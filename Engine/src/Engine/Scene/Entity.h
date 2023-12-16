@@ -1,12 +1,10 @@
 #pragma once
 
 #include "Engine/Core/UUID.h"
-#include "Engine/Scene/Components.h"
 #include "Scene.h"
+#include "Engine/Scene/Components.h"
 
-#include "../../../Engine/vendor/entt/include/entt.hpp"
-
-//#include "Engine/Core/Core.h"
+#include "../../../../Engine/vendor/entt/include/entt.hpp"
 
 
 namespace eg {
@@ -21,7 +19,7 @@ namespace eg {
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
 		{
-			//EG_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
+			EG_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 			m_Scene->OnComponentAdded<T>(*this, component);
 			return component;
@@ -30,7 +28,7 @@ namespace eg {
 		template<typename T>
 		T& GetComponent()
 		{
-			//EG_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			EG_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
 			return m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 
@@ -43,11 +41,10 @@ namespace eg {
 		template<typename T>
 		void RemoveComponent()
 		{
-			//EG_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			EG_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
-		Scene* GetScene() { return m_Scene; }
 
 		operator bool() const { return m_EntityHandle != entt::null; }
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; }

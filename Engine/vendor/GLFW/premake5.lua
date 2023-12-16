@@ -28,9 +28,6 @@ project "GLFW"
 
 	filter "system:linux"
 		pic "On"
-
-		systemversion "latest"
-		staticruntime "On"
 		systemversion "latest"
 		
 		files
@@ -57,7 +54,6 @@ project "GLFW"
 	filter "system:macosx"
 		pic "On"
 		systemversion "latest"
-		staticruntime "On"
 		
 		files
 		{
@@ -80,7 +76,6 @@ project "GLFW"
 
 	filter "system:windows"
 		systemversion "latest"
-		staticruntime "On"
 
 		files
 		{

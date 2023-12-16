@@ -4,13 +4,14 @@
 
 #include "SceneCamera.h"
 #include "Engine/Core/UUID.h"
+#include "Engine/Renderer/Texture.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/exponential.hpp"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
-#include "Engine/Renderer/Texture.h"
+
 
 
 namespace eg {
@@ -21,6 +22,8 @@ namespace eg {
 
 		IDComponent() = default;
 		IDComponent(const IDComponent&) = default;
+		IDComponent(const UUID& uuid)
+			: ID(uuid) {}
 	};
 
 	struct TagComponent
