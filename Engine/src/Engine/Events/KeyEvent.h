@@ -1,22 +1,24 @@
 #pragma once
 #include "Event.h"
+#include "Engine/Core/KeyCodes.h"
+
 namespace eg {
 
 	class ENGINE_API KeyEvent : public Event
 	{
 	public:
-		inline int GetKeyCode() const { return m_KeyCode; }
+		KeyCode GetKeyCode() const { return m_KeyCode; }
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
-		KeyEvent(int keycode)
+		KeyEvent(const KeyCode keycode)
 			:m_KeyCode(keycode){}
-		int m_KeyCode;
+		KeyCode m_KeyCode;
 	};
 
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(int keycode, int repeatCount)
+		KeyPressedEvent(const KeyCode keycode, int repeatCount)
 			:KeyEvent(keycode), m_RepeatedCount(repeatCount)
 		{}
 		inline int GetRepeatCount() const { return m_RepeatedCount; }
@@ -24,7 +26,7 @@ namespace eg {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatedCount << " repeats";
+			ss << "KeyPressedEvent: " << (int)m_KeyCode << " (" << m_RepeatedCount << " repeats";
 			return ss.str();
 		};
 
@@ -36,7 +38,7 @@ namespace eg {
 	class ENGINE_API KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(int keycode)
+		KeyReleasedEvent(const KeyCode keycode)
 			:KeyEvent(keycode)
 		{}
 
@@ -53,7 +55,7 @@ namespace eg {
 	class KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(int keycode)
+		KeyTypedEvent(const KeyCode keycode)
 			:KeyEvent(keycode)
 		{}
 

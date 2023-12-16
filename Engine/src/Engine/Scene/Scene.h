@@ -17,6 +17,8 @@ namespace eg {
 	public:
 		Scene();
 		~Scene();
+			
+		static Ref<Scene> Copy(Ref<Scene>& other);
 
 		Entity CreateEntity(const std::string& name = std::string());
 		Entity CreateEntityWithID(UUID uuid, const std::string& name = std::string());
@@ -29,12 +31,15 @@ namespace eg {
 		void OnUpdateRuntime(Timestep ts);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
+		void DuplicateEntity(Entity entity);
+
 		Entity GetPrimaryCameraEntity();
 
 		entt::registry& GetRegistry()
 		{
 			return m_Registry;
 		}
+
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

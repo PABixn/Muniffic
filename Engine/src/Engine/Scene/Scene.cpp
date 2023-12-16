@@ -38,6 +38,60 @@ namespace eg {
 	{
 	}
 
+	template<typename Component>
+	static void CopyComponent(entt::registry& dstRegistry, entt::registry& srcRegistry, std::unordered_map<UUID, entt::entity>& enttMap)
+	{
+		auto view = srcRegistry.view<Component>();
+		for (auto entity : view)
+		{
+			UUID uuid = srcRegistry.get<IDComponent>(entity).ID;
+			EG_CORE_ASSERT(enttMap.find(uuid) != enttMap.end());
+			entt::entity enttID = enttMap.at(uuid);
+
+			auto& component = srcRegistry.get<Component>(entity);
+			dstRegistry.emplace_or_replace<Component>(enttID, component);
+		}
+	}
+
+	template<typename Component>
+	static void CopyComponentIfExists(Entity dst, Entity src)
+	{
+		if (src.HasComponent<Component>())
+			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+	}
+
+	Ref<Scene> Scene::Copy(Ref<Scene>& other)
+	{
+		Ref<Scene> scene = CreateRef<Scene>();
+		scene->m_ViewportWidth = other->m_ViewportWidth;
+		scene->m_ViewportHeight = other->m_ViewportHeight;
+
+		std::unordered_map<UUID, entt::entity> enttMap;
+		
+		auto& srcSceneRegistry = other->m_Registry;
+		auto& dstSceneRegistry = scene->m_Registry;
+		auto idView = srcSceneRegistry.view<IDComponent>();
+
+		// Copy entities
+		for(auto entity : idView)
+		{
+			UUID uuid = srcSceneRegistry.get<IDComponent>(entity).ID;
+			const auto& tag = srcSceneRegistry.get<TagComponent>(entity).Tag;
+			Entity newEntity = scene->CreateEntityWithID(uuid, tag);
+			enttMap[uuid] = (entt::entity)newEntity;
+		}
+
+		// Copy components
+		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<RigidBody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+
+		return scene;
+	}
+
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		return CreateEntityWithID(UUID(), name);
@@ -205,6 +259,19 @@ namespace eg {
 				cameraComponent.Camera.SetViewportSize(width, height);
 		}
 
+	}
+
+	void Scene::DuplicateEntity(Entity entity)
+	{
+		std::string name = entity.GetName();
+		Entity newEntity = CreateEntityWithID(UUID(), name);
+
+		CopyComponentIfExists<TransformComponent>(newEntity, entity);
+		CopyComponentIfExists<CameraComponent>(newEntity, entity);
+		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
+		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+		CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()

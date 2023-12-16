@@ -3,7 +3,7 @@
 #include "Engine/Events/KeyEvent.h"
 #include "Engine/Events/ApplicationEvent.h"
 #include "Engine/Events/MouseEvent.h"
-
+#include "Engine/Core/KeyCodes.h"
 
 namespace eg
 {
@@ -78,19 +78,19 @@ namespace eg
 				{
 					case GLFW_PRESS:
 					{
-						KeyPressedEvent event(key, 0);
+						KeyPressedEvent event((KeyCode)key, 0);
 						data.EventCallback(event);
 						break;
 					}
 					case GLFW_RELEASE:
 					{
-						KeyReleasedEvent event(key);
+						KeyReleasedEvent event((KeyCode)key);
 						data.EventCallback(event);
 						break;
 					}
 					case GLFW_REPEAT:
 					{
-						KeyPressedEvent event(key, 1);
+						KeyPressedEvent event((KeyCode)key, 1);
 						data.EventCallback(event);
 						break;
 					}
@@ -134,7 +134,7 @@ namespace eg
 
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode) {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-			KeyTypedEvent event(keycode);
+			KeyTypedEvent event((KeyCode)keycode);
 			data.EventCallback(event);
 			});
 		

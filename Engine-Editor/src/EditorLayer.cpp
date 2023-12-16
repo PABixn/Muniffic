@@ -46,66 +46,7 @@ namespace eg {
 		}
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
-		//auto game = m_ActiveScene->CreateEntity("Game");
-		//game.AddComponent<NativeScriptComponent>().Bind<Game>();
-#if 0
-		auto square = m_ActiveScene->CreateEntity("Square");
-		square.AddComponent<SpriteRendererComponent>();
-
-		auto square2 = m_ActiveScene->CreateEntity("Square2");
-		square2.AddComponent<SpriteRendererComponent>(glm::vec4{0.8f, 0.2f, 0.3f, 1.0f});
 		
-
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
-		m_CameraEntity.AddComponent<CameraComponent>();
-		m_SecondCameraEntity = m_ActiveScene->CreateEntity("Second Camera Entity");
-		auto& cc = m_SecondCameraEntity.AddComponent<CameraComponent>();
-
-		cc.Primary = false;
-
-		
-		class CameraController : public ScriptableEntity
-		{
-		public:
-			void OnCreate()
-			{
-				auto& translate = GetComponent<TransformComponent>().Translation;
-				translate.x = rand() % 10 - 5.0f;
-			}
-
-			void OnDestroy()
-			{
-			}
-
-			void OnUpdate(Timestep ts)
-			{
-				auto& translate = GetComponent<TransformComponent>().Translation;
-
-				float speed = 5.0f;
-
-				if (Input::IsKeyPressed(KeyCode::A))
-					translate.x -= speed * ts;
-				if (Input::IsKeyPressed(KeyCode::D))
-					translate.x += speed * ts;
-				if (Input::IsKeyPressed(KeyCode::W))
-					translate.y += speed * ts;
-				if (Input::IsKeyPressed(KeyCode::S))
-					translate.y -= speed * ts;
-			}
-		};
-
-		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-		m_SecondCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-		SceneSerializer serializer(m_ActiveScene);
-		serializer.Serialize("assets/scenes/ExampleScene.egscene");
-#else
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-		//SceneSerializer serializer(m_ActiveScene);
-		//serializer.Deserialize("assets/scenes/ExampleScene.egscene");
-#endif
 	}
 
 	void EditorLayer::OnDetach()
@@ -418,26 +359,36 @@ namespace eg {
 
 		switch (e.GetKeyCode())
 		{
-			case (int)Key::S:
+			case Key::S:
 			{
-				if (controlPressed && shiftPressed)
-					SaveAs();
+				if (controlPressed)
+					if(shiftPressed)
+						SaveAs();
+					else
+						Save();
 				break;
 			}
-			case (int)Key::N:
+			case Key::N:
 			{
 				if (controlPressed)
 					NewScene();
 				break;
 			}
-			case (int)Key::O:
+			case Key::O:
 			{
 				if (controlPressed)
 					OpenScene();
 				break;
 			}
+			// Commands
+			case Key::D:
+			{
+				if (controlPressed)
+					OnDuplicateEntity();
+				break;
+			}
 			// Gizmos
-			case (int)Key::Q:
+			case Key::Q:
 			{
 				if (!ImGuizmo::IsUsing())
 				{
@@ -447,19 +398,19 @@ namespace eg {
 				}
 				break;
 			}
-			case (int)Key::W:
+			case Key::W:
 			{
 				if (!ImGuizmo::IsUsing())
 					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 				break;
 			}
-			case (int)Key::E:
+			case Key::E:
 			{
 				if (!ImGuizmo::IsUsing())
 					m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 				break;
 			}
-			case (int)Key::R:
+			case Key::R:
 			{
 				if (!ImGuizmo::IsUsing())
 					m_GizmoType = ImGuizmo::OPERATION::SCALE;
@@ -485,6 +436,8 @@ namespace eg {
 		m_ActiveScene = CreateRef<Scene>();
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+		m_ActiveScenePath = std::filesystem::path();
 	}
 
 	void EditorLayer::OpenScene()
@@ -492,17 +445,15 @@ namespace eg {
 		std::string filepath = FileDialogs::OpenFile("Muniffic Scene (*.egscene)\0*.egscene\0");
 		if (!filepath.empty())
 		{
-			m_ActiveScene = CreateRef<Scene>();
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Deserialize(filepath);
+			OpenScene(filepath);
 		}
 	}
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
+		if (m_SceneState != SceneState::Edit)
+			OnSceneStop();
+
 		if (path.extension().string() != ".egscene")
 		{
 			EG_WARN("Could not load {0} - not a scene file", path.filename().string());
@@ -513,9 +464,11 @@ namespace eg {
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
+			m_EditorScene = newScene;
 			m_ActiveScene = newScene;
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+			m_ActiveScenePath = path;
 		}
 	}
 
@@ -523,21 +476,55 @@ namespace eg {
 	{
 		std::string filepath = FileDialogs::SaveFile("Muniffic Scene (*.egscene)\0*.egscene\0");
 		if (!filepath.empty()) {
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize(filepath);
+			SerializeScene(m_ActiveScene, filepath);
+
+			m_ActiveScenePath = filepath;
 		}
+	}
+
+	void EditorLayer::Save()
+	{
+		if(m_ActiveScenePath.empty())
+			SaveAs();
+		else
+		{
+			SerializeScene(m_ActiveScene, m_ActiveScenePath);
+		}
+	}
+
+	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
+	{
+		SceneSerializer serializer(scene);
+		serializer.Serialize(path.string());
 	}
 
 	void EditorLayer::OnScenePlay()
 	{
 		m_SceneState = SceneState::Play;
+		
+		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart();
+
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnSceneStop()
 	{
 		m_SceneState = SceneState::Edit;
 		m_ActiveScene->OnRuntimeStop();
+		m_ActiveScene = m_EditorScene;
+	}
+
+	void EditorLayer::OnDuplicateEntity()
+	{
+		if (m_SceneState == SceneState::Play)
+			return;
+
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity)
+		{
+			m_EditorScene->DuplicateEntity(selectedEntity);
+		}
 	}
 
 	

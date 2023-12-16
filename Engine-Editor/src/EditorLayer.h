@@ -24,9 +24,14 @@ namespace eg {
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
 		void SaveAs();
+		void Save();
+
+		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
 
 		void OnScenePlay();
 		void OnSceneStop();
+
+		void OnDuplicateEntity();
 
 		//UI Panels
 		void UI_Toolbar();
@@ -41,6 +46,8 @@ namespace eg {
 		Ref<FrameBuffer> m_FrameBuffer;
 
 		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_EditorScene;
+		std::filesystem::path m_ActiveScenePath;
 		Entity m_SquareEntity;
 		Entity m_CameraEntity;
 		Entity m_SecondCameraEntity;
