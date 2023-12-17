@@ -29,6 +29,7 @@ void OpenGLRendererAPI::Clear()
 void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 {
 	indexCount = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+	vertexArray->Bind();
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 }
 
