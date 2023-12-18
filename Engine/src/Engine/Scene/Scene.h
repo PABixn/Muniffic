@@ -35,6 +35,12 @@ namespace eg {
 
 		Entity GetPrimaryCameraEntity();
 
+		template<typename... Components>
+		auto GetEntitiesWith()
+		{
+			return m_Registry.view<Components...>();
+		}
+
 		entt::registry& GetRegistry()
 		{
 			return m_Registry;

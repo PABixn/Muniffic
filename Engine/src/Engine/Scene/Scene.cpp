@@ -157,7 +157,7 @@ namespace eg {
 				b2CircleShape shape;
 				shape.m_p.Set(cc.Offset.x, cc.Offset.y);
 
-				shape.m_radius = cc.Radius;
+				shape.m_radius = (transform.Scale.x) * cc.Radius;
 				
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &shape;

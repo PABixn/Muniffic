@@ -19,6 +19,7 @@ namespace eg {
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+		void OnOverlayRender();
 
 		void NewScene();
 		void OpenScene();
@@ -74,6 +75,8 @@ namespace eg {
 		std::unordered_map<char, Ref<SubTexture2D>> s_TextureMap;
 
 		int m_GizmoType = -1;
+
+		bool m_ShowPhysicsColliders = false;
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;

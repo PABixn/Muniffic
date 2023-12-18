@@ -118,8 +118,37 @@ Entities:
     TransformComponent:
       Translation: [2.4000001, 0, 0]
       Rotation: [0, 0, 0]
+      Scale: [2.5, 2.5, 1]
+    CircleRendererComponent:
+      Color: [1, 1, 1, 1]
+      Thickness: 1
+      Fade: 0.00499999989
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: false
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 12466326309952554741
+    Name: Cube
+    TagComponent:
+      Tag: Circle
+    TransformComponent:
+      Translation: [2.4000001, 0, 0]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CircleRendererComponent:
       Color: [1, 1, 1, 1]
       Thickness: 1
       Fade: 0.00499999989
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
