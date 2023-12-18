@@ -14,6 +14,7 @@
 #include <box2d/b2_body.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
+#include <box2d/b2_circle_shape.h>
 
 namespace eg {
 
@@ -89,6 +90,7 @@ namespace eg {
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<RigidBody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		return scene;
 	}
@@ -148,6 +150,23 @@ namespace eg {
 
 				body->CreateFixture(&fixtureDef);
 			}
+
+			if (e.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& cc = e.GetComponent<CircleCollider2DComponent>();
+				b2CircleShape shape;
+				shape.m_p.Set(cc.Offset.x, cc.Offset.y);
+
+				shape.m_radius = cc.Radius;
+				
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &shape;
+				fixtureDef.density = cc.Density;
+				fixtureDef.friction = cc.Friction;
+				fixtureDef.restitution = cc.Restitution;
+				fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
+				body->CreateFixture(&fixtureDef);
+			}
 		}
 	}
 
@@ -180,7 +199,6 @@ namespace eg {
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
 			}
 		}
-		Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
 
 		Renderer2D::EndScene();
 	}
@@ -301,6 +319,7 @@ namespace eg {
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
 		CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
+		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()
@@ -365,6 +384,11 @@ namespace eg {
 
 	template<>
 	void Scene::OnComponentAdded<RigidBody2DComponent>(Entity entity, RigidBody2DComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
 	{
 	}
 
