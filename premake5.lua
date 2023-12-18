@@ -1,7 +1,7 @@
 include "./vendor/premake/premake_customization/solution_items.lua"
 include "Dependencies.lua"
 
-workspace "HowToGameEngine"
+workspace "Muniffic"
 	architecture "x86_64"
 	startproject "Engine-Editor"
 

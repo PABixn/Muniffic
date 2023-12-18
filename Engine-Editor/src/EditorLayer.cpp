@@ -502,6 +502,7 @@ namespace eg {
 
 	void EditorLayer::OnScenePlay()
 	{
+		if (!m_EditorScene) return;
 		m_SceneState = SceneState::Play;
 		
 		m_ActiveScene = Scene::Copy(m_EditorScene);

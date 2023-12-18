@@ -31,6 +31,11 @@ namespace eg {
 			s_RendererAPI->DrawLines(vertexArray, vertexCount);
 		}
 
+		inline static void SetLineThickness(float thickness)
+		{
+			s_RendererAPI->SetLineThickness(thickness);
+		}
+
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

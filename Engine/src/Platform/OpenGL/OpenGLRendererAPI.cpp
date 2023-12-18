@@ -40,4 +40,9 @@ namespace eg{
 		glDrawArrays(GL_LINES, 0, vertexCount);
 	}
 
+	void OpenGLRendererAPI::SetLineThickness(float thickness)
+	{
+		glLineWidth(thickness);
+	}
+
 }
