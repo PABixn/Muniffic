@@ -1,5 +1,4 @@
 #pragma once
-#include <xhash>
 
 namespace eg {
 
@@ -18,13 +17,14 @@ namespace eg {
 }
 
 namespace std {
+	template <typename T> struct hash;
 
 	template<>
 	struct hash<eg::UUID>
 	{
 		std::size_t operator()(const eg::UUID& uuid) const
 		{
-			return hash<uint64_t>()((uint64_t)uuid);
+			return (uint64_t)uuid;
 		}
 	};
 

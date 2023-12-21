@@ -18,21 +18,21 @@ namespace eg {
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(const KeyCode keycode, int repeatCount)
-			:KeyEvent(keycode), m_RepeatedCount(repeatCount)
+		KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
+			:KeyEvent(keycode), m_IsRepeat(isRepeat)
 		{}
-		inline int GetRepeatCount() const { return m_RepeatedCount; }
+		inline bool IsRepeat() const { return m_IsRepeat; }
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << (int)m_KeyCode << " (" << m_RepeatedCount << " repeats";
+			ss << "KeyPressedEvent: " << (int)m_KeyCode << " (repeat=" << m_IsRepeat << ")";
 			return ss.str();
 		};
 
 		EVENT_CLASS_TYPE(KeyPressed);
 	private:
-		int m_RepeatedCount;
+		bool m_IsRepeat;
 	};
 
 	class ENGINE_API KeyReleasedEvent : public KeyEvent

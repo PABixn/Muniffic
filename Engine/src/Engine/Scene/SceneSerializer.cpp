@@ -170,6 +170,9 @@ namespace eg {
 			out << YAML::Key << "SpriteRendererComponent";
 			out << YAML::BeginMap; // SpriteRendererComponent
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+			out << YAML::Key << "TilignFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
+			if(spriteRendererComponent.Texture)
+				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.Texture->GetPath();
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
@@ -285,6 +288,7 @@ namespace eg {
 		}
 		catch (YAML::ParserException e)
 		{
+			EG_CORE_ERROR("Failed to load .hazel file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
 		if(!data["Scene"])
@@ -344,6 +348,10 @@ namespace eg {
 				{
 					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+					if(spriteRendererComponent["TilingFactor"])
+						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
+					if (spriteRendererComponent["TexturePath"])
+						src.Texture = Texture2D::Create(spriteRendererComponent["TexturePath"].as<std::string>());
 				}
 
 				auto circleRendererComponent = entity["CircleRendererComponent"];

@@ -6,7 +6,8 @@
 class Sandbox : public eg::Application
 {
 public:
-	Sandbox(eg::ApplicationCommandLineArgs args)
+	Sandbox(const eg::ApplicationSpecification& specification)
+		: eg::Application(specification)
 	{
 		// PushLayer(new ExampleLayer());
 		PushLayer(new Sandbox2D());
@@ -19,5 +20,9 @@ public:
 
 eg::Application* eg::CreateApplication(eg::ApplicationCommandLineArgs args)
 {
-	return new Sandbox(args);
+	ApplicationSpecification spec;
+	spec.Name = "Sandbox";
+	spec.WorkingDirectory = "../Engine-Editor";
+	spec.CommandLineArgs = args;
+	return new Sandbox(spec);
 }

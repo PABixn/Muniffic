@@ -90,7 +90,7 @@ namespace eg
 					}
 					case GLFW_REPEAT:
 					{
-						KeyPressedEvent event((KeyCode)key, 1);
+						KeyPressedEvent event((KeyCode)key, true);
 						data.EventCallback(event);
 						break;
 					}

@@ -3,6 +3,7 @@
 #include "Platform/Windows/WindowsWindow.h"
 #include "Engine/Renderer/Renderer.h"
 #include "glad/glad.h"
+#include "Engine/Utils/PlatformUtils.h"
 
 namespace eg {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -11,13 +12,18 @@ namespace eg {
 
 	
 
-	Application::Application(const std::string& name, ApplicationCommandLineArgs args)
-		: m_CommandLineArgs(args)
+	Application::Application(const ApplicationSpecification applicationSpec)
+		: m_Specification(applicationSpec)
 	{
 		EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
-		m_Window = Window::Create(WindowProps(name));
+
+		//Set working directory here
+		if (!m_Specification.WorkingDirectory.empty())
+			std::filesystem::current_path(applicationSpec.WorkingDirectory);
+
+		m_Window = Window::Create(WindowProps(applicationSpec.Name));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Renderer::Init();
@@ -67,7 +73,7 @@ namespace eg {
 		while (m_Running) 
 		{
 			EG_PROFILE_SCOPE("RunLoop");
-			float time = (float)glfwGetTime(); // Platform::GetTime()
+			float time = Time::GetTime(); // Platform::GetTime()
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 

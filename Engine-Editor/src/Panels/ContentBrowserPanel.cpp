@@ -36,7 +36,6 @@ namespace eg {
 		ImGui::Columns(columnCount, 0, false);
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory)) {\
 			const auto& path = directoryEntry.path();
-			auto relativePath = std::filesystem::relative(path, s_AssetPath);
 			auto name = path.filename().string();
 			ImGui::PushID(name.c_str());
 
@@ -46,6 +45,7 @@ namespace eg {
 
 			if (ImGui::BeginDragDropSource())
 			{
+				auto relativePath = std::filesystem::relative(path, s_AssetPath);
 				const wchar_t* pathStr = relativePath.c_str();
 				ImGui::SetDragDropPayload("ContentBrowserPanel", pathStr, (wcslen(pathStr)+1) * sizeof(wchar_t));
 				ImGui::EndDragDropSource();
