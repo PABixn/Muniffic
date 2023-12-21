@@ -3,7 +3,7 @@
 bin-int/
 Intermediates/
 
-# Hazel files
+# Muniffic files
 *.log
 
 # Visual Studio files and folder

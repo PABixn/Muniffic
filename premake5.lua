@@ -33,6 +33,15 @@ group "Dependencies"
 	include "Engine/vendor/yaml-cpp"
 group ""
 
-include "Engine"
-include "Sandbox"
-include "Engine-Editor"
+group "Core"
+	include "Engine"
+	include "Muniffic-ScriptCore"
+group ""
+
+group "Tools"
+	include "Engine-Editor"
+group ""
+
+group "Misc"
+	include "Sandbox"
+group ""
