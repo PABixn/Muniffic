@@ -1,5 +1,7 @@
 #include "egpch.h"
 #include "SceneHierarchyPanel.h"
+#include "Engine/Scripting/ScriptEngine.h"
+
 #include <Imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <Imgui/imgui_internal.h>
@@ -229,6 +231,7 @@ namespace eg {
 		if (ImGui::BeginPopup("AddComponent"))
 		{
 			DisplayAddComponentEntry<CameraComponent>("Camera");
+			DisplayAddComponentEntry<ScriptComponent>("Script");
 			DisplayAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
 			DisplayAddComponentEntry<CircleRendererComponent>("Circle Renderer");
 			DisplayAddComponentEntry<RigidBody2DComponent>("Rigidbody 2D");
@@ -305,6 +308,30 @@ namespace eg {
 
 				ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
 			}
+			});
+
+		DrawComponent<ScriptComponent>("Script", entity, [](auto& component) 
+			{
+				bool scriptExists = ScriptEngine::EntityClassExists(component.Name);
+
+				static char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				strcpy(buffer, component.Name.c_str());
+
+				if(!scriptExists)
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f });
+
+				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+				{
+					component.Name = std::string(buffer);
+
+					
+					
+				}
+
+				if(!scriptExists)
+					ImGui::PopStyleColor();
+
 			});
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)

@@ -212,6 +212,15 @@ namespace eg {
 			out << YAML::EndMap; // CameraComponent
 		}
 
+		if (entity.HasComponent<ScriptComponent>())
+		{
+			out << YAML::Key << "ScriptComponent";
+			out << YAML::BeginMap; // ScriptComponent
+			auto& scriptComponent = entity.GetComponent<ScriptComponent>();
+			out << YAML::Key << "Name" << YAML::Value << scriptComponent.Name;
+			out << YAML::EndMap; // ScriptComponent
+
+		}
 		if (entity.HasComponent<RigidBody2DComponent>())
 		{
 			auto& rb = entity.GetComponent<RigidBody2DComponent>();
@@ -341,6 +350,14 @@ namespace eg {
 
 					cc.Primary = cameraComponent["Primary"].as<bool>();
 					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+				}
+
+				auto scriptComponent = entity["ScriptComponent"];
+				if (scriptComponent)
+				{
+					auto& sc = deserializedEntity.AddComponent<ScriptComponent>();
+					sc.Name = scriptComponent["Name"].as<std::string>();
+					deserializedEntity.GetComponent<ScriptComponent>();
 				}
 
 				auto spriteRendererComponent = entity["SpriteRendererComponent"];
