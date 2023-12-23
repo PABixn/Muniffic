@@ -374,21 +374,21 @@ namespace eg {
 								//	scriptInstance->SetFieldValue<std::string>(name, std::string(buffer));
 								//reak;
 							}
-							case ScriptFieldType::Vec2:
+							case ScriptFieldType::Vector2:
 							{
 								glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
 								if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
 									scriptInstance->SetFieldValue<glm::vec2>(name, value);
 								break;
 							}
-							case ScriptFieldType::Vec3:
+							case ScriptFieldType::Vector3:
 							{
 								glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
 								if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
 									scriptInstance->SetFieldValue<glm::vec3>(name, value);
 								break;
 							}
-							case ScriptFieldType::Vec4:
+							case ScriptFieldType::Vector4:
 							{
 								glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
 								if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
@@ -457,7 +457,7 @@ namespace eg {
 										//}
 										//break;
 									}
-									case ScriptFieldType::Vec2:
+									case ScriptFieldType::Vector2:
 									{
 										glm::vec2 data = scriptField.GetValue<glm::vec2>();
 										if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
@@ -466,7 +466,7 @@ namespace eg {
 										}
 										break;
 									}
-									case ScriptFieldType::Vec3:
+									case ScriptFieldType::Vector3:
 									{
 										glm::vec3 data = scriptField.GetValue<glm::vec3>();
 										if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
@@ -475,7 +475,7 @@ namespace eg {
 										}
 										break;
 									}
-									case ScriptFieldType::Vec4:
+									case ScriptFieldType::Vector4:
 									{
 										glm::vec4 data = scriptField.GetValue<glm::vec4>();
 										if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
@@ -538,7 +538,7 @@ namespace eg {
 										//}
 										//break;
 									}
-									case ScriptFieldType::Vec2:
+									case ScriptFieldType::Vector2:
 									{
 										glm::vec2 data = glm::vec2(0.0f);
 										if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
@@ -549,7 +549,7 @@ namespace eg {
 										}
 										break;
 									}
-									case ScriptFieldType::Vec3:
+									case ScriptFieldType::Vector3:
 									{
 										glm::vec3 data = glm::vec3(0.0f);
 										if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
@@ -560,7 +560,7 @@ namespace eg {
 										}
 										break;
 									}
-									case ScriptFieldType::Vec4:
+									case ScriptFieldType::Vector4:
 									{
 										glm::vec4 data = glm::vec4(0.0f);
 										if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(data), 0.1f))

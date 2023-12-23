@@ -26,9 +26,9 @@ namespace eg {
 		{"System.String", ScriptFieldType::String},
 		{"System.Object", ScriptFieldType::Object},
 		{"System.Void", ScriptFieldType::Void},
-		{"eg.Vector2", ScriptFieldType::Vec2},
-		{"eg.Vector3", ScriptFieldType::Vec3},
-		{"eg.Vector4", ScriptFieldType::Vec4},
+		{"eg.Vector2", ScriptFieldType::Vector2},
+		{"eg.Vector3", ScriptFieldType::Vector3},
+		{"eg.Vector4", ScriptFieldType::Vector4},
 		{ "eg.Entity", ScriptFieldType::Entity },
 		//{ "eg.TransformComponent", ScriptFieldType::TransformComponent },
 		//{ "eg.RigidBodyComponent", ScriptFieldType::RigidBodyComponent },
@@ -126,34 +126,7 @@ namespace eg {
 			return it->second;
 		}
 
-		const char* ScriptFieldTypeToString(ScriptFieldType type)
-		{
-			switch (type)
-			{
-			case ScriptFieldType::Float: return "float";
-			case ScriptFieldType::Vec2: return "vec2";
-			case ScriptFieldType::Vec3: return "vec3";
-			case ScriptFieldType::Vec4: return "vec4";
-			case ScriptFieldType::Int32: return "int";
-			case ScriptFieldType::UInt: return "uint";
-			case ScriptFieldType::Int64: return "int64";
-			case ScriptFieldType::Bool: return "bool";
-			case ScriptFieldType::Double: return "double";
-			case ScriptFieldType::Short: return "short";
-			case ScriptFieldType::Byte: return "byte";
-			case ScriptFieldType::UShort: return "ushort";
-			case ScriptFieldType::UInt64: return "uint64";
-			case ScriptFieldType::SByte: return "sbyte";
-			case ScriptFieldType::Char: return "char";
-			case ScriptFieldType::String: return "string";
-			case ScriptFieldType::Object: return "object";
-			case ScriptFieldType::Void: return "void";
-			case ScriptFieldType::Entity: return "entity";
-			}
-
-			//EG_CORE_ASSERT(false, "Unknown type!");
-			return "<Invalid>";
-		}
+		
 
 	}
 

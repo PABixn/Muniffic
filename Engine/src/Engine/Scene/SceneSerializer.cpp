@@ -6,6 +6,7 @@
 #include "Entity.h"
 #include "Components.h"
 #include <optional>
+#include "Engine/Scripting/ScriptEngine.h"
 
 namespace YAML
 {
@@ -218,6 +219,24 @@ namespace eg {
 			out << YAML::BeginMap; // ScriptComponent
 			auto& scriptComponent = entity.GetComponent<ScriptComponent>();
 			out << YAML::Key << "Name" << YAML::Value << scriptComponent.Name;
+
+			// Fields
+			Ref<ScriptClass> scriptClass = ScriptEngine::GetEntityClass(scriptComponent.Name);
+			const auto& fields = scriptClass->GetFields();
+			if (fields.size() > 0) {
+				out << YAML::Key << "ScriptFields" << YAML::Value;
+				auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
+				out << YAML::BeginSeq;
+				for (auto& [name, field] : fields)
+				{
+					out << YAML::Key << field.Name;
+					out << YAML::BeginMap; // Field
+					out << YAML::Key << "Type" << YAML::Value << Utils::ScriptFieldTypeToString(field.Type);
+					out << YAML::Key << "Value" << YAML::Value << entityFields[field.Name];
+					out << YAML::EndMap; // Field
+				}
+				out << YAML::EndSeq;
+			}
 			out << YAML::EndMap; // ScriptComponent
 
 		}

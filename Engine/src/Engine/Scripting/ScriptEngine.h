@@ -18,7 +18,7 @@ namespace eg {
 	enum class ScriptFieldType
 	{
 		None = 0,
-		Float, Vec2, Vec3, Vec4,
+		Float, Vector2, Vector3, Vector4,
 		Int32, Int64, Bool, Double, Short, Byte, Char,
 		UByte, UInt, UInt64, UShort, SByte,
 		String, Object, Void,
@@ -181,6 +181,66 @@ namespace eg {
 		friend class ScriptInstance;
 	};
 
+	namespace Utils
+	{
+		inline const char* ScriptFieldTypeToString(ScriptFieldType type)
+		{
+			switch (type)
+			{
+				case ScriptFieldType::Float: return		"float";
+				case ScriptFieldType::Vector2: return	"vector2";
+				case ScriptFieldType::Vector3: return	"vector3";	
+				case ScriptFieldType::Vector4: return	"vector4";
+				case ScriptFieldType::Int32: return		"int";
+				case ScriptFieldType::UInt: return		"uint";
+				case ScriptFieldType::Int64: return		"int64";
+				case ScriptFieldType::Bool: return		"bool";
+				case ScriptFieldType::Double: return	"double";
+				case ScriptFieldType::Short: return		"short";
+				case ScriptFieldType::Byte: return		"byte";
+				case ScriptFieldType::UShort: return	"ushort";
+				case ScriptFieldType::UInt64: return	"uint64";
+				case ScriptFieldType::SByte: return		"sbyte";
+				case ScriptFieldType::Char: return		"char";
+				case ScriptFieldType::String: return	"string";
+				case ScriptFieldType::Object: return	"object";
+				case ScriptFieldType::Void: return		"void";
+				case ScriptFieldType::Entity: return	"entity";
+				case ScriptFieldType::None: return		"none";
+			}
+
+			//EG_CORE_ASSERT(false, "Unknown type!");
+			return "<Invalid>";
+		}
+
+		inline ScriptFieldType ScriptFieldTypeFromString(std::string_view fieldType)
+		{
+			if (fieldType == "none")		return ScriptFieldType::None;
+			if (fieldType == "float")		return ScriptFieldType::Float;
+			if (fieldType == "double")		return ScriptFieldType::Double;
+			if (fieldType == "bool")		return ScriptFieldType::Bool;
+			if (fieldType == "char")		return ScriptFieldType::Char;
+			if (fieldType == "byte")		return ScriptFieldType::Byte;
+			if (fieldType == "sbyte")		return ScriptFieldType::SByte;
+			if (fieldType == "short")		return ScriptFieldType::Short;
+			if (fieldType == "int")			return ScriptFieldType::Int32;
+			if (fieldType == "int64")		return ScriptFieldType::Int64;
+			if (fieldType == "UByte")		return ScriptFieldType::UByte;
+			if (fieldType == "UShort")		return ScriptFieldType::UShort;
+			if (fieldType == "UInt")		return ScriptFieldType::UInt;
+			if (fieldType == "uint64")		return ScriptFieldType::UInt64;
+			if (fieldType == "vector2")		return ScriptFieldType::Vector2;
+			if (fieldType == "vector3")		return ScriptFieldType::Vector3;
+			if (fieldType == "vector4")		return ScriptFieldType::Vector4;
+			if (fieldType == "string")		return ScriptFieldType::String;
+			if (fieldType == "object")		return ScriptFieldType::Object;
+			if (fieldType == "void")		return ScriptFieldType::Void;
+			if (fieldType == "entity")		return ScriptFieldType::Entity;
+
+			EG_CORE_ASSERT(false, "Unknown ScriptFieldType");
+			return ScriptFieldType::None;
+		}
+	}
 	
 
 }
