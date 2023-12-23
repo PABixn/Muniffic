@@ -94,6 +94,8 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
+    ScriptComponent:
+      Name: Sandbox.Camera
   - Entity: 3898880785194007479
     Name: Cube
     TagComponent:

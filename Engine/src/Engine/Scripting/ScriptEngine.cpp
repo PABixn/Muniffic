@@ -93,7 +93,9 @@ namespace eg {
 		LoadAssembly("Resources/Scripts/Muniffic-ScriptCore.dll");
 		LoadAssemblyClasses(s_Data->CoreAssembly);
 
+		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
+		
 		s_Data->EntityClass = new ScriptClass("eg", "Entity");
 #if 0
 		
@@ -184,6 +186,11 @@ namespace eg {
 			
 			EG_CORE_TRACE("{}.{}", nameSpace, name);
 		}
+	}
+
+	MonoImage* ScriptEngine::GetCoreAssemblyImage()
+	{
+		return s_Data->CoreAssemblyImage;
 	}
 
 	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
@@ -289,13 +296,18 @@ namespace eg {
 
 	void ScriptInstance::InvokeOnCreate()
 	{
-		m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
+		if(m_OnCreateMethod)
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
 	}
 
 	void ScriptInstance::InvokeOnUpdate(float ts)
 	{
-		void* arg = &ts;
-		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &arg);
+		
+		if (m_OnUpdateMethod)
+		{
+			void* arg = &ts;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &arg);
+		}
 	}
 
 }
