@@ -41,8 +41,6 @@ namespace Sandbox
                 velocity.X = 0f;
             }
 
-            Console.WriteLine("What");
-
             Vector3 translation = Translation;
             translation += velocity * ts;
             Translation = translation;

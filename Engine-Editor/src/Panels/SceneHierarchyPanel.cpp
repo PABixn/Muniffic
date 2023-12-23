@@ -310,7 +310,7 @@ namespace eg {
 			}
 			});
 
-		DrawComponent<ScriptComponent>("Script", entity, [](auto& component) 
+		DrawComponent<ScriptComponent>("Script", entity, [entity](auto& component) mutable
 			{
 				bool scriptExists = ScriptEngine::EntityClassExists(component.Name);
 
@@ -324,9 +324,75 @@ namespace eg {
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 				{
 					component.Name = std::string(buffer);
+				}
 
-					
-					
+				//Fields
+				Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+				if (scriptInstance)
+				{
+					const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+						for(const auto& [name, field] : fields)
+						{
+								//float a = 5.0f;
+								//ImGui::DragFloat(name.c_str(), &a, 0.1f);
+								switch (field.Type)
+								{
+								case ScriptFieldType::Float:
+								{
+									float value = scriptInstance->GetFieldValue<float>(name);
+									if(ImGui::DragFloat(name.c_str(), &value, 0.1f))
+										scriptInstance->SetFieldValue<float>(name, value);
+									break;
+								}
+								case ScriptFieldType::Int32:
+								{
+									int value = scriptInstance->GetFieldValue<int>(name);
+									if(ImGui::DragInt(name.c_str(), &value, 1.0f))
+										scriptInstance->SetFieldValue<int>(name, value);
+									break;
+								}
+								case ScriptFieldType::Bool:
+								{
+									bool value = scriptInstance->GetFieldValue<bool>(name);
+									if(ImGui::Checkbox(name.c_str(), &value))
+										scriptInstance->SetFieldValue<bool>(name, value);
+									break;
+								}
+								case ScriptFieldType::String:
+								{
+									//td::string value = scriptInstance->GetFieldValue<std::string>(name);
+									//har buffer[256];
+									//emset(buffer, 0, sizeof(buffer));
+									//trcpy(buffer, value.c_str());
+									//f(ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+									//	scriptInstance->SetFieldValue<std::string>(name, std::string(buffer));
+									//reak;
+								}
+								case ScriptFieldType::Vec2:
+								{
+									glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
+									if(ImGui::DragFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
+										scriptInstance->SetFieldValue<glm::vec2>(name, value);
+									break;
+								}
+								case ScriptFieldType::Vec3:
+								{
+									glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
+									if(ImGui::DragFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
+										scriptInstance->SetFieldValue<glm::vec3>(name, value);
+									break;
+								}
+								case ScriptFieldType::Vec4:
+								{
+									glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
+									if(ImGui::DragFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
+										scriptInstance->SetFieldValue<glm::vec4>(name, value);
+									break;
+								}
+								default:
+									break;
+								}
+							};
 				}
 
 				if(!scriptExists)
