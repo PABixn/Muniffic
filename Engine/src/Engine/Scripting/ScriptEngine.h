@@ -35,6 +35,36 @@ namespace eg {
 		MonoClassField* ClassField = nullptr;
 	};
 
+	// ScriptField + data storage
+	struct ScriptFieldInstance
+	{
+		 ScriptField Field;
+
+		 ScriptFieldInstance()
+		 {
+			 memset(m_Buffer, 0, sizeof(m_Buffer));
+		 }
+
+		 template<typename T>
+		 T GetValue()
+		 {
+			 static_assert(sizeof(T) <= 16, "Type is too large");
+			 return *(T*)m_Buffer;
+		 }
+
+		 template<typename T>
+		 void SetValue(T value)
+		 {
+			static_assert(sizeof(T) <= 16, "Type is too large");
+			memcpy(m_Buffer, &value, sizeof(T));
+		 }
+	private:
+		 uint8_t m_Buffer[16];
+
+		 friend class ScriptEngine;
+		 friend class ScriptInstance;
+	};
+
 
 	class ScriptClass {
 	public:
@@ -78,6 +108,8 @@ namespace eg {
 		template<typename T>
 		T GetFieldValue(const std::string& name)
 		{
+			static_assert(sizeof(T) <= 16, "Type is too large");
+
 			bool success = GetFieldValueInternal(name, s_FieldValueBuffer);
 			if (!success)
 				return T();
@@ -88,6 +120,8 @@ namespace eg {
 		template<typename T>
 		void SetFieldValue(const std::string& name, const T& value)
 		{
+			static_assert(sizeof(T) <= 16, "Type is too large");
+
 			SetFieldValueInternal(name, &value);
 		}
 	private:
@@ -100,8 +134,13 @@ namespace eg {
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
-		inline static char s_FieldValueBuffer[8];
+		inline static char s_FieldValueBuffer[16];
+
+		friend class ScriptEngine;
+		friend class ScriptFieldInstance;
 	};
+
+	using ScriptFieldMap = std::unordered_map<std::string, ScriptFieldInstance>;
 
 	class ScriptEngine
 	{
@@ -123,7 +162,10 @@ namespace eg {
 		static Scene* GetSceneContext();
 		static Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid);
 
+		static Ref<ScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<ScriptClass>>& GetEnityClasses();
+		static ScriptFieldMap& GetScriptFieldMap(Entity uuid);
+
 		static MonoImage* GetCoreAssemblyImage();
 	private:
 		static void InitMono();
@@ -136,6 +178,7 @@ namespace eg {
 
 		friend class ScriptClass;
 		friend class ScriptGlue;
+		friend class ScriptInstance;
 	};
 
 	

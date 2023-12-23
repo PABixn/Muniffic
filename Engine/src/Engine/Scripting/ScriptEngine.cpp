@@ -50,6 +50,9 @@ namespace eg {
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
 		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
 
+		using ScriptFieldMap = std::unordered_map<std::string, ScriptFieldInstance>;
+		std::unordered_map<UUID, ScriptFieldMap> EntityFields;
+
 		//Runtime
 		Scene* SceneContext = nullptr;
 	};
@@ -282,6 +285,19 @@ namespace eg {
 		//mono_field_get_value
 	}
 
+	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)
+	{
+		EG_CORE_ASSERT(entity);
+
+		UUID uuid = entity.GetUUID();
+		//EG_CORE_ASSERT(s_Data->EntityFields.find(uuid) != s_Data->EntityFields.end(), "Entity has no script fields!");
+
+		//if(s_Data->EntityFields.find(uuid) == s_Data->EntityFields.end())
+			//s_Data->EntityFields[uuid] = ScriptFieldMap();
+
+		return s_Data->EntityFields[uuid];
+	}
+
 	MonoImage* ScriptEngine::GetCoreAssemblyImage()
 	{
 		return s_Data->CoreAssemblyImage;
@@ -323,8 +339,21 @@ namespace eg {
 		const auto& nsc = entity.GetComponent<ScriptComponent>();
 		if (ScriptEngine::EntityClassExists(nsc.Name))
 		{
+			UUID uuid = entity.GetUUID();
 			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[nsc.Name], entity);
-			s_Data->EntityInstances[entity.GetUUID()] = instance;
+			s_Data->EntityInstances[uuid] = instance;
+
+			//Copy field values
+
+			s_Data->EntityInstances[uuid] = instance;
+
+			if (s_Data->EntityFields.find(uuid) != s_Data->EntityFields.end())
+			{
+				const ScriptFieldMap& fieldMap = s_Data->EntityFields.at(uuid);
+				for (const auto& [name, fieldInstance] : fieldMap)
+					instance->SetFieldValueInternal(name, fieldInstance.m_Buffer);
+			}
+
 			instance->InvokeOnCreate();
 		}
 	}
@@ -348,6 +377,13 @@ namespace eg {
 		if (it == s_Data->EntityInstances.end())
 			return nullptr;
 		return it->second;
+	}
+
+	Ref<ScriptClass> ScriptEngine::GetEntityClass(const std::string& name)
+	{
+		if (s_Data->EntityClasses.find(name) == s_Data->EntityClasses.end())
+			return nullptr;
+		return s_Data->EntityClasses.at(name);
 	}
 
 	std::unordered_map<std::string, Ref<ScriptClass>>& ScriptEngine::GetEnityClasses()

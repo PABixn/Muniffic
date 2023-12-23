@@ -132,7 +132,7 @@ namespace eg {
 	void Scene::OnRuntimeStart()
 	{
 		OnPhysics2DStart();
-
+		m_IsRunning = true;
 		//Scripting
 		{
 			ScriptEngine::OnRuntimeStart(this);
@@ -150,6 +150,7 @@ namespace eg {
 	void Scene::OnRuntimeStop()
 	{
 		OnPhysics2DStop();
+		m_IsRunning = false;
 
 		ScriptEngine::OnRuntimeStop();
 	}
