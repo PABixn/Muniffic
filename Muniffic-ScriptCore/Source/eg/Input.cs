@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace eg
 {
-    internal class Input
+    public class Input
     {
         public static bool IsKeyDown(KeyCode key)
         {

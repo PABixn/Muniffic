@@ -3,8 +3,8 @@ project "Muniffic-ScriptCore"
 	language "C#"
 	dotnetframework "4.7.2"
 
-	targetdir ("%{wks.location}/Engine-Editor/Resources/Scripts")
-	objdir ("%{wks.location}/Engine-Editor/Resources/Scripts/Intermediates")
+	targetdir ("../Engine-Editor/Resources/Scripts")
+	objdir ("../Engine-Editor/Resources/Scripts/Intermediates")
 
 	files
 	{

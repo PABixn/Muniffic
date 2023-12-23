@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace eg
 {
-    internal enum KeyCode
+    public enum KeyCode
     {
 
 		// From glfw3.h
