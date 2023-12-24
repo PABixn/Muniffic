@@ -20,7 +20,7 @@ namespace eg {
 		None = 0,
 		Float, Vector2, Vector3, Vector4,
 		Int32, Int64, Bool, Double, Short, Byte, Char,
-		UByte, UInt, UInt64, UShort, SByte,
+		UByte, UInt32, UInt64, UShort, SByte,
 		String, Object, Void,
 		Entity//, TransformComponent, RigidBodyComponent
 	};
@@ -192,7 +192,7 @@ namespace eg {
 				case ScriptFieldType::Vector3: return	"vector3";	
 				case ScriptFieldType::Vector4: return	"vector4";
 				case ScriptFieldType::Int32: return		"int";
-				case ScriptFieldType::UInt: return		"uint";
+				case ScriptFieldType::UInt32: return		"uint";
 				case ScriptFieldType::Int64: return		"int64";
 				case ScriptFieldType::Bool: return		"bool";
 				case ScriptFieldType::Double: return	"double";
@@ -227,7 +227,7 @@ namespace eg {
 			if (fieldType == "int64")		return ScriptFieldType::Int64;
 			if (fieldType == "UByte")		return ScriptFieldType::UByte;
 			if (fieldType == "UShort")		return ScriptFieldType::UShort;
-			if (fieldType == "UInt")		return ScriptFieldType::UInt;
+			if (fieldType == "UInt")		return ScriptFieldType::UInt32;
 			if (fieldType == "uint64")		return ScriptFieldType::UInt64;
 			if (fieldType == "vector2")		return ScriptFieldType::Vector2;
 			if (fieldType == "vector3")		return ScriptFieldType::Vector3;

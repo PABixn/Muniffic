@@ -109,6 +109,16 @@ Entities:
       TilignFactor: 1
     ScriptComponent:
       Name: Sandbox.Player
+      ScriptFields:
+        - Name: Speed
+          Type: float
+          Value: 2.0999999
+        - Name: Time
+          Type: float
+          Value: 3.29999995
+        - Name: Velocity
+          Type: vector2
+          Value: [-1, 4.0999999]
     RigidBody2DComponent:
       Body Type: Dynamic
       FixedRotation: false

@@ -16,7 +16,7 @@ namespace eg {
 		{ "System.UInt16", ScriptFieldType::UShort },
 		{"System.SByte", ScriptFieldType::SByte},
 		{"System.Char", ScriptFieldType::Char},
-		{"System.UInt32", ScriptFieldType::UInt},
+		{"System.UInt32", ScriptFieldType::UInt32},
 		{"System.Int32", ScriptFieldType::Int32},
 		{"System.UInt64", ScriptFieldType::UInt64},
 		{"System.Int64", ScriptFieldType::Int64},
