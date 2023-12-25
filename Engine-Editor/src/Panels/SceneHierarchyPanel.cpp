@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <Imgui/imgui_internal.h>
 #include <cstring>
+#include "../../Commands.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -29,6 +30,7 @@ namespace eg {
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
+		CreateEntityCommand* command = nullptr;
 		ImGui::Begin("Scene Hierarchy");
 		if (m_Context) {
 			m_Context->m_Registry.each([&](auto entityID)
@@ -44,7 +46,11 @@ namespace eg {
 			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
 			{
 				if (ImGui::MenuItem("Create Empty Entity"))
-					m_Context->CreateEntity("Empty Entity");
+				{
+					command = new CreateEntityCommand(m_Context);
+					command->Execute("Empty Entity");
+				}
+					//m_Context->CreateEntity("Empty Entity");
 				ImGui::EndPopup();
 			}
 
@@ -63,6 +69,7 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
+		DeleteEntityCommand* command = nullptr;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -70,11 +77,12 @@ namespace eg {
 		if (ImGui::IsItemClicked())
 			m_SelectionContext = entity;
 
-		bool entityDeleted = false;
+		//bool entityDeleted = false;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
-				entityDeleted = true;
+				command = new DeleteEntityCommand(m_Context, m_SelectionContext);
+				//entityDeleted = true;
 			ImGui::EndPopup();
 		}
 
@@ -87,11 +95,12 @@ namespace eg {
 			ImGui::TreePop();
 		}
 
-		if (entityDeleted)
+		if (command != nullptr)
 		{
-			if (m_SelectionContext == entity)
+			command->Execute(entity);
+			/*if (m_SelectionContext == entity)
 				m_SelectionContext = {};
-			m_Context->DestroyEntity(entity);
+			m_Context->DestroyEntity(entity);*/
 			
 		}
 	}
