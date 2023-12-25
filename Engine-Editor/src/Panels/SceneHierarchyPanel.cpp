@@ -30,7 +30,7 @@ namespace eg {
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
-		CreateEntityCommand* command = nullptr;
+		Commands::Command* command = nullptr;
 		ImGui::Begin("Scene Hierarchy");
 		if (m_Context) {
 			m_Context->m_Registry.each([&](auto entityID)
@@ -47,14 +47,13 @@ namespace eg {
 			{
 				if (ImGui::MenuItem("Create Empty Entity"))
 				{
-					command = new CreateEntityCommand(m_Context);
-					command->Execute("Empty Entity");
+					command = new Commands::CreateEntityCommand(m_Context);
+					Commands::CommandArgs args = { "Empty Entity" };
+					command->Execute(args);
+					Commands::AddCommand(command);
 				}
-					//m_Context->CreateEntity("Empty Entity");
 				ImGui::EndPopup();
-			}
-
-			
+			}	
 		}
 
 		ImGui::Begin("Properties");
@@ -69,7 +68,7 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
-		DeleteEntityCommand* command = nullptr;
+		Commands::Command* command = nullptr;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -77,12 +76,10 @@ namespace eg {
 		if (ImGui::IsItemClicked())
 			m_SelectionContext = entity;
 
-		//bool entityDeleted = false;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
-				command = new DeleteEntityCommand(m_Context, m_SelectionContext);
-				//entityDeleted = true;
+				command = new Commands::DeleteEntityCommand(m_Context, m_SelectionContext);
 			ImGui::EndPopup();
 		}
 
@@ -97,11 +94,9 @@ namespace eg {
 
 		if (command != nullptr)
 		{
-			command->Execute(entity);
-			/*if (m_SelectionContext == entity)
-				m_SelectionContext = {};
-			m_Context->DestroyEntity(entity);*/
-			
+			Commands::CommandArgs args = {"", entity};
+			command->Execute(args);
+			Commands::AddCommand(command);
 		}
 	}
 

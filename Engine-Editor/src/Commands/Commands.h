@@ -1,50 +1,94 @@
 #pragma once
 #include <string>
 #include "Engine.h"
+#include <variant>
 
 namespace eg
 {
-	template<typename param>
-	class Command
+	class Commands
 	{
 	public:
-		virtual void Execute(param) = 0;
-	};
+		struct CommandArgs
+		{
+		public:
+			const std::string& name;
+			Entity entity;
+		};
+
+		class Command
+		{
+		public:
+			virtual ~Command() = 0 {};
+			virtual void Undo() = 0;
+			virtual void Execute(CommandArgs) = 0;
+		};
 
 
-	template<typename T>
-	class EntityCommand : public Command<T>
-	{
-	public:
-		EntityCommand(Ref<Scene>& context)
-			: m_Context(context) {}
+		class EntityCommand : public Command
+		{
+		public:
+			EntityCommand(Ref<Scene>& context)
+				: m_Context(context) {  }
 
-	protected:
-		Ref<Scene>& m_Context;
-	};
+			virtual void Execute(CommandArgs) = 0;
 
-	class CreateEntityCommand : public EntityCommand<const std::string&>
-	{
-	public:
-		CreateEntityCommand(Ref<Scene>& context)
-			: EntityCommand(context) {}
+			virtual void Undo() = 0;
 
-		void Execute(const std::string& name) override;
+			~EntityCommand() override
+			{
+				delete& m_Context;
+			}
 
-	protected:
-		Entity m_CreatedEntity;
-	};
+		protected:
+			Ref<Scene>& m_Context;
+		};
 
-	class DeleteEntityCommand : public EntityCommand<Entity>
-	{
-	public:
-		DeleteEntityCommand(Ref<Scene>& context, Entity& m_SelectionContext)
-			: EntityCommand(context), m_SelectionContext(m_SelectionContext) {}
+		class CreateEntityCommand : public EntityCommand
+		{
+		public:
+			CreateEntityCommand(Ref<Scene>& context)
+				: EntityCommand(context) {}
 
-		void Execute(Entity entity) override;
+			void Execute(CommandArgs arg) override;
 
-	protected:
-		Entity& m_SelectionContext;
-		Entity m_DeletedEntity;
+			void Undo() override;
+
+			~CreateEntityCommand()
+			{
+				delete& m_CreatedEntity;
+			}
+
+		protected:
+			Entity m_CreatedEntity;	
+		};
+
+
+		class DeleteEntityCommand : public EntityCommand
+		{
+		public:
+			DeleteEntityCommand(Ref<Scene>& context, Entity& m_SelectionContext)
+				: EntityCommand(context), m_SelectionContext(m_SelectionContext) {}
+
+			void Execute(CommandArgs arg) override;
+
+			void Undo() override;
+
+			~DeleteEntityCommand()
+			{
+				delete& m_DeletedEntity;
+				delete& m_SelectionContext;
+			}
+
+		protected:
+			Entity& m_SelectionContext;
+			Entity m_DeletedEntity;
+		};
+
+		static void AddCommand(Command* command);
+		static Command* GetCurrentCommand();
+		static Command* currentCommand;
+
+	private:
+		static std::vector<Commands::Command*> commandHistory;
 	};
 }

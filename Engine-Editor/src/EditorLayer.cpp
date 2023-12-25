@@ -11,6 +11,7 @@
 #include "ImGuizmo.h"
 #include "Engine/Scene/Components.h"
 #include "Engine/Math/Math.h"
+#include "Commands/Commands.h"
 
 namespace eg {
 
@@ -368,6 +369,15 @@ namespace eg {
 
 		switch (e.GetKeyCode())
 		{
+			case Key::Z:
+			{
+				if (controlPressed)
+				{
+					Commands::GetCurrentCommand()->Undo();
+				}
+
+				break;
+			}
 			case Key::S:
 			{
 				if (controlPressed)
