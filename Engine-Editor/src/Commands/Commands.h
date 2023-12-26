@@ -27,8 +27,8 @@ namespace eg
 		class EntityCommand : public Command
 		{
 		public:
-			EntityCommand(Ref<Scene>& context)
-				: m_Context(context) {  }
+			EntityCommand(Ref<Scene>& context, Entity& selectionContext)
+				: m_Context(context), m_SelectionContext(selectionContext) {  }
 
 			virtual void Execute(CommandArgs) = 0;
 
@@ -41,13 +41,14 @@ namespace eg
 
 		protected:
 			Ref<Scene>& m_Context;
+			Entity& m_SelectionContext;
 		};
 
 		class CreateEntityCommand : public EntityCommand
 		{
 		public:
-			CreateEntityCommand(Ref<Scene>& context)
-				: EntityCommand(context) {}
+			CreateEntityCommand(Ref<Scene>& context, Entity& selectionContext)
+				: EntityCommand(context, selectionContext) {}
 
 			void Execute(CommandArgs arg) override;
 
@@ -66,8 +67,8 @@ namespace eg
 		class DeleteEntityCommand : public EntityCommand
 		{
 		public:
-			DeleteEntityCommand(Ref<Scene>& context, Entity& m_SelectionContext)
-				: EntityCommand(context), m_SelectionContext(m_SelectionContext) {}
+			DeleteEntityCommand(Ref<Scene>& context, Entity& selectionContext)
+				: EntityCommand(context, selectionContext) {}
 
 			void Execute(CommandArgs arg) override;
 
@@ -80,13 +81,15 @@ namespace eg
 			}
 
 		protected:
-			Entity& m_SelectionContext;
-			Entity m_DeletedEntity;
+			std::string m_DeletedEntity;
 		};
 
+		static void SetCurrentCommand(bool isUndo);
 		static void AddCommand(Command* command);
+		static bool CanRevert(bool isUndo);
 		static Command* GetCurrentCommand();
 		static Command* currentCommand;
+		static int currentCommandIndex;
 
 	private:
 		static std::vector<Commands::Command*> commandHistory;

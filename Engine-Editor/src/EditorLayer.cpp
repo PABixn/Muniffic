@@ -373,7 +373,8 @@ namespace eg {
 			{
 				if (controlPressed)
 				{
-					Commands::GetCurrentCommand()->Undo();
+					if(Commands::CanRevert(true))
+						Commands::GetCurrentCommand()->Undo();
 				}
 
 				break;

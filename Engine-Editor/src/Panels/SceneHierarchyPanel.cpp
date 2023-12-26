@@ -47,7 +47,7 @@ namespace eg {
 			{
 				if (ImGui::MenuItem("Create Empty Entity"))
 				{
-					command = new Commands::CreateEntityCommand(m_Context);
+					command = new Commands::CreateEntityCommand(m_Context, m_SelectionContext);
 					Commands::CommandArgs args = { "Empty Entity" };
 					command->Execute(args);
 					Commands::AddCommand(command);
