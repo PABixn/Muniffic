@@ -129,6 +129,7 @@ namespace eg {
 	template<typename... Component>
 	static void RegisterComponent(ComponentGroup<Component...>)
 	{
+		s_EntityHasComponentFunctions.clear();
 		RegisterComponent<Component...>();
 	}
 

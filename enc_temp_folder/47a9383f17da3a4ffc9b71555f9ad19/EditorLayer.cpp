@@ -429,9 +429,7 @@ namespace eg {
 			}
 			case Key::R:
 			{
-				if(control)
-					ScriptEngine::ReloadAssembly();
-				else if (!ImGuizmo::IsUsing())
+				if (!ImGuizmo::IsUsing())
 					m_GizmoType = ImGuizmo::OPERATION::SCALE;
 				break;
 			}

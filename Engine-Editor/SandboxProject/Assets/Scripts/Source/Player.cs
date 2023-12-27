@@ -67,11 +67,11 @@ namespace Sandbox
 
             if(Input.IsKeyDown(KeyCode.Q))
             {
-                camera.DistanceFromPlayer += 0.1f;
+                camera.DistanceFromPlayer += 1f * ts;
             }
             else if(Input.IsKeyDown(KeyCode.E))
             {
-                camera.DistanceFromPlayer -= 0.1f;
+                camera.DistanceFromPlayer -= 1f * ts;
             }
 
             m_RigidBody2D.ApplyLinearImpulse(velocity.XY, true);

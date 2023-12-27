@@ -13,6 +13,7 @@ namespace Sandbox
         private Entity m_Player;
 
         public float DistanceFromPlayer = 5.0f;
+        public float Speed = 5.0f;
 
         void OnCreate()
         {
