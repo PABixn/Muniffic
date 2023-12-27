@@ -4,6 +4,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "glad/glad.h"
 #include "Engine/Utils/PlatformUtils.h"
+#include "Engine/Scripting/ScriptEngine.h"
 
 namespace eg {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -27,13 +28,17 @@ namespace eg {
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Renderer::Init();
+		ScriptEngine::Init();
+
 		m_ImGuiLayer = new ImGuiLayer();
 		m_LayerStack.PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
 	{
-
+		EG_PROFILE_FUNCTION();
+		ScriptEngine::Shutdown();
+		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
