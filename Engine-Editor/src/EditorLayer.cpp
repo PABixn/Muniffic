@@ -510,7 +510,6 @@ namespace eg {
 		if (m_SceneState != SceneState::Edit)
 			OnSceneStop();
 
-		//m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
 		m_ActiveScenePath = std::filesystem::path();
@@ -542,7 +541,6 @@ namespace eg {
 		{
 			m_EditorScene = newScene;
 			m_ActiveScene = newScene;
-			m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 			m_ActiveScenePath = path;
 		}
