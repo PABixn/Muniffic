@@ -14,12 +14,12 @@ namespace eg
 
 	void Commands::CreateEntityCommand::Undo()
 	{
-		Entity& e = m_Context->GetEntitiesWith<UUID>
-		if (m_CreatedEntity.HasComponent<TagComponent>())
+		Entity e = m_Context->GetEntityByUUID(m_CreatedEntity);
+		if (e.HasComponent<TagComponent>())
 		{
-			if (m_SelectionContext == m_CreatedEntity)
+			if (m_SelectionContext == e)
 				m_SelectionContext = {};
-			m_Context->DestroyEntity(m_CreatedEntity);
+			m_Context->DestroyEntity(e);
 			SetCurrentCommand(true);
 		}
 	}
@@ -30,14 +30,14 @@ namespace eg
 		{
 			if (m_SelectionContext == arg.entity)
 				m_SelectionContext = {};
-			m_DeletedEntity = arg.entity.GetName();
+			m_DeletedEntity = { arg.entity.GetName(), arg.entity.GetUUID() };
 			m_Context->DestroyEntity(arg.entity);
 		}
 	}
 
 	void Commands::DeleteEntityCommand::Undo()
 	{
-		m_Context->CreateEntity(m_DeletedEntity);
+		m_Context->CreateEntityWithID(m_DeletedEntity.uuid, m_DeletedEntity.name);
 		SetCurrentCommand(true);
 	}
 
@@ -52,15 +52,15 @@ namespace eg
 		currentCommandIndex = commandHistory.size() - 1;
 		currentCommand = commandHistory.at(commandHistory.size() - 1);
 
-		std::cout << std::endl;
-		std::cout << std::endl;
-		std::cout << std::endl;
-		std::cout << std::endl;
+		//std::cout << std::endl;
+		//std::cout << std::endl;
+		//std::cout << std::endl;
+		//std::cout << std::endl;
 
-		for(int i = 0; i < commandHistory.size(); i++)
-			std::cout << i <<". "<< commandHistory[i] << std::endl;
-		std::cout<<"Command Index: "<<currentCommandIndex<<std::endl;
-		std::cout<<"Size: "<<commandHistory.size()<<std::endl;
+		//for(int i = 0; i < commandHistory.size(); i++)
+		//	std::cout << i <<". "<< commandHistory[i] << std::endl;
+		//std::cout<<"Command Index: "<<currentCommandIndex<<std::endl;
+		//std::cout<<"Size: "<<commandHistory.size()<<std::endl;
 	}
 
 	Commands::Command* Commands::GetCurrentCommand()

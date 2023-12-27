@@ -15,6 +15,13 @@ namespace eg
 			Entity entity;
 		};
 
+		struct SavedEntity
+		{
+		public:
+			std::string name;
+			UUID uuid;
+		};
+
 		class Command
 		{
 		public:
@@ -81,7 +88,7 @@ namespace eg
 			}
 
 		protected:
-			std::string m_DeletedEntity;
+			SavedEntity m_DeletedEntity;
 		};
 
 		static void SetCurrentCommand(bool isUndo);
