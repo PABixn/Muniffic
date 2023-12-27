@@ -60,7 +60,7 @@ namespace eg
 			}
 
 		protected:
-			Entity m_CreatedEntity;	
+			UUID m_CreatedEntity;	
 		};
 
 

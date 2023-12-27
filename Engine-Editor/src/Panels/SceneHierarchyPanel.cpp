@@ -221,6 +221,7 @@ namespace eg {
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
+				std::cout<<tag<<std::endl;
 			}
 		}
 

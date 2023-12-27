@@ -8,12 +8,13 @@ namespace eg
 
 	void Commands::CreateEntityCommand::Execute(CommandArgs arg)
 	{
-		Entity e = m_Context->CreateEntity(arg.name);
+		UUID e = m_Context->CreateEntity(arg.name).GetUUID();
 		m_CreatedEntity = e;
 	}
 
 	void Commands::CreateEntityCommand::Undo()
 	{
+		Entity& e = m_Context->GetEntitiesWith<UUID>
 		if (m_CreatedEntity.HasComponent<TagComponent>())
 		{
 			if (m_SelectionContext == m_CreatedEntity)
@@ -42,12 +43,24 @@ namespace eg
 
 	void Commands::AddCommand(Command* command)
 	{
-		if (commandHistory.size() > 0 && currentCommandIndex != commandHistory.size() - 1)
+		if(currentCommandIndex == -1)
+			commandHistory.clear();
+		else if (commandHistory.size() > 0 && currentCommandIndex != commandHistory.size() - 1)
 			commandHistory.erase(commandHistory.begin() + currentCommandIndex + 1, commandHistory.end());
 
 		commandHistory.push_back(command);
 		currentCommandIndex = commandHistory.size() - 1;
 		currentCommand = commandHistory.at(commandHistory.size() - 1);
+
+		std::cout << std::endl;
+		std::cout << std::endl;
+		std::cout << std::endl;
+		std::cout << std::endl;
+
+		for(int i = 0; i < commandHistory.size(); i++)
+			std::cout << i <<". "<< commandHistory[i] << std::endl;
+		std::cout<<"Command Index: "<<currentCommandIndex<<std::endl;
+		std::cout<<"Size: "<<commandHistory.size()<<std::endl;
 	}
 
 	Commands::Command* Commands::GetCurrentCommand()
@@ -57,8 +70,9 @@ namespace eg
 
 	void Commands::SetCurrentCommand(bool isUndo)
 	{
-		currentCommandIndex += currentCommandIndex == 0 ? 0 : isUndo ? -1 : 1;
-		currentCommand = commandHistory.at(currentCommandIndex);
+		currentCommandIndex += isUndo ? -1 : 1;
+		if(currentCommandIndex >= 0)
+			currentCommand = commandHistory.at(currentCommandIndex);
 	}
 
 	bool Commands::CanRevert(bool isUndo)
