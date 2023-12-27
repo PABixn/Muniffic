@@ -125,8 +125,8 @@ namespace eg {
 
 	void Scene::DestroyEntity(Entity entity)
 	{
-		m_Registry.destroy(entity);
 		m_EntityMap.erase(entity.GetUUID());
+		m_Registry.destroy(entity);
 	}
 
 	void Scene::OnRuntimeStart()
@@ -303,6 +303,9 @@ namespace eg {
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
+		if (m_ViewportHeight == height && m_ViewportWidth == width)
+			return;
+
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
@@ -350,6 +353,18 @@ namespace eg {
 	{
 		Entity newEntity = CreateEntity(entity.GetName());
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
+	}
+
+	Entity Scene::FindEntityByName(const std::string_view& name)
+	{
+		auto view = m_Registry.view<TagComponent>();
+		for (auto entity : view)
+		{
+			const auto& tag = view.get<TagComponent>(entity).Tag;
+			if (tag == name)
+				return Entity{ entity, this };
+		}
+		return {};
 	}
 
 	Entity Scene::GetEntityByUUID(UUID uuid)

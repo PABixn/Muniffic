@@ -440,9 +440,11 @@ namespace eg {
 							ScriptFieldType fieldType = Utils::ScriptFieldTypeFromString(field);
 
 							ScriptFieldInstance& fieldInstance = entityFields[fieldName];
-							EG_CORE_ASSERT(fields.find(name) != fields.end(), "Field not found!");
-							if (fields.find(name) == fields.end())
+							
+							if (fields.find(name) == fields.end()) {
+								EG_CORE_WARN("Field not found!");
 								continue;
+							}
 							fieldInstance.Field = fields.at(fieldName);
 
 							switch (fieldType)

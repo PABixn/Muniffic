@@ -124,6 +124,8 @@ namespace eg {
 
 			SetFieldValueInternal(name, &value);
 		}
+
+		MonoObject* GetManagedObject() const { return m_Instance; }
 	private:
 		bool GetFieldValueInternal(const std::string& name, void* buffer);
 		bool SetFieldValueInternal(const std::string& name, const void* value);
@@ -167,6 +169,8 @@ namespace eg {
 		static ScriptFieldMap& GetScriptFieldMap(Entity uuid);
 
 		static MonoImage* GetCoreAssemblyImage();
+
+		static MonoObject* GetManagedInstance(UUID uuid);
 	private:
 		static void InitMono();
 		static void ShutdownMono();

@@ -16,6 +16,11 @@ namespace eg {
 
 #define EG_ADD_INTERNAL_CALL(Name) mono_add_internal_call("eg.InternalCalls::" #Name, Name)
 
+	static MonoObject* Entity_GetScriptInstance(UUID uuid)
+	{
+		return ScriptEngine::GetManagedInstance(uuid);
+	}
+
 	static bool Entity_HasComponent(UUID uuid, MonoReflectionType* componentType)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -26,6 +31,21 @@ namespace eg {
 		MonoType* managedType = mono_reflection_type_get_type(componentType);
 		EG_CORE_ASSERT(s_EntityHasComponentFunctions.find(managedType) != s_EntityHasComponentFunctions.end(), "Entity_HasComponent: Component type not registered!");
 		return s_EntityHasComponentFunctions.at(managedType)(entity);
+	}
+
+	static uint64_t Entity_FindEntityByName(MonoString* name)
+	{
+		char* cStr = mono_string_to_utf8(name);
+
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->FindEntityByName(cStr);
+		mono_free(cStr);
+
+		if (!e)
+			return 0;
+
+		return e.GetUUID();
 	}
 
 	static void TransformComponent_GetTranslation(UUID uuid, glm::vec3* outTranslation)
@@ -74,10 +94,15 @@ namespace eg {
 	void ScriptGlue::RegisterFunctions()
 	{
 		EG_ADD_INTERNAL_CALL(Entity_HasComponent);
+		EG_ADD_INTERNAL_CALL(Entity_FindEntityByName);
+
+		EG_ADD_INTERNAL_CALL(Entity_GetScriptInstance);
 		EG_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		EG_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
+
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponnet_ApplyLinearImpulse);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponnet_ApplyLinearImpulseToCenter);
+
 		EG_ADD_INTERNAL_CALL(Input_IsKeyDown);
 	}
 

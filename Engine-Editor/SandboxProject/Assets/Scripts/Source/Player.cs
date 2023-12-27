@@ -12,6 +12,7 @@ namespace Sandbox
     {
         private TransformComponent m_Transform;
         private RigidBody2DComponent m_RigidBody2D;
+        Camera camera;
 
         public float Speed;
         public float Time = 0.0f;
@@ -23,11 +24,20 @@ namespace Sandbox
             m_RigidBody2D = GetComponent<RigidBody2DComponent>();
             bool hasTransform = HasComponent<TransformComponent>();
             Console.WriteLine("HasComponent {0}", hasTransform);
-            //m_Transform.Translation = new Vector3(0f);
+            
         }
 
         void OnUpdate(float ts)
         {
+            Entity cameraEntity = FindEntityByName("Camera");
+            if (cameraEntity != null)
+            {
+                camera = cameraEntity.As<Camera>();
+            }
+            else
+            {
+                Console.WriteLine("Camera is null");
+            }
             Time += ts;
             Vector3 velocity = new Vector3(0);
             if (Input.IsKeyDown(KeyCode.W))
@@ -53,6 +63,15 @@ namespace Sandbox
             else
             {
                 velocity.X = 0f;
+            }
+
+            if(Input.IsKeyDown(KeyCode.Q))
+            {
+                camera.DistanceFromPlayer += 0.1f;
+            }
+            else if(Input.IsKeyDown(KeyCode.E))
+            {
+                camera.DistanceFromPlayer -= 0.1f;
             }
 
             m_RigidBody2D.ApplyLinearImpulse(velocity.XY, true);

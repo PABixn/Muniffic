@@ -1,15 +1,26 @@
 Scene: Untitled
 Entities:
-  - Entity: 7076902115285967907
+  - Entity: 16516330265516733132
     Name: Cube
     TagComponent:
-      Tag: Top
+      Tag: Left
     TransformComponent:
-      Translation: [0, 0.5, 0]
-      Rotation: [1.57079637, 0.785398185, 0]
+      Translation: [-0.354999989, 0, 0.349999994]
+      Rotation: [0, -0.785398185, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.876447856, 0, 0.834712803, 1]
+      Color: [1, 0, 0.949807167, 1]
+      TilignFactor: 1
+  - Entity: 7918347203714644449
+    Name: Cube
+    TagComponent:
+      Tag: Right
+    TransformComponent:
+      Translation: [0.351999998, 0, 0.349999994]
+      Rotation: [0, 0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.54842025, 0, 0.586872578, 1]
       TilignFactor: 1
   - Entity: 5660587473119002668
     Name: Cube
@@ -30,27 +41,14 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
-  - Entity: 7918347203714644449
+  - Entity: 7076902115285967907
     Name: Cube
     TagComponent:
-      Tag: Right
+      Tag: Top
     TransformComponent:
-      Translation: [0.351999998, 0, 0.349999994]
-      Rotation: [0, 0.785398185, 0]
+      Translation: [0, 0.5, 0]
+      Rotation: [1.57079637, 0.785398185, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.54842025, 0, 0.586872578, 1]
-      TilignFactor: 1
-    ScriptComponent:
-      Name: Sandbox.Player
-  - Entity: 16516330265516733132
-    Name: Cube
-    TagComponent:
-      Tag: Left
-    TransformComponent:
-      Translation: [-0.354999989, 0, 0.349999994]
-      Rotation: [0, -0.785398185, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0, 0.949807167, 1]
+      Color: [0.876447856, 0, 0.834712803, 1]
       TilignFactor: 1
