@@ -1,0 +1,6 @@
+Project:
+  Name: "Untitiled"
+  StartScene: "Physics2D.egscene"
+  AssetDirectory: "Assets"
+  SceneDirectory: "Scenes"
+  ScriptModulePath: "Scripts/Binaries"

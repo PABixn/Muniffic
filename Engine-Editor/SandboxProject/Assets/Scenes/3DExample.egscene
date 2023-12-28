@@ -10,7 +10,7 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0, 1, 0, 1]
-      TexturePath: assets\textures\Chess_Board.png
+      TexturePath:  Textures\Chess_Board.png
   - Entity: 12947906749616314887
     Name: Cube
     TagComponent:
@@ -21,7 +21,7 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
-      TexturePath: assets\textures\cubes.png
+      TexturePath: Textures\cubes.png
   - Entity: 7420224206884829985
     Name: Cube
     TagComponent:

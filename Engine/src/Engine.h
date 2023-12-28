@@ -8,18 +8,18 @@
 
 #include "Engine/Core/Core.h"
 
+#include "Engine/Project/Project.h"
+
 #include "Engine/Core/MouseButtonCodes.h"
 #include "Engine/Core/KeyCodes.h"
-// ---- Entry Point ----------------------
-
-// ---------------------------------------
 #include "Engine/Core/Window.h"
 #include "Engine/Events/Event.h"
 #include "Engine/Core/Layer.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/RenderCommand.h"
 #include "Engine/Renderer/VertexArray.h"
-//#include "imgui.h"
+
+
 #include "glm/glm.hpp"
 #include "Engine/Core/Input.h"
 #include "Platform/OpenGL/OpenGLShader.h"

@@ -15,7 +15,6 @@
 
 namespace eg {
 
-	extern const std::filesystem::path g_AssetPath = "assets";
 
 	EditorLayer::EditorLayer()
 		:Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
@@ -44,8 +43,13 @@ namespace eg {
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
 		{
-			auto sceneFilePath = commandLineArgs[1];
-			OpenScene(sceneFilePath);
+			auto projectFilePath = commandLineArgs[1];
+			OpenProject(projectFilePath);
+		}
+		else
+		{
+			// TODO: Show project selection dialog
+			NewProject();
 		}
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
@@ -226,7 +230,7 @@ namespace eg {
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
-		m_ContentBrowserPanel.OnImGuiRender();
+		m_ContentBrowserPanel->OnImGuiRender();
 
 		ImGui::Begin("Stats");
 		std::string name = "None";
@@ -271,7 +275,7 @@ namespace eg {
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
 
-				OpenScene(std::filesystem::path(g_AssetPath) / path);
+				OpenScene(path);
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -640,6 +644,29 @@ namespace eg {
 		{
 			SerializeScene(m_ActiveScene, m_ActiveScenePath);
 		}
+	}
+
+	void EditorLayer::NewProject()
+	{
+		Project::New();
+	}
+
+	void EditorLayer::OpenProject(const std::filesystem::path& path)
+	{
+		if (Project::Load(path))
+		{
+			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
+			OpenScene(startScenePath);
+			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+		}
+	}
+
+	void EditorLayer::SaveProjectAs()
+	{
+	}
+
+	void EditorLayer::SaveProject()
+	{
 	}
 
 	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)

@@ -27,6 +27,11 @@ namespace eg {
 		void SaveAs();
 		void Save();
 
+		void NewProject();
+		void OpenProject(const std::filesystem::path& path);
+		void SaveProjectAs();
+		void SaveProject();
+
 		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
 
 		void OnScenePlay();
@@ -82,7 +87,7 @@ namespace eg {
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
-		ContentBrowserPanel m_ContentBrowserPanel;
+		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 
 		enum class SceneState
 		{

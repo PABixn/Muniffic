@@ -7,6 +7,7 @@
 #include "Components.h"
 #include <optional>
 #include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/Project/Project.h"
 
 namespace YAML
 {
@@ -480,7 +481,12 @@ namespace eg {
 					if(spriteRendererComponent["TilingFactor"])
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
 					if (spriteRendererComponent["TexturePath"])
-						src.Texture = Texture2D::Create(spriteRendererComponent["TexturePath"].as<std::string>());
+					{
+						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
+						//TODO: Later should be handled by the asset manager
+						auto path = Project::GetAssetFileSystemPath(texturePath);
+						src.Texture = Texture2D::Create(path.string());
+					}
 				}
 
 				auto circleRendererComponent = entity["CircleRendererComponent"];
