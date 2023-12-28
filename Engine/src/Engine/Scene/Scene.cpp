@@ -176,50 +176,51 @@ namespace eg {
 
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
-		
-
-		// Update Native scripts
+		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
-			//C# Entity OnUpdate
-			auto view = m_Registry.view<ScriptComponent>();
-			for (auto entity : view)
+			// Update Native scripts
 			{
-				Entity e{ entity, this };
-				ScriptEngine::OnUpdateEntity(e, ts);
-			}
-
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
-			{
-				// TODO: Move to Scene::OnScenePlay
-				if (!nsc.Instance)
+				//C# Entity OnUpdate
+				auto view = m_Registry.view<ScriptComponent>();
+				for (auto entity : view)
 				{
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->m_Entity = Entity{ entity, this };
-					nsc.Instance->OnCreate();
+					Entity e{ entity, this };
+					ScriptEngine::OnUpdateEntity(e, ts);
 				}
 
-				nsc.Instance->OnUpdate(ts);
-			});
-		}
+				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+					{
+						// TODO: Move to Scene::OnScenePlay
+						if (!nsc.Instance)
+						{
+							nsc.Instance = nsc.InstantiateScript();
+							nsc.Instance->m_Entity = Entity{ entity, this };
+							nsc.Instance->OnCreate();
+						}
 
-		// Physics
-		{
-			const int32_t velocityIterations = 6;
-			const int32_t positionIterations = 2;
-			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+						nsc.Instance->OnUpdate(ts);
+					});
+			}
 
-			auto view = m_Registry.view<RigidBody2DComponent>();
+			// Physics
 			{
-				for (auto e : view)
-				{
-					Entity entity{ e, this };
-					auto& rb = entity.GetComponent<RigidBody2DComponent>();
-					auto& transform = entity.GetComponent<TransformComponent>();
-					auto* body = (b2Body*)rb.RuntimeBody;
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
-					transform.Translation.x = body->GetPosition().x;
-					transform.Translation.y = body->GetPosition().y;
-					transform.Rotation.z = body->GetAngle();
+				auto view = m_Registry.view<RigidBody2DComponent>();
+				{
+					for (auto e : view)
+					{
+						Entity entity{ e, this };
+						auto& rb = entity.GetComponent<RigidBody2DComponent>();
+						auto& transform = entity.GetComponent<TransformComponent>();
+						auto* body = (b2Body*)rb.RuntimeBody;
+
+						transform.Translation.x = body->GetPosition().x;
+						transform.Translation.y = body->GetPosition().y;
+						transform.Rotation.z = body->GetAngle();
+					}
 				}
 			}
 		}
@@ -275,25 +276,28 @@ namespace eg {
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
-		// Physics
+		if (!m_IsPaused || m_StepFrames-- > 0)
+			// Physics
 		{
-			const int32_t velocityIterations = 6;
-			const int32_t positionIterations = 2;
-			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
-
-			// Retrieve transform from Box2D
-			auto view = m_Registry.view<RigidBody2DComponent>();
-			for (auto e : view)
 			{
-				Entity entity = { e, this };
-				auto& transform = entity.GetComponent<TransformComponent>();
-				auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
-				b2Body* body = (b2Body*)rb2d.RuntimeBody;
-				const auto& position = body->GetPosition();
-				transform.Translation.x = position.x;
-				transform.Translation.y = position.y;
-				transform.Rotation.z = body->GetAngle();
+				// Retrieve transform from Box2D
+				auto view = m_Registry.view<RigidBody2DComponent>();
+				for (auto e : view)
+				{
+					Entity entity = { e, this };
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+
+					b2Body* body = (b2Body*)rb2d.RuntimeBody;
+					const auto& position = body->GetPosition();
+					transform.Translation.x = position.x;
+					transform.Translation.y = position.y;
+					transform.Rotation.z = body->GetAngle();
+				}
 			}
 		}
 
@@ -385,6 +389,11 @@ namespace eg {
 				return Entity{ entity, this };
 		}
 		return {};
+	}
+
+	void Scene::Step(int frames)
+	{
+		m_StepFrames = frames;
 	}
 
 	void Scene::OnPhysics2DStart()
