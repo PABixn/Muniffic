@@ -1,10 +1,13 @@
 #include "egpch.h"
+#include "Engine/Core/Application.h"
 #include "ScriptEngine.h"
 #include "ScriptGlue.h"
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/attrdefs.h"
+
+#include "Filewatch.h"
 
 namespace eg {
 
@@ -55,6 +58,9 @@ namespace eg {
 
 		using ScriptFieldMap = std::unordered_map<std::string, ScriptFieldInstance>;
 		std::unordered_map<UUID, ScriptFieldMap> EntityFields;
+
+		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
+		bool AssemblyReloadPending = false;
 
 		//Runtime
 		Scene* SceneContext = nullptr;
@@ -169,6 +175,8 @@ namespace eg {
 
 		s_Data->EntityClass->InvokeMethod(object, printMessageFunc3, args2);
 #endif
+
+		s_Data->AssemblyReloadPending = false;
 	}
 
 	void ScriptEngine::Shutdown()
@@ -301,6 +309,18 @@ namespace eg {
 		s_Data->CoreAssemblyPath = filepath;
 	}
 
+	static void onAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
+	{
+		if (!s_Data->AssemblyReloadPending && change_type == filewatch::Event::modified)
+		{
+			s_Data->AssemblyReloadPending = true;
+			Application::Get().SubmitToMainThread([]() { 
+				s_Data->AppAssemblyFileWatcher.reset();
+				ScriptEngine::ReloadAssembly();
+				});
+		}
+	}
+
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
 		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath.string());
@@ -308,6 +328,12 @@ namespace eg {
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 
 		s_Data->AppAssemblyPath = filepath;
+
+		s_Data->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(
+			filepath.string(),
+			onAppAssemblyFileSystemEvent
+		);
+		s_Data->AssemblyReloadPending = false;
 	}
 
 	void ScriptEngine::ReloadAssembly()

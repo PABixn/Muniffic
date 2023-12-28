@@ -35,7 +35,7 @@ namespace eg {
 		Application(const ApplicationSpecification specification);
 		~Application();
 
-		void Run();
+		
 
 		void OnEvent(Event& e);
 
@@ -49,9 +49,14 @@ namespace eg {
 		void Close();
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
-	protected:
+		void SubmitToMainThread(std::function<void()> function);
+	private:
+		void Run();
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
+
+		void ExecuteMainThreadQueue();
+		
 	private:
 		ApplicationSpecification m_Specification;
 		Scope<Window> m_Window;
@@ -60,8 +65,12 @@ namespace eg {
 		LayerStack m_LayerStack;
 		float m_LastFrameTime = 0.0f;
 		bool m_Minimized = false;
+
+		std::vector<std::function<void()>> m_MainThreadQueue;
+		std::mutex m_MainThreadQueueMutex;
 	private:
 		static Application* s_Instance;
+		friend int ::main(int argc, char** argv);
 		
 	};
 	 //To be defined in client

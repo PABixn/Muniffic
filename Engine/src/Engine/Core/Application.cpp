@@ -82,6 +82,8 @@ namespace eg {
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
+			ExecuteMainThreadQueue();
+
 			if (!m_Minimized) {
 				{
 					EG_PROFILE_SCOPE("LayerStack OnUpdate");
@@ -119,5 +121,21 @@ namespace eg {
 		m_Minimized = false;
 		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
 		return false;
+	}
+
+	void Application::SubmitToMainThread(std::function<void()> function)
+	{
+		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+		m_MainThreadQueue.emplace_back(function);
+	}
+
+	void Application::ExecuteMainThreadQueue()
+	{
+		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+		for(auto& function : m_MainThreadQueue)
+			function(); 
+
+		m_MainThreadQueue.clear();
 	}
 }
