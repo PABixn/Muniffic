@@ -2,10 +2,15 @@
 #include "Engine/Core/Application.h"
 #include "ScriptEngine.h"
 #include "ScriptGlue.h"
+#include "Engine/Core/Buffer.h"
+#include "Engine/Core/FileSystem.h"
+
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/attrdefs.h"
+#include "mono/metadata/mono-debug.h"
+#include "mono/metadata/threads.h"
 
 #include "Filewatch.h"
 
@@ -62,6 +67,8 @@ namespace eg {
 		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
 		bool AssemblyReloadPending = false;
 
+		bool EnableDebugging = false;
+
 		//Runtime
 		Scene* SceneContext = nullptr;
 	};
@@ -71,42 +78,21 @@ namespace eg {
 	namespace Utils {
 
 		//TOOD: move this to Filesystem class
-		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
-		{
-			std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
+		
 
-			if (!stream)
+		MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
+		{
+			ScopedBuffer fileData = FileSystem::ReadFileBinary(assemblyPath.string());
+			
+			if (!fileData)
 			{
-				// Failed to open the file
+				// Log some error message using the errorMessage data
 				return nullptr;
 			}
-
-			std::streampos end = stream.tellg();
-			stream.seekg(0, std::ios::beg);
-			uint32_t size = end - stream.tellg();
-
-			if (size == 0)
-			{
-				// File is empty
-				return nullptr;
-			}
-
-			char* buffer = new char[size];
-			stream.read((char*)buffer, size);
-			stream.close();
-
-			*outSize = size;
-			return buffer;
-		}
-
-		MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath)
-		{
-			uint32_t fileSize = 0;
-			char* fileData = ReadBytes(assemblyPath.string(), &fileSize);
 
 			// NOTE: We can't use this image for anything other than loading the assembly because this image doesn't have a reference to the assembly
 			MonoImageOpenStatus status;
-			MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
+			MonoImage* image = mono_image_open_from_data_full(fileData.As<char>(), fileData.Size(), 1, &status, 0);
 
 			if (status != MONO_IMAGE_OK)
 			{
@@ -117,9 +103,6 @@ namespace eg {
 
 			MonoAssembly* assembly = mono_assembly_load_from_full(image, assemblyPath.string().c_str(), &status, 0);
 			mono_image_close(image);
-
-			// Don't forget to free the file data
-			delete[] fileData;
 
 			return assembly;
 		}
@@ -143,40 +126,25 @@ namespace eg {
 	{
 		s_Data = new ScriptEngineData();
 		InitMono();
-		LoadAssembly("Resources/Scripts/Muniffic-ScriptCore.dll");
-		LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+		bool status = LoadAssembly("Resources/Scripts/Muniffic-ScriptCore.dll");
+		if (!status) {
+			EG_CORE_ERROR("Failed to load core assembly!");
+			return;
+		}
+		status = LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+		if (!status)
+		{
+			EG_CORE_ERROR("Failed to load app assembly!");
+			return;
+		}
 		LoadAssemblyClasses();
 
 		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 		
 		s_Data->EntityClass = ScriptClass("eg", "Entity", true);
-#if 0
+
 		
-
-		// Retrieve adn instantiate class (with constructor)
-		MonoObject* object = s_Data->EntityClass->Instantiate();
-
-		// Call method
-		MonoMethod* printMessageFunc = s_Data->EntityClass->GetMethod("PrintMessage", 0);
-		s_Data->EntityClass->InvokeMethod(object, printMessageFunc, nullptr);
-		// Call method with parameters
-		MonoMethod* printMessageFunc2 = s_Data->EntityClass->GetMethod("PrintMessage", 1);
-		void* args[1];
-		args[0] = mono_string_new(s_Data->AppDomain, "Hello from C++");
-		s_Data->EntityClass->InvokeMethod(object, printMessageFunc2, args);
-
-		MonoMethod* printMessageFunc3 = s_Data->EntityClass->GetMethod("PrintInts", 2);
-		void* args2[2];
-		int val = 5;
-		int val2 = 10;
-		args2[0] = &val;
-		args2[1] = &val2;
-
-		s_Data->EntityClass->InvokeMethod(object, printMessageFunc3, args2);
-#endif
-
-		s_Data->AssemblyReloadPending = false;
 	}
 
 	void ScriptEngine::Shutdown()
@@ -190,13 +158,10 @@ namespace eg {
 		mono_set_assemblies_path("mono/lib");
 
 		MonoDomain* domain = mono_jit_init("MunifficJitRuntime");
-		if (!domain)
-		{
-			EG_CORE_ERROR("Could not initialize Mono");
-			return;
-		}
+		EG_CORE_ASSERT(domain, "Could not initialize Mono");
 
 		s_Data->RootDomain = domain;
+
 	}
 
 	void ScriptEngine::ShutdownMono()
@@ -299,33 +264,39 @@ namespace eg {
 		return s_Data->EntityInstances.at(uuid)->GetManagedObject();
 	}
 
-	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
-	{
-		s_Data->AppDomain = mono_domain_create_appdomain((char*)"MunifficScriptRuntime", nullptr);
-		mono_domain_set(s_Data->AppDomain, true);
-		s_Data->CoreAssembly = Utils::LoadMonoAssembly(filepath.string());
-		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
-
-		s_Data->CoreAssemblyPath = filepath;
-	}
-
 	static void onAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
 	{
 		if (!s_Data->AssemblyReloadPending && change_type == filewatch::Event::modified)
 		{
 			s_Data->AssemblyReloadPending = true;
-			Application::Get().SubmitToMainThread([]() { 
+			Application::Get().SubmitToMainThread([]() {
 				s_Data->AppAssemblyFileWatcher.reset();
 				ScriptEngine::ReloadAssembly();
 				});
 		}
 	}
 
-	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
+	bool ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
 	{
-		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath.string());
-		auto ass = s_Data->AppAssembly;
+		s_Data->AppDomain = mono_domain_create_appdomain((char*)"MunifficScriptRuntime", nullptr);
+		mono_domain_set(s_Data->AppDomain, true);
+		s_Data->CoreAssembly = Utils::LoadMonoAssembly(filepath.string(), s_Data->EnableDebugging);
+		if(!s_Data->CoreAssembly)
+			return false;
+
+		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
+
+		s_Data->CoreAssemblyPath = filepath;
+		return true;
+	}
+
+	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
+	{
+		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath.string(), s_Data->EnableDebugging);
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
+
+		if(!s_Data->AppAssembly)
+			return false;
 
 		s_Data->AppAssemblyPath = filepath;
 
@@ -334,6 +305,7 @@ namespace eg {
 			onAppAssemblyFileSystemEvent
 		);
 		s_Data->AssemblyReloadPending = false;
+		return true;
 	}
 
 	void ScriptEngine::ReloadAssembly()
@@ -394,9 +366,15 @@ namespace eg {
 	void ScriptEngine::OnUpdateEntity(Entity entity, Timestep ts)
 	{
 		UUID entityID = entity.GetUUID();
-		EG_CORE_ASSERT(s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end(), "Entity has no script instance!");
-		Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
-		instance->InvokeOnUpdate(ts);
+		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
+		{
+			Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
+			instance->InvokeOnUpdate(ts);
+		}
+		else
+		{
+			EG_CORE_ERROR("Couldn't find script instance for entity {}!", entityID);
+		}
 	}
 
 	Scene* ScriptEngine::GetSceneContext()
@@ -449,7 +427,8 @@ namespace eg {
 
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
-		return mono_runtime_invoke(method, instance, params, nullptr);
+		MonoObject* exception = nullptr;
+		return mono_runtime_invoke(method, instance, params, &exception);
 	}
 
 	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity)
