@@ -1,6 +1,7 @@
 #include "egpch.h"
 #include "SceneHierarchyPanel.h"
 #include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/UI/UI.h"
 
 #include <Imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -316,14 +317,14 @@ namespace eg {
 				memset(buffer, 0, sizeof(buffer));
 				strcpy_s(buffer, sizeof(buffer), component.Name.c_str());
 
-				if(!scriptExists)
-					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f });
+				UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
+
 
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 				{
 					component.Name = std::string(buffer);
+					return;
 				}
-
 				//Fields
 				
 				bool sceneRunning = scene->IsRunning();
@@ -574,9 +575,6 @@ namespace eg {
 						}
 					}
 				}
-
-				if(!scriptExists)
-					ImGui::PopStyleColor();
 
 			});
 

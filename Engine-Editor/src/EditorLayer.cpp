@@ -49,7 +49,10 @@ namespace eg {
 		else
 		{
 			// TODO: Show project selection dialog
-			NewProject();
+			//NewProject();
+			//NOTE: this is while we don't have a project selection dialog and possibility to create new project
+			if (!OpenProject())
+				Application::Get().Close();
 		}
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
@@ -199,19 +202,18 @@ namespace eg {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows, 
-				// which we can't undo at the moment without finer window depth/z control.
-				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
-				if (ImGui::MenuItem("New", "Ctrl+N"))
+				if (ImGui::MenuItem("Open Project...", "Ctrl+O"))
+					OpenProject();
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
 					NewScene();
 
-				if (ImGui::MenuItem("Open...", "Ctrl+O"))
-					OpenScene();
-
-				if (ImGui::MenuItem("Save", "Ctrl+S"))
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
 					Save();
 
-				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) 
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S")) 
 					SaveAs();
 
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
@@ -463,7 +465,7 @@ namespace eg {
 			case Key::O:
 			{
 				if (controlPressed)
-					OpenScene();
+					OpenProject();
 				break;
 			}
 			// Commands
@@ -649,6 +651,15 @@ namespace eg {
 	void EditorLayer::NewProject()
 	{
 		Project::New();
+	}
+
+	bool EditorLayer::OpenProject()
+	{
+		std::string filepath = FileDialogs::OpenFile("Muniffic Project (*.mnproj)\0*.mnproj\0");
+		if (filepath.empty())
+			return false;
+		OpenProject(filepath);
+		return true;
 	}
 
 	void EditorLayer::OpenProject(const std::filesystem::path& path)
