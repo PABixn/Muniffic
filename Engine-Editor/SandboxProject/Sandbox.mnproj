@@ -3,4 +3,4 @@ Project:
   StartScene: "Physics2D.egscene"
   AssetDirectory: "Assets"
   SceneDirectory: "Scenes"
-  ScriptModulePath: "Scripts/Binaries"
+  ScriptModulePath: "Scripts/Binaries/Sandbox.dll"
