@@ -5,6 +5,7 @@
 #include "ScriptableEntity.h"
 #include "Engine/Renderer/Renderer2D.h"
 #include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/Physics/Physics2D.h"
 
 #include <glm/glm.hpp>
 
@@ -18,19 +19,6 @@
 #include <box2d/b2_circle_shape.h>
 
 namespace eg {
-
-	static b2BodyType RigidBody2DTypeToBox2DType(RigidBody2DComponent::BodyType type)
-	{
-		switch (type)
-		{
-		case RigidBody2DComponent::BodyType::Static:    return b2_staticBody;
-		case RigidBody2DComponent::BodyType::Dynamic:   return b2_dynamicBody;
-		case RigidBody2DComponent::BodyType::Kinematic: return b2_kinematicBody;
-		}
-
-		EG_CORE_ASSERT(false, "Unknown RigidBody2DComponent::BodyType!");
-		return b2_staticBody;
-	}
 
 	Scene::Scene()
 	{
@@ -353,10 +341,12 @@ namespace eg {
 		Renderer2D::EndScene();
 	}
 
-	void Scene::DuplicateEntity(Entity entity)
+	Entity Scene::DuplicateEntity(Entity entity)
 	{
-		Entity newEntity = CreateEntity(entity.GetName());
+		std::string name = entity.GetName();
+		Entity newEntity = CreateEntity(name);
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
+		return newEntity;
 	}
 
 	Entity Scene::FindEntityByName(const std::string_view& name)
@@ -408,7 +398,7 @@ namespace eg {
 			auto& rb = e.GetComponent<RigidBody2DComponent>();
 
 			b2BodyDef bodyDef;
-			bodyDef.type = RigidBody2DTypeToBox2DType(rb.Type);
+			bodyDef.type = Utils::RigidBody2DTypeToBox2DBody(rb.Type);
 			bodyDef.position.Set(transform.Translation.x, transform.Translation.y);
 			bodyDef.angle = transform.Rotation.z;
 

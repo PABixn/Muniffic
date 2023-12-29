@@ -39,7 +39,7 @@ namespace eg {
 
 		void RenderScene(EditorCamera& camera);
 
-		void DuplicateEntity(Entity entity);
+		Entity DuplicateEntity(Entity entity);
 
 		Entity FindEntityByName(const std::string_view& name);
 		Entity GetEntityByUUID(UUID uuid);

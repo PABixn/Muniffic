@@ -30,6 +30,15 @@ namespace eg
             X = x;
             Y = y;
         }
+        public float LengthSquared()
+        {
+            return X * X + Y * Y;
+        }
+
+        public float Length()
+        {
+            return (float)Math.Sqrt(LengthSquared());
+        }
 
         static public Vector2 operator +(Vector2 a, Vector2 b)
         {
