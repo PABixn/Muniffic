@@ -30,6 +30,73 @@ namespace eg
 			virtual void Execute(CommandArgs) = 0;
 		};
 
+		class ComponentCommand : public Command
+		{
+		public:
+			ComponentCommand(Entity& selectionContext)
+			: m_SelectionContext(selectionContext) {  }
+
+			~ComponentCommand() override
+			{
+				delete& m_SelectionContext;
+			}
+		protected:
+			Entity m_SelectionContext;
+		};
+
+		template<typename T>
+		class AddComponentCommand : public ComponentCommand
+		{
+		public:
+			AddComponentCommand(Entity& selectionContext)
+				: ComponentCommand(selectionContext)
+			{
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs args) override 
+			{
+				if(!m_SelectionContext.HasComponent<T>())
+					m_SelectionContext.AddComponent<T>();
+			}
+
+			void Undo() override
+			{
+				if (m_SelectionContext.HasComponent<T>())
+				{
+					m_SelectionContext.RemoveComponent<T>();
+					SetCurrentCommand(true);
+				}
+			}
+		};
+
+		template<typename T>
+		class RemoveComponentCommand : public ComponentCommand
+		{
+		public:
+			RemoveComponentCommand(Entity& selectionContext)
+				: ComponentCommand(selectionContext)
+			{
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs args) override
+			{
+				if (m_SelectionContext.HasComponent<T>())
+				{
+					m_SelectionContext.RemoveComponent<T>();
+				}
+			}
+
+			void Undo() override
+			{
+				if (!m_SelectionContext.HasComponent<T>())
+				{
+					m_SelectionContext.AddComponent<T>();
+					SetCurrentCommand(true);
+				}
+			}
+		};
 
 		class EntityCommand : public Command
 		{
@@ -55,7 +122,10 @@ namespace eg
 		{
 		public:
 			CreateEntityCommand(Ref<Scene>& context, Entity& selectionContext)
-				: EntityCommand(context, selectionContext) {}
+				: EntityCommand(context, selectionContext)
+			{
+				Commands::AddCommand(this);
+			}
 
 			void Execute(CommandArgs arg) override;
 
@@ -75,7 +145,10 @@ namespace eg
 		{
 		public:
 			DeleteEntityCommand(Ref<Scene>& context, Entity& selectionContext)
-				: EntityCommand(context, selectionContext) {}
+				: EntityCommand(context, selectionContext)
+			{
+				Commands::AddCommand(this);
+			}
 
 			void Execute(CommandArgs arg) override;
 

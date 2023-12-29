@@ -15,7 +15,6 @@
 
 
 namespace eg {
-
 	struct IDComponent
 	{
 		UUID ID;

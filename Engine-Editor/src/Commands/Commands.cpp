@@ -51,16 +51,6 @@ namespace eg
 		commandHistory.push_back(command);
 		currentCommandIndex = commandHistory.size() - 1;
 		currentCommand = commandHistory.at(commandHistory.size() - 1);
-
-		//std::cout << std::endl;
-		//std::cout << std::endl;
-		//std::cout << std::endl;
-		//std::cout << std::endl;
-
-		//for(int i = 0; i < commandHistory.size(); i++)
-		//	std::cout << i <<". "<< commandHistory[i] << std::endl;
-		//std::cout<<"Command Index: "<<currentCommandIndex<<std::endl;
-		//std::cout<<"Size: "<<commandHistory.size()<<std::endl;
 	}
 
 	Commands::Command* Commands::GetCurrentCommand()

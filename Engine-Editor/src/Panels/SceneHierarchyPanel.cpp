@@ -50,9 +50,7 @@ namespace eg {
 				if (ImGui::MenuItem("Create Empty Entity"))
 				{
 					command = new Commands::CreateEntityCommand(m_Context, m_SelectionContext);
-					Commands::CommandArgs args = { "Empty Entity" };
-					command->Execute(args);
-					Commands::AddCommand(command);
+					command->Execute({ "Empty Entity" });
 				}
 				ImGui::EndPopup();
 			}	
@@ -96,9 +94,7 @@ namespace eg {
 
 		if (command != nullptr)
 		{
-			Commands::CommandArgs args = {"", entity};
-			command->Execute(args);
-			Commands::AddCommand(command);
+			command->Execute({ "", entity });
 		}
 	}
 
@@ -167,6 +163,7 @@ namespace eg {
 	template<typename T, typename UIFunction>
 	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)
 	{
+		Commands::Command* command = nullptr;
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 		if (entity.HasComponent<T>())
 		{
@@ -182,11 +179,11 @@ namespace eg {
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
-			bool removeComponent = false;
+
 			if (ImGui::BeginPopup("ComponentSettings"))
 			{
 				if (ImGui::MenuItem("Remove Component"))
-					removeComponent = true;
+					command = new Commands::RemoveComponentCommand<T>(entity);
 				ImGui::EndPopup();
 			}
 			if (open)
@@ -194,8 +191,8 @@ namespace eg {
 				uiFunction(component);
 				ImGui::TreePop();
 			}
-			if (removeComponent)
-				entity.RemoveComponent<T>();
+			if (command != nullptr)
+				command->Execute({ "", entity });
 			//ImGui::PopStyleVar();
 		}
 	}
@@ -206,7 +203,8 @@ namespace eg {
 		{
 			if (ImGui::MenuItem(entryName.c_str()))
 			{
-				m_SelectionContext.AddComponent<T>();
+				Commands::Command* command = new Commands::AddComponentCommand<T>(m_SelectionContext);
+				command->Execute({ "", m_SelectionContext});
 				ImGui::CloseCurrentPopup();
 			}
 		}
