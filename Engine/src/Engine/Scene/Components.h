@@ -91,6 +91,14 @@ namespace eg {
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	struct ScriptComponent
+	{
+		std::string Name;
+
+		ScriptComponent() = default;
+		ScriptComponent(const ScriptComponent&) = default;
+	};
+
 	class ScriptableEntity;
 
 	struct NativeScriptComponent
@@ -184,6 +192,7 @@ namespace eg {
 
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
-		CircleRendererComponent, CameraComponent, NativeScriptComponent,
-		RigidBody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
+		CircleRendererComponent, CameraComponent, ScriptComponent,
+		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
+		CircleCollider2DComponent>;
 }

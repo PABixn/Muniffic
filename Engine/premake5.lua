@@ -28,6 +28,7 @@ project "Engine"
 		".",
 		"vendor/spdlog/include",
 		"%{IncludeDir.Box2D}",
+		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
@@ -36,7 +37,8 @@ project "Engine"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.VulkanSDK}"
+		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.mono}",
 	}
 
 	links
@@ -47,7 +49,8 @@ project "Engine"
 		"dwmapi.lib",
 		"yaml-cpp",
 		"Glad",
-		"Imgui"
+		"Imgui",
+		"%{Library.mono}",
 	}
 
 	defines{
@@ -60,6 +63,14 @@ project "Engine"
 
 	filter "system:windows"
 		systemversion "latest"
+
+		links
+		{
+			"%{Library.WinSock}",
+			"%{Library.WinMM}",
+			"%{Library.WinVersion}",
+			"%{Library.BCrypt}",
+		}
 
 		defines
 		{

@@ -1,14 +1,13 @@
 #include "egpch.h"
 #include "ContentBrowserPanel.h"
 #include <Imgui/imgui.h>
+#include "Engine/Project/Project.h"
 
 namespace eg {
 
-	// Once we have a proper file system, this will be replaced with a call to the file system
-	static const std::filesystem::path s_AssetPath = "assets";
 
 	ContentBrowserPanel::ContentBrowserPanel()
-	:m_CurrentDirectory(s_AssetPath)
+	: m_BaseDirectory(Project::GetProjectDirectory() / Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
 		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
@@ -17,7 +16,7 @@ namespace eg {
 	void ContentBrowserPanel::OnImGuiRender() {
 		ImGui::Begin("Content Browser");
 
-		if (m_CurrentDirectory != std::filesystem::path(s_AssetPath)) {
+		if (m_CurrentDirectory != std::filesystem::path(Project::GetAssetDirectory())) {
 			if (ImGui::Button("<-"))
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
@@ -45,7 +44,7 @@ namespace eg {
 
 			if (ImGui::BeginDragDropSource())
 			{
-				auto relativePath = std::filesystem::relative(path, s_AssetPath);
+				std::filesystem::path relativePath(path);
 				const wchar_t* pathStr = relativePath.c_str();
 				ImGui::SetDragDropPayload("ContentBrowserPanel", pathStr, (wcslen(pathStr)+1) * sizeof(wchar_t));
 				ImGui::EndDragDropSource();

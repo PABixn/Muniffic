@@ -18,6 +18,7 @@ project "Engine-Editor"
 		"%{wks.location}/Engine/src",
 		"%{wks.location}/Engine/vendor/spdlog/include",
 		"%{wks.location}/Engine/vendor",
+		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.ImGuizmo}"

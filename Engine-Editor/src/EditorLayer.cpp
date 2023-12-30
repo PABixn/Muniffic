@@ -11,13 +11,13 @@
 #include "ImGuizmo.h"
 #include "Engine/Scene/Components.h"
 #include "Engine/Math/Math.h"
+#include "Engine/Scripting/ScriptEngine.h"
 
-namespace eg {
-
-	extern const std::filesystem::path g_AssetPath = "assets";
+namespace eg
+{
 
 	EditorLayer::EditorLayer()
-		:Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
+		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
 	}
 
@@ -26,11 +26,13 @@ namespace eg {
 		EG_PROFILE_FUNCTION();
 		m_Texture = Texture2D::Create("assets/textures/cubes.png");
 		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");
+		m_IconPause = Texture2D::Create("resources/icons/PauseButton.png");
+		m_IconSimulate = Texture2D::Create("resources/icons/SimulateButton.png");
 		m_IconStop = Texture2D::Create("resources/icons/StopButton.png");
-
+		m_IconStep = Texture2D::Create("resources/icons/StepButton.png");
 
 		FrameBufferSpecification fbSpec;
-		fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
+		fbSpec.Attachments = {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth};
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
 		m_FrameBuffer = FrameBuffer::Create(fbSpec);
@@ -40,9 +42,16 @@ namespace eg {
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
 		{
-			auto sceneFilePath = commandLineArgs[1];
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Deserialize(sceneFilePath);
+			auto projectFilePath = commandLineArgs[1];
+			OpenProject(projectFilePath);
+		}
+		else
+		{
+			// TODO: Show project selection dialog
+			// NewProject();
+			// NOTE: this is while we don't have a project selection dialog and possibility to create new project
+			if (!OpenProject())
+				Application::Get().Close();
 		}
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
@@ -56,58 +65,64 @@ namespace eg {
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
-		
-		EG_PROFILE_FUNCTION();
-		
 
-		if(FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
+		EG_PROFILE_FUNCTION();
+
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
 			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_Camera.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
 		if (m_ViewportFocused)
 			m_Camera.OnUpdate(ts);
 
 		m_EditorCamera.OnUpdate(ts);
-			
+
 		Renderer2D::ResetStats();
 		m_FrameBuffer->Bind();
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		RenderCommand::Clear();
 
 		m_FrameBuffer->ClearAttachment(1, -1);
 
 		switch (m_SceneState)
 		{
-			case SceneState::Edit:
-			{
-				// Update
-				if(m_ViewportFocused)
-					m_Camera.OnUpdate(ts);
-				m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+		case SceneState::Edit:
+		{
+			// Update
+			if (m_ViewportFocused)
+				m_Camera.OnUpdate(ts);
+			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
-				// Render
-				//Renderer2D::BeginScene(m_EditorCamera);
-				//m_ActiveScene->OnRenderEditor(m_EditorCamera);
-				//Renderer2D::EndScene();
-				break;
-			}
-			case SceneState::Play:
-			{
-				// Update
-				m_ActiveScene->OnUpdateRuntime(ts);
+			// Render
+			// Renderer2D::BeginScene(m_EditorCamera);
+			// m_ActiveScene->OnRenderEditor(m_EditorCamera);
+			// Renderer2D::EndScene();
+			break;
+		}
+		case SceneState::Play:
+		{
+			// Update
+			m_ActiveScene->OnUpdateRuntime(ts);
 
-				// Render
-				//Renderer2D::BeginScene(m_EditorCamera);
-				//m_ActiveScene->OnRenderRuntime(m_EditorCamera);
-				//Renderer2D::EndScene();
-				break;
-			}
+			// Render
+			// Renderer2D::BeginScene(m_EditorCamera);
+			// m_ActiveScene->OnRenderRuntime(m_EditorCamera);
+			// Renderer2D::EndScene();
+			break;
+		}
+		case SceneState::Simulate:
+		{
+			m_EditorCamera.OnUpdate(ts);
+
+			m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera);
+			break;
+		}
 		}
 
 		auto [mx, my] = ImGui::GetMousePos();
@@ -126,7 +141,7 @@ namespace eg {
 		}
 
 		OnOverlayRender();
-		
+
 		m_FrameBuffer->Unbind();
 	}
 
@@ -142,7 +157,7 @@ namespace eg {
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 		if (opt_fullscreen)
 		{
-			ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGuiViewport *viewport = ImGui::GetMainViewport();
 			ImGui::SetNextWindowPos(viewport->Pos);
 			ImGui::SetNextWindowSize(viewport->Size);
 			ImGui::SetNextWindowViewport(viewport->ID);
@@ -157,9 +172,9 @@ namespace eg {
 			window_flags |= ImGuiWindowFlags_NoBackground;
 
 		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive, 
+		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
 		// all active windows docked into it will lose their parent and become undocked.
-		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise 
+		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
@@ -169,8 +184,8 @@ namespace eg {
 			ImGui::PopStyleVar(2);
 
 		// DockSpace
-		ImGuiIO& io = ImGui::GetIO();
-		ImGuiStyle& style = ImGui::GetStyle();
+		ImGuiIO &io = ImGui::GetIO();
+		ImGuiStyle &style = ImGui::GetStyle();
 		float minWinSizeX = style.WindowMinSize.x;
 		style.WindowMinSize.x = 370.0f;
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
@@ -185,22 +200,30 @@ namespace eg {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows, 
-				// which we can't undo at the moment without finer window depth/z control.
-				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
-				if (ImGui::MenuItem("New", "Ctrl+N"))
+				if (ImGui::MenuItem("Open Project...", "Ctrl+O"))
+					OpenProject();
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
 					NewScene();
 
-				if (ImGui::MenuItem("Open...", "Ctrl+O"))
-					OpenScene();
-
-				if (ImGui::MenuItem("Save", "Ctrl+S"))
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
 					Save();
 
-				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) 
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
 					SaveAs();
 
-				if (ImGui::MenuItem("Exit")) Application::Get().Close();
+				if (ImGui::MenuItem("Exit"))
+					Application::Get().Close();
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Script"))
+			{
+				if (ImGui::MenuItem("Reload assembly", "Ctrl+R"))
+					ScriptEngine::ReloadAssembly();
+
 				ImGui::EndMenu();
 			}
 
@@ -208,7 +231,7 @@ namespace eg {
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
-		m_ContentBrowserPanel.OnImGuiRender();
+		m_ContentBrowserPanel->OnImGuiRender();
 
 		ImGui::Begin("Stats");
 		std::string name = "None";
@@ -229,38 +252,38 @@ namespace eg {
 		ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders);
 		ImGui::End();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
 		ImGui::Begin("Viewport");
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
 		auto viewportOffset = ImGui::GetWindowPos();
-		m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-		m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+		m_ViewportBounds[0] = {viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y};
+		m_ViewportBounds[1] = {viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y};
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+		Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused);
 
 		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-		
-			m_ViewportSize = { viewportSize.x, viewportSize.y };
+
+		m_ViewportSize = {viewportSize.x, viewportSize.y};
 		uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
-		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1,0 });
+		ImGui::Image((void *)textureID, ImVec2{m_ViewportSize.x, m_ViewportSize.y}, ImVec2{0, 1}, ImVec2{1, 0});
 
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+			if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 			{
-				const wchar_t* path = (const wchar_t*)payload->Data;
+				const wchar_t *path = (const wchar_t *)payload->Data;
 
-				OpenScene(std::filesystem::path(g_AssetPath) / path);
+				OpenScene(path);
 			}
 			ImGui::EndDragDropTarget();
 		}
 
-		//Gizmos
+		// Gizmos
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-		if (selectedEntity && m_GizmoType!=-1)
+		if (selectedEntity && m_GizmoType != -1)
 		{
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
@@ -269,17 +292,17 @@ namespace eg {
 			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 			// Camera
 			// Runtime camera from entity
-			//auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			//const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
-			//const glm::mat4& cameraProjection = camera.GetProjection();
-			//glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+			// auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			// const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+			// const glm::mat4& cameraProjection = camera.GetProjection();
+			// glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
 
 			// Editor camera
-			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+			const glm::mat4 &cameraProjection = m_EditorCamera.GetProjection();
 			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 			// Entity Transform
-			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			auto &tc = selectedEntity.GetComponent<TransformComponent>();
 			glm::mat4 transform = tc.GetTransform();
 
 			// Snapping
@@ -289,11 +312,11 @@ namespace eg {
 			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
 				snapValue = 45.0f;
 
-			float snapValues[3] = { snapValue, snapValue, snapValue };
+			float snapValues[3] = {snapValue, snapValue, snapValue};
 
 			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
-				nullptr, snap ? snapValues : nullptr);
+								 (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+								 nullptr, snap ? snapValues : nullptr);
 
 			if (ImGuizmo::IsUsing())
 			{
@@ -306,7 +329,7 @@ namespace eg {
 				tc.Scale = scale;
 			}
 
-			//ImGuizmo::ViewManipulate(glm::value_ptr(cameraView), m_Camera.GetZoomLevel(), ImVec2{ ImGui::GetWindowPos().x, ImGui::GetWindowPos().y }, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, 0x10101010);
+			// ImGuizmo::ViewManipulate(glm::value_ptr(cameraView), m_Camera.GetZoomLevel(), ImVec2{ ImGui::GetWindowPos().x, ImGui::GetWindowPos().y }, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, 0x10101010);
 		}
 
 		ImGui::End();
@@ -322,30 +345,84 @@ namespace eg {
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0.0f, 2.0f});
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{0.0f, 0.0f});
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.0f, 0.0f, 0.0f, 0.0f});
-		auto& colors = ImGui::GetStyle().Colors;
-		auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f });
-		auto& buttonActive = colors[ImGuiCol_ButtonActive];
+		auto &colors = ImGui::GetStyle().Colors;
+		auto &buttonHovered = colors[ImGuiCol_ButtonHovered];
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f});
+		auto &buttonActive = colors[ImGuiCol_ButtonActive];
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{buttonActive.x, buttonActive.y, buttonActive.z, 0.5f});
 
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
+		bool toolbarEnabled = (bool)m_ActiveScene;
+
+		ImVec4 tintColor = ImVec4(1, 1, 1, 1);
+		if (!toolbarEnabled)
+			tintColor.w = 0.5f;
+
 		float size = ImGui::GetWindowHeight() - 4.0f;
-		Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
-		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x*0.5f)- (size*0.5f));
-		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), {size, size}, ImVec2(0,0), ImVec2(1,1),0))
+		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+		bool hasPlayButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play;
+		bool hasSimulateButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate;
+		bool hasPauseButton = m_SceneState != SceneState::Edit;
+
+		if (hasPlayButton)
 		{
-			if (m_SceneState == SceneState::Edit)
-				OnScenePlay();
-			else if (m_SceneState == SceneState::Play)
-				OnSceneStop();
+			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+			{
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+					OnScenePlay();
+				else if (m_SceneState == SceneState::Play)
+					OnSceneStop();
+			}
+		}
+
+		if (hasSimulateButton)
+		{
+			if (hasPlayButton)
+				ImGui::SameLine();
+
+			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+			{
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
+					OnSceneSimulate();
+				else if (m_SceneState == SceneState::Simulate)
+					OnSceneStop();
+			}
+		}
+		if (hasPauseButton)
+		{
+			bool isPaused = m_ActiveScene->IsPaused();
+			ImGui::SameLine();
+			{
+				Ref<Texture2D> icon = m_IconPause;
+				if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+				{
+					m_ActiveScene->SetPaused(!isPaused);
+				}
+			}
+
+			// Step button
+			if (isPaused)
+			{
+				ImGui::SameLine();
+				{
+					Ref<Texture2D> icon = m_IconStep;
+					bool isPaused = m_ActiveScene->IsPaused();
+					if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+					{
+						m_ActiveScene->Step();
+					}
+				}
+			}
 		}
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 		ImGui::End();
 	}
 
-	void EditorLayer::OnEvent(Event& e)
+	void EditorLayer::OnEvent(Event &e)
 	{
 		m_Camera.OnEvent(e);
 		m_EditorCamera.OnEvent(e);
@@ -355,7 +432,7 @@ namespace eg {
 		dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 	}
 
-	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent &e)
 	{
 		if (e.IsRepeat())
 			return false;
@@ -368,69 +445,84 @@ namespace eg {
 
 		switch (e.GetKeyCode())
 		{
-			case Key::S:
-			{
-				if (controlPressed)
-					if(shiftPressed)
-						SaveAs();
-					else
-						Save();
-				break;
-			}
-			case Key::N:
-			{
-				if (controlPressed)
-					NewScene();
-				break;
-			}
-			case Key::O:
-			{
-				if (controlPressed)
-					OpenScene();
-				break;
-			}
-			// Commands
-			case Key::D:
-			{
-				if (controlPressed)
-					OnDuplicateEntity();
-				break;
-			}
-			// Gizmos
-			case Key::Q:
-			{
-				if (!ImGuizmo::IsUsing())
-				{
-					if (!ImGuizmo::IsUsing())
-						m_GizmoType = -1;
-					break;
-				}
-				break;
-			}
-			case Key::W:
-			{
-				if (!ImGuizmo::IsUsing())
-					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-				break;
-			}
-			case Key::E:
-			{
-				if (!ImGuizmo::IsUsing())
-					m_GizmoType = ImGuizmo::OPERATION::ROTATE;
-				break;
-			}
-			case Key::R:
-			{
-				if (!ImGuizmo::IsUsing())
-					m_GizmoType = ImGuizmo::OPERATION::SCALE;
-				break;
-			}
+		case Key::S:
+		{
+			if (controlPressed)
+				if (shiftPressed)
+					SaveAs();
+				else
+					Save();
+			break;
 		}
-			
+		case Key::N:
+		{
+			if (controlPressed)
+				NewScene();
+			break;
+		}
+		case Key::O:
+		{
+			if (controlPressed)
+				OpenProject();
+			break;
+		}
+		// Commands
+		case Key::D:
+		{
+			if (controlPressed)
+				OnDuplicateEntity();
+			break;
+		}
+		// Gizmos
+		case Key::Q:
+		{
+			if (!ImGuizmo::IsUsing())
+			{
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = -1;
+				break;
+			}
+			break;
+		}
+		case Key::W:
+		{
+			if (!ImGuizmo::IsUsing())
+				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+			break;
+		}
+		case Key::E:
+		{
+			if (!ImGuizmo::IsUsing())
+				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+			break;
+		}
+		case Key::R:
+		{
+			if (control)
+				ScriptEngine::ReloadAssembly();
+			else if (!ImGuizmo::IsUsing())
+				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			break;
+		}
+		case Key::Delete:
+		{
+			if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0)
+			{
+				Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+				if (selectedEntity)
+				{
+					m_SceneHierarchyPanel.SetSelectedEntity({});
+					m_ActiveScene->DestroyEntity(selectedEntity);
+				}
+			}
+			break;
+		}
+		}
+
 		return false;
 	}
 
-	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent &e)
 	{
 		if (e.GetMouseButton() == (int)Mouse::ButtonLeft)
 		{
@@ -446,7 +538,7 @@ namespace eg {
 		if (m_SceneState == SceneState::Play)
 		{
 			Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+			const auto &camera = cameraEntity.GetComponent<CameraComponent>().Camera;
 			Renderer2D::BeginScene(camera, cameraEntity.GetComponent<TransformComponent>().GetTransform());
 		}
 		else
@@ -454,10 +546,10 @@ namespace eg {
 			Renderer2D::BeginScene(m_EditorCamera);
 		}
 
+		if (m_ShowPhysicsColliders)
+		{
 
-		if (m_ShowPhysicsColliders) {
-
-			//Circle Colliders
+			// Circle Colliders
 			{
 				auto view = m_ActiveScene->GetEntitiesWith<TransformComponent, CircleCollider2DComponent>();
 				for (auto entity : view)
@@ -467,15 +559,13 @@ namespace eg {
 					glm::vec3 translation = tc.Translation + glm::vec3(cc2d.Offset, 0.001f);
 					glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2.0f);
 
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation) * glm::scale(glm::mat4(1.0f), scale);
 
-					glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation)  * glm::scale(glm::mat4(1.0f), scale);
-
-					Renderer2D::DrawCircle(transform, { 0, 1, 0, 1 }, 0.01f);
-
+					Renderer2D::DrawCircle(transform, {0, 1, 0, 1}, 0.01f);
 				}
 			}
 
-			//Box Colliders
+			// Box Colliders
 			{
 				auto view = m_ActiveScene->GetEntitiesWith<TransformComponent, BoxCollider2DComponent>();
 				for (auto entity : view)
@@ -485,18 +575,16 @@ namespace eg {
 					glm::vec3 translation = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
 					glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
 
-					glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation) 
-						* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0, 0, 1.0f)) 
-						* glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
-						* glm::scale(glm::mat4(1.0f), scale);
-					Renderer2D::DrawRect(transform, { 0, 1, 0, 1 });
+					glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation) * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0, 0, 1.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f)) * glm::scale(glm::mat4(1.0f), scale);
+					Renderer2D::DrawRect(transform, {0, 1, 0, 1});
 				}
 			}
 		}
 
-		// Draw selected entity outline 
-		if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity()) {
-			const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
+		// Draw selected entity outline
+		if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
+		{
+			const TransformComponent &transform = selectedEntity.GetComponent<TransformComponent>();
 			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
 		}
 
@@ -511,7 +599,6 @@ namespace eg {
 		if (m_SceneState != SceneState::Edit)
 			OnSceneStop();
 
-		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
 		m_ActiveScenePath = std::filesystem::path();
@@ -526,7 +613,7 @@ namespace eg {
 		}
 	}
 
-	void EditorLayer::OpenScene(const std::filesystem::path& path)
+	void EditorLayer::OpenScene(const std::filesystem::path &path)
 	{
 		if (m_SceneState != SceneState::Edit)
 			OnSceneStop();
@@ -543,7 +630,6 @@ namespace eg {
 		{
 			m_EditorScene = newScene;
 			m_ActiveScene = newScene;
-			m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 			m_ActiveScenePath = path;
 		}
@@ -552,7 +638,8 @@ namespace eg {
 	void EditorLayer::SaveAs()
 	{
 		std::string filepath = FileDialogs::SaveFile("Muniffic Scene (*.egscene)\0*.egscene\0");
-		if (!filepath.empty()) {
+		if (!filepath.empty())
+		{
 			SerializeScene(m_ActiveScene, filepath);
 
 			m_ActiveScenePath = filepath;
@@ -561,7 +648,7 @@ namespace eg {
 
 	void EditorLayer::Save()
 	{
-		if(m_ActiveScenePath.empty())
+		if (m_ActiveScenePath.empty())
 			SaveAs();
 		else
 		{
@@ -569,7 +656,40 @@ namespace eg {
 		}
 	}
 
-	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
+	void EditorLayer::NewProject()
+	{
+		Project::New();
+	}
+
+	bool EditorLayer::OpenProject()
+	{
+		std::string filepath = FileDialogs::OpenFile("Muniffic Project (*.mnproj)\0*.mnproj\0");
+		if (filepath.empty())
+			return false;
+		OpenProject(filepath);
+		return true;
+	}
+
+	void EditorLayer::OpenProject(const std::filesystem::path &path)
+	{
+		if (Project::Load(path))
+		{
+			ScriptEngine::Init();
+			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
+			OpenScene(startScenePath);
+			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+		}
+	}
+
+	void EditorLayer::SaveProjectAs()
+	{
+	}
+
+	void EditorLayer::SaveProject()
+	{
+	}
+
+	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path &path)
 	{
 		SceneSerializer serializer(scene);
 		serializer.Serialize(path.string());
@@ -577,17 +697,48 @@ namespace eg {
 
 	void EditorLayer::OnScenePlay()
 	{
-		if (!m_EditorScene) return;
+		if (!m_EditorScene)
+			return;
+		if (m_SceneState == SceneState::Simulate)
+			OnSceneStop();
 		m_SceneState = SceneState::Play;
-		
+
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart();
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
+	void EditorLayer::OnSceneSimulate()
+	{
+		if (m_SceneState == SceneState::Play)
+			OnSceneStop();
+
+		m_SceneState = SceneState::Simulate;
+
+		m_ActiveScene = Scene::Copy(m_EditorScene);
+		m_ActiveScene->OnSimulationStart();
+
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+	}
+
+	void EditorLayer::OnScenePause()
+	{
+		if (m_SceneState == SceneState::Edit)
+			return;
+
+		m_ActiveScene->SetPaused(true);
+	}
+
 	void EditorLayer::OnSceneStop()
 	{
+		EG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate);
+
+		if (m_SceneState == SceneState::Play)
+			m_ActiveScene->OnRuntimeStop();
+		else if (m_SceneState == SceneState::Simulate)
+			m_ActiveScene->OnSimulationStop();
+
 		m_SceneState = SceneState::Edit;
 		m_ActiveScene->OnRuntimeStop();
 		m_ActiveScene = m_EditorScene;
@@ -601,10 +752,9 @@ namespace eg {
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity)
 		{
-			m_EditorScene->DuplicateEntity(selectedEntity);
+			Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
+			m_SceneHierarchyPanel.SetSelectedEntity(newEntity);
 		}
 	}
-
-	
 
 }

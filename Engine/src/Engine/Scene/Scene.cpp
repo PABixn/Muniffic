@@ -4,6 +4,8 @@
 #include "Components.h"
 #include "ScriptableEntity.h"
 #include "Engine/Renderer/Renderer2D.h"
+#include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/Physics/Physics2D.h"
 
 #include <glm/glm.hpp>
 
@@ -17,19 +19,6 @@
 #include <box2d/b2_circle_shape.h>
 
 namespace eg {
-
-	static b2BodyType RigidBody2DTypeToBox2DType(RigidBody2DComponent::BodyType type)
-	{
-		switch (type)
-		{
-		case RigidBody2DComponent::BodyType::Static:    return b2_staticBody;
-		case RigidBody2DComponent::BodyType::Dynamic:   return b2_dynamicBody;
-		case RigidBody2DComponent::BodyType::Kinematic: return b2_kinematicBody;
-		}
-
-		EG_CORE_ASSERT(false, "Unknown RigidBody2DComponent::BodyType!");
-		return b2_staticBody;
-	}
 
 	Scene::Scene()
 	{
@@ -116,137 +105,110 @@ namespace eg {
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
+
+		m_EntityMap[uuid] = (entt::entity)entity;
+
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		m_EntityMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 	}
 
 	void Scene::OnRuntimeStart()
 	{
-		m_PhysicsWorld = new b2World({ 0.0f, -9.81f });
-		auto view = m_Registry.view<RigidBody2DComponent>();
-		for (auto entity : view)
+		OnPhysics2DStart();
+		m_IsRunning = true;
+		//Scripting
 		{
-			Entity e{ entity, this };
+			ScriptEngine::OnRuntimeStart(this);
+			//Instantiate all script components
 
-			auto& transform = e.GetComponent<TransformComponent>();
-			auto& rb = e.GetComponent<RigidBody2DComponent>();
-
-			b2BodyDef bodyDef;
-			bodyDef.type = RigidBody2DTypeToBox2DType(rb.Type);
-			bodyDef.position.Set(transform.Translation.x, transform.Translation.y);
-			bodyDef.angle = transform.Rotation.z;
-
-			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
-			body->SetFixedRotation(rb.FixedRotation);
-			rb.RuntimeBody = body;
-
-			if (e.HasComponent<BoxCollider2DComponent>())
+			auto view = m_Registry.view<ScriptComponent>();
+			for(auto entity : view)
 			{
-				auto& bc = e.GetComponent<BoxCollider2DComponent>();
-				b2PolygonShape shape;
-				shape.SetAsBox(bc.Size.x * transform.Scale.x, bc.Size.y * transform.Scale.y, { bc.Offset.x, bc.Offset.y }, 0.0f);
-
-				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &shape;
-				fixtureDef.density = bc.Density;
-				fixtureDef.friction = bc.Friction;
-				fixtureDef.restitution = bc.Restitution;
-				fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
-
-				body->CreateFixture(&fixtureDef);
-			}
-
-			if (e.HasComponent<CircleCollider2DComponent>())
-			{
-				auto& cc = e.GetComponent<CircleCollider2DComponent>();
-				b2CircleShape shape;
-				shape.m_p.Set(cc.Offset.x, cc.Offset.y);
-
-				shape.m_radius = (transform.Scale.x) * cc.Radius;
-				
-				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &shape;
-				fixtureDef.density = cc.Density;
-				fixtureDef.friction = cc.Friction;
-				fixtureDef.restitution = cc.Restitution;
-				fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
-				body->CreateFixture(&fixtureDef);
+				Entity e{ entity, this };
+				ScriptEngine::OnCreateEntity(e);
 			}
 		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
-		delete m_PhysicsWorld;
-		m_PhysicsWorld = nullptr;
+		OnPhysics2DStop();
+		m_IsRunning = false;
+
+		ScriptEngine::OnRuntimeStop();
 	}
+
+	void Scene::OnSimulationStart()
+	{
+		OnPhysics2DStart();
+	}
+
+	void Scene::OnSimulationStop()
+	{
+		OnPhysics2DStop();
+	}
+
+	
+
+	
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
-		Renderer2D::BeginScene(camera);
-
-		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-			}
-		}
-
-		{
-			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
-			}
-		}
-
-		Renderer2D::EndScene();
+		RenderScene(camera);
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
-		// Update scripts
+		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			// Update Native scripts
 			{
-				// TODO: Move to Scene::OnScenePlay
-				if (!nsc.Instance)
+				//C# Entity OnUpdate
+				auto view = m_Registry.view<ScriptComponent>();
+				for (auto entity : view)
 				{
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->m_Entity = Entity{ entity, this };
-					nsc.Instance->OnCreate();
+					Entity e{ entity, this };
+					ScriptEngine::OnUpdateEntity(e, ts);
 				}
 
-				nsc.Instance->OnUpdate(ts);
-			});
-		}
+				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+					{
+						// TODO: Move to Scene::OnScenePlay
+						if (!nsc.Instance)
+						{
+							nsc.Instance = nsc.InstantiateScript();
+							nsc.Instance->m_Entity = Entity{ entity, this };
+							nsc.Instance->OnCreate();
+						}
 
-		// Physics
-		{
-			const int32_t velocityIterations = 6;
-			const int32_t positionIterations = 2;
-			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+						nsc.Instance->OnUpdate(ts);
+					});
+			}
 
-			auto view = m_Registry.view<RigidBody2DComponent>();
+			// Physics
 			{
-				for (auto e : view)
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+
+				auto view = m_Registry.view<RigidBody2DComponent>();
 				{
-					Entity entity{ e, this };
-					auto& rb = entity.GetComponent<RigidBody2DComponent>();
-					auto& transform = entity.GetComponent<TransformComponent>();
-					auto* body = (b2Body*)rb.RuntimeBody;
-					transform.Translation.x = body->GetPosition().x;
-					transform.Translation.y = body->GetPosition().y;
-					transform.Rotation.z = body->GetAngle();
+					for (auto e : view)
+					{
+						Entity entity{ e, this };
+						auto& rb = entity.GetComponent<RigidBody2DComponent>();
+						auto& transform = entity.GetComponent<TransformComponent>();
+						auto* body = (b2Body*)rb.RuntimeBody;
+
+						transform.Translation.x = body->GetPosition().x;
+						transform.Translation.y = body->GetPosition().y;
+						transform.Rotation.z = body->GetAngle();
+					}
 				}
 			}
 		}
@@ -300,8 +262,42 @@ namespace eg {
 
 	}
 
+	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
+	{
+		if (!m_IsPaused || m_StepFrames-- > 0)
+			// Physics
+		{
+			{
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+
+				// Retrieve transform from Box2D
+				auto view = m_Registry.view<RigidBody2DComponent>();
+				for (auto e : view)
+				{
+					Entity entity = { e, this };
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+
+					b2Body* body = (b2Body*)rb2d.RuntimeBody;
+					const auto& position = body->GetPosition();
+					transform.Translation.x = position.x;
+					transform.Translation.y = position.y;
+					transform.Rotation.z = body->GetAngle();
+				}
+			}
+		}
+
+		// Render
+		RenderScene(camera);
+	}
+
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
+		if (m_ViewportHeight == height && m_ViewportWidth == width)
+			return;
+
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
@@ -316,10 +312,61 @@ namespace eg {
 
 	}
 
-	void Scene::DuplicateEntity(Entity entity)
+	void Scene::RenderScene(EditorCamera& camera)
 	{
-		Entity newEntity = CreateEntity(entity.GetName());
+		Renderer2D::BeginScene(camera);
+
+		// Draw sprites
+		{
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+			}
+		}
+
+		// Draw circles
+		{
+			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+			}
+		}
+
+		Renderer2D::EndScene();
+	}
+
+	Entity Scene::DuplicateEntity(Entity entity)
+	{
+		std::string name = entity.GetName();
+		Entity newEntity = CreateEntity(name);
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
+		return newEntity;
+	}
+
+	Entity Scene::FindEntityByName(const std::string_view& name)
+	{
+		auto view = m_Registry.view<TagComponent>();
+		for (auto entity : view)
+		{
+			const auto& tag = view.get<TagComponent>(entity).Tag;
+			if (tag == name)
+				return Entity{ entity, this };
+		}
+		return {};
+	}
+
+	Entity Scene::GetEntityByUUID(UUID uuid)
+	{
+		//TODO: Maybe should assert
+		if(m_EntityMap.find(uuid) != m_EntityMap.end())
+			return Entity{ m_EntityMap[uuid], this };
+		return {};
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()
@@ -332,6 +379,72 @@ namespace eg {
 				return Entity{ entity, this };
 		}
 		return {};
+	}
+
+	void Scene::Step(int frames)
+	{
+		m_StepFrames = frames;
+	}
+
+	void Scene::OnPhysics2DStart()
+	{
+		m_PhysicsWorld = new b2World({ 0.0f, -9.81f });
+		auto view = m_Registry.view<RigidBody2DComponent>();
+		for (auto entity : view)
+		{
+			Entity e{ entity, this };
+
+			auto& transform = e.GetComponent<TransformComponent>();
+			auto& rb = e.GetComponent<RigidBody2DComponent>();
+
+			b2BodyDef bodyDef;
+			bodyDef.type = Utils::RigidBody2DTypeToBox2DBody(rb.Type);
+			bodyDef.position.Set(transform.Translation.x, transform.Translation.y);
+			bodyDef.angle = transform.Rotation.z;
+
+			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
+			body->SetFixedRotation(rb.FixedRotation);
+			rb.RuntimeBody = body;
+
+			if (e.HasComponent<BoxCollider2DComponent>())
+			{
+				auto& bc = e.GetComponent<BoxCollider2DComponent>();
+				b2PolygonShape shape;
+				shape.SetAsBox(bc.Size.x * transform.Scale.x, bc.Size.y * transform.Scale.y, { bc.Offset.x, bc.Offset.y }, 0.0f);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &shape;
+				fixtureDef.density = bc.Density;
+				fixtureDef.friction = bc.Friction;
+				fixtureDef.restitution = bc.Restitution;
+				fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
+
+				body->CreateFixture(&fixtureDef);
+			}
+
+			if (e.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& cc = e.GetComponent<CircleCollider2DComponent>();
+				b2CircleShape shape;
+				shape.m_p.Set(cc.Offset.x, cc.Offset.y);
+
+				shape.m_radius = (transform.Scale.x) * cc.Radius;
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &shape;
+				fixtureDef.density = cc.Density;
+				fixtureDef.friction = cc.Friction;
+				fixtureDef.restitution = cc.Restitution;
+				fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
+				body->CreateFixture(&fixtureDef);
+			}
+		}
+	}
+
+	void Scene::OnPhysics2DStop()
+	{
+		delete m_PhysicsWorld;
+		m_PhysicsWorld = nullptr;
 	}
 
 	template<typename T>
@@ -360,6 +473,11 @@ namespace eg {
 	{
 		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
 			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
+	{
 	}
 
 	template<>
