@@ -40,9 +40,9 @@ namespace eg
 		class ChangeRawValueCommand : public Command
 		{
 		public:
-			ChangeRawValueCommand(T* value_ptr, T previousValue, const char* label)
+			ChangeRawValueCommand(T* value_ptr, T previousValue, const std::string label)
 				: m_ValuePtr(value_ptr), m_PreviousValue(previousValue), m_Label(label)
-			{ 
+			{
 				Commands::AddCommand(this);
 			}
 
@@ -54,12 +54,12 @@ namespace eg
 				SetCurrentCommand(true);
 			}
 
-			const char* GetLabel() const { return m_Label; }
+			const std::string GetLabel() const { return m_Label; }
 
 		protected:
 			T* m_ValuePtr;
 			T m_PreviousValue;
-			const char* m_Label;
+			const std::string m_Label;
 		};
 
 		class ComponentCommand : public Command
@@ -183,7 +183,7 @@ namespace eg
 		static int currentCommandIndex;
 
 		template<typename T>
-		static Command* ExecuteRawValueCommand(T* value_ptr, T previousValue, const char* label)
+		static Command* ExecuteRawValueCommand(T* value_ptr, T previousValue, const std::string label)
 		{
 			Command* command = nullptr;
 			ChangeRawValueCommand<T>* previousCommand = dynamic_cast<ChangeRawValueCommand<T>*>(GetCurrentCommand(1));
