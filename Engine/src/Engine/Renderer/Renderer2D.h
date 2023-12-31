@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Engine/Renderer/EditorCamera.h"
 #include "Engine/Scene/Components.h"
+#include "Engine/Renderer/Font.h"
 
 namespace eg {
 	class Renderer2D {
@@ -44,6 +45,8 @@ namespace eg {
 
 		static void DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID = -1);
 		static void DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID = -1);
+
+		static void DrawString(const std::string& text, Ref<Font> font, glm::mat4& transform, const glm::vec4& color, int entityID = -1);
 
 		static float GetLineThickness();
 		static void SetLineThickness(float thickness);

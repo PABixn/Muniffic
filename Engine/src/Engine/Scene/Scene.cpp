@@ -338,6 +338,17 @@ namespace eg {
 			}
 		}
 
+		glm::mat4 transform = glm::mat4(1.0f);
+		Renderer2D::DrawString(R"(
+			Hello World!
+			Hello World!
+			Hello World!
+			Hello World!
+			Hello World!
+			Hello World!
+	)"
+			, Font::GetDefaultFont(), transform, glm::vec4(1.0f));
+
 		Renderer2D::EndScene();
 	}
 

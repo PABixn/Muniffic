@@ -12,13 +12,16 @@
 #include "Engine/Scene/Components.h"
 #include "Engine/Math/Math.h"
 #include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/Renderer/Font.h"
+
 
 namespace eg
 {
-
+	static Ref<Font> s_Font;
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
+		s_Font = Font::GetDefaultFont();
 	}
 
 	void EditorLayer::OnAttach()
@@ -250,6 +253,7 @@ namespace eg
 
 		ImGui::Begin("Settings");
 		ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders);
+		ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});

@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <Imgui/imgui_internal.h>
 #include <cstring>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
