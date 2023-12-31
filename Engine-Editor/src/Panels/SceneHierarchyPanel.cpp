@@ -32,7 +32,6 @@ namespace eg {
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
-		Commands::Command* command = nullptr;
 		ImGui::Begin("Scene Hierarchy");
 		if (m_Context) {
 			m_Context->m_Registry.each([&](auto entityID)
@@ -49,8 +48,7 @@ namespace eg {
 			{
 				if (ImGui::MenuItem("Create Empty Entity"))
 				{
-					command = new Commands::CreateEntityCommand(m_Context, m_SelectionContext);
-					command->Execute({ "Empty Entity" });
+					Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Entity", {}, m_Context, m_SelectionContext));
 				}
 				ImGui::EndPopup();
 			}	
@@ -68,7 +66,6 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
-		Commands::Command* command = nullptr;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -79,7 +76,7 @@ namespace eg {
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
-				command = new Commands::DeleteEntityCommand(m_Context, m_SelectionContext);
+				Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Context, m_SelectionContext));
 			ImGui::EndPopup();
 		}
 
@@ -90,11 +87,6 @@ namespace eg {
 			if (opened)
 				ImGui::TreePop();
 			ImGui::TreePop();
-		}
-
-		if (command != nullptr)
-		{
-			command->Execute({ "", entity });
 		}
 	}
 
@@ -161,9 +153,8 @@ namespace eg {
 	}
 
 	template<typename T, typename UIFunction>
-	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)
+	void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context)
 	{
-		Commands::Command* command = nullptr;
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 		if (entity.HasComponent<T>())
 		{
@@ -183,7 +174,7 @@ namespace eg {
 			if (ImGui::BeginPopup("ComponentSettings"))
 			{
 				if (ImGui::MenuItem("Remove Component"))
-					command = new Commands::RemoveComponentCommand<T>(entity);
+					Commands::ExecuteCommand<Commands::RemoveComponentCommand<T>>(Commands::CommandArgs("", entity, context, entity));
 				ImGui::EndPopup();
 			}
 			if (open)
@@ -191,9 +182,6 @@ namespace eg {
 				uiFunction(component);
 				ImGui::TreePop();
 			}
-			if (command != nullptr)
-				command->Execute({ "", entity });
-			//ImGui::PopStyleVar();
 		}
 	}
 
@@ -203,8 +191,9 @@ namespace eg {
 		{
 			if (ImGui::MenuItem(entryName.c_str()))
 			{
-				Commands::Command* command = new Commands::AddComponentCommand<T>(m_SelectionContext);
-				command->Execute({ "", m_SelectionContext});
+				Commands::ExecuteCommand<Commands::AddComponentCommand<T>>(Commands::CommandArgs("", m_SelectionContext, m_Context, m_SelectionContext));
+				//Commands::Command* command = new Commands::AddComponentCommand<T>(m_Context, m_SelectionContext);
+				//command->Execute({ "", m_SelectionContext});
 				ImGui::CloseCurrentPopup();
 			}
 		}
@@ -253,7 +242,7 @@ namespace eg {
 				DrawVec3Control("Rotation", rotation);
 				component.Rotation = glm::radians(rotation);
 				DrawVec3Control("Scale", component.Scale, 1.0f);
-			});
+			}, m_Context);
 
 		DrawComponent<CameraComponent>("Camera", entity, [](auto& component) {
 			auto& camera = component.Camera;
@@ -311,7 +300,7 @@ namespace eg {
 
 				ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
 			}
-			});
+			}, m_Context);
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
@@ -583,7 +572,7 @@ namespace eg {
 				if(!scriptExists)
 					ImGui::PopStyleColor();
 
-			});
+			}, m_Context);
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
 			{
@@ -608,14 +597,14 @@ namespace eg {
 
 				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);	
 				
-			});
+			}, m_Context);
 
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
 			{
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 				ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
 				ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
-			});
+			}, m_Context);
 
 		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [](auto& component) {
 			const char* bodyTypeString[] = { "Static", "Dynamic", "Kinematic"};
@@ -639,7 +628,7 @@ namespace eg {
 			}
 
 			ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
-		});
+		}, m_Context);
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component) {
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.1f);
@@ -648,7 +637,7 @@ namespace eg {
 			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
-		});
+		}, m_Context);
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component) {
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.1f);
@@ -657,7 +646,7 @@ namespace eg {
 			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
-			});
+			}, m_Context);
 	}
 
 

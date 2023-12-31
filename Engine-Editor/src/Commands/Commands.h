@@ -11,8 +11,15 @@ namespace eg
 		struct CommandArgs
 		{
 		public:
+			CommandArgs(const std::string& name, Entity entity,
+			Ref<Scene>& context,
+			Entity& selectionContext)
+				: name(name), entity(entity), m_Context(context), selectionContext(selectionContext) {  }
+
 			const std::string& name;
 			Entity entity;
+			Ref<Scene>& m_Context;
+			Entity& selectionContext;
 		};
 
 		struct SavedEntity
@@ -25,7 +32,6 @@ namespace eg
 		class Command
 		{
 		public:
-			virtual ~Command() = 0 {};
 			virtual void Undo() = 0;
 			virtual void Execute(CommandArgs) = 0;
 		};
@@ -33,13 +39,9 @@ namespace eg
 		class ComponentCommand : public Command
 		{
 		public:
-			ComponentCommand(Entity& selectionContext)
+			ComponentCommand(Ref<Scene>& m_Context, Entity& selectionContext)
 			: m_SelectionContext(selectionContext) {  }
 
-			~ComponentCommand() override
-			{
-				delete& m_SelectionContext;
-			}
 		protected:
 			Entity m_SelectionContext;
 		};
@@ -48,8 +50,8 @@ namespace eg
 		class AddComponentCommand : public ComponentCommand
 		{
 		public:
-			AddComponentCommand(Entity& selectionContext)
-				: ComponentCommand(selectionContext)
+			AddComponentCommand(Ref<Scene>& m_Context, Entity& selectionContext)
+				: ComponentCommand(m_Context, selectionContext)
 			{
 				Commands::AddCommand(this);
 			}
@@ -74,8 +76,8 @@ namespace eg
 		class RemoveComponentCommand : public ComponentCommand
 		{
 		public:
-			RemoveComponentCommand(Entity& selectionContext)
-				: ComponentCommand(selectionContext)
+			RemoveComponentCommand(Ref<Scene>& m_Context, Entity& selectionContext)
+				: ComponentCommand(m_Context, selectionContext)
 			{
 				Commands::AddCommand(this);
 			}
@@ -108,11 +110,6 @@ namespace eg
 
 			virtual void Undo() = 0;
 
-			~EntityCommand() override
-			{
-				delete& m_Context;
-			}
-
 		protected:
 			Ref<Scene>& m_Context;
 			Entity& m_SelectionContext;
@@ -130,11 +127,6 @@ namespace eg
 			void Execute(CommandArgs arg) override;
 
 			void Undo() override;
-
-			~CreateEntityCommand()
-			{
-				delete& m_CreatedEntity;
-			}
 
 		protected:
 			UUID m_CreatedEntity;	
@@ -154,12 +146,6 @@ namespace eg
 
 			void Undo() override;
 
-			~DeleteEntityCommand()
-			{
-				delete& m_DeletedEntity;
-				delete& m_SelectionContext;
-			}
-
 		protected:
 			SavedEntity m_DeletedEntity;
 		};
@@ -170,6 +156,14 @@ namespace eg
 		static Command* GetCurrentCommand();
 		static Command* currentCommand;
 		static int currentCommandIndex;
+
+		template<typename T>
+		static Command* ExecuteCommand(CommandArgs args)
+		{
+			Command* command = new T(args.m_Context, args.selectionContext);
+			command->Execute(args);
+			return command;
+		}
 
 	private:
 		static std::vector<Commands::Command*> commandHistory;
