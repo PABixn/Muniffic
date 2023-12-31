@@ -445,6 +445,11 @@ namespace eg
 		}
 	}
 
+	MonoString* ScriptEngine::CreateString(const char* string)
+	{
+		return mono_string_new(s_Data->AppDomain, string);
+	}
+
 	void ScriptInstance::InvokeOnCreate()
 	{
 		if (m_OnCreateMethod)
