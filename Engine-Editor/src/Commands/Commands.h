@@ -36,6 +36,32 @@ namespace eg
 			virtual void Execute(CommandArgs) = 0;
 		};
 
+		template<typename T>
+		class ChangeRawValueCommand : public Command
+		{
+		public:
+			ChangeRawValueCommand(T* value_ptr, T previousValue, const char* label)
+				: m_ValuePtr(value_ptr), m_PreviousValue(previousValue), m_Label(label)
+			{ 
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs args) override {};
+
+			void Undo() override
+			{
+				*m_ValuePtr = m_PreviousValue;
+				SetCurrentCommand(true);
+			}
+
+			const char* GetLabel() const { return m_Label; }
+
+		protected:
+			T* m_ValuePtr;
+			T m_PreviousValue;
+			const char* m_Label;
+		};
+
 		class ComponentCommand : public Command
 		{
 		public:
@@ -153,9 +179,19 @@ namespace eg
 		static void SetCurrentCommand(bool isUndo);
 		static void AddCommand(Command* command);
 		static bool CanRevert(bool isUndo);
-		static Command* GetCurrentCommand();
-		static Command* currentCommand;
+		static Command* GetCurrentCommand(int offset = 0);
 		static int currentCommandIndex;
+
+		template<typename T>
+		static Command* ExecuteRawValueCommand(T* value_ptr, T previousValue, const char* label)
+		{
+			Command* command = nullptr;
+			ChangeRawValueCommand<T>* previousCommand = dynamic_cast<ChangeRawValueCommand<T>*>(GetCurrentCommand(1));
+			if (previousCommand == nullptr || previousCommand->GetLabel() != label)
+				Command* command = new ChangeRawValueCommand<T>(value_ptr, previousValue, label);
+
+			return command;
+		}
 
 		template<typename T>
 		static Command* ExecuteCommand(CommandArgs args)

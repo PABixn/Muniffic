@@ -2,7 +2,6 @@
 
 namespace eg
 {
-	Commands::Command* Commands::currentCommand;
 	std::vector<Commands::Command*> Commands::commandHistory;
 	int Commands::currentCommandIndex;
 
@@ -50,19 +49,20 @@ namespace eg
 
 		commandHistory.push_back(command);
 		currentCommandIndex = commandHistory.size() - 1;
-		currentCommand = commandHistory.at(commandHistory.size() - 1);
 	}
 
-	Commands::Command* Commands::GetCurrentCommand()
+	Commands::Command* Commands::GetCurrentCommand(int offset)
 	{
-		return currentCommand;
+		offset = offset < 0 ? 0 : offset;
+		if (currentCommandIndex - offset >= 0)
+			return commandHistory[currentCommandIndex];
+		else
+			return nullptr;
 	}
 
 	void Commands::SetCurrentCommand(bool isUndo)
 	{
 		currentCommandIndex += isUndo ? -1 : 1;
-		if(currentCommandIndex >= 0)
-			currentCommand = commandHistory.at(currentCommandIndex);
 	}
 
 	bool Commands::CanRevert(bool isUndo)

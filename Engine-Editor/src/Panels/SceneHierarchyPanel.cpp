@@ -103,7 +103,7 @@ namespace eg {
 
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
-
+		
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
 
@@ -116,7 +116,8 @@ namespace eg {
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+		if (ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f"))
+			Commands::ExecuteRawValueCommand<float>(&values.x, values.x, "##X");
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
@@ -153,7 +154,8 @@ namespace eg {
 	}
 
 	template<typename T, typename UIFunction>
-	void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context)
+	//Why static?
+	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context)
 	{
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 		if (entity.HasComponent<T>())
@@ -192,8 +194,6 @@ namespace eg {
 			if (ImGui::MenuItem(entryName.c_str()))
 			{
 				Commands::ExecuteCommand<Commands::AddComponentCommand<T>>(Commands::CommandArgs("", m_SelectionContext, m_Context, m_SelectionContext));
-				//Commands::Command* command = new Commands::AddComponentCommand<T>(m_Context, m_SelectionContext);
-				//command->Execute({ "", m_SelectionContext});
 				ImGui::CloseCurrentPopup();
 			}
 		}
