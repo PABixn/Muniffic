@@ -37,6 +37,31 @@ namespace eg
 		};
 
 		template<typename T>
+		class ChangeValueCommand : public Command
+		{
+		public:
+			ChangeValueCommand(std::function<void(T)> function, T value, T previousValue, const std::string label)
+				: m_PreviousValue(previousValue), m_Label(label), m_Function(function)
+			{
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override
+			{
+				m_Function(m_PreviousValue);
+				SetCurrentCommand(true);
+			};
+
+			const std::string GetLabel() const { return m_Label; }
+
+		protected:
+			T m_PreviousValue;
+			const std::string m_Label;
+			std::function<void(T)> m_Function;
+		};
+
+		template<typename T>
 		class ChangeRawValueCommand : public Command
 		{
 		public:
@@ -183,11 +208,24 @@ namespace eg
 		static int currentCommandIndex;
 
 		template<typename T>
-		static Command* ExecuteRawValueCommand(T* value_ptr, T previousValue, const std::string label)
+		static Command* ExecuteValueCommand(std::function<void(T)> function, T value, T previousValue, const std::string label, bool bypass = false)
+		{
+			function(value);
+
+			Command* command = nullptr;
+			ChangeValueCommand<T>* previousCommand = dynamic_cast<ChangeValueCommand<T>*>(GetCurrentCommand(1));
+			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
+				Command* command = new ChangeValueCommand<T>(function, value, previousValue, label);
+
+			return command;
+		}
+
+		template<typename T>
+		static Command* ExecuteRawValueCommand(T* value_ptr, T previousValue, const std::string label, bool bypass = false)
 		{
 			Command* command = nullptr;
 			ChangeRawValueCommand<T>* previousCommand = dynamic_cast<ChangeRawValueCommand<T>*>(GetCurrentCommand(1));
-			if (previousCommand == nullptr || previousCommand->GetLabel() != label)
+			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
 				Command* command = new ChangeRawValueCommand<T>(value_ptr, previousValue, label);
 
 			return command;

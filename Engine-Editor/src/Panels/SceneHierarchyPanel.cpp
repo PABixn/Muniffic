@@ -113,8 +113,11 @@ namespace eg {
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f,0.2f,0.2f,1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f,0.1f,0.15f,1.0f });
 		ImGui::PushFont(boldFont);
-		if(ImGui::Button("X", buttonSize))
+		if (ImGui::Button("X", buttonSize))
+		{
 			values.x = resetValue;
+			Commands::ExecuteRawValueCommand<float>(&values.x, x, label + std::string("##X"), true);
+		}
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
@@ -129,7 +132,10 @@ namespace eg {
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f,0.7f,0.2f,1.0f });
 		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Y", buttonSize))
+		{
 			values.y = resetValue;
+			Commands::ExecuteRawValueCommand<float>(&values.y, y, label + std::string("##Y"), true);
+		}
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
@@ -143,7 +149,10 @@ namespace eg {
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f,0.15f,0.8f,1.0f });
 		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Z", buttonSize))
+		{
 			values.z = resetValue;
+			Commands::ExecuteRawValueCommand<float>(&values.z, z, label + std::string("##Z"), true);
+		}
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
@@ -252,7 +261,8 @@ namespace eg {
 		DrawComponent<CameraComponent>("Camera", entity, [](auto& component) {
 			auto& camera = component.Camera;
 
-			ImGui::Checkbox("Primary", &component.Primary);
+			if(ImGui::Checkbox("Primary", &component.Primary))
+				Commands::ExecuteRawValueCommand<bool>(&component.Primary, !component.Primary, "CameraComponent-Primary");
 
 			const char* projectionTypeString[] = { "Perspective","Orthographic" };
 			const char* currentProjectionTypeString = projectionTypeString[(int)camera.GetProjectionType()];
@@ -264,7 +274,10 @@ namespace eg {
 					if (ImGui::Selectable(projectionTypeString[i], isSelected))
 					{
 						currentProjectionTypeString = projectionTypeString[i];
-						camera.SetProjectionType((SceneCamera::ProjectionType)i);
+						Commands::ExecuteValueCommand<SceneCamera::ProjectionType>([&camera](SceneCamera::ProjectionType projectionType)
+							{
+								camera.SetProjectionType(projectionType);
+							}, (SceneCamera::ProjectionType)i, camera.GetProjectionType(), "CameraComponent-ProjectionType");
 					}
 
 					if (isSelected)
@@ -278,32 +291,52 @@ namespace eg {
 			{
 				float perspectiveVerticalFov = glm::degrees(camera.GetPerspectiveVerticalFOV());
 				if (ImGui::DragFloat("Vertical FOV", &perspectiveVerticalFov))
-					camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
+					//camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
+					Commands::ExecuteValueCommand<float>([&camera](float verticalFov)
+						{
+							camera.SetPerspectiveVerticalFOV(glm::radians(verticalFov));
+						}, perspectiveVerticalFov, glm::degrees(camera.GetPerspectiveVerticalFOV()), "CameraComponent-Vertical FOV");
 
 				float perspectiveNear = camera.GetPerspectiveNearClip();
 				if (ImGui::DragFloat("Near", &perspectiveNear))
-					camera.SetPerspectiveNearClip(perspectiveNear);
+					Commands::ExecuteValueCommand<float>([&camera](float nearClip)
+						{
+							camera.SetPerspectiveNearClip(nearClip);
+						}, perspectiveNear, camera.GetPerspectiveNearClip(), "CameraComponent-Near");
 
 				float perspectiveFar = camera.GetPerspectiveFarClip();
 				if (ImGui::DragFloat("Far", &perspectiveFar))
-					camera.SetPerspectiveFarClip(perspectiveFar);
+					Commands::ExecuteValueCommand<float>([&camera](float farClip)
+						{
+							camera.SetPerspectiveFarClip(farClip);
+						}, perspectiveFar, camera.GetPerspectiveFarClip(), "CameraComponent-Far");
 			}
 
 			if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
 			{
 				float size = camera.GetOrthographicSize();
 				if (ImGui::DragFloat("Size", &size))
-					camera.SetOrthographicSize(size);
+					Commands::ExecuteValueCommand<float>([&camera](float size)
+						{
+							camera.SetOrthographicSize(size);
+						}, size, camera.GetOrthographicSize(), "CameraComponent-Size");
 
 				float nearClip = camera.GetOrthographicNearClip();
 				if (ImGui::DragFloat("Near", &nearClip))
-					camera.SetOrthographicNearClip(nearClip);
+					Commands::ExecuteValueCommand<float>([&camera](float nearClip)
+						{
+							camera.SetOrthographicNearClip(nearClip);
+						}, nearClip, camera.GetOrthographicNearClip(), "CameraComponent-Near");
 
 				float farClip = camera.GetOrthographicFarClip();
 				if (ImGui::DragFloat("Far", &farClip))
-					camera.SetOrthographicFarClip(farClip);
+					Commands::ExecuteValueCommand<float>([&camera](float farClip)
+						{
+							camera.SetOrthographicFarClip(farClip);
+						}, farClip, camera.GetOrthographicFarClip(), "CameraComponent-Far");
 
-				ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
+				if(ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
+					Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
 			}
 			}, m_Context);
 
