@@ -226,7 +226,9 @@ namespace eg {
 		ImGui::End();
 
 		ImGui::Begin("Settings");
-		ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders);
+
+		if(ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
+			Commands::ExecuteRawValueCommand(&m_ShowPhysicsColliders, !m_ShowPhysicsColliders, "Show Physics Colliders");
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });

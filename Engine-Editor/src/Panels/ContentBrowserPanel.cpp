@@ -1,6 +1,7 @@
 #include "egpch.h"
 #include "ContentBrowserPanel.h"
 #include <Imgui/imgui.h>
+#include "../Commands/Commands.h"
 
 namespace eg {
 
@@ -64,8 +65,13 @@ namespace eg {
 		}
 		ImGui::Columns(1);
 
-		ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-		ImGui::SliderFloat("Padding", &padding, 0, 32);
+		float size = thumbnailSize, offset = padding;
+
+		if(ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512))
+			Commands::ExecuteRawValueCommand(&thumbnailSize, size, std::string("ContentBrowserPanel-Thumbnail Size"));
+			
+		if(ImGui::SliderFloat("Padding", &padding, 0, 32))
+			Commands::ExecuteRawValueCommand(&padding, offset, std::string("ContentBrowserPanel-Padding"));
 
 		ImGui::End();
 	}

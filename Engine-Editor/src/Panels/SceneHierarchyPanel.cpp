@@ -168,7 +168,6 @@ namespace eg {
 	}
 
 	template<typename T, typename UIFunction>
-	//Why static?
 	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context)
 	{
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
@@ -187,12 +186,13 @@ namespace eg {
 				ImGui::OpenPopup("ComponentSettings");
 			}
 
-			if (ImGui::BeginPopup("ComponentSettings"))
-			{
-				if (ImGui::MenuItem("Remove Component"))
-					Commands::ExecuteCommand<Commands::RemoveComponentCommand<T>>(Commands::CommandArgs("", entity, context, entity));
-				ImGui::EndPopup();
-			}
+			if (name != std::string("Transform"))
+				if (ImGui::BeginPopup("ComponentSettings"))
+				{
+					if (ImGui::MenuItem("Remove Component"))
+						Commands::ExecuteCommand<Commands::RemoveComponentCommand<T>>(Commands::CommandArgs("", entity, context, entity));
+					ImGui::EndPopup();
+				}
 			if (open)
 			{
 				uiFunction(component);
@@ -614,7 +614,11 @@ namespace eg {
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
 			{
-				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				glm::vec4 color = component.Color;
+
+				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
+
 				
 				ImGui::Button("Texture", {100.0f, 0.0f});
 
@@ -642,7 +646,10 @@ namespace eg {
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
 			{
 				float thickness = component.Thickness, fade = component.Fade;
-				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				glm::vec4 color = component.Color;
+				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand(&component.Color, color, "CircleRendererComponent-Color");
+
 				if(ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
 					Commands::ExecuteRawValueCommand(&component.Thickness, thickness, "CircleRendererComponent-Thickness");
 				if(ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))

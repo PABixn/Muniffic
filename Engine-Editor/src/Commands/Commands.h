@@ -61,6 +61,7 @@ namespace eg
 			std::function<void(T)> m_Function;
 		};
 
+
 		template<typename T>
 		class ChangeRawValueCommand : public Command
 		{
