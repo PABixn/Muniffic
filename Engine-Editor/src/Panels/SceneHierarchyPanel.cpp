@@ -277,7 +277,7 @@ namespace eg {
 						Commands::ExecuteValueCommand<SceneCamera::ProjectionType>([&camera](SceneCamera::ProjectionType projectionType)
 							{
 								camera.SetProjectionType(projectionType);
-							}, (SceneCamera::ProjectionType)i, camera.GetProjectionType(), "CameraComponent-ProjectionType");
+							}, (SceneCamera::ProjectionType)i, camera.GetProjectionType(), "CameraComponent-ProjectionType", true);
 					}
 
 					if (isSelected)
@@ -630,7 +630,11 @@ namespace eg {
 						std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
 						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 						if (texture->IsLoaded())
+						{
+							Ref<Texture2D> oldTexture = component.Texture;
 							component.Texture = texture;
+							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&component.Texture, oldTexture, "SpriteRendererComponent-Texture", true);
+						}
 						else
 							EG_WARN("Could not load texture {0}", texturePath.filename().string());
 					}
@@ -667,7 +671,9 @@ namespace eg {
 					if (ImGui::Selectable(bodyTypeString[i], isSelected))
 					{
 						currentBodyTypeString = bodyTypeString[i];
+						RigidBody2DComponent::BodyType type = component.Type;
 						component.Type = (RigidBody2DComponent::BodyType)i;
+						Commands::ExecuteRawValueCommand(&component.Type, type, "RigidBody2DComponent-Body Type", true);
 					}
 
 					if (isSelected)
@@ -677,7 +683,8 @@ namespace eg {
 				ImGui::EndCombo();
 			}
 
-			ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
+			if(ImGui::Checkbox("Fixed Rotation", &component.FixedRotation))
+				Commands::ExecuteRawValueCommand<bool>(&component.FixedRotation, !component.FixedRotation, "RigidBody2DComponent-Fixed Rotation");
 		}, m_Context);
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component) {
