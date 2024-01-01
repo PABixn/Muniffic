@@ -96,6 +96,7 @@ namespace eg
 
 		protected:
 			Entity m_SelectionContext;
+
 		};
 
 		template<typename T>
@@ -138,6 +139,7 @@ namespace eg
 			{
 				if (m_SelectionContext.HasComponent<T>())
 				{
+					m_Component = m_SelectionContext.GetComponent<T>();
 					m_SelectionContext.RemoveComponent<T>();
 				}
 			}
@@ -147,9 +149,13 @@ namespace eg
 				if (!m_SelectionContext.HasComponent<T>())
 				{
 					m_SelectionContext.AddComponent<T>();
+					Commands::SetComponent(m_SelectionContext, &m_Component);
 					SetCurrentCommand(true);
 				}
 			}
+
+		protected:
+			T m_Component;
 		};
 
 		class EntityCommand : public Command
@@ -207,6 +213,8 @@ namespace eg
 		static bool CanRevert(bool isUndo);
 		static Command* GetCurrentCommand(int offset = 0);
 		static int currentCommandIndex;
+		template<typename T>
+		static void SetComponent(Entity& entity, T* component);
 
 		template<typename T>
 		static Command* ExecuteValueCommand(std::function<void(T)> function, T value, T previousValue, const std::string label, bool bypass = false)
