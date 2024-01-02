@@ -21,7 +21,9 @@ namespace eg {
 		if (m_CurrentDirectory != std::filesystem::path(s_AssetPath)) {
 			if (ImGui::Button("<-"))
 			{
+				std::filesystem::path oldPath = m_CurrentDirectory;
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
+				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
 		}
 
@@ -55,7 +57,11 @@ namespace eg {
 			ImGui::PopStyleColor();
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 				if (directoryEntry.is_directory())
+				{
+					std::filesystem::path oldPath = m_CurrentDirectory;
 					m_CurrentDirectory /= path.filename();
+					Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
+				}
 			}
 			ImGui::TextWrapped(name.c_str());
 
