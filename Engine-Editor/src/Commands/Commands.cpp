@@ -30,13 +30,15 @@ namespace eg
 			if (m_SelectionContext == arg.entity)
 				m_SelectionContext = {};
 			m_DeletedEntity = { arg.entity.GetName(), arg.entity.GetUUID() };
+			m_EntitySave = SaveEntity(arg.entity);
 			m_Context->DestroyEntity(arg.entity);
 		}
 	}
 
 	void Commands::DeleteEntityCommand::Undo()
 	{
-		m_Context->CreateEntityWithID(m_DeletedEntity.uuid, m_DeletedEntity.name);
+		Entity e = m_Context->CreateEntityWithID(m_DeletedEntity.uuid, m_DeletedEntity.name);
+		RestoreEntity(e, m_EntitySave);
 		SetCurrentCommand(true);
 	}
 
@@ -70,15 +72,48 @@ namespace eg
 		return isUndo ? currentCommandIndex >= 0 : currentCommandIndex < commandHistory.size() - 1;
 	}
 
+	Commands::EntitySave Commands::SaveEntity(Entity& entity)
+	{
+		EntitySave entitySave;
+
+		if (entity.HasComponent<TagComponent>())
+			entitySave.SaveComponent<TagComponent>(entity.GetComponent<TagComponent>());
+		if (entity.HasComponent<TransformComponent>())
+			entitySave.SaveComponent<TransformComponent>(entity.GetComponent<TransformComponent>());
+		if (entity.HasComponent<SpriteRendererComponent>())
+			entitySave.SaveComponent<SpriteRendererComponent>(entity.GetComponent<SpriteRendererComponent>());
+		if (entity.HasComponent<CameraComponent>())
+			entitySave.SaveComponent<CameraComponent>(entity.GetComponent<CameraComponent>());
+		if (entity.HasComponent<ScriptComponent>())
+			entitySave.SaveComponent<ScriptComponent>(entity.GetComponent<ScriptComponent>());
+		if (entity.HasComponent<CircleRendererComponent>())
+			entitySave.SaveComponent<CircleRendererComponent>(entity.GetComponent<CircleRendererComponent>());
+		if (entity.HasComponent<BoxCollider2DComponent>())
+			entitySave.SaveComponent<BoxCollider2DComponent>(entity.GetComponent<BoxCollider2DComponent>());
+		if (entity.HasComponent<CircleCollider2DComponent>())
+			entitySave.SaveComponent<CircleCollider2DComponent>(entity.GetComponent<CircleCollider2DComponent>());
+		if (entity.HasComponent<RigidBody2DComponent>())
+			entitySave.SaveComponent<RigidBody2DComponent>(entity.GetComponent<RigidBody2DComponent>());
+
+		return entitySave;
+	}
+
+
 	template<>
 	void Commands::SetComponent<TagComponent>(Entity& entity, TagComponent* component)
 	{
+		if (!entity.HasComponent<TagComponent>())
+			entity.AddComponent<TagComponent>();
+
 		entity.GetComponent<TagComponent>().Tag = component->Tag;
 	}
 
 	template<>
 	void Commands::SetComponent<TransformComponent>(Entity& entity, TransformComponent* component)
 	{
+		if (!entity.HasComponent<TransformComponent>())
+			entity.AddComponent<TransformComponent>();
+
 		entity.GetComponent<TransformComponent>().Translation = component->Translation;
 		entity.GetComponent<TransformComponent>().Rotation = component->Rotation;
 		entity.GetComponent<TransformComponent>().Scale = component->Scale;
@@ -87,6 +122,9 @@ namespace eg
 	template<>
 	void Commands::SetComponent<SpriteRendererComponent>(Entity& entity, SpriteRendererComponent* component)
 	{
+		if (!entity.HasComponent<SpriteRendererComponent>())
+			entity.AddComponent<SpriteRendererComponent>();
+
 		entity.GetComponent<SpriteRendererComponent>().Color = component->Color;
 		entity.GetComponent<SpriteRendererComponent>().Texture = component->Texture;
 		entity.GetComponent<SpriteRendererComponent>().TilingFactor = component->TilingFactor;
@@ -95,6 +133,9 @@ namespace eg
 	template<>
 	void Commands::SetComponent<CameraComponent>(Entity& entity, CameraComponent* component)
 	{
+		if (!entity.HasComponent<CameraComponent>())
+			entity.AddComponent<CameraComponent>();
+
 		entity.GetComponent<CameraComponent>().Primary = component->Primary;
 		entity.GetComponent<CameraComponent>().FixedAspectRatio = component->FixedAspectRatio;
 		entity.GetComponent<CameraComponent>().Camera.SetProjectionType(component->Camera.GetProjectionType());
@@ -105,12 +146,18 @@ namespace eg
 	template<>
 	void Commands::SetComponent<ScriptComponent>(Entity& entity, ScriptComponent* component)
 	{
+		if (!entity.HasComponent<ScriptComponent>())
+			entity.AddComponent<ScriptComponent>();
+
 		entity.GetComponent<ScriptComponent>().Name = component->Name;
 	}
 
 	template<>
 	void Commands::SetComponent<CircleRendererComponent>(Entity& entity, CircleRendererComponent* component)
 	{
+		if (!entity.HasComponent<CircleRendererComponent>())
+			entity.AddComponent<CircleRendererComponent>();
+
 		entity.GetComponent<CircleRendererComponent>().Color = component->Color;
 		entity.GetComponent<CircleRendererComponent>().Fade = component->Fade;
 		entity.GetComponent<CircleRendererComponent>().Thickness = component->Thickness;
@@ -119,6 +166,9 @@ namespace eg
 	template<>
 	void Commands::SetComponent<BoxCollider2DComponent>(Entity& entity, BoxCollider2DComponent* component)
 	{
+		if (!entity.HasComponent<BoxCollider2DComponent>())
+			entity.AddComponent<BoxCollider2DComponent>();
+
 		entity.GetComponent<BoxCollider2DComponent>().Offset = component->Offset;
 		entity.GetComponent<BoxCollider2DComponent>().Size = component->Size;
 		entity.GetComponent<BoxCollider2DComponent>().Density = component->Density;
@@ -130,6 +180,9 @@ namespace eg
 	template<>
 	void Commands::SetComponent<CircleCollider2DComponent>(Entity& entity, CircleCollider2DComponent* component)
 	{
+		if (!entity.HasComponent<CircleCollider2DComponent>())
+			entity.AddComponent<CircleCollider2DComponent>();
+
 		entity.GetComponent<CircleCollider2DComponent>().Offset = component->Offset;
 		entity.GetComponent<CircleCollider2DComponent>().Radius = component->Radius;
 		entity.GetComponent<CircleCollider2DComponent>().Density = component->Density;
@@ -141,8 +194,24 @@ namespace eg
 	template<>
 	void Commands::SetComponent<RigidBody2DComponent>(Entity& entity, RigidBody2DComponent* component)
 	{
+		if (!entity.HasComponent<RigidBody2DComponent>())
+			entity.AddComponent<RigidBody2DComponent>();
+
 		entity.GetComponent<RigidBody2DComponent>().Type = component->Type;
 		entity.GetComponent<RigidBody2DComponent>().FixedRotation = component->FixedRotation;
 	}
 
+	template<typename T>
+	void TrySetComponent(Entity& entity, std::optional<T>* component)
+	{
+		if (component->has_value())
+			Commands::SetComponent(entity, &component->value());
+	}
+
+	void Commands::RestoreEntity(Entity& entity, EntitySave& entitySave)
+	{
+		Commands::AllSavedComponents components = entitySave.GetAllComponents();
+
+		std::apply([&entity](auto&&... args) {((TrySetComponent(entity, &args)), ...); }, components);
+	}
 }

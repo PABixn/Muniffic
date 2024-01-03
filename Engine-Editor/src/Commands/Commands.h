@@ -29,6 +29,54 @@ namespace eg
 			UUID uuid;
 		};
 
+		using AllSavedComponents = std::tuple<std::optional<TagComponent>,
+			std::optional<TransformComponent>,
+			std::optional<SpriteRendererComponent>,
+			std::optional<CircleRendererComponent>,
+			std::optional<CameraComponent>,
+			std::optional<ScriptComponent>,
+			std::optional<RigidBody2DComponent>,
+			std::optional<BoxCollider2DComponent>,
+			std::optional<CircleCollider2DComponent>>;
+
+		struct EntitySave
+		{
+			std::tuple<std::optional<TagComponent>,
+			std::optional<TransformComponent>,
+			std::optional<SpriteRendererComponent>,
+			std::optional<CircleRendererComponent>,
+			std::optional<CameraComponent>,
+			std::optional<ScriptComponent>,
+			std::optional<RigidBody2DComponent>,
+			std::optional<BoxCollider2DComponent>,
+			std::optional<CircleCollider2DComponent>> components;
+
+			AllSavedComponents GetAllComponents()
+			{
+				return std::make_tuple(GetComponent<TagComponent>(),
+					GetComponent<TransformComponent>(),
+					GetComponent<SpriteRendererComponent>(),
+					GetComponent<CircleRendererComponent>(),
+					GetComponent<CameraComponent>(),
+					GetComponent<ScriptComponent>(),
+					GetComponent<RigidBody2DComponent>(),
+					GetComponent<BoxCollider2DComponent>(),
+					GetComponent<CircleCollider2DComponent>());
+			}
+
+			template<typename T>
+			void SaveComponent(T& component)
+			{
+				std::get<std::optional<T>>(components) = component;
+			}
+
+			template <typename T>
+			std::optional<T> GetComponent()
+			{
+				return std::get<std::optional<T>>(components);
+			}
+		};
+
 		class Command
 		{
 		public:
@@ -120,8 +168,8 @@ namespace eg
 				if (m_SelectionContext.HasComponent<T>())
 				{
 					m_SelectionContext.RemoveComponent<T>();
-					SetCurrentCommand(true);
 				}
+				SetCurrentCommand(true);
 			}
 		};
 
@@ -150,8 +198,8 @@ namespace eg
 				{
 					m_SelectionContext.AddComponent<T>();
 					Commands::SetComponent(m_SelectionContext, &m_Component);
-					SetCurrentCommand(true);
 				}
+				SetCurrentCommand(true);
 			}
 
 		protected:
@@ -190,7 +238,6 @@ namespace eg
 			UUID m_CreatedEntity;	
 		};
 
-
 		class DeleteEntityCommand : public EntityCommand
 		{
 		public:
@@ -206,6 +253,7 @@ namespace eg
 
 		protected:
 			SavedEntity m_DeletedEntity;
+			EntitySave m_EntitySave;
 		};
 
 		static void SetCurrentCommand(bool isUndo);
@@ -215,6 +263,8 @@ namespace eg
 		static int currentCommandIndex;
 		template<typename T>
 		static void SetComponent(Entity& entity, T* component);
+		static EntitySave SaveEntity(Entity& entity);
+		static void RestoreEntity(Entity& entity, EntitySave& entitySave);
 
 		template<typename T>
 		static Command* ExecuteValueCommand(std::function<void(T)> function, T value, T previousValue, const std::string label, bool bypass = false)

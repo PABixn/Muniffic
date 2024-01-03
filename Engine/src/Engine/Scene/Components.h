@@ -15,6 +15,7 @@
 
 
 namespace eg {
+
 	struct IDComponent
 	{
 		UUID ID;
@@ -149,7 +150,8 @@ namespace eg {
 
 	};
 
-	struct BoxCollider2DComponent {
+	struct BoxCollider2DComponent
+	{
 
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		glm::vec2 Size = { 0.5f, 0.5f };
