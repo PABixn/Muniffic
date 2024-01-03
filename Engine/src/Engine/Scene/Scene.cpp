@@ -234,7 +234,7 @@ namespace eg {
 		if (mainCamera)
 		{
 			Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
-
+			// Draw sprites
 			{
 				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 				for (auto entity : group)
@@ -244,7 +244,8 @@ namespace eg {
 					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
 			}
-
+			
+			// Draw circles
 			{
 				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
 				for (auto entity : view)
@@ -255,7 +256,16 @@ namespace eg {
 				}
 			}
 
-			
+			// Draw text
+			{
+				auto view = m_Registry.view<TransformComponent, TextComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
+
+					Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
+				}
+			}
 
 			Renderer2D::EndScene();
 		}
@@ -335,6 +345,17 @@ namespace eg {
 				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
 
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+			}
+		}
+
+		// Draw text
+		{
+			auto view = m_Registry.view<TransformComponent, TextComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
+
+				Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
 			}
 		}
 
@@ -507,6 +528,11 @@ namespace eg {
 
 	template<>
 	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
 	{
 	}
 

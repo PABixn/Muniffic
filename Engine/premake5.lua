@@ -36,6 +36,8 @@ project "Engine"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.msdfgen}",
+		"%{IncludeDir.msdf_atlas_gen}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.mono}",
@@ -50,6 +52,7 @@ project "Engine"
 		"yaml-cpp",
 		"Glad",
 		"Imgui",
+		"msdf-atlas-gen",
 		"%{Library.mono}",
 	}
 

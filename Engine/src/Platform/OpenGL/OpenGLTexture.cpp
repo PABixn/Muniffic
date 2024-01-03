@@ -4,11 +4,48 @@
 
 namespace eg {
 
-	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
-		: m_Width(width), m_Height(height)
+	namespace Utils
+	{
+		static GLenum MunifficFormatToGLDataFormat(ImageFormat format)
+		{
+			switch (format)
+			{
+			case ImageFormat::R8: return GL_RED;
+			case ImageFormat::RG8: return GL_RG;
+			case ImageFormat::RGB8: return GL_RGB;
+			case ImageFormat::RGBA8: return GL_RGBA;
+
+			}
+
+			EG_CORE_ASSERT(false);
+			return 0;
+		}
+
+		static GLenum MunifficFormatToGLInternalFormat(ImageFormat format)
+		{
+			switch (format)
+			{
+			case eg::ImageFormat::R8: return GL_R8;
+			case eg::ImageFormat::RG8: return GL_RG8;
+			case eg::ImageFormat::RGB8: return GL_RGB8;
+			case eg::ImageFormat::RGBA8: return GL_RGBA8;
+			}
+
+			EG_CORE_ASSERT(false);
+			return 0;
+		}
+	}
+
+
+	OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification& specification)
+		: m_Specification(specification), m_Width(specification.Width), m_Height(specification.Height)
 	{
 		EG_PROFILE_FUNCTION();
-		m_InternalFormat = GL_RGBA8; m_DataFormat = GL_RGBA;
+
+		switch (m_Specification.Format)
+
+			m_InternalFormat = Utils::MunifficFormatToGLInternalFormat(m_Specification.Format);
+		m_DataFormat = Utils::MunifficFormatToGLDataFormat(m_Specification.Format);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
