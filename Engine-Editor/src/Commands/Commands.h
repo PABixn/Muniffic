@@ -7,6 +7,16 @@ namespace eg
 {
 	class Commands
 	{
+		using AllSavedComponents = std::tuple<std::optional<TagComponent>,
+			std::optional<TransformComponent>,
+			std::optional<SpriteRendererComponent>,
+			std::optional<CircleRendererComponent>,
+			std::optional<CameraComponent>,
+			std::optional<ScriptComponent>,
+			std::optional<RigidBody2DComponent>,
+			std::optional<BoxCollider2DComponent>,
+			std::optional<CircleCollider2DComponent>>;
+
 	public:
 		struct CommandArgs
 		{
@@ -29,27 +39,9 @@ namespace eg
 			UUID uuid;
 		};
 
-		using AllSavedComponents = std::tuple<std::optional<TagComponent>,
-			std::optional<TransformComponent>,
-			std::optional<SpriteRendererComponent>,
-			std::optional<CircleRendererComponent>,
-			std::optional<CameraComponent>,
-			std::optional<ScriptComponent>,
-			std::optional<RigidBody2DComponent>,
-			std::optional<BoxCollider2DComponent>,
-			std::optional<CircleCollider2DComponent>>;
-
 		struct EntitySave
 		{
-			std::tuple<std::optional<TagComponent>,
-			std::optional<TransformComponent>,
-			std::optional<SpriteRendererComponent>,
-			std::optional<CircleRendererComponent>,
-			std::optional<CameraComponent>,
-			std::optional<ScriptComponent>,
-			std::optional<RigidBody2DComponent>,
-			std::optional<BoxCollider2DComponent>,
-			std::optional<CircleCollider2DComponent>> components;
+			AllSavedComponents components;
 
 			AllSavedComponents GetAllComponents()
 			{

@@ -18,3 +18,4 @@ Intermediates/
 Engine/vendor/VulkanSDK
 Engine-Editor/assets/cache
 scripts/__pycache__
+Engine-Editor/imgui.ini

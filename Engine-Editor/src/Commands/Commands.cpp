@@ -212,6 +212,6 @@ namespace eg
 	{
 		Commands::AllSavedComponents components = entitySave.GetAllComponents();
 
-		std::apply([&entity](auto&&... args) {((TrySetComponent(entity, &args)), ...); }, components);
+		std::apply([&entity](auto&&... args) {(( TrySetComponent(entity, &args)), ...); }, components);
 	}
 }
