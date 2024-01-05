@@ -35,6 +35,11 @@ namespace eg
 		struct SavedEntity
 		{
 		public:
+			SavedEntity(const std::string& name, UUID uuid)
+				: name(name), uuid(uuid) {  }
+
+			SavedEntity() = default;
+
 			std::string name;
 			UUID uuid;
 		};
@@ -74,6 +79,7 @@ namespace eg
 		public:
 			virtual void Undo() = 0;
 			virtual void Execute(CommandArgs) = 0;
+			virtual void Redo() = 0;
 		};
 
 		template<typename T>
@@ -81,21 +87,29 @@ namespace eg
 		{
 		public:
 			ChangeValueCommand(std::function<void(T)> function, T value, T previousValue, const std::string label)
-				: m_PreviousValue(previousValue), m_Label(label), m_Function(function)
+				: m_PreviousValue(previousValue), m_Label(label), m_Function(function), m_Value(value)
 			{
 				Commands::AddCommand(this);
 			}
 
 			void Execute(CommandArgs args) override {};
+
 			void Undo() override
 			{
 				m_Function(m_PreviousValue);
 				SetCurrentCommand(true);
 			};
 
+			void Redo() override
+			{
+				m_Function(m_Value);
+				SetCurrentCommand(false);
+			};
+
 			const std::string GetLabel() const { return m_Label; }
 
 		protected:
+			T m_Value;
 			T m_PreviousValue;
 			const std::string m_Label;
 			std::function<void(T)> m_Function;
@@ -107,7 +121,7 @@ namespace eg
 		{
 		public:
 			ChangeRawValueCommand(T* value_ptr, T previousValue, const std::string label)
-				: m_ValuePtr(value_ptr), m_PreviousValue(previousValue), m_Label(label)
+				: m_ValuePtr(value_ptr), m_PreviousValue(previousValue), m_Label(label), m_Value(*value_ptr)
 			{
 				Commands::AddCommand(this);
 			}
@@ -116,14 +130,24 @@ namespace eg
 
 			void Undo() override
 			{
+				m_Value = *m_ValuePtr;
 				*m_ValuePtr = m_PreviousValue;
+
 				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				*m_ValuePtr = m_Value;
+
+				SetCurrentCommand(false);
 			}
 
 			const std::string GetLabel() const { return m_Label; }
 
 		protected:
 			T* m_ValuePtr;
+			T m_Value;
 			T m_PreviousValue;
 			const std::string m_Label;
 		};
@@ -133,6 +157,10 @@ namespace eg
 		public:
 			ComponentCommand(Ref<Scene>& m_Context, Entity& selectionContext)
 			: m_SelectionContext(selectionContext) {  }
+
+			virtual void Execute(CommandArgs args) = 0;
+			virtual void Undo() = 0;
+			virtual void Redo() = 0;
 
 		protected:
 			Entity m_SelectionContext;
@@ -162,6 +190,14 @@ namespace eg
 					m_SelectionContext.RemoveComponent<T>();
 				}
 				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				if (!m_SelectionContext.HasComponent<T>())
+					m_SelectionContext.AddComponent<T>();
+
+				SetCurrentCommand(false);
 			}
 		};
 
@@ -194,6 +230,17 @@ namespace eg
 				SetCurrentCommand(true);
 			}
 
+			void Redo() override
+			{
+				if (m_SelectionContext.HasComponent<T>())
+				{
+					m_Component = m_SelectionContext.GetComponent<T>();
+					m_SelectionContext.RemoveComponent<T>();
+				}
+
+				SetCurrentCommand(false);
+			}
+
 		protected:
 			T m_Component;
 		};
@@ -205,8 +252,8 @@ namespace eg
 				: m_Context(context), m_SelectionContext(selectionContext) {  }
 
 			virtual void Execute(CommandArgs) = 0;
-
 			virtual void Undo() = 0;
+			virtual void Redo() = 0;
 
 		protected:
 			Ref<Scene>& m_Context;
@@ -223,11 +270,11 @@ namespace eg
 			}
 
 			void Execute(CommandArgs arg) override;
-
 			void Undo() override;
+			void Redo() override;
 
 		protected:
-			UUID m_CreatedEntity;	
+			SavedEntity m_CreatedEntity;
 		};
 
 		class DeleteEntityCommand : public EntityCommand
@@ -242,6 +289,8 @@ namespace eg
 			void Execute(CommandArgs arg) override;
 
 			void Undo() override;
+
+			void Redo() override;
 
 		protected:
 			SavedEntity m_DeletedEntity;
@@ -264,7 +313,7 @@ namespace eg
 			function(value);
 
 			Command* command = nullptr;
-			ChangeValueCommand<T>* previousCommand = dynamic_cast<ChangeValueCommand<T>*>(GetCurrentCommand(1));
+			ChangeValueCommand<T>* previousCommand = dynamic_cast<ChangeValueCommand<T>*>(GetCurrentCommand());
 			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
 				Command* command = new ChangeValueCommand<T>(function, value, previousValue, label);
 
@@ -275,7 +324,7 @@ namespace eg
 		static Command* ExecuteRawValueCommand(T* value_ptr, T previousValue, const std::string label, bool bypass = false)
 		{
 			Command* command = nullptr;
-			ChangeRawValueCommand<T>* previousCommand = dynamic_cast<ChangeRawValueCommand<T>*>(GetCurrentCommand(1));
+			ChangeRawValueCommand<T>* previousCommand = dynamic_cast<ChangeRawValueCommand<T>*>(GetCurrentCommand());
 			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
 				Command* command = new ChangeRawValueCommand<T>(value_ptr, previousValue, label);
 

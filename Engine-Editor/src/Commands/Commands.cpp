@@ -8,12 +8,12 @@ namespace eg
 	void Commands::CreateEntityCommand::Execute(CommandArgs arg)
 	{
 		UUID e = m_Context->CreateEntity(arg.name).GetUUID();
-		m_CreatedEntity = e;
+		m_CreatedEntity = SavedEntity(arg.name, e);
 	}
 
 	void Commands::CreateEntityCommand::Undo()
 	{
-		Entity e = m_Context->GetEntityByUUID(m_CreatedEntity);
+		Entity e = m_Context->GetEntityByUUID(m_CreatedEntity.uuid);
 		if (e.HasComponent<TagComponent>())
 		{
 			if (m_SelectionContext == e)
@@ -23,13 +23,20 @@ namespace eg
 		}
 	}
 
+	void Commands::CreateEntityCommand::Redo()
+	{
+		m_Context->CreateEntityWithID(m_CreatedEntity.uuid, m_CreatedEntity.name);
+
+		SetCurrentCommand(false);
+	}
+
 	void Commands::DeleteEntityCommand::Execute(CommandArgs arg)
 	{
 		if (arg.entity.HasComponent<TagComponent>())
 		{
 			if (m_SelectionContext == arg.entity)
 				m_SelectionContext = {};
-			m_DeletedEntity = { arg.entity.GetName(), arg.entity.GetUUID() };
+			m_DeletedEntity = SavedEntity(arg.entity.GetName(), arg.entity.GetUUID());
 			m_EntitySave = SaveEntity(arg.entity);
 			m_Context->DestroyEntity(arg.entity);
 		}
@@ -40,6 +47,22 @@ namespace eg
 		Entity e = m_Context->CreateEntityWithID(m_DeletedEntity.uuid, m_DeletedEntity.name);
 		RestoreEntity(e, m_EntitySave);
 		SetCurrentCommand(true);
+	}
+
+	void Commands::DeleteEntityCommand::Redo()
+	{
+		Entity entity = m_Context->GetEntityByUUID(m_DeletedEntity.uuid);
+
+		if (entity.HasComponent<TagComponent>())
+		{
+			if (m_SelectionContext == entity)
+				m_SelectionContext = {};
+			m_DeletedEntity = { entity.GetName(), entity.GetUUID() };
+			m_EntitySave = SaveEntity(entity);
+			m_Context->DestroyEntity(entity);
+		}
+
+		SetCurrentCommand(false);
 	}
 
 	void Commands::AddCommand(Command* command)
@@ -55,9 +78,8 @@ namespace eg
 
 	Commands::Command* Commands::GetCurrentCommand(int offset)
 	{
-		offset = offset < 0 ? 0 : offset;
-		if (currentCommandIndex - offset >= 0)
-			return commandHistory[currentCommandIndex];
+		if (currentCommandIndex + offset >= 0 && currentCommandIndex + offset < static_cast<int>(commandHistory.size()))
+			return commandHistory[currentCommandIndex + offset];
 		else
 			return nullptr;
 	}
@@ -69,7 +91,7 @@ namespace eg
 
 	bool Commands::CanRevert(bool isUndo)
 	{
-		return isUndo ? currentCommandIndex >= 0 : currentCommandIndex < commandHistory.size() - 1;
+		return isUndo ? currentCommandIndex >= 0 : currentCommandIndex < static_cast<int>(commandHistory.size()) - 1;
 	}
 
 	Commands::EntitySave Commands::SaveEntity(Entity& entity)

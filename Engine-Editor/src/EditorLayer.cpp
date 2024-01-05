@@ -380,6 +380,16 @@ namespace eg {
 
 				break;
 			}
+			case Key::Y:
+			{
+				if (controlPressed)
+				{
+					if (Commands::CanRevert(false))
+						Commands::GetCurrentCommand(1)->Redo();
+				}
+
+				break;
+			}
 			case Key::S:
 			{
 				if (controlPressed)
