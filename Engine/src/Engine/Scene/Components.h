@@ -5,6 +5,7 @@
 #include "SceneCamera.h"
 #include "Engine/Core/UUID.h"
 #include "Engine/Renderer/Texture.h"
+#include "Engine/Renderer/Font.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/exponential.hpp"
@@ -186,6 +187,15 @@ namespace eg {
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
+	struct TextComponent
+	{
+		std::string TextString;
+		Ref<Font> FontAsset = Font::GetDefaultFont();
+		glm::vec4 Color{ 1.0f };
+		float Kerning = 0.0f;
+		float LineSpacing = 0.0f;
+	};
+
 	template<typename... Component>
 	struct ComponentGroup
 	{
@@ -195,5 +205,5 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
-		CircleCollider2DComponent>;
+		CircleCollider2DComponent, TextComponent>;
 }

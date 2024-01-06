@@ -11,6 +11,7 @@ extern "C" {
 	typedef struct _MonoAssembly MonoAssembly;
 	typedef struct _MonoImage MonoImage;
 	typedef struct _MonoClassField MonoClassField;
+	typedef struct _MonoString MonoString;
 }
 
 namespace eg {
@@ -124,6 +125,8 @@ namespace eg {
 
 			SetFieldValueInternal(name, &value);
 		}
+
+		MonoObject* GetManagedObject() const { return m_Instance; }
 	private:
 		bool GetFieldValueInternal(const std::string& name, void* buffer);
 		bool SetFieldValueInternal(const std::string& name, const void* value);
@@ -149,8 +152,10 @@ namespace eg {
 		static void Init();
 		static void Shutdown();
 
-		static void LoadAssembly(const std::filesystem::path& filepath);
-		static void LoadAppAssembly(const std::filesystem::path& filepath);
+		static bool LoadAssembly(const std::filesystem::path& filepath);
+		static bool LoadAppAssembly(const std::filesystem::path& filepath);
+
+		static void ReloadAssembly();
 
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();
@@ -167,6 +172,10 @@ namespace eg {
 		static ScriptFieldMap& GetScriptFieldMap(Entity uuid);
 
 		static MonoImage* GetCoreAssemblyImage();
+
+		static MonoObject* GetManagedInstance(UUID uuid);
+
+		static MonoString* CreateString(const char* string);
 	private:
 		static void InitMono();
 		static void ShutdownMono();

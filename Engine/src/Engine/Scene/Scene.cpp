@@ -5,6 +5,7 @@
 #include "ScriptableEntity.h"
 #include "Engine/Renderer/Renderer2D.h"
 #include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/Physics/Physics2D.h"
 
 #include <glm/glm.hpp>
 
@@ -18,19 +19,6 @@
 #include <box2d/b2_circle_shape.h>
 
 namespace eg {
-
-	static b2BodyType RigidBody2DTypeToBox2DType(RigidBody2DComponent::BodyType type)
-	{
-		switch (type)
-		{
-		case RigidBody2DComponent::BodyType::Static:    return b2_staticBody;
-		case RigidBody2DComponent::BodyType::Dynamic:   return b2_dynamicBody;
-		case RigidBody2DComponent::BodyType::Kinematic: return b2_kinematicBody;
-		}
-
-		EG_CORE_ASSERT(false, "Unknown RigidBody2DComponent::BodyType!");
-		return b2_staticBody;
-	}
 
 	Scene::Scene()
 	{
@@ -176,50 +164,51 @@ namespace eg {
 
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
-		
-
-		// Update Native scripts
+		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
-			//C# Entity OnUpdate
-			auto view = m_Registry.view<ScriptComponent>();
-			for (auto entity : view)
+			// Update Native scripts
 			{
-				Entity e{ entity, this };
-				ScriptEngine::OnUpdateEntity(e, ts);
-			}
-
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
-			{
-				// TODO: Move to Scene::OnScenePlay
-				if (!nsc.Instance)
+				//C# Entity OnUpdate
+				auto view = m_Registry.view<ScriptComponent>();
+				for (auto entity : view)
 				{
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->m_Entity = Entity{ entity, this };
-					nsc.Instance->OnCreate();
+					Entity e{ entity, this };
+					ScriptEngine::OnUpdateEntity(e, ts);
 				}
 
-				nsc.Instance->OnUpdate(ts);
-			});
-		}
+				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+					{
+						// TODO: Move to Scene::OnScenePlay
+						if (!nsc.Instance)
+						{
+							nsc.Instance = nsc.InstantiateScript();
+							nsc.Instance->m_Entity = Entity{ entity, this };
+							nsc.Instance->OnCreate();
+						}
 
-		// Physics
-		{
-			const int32_t velocityIterations = 6;
-			const int32_t positionIterations = 2;
-			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+						nsc.Instance->OnUpdate(ts);
+					});
+			}
 
-			auto view = m_Registry.view<RigidBody2DComponent>();
+			// Physics
 			{
-				for (auto e : view)
-				{
-					Entity entity{ e, this };
-					auto& rb = entity.GetComponent<RigidBody2DComponent>();
-					auto& transform = entity.GetComponent<TransformComponent>();
-					auto* body = (b2Body*)rb.RuntimeBody;
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
-					transform.Translation.x = body->GetPosition().x;
-					transform.Translation.y = body->GetPosition().y;
-					transform.Rotation.z = body->GetAngle();
+				auto view = m_Registry.view<RigidBody2DComponent>();
+				{
+					for (auto e : view)
+					{
+						Entity entity{ e, this };
+						auto& rb = entity.GetComponent<RigidBody2DComponent>();
+						auto& transform = entity.GetComponent<TransformComponent>();
+						auto* body = (b2Body*)rb.RuntimeBody;
+
+						transform.Translation.x = body->GetPosition().x;
+						transform.Translation.y = body->GetPosition().y;
+						transform.Rotation.z = body->GetAngle();
+					}
 				}
 			}
 		}
@@ -245,7 +234,7 @@ namespace eg {
 		if (mainCamera)
 		{
 			Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
-
+			// Draw sprites
 			{
 				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 				for (auto entity : group)
@@ -255,7 +244,8 @@ namespace eg {
 					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
 			}
-
+			
+			// Draw circles
 			{
 				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
 				for (auto entity : view)
@@ -266,7 +256,16 @@ namespace eg {
 				}
 			}
 
-			
+			// Draw text
+			{
+				auto view = m_Registry.view<TransformComponent, TextComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
+
+					Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
+				}
+			}
 
 			Renderer2D::EndScene();
 		}
@@ -275,25 +274,28 @@ namespace eg {
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
-		// Physics
+		if (!m_IsPaused || m_StepFrames-- > 0)
+			// Physics
 		{
-			const int32_t velocityIterations = 6;
-			const int32_t positionIterations = 2;
-			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
-
-			// Retrieve transform from Box2D
-			auto view = m_Registry.view<RigidBody2DComponent>();
-			for (auto e : view)
 			{
-				Entity entity = { e, this };
-				auto& transform = entity.GetComponent<TransformComponent>();
-				auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
-				b2Body* body = (b2Body*)rb2d.RuntimeBody;
-				const auto& position = body->GetPosition();
-				transform.Translation.x = position.x;
-				transform.Translation.y = position.y;
-				transform.Rotation.z = body->GetAngle();
+				// Retrieve transform from Box2D
+				auto view = m_Registry.view<RigidBody2DComponent>();
+				for (auto e : view)
+				{
+					Entity entity = { e, this };
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+
+					b2Body* body = (b2Body*)rb2d.RuntimeBody;
+					const auto& position = body->GetPosition();
+					transform.Translation.x = position.x;
+					transform.Translation.y = position.y;
+					transform.Rotation.z = body->GetAngle();
+				}
 			}
 		}
 
@@ -303,6 +305,9 @@ namespace eg {
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
+		if (m_ViewportHeight == height && m_ViewportWidth == width)
+			return;
+
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
@@ -343,13 +348,38 @@ namespace eg {
 			}
 		}
 
+		// Draw text
+		{
+			auto view = m_Registry.view<TransformComponent, TextComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
+
+				Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
+			}
+		}
+
 		Renderer2D::EndScene();
 	}
 
-	void Scene::DuplicateEntity(Entity entity)
+	Entity Scene::DuplicateEntity(Entity entity)
 	{
-		Entity newEntity = CreateEntity(entity.GetName());
+		std::string name = entity.GetName();
+		Entity newEntity = CreateEntity(name);
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
+		return newEntity;
+	}
+
+	Entity Scene::FindEntityByName(const std::string_view& name)
+	{
+		auto view = m_Registry.view<TagComponent>();
+		for (auto entity : view)
+		{
+			const auto& tag = view.get<TagComponent>(entity).Tag;
+			if (tag == name)
+				return Entity{ entity, this };
+		}
+		return {};
 	}
 
 	Entity Scene::GetEntityByUUID(UUID uuid)
@@ -372,6 +402,11 @@ namespace eg {
 		return {};
 	}
 
+	void Scene::Step(int frames)
+	{
+		m_StepFrames = frames;
+	}
+
 	void Scene::OnPhysics2DStart()
 	{
 		m_PhysicsWorld = new b2World({ 0.0f, -9.81f });
@@ -384,7 +419,7 @@ namespace eg {
 			auto& rb = e.GetComponent<RigidBody2DComponent>();
 
 			b2BodyDef bodyDef;
-			bodyDef.type = RigidBody2DTypeToBox2DType(rb.Type);
+			bodyDef.type = Utils::RigidBody2DTypeToBox2DBody(rb.Type);
 			bodyDef.position.Set(transform.Translation.x, transform.Translation.y);
 			bodyDef.angle = transform.Rotation.z;
 
@@ -493,6 +528,11 @@ namespace eg {
 
 	template<>
 	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
 	{
 	}
 

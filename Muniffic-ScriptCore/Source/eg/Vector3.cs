@@ -19,6 +19,20 @@ namespace eg
             Z = vec.Z;
         }
 
+        public Vector3(Vector2 vec)
+        {
+            X = vec.X;
+            Y = vec.Y;
+            Z = 0f;
+        }
+
+        public Vector3(Vector2 vec, float z)
+        {
+            X = vec.X;
+            Y = vec.Y;
+            Z = z;
+        }
+
         public Vector3(float x)
         {
             X = x;

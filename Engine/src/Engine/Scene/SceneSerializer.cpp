@@ -7,6 +7,7 @@
 #include "Components.h"
 #include <optional>
 #include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/Project/Project.h"
 
 namespace YAML
 {
@@ -326,6 +327,21 @@ namespace eg {
 			out << YAML::EndMap; // CircleCollider2DComponent
 		}
 
+		if (entity.HasComponent<TextComponent>())
+		{
+			out << YAML::Key << "TextComponent";
+			out << YAML::BeginMap; // TextComponent
+
+			auto& textComponent = entity.GetComponent<TextComponent>();
+			out << YAML::Key << "TextString" << YAML::Value << textComponent.TextString;
+			// TODO: textComponent.FontAsset
+			out << YAML::Key << "Color" << YAML::Value << textComponent.Color;
+			out << YAML::Key << "Kerning" << YAML::Value << textComponent.Kerning;
+			out << YAML::Key << "LineSpacing" << YAML::Value << textComponent.LineSpacing;
+
+			out << YAML::EndMap; // TextComponent
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -428,41 +444,45 @@ namespace eg {
 					auto scriptFields = scriptComponent["ScriptFields"];
 					if (scriptFields)
 					{
-						for (auto scriptField : scriptFields)
-						{
-							Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(sc.Name);
-							EG_CORE_ASSERT(entityClass, "Entity class not found!");
-							const auto& fields = entityClass->GetFields();
-							auto& entityFields = ScriptEngine::GetScriptFieldMap(deserializedEntity);
+						Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(sc.Name);
+						EG_CORE_ASSERT(entityClass, "Entity class not found!");
+						const auto& fields = entityClass->GetFields();
+						auto& entityFields = ScriptEngine::GetScriptFieldMap(deserializedEntity);
 
-							std::string fieldName = scriptField["Name"].as<std::string>();
-							std::string field = scriptField["Type"].as<std::string>();
-							ScriptFieldType fieldType = Utils::ScriptFieldTypeFromString(field);
-
-							ScriptFieldInstance& fieldInstance = entityFields[fieldName];
-							EG_CORE_ASSERT(fields.find(name) != fields.end(), "Field not found!");
-							if (fields.find(name) == fields.end())
-								continue;
-							fieldInstance.Field = fields.at(fieldName);
-
-							switch (fieldType)
+						if (entityClass) {
+							for (auto scriptField : scriptFields)
 							{
-								READ_SCRIPT_FIELD(Float, float);
-								READ_SCRIPT_FIELD(Double, double);
-								READ_SCRIPT_FIELD(Bool, bool);
-								READ_SCRIPT_FIELD(Char, char);
-								READ_SCRIPT_FIELD(Byte, uint8_t);
-								READ_SCRIPT_FIELD(Short, int16_t);
-								READ_SCRIPT_FIELD(Int32, int32_t);
-								READ_SCRIPT_FIELD(Int64, int64_t);
-								READ_SCRIPT_FIELD(SByte, int8_t);
-								READ_SCRIPT_FIELD(UShort, uint16_t);
-								READ_SCRIPT_FIELD(UInt32, uint32_t);
-								READ_SCRIPT_FIELD(UInt64, uint64_t);
-								READ_SCRIPT_FIELD(Vector2, glm::vec2);
-								READ_SCRIPT_FIELD(Vector3, glm::vec3);
-								READ_SCRIPT_FIELD(Vector4, glm::vec4);
-								READ_SCRIPT_FIELD(Entity, UUID);
+								std::string fieldName = scriptField["Name"].as<std::string>();
+								std::string field = scriptField["Type"].as<std::string>();
+								ScriptFieldType fieldType = Utils::ScriptFieldTypeFromString(field);
+
+								ScriptFieldInstance& fieldInstance = entityFields[fieldName];
+
+								if (fields.find(name) == fields.end()) {
+									EG_CORE_WARN("Field not found!");
+									continue;
+								}
+								fieldInstance.Field = fields.at(fieldName);
+
+								switch (fieldType)
+								{
+									READ_SCRIPT_FIELD(Float, float);
+									READ_SCRIPT_FIELD(Double, double);
+									READ_SCRIPT_FIELD(Bool, bool);
+									READ_SCRIPT_FIELD(Char, char);
+									READ_SCRIPT_FIELD(Byte, uint8_t);
+									READ_SCRIPT_FIELD(Short, int16_t);
+									READ_SCRIPT_FIELD(Int32, int32_t);
+									READ_SCRIPT_FIELD(Int64, int64_t);
+									READ_SCRIPT_FIELD(SByte, int8_t);
+									READ_SCRIPT_FIELD(UShort, uint16_t);
+									READ_SCRIPT_FIELD(UInt32, uint32_t);
+									READ_SCRIPT_FIELD(UInt64, uint64_t);
+									READ_SCRIPT_FIELD(Vector2, glm::vec2);
+									READ_SCRIPT_FIELD(Vector3, glm::vec3);
+									READ_SCRIPT_FIELD(Vector4, glm::vec4);
+									READ_SCRIPT_FIELD(Entity, UUID);
+								}
 							}
 						}
 					}
@@ -476,7 +496,12 @@ namespace eg {
 					if(spriteRendererComponent["TilingFactor"])
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
 					if (spriteRendererComponent["TexturePath"])
-						src.Texture = Texture2D::Create(spriteRendererComponent["TexturePath"].as<std::string>());
+					{
+						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
+						//TODO: Later should be handled by the asset manager
+						auto path = Project::GetAssetFileSystemPath(texturePath);
+						src.Texture = Texture2D::Create(path.string());
+					}
 				}
 
 				auto circleRendererComponent = entity["CircleRendererComponent"];
@@ -518,6 +543,17 @@ namespace eg {
 					cc.Friction = circleCollider2DComponent["Friction"].as<float>();
 					cc.Restitution = circleCollider2DComponent["Restitution"].as<float>();
 					cc.RestitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+				}
+
+				auto textComponent = entity["TextComponent"];
+				if (textComponent)
+				{
+					auto& tc = deserializedEntity.AddComponent<TextComponent>();
+					tc.TextString = textComponent["TextString"].as<std::string>();
+					// tc.FontAsset // TODO
+					tc.Color = textComponent["Color"].as<glm::vec4>();
+					tc.Kerning = textComponent["Kerning"].as<float>();
+					tc.LineSpacing = textComponent["LineSpacing"].as<float>();
 				}
 			}
 		}

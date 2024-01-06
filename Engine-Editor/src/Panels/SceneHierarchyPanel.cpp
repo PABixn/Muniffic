@@ -1,12 +1,14 @@
 #include "egpch.h"
 #include "SceneHierarchyPanel.h"
 #include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/UI/UI.h"
 
 #include <Imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <Imgui/imgui_internal.h>
 #include <cstring>
 #include "../Commands/Commands.h"
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -16,8 +18,6 @@
 #endif
 
 namespace eg {
-
-	extern const std::filesystem::path g_AssetPath;
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
@@ -243,6 +243,7 @@ namespace eg {
 			DisplayAddComponentEntry<RigidBody2DComponent>("Rigidbody 2D");
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
+			DisplayAddComponentEntry<TextComponent>("Text Component");
 
 			ImGui::EndPopup();
 		}
@@ -348,14 +349,14 @@ namespace eg {
 				memset(buffer, 0, sizeof(buffer));
 				strcpy_s(buffer, sizeof(buffer), component.Name.c_str());
 
-				if(!scriptExists)
-					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f });
+				UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
+
 
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 				{
 					component.Name = std::string(buffer);
+					return;
 				}
-
 				//Fields
 				
 				bool sceneRunning = scene->IsRunning();
@@ -627,7 +628,7 @@ namespace eg {
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 					{
 						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
+						std::filesystem::path texturePath = std::filesystem::path(path);
 						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 						if (texture->IsLoaded())
 						{
@@ -722,6 +723,14 @@ namespace eg {
 			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand(&component.RestitutionThreshold, restitutionThreshold, "CircleCollider2DComponent-Restitution Threshold");
 			}, m_Context);
+
+		DrawComponent<TextComponent>("Text Renderer", entity, [](auto& component)
+			{
+				ImGui::InputTextMultiline("Text String", &component.TextString);
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				ImGui::DragFloat("Kerning", &component.Kerning, 0.025f);
+				ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f);
+			});
 	}
 
 

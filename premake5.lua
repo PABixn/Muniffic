@@ -30,6 +30,7 @@ group "Dependencies"
 	include "Engine/vendor/GLFW"
 	include "Engine/vendor/Glad"
 	include "Engine/vendor/imgui"
+	include "Engine/vendor/msdf-atlas-gen"
 	include "Engine/vendor/yaml-cpp"
 group ""
 
