@@ -116,6 +116,8 @@ namespace eg
 			entitySave.SaveComponent<CircleCollider2DComponent>(entity.GetComponent<CircleCollider2DComponent>());
 		if (entity.HasComponent<RigidBody2DComponent>())
 			entitySave.SaveComponent<RigidBody2DComponent>(entity.GetComponent<RigidBody2DComponent>());
+		if (entity.HasComponent<TextComponent>())
+			entitySave.SaveComponent<TextComponent>(entity.GetComponent<TextComponent>());
 
 		return entitySave;
 	}
@@ -221,6 +223,20 @@ namespace eg
 
 		entity.GetComponent<RigidBody2DComponent>().Type = component->Type;
 		entity.GetComponent<RigidBody2DComponent>().FixedRotation = component->FixedRotation;
+	}
+
+	template<>
+	void Commands::SetComponent<TextComponent>(Entity& entity, TextComponent* component)
+	{
+		if (!entity.HasComponent<TextComponent>())
+			entity.AddComponent<TextComponent>();
+
+		entity.GetComponent<TextComponent>().Color = component->Color;
+		entity.GetComponent<TextComponent>().FontAsset = component->FontAsset;
+		entity.GetComponent<TextComponent>().Kerning = component->Kerning;
+		entity.GetComponent<TextComponent>().LineSpacing = component->LineSpacing;
+		entity.GetComponent<TextComponent>().TextString = component->TextString;
+	
 	}
 
 	template<typename T>

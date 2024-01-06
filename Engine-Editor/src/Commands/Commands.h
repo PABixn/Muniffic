@@ -15,7 +15,8 @@ namespace eg
 			std::optional<ScriptComponent>,
 			std::optional<RigidBody2DComponent>,
 			std::optional<BoxCollider2DComponent>,
-			std::optional<CircleCollider2DComponent>>;
+			std::optional<CircleCollider2DComponent>,
+			std::optional<TextComponent>>;
 
 	public:
 		struct CommandArgs
@@ -58,7 +59,8 @@ namespace eg
 					GetComponent<ScriptComponent>(),
 					GetComponent<RigidBody2DComponent>(),
 					GetComponent<BoxCollider2DComponent>(),
-					GetComponent<CircleCollider2DComponent>());
+					GetComponent<CircleCollider2DComponent>(),
+					GetComponent<TextComponent>());
 			}
 
 			template<typename T>
