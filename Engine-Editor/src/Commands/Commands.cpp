@@ -94,35 +94,6 @@ namespace eg
 		return isUndo ? currentCommandIndex >= 0 : currentCommandIndex < static_cast<int>(commandHistory.size()) - 1;
 	}
 
-	Commands::EntitySave Commands::SaveEntity(Entity& entity)
-	{
-		EntitySave entitySave;
-
-		if (entity.HasComponent<TagComponent>())
-			entitySave.SaveComponent<TagComponent>(entity.GetComponent<TagComponent>());
-		if (entity.HasComponent<TransformComponent>())
-			entitySave.SaveComponent<TransformComponent>(entity.GetComponent<TransformComponent>());
-		if (entity.HasComponent<SpriteRendererComponent>())
-			entitySave.SaveComponent<SpriteRendererComponent>(entity.GetComponent<SpriteRendererComponent>());
-		if (entity.HasComponent<CameraComponent>())
-			entitySave.SaveComponent<CameraComponent>(entity.GetComponent<CameraComponent>());
-		if (entity.HasComponent<ScriptComponent>())
-			entitySave.SaveComponent<ScriptComponent>(entity.GetComponent<ScriptComponent>());
-		if (entity.HasComponent<CircleRendererComponent>())
-			entitySave.SaveComponent<CircleRendererComponent>(entity.GetComponent<CircleRendererComponent>());
-		if (entity.HasComponent<BoxCollider2DComponent>())
-			entitySave.SaveComponent<BoxCollider2DComponent>(entity.GetComponent<BoxCollider2DComponent>());
-		if (entity.HasComponent<CircleCollider2DComponent>())
-			entitySave.SaveComponent<CircleCollider2DComponent>(entity.GetComponent<CircleCollider2DComponent>());
-		if (entity.HasComponent<RigidBody2DComponent>())
-			entitySave.SaveComponent<RigidBody2DComponent>(entity.GetComponent<RigidBody2DComponent>());
-		if (entity.HasComponent<TextComponent>())
-			entitySave.SaveComponent<TextComponent>(entity.GetComponent<TextComponent>());
-
-		return entitySave;
-	}
-
-
 	template<>
 	void Commands::SetComponent<TagComponent>(Entity& entity, TagComponent* component)
 	{
@@ -244,6 +215,25 @@ namespace eg
 	{
 		if (component->has_value())
 			Commands::SetComponent(entity, &component->value());
+	}
+
+	template<typename T>
+	void TrySaveComponent(Entity& entity, Commands::EntitySave& entitySave, std::optional<T>& component)
+	{
+		using type = std::optional<T>::value_type;
+		if (entity.HasComponent<type>())
+			entitySave.SaveComponent<type>(entity.GetComponent<type>());
+	}
+
+	Commands::EntitySave Commands::SaveEntity(Entity& entity)
+	{
+		EntitySave entitySave;
+
+		Commands::AllSavedComponents components = entitySave.GetAllComponents();
+
+		std::apply([&entity, &entitySave](auto&&... args) {((TrySaveComponent(entity, entitySave, args)), ...); }, components);
+
+		return entitySave;
 	}
 
 	void Commands::RestoreEntity(Entity& entity, EntitySave& entitySave)
