@@ -726,10 +726,16 @@ namespace eg {
 
 		DrawComponent<TextComponent>("Text Renderer", entity, [](auto& component)
 			{
+				float kerning = component.Kerning, lineSpacing = component.LineSpacing;
+				glm::vec4 color = component.Color;
+
 				ImGui::InputTextMultiline("Text String", &component.TextString);
-				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
-				ImGui::DragFloat("Kerning", &component.Kerning, 0.025f);
-				ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f);
+				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand(&component.Color, color, "TextComponent-Color");
+				if(ImGui::DragFloat("Kerning", &component.Kerning, 0.025f))
+					Commands::ExecuteRawValueCommand(&component.Kerning, kerning, "TextComponent-Kerning");
+				if(ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f))
+					Commands::ExecuteRawValueCommand(&component.LineSpacing, lineSpacing, "TextComponent-Line Spacing");
 			}, m_Context);
 	}
 
