@@ -48,28 +48,14 @@ layout (location = 2) in flat int v_EntityID;
 
 layout (binding = 0) uniform sampler2D u_FontAtlas;
 
-float screenPxRange()
+void main()
 {
+	vec3 msd = texture(u_FontAtlas, Input.TexCoord).rgb;
+	float sd = max(min(msd.r, msd.g), min(max(msd.r, msd.g), msd.b));
 	const float pxRange = 2.0;
 	vec2 unitRange = vec2(pxRange)/vec2(textureSize(u_FontAtlas, 0));
 	vec2 screenTexSize = vec2(1.0)/fwidth(Input.TexCoord);
-	return max(0.5*dot(unitRange, screenTexSize), 0.0);
-}
-
-float median(float r, float g, float b)
-{
-	return max(min(r, g), min(max(r, g), b));
-}
-
-void main()
-{
-	vec4 texColor = Input.Color * texture(u_FontAtlas, Input.TexCoord);
-
-
-
-	vec3 msd = texture(u_FontAtlas, Input.TexCoord).rgb;
-	float sd = median(msd.r, msd.g, msd.b);
-	float screenPxDistance = screenPxRange()*(sd-0.5);
+	float screenPxDistance = max(0.5*dot(unitRange, screenTexSize), 0.0)*(sd-0.5);
 	float alpha = clamp(screenPxDistance + 0.5, 0.0, 1.0);
 	if(alpha == 0.0)
 		discard;
