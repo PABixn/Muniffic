@@ -1,118 +1,46 @@
 Scene: Untitled
 Entities:
-  - Entity: 10642011015283237485
-    Name: Cube
-    TagComponent:
-      Tag: Text
-    TransformComponent:
-      Translation: [0, 1.60000002, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    TextComponent:
-      TextString: Hello
-      Color: [1, 1, 1, 1]
-      Kerning: 0
-      LineSpacing: 0
-  - Entity: 16442485196201648565
-    Name: Cube
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [0, -2.9000001, 0]
-      Rotation: [0, -0, -0.786272645]
-      Scale: [12.6000042, 0.999999881, 1]
-    SpriteRendererComponent:
-      Color: [1, 0.568627477, 0.31764707, 1]
-      TilignFactor: 1
-    RigidBody2DComponent:
-      Body Type: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 9681069167797108457
-    Name: Cube
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [-1.60074186, -10.7968616, 0]
-      Rotation: [0, -0, -0.786272645]
-      Scale: [12.6000042, 0.999999881, 1]
-    SpriteRendererComponent:
-      Color: [1, 0.568627477, 0.31764707, 1]
-      TilignFactor: 1
-    RigidBody2DComponent:
-      Body Type: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 5817885789038573713
+  - Entity: 12466326309952554741
     Name: Cube
     TagComponent:
       Tag: Circle
     TransformComponent:
-      Translation: [3.5999999, 0, 0]
-      Rotation: [0.0689573437, -0, 0]
+      Translation: [2.4000001, 2.98023224e-08, 0]
+      Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     CircleRendererComponent:
       Color: [1, 1, 1, 1]
       Thickness: 1
       Fade: 0.00499999989
-  - Entity: 16108228054420389651
-    Name: Cube
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [5.06258726, -0.334269524, -3.81469999e-06]
-      Rotation: [0, -0, -2.26661325]
-      Scale: [12.6000099, 0.999999583, 1]
-    SpriteRendererComponent:
-      Color: [1, 0.568627477, 0.31764707, 1]
-      TilignFactor: 1
-    RigidBody2DComponent:
-      Body Type: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
+    CircleCollider2DComponent:
       Offset: [0, 0]
-      Size: [0.5, 0.5]
+      Radius: 0.5
       Density: 1
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 1567858812585259299
+  - Entity: 1597444277314487850
     Name: Cube
     TagComponent:
-      Tag: Camera
+      Tag: Circle
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [2.4000001, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
-    ScriptComponent:
-      Name: Sandbox.Camera
-      ScriptFields:
-        - Name: DistanceFromPlayer
-          Type: float
-          Value: 0
+      Scale: [2.5, 2.5, 1]
+    CircleRendererComponent:
+      Color: [1, 1, 1, 1]
+      Thickness: 1
+      Fade: 0.00499999989
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: false
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
   - Entity: 3898880785194007479
     Name: Cube
     TagComponent:
@@ -146,44 +74,116 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 1597444277314487850
+  - Entity: 1567858812585259299
     Name: Cube
     TagComponent:
-      Tag: Circle
+      Tag: Camera
     TransformComponent:
-      Translation: [2.4000001, 0, 0]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [2.5, 2.5, 1]
-    CircleRendererComponent:
-      Color: [1, 1, 1, 1]
-      Thickness: 1
-      Fade: 0.00499999989
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+    ScriptComponent:
+      Name: Sandbox.Camera
+      ScriptFields:
+        - Name: DistanceFromPlayer
+          Type: float
+          Value: 0
+  - Entity: 16108228054420389651
+    Name: Cube
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [5.06258726, -0.334269524, -3.81469999e-06]
+      Rotation: [0, -0, -2.26661325]
+      Scale: [12.6000099, 0.999999583, 1]
+    SpriteRendererComponent:
+      Color: [1, 0.568627477, 0.31764707, 1]
+      TilignFactor: 1
     RigidBody2DComponent:
-      Body Type: Dynamic
+      Body Type: Static
       FixedRotation: false
-    CircleCollider2DComponent:
+    BoxCollider2DComponent:
       Offset: [0, 0]
-      Radius: 0.5
+      Size: [0.5, 0.5]
       Density: 1
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 12466326309952554741
+  - Entity: 5817885789038573713
     Name: Cube
     TagComponent:
       Tag: Circle
     TransformComponent:
-      Translation: [2.4000001, 2.98023224e-08, 0]
-      Rotation: [0, -0, 0]
+      Translation: [3.5999999, 0, 0]
+      Rotation: [0.0689573437, -0, 0]
       Scale: [1, 1, 1]
     CircleRendererComponent:
       Color: [1, 1, 1, 1]
       Thickness: 1
       Fade: 0.00499999989
-    CircleCollider2DComponent:
+  - Entity: 9681069167797108457
+    Name: Cube
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [-1.60074186, -10.7968616, 0]
+      Rotation: [0, -0, -0.786272645]
+      Scale: [12.6000042, 0.999999881, 1]
+    SpriteRendererComponent:
+      Color: [1, 0.568627477, 0.31764707, 1]
+      TilignFactor: 1
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
       Offset: [0, 0]
-      Radius: 0.5
+      Size: [0.5, 0.5]
       Density: 1
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
+  - Entity: 16442485196201648565
+    Name: Cube
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, -2.9000001, 0]
+      Rotation: [0, -0, -0.786272645]
+      Scale: [12.6000042, 0.999999881, 1]
+    SpriteRendererComponent:
+      Color: [1, 0.568627477, 0.31764707, 1]
+      TilignFactor: 1
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 10642011015283237485
+    Name: Cube
+    TagComponent:
+      Tag: Text
+    TransformComponent:
+      Translation: [0, 1.60000002, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    TextComponent:
+      TextString: Hello
+      Color: [1, 1, 1, 1]
+      Kerning: 0
+      LineSpacing: 0
