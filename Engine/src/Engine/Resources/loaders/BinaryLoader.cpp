@@ -27,7 +27,7 @@ namespace eg
 
 		resource->Data = malloc(size);
 		file.read((char*)resource->Data, size);
-		resource->Size = size;
+		resource->DataSize = size;
 
 		file.close();
 
