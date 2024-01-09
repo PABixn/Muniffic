@@ -72,6 +72,11 @@ namespace eg
 		else if (commandHistory.size() > 0 && currentCommandIndex != commandHistory.size() - 1)
 			commandHistory.erase(commandHistory.begin() + currentCommandIndex + 1, commandHistory.end());
 
+		if (commandHistory.size() >= Commands::MAX_COMMANDS)
+		{
+			commandHistory.erase(commandHistory.begin());
+		}
+
 		commandHistory.push_back(command);
 		currentCommandIndex = commandHistory.size() - 1;
 	}
