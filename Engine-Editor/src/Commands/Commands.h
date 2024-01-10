@@ -5,6 +5,8 @@
 
 namespace eg
 {
+	void SetIsSaved(bool val);
+	bool GetIsSaved();
 	class Commands
 	{
 		using AllSavedComponents = std::tuple<std::optional<TagComponent>,

@@ -6,6 +6,7 @@
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Scripting/ScriptEngine.h"
 
+
 namespace eg
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -137,5 +138,8 @@ namespace eg
 			function();
 
 		m_MainThreadQueue.clear();
+	}
+	void Application::SetRunning(bool val) {
+		m_Running = val;
 	}
 }

@@ -32,6 +32,7 @@ namespace eg {
 	 class Application
 	{
 	public:
+
 		Application(const ApplicationSpecification specification);
 		~Application();
 
@@ -52,7 +53,7 @@ namespace eg {
 		void SubmitToMainThread(std::function<void()> function);
 	private:
 		void Run();
-		bool OnWindowClose(WindowCloseEvent& e);
+		virtual bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 
 		void ExecuteMainThreadQueue();
@@ -71,7 +72,8 @@ namespace eg {
 	private:
 		static Application* s_Instance;
 		friend int ::main(int argc, char** argv);
-		
+	protected:
+		void SetRunning(bool val);
 	};
 	 //To be defined in client
 	 Application* CreateApplication(ApplicationCommandLineArgs args);

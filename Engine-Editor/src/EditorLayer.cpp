@@ -672,6 +672,7 @@ namespace eg
 
 			m_ActiveScenePath = filepath;
 		}
+		SetIsSaved(true);
 	}
 
 	void EditorLayer::Save()
@@ -682,6 +683,7 @@ namespace eg
 		{
 			SerializeScene(m_ActiveScene, m_ActiveScenePath);
 		}
+		SetIsSaved(true);
 	}
 
 	void EditorLayer::NewProject()

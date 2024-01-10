@@ -1,27 +1,20 @@
-#include "Engine.h"
-#include "Engine/Core/EntryPoint.h"
-#include "Imgui/imgui.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "EditorLayer.h"
-
+#include "EditorApp.h"
 namespace eg {
 
-	class Editor : public Application 
+	bool Editor::OnWindowClose(WindowCloseEvent& e)
 	{
-	public:
-		Editor(ApplicationSpecification spec)
-			: Application(spec)
+		if (GetIsSaved())
 		{
-			PushLayer(new EditorLayer());
+			SetRunning(false);
+			return true;
+		}
+		return false;
+	}
+	void Editor::ChangeName(const char* text) {
+			if (auto WinWindow = dynamic_cast<WindowsWindow*>(&this->GetWindow()))
+				glfwSetWindowTitle((WinWindow)->GetGLFWwindow(), text);
 		}
 
-		~Editor() {}
-
-		void OnUpdate()  {
-		}
-	};
-	
 	Application* CreateApplication(ApplicationCommandLineArgs args) {
 		ApplicationSpecification spec;
 		spec.Name = "Editor";
@@ -29,4 +22,5 @@ namespace eg {
 
 		return new Editor(spec);
 	};
+
 }
