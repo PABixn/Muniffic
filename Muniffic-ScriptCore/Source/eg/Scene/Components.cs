@@ -29,6 +29,11 @@ namespace eg
         }
     }
 
+    public class CameraComponent : Component
+    {
+        public enum ProjectionType { Perspective = 0, Ortographic = 1 }
+    }
+
     public class RigidBody2DComponent : Component
     {
         public enum BodyType { Static = 0, Dynamic, Kinematic }

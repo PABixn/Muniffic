@@ -125,18 +125,33 @@ namespace eg
 		entity.GetComponent<SpriteRendererComponent>().Color = *color;
 	}
 
-	static void SpriteRendererComponent_GetTilingFactor(UUID uuid, float outTilingFactor)
+	static float SpriteRendererComponent_GetTilingFactor(UUID uuid)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		outTilingFactor = entity.GetComponent<SpriteRendererComponent>().TilingFactor;
+		return entity.GetComponent<SpriteRendererComponent>().TilingFactor;
 	}
 
-	static void SpriteRendererComponent_SetColor(UUID uuid, float tilingFactor)
+	static void SpriteRendererComponent_SetTilingFactor(UUID uuid, float tilingFactor)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<SpriteRendererComponent>().TilingFactor = tilingFactor;
+	}
+
+	static MonoString* SpriteRendererComponent_GetTexture(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Ref<Texture2D> texture = entity.GetComponent<SpriteRendererComponent>().Texture;
+		return ScriptEngine::CreateString(texture->GetPath().c_str());
+	}
+
+	static void SpriteRendererComponent_SetTexture(UUID uuid, MonoString* texturePath)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<SpriteRendererComponent>().Texture = Texture2D::Create(Utils::MonoStringToString(texturePath));
 	}
 	#pragma endregion
 
@@ -155,11 +170,11 @@ namespace eg
 		entity.GetComponent<CircleRendererComponent>().Color = *color;
 	}
 
-	static void CircleRendererComponent_GetThickness(UUID uuid, float outThickness)
+	static float CircleRendererComponent_GetThickness(UUID uuid)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		outThickness = entity.GetComponent<CircleRendererComponent>().Thickness;
+		return entity.GetComponent<CircleRendererComponent>().Thickness;
 	}
 
 	static void CircleRendererComponent_SetThickness(UUID uuid, float thickness)
@@ -169,14 +184,14 @@ namespace eg
 		entity.GetComponent<CircleRendererComponent>().Thickness = thickness;
 	}
 
-	static void CircleRendererComponent_GetThickness(UUID uuid, float outFade)
+	static float CircleRendererComponent_GetFade(UUID uuid)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		outFade = entity.GetComponent<CircleRendererComponent>().Fade;
+		return entity.GetComponent<CircleRendererComponent>().Fade;
 	}
 
-	static void CircleRendererComponent_SetThickness(UUID uuid, float fade)
+	static void CircleRendererComponent_SetFade(UUID uuid, float fade)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -185,11 +200,11 @@ namespace eg
 #pragma endregion
 
 	#pragma region Camera
-	static void CameraComponent_IsPrimary(UUID uuid, bool outPrimary)
+	static bool CameraComponent_IsPrimary(UUID uuid)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		outPrimary = entity.GetComponent<CameraComponent>().Primary;
+		return entity.GetComponent<CameraComponent>().Primary;
 	}
 
 	static void CameraComponent_SetPrimary(UUID uuid, bool primary)
@@ -199,11 +214,11 @@ namespace eg
 		entity.GetComponent<CameraComponent>().Primary = primary;
 	}
 
-	static void CameraComponent_IsFixedAspectRatio(UUID uuid, bool outFixedAspectRatio)
+	static bool CameraComponent_IsFixedAspectRatio(UUID uuid)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		outFixedAspectRatio = entity.GetComponent<CameraComponent>().FixedAspectRatio;
+		return entity.GetComponent<CameraComponent>().FixedAspectRatio;
 	}
 
 	static void CameraComponent_SetFixedAspectRatio(UUID uuid, bool fixedAspectRatio)
@@ -212,6 +227,121 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().FixedAspectRatio = fixedAspectRatio;
 	}
+
+	#pragma region SceneCamera
+	static void CameraComponent_SetOrtograpic(UUID uuid, float size, float nearClip, float farClip)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CameraComponent>().Camera.SetOrthographic(size, nearClip, farClip);
+	}
+
+	static void CameraComponent_SetPerspective(UUID uuid, float verticalFOV, float nearClip, float farClip)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CameraComponent>().Camera.SetPerspective(verticalFOV, nearClip, farClip);
+	}
+
+	static SceneCamera::ProjectionType CameraComponent_GetProjectionType(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CameraComponent>().Camera.GetProjectionType();
+	}
+
+	static void CameraComponent_SetProjectionType(UUID uuid, SceneCamera::ProjectionType projectionType)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CameraComponent>().Camera.SetProjectionType(projectionType);
+	} 
+
+	static float CameraComponent_GetOrthographicSize(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CameraComponent>().Camera.GetOrthographicSize();
+	}
+
+	static void CameraComponent_SetOrthographicSize(UUID uuid, float orthographicSize)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CameraComponent>().Camera.SetOrthographicSize(orthographicSize);
+	}
+
+	static float CameraComponent_GetOrthographicNearClip(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CameraComponent>().Camera.GetOrthographicNearClip();
+	}
+
+	static void CameraComponent_SetOrthographicNearClip(UUID uuid, float orthographicNearClip)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CameraComponent>().Camera.SetOrthographicNearClip(orthographicNearClip);
+	}
+
+	static float CameraComponent_GetOrthographicFarClip(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CameraComponent>().Camera.GetOrthographicFarClip();
+	}
+
+	static void CameraComponent_SetOrthographicFarClip(UUID uuid, float orthographicFarClip)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CameraComponent>().Camera.SetOrthographicFarClip(orthographicFarClip);
+	}
+
+	static float CameraComponent_GetPerspectiveVerticalFOV(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CameraComponent>().Camera.GetPerspectiveVerticalFOV();
+	}
+
+	static void CameraComponent_SetPerspectiveVerticalFOV(UUID uuid, float perspectiveVerticalFOV)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CameraComponent>().Camera.SetPerspectiveVerticalFOV(perspectiveVerticalFOV);
+	}
+
+	static float CameraComponent_GetPerspectiveNearClip(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CameraComponent>().Camera.GetPerspectiveNearClip();
+	}
+
+	static void CameraComponent_SetPerspectiveNearClip(UUID uuid, float perspectiveNearClip)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CameraComponent>().Camera.SetPerspectiveNearClip(perspectiveNearClip);
+	}
+
+	static float CameraComponent_GetPerspectiveFarClip(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CameraComponent>().Camera.GetPerspectiveFarClip();
+	}
+
+	static void CameraComponent_SetPerspectiveFarClip(UUID uuid, float perspectiveFarClip)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CameraComponent>().Camera.SetPerspectiveFarClip(perspectiveFarClip);
+	}
+	#pragma endregion 
+
 	#pragma endregion
 
 	#pragma region RigidBody2D
@@ -275,7 +405,203 @@ namespace eg
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
 		body->SetType(Utils::RigidBody2DTypeToBox2DBody(bodyType));
 	}
+
+	static bool Rigidbody2DComponent_IsFixedRotation(UUID entityID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EG_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->IsFixedRotation();
+	}
+
+	static void Rigidbody2DComponent_SetFixedRotation(UUID entityID, bool fixedRotation)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EG_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetFixedRotation(fixedRotation);
+	}
 #pragma endregion
+
+	#pragma region BoxCollider2D
+	static void BoxCollider2DComponent_GetOffset(UUID uuid, glm::vec2* outOffset)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		*outOffset = entity.GetComponent<BoxCollider2DComponent>().Offset;
+	}
+
+	static void BoxCollider2DComponent_SetOffset(UUID uuid, glm::vec2* offset)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<BoxCollider2DComponent>().Offset = *offset;
+	}
+
+	static void BoxCollider2DComponent_GetSize(UUID uuid, glm::vec2* outSize)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		*outSize = entity.GetComponent<BoxCollider2DComponent>().Size;
+	}
+
+	static void BoxCollider2DComponent_SetSize(UUID uuid, glm::vec2* size)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<BoxCollider2DComponent>().Size = *size;
+	}
+
+	static float BoxCollider2DComponent_GetDensity(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<BoxCollider2DComponent>().Density;
+	}
+
+	static void BoxCollider2DComponent_SetDensity(UUID uuid, float density)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<BoxCollider2DComponent>().Density = density;
+	}
+
+	static float BoxCollider2DComponent_GetFriction(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<BoxCollider2DComponent>().Friction;
+	}
+
+	static void BoxCollider2DComponent_SetFriction(UUID uuid, float friction)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<BoxCollider2DComponent>().Friction = friction;
+	}
+
+	static float BoxCollider2DComponent_GetRestitution(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<BoxCollider2DComponent>().Restitution;
+	}
+
+	static void BoxCollider2DComponent_SetRestitution(UUID uuid, float restitution)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<BoxCollider2DComponent>().Restitution = restitution;
+	}
+
+	static float BoxCollider2DComponent_GetRestitutionThreshold(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<BoxCollider2DComponent>().RestitutionThreshold;
+	}
+
+	static void BoxCollider2DComponent_SetRestitutionThreshold(UUID uuid, float restitutionThreshold)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<BoxCollider2DComponent>().RestitutionThreshold = restitutionThreshold;
+	}
+	#pragma endregion
+
+	#pragma region CircleCollider2D
+	static void CircleCollider2DComponent_GetOffset(UUID uuid, glm::vec2* outOffset)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		*outOffset = entity.GetComponent<CircleCollider2DComponent>().Offset;
+	}
+
+	static void CircleCollider2DComponent_SetOffset(UUID uuid, glm::vec2* offset)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CircleCollider2DComponent>().Offset = *offset;
+	}
+
+	static float CircleCollider2DComponent_GetRadius(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CircleCollider2DComponent>().Radius;
+	}
+
+	static void CircleCollider2DComponent_SetRadius(UUID uuid, float radius)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CircleCollider2DComponent>().Radius = radius;
+	}
+
+	static float CircleCollider2DComponent_GetDensity(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CircleCollider2DComponent>().Density;
+	}
+
+	static void CircleCollider2DComponent_SetDensity(UUID uuid, float density)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CircleCollider2DComponent>().Density = density;
+	}
+
+	static float CircleCollider2DComponent_GetFriction(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CircleCollider2DComponent>().Friction;
+	}
+
+	static void CircleCollider2DComponent_SetFriction(UUID uuid, float friction)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CircleCollider2DComponent>().Friction = friction;
+	}
+
+	static float CircleCollider2DComponent_GetRestitution(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CircleCollider2DComponent>().Restitution;
+	}
+
+	static void CircleCollider2DComponent_SetRestitution(UUID uuid, float restitution)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CircleCollider2DComponent>().Restitution = restitution;
+	}
+
+	static float CircleCollider2DComponent_GetRestitutionThreshold(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CircleCollider2DComponent>().RestitutionThreshold;
+	}
+
+	static void CircleCollider2DComponent_SetRestitutionThreshold(UUID uuid, float restitutionThreshold)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<CircleCollider2DComponent>().RestitutionThreshold = restitutionThreshold;
+	}
+	#pragma endregion
 
 	#pragma region Text
 		static MonoString* TextComponent_GetText(UUID entityID)
@@ -386,13 +712,83 @@ namespace eg
 	{
 		EG_ADD_INTERNAL_CALL(Entity_HasComponent);
 		EG_ADD_INTERNAL_CALL(Entity_FindEntityByName);
-
 		EG_ADD_INTERNAL_CALL(Entity_GetScriptInstance);
+
 		EG_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		EG_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
+		EG_ADD_INTERNAL_CALL(TransformComponent_GetRotation);
+		EG_ADD_INTERNAL_CALL(TransformComponent_SetRotation);
+		EG_ADD_INTERNAL_CALL(TransformComponent_GetScale);
+		EG_ADD_INTERNAL_CALL(TransformComponent_SetScale);
+
+		EG_ADD_INTERNAL_CALL(SpriteRendererComponent_GetColor);
+		EG_ADD_INTERNAL_CALL(SpriteRendererComponent_SetColor);
+		EG_ADD_INTERNAL_CALL(SpriteRendererComponent_GetTilingFactor);
+		EG_ADD_INTERNAL_CALL(SpriteRendererComponent_SetTilingFactor);
+		EG_ADD_INTERNAL_CALL(SpriteRendererComponent_GetTexture);
+		EG_ADD_INTERNAL_CALL(SpriteRendererComponent_SetTexture);
+
+		EG_ADD_INTERNAL_CALL(CircleRendererComponent_GetColor);
+		EG_ADD_INTERNAL_CALL(CircleRendererComponent_SetColor);
+		EG_ADD_INTERNAL_CALL(CircleRendererComponent_GetThickness);
+		EG_ADD_INTERNAL_CALL(CircleRendererComponent_SetThickness);
+		EG_ADD_INTERNAL_CALL(CircleRendererComponent_GetFade);
+		EG_ADD_INTERNAL_CALL(CircleRendererComponent_SetFade);
+
+		EG_ADD_INTERNAL_CALL(CameraComponent_IsPrimary);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetPrimary);
+		EG_ADD_INTERNAL_CALL(CameraComponent_IsFixedAspectRatio);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetFixedAspectRatio);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetOrtograpic);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetPerspective);
+		EG_ADD_INTERNAL_CALL(CameraComponent_GetProjectionType);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetProjectionType);
+		EG_ADD_INTERNAL_CALL(CameraComponent_GetOrthographicSize);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetOrthographicSize);
+		EG_ADD_INTERNAL_CALL(CameraComponent_GetOrthographicNearClip);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetOrthographicNearClip);
+		EG_ADD_INTERNAL_CALL(CameraComponent_GetOrthographicFarClip);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetOrthographicFarClip);
+		EG_ADD_INTERNAL_CALL(CameraComponent_GetPerspectiveVerticalFOV);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetPerspectiveVerticalFOV);
+		EG_ADD_INTERNAL_CALL(CameraComponent_GetPerspectiveNearClip);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetPerspectiveNearClip);
+		EG_ADD_INTERNAL_CALL(CameraComponent_GetPerspectiveFarClip);
+		EG_ADD_INTERNAL_CALL(CameraComponent_SetPerspectiveFarClip);
 
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
+		EG_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetLinearVelocity);
+		EG_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetType);
+		EG_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetType);
+		EG_ADD_INTERNAL_CALL(Rigidbody2DComponent_IsFixedRotation);
+		EG_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetFixedRotation);
+
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetOffset);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetOffset);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetSize);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetSize);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetDensity);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetDensity);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetFriction);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetFriction);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetRestitution);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetRestitution);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetRestitutionThreshold);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetRestitutionThreshold);
+
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_GetOffset);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_SetOffset);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_GetRadius);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_SetRadius);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_GetDensity);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_SetDensity);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_GetFriction);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_SetFriction);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_GetRestitution);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_SetRestitution);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_GetRestitutionThreshold);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_SetRestitutionThreshold);
 
 		EG_ADD_INTERNAL_CALL(TextComponent_GetText);
 		EG_ADD_INTERNAL_CALL(TextComponent_SetText);
