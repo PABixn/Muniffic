@@ -45,29 +45,20 @@ namespace eg
 			return nullptr;
 		}
 
-		template<typename T>
-		void TryGetComponent(MonoType* managedType, std::optional<T>& component, Entity e)
-		{
-			if (std::strcmp(getSubstringAfterColon(typeid(T).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
-				e.AddComponent<T>();
-		}
-
-		using AllSavedComponents = std::tuple<std::optional<TagComponent>,
-			std::optional<TransformComponent>,
-			std::optional<SpriteRendererComponent>,
-			std::optional<CircleRendererComponent>,
-			std::optional<CameraComponent>,
-			std::optional<ScriptComponent>,
-			std::optional<RigidBody2DComponent>,
-			std::optional<BoxCollider2DComponent>,
-			std::optional<CircleCollider2DComponent>,
-			std::optional<TextComponent>>;
-
+		template<typename... Component>
 		void AddComponent(MonoType* managedType, Entity e)
 		{
-			Commands::EntitySave entitySave;
-			AllSavedComponents components = entitySave.GetAllComponents();
-			std::apply([&managedType, &e](auto&&... args) {(( TryGetComponent(managedType, args, e)), ...); }, components);
+			([&managedType, &e]()
+				{
+					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
+						e.AddComponent<Component>();
+				}(), ...);
+		}
+
+		template<typename... Component>
+		void AddComponent(ComponentGroup<Component...>, MonoType* managedType, Entity e)
+		{
+			AddComponent<Component...>(managedType, e);
 		}
 	}
 
@@ -105,8 +96,13 @@ namespace eg
 			EG_CORE_WARN("Entity already has component of type {}", mono_type_get_name(managedType));
 			return;
 		}
+		std::cout << "Dupa" << std::endl;
+		Utils::AddComponent(AllComponents{}, managedType, e);
+	}
 
-		Utils::AddComponent(managedType, e);
+	static void Entity_RemoveComponent(UUID uuid, MonoReflectionType* componentType)
+	{
+
 	}
 
 	static uint64_t Entity_FindEntityByName(MonoString *name)
