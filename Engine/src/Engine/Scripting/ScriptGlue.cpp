@@ -96,7 +96,6 @@ namespace eg
 			EG_CORE_WARN("Entity already has component of type {}", mono_type_get_name(managedType));
 			return;
 		}
-		std::cout << "Dupa" << std::endl;
 		Utils::AddComponent(AllComponents{}, managedType, e);
 	}
 
