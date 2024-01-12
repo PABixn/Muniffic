@@ -49,6 +49,18 @@ namespace eg
 
         #region Instance
 
+        public string Name
+        {
+            get
+            {
+                return InternalCalls.Entity_GetName(ID);
+            }
+            set
+            {
+                InternalCalls.Entity_SetName(ID, value);
+            }
+        }
+
         public T As<T>() where T : DefaultBehaviour, new()
         {
             object instance = InternalCalls.Entity_GetScriptInstance(ID);
@@ -72,15 +84,22 @@ namespace eg
             return component;
         }
 
-        public void AddComponent<T>() where T : Component, new()
+        public T AddComponent<T>() where T : Component, new()
         {
             Type componentType = typeof(T);
             InternalCalls.Entity_AddComponent(ID, componentType);
+
+            return GetComponent<T>();
+        }
+
+        public void RemoveComponent<T>() where T : Component, new()
+        {
+            Type componentType = typeof(T);
+            InternalCalls.Entity_RemoveComponent(ID, componentType);
         }
         #endregion
 
         #region Static
-
         public static Entity FindEntityByName(string name)
         {
             ulong entityID = InternalCalls.Entity_FindEntityByName(name);
@@ -88,6 +107,25 @@ namespace eg
                 return null;
 
             return new Entity(entityID);
+        }
+
+        public static Entity Create(string name)
+        {
+            ulong entityID = InternalCalls.Entity_Create(name);
+            if (entityID == 0)
+                return null;
+
+            return new Entity(entityID);
+        }
+
+        public static void Destroy(Entity entity)
+        {
+            InternalCalls.Entity_Destroy(entity.ID);
+        }
+
+        public static void Destroy(ulong ID)
+        {
+            InternalCalls.Entity_Destroy(ID);
         }
 
         #endregion

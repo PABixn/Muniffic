@@ -36,6 +36,14 @@ namespace Sandbox
             {
                 velocity.Y = speed;
             }
+            else if(Input.IsKeyDown(KeyCode.R))
+            {
+                m_Player.RemoveComponent<TextComponent>();
+            }
+            else if(Input.IsKeyDown(KeyCode.C))
+            {
+                m_Player.AddComponent<TextComponent>();
+            }
             else if (Input.IsKeyDown(KeyCode.Down))
             {
                 velocity.Y = -speed;

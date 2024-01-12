@@ -60,6 +60,22 @@ namespace eg
 		{
 			AddComponent<Component...>(managedType, e);
 		}
+		
+		template<typename... Component>
+		void RemoveComponent(MonoType* managedType, Entity e)
+		{
+			([&managedType, &e]()
+				{
+					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
+						e.RemoveComponent<Component>();
+				}(), ...);
+		}
+
+		template<typename... Component>
+		void RemoveComponent(ComponentGroup<Component...>, MonoType* managedType, Entity e)
+		{
+			RemoveComponent<Component...>(managedType, e);
+		}
 	}
 
 	static std::unordered_map<MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFunctions;
@@ -96,12 +112,24 @@ namespace eg
 			EG_CORE_WARN("Entity already has component of type {}", mono_type_get_name(managedType));
 			return;
 		}
+
 		Utils::AddComponent(AllComponents{}, managedType, e);
 	}
 
 	static void Entity_RemoveComponent(UUID uuid, MonoReflectionType* componentType)
 	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->GetEntityByUUID(uuid);
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		EG_CORE_ASSERT(s_EntityHasComponentFunctions.find(managedType) != s_EntityHasComponentFunctions.end(), "Entity_RemoveComponent: Component type not registered!");
+		if (!s_EntityHasComponentFunctions.at(managedType)(e))
+		{
+			EG_CORE_WARN("Entity does not have component of type {}", mono_type_get_name(managedType));
+			return;
+		}
 
+		Utils::RemoveComponent(AllComponents{}, managedType, e);
 	}
 
 	static uint64_t Entity_FindEntityByName(MonoString *name)
@@ -797,7 +825,12 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(Entity_HasComponent);
 		EG_ADD_INTERNAL_CALL(Entity_FindEntityByName);
 		EG_ADD_INTERNAL_CALL(Entity_GetScriptInstance);
+		EG_ADD_INTERNAL_CALL(Entity_Create);
+		EG_ADD_INTERNAL_CALL(Entity_Destroy);
 		EG_ADD_INTERNAL_CALL(Entity_AddComponent);
+		EG_ADD_INTERNAL_CALL(Entity_RemoveComponent);
+		EG_ADD_INTERNAL_CALL(Entity_GetName);
+		EG_ADD_INTERNAL_CALL(Entity_SetName);
 
 		EG_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		EG_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);

@@ -21,7 +21,22 @@ namespace eg
         internal extern static bool Entity_HasComponent(ulong ID, Type componentType);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static ulong Entity_AddComponent(ulong ID, Type componentType);
+        internal extern static void Entity_AddComponent(ulong ID, Type componentType);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_RemoveComponent(ulong ID, Type componentType);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Entity_Create(string name);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_Destroy(ulong ID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string Entity_GetName(ulong ID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_SetName(ulong ID, string name);
         #endregion
 
         #region Transform
