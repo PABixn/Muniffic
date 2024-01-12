@@ -1,17 +1,15 @@
 #include "egpch.h"
 #include "ResourceSystem.h"
 #include "Engine/Resources/loaders/BinaryLoader.h"
+#include "Engine/Resources/loaders/ImageLoader.h"
+#include "Engine/Resources/loaders/TextLoader.h"
 
 //Todo: switch to Ref instead of raw pointers
 namespace eg {
 
-	struct ResourceSystemState
-	{
-		ResourceSystemConfig Config;
-		std::vector<ResourceLoader> RegisteredLoaders;
-	};
+	
 
-	static ResourceSystemState* StatePtr = nullptr;
+	static Ref<ResourceSystemState> StatePtr = nullptr;
 
 	bool load(std::string name, ResourceLoader* loader, Resource* outResource)
 	{
@@ -26,7 +24,7 @@ namespace eg {
 		return loader->load(loader, name, outResource);
 	}
 
-	bool resourceSystemInit(uint64_t* memory_requirement, ResourceSystemState* state, ResourceSystemConfig config)
+	bool resourceSystemInit(ResourceSystemConfig config)
 	{
 		if (config.MaxLoaderCount == 0)
 		{
@@ -34,16 +32,10 @@ namespace eg {
 			return false;
 		}
 
-		if (state == nullptr)
-		{
-			//EG_CORE_ERROR("Invalid state passed to resourceSystemInit");
-			return true;
-		}
-
-		StatePtr = state;
+		StatePtr = CreateRef<ResourceSystemState>();
 		StatePtr->Config = config;
 
-		StatePtr->RegisteredLoaders.reserve(StatePtr->Config.MaxLoaderCount);
+		StatePtr->RegisteredLoaders.resize(StatePtr->Config.MaxLoaderCount);
 
 		uint32_t count = config.MaxLoaderCount;
 		for (uint32_t i = 0; i < count; i++)
@@ -51,12 +43,12 @@ namespace eg {
 			StatePtr->RegisteredLoaders[i].Id = -1;
 		}
 
-		resourceSystemRegisterLoader(textResourceLoaderCreate());
-		resourceSystemRegisterLoader(binaryResourceLoaderCreate());
-		resourceSystemRegisterLoader(imageResourceLoaderCreate());
+		resourceSystemRegisterLoader(StatePtr, textResourceLoaderCreate());
+		resourceSystemRegisterLoader(StatePtr, binaryResourceLoaderCreate());
+		resourceSystemRegisterLoader(StatePtr, imageResourceLoaderCreate());
 	}
 
-	void resourceSystemShutdown(void* state)
+	void resourceSystemShutdown()
 	{
 		if (StatePtr)
 		{
@@ -64,7 +56,7 @@ namespace eg {
 		}
 	}
 
-	bool resourceSystemRegisterLoader(void* state, ResourceLoader* loader)
+	bool resourceSystemRegisterLoader(Ref<ResourceSystemState> state, const ResourceLoader loader)
 	{
 		if (StatePtr) {
 			uint32_t count = StatePtr->Config.MaxLoaderCount;
@@ -74,12 +66,12 @@ namespace eg {
 				ResourceLoader* currentLoader = &StatePtr->RegisteredLoaders[i];
 				if (currentLoader->Id != -1)
 				{
-					if (currentLoader->Type == loader->Type)
+					if (currentLoader->Type == loader.Type)
 					{
 						EG_ERROR("A loader with the given type is already registered");
 						return false;
 					}
-					else if (!loader->CustomType.empty() && loader->CustomType == currentLoader->CustomType)
+					else if (!loader.CustomType.empty() && loader.CustomType == currentLoader->CustomType)
 					{
 							EG_ERROR("A loader with the given custom type is already registered");
 							return false;
@@ -90,7 +82,7 @@ namespace eg {
 			{
 				if (StatePtr->RegisteredLoaders[i].Id == -1)
 				{
-					StatePtr->RegisteredLoaders[i] = *loader;
+					StatePtr->RegisteredLoaders[i] = loader;
 					StatePtr->RegisteredLoaders[i].Id = i;
 					EG_TRACE("Registered loader with id: {0}", i);
 					return true;

@@ -9,7 +9,8 @@
 namespace eg
 {
 
-	struct ResourceSystemState;
+	
+
 	struct ResourceSystemConfig
 	{
 		uint32_t MaxLoaderCount;
@@ -25,10 +26,18 @@ namespace eg
 		void (*unload)(ResourceLoader* loader, Resource* resource);
 	};
 
-	bool resourceSystemInit(uint64_t* memory_requirement, ResourceSystemState* state, ResourceSystemConfig config);
-	void resourceSystemShutdown(void* state);
+	struct ResourceSystemState
+	{
+		ResourceSystemConfig Config;
+		std::vector<ResourceLoader> RegisteredLoaders;
+	};
 
-	bool resourceSystemRegisterLoader(void* state, ResourceLoader* loader);
+	
+
+	bool resourceSystemInit(ResourceSystemConfig config);
+	void resourceSystemShutdown();
+
+	bool resourceSystemRegisterLoader(Ref<ResourceSystemState> state, const ResourceLoader loader);
 
 	bool resourceSystemLoad(std::string name, ResourceType resourceType, Resource* outResource);
 	bool resourceSystemLoadCustom(std::string name, std::string customType, Resource* outResource);

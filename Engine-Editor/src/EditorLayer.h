@@ -80,6 +80,8 @@ namespace eg {
 		bool m_ViewportHovered = false;
 		std::vector<ProfileResult> m_ProfileResults;
 
+		Ref<ResourceSystemState> resourceSystemState;
+
 		std::unordered_map<char, Ref<SubTexture2D>> s_TextureMap;
 
 		int m_GizmoType = -1;

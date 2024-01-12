@@ -26,6 +26,16 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
+		ResourceSystemConfig resourceSystemConfig;
+		resourceSystemConfig.MaxLoaderCount = 3;
+		resourceSystemConfig.ResourceDirectory = "../resources";
+
+		if (!resourceSystemInit(resourceSystemConfig))
+		{
+			EG_ERROR("Failed to initialize resource system.");
+			return;
+		}
+
 		EG_PROFILE_FUNCTION();
 		m_Texture = Texture2D::Create("assets/textures/cubes.png");
 		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");
@@ -64,6 +74,7 @@ namespace eg
 	void EditorLayer::OnDetach()
 	{
 		EG_PROFILE_FUNCTION();
+		resourceSystemShutdown();
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)

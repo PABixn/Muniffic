@@ -4,6 +4,7 @@
 #include "LayerStack.h"
 #include "Engine/ImGui/ImGuiLayer.h"
 #include "Engine/Core/Timestep.h"
+#include "Engine/Resources/Systems/ResourceSystem.h"
 
 
 int main(int argc, char** argv);
@@ -65,6 +66,8 @@ namespace eg {
 		LayerStack m_LayerStack;
 		float m_LastFrameTime = 0.0f;
 		bool m_Minimized = false;
+
+		
 
 		std::vector<std::function<void()>> m_MainThreadQueue;
 		std::mutex m_MainThreadQueueMutex;
