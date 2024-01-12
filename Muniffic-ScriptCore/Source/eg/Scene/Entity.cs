@@ -3,8 +3,41 @@ using System.Runtime.CompilerServices;
 
 namespace eg
 {
+    public class DefaultBehaviour
+    {
+        public Entity entity;
+
+        protected DefaultBehaviour()
+        {
+            entity = new Entity(0);
+        }
+        internal DefaultBehaviour(ulong id)
+        {
+            entity = new Entity(id);
+        }
+
+        public bool HasComponent<T>() where T : Component, new()
+        {
+            Type componentType = typeof(T);
+            return InternalCalls.Entity_HasComponent(entity.ID, componentType);
+        }
+
+        public T GetComponent<T>() where T : Component, new()
+        {
+            if(!HasComponent<T>())
+            {
+                return null;
+            }
+
+            T component = new T() { Entity = entity };
+            return component;
+        }
+    }
+
     public class Entity
     {
+        public readonly ulong ID;
+
         protected Entity()
         {
             ID = 0;
@@ -14,20 +47,12 @@ namespace eg
             ID = id;
         }
 
-        public readonly ulong ID;
-        
-        public Vector3 Translation
-        {
-            get
-            {
-                InternalCalls.TransformComponent_GetTranslation(ID, out Vector3 value);
-                return value;
-            }
+        #region Instance
 
-            set
-            {
-                InternalCalls.TransformComponent_SetTranslation(ID, ref value);
-            }
+        public T As<T>() where T : DefaultBehaviour, new()
+        {
+            object instance = InternalCalls.Entity_GetScriptInstance(ID);
+            return instance as T;
         }
 
         public bool HasComponent<T>() where T : Component, new()
@@ -38,7 +63,7 @@ namespace eg
 
         public T GetComponent<T>() where T : Component, new()
         {
-            if(!HasComponent<T>())
+            if (!HasComponent<T>())
             {
                 return null;
             }
@@ -47,21 +72,19 @@ namespace eg
             return component;
         }
 
-        public Entity FindEntityByName(string name)
+        #endregion
+
+        #region Static
+
+        public static Entity FindEntityByName(string name)
         {
             ulong entityID = InternalCalls.Entity_FindEntityByName(name);
-            if(entityID == 0)
+            if (entityID == 0)
                 return null;
 
             return new Entity(entityID);
         }
 
-        public T As<T>() where T : Entity, new()
-        {
-            object instance = InternalCalls.Entity_GetScriptInstance(ID);
-            return instance as T;
-        }
+        #endregion
     }
-
-    
 }

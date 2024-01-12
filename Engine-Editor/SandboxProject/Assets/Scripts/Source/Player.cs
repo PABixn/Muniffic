@@ -8,7 +8,7 @@ using eg;
 
 namespace Sandbox
 {
-    public class Player : Entity
+    public class Player : DefaultBehaviour
     {
         private TransformComponent m_Transform;
         private RigidBody2DComponent m_RigidBody2D;
@@ -19,17 +19,16 @@ namespace Sandbox
         public Vector2 Velocity = new Vector2(0);
         void OnCreate()
         {
-            Console.WriteLine("Player created! - " + ID);
+            Console.WriteLine("Player created! - " + entity.ID);
             m_Transform = GetComponent<TransformComponent>();
             m_RigidBody2D = GetComponent<RigidBody2DComponent>();
             bool hasTransform = HasComponent<TransformComponent>();
             Console.WriteLine("HasComponent {0}", hasTransform);
-            
         }
 
         void OnUpdate(float ts)
         {
-            Entity cameraEntity = FindEntityByName("Camera");
+            Entity cameraEntity = Entity.FindEntityByName("Camera");
             if (cameraEntity != null)
             {
                 camera = cameraEntity.As<Camera>();
