@@ -389,9 +389,7 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(entityID);
 		EG_CORE_ASSERT(entity);
 
-		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
-		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		return Utils::RigidBody2DTypeFromBox2DBody(body->GetType());
+		return entity.GetComponent<RigidBody2DComponent>().Type;
 	}
 
 	static void Rigidbody2DComponent_SetType(UUID entityID, RigidBody2DComponent::BodyType bodyType)
@@ -401,9 +399,7 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(entityID);
 		EG_CORE_ASSERT(entity);
 
-		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
-		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		body->SetType(Utils::RigidBody2DTypeToBox2DBody(bodyType));
+		entity.GetComponent<RigidBody2DComponent>().Type = bodyType;
 	}
 
 	static bool Rigidbody2DComponent_IsFixedRotation(UUID entityID)
@@ -413,9 +409,7 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(entityID);
 		EG_CORE_ASSERT(entity);
 
-		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
-		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		return body->IsFixedRotation();
+		return entity.GetComponent<RigidBody2DComponent>().FixedRotation;
 	}
 
 	static void Rigidbody2DComponent_SetFixedRotation(UUID entityID, bool fixedRotation)
@@ -425,9 +419,7 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(entityID);
 		EG_CORE_ASSERT(entity);
 
-		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
-		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		body->SetFixedRotation(fixedRotation);
+		entity.GetComponent<RigidBody2DComponent>().FixedRotation = fixedRotation;
 	}
 #pragma endregion
 
