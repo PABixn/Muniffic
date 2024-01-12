@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace eg
 {
-
     public class Entity
     {
         protected Entity()

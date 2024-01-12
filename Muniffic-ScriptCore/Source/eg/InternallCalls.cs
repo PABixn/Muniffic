@@ -58,7 +58,7 @@ namespace eg
         internal extern static float SpriteRendererComponent_GetTilingFactor(ulong UUID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void SpriteRendererComponent_SetTilingFactor(ulong UUID, out float tilingFactor);
+        internal extern static void SpriteRendererComponent_SetTilingFactor(ulong UUID, ref float tilingFactor);
         #endregion
 
         #region CircleRenderer
@@ -72,13 +72,13 @@ namespace eg
         internal extern static float CircleRendererComponent_GetThickness(ulong UUID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CircleRendererComponent_SetThickness(ulong UUID, out float thickness);
+        internal extern static void CircleRendererComponent_SetThickness(ulong UUID, ref float thickness);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static float CircleRendererComponent_GetFade(ulong UUID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CircleRendererComponent_SetFade(ulong UUID, out float fade);
+        internal extern static void CircleRendererComponent_SetFade(ulong UUID, ref float fade);
         #endregion
 
         #region Camera
