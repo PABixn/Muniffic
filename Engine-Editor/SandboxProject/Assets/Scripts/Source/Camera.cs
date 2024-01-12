@@ -20,6 +20,9 @@ namespace Sandbox
         {
             m_Transform = GetComponent<TransformComponent>();
             m_Player = Entity.FindEntityByName("Player");
+            m_Player.AddComponent<TextComponent>();
+            m_Player.GetComponent<TextComponent>().Text = "Hello World!";
+            m_Player.GetComponent<TextComponent>().Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
         }
 
         void OnUpdate(float ts)

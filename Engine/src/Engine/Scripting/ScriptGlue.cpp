@@ -10,6 +10,7 @@
 #include "mono/metadata/reflection.h"
 
 #include "box2d/b2_body.h"
+#include "../Engine-Editor/src/Commands/Commands.h"
 
 namespace eg
 {
@@ -24,9 +25,53 @@ namespace eg
 			return str;
 		}
 
+		const char* getSubstringAfterColon(const char* input) {
+			const char* colonPosition = strchr(input, ':');
+
+			if (colonPosition != nullptr) {
+				return colonPosition + 2;
+			}
+
+			return nullptr;
+		}
+
+		const char* getSubstringAfterDot(const char* input) {
+			const char* colonPosition = strchr(input, '.');
+
+			if (colonPosition != nullptr) {
+				return colonPosition + 1;
+			}
+
+			return nullptr;
+		}
+
+		template<typename T>
+		void TryGetComponent(MonoType* managedType, std::optional<T>& component, Entity e)
+		{
+			if (std::strcmp(getSubstringAfterColon(typeid(T).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
+				e.AddComponent<T>();
+		}
+
+		using AllSavedComponents = std::tuple<std::optional<TagComponent>,
+			std::optional<TransformComponent>,
+			std::optional<SpriteRendererComponent>,
+			std::optional<CircleRendererComponent>,
+			std::optional<CameraComponent>,
+			std::optional<ScriptComponent>,
+			std::optional<RigidBody2DComponent>,
+			std::optional<BoxCollider2DComponent>,
+			std::optional<CircleCollider2DComponent>,
+			std::optional<TextComponent>>;
+
+		void AddComponent(MonoType* managedType, Entity e)
+		{
+			Commands::EntitySave entitySave;
+			AllSavedComponents components = entitySave.GetAllComponents();
+			std::apply([&managedType, &e](auto&&... args) {(( TryGetComponent(managedType, args, e)), ...); }, components);
+		}
 	}
 
-	static std::unordered_map<MonoType *, std::function<bool(Entity)>> s_EntityHasComponentFunctions;
+	static std::unordered_map<MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFunctions;
 
 #define EG_ADD_INTERNAL_CALL(Name) mono_add_internal_call("eg.InternalCalls::" #Name, Name)
 
@@ -48,6 +93,22 @@ namespace eg
 		return s_EntityHasComponentFunctions.at(managedType)(entity);
 	}
 
+	static void Entity_AddComponent(UUID uuid, MonoReflectionType* componentType)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->GetEntityByUUID(uuid);
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		EG_CORE_ASSERT(s_EntityHasComponentFunctions.find(managedType) != s_EntityHasComponentFunctions.end(), "Entity_AddComponent: Component type not registered!");
+		if (s_EntityHasComponentFunctions.at(managedType)(e))
+		{
+			EG_CORE_WARN("Entity already has component of type {}", mono_type_get_name(managedType));
+			return;
+		}
+
+		Utils::AddComponent(managedType, e);
+	}
+
 	static uint64_t Entity_FindEntityByName(MonoString *name)
 	{
 		char *cStr = mono_string_to_utf8(name);
@@ -61,6 +122,42 @@ namespace eg
 			return 0;
 
 		return e.GetUUID();
+	}
+
+	static uint64_t Entity_Create(MonoString* name)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->CreateEntity(Utils::MonoStringToString(name));
+
+		if(!e)
+			return 0;
+
+		return e.GetUUID();
+	}
+
+	static void Entity_Destroy(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->GetEntityByUUID(uuid);
+		scene->DestroyEntity(e);
+	}
+
+	static MonoString* Entity_GetName(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->GetEntityByUUID(uuid);
+		return ScriptEngine::CreateString(e.GetName().c_str());
+	}
+
+	static void Entity_SetName(UUID uuid, MonoString* name)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->GetEntityByUUID(uuid);
+		e.SetName(Utils::MonoStringToString(name));
 	}
 
 	#pragma endregion
@@ -705,6 +802,7 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(Entity_HasComponent);
 		EG_ADD_INTERNAL_CALL(Entity_FindEntityByName);
 		EG_ADD_INTERNAL_CALL(Entity_GetScriptInstance);
+		EG_ADD_INTERNAL_CALL(Entity_AddComponent);
 
 		EG_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		EG_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
@@ -810,8 +908,8 @@ namespace eg
 					EG_CORE_ERROR("Could not find component type {}", managedTypeName);
 					return;
 				}
-				s_EntityHasComponentFunctions[managedType] = [](Entity entity) { return entity.HasComponent<Component>(); }; }(),
-		 ...);
+				s_EntityHasComponentFunctions[managedType] = [](Entity entity) { return entity.HasComponent<Component>();};
+			}(), ...);
 	}
 
 	template <typename... Component>

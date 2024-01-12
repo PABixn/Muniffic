@@ -72,6 +72,11 @@ namespace eg
             return component;
         }
 
+        public void AddComponent<T>() where T : Component, new()
+        {
+            Type componentType = typeof(T);
+            InternalCalls.Entity_AddComponent(ID, componentType);
+        }
         #endregion
 
         #region Static

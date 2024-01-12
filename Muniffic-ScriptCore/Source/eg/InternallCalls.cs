@@ -18,7 +18,10 @@ namespace eg
         internal extern static object Entity_GetScriptInstance(ulong UUID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool Entity_HasComponent(ulong iD, Type componentType);
+        internal extern static bool Entity_HasComponent(ulong ID, Type componentType);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Entity_AddComponent(ulong ID, Type componentType);
         #endregion
 
         #region Transform
