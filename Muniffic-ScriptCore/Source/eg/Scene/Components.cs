@@ -49,15 +49,19 @@ namespace eg
 
     public class SpriteRendererComponent : Component
     {
-        public Vector4 color
+        public Color color
         {
             get
             {
                 InternalCalls.SpriteRendererComponent_GetColor(Entity.ID, out Vector4 color);
-                return color;
+                return new Color(color);
             }
 
-            set => InternalCalls.SpriteRendererComponent_SetColor(Entity.ID, ref value);
+            set
+            {
+                Vector4 colorVec = Color.ToVector4(value);
+                InternalCalls.SpriteRendererComponent_SetColor(Entity.ID, ref colorVec);
+            }
         }
 
         public string texture
@@ -75,15 +79,19 @@ namespace eg
 
     public class CircleRendererComponent : Component
     {
-        public Vector4 color
+        public Color color
         {
             get
             {
                 InternalCalls.CircleRendererComponent_GetColor(Entity.ID, out Vector4 color);
-                return color;
+                return new Color(color);
             }
 
-            set => InternalCalls.CircleRendererComponent_SetColor(Entity.ID, ref value);
+            set
+            {
+                Vector4 colorVec = Color.ToVector4(value);
+                InternalCalls.CircleRendererComponent_SetColor(Entity.ID, ref colorVec);
+            }
         }
 
         public float thickness
@@ -295,17 +303,18 @@ namespace eg
             set => InternalCalls.TextComponent_SetText(Entity.ID, value);
         }
 
-        public Vector4 color
+        public Color color
         {
             get
             {
                 InternalCalls.TextComponent_GetColor(Entity.ID, out Vector4 color);
-                return color;
+                return new Color(color);
             }
 
             set
             {
-                InternalCalls.TextComponent_SetColor(Entity.ID, ref value);
+                Vector4 colorVec = Color.ToVector4(value);
+                InternalCalls.TextComponent_SetColor(Entity.ID, ref colorVec);
             }
         }
 
