@@ -49,7 +49,7 @@ namespace eg
 
         #region Instance
 
-        public string Name
+        public string name
         {
             get
             {

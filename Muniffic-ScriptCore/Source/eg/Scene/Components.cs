@@ -13,7 +13,7 @@ namespace eg
 
     public class TransformComponent : Component
     {
-        public Vector3 Translation
+        public Vector3 translation
         {
             get
             {
@@ -24,7 +24,7 @@ namespace eg
             set => InternalCalls.TransformComponent_SetTranslation(Entity.ID, ref value);
         }
 
-        public Vector3 Scale
+        public Vector3 scale
         {
             get
             {
@@ -35,7 +35,7 @@ namespace eg
             set => InternalCalls.TransformComponent_SetScale(Entity.ID, ref value);
         }
 
-        public Vector3 Rotation
+        public Vector3 rotation
         {
             get
             {
@@ -49,7 +49,7 @@ namespace eg
 
     public class SpriteRendererComponent : Component
     {
-        public Vector4 Color
+        public Vector4 color
         {
             get
             {
@@ -60,13 +60,13 @@ namespace eg
             set => InternalCalls.SpriteRendererComponent_SetColor(Entity.ID, ref value);
         }
 
-        public string Texture
+        public string texture
         {
             get => InternalCalls.SpriteRendererComponent_GetTexture(Entity.ID);
             set => InternalCalls.SpriteRendererComponent_SetTexture(Entity.ID, ref value);
         }
 
-        public float TilingFactor
+        public float tilingFactor
         {
             get => InternalCalls.SpriteRendererComponent_GetTilingFactor(Entity.ID);
             set => InternalCalls.SpriteRendererComponent_SetTilingFactor(Entity.ID, ref value);
@@ -75,7 +75,7 @@ namespace eg
 
     public class CircleRendererComponent : Component
     {
-        public Vector4 Color
+        public Vector4 color
         {
             get
             {
@@ -86,13 +86,13 @@ namespace eg
             set => InternalCalls.CircleRendererComponent_SetColor(Entity.ID, ref value);
         }
 
-        public float Thickness
+        public float thickness
         {
             get => InternalCalls.CircleRendererComponent_GetThickness(Entity.ID);
             set => InternalCalls.CircleRendererComponent_SetThickness(Entity.ID, ref value);
         }
 
-        public float Fade
+        public float fade
         {
             get => InternalCalls.CircleRendererComponent_GetFade(Entity.ID);
             set => InternalCalls.CircleRendererComponent_SetFade(Entity.ID, ref value);
@@ -103,19 +103,19 @@ namespace eg
     {
         public enum ProjectionType { Perspective = 0, Ortographic = 1 }
 
-        public bool Primary
+        public bool primary
         {
             get => InternalCalls.CameraComponent_IsPrimary(Entity.ID);
             set => InternalCalls.CameraComponent_SetPrimary(Entity.ID, ref value);
         }
 
-        public bool FixedAspectRatio
+        public bool fixedAspectRatio
         {
             get => InternalCalls.CameraComponent_IsFixedAspectRatio(Entity.ID);
             set => InternalCalls.CameraComponent_SetFixedAspectRatio(Entity.ID, ref value);
         }
 
-        public ProjectionType Type
+        public ProjectionType type
         {
             get => InternalCalls.CameraComponent_GetProjectionType(Entity.ID);
             set => InternalCalls.CameraComponent_SetProjectionType(Entity.ID, ref value);
@@ -131,37 +131,37 @@ namespace eg
             InternalCalls.CameraComponent_SetOrthographic(Entity.ID, ref size, ref nearClip, ref farClip);
         }
 
-        public float OrtographicSize
+        public float ortographicSize
         {
             get => InternalCalls.CameraComponent_GetOrthographicSize(Entity.ID);
             set => InternalCalls.CameraComponent_SetOrthographicSize(Entity.ID, ref value);
         }
 
-        public float OrtographicNearClip
+        public float ortographicNearClip
         {
             get => InternalCalls.CameraComponent_GetOrthographicNearClip(Entity.ID);
             set => InternalCalls.CameraComponent_SetOrthographicNearClip(Entity.ID, ref value);
         }
 
-        public float OrtographicFarClip
+        public float ortographicFarClip
         {
             get => InternalCalls.CameraComponent_GetOrthographicFarClip(Entity.ID);
             set => InternalCalls.CameraComponent_SetOrthographicFarClip(Entity.ID, ref value);
         }
 
-        public float PerspectiveVerticalFov
+        public float perspectiveVerticalFov
         {
             get => InternalCalls.CameraComponent_GetPerspectiveVerticalFOV(Entity.ID);
             set => InternalCalls.CameraComponent_SetPerspectiveVerticalFOV(Entity.ID, ref value);
         }
 
-        public float PerspectiveNearClip
+        public float perspectiveNearClip
         {
             get => InternalCalls.CameraComponent_GetPerspectiveNearClip(Entity.ID);
             set => InternalCalls.CameraComponent_SetPerspectiveNearClip(Entity.ID, ref value);
         }
 
-        public float PerspectiveFarClip
+        public float perspectiveFarClip
         {
             get => InternalCalls.CameraComponent_GetPerspectiveFarClip(Entity.ID);
             set => InternalCalls.CameraComponent_SetPerspectiveFarClip(Entity.ID, ref value);
@@ -172,7 +172,7 @@ namespace eg
     {
         public enum BodyType { Static = 0, Dynamic, Kinematic }
 
-        public Vector2 LinearVelocity
+        public Vector2 linearVelocity
         {
             get
             {
@@ -181,7 +181,7 @@ namespace eg
             }
         }
 
-        public BodyType Type
+        public BodyType type
         {
             get => InternalCalls.RigidBody2DComponent_GetType(Entity.ID);
             set => InternalCalls.RigidBody2DComponent_SetType(Entity.ID, value);
@@ -197,7 +197,7 @@ namespace eg
             InternalCalls.RigidBody2DComponent_ApplyLinearImpulseToCenter(Entity.ID, ref impulse, wake);
         }
 
-        public bool FixedRotation
+        public bool fixedRotation
         {
             get => InternalCalls.RigidBody2DComponent_IsFixedRotation(Entity.ID);
             set => InternalCalls.RigidBody2DComponent_SetFixedRotation(Entity.ID, ref value);
@@ -206,7 +206,7 @@ namespace eg
 
     public class BoxCollider2DComponent : Component
     {
-        public Vector2 Size
+        public Vector2 size
         {
             get
             {
@@ -217,7 +217,7 @@ namespace eg
             set => InternalCalls.BoxCollider2DComponent_SetSize(Entity.ID, ref value);
         }
 
-        public Vector2 Offset
+        public Vector2 offset
         {
             get
             {
@@ -228,25 +228,25 @@ namespace eg
             set => InternalCalls.BoxCollider2DComponent_SetOffset(Entity.ID, ref value);
         }
 
-        public float Density
+        public float density
         {
             get => InternalCalls.BoxCollider2DComponent_GetDensity(Entity.ID);
             set => InternalCalls.BoxCollider2DComponent_SetDensity(Entity.ID, ref value);
         }
 
-        public float Friction
+        public float friction
         {
             get => InternalCalls.BoxCollider2DComponent_GetFriction(Entity.ID);
             set => InternalCalls.BoxCollider2DComponent_SetFriction(Entity.ID, ref value);
         }
 
-        public float Restitution
+        public float restitution
         {
             get => InternalCalls.BoxCollider2DComponent_GetRestitution(Entity.ID);
             set => InternalCalls.BoxCollider2DComponent_SetRestitution(Entity.ID, ref value);
         }
 
-        public float RestitutionThreshold
+        public float restitutionThreshold
         {
             get => InternalCalls.BoxCollider2DComponent_GetRestitutionThreshold(Entity.ID);
             set => InternalCalls.BoxCollider2DComponent_SetRestitutionThreshold(Entity.ID, ref value);
@@ -255,31 +255,31 @@ namespace eg
 
     public class CircleCollider2DComponent : Component
     {
-        public float Offset
+        public float offset
         {
             get => InternalCalls.CircleCollider2DComponent_GetOffset(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetOffset(Entity.ID, ref value);
         }
 
-        public float Density
+        public float density
         {
             get => InternalCalls.CircleCollider2DComponent_GetDensity(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetDensity(Entity.ID, ref value);
         }
 
-        public float Friction
+        public float friction
         {
             get => InternalCalls.CircleCollider2DComponent_GetFriction(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetFriction(Entity.ID, ref value);
         }
 
-        public float Restitution
+        public float restitution
         {
             get => InternalCalls.CircleCollider2DComponent_GetRestitution(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetRestitution(Entity.ID, ref value);
         }
 
-        public float RestitutionThreshold
+        public float restitutionThreshold
         {
             get => InternalCalls.CircleCollider2DComponent_GetRestitutionThreshold(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetRestitutionThreshold(Entity.ID, ref value);
@@ -289,13 +289,13 @@ namespace eg
     public class TextComponent : Component
     {
 
-        public string Text
+        public string text
         {
             get => InternalCalls.TextComponent_GetText(Entity.ID);
             set => InternalCalls.TextComponent_SetText(Entity.ID, value);
         }
 
-        public Vector4 Color
+        public Vector4 color
         {
             get
             {
@@ -309,13 +309,13 @@ namespace eg
             }
         }
 
-        public float Kerning
+        public float kerning
         {
             get => InternalCalls.TextComponent_GetKerning(Entity.ID);
             set => InternalCalls.TextComponent_SetKerning(Entity.ID, value);
         }
 
-        public float LineSpacing
+        public float lineSpacing
         {
             get => InternalCalls.TextComponent_GetLineSpacing(Entity.ID);
             set => InternalCalls.TextComponent_SetLineSpacing(Entity.ID, value);

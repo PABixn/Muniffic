@@ -21,17 +21,18 @@ namespace Sandbox
             m_Transform = GetComponent<TransformComponent>();
             m_Player = Entity.FindEntityByName("Player");
             m_Player.AddComponent<TextComponent>();
-            m_Player.GetComponent<TextComponent>().Text = "Hello World!";
-            m_Player.GetComponent<TextComponent>().Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+            m_Player.GetComponent<TextComponent>().text = "Hello World!";
+            m_Player.GetComponent<TextComponent>().color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
         }
 
         void OnUpdate(float ts)
         {
             if (m_Player != null)
-                m_Transform.Translation = new Vector3(m_Player.GetComponent<TransformComponent>().Translation.XY, DistanceFromPlayer);
+                m_Transform.translation = new Vector3(m_Player.GetComponent<TransformComponent>().translation.XY, DistanceFromPlayer);
 
             float speed = 5f;
             Vector3 velocity = new Vector3(0);
+            
             if (Input.IsKeyDown(KeyCode.Up))
             {
                 velocity.Y = speed;
@@ -65,9 +66,9 @@ namespace Sandbox
                 velocity.X = 0f;
             }
 
-            Vector3 translation = m_Transform.Translation;
+            Vector3 translation = m_Transform.translation;
             translation += velocity * ts;
-            m_Transform.Translation = translation;
+            m_Transform.translation = translation;
         }
 
     }

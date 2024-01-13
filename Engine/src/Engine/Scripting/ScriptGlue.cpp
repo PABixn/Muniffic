@@ -86,7 +86,7 @@ namespace eg
 	static MonoObject* Entity_GetScriptInstance(UUID uuid)
 	{
 		return ScriptEngine::GetManagedInstance(uuid);
-	}
+	} 
 
 	static bool Entity_HasComponent(UUID uuid, MonoReflectionType *componentType)
 	{
