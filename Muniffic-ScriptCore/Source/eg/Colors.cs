@@ -7,12 +7,18 @@ using System.Threading.Tasks;
 
 namespace eg
 {
+    /// <summary>
+    /// Color in default RGBA Color format.
+    /// </summary>
     public class Color
     {
         public float red, green, blue, alpha;
 
         #region Constructors
 
+        /// <summary>
+        /// Creates new Color with RGB values and sets alpha to 1.
+        /// </summary>
         public Color(float red, float green, float blue)
         {
             this.red = red;
@@ -21,6 +27,9 @@ namespace eg
             alpha = 1f;
         }
 
+        /// <summary>
+        /// Creates new Color with RGB values and specified alpha.
+        /// </summary>
         public Color(float red, float green, float blue, float alpha)
         {
             this.red = red;
@@ -29,6 +38,10 @@ namespace eg
             this.alpha = alpha;
         }
 
+        /// <summary>
+        /// Creates new Color based on Vector4.
+        /// </summary>
+        /// <param name="color">Vector3 with corresponding RGBA values.</param>
         public Color(Vector4 color)
         {
             red = color.X;
@@ -37,6 +50,23 @@ namespace eg
             alpha = color.W;
         }
 
+        /// <summary>
+        /// Creates new Color based on Vector3 and sets alpha to 1.
+        /// </summary>
+        /// <param name="color">Vector3 with corresponding RGB values.</param>
+        public Color(Vector3 color)
+        {
+            red = color.X;
+            green = color.Y;
+            blue = color.Z;
+            alpha = 1f;
+        }
+        
+        /// <summary>
+        /// Creates new Color from hex string.
+        /// </summary>
+        /// <param name="hex">String with color in hex format.</param>
+        /// <remarks>Giving 6 digit hex will result in alpha being set to 1.</remarks>
         public Color(string hex)
         {
             try
@@ -78,29 +108,58 @@ namespace eg
         }
 
         #endregion
-
+        
+        /// <summary>
+        /// Creates new Color with all values set to 0.
+        /// </summary>
         public static Color Zero()
         {
             return new Color(0, 0, 0, 0);
         }
 
+        /// <summary>
+        /// Converts Color to hex string.
+        /// </summary>
+        /// <param name="color">Color in default RGBA color format.</param>
+        /// <returns>String with color in hex format.</returns>
         public static string ToHex(Color color)
         {
             return string.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", (int)(color.red * 255), (int)(color.green * 255), (int)(color.blue * 255), (int)(color.alpha * 255));
         }
 
+        /// <summary>
+        /// Converts Color to Vector4.
+        /// </summary>
+        /// <param name="color">Color in default RGBA color format.</param>
+        /// <returns>Vector4 with corresponding RGBA values.</returns>
         public static Vector4 ToVector4(Color color)
         {
             return new Vector4(color.red, color.green, color.blue, color.alpha);
         }
+
+        /// <summary>
+        /// Converts Color to Vector3.
+        /// </summary>
+        /// <param name="color">Color in default RGBA color format.</param>
+        /// <returns>Vector4 with corresponding RGB values.</returns>
+        public static Vector3 ToVector3(Color color)
+        {
+            return new Vector3(color.red, color.green, color.blue);
+        }
     }
 
+    /// <summary>
+    /// Color in HSV format.
+    /// </summary>
     public class HSVColor
     {
         public float hue, saturation, value, alpha;
 
         #region Constructors
 
+        /// <summary>
+        /// Creates new HSVColor with HSV values and sets alpha to 1.
+        /// </summary>
         public HSVColor(float hue, float saturation, float value)
         {
             this.hue = hue;
@@ -109,6 +168,9 @@ namespace eg
             alpha = 1f;
         }
 
+        /// <summary>
+        /// Creates new HSVColor with HSV values and specified alpha.
+        /// </summary>
         public HSVColor(float hue, float saturation, float value, float alpha)
         {
             this.hue = hue;
@@ -117,6 +179,10 @@ namespace eg
             this.alpha = alpha;
         }
 
+        /// <summary>
+        /// Creates new HSVColor from default RGBA color format.
+        /// </summary>
+        /// <param name="color">Color in default RGBA color format.</param>
         public HSVColor(Color color)
         {
             HSVColor hsv = RGBAToHSV(color);
@@ -128,11 +194,19 @@ namespace eg
 
         #endregion
 
+        /// <summary>
+        /// Creates new HSVColor with all values set to 0.
+        /// </summary>
         public static HSVColor Zero()
         {
             return new HSVColor(0, 0, 0, 0);
         }
 
+        /// <summary>
+        /// Converts HSVColor to default RGBA color format.
+        /// </summary>
+        /// <param name="color">Color in HSVColor format.</param>
+        /// <returns>Color in default RGBA Color format.</returns>
         public static Color ToColor(HSVColor color)
         {
             return HSVToRGBA(color);
@@ -229,12 +303,18 @@ namespace eg
         }
     }
 
+    /// <summary>
+    /// Color in HSL format.
+    /// </summary>
     public class HSLColor
     {
         public float hue, saturation, lightness, alpha;
 
         #region Constructors
 
+        /// <summary>
+        /// Creates new HSLColor with HSL values and sets alpha to 1.
+        /// </summary>
         public HSLColor(float hue, float saturation, float lightness)
         {
             this.hue = hue;
@@ -243,6 +323,9 @@ namespace eg
             alpha = 1f;
         }
 
+        /// <summary>
+        /// Creates new HSLColor with HSL values and specified alpha.
+        /// </summary>
         public HSLColor(float hue, float saturation, float lightness, float alpha)
         {
             this.hue = hue;
@@ -251,6 +334,10 @@ namespace eg
             this.alpha = alpha;
         }
 
+        /// <summary>
+        /// Creates new HSLColor from default RGBA color format.
+        /// </summary>
+        /// <param name="color">Color in default RGBA color format.</param>
         public HSLColor(Color color)
         {
             HSLColor hsl = RGBAToHSL(color);
@@ -262,11 +349,19 @@ namespace eg
 
         #endregion
 
+        /// <summary>
+        /// Creates new HSLColor with all values set to 0.
+        /// </summary>
         public static HSLColor Zero()
         {
             return new HSLColor(0, 0, 0, 0);
         }
 
+        /// <summary>
+        /// Converts HSLColor to default RGBA color format.
+        /// </summary>
+        /// <param name="color">Color in HSL color format.</param>
+        /// <returns>Color in default RGBA color format.</returns>
         public static Color ToColor(HSLColor color)
         {
             return HSLToRGBA(color);
@@ -364,12 +459,18 @@ namespace eg
         }
     }
 
+    /// <summary>
+    /// Color in CMYK format.
+    /// </summary>
     public class CMYKColor
     {
         public float cyan, magenta, yellow, black, alpha;
 
         #region Constructors
 
+        /// <summary>
+        /// Creates new CMYKColor with CMYK values and sets alpha to 1.
+        /// </summary>
         public CMYKColor(float cyan, float magenta, float yellow, float black)
         {
             this.cyan = cyan;
@@ -379,6 +480,9 @@ namespace eg
             alpha = 1f;
         }
 
+        /// <summary>
+        /// Creates new CMYKColor with CMYK values and specified alpha.
+        /// </summary>
         public CMYKColor(float cyan, float magenta, float yellow, float black, float alpha)
         {
             this.cyan = cyan;
@@ -388,6 +492,10 @@ namespace eg
             this.alpha = alpha;
         }
 
+        /// <summary>
+        /// Creates new CMYKColor from default RGBA color format.
+        /// </summary>
+        /// <param name="color">Color in default RGBA color format.</param>
         public CMYKColor(Color color)
         {
             CMYKColor cmyk = RGBAToCMYK(color);
@@ -400,11 +508,19 @@ namespace eg
 
         #endregion
 
+        /// <summary>
+        /// Creates new CMYKColor with all values set to 0.
+        /// </summary>
         public static CMYKColor Zero()
         {
             return new CMYKColor(0, 0, 0, 0, 0);
         }
 
+        /// <summary>
+        /// Converts CMYKColor to default RGBA color format.
+        /// </summary>
+        /// <param name="color">Color in CMYK color format.</param>
+        /// <returns>Color in default RGBA color format.</returns>
         public static Color ToColor(CMYKColor color)
         {
             return CMYKToRGBA(color);
@@ -428,6 +544,7 @@ namespace eg
                     (y - k) / (1 - k),
                     k);
         }
+
 
         private static Color CMYKToRGBA(CMYKColor cmyk)
         {

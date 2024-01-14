@@ -6,13 +6,22 @@ using System.Threading.Tasks;
 
 namespace eg
 {
+    /// <summary>
+    /// Base class for all components.
+    /// </summary>
     public abstract class Component
     { 
+        /// <summary>
+        /// Reference to entity the component is attached to.
+        /// </summary>
         public Entity Entity { get; internal set; }
     }
 
     public class TransformComponent : Component
     {
+        /// <summary>
+        /// Translation of the entity.
+        /// </summary>
         public Vector3 translation
         {
             get
@@ -24,6 +33,9 @@ namespace eg
             set => InternalCalls.TransformComponent_SetTranslation(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Scale of the entity.
+        /// </summary>
         public Vector3 scale
         {
             get
@@ -35,6 +47,10 @@ namespace eg
             set => InternalCalls.TransformComponent_SetScale(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Rotation of the entity.
+        /// </summary>
+        /// <remarks>Rotation is given in degrees.</remarks>
         public Vector3 rotation
         {
             get
@@ -49,6 +65,10 @@ namespace eg
 
     public class SpriteRendererComponent : Component
     {
+        /// <summary>
+        /// Color of the SpriteRenderer component.
+        /// </summary>
+        /// <remarks>Color is given in RGBA format.</remarks>
         public Color color
         {
             get
@@ -64,12 +84,19 @@ namespace eg
             }
         }
 
+        /// <summary>
+        /// Texture of the SpriteRenderer component.
+        /// </summary>
+        /// <remarks>Path to the texture file.</remarks>
         public string texture
         {
             get => InternalCalls.SpriteRendererComponent_GetTexture(Entity.ID);
             set => InternalCalls.SpriteRendererComponent_SetTexture(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Tile size of the SpriteRenderer component.
+        /// </summary>
         public float tilingFactor
         {
             get => InternalCalls.SpriteRendererComponent_GetTilingFactor(Entity.ID);
@@ -79,6 +106,10 @@ namespace eg
 
     public class CircleRendererComponent : Component
     {
+        /// <summary>
+        /// Color of the SpriteRenderer component.
+        /// </summary>
+        /// <remarks>Color is given in RGBA format.</remarks>
         public Color color
         {
             get
@@ -94,12 +125,18 @@ namespace eg
             }
         }
 
+        /// <summary>
+        /// Radius of the CircleRenderer component.
+        /// </summary>
         public float thickness
         {
             get => InternalCalls.CircleRendererComponent_GetThickness(Entity.ID);
             set => InternalCalls.CircleRendererComponent_SetThickness(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Opacity of the CircleRenderer component.
+        /// </summary>
         public float fade
         {
             get => InternalCalls.CircleRendererComponent_GetFade(Entity.ID);
@@ -109,34 +146,56 @@ namespace eg
 
     public class CameraComponent : Component
     {
+        /// <summary>
+        /// Type of projection used by the camera.
+        /// </summary>
         public enum ProjectionType { Perspective = 0, Ortographic = 1 }
 
+        /// <summary>
+        /// Specifies if the camera is primary.
+        /// </summary>
         public bool primary
         {
             get => InternalCalls.CameraComponent_IsPrimary(Entity.ID);
             set => InternalCalls.CameraComponent_SetPrimary(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Specifies if the camera has fixed aspect ratio.
+        /// </summary>
         public bool fixedAspectRatio
         {
             get => InternalCalls.CameraComponent_IsFixedAspectRatio(Entity.ID);
             set => InternalCalls.CameraComponent_SetFixedAspectRatio(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Type of projection used by the camera.
+        /// </summary>
         public ProjectionType type
         {
             get => InternalCalls.CameraComponent_GetProjectionType(Entity.ID);
             set => InternalCalls.CameraComponent_SetProjectionType(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Sets projection type to perspective and specifies all values of perspective projection type.
+        /// </summary>
         public void SetPerspective(float verticalFov, float nearClip, float farClip)
         {
             InternalCalls.CameraComponent_SetPerspective(Entity.ID, ref verticalFov, ref nearClip, ref farClip);
+            ProjectionType type = ProjectionType.Perspective;
+            InternalCalls.CameraComponent_SetProjectionType(Entity.ID, ref type);
         }
 
+        /// <summary>
+        /// Sets projection type to ortographic and specifies all values of ortographic projection type.
+        /// </summary>
         public void SetOrthographic(float size, float nearClip, float farClip)
         {
             InternalCalls.CameraComponent_SetOrthographic(Entity.ID, ref size, ref nearClip, ref farClip);
+            ProjectionType type = ProjectionType.Ortographic;
+            InternalCalls.CameraComponent_SetProjectionType(Entity.ID, ref type);
         }
 
         public float ortographicSize
@@ -178,8 +237,15 @@ namespace eg
 
     public class RigidBody2DComponent : Component
     {
-        public enum BodyType { Static = 0, Dynamic, Kinematic }
+        /// <summary>
+        /// Type of the body.
+        /// </summary>
+        /// <remarks>Static bodies do not move, dynamic bodies are affected by forces and kinematic bodies are moved by user.</remarks>
+        public enum BodyType { Static = 0, Dynamic = 1, Kinematic = 2 }
 
+        /// <summary>
+        /// Retrieves linear velocity of the body as Vector2.
+        /// </summary>
         public Vector2 linearVelocity
         {
             get
@@ -189,22 +255,40 @@ namespace eg
             }
         }
 
+        /// <summary>
+        /// Type of the body.
+        /// </summary>
+        /// <remarks>Static bodies do not move, dynamic bodies are affected by forces and kinematic bodies are moved by user.</remarks>
         public BodyType type
         {
             get => InternalCalls.RigidBody2DComponent_GetType(Entity.ID);
             set => InternalCalls.RigidBody2DComponent_SetType(Entity.ID, value);
         }
 
+        /// <summary>
+        /// Applies force to the body at given world position.
+        /// </summary>
+        /// <param name="impulse"></param>
+        /// <param name="worldPosition"></param>
+        /// <param name="wake"></param>
         public void ApplyLinearImpulse(Vector2 impulse, Vector2 worldPosition, bool wake = true)
         {
             InternalCalls.RigidBody2DComponent_ApplyLinearImpulse(Entity.ID, ref impulse, ref worldPosition, wake);
         }
 
+        /// <summary>
+        /// Applies force to the body at center of mass.
+        /// </summary>
+        /// <param name="impulse"></param>
+        /// <param name="wake"></param>
         public void ApplyLinearImpulse(Vector2 impulse, bool wake = true)
         {
             InternalCalls.RigidBody2DComponent_ApplyLinearImpulseToCenter(Entity.ID, ref impulse, wake);
         }
 
+        /// <summary>
+        /// Specifies if the body can rotate.
+        /// </summary>
         public bool fixedRotation
         {
             get => InternalCalls.RigidBody2DComponent_IsFixedRotation(Entity.ID);
@@ -214,6 +298,9 @@ namespace eg
 
     public class BoxCollider2DComponent : Component
     {
+        /// <summary>
+        /// Size of the collider given in Vector2.
+        /// </summary>
         public Vector2 size
         {
             get
@@ -225,6 +312,9 @@ namespace eg
             set => InternalCalls.BoxCollider2DComponent_SetSize(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Offset of the collider given in Vector2.
+        /// </summary>
         public Vector2 offset
         {
             get
@@ -296,13 +386,19 @@ namespace eg
 
     public class TextComponent : Component
     {
-
+        /// <summary>
+        /// Content of the text component.
+        /// </summary>
         public string text
         {
             get => InternalCalls.TextComponent_GetText(Entity.ID);
             set => InternalCalls.TextComponent_SetText(Entity.ID, value);
         }
 
+        /// <summary>
+        /// Color of the text.
+        /// </summary>
+        /// <remarks>Color is given in RGBA format.</remarks>
         public Color color
         {
             get
@@ -318,12 +414,18 @@ namespace eg
             }
         }
 
+        /// <summary>
+        /// Distance between characters.
+        /// </summary>
         public float kerning
         {
             get => InternalCalls.TextComponent_GetKerning(Entity.ID);
             set => InternalCalls.TextComponent_SetKerning(Entity.ID, value);
         }
 
+        /// <summary>
+        /// Distance between lines.
+        /// </summary>
         public float lineSpacing
         {
             get => InternalCalls.TextComponent_GetLineSpacing(Entity.ID);
