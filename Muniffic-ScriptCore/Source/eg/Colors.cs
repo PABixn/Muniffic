@@ -21,6 +21,10 @@ namespace eg
         /// </summary>
         public Color(float red, float green, float blue)
         {
+            red = red > 1 ? 1 : red < 0 ? 0 : red;
+            green = green > 1 ? 1 : green < 0 ? 0 : green;
+            blue = blue > 1 ? 1 : blue < 0 ? 0 : blue;
+
             this.red = red;
             this.green = green;
             this.blue = blue;
@@ -32,6 +36,11 @@ namespace eg
         /// </summary>
         public Color(float red, float green, float blue, float alpha)
         {
+            red = red > 1 ? 1 : red < 0 ? 0 : red;
+            green = green > 1 ? 1 : green < 0 ? 0 : green;
+            blue = blue > 1 ? 1 : blue < 0 ? 0 : blue;
+            alpha = alpha > 1 ? 1 : alpha < 0 ? 0 : alpha;
+
             this.red = red;
             this.green = green;
             this.blue = blue;
@@ -202,6 +211,10 @@ namespace eg
         /// </summary>
         public HSVColor(float hue, float saturation, float value)
         {
+            hue = hue > 1 ? 1 : hue < 0 ? 0 : hue;
+            saturation = saturation > 1 ? 1 : saturation < 0 ? 0 : saturation;
+            value = value > 1 ? 1 : value < 0 ? 0 : value;
+
             this.hue = hue;
             this.saturation = saturation;
             this.value = value;
@@ -213,6 +226,11 @@ namespace eg
         /// </summary>
         public HSVColor(float hue, float saturation, float value, float alpha)
         {
+            hue = hue > 1 ? 1 : hue < 0 ? 0 : hue;
+            saturation = saturation > 1 ? 1 : saturation < 0 ? 0 : saturation;
+            value = value > 1 ? 1 : value < 0 ? 0 : value;
+            alpha = alpha > 1 ? 1 : alpha < 0 ? 0 : alpha;
+
             this.hue = hue;
             this.saturation = saturation;
             this.value = value;
@@ -400,6 +418,10 @@ namespace eg
         /// </summary>
         public HSLColor(float hue, float saturation, float lightness)
         {
+            hue = hue > 1 ? 1 : hue < 0 ? 0 : hue;
+            saturation = saturation > 1 ? 1 : saturation < 0 ? 0 : saturation;
+            lightness = lightness > 1 ? 1 : lightness < 0 ? 0 : lightness;
+
             this.hue = hue;
             this.saturation = saturation;
             this.lightness = lightness;
@@ -411,6 +433,11 @@ namespace eg
         /// </summary>
         public HSLColor(float hue, float saturation, float lightness, float alpha)
         {
+            hue = hue > 1 ? 1 : hue < 0 ? 0 : hue;
+            saturation = saturation > 1 ? 1 : saturation < 0 ? 0 : saturation;
+            lightness = lightness > 1 ? 1 : lightness < 0 ? 0 : lightness;
+            alpha = alpha > 1 ? 1 : alpha < 0 ? 0 : alpha;
+
             this.hue = hue;
             this.saturation = saturation;
             this.lightness = lightness;
@@ -599,6 +626,11 @@ namespace eg
         /// </summary>
         public CMYKColor(float cyan, float magenta, float yellow, float black)
         {
+            cyan = cyan > 1 ? 1 : cyan < 0 ? 0 : cyan;
+            magenta = magenta > 1 ? 1 : magenta < 0 ? 0 : magenta;
+            yellow = yellow > 1 ? 1 : yellow < 0 ? 0 : yellow;
+            black = black > 1 ? 1 : black < 0 ? 0 : black;
+
             this.cyan = cyan;
             this.magenta = magenta;
             this.yellow = yellow;
@@ -611,6 +643,12 @@ namespace eg
         /// </summary>
         public CMYKColor(float cyan, float magenta, float yellow, float black, float alpha)
         {
+            cyan = cyan > 1 ? 1 : cyan < 0 ? 0 : cyan;
+            magenta = magenta > 1 ? 1 : magenta < 0 ? 0 : magenta;
+            yellow = yellow > 1 ? 1 : yellow < 0 ? 0 : yellow;
+            black = black > 1 ? 1 : black < 0 ? 0 : black;
+            alpha = alpha > 1 ? 1 : alpha < 0 ? 0 : alpha;
+
             this.cyan = cyan;
             this.magenta = magenta;
             this.yellow = yellow;
