@@ -236,6 +236,10 @@ namespace eg
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();
+		
+		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
+			(*m_UnsavedChangesPanel).OnImGuiRender();
+		}
 
 		ImGui::Begin("Stats");
 		std::string name = "None";

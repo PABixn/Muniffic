@@ -5,7 +5,6 @@
 #include "Engine/ImGui/ImGuiLayer.h"
 #include "Engine/Core/Timestep.h"
 
-
 int main(int argc, char** argv);
 
 namespace eg {
@@ -36,21 +35,22 @@ namespace eg {
 		Application(const ApplicationSpecification specification);
 		~Application();
 
-		
 
 		void OnEvent(Event& e);
-
+		Layer* GetFirstLayer() { return m_LayerStack.GetFirstLayer(); }
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
 		inline static Application& Get() { return *s_Instance; }
 		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 		inline Window& GetWindow() { return *m_Window; }
-
+		
 		void Close();
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 		void SubmitToMainThread(std::function<void()> function);
+		void ChangeName(const char* text);
+		void ChangeNameWithCurrentProject(bool saved);
 	private:
 		void Run();
 		virtual bool OnWindowClose(WindowCloseEvent& e);
@@ -72,6 +72,7 @@ namespace eg {
 	private:
 		static Application* s_Instance;
 		friend int ::main(int argc, char** argv);
+		
 	protected:
 		void SetRunning(bool val);
 	};

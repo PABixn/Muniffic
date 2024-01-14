@@ -1,4 +1,6 @@
 #include "EditorApp.h"
+#include <Imgui/imgui.h>
+#include "EditorLayer.h"
 namespace eg {
 
 	bool Editor::OnWindowClose(WindowCloseEvent& e)
@@ -8,12 +10,9 @@ namespace eg {
 			SetRunning(false);
 			return true;
 		}
+		(*(dynamic_cast<EditorLayer*>(this->GetFirstLayer()))).GetUnsavedChangesPanel()->SetUnsavedChangesPanelRender(true);
 		return false;
 	}
-	void Editor::ChangeName(const char* text) {
-			if (auto WinWindow = dynamic_cast<WindowsWindow*>(&this->GetWindow()))
-				glfwSetWindowTitle((WinWindow)->GetGLFWwindow(), text);
-		}
 
 	Application* CreateApplication(ApplicationCommandLineArgs args) {
 		ApplicationSpecification spec;
@@ -22,5 +21,6 @@ namespace eg {
 
 		return new Editor(spec);
 	};
+
 
 }

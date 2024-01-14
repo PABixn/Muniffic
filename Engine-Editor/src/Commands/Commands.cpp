@@ -6,10 +6,10 @@ namespace eg
 	int Commands::currentCommandIndex;
 	bool isSaved = true;
 	void SetIsSaved(bool val) {
-		/*
-		dynamic_cast<Editor*>
-		.ChangeName("veri silli app");*/
-		isSaved = val;
+		if (!isSaved == val) {
+			Application::Get().ChangeNameWithCurrentProject(val);
+			isSaved = val;
+		}
 	}
 	bool GetIsSaved() {
 		return isSaved;

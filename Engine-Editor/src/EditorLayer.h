@@ -1,8 +1,10 @@
 #pragma once
 #include "Engine.h"
+#include "Panels/UnsavedChangesPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Engine/Renderer/EditorCamera.h"
 #include "Panels/ContentBrowserPanel.h"
+
 
 namespace eg {
 	class EditorLayer : public Layer
@@ -45,6 +47,7 @@ namespace eg {
 		//UI Panels
 		void UI_Toolbar();
 	private:
+		friend class UnsavedChangesPanel;
 		OrthographicCameraController m_Camera;
 		//Temp
 		Ref<Shader> m_Shader;
@@ -96,5 +99,10 @@ namespace eg {
 		};
 
 		SceneState m_SceneState = SceneState::Edit;
+	public:
+		UnsavedChangesPanel* m_UnsavedChangesPanel;
+		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
+
 	};
+
 }
