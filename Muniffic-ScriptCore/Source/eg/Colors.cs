@@ -146,6 +146,46 @@ namespace eg
         {
             return new Vector3(color.red, color.green, color.blue);
         }
+
+        #region Operators
+
+        public static Color operator +(Color a, Color b)
+        {
+            return new Color(a.red + b.red, a.green + b.green, a.blue + b.blue, a.alpha + b.alpha);
+        }
+
+        public static Color operator -(Color a, Color b)
+        {
+            return new Color(a.red - b.red, a.green - b.green, a.blue - b.blue, a.alpha - b.alpha);
+        }
+
+        public static Color operator *(Color a, Color b)
+        {
+            return new Color(a.red * b.red, a.green * b.green, a.blue * b.blue, a.alpha * b.alpha);
+        }
+
+        public static Color operator /(Color a, Color b)
+        {
+            return new Color(a.red / b.red, a.green / b.green, a.blue / b.blue, a.alpha / b.alpha);
+        }
+
+        public static bool operator ==(Color a, Color b)
+        {
+            return a.red == b.red && a.green == b.green && a.blue == b.blue && a.alpha == b.alpha;
+        }
+
+        public static bool operator !=(Color a, Color b)
+        {
+            return a.red != b.red || a.green != b.green || a.blue != b.blue || a.alpha != b.alpha;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Red: {0}, Green: {1}, Blue: {2}, Alpha: {3}", red, green, blue, alpha);
+        
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -211,6 +251,47 @@ namespace eg
         {
             return HSVToRGBA(color);
         }
+
+        #region Operators
+
+        public static HSVColor operator +(HSVColor a, HSVColor b)
+        {
+            return new HSVColor(a.hue + b.hue, a.saturation + b.saturation, a.value + b.value, a.alpha + b.alpha);
+        }
+
+        public static HSVColor operator -(HSVColor a, HSVColor b)
+        {
+            return new HSVColor(a.hue - b.hue, a.saturation - b.saturation, a.value - b.value, a.alpha - b.alpha);
+        }
+
+        public static HSVColor operator *(HSVColor a, HSVColor b)
+        {
+            return new HSVColor(a.hue * b.hue, a.saturation * b.saturation, a.value * b.value, a.alpha * b.alpha);
+        }
+
+        public static HSVColor operator /(HSVColor a, HSVColor b)
+        {
+            return new HSVColor(a.hue / b.hue, a.saturation / b.saturation, a.value / b.value, a.alpha / b.alpha);
+        }
+
+        public static bool operator ==(HSVColor a, HSVColor b)
+        {
+            return a.hue == b.hue && a.saturation == b.saturation && a.value == b.value && a.alpha == b.alpha;
+        }
+
+        public static bool operator !=(HSVColor a, HSVColor b)
+        {
+            return a.hue != b.hue || a.saturation != b.saturation || a.value != b.value || a.alpha != b.alpha;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Hue: {0}, Saturation: {1}, Value: {2}, Alpha: {3}", hue, saturation, value, alpha);
+        }
+
+        #endregion
+
+        #region Private
 
         public static Color HSVToRGBA(HSVColor hsv)
         {
@@ -301,6 +382,8 @@ namespace eg
 
             return new HSVColor(hsv[0] / 100f, (float)Math.Round(hsv[1], 2), (float)Math.Round(hsv[2], 2));
         }
+
+        #endregion
     }
 
     /// <summary>
@@ -366,6 +449,47 @@ namespace eg
         {
             return HSLToRGBA(color);
         }
+
+        #region Operators
+
+        public static HSLColor operator +(HSLColor a, HSLColor b)
+        {
+            return new HSLColor(a.hue + b.hue, a.saturation + b.saturation, a.lightness + b.lightness, a.alpha + b.alpha);
+        }
+
+        public static HSLColor operator -(HSLColor a, HSLColor b)
+        {
+            return new HSLColor(a.hue - b.hue, a.saturation - b.saturation, a.lightness - b.lightness, a.alpha - b.alpha);
+        }
+
+        public static HSLColor operator *(HSLColor a, HSLColor b)
+        {
+            return new HSLColor(a.hue * b.hue, a.saturation * b.saturation, a.lightness * b.lightness, a.alpha * b.alpha);
+        }
+
+        public static HSLColor operator /(HSLColor a, HSLColor b)
+        {
+            return new HSLColor(a.hue / b.hue, a.saturation / b.saturation, a.lightness / b.lightness, a.alpha / b.alpha);
+        }
+
+        public static bool operator ==(HSLColor a, HSLColor b)
+        {
+            return a.hue == b.hue && a.saturation == b.saturation && a.lightness == b.lightness && a.alpha == b.alpha;
+        }
+
+        public static bool operator !=(HSLColor a, HSLColor b)
+        {
+            return a.hue != b.hue || a.saturation != b.saturation || a.lightness != b.lightness || a.alpha != b.alpha;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Hue: {0}, Saturation: {1}, Lightness: {2}, Alpha: {3}", hue, saturation, lightness, alpha);
+        }
+
+        #endregion
+
+        #region Private
 
         public static Color HSLToRGBA(HSLColor hsl)
         {
@@ -457,6 +581,8 @@ namespace eg
 
             return new HSLColor(hsl[0] / 100f, (float)Math.Round(hsl[1], 2), (float)Math.Round(hsl[2], 2));
         }
+
+        #endregion
     }
 
     /// <summary>
@@ -525,7 +651,48 @@ namespace eg
         {
             return CMYKToRGBA(color);
         }
-        
+
+        #region Operators
+
+        public static CMYKColor operator +(CMYKColor a, CMYKColor b)
+        {
+            return new CMYKColor(a.cyan + b.cyan, a.magenta + b.magenta, a.yellow + b.yellow, a.black + b.black, a.alpha + b.alpha);
+        }
+
+        public static CMYKColor operator -(CMYKColor a, CMYKColor b)
+        {
+            return new CMYKColor(a.cyan - b.cyan, a.magenta - b.magenta, a.yellow - b.yellow, a.black - b.black, a.alpha - b.alpha);
+        }
+
+        public static CMYKColor operator *(CMYKColor a, CMYKColor b)
+        {
+            return new CMYKColor(a.cyan * b.cyan, a.magenta * b.magenta, a.yellow * b.yellow, a.black * b.black, a.alpha * b.alpha);
+        }
+
+        public static CMYKColor operator /(CMYKColor a, CMYKColor b)
+        {
+            return new CMYKColor(a.cyan / b.cyan, a.magenta / b.magenta, a.yellow / b.yellow, a.black / b.black, a.alpha / b.alpha);
+        }
+
+        public static bool operator ==(CMYKColor a, CMYKColor b)
+        {
+            return a.cyan == b.cyan && a.magenta == b.magenta && a.yellow == b.yellow && a.black == b.black && a.alpha == b.alpha;
+        }
+
+        public static bool operator !=(CMYKColor a, CMYKColor b)
+        {
+            return a.cyan != b.cyan || a.magenta != b.magenta || a.yellow != b.yellow || a.black != b.black || a.alpha != b.alpha;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Cyan: {0}, Magenta: {1}, Yellow: {2}, Black: {3}, Alpha: {4}", cyan, magenta, yellow, black, alpha);
+        }
+
+        #endregion
+
+        #region Private
+
         private static CMYKColor RGBAToCMYK(Color color)
         {
             float c = 1 - color.red;
@@ -553,5 +720,7 @@ namespace eg
                              (1 - cmyk.yellow) * (1 - cmyk.black),
                              cmyk.alpha);
         }
+
+        #endregion
     }
 }
