@@ -203,7 +203,7 @@ namespace eg
 
             if (hsv[1] == 0)
             {
-                return new HSVColor(hsv[0], (float)Math.Round(hsv[1] * 100f, 2), (float)Math.Round(hsv[2] * 100f, 2));
+                return new HSVColor(hsv[0] / 100f, (float)Math.Round(hsv[1], 2), (float)Math.Round(hsv[2], 2));
             }
             if (color.red == max)
             {
@@ -225,7 +225,216 @@ namespace eg
                 hsv[0] += 360.0f;
             }
 
-            return new HSVColor(hsv[0], (float)Math.Round(hsv[1] * 100f, 2), (float)Math.Round(hsv[2] * 100f, 2));
+            return new HSVColor(hsv[0] / 100f, (float)Math.Round(hsv[1], 2), (float)Math.Round(hsv[2], 2));
+        }
+    }
+
+    public class HSLColor
+    {
+        public float hue, saturation, lightness, alpha;
+
+        #region Constructors
+
+        public HSLColor(float hue, float saturation, float lightness)
+        {
+            this.hue = hue;
+            this.saturation = saturation;
+            this.lightness = lightness;
+            alpha = 1f;
+        }
+
+        public HSLColor(float hue, float saturation, float lightness, float alpha)
+        {
+            this.hue = hue;
+            this.saturation = saturation;
+            this.lightness = lightness;
+            this.alpha = alpha;
+        }
+
+        public HSLColor(Color color)
+        {
+            HSLColor hsl = RGBAToHSL(color);
+            hue = hsl.hue;
+            saturation = hsl.saturation;
+            lightness = hsl.lightness;
+            alpha = hsl.alpha;
+        }
+
+        #endregion
+
+        public static HSLColor Zero()
+        {
+            return new HSLColor(0, 0, 0, 0);
+        }
+
+        public static Color ToColor(HSLColor color)
+        {
+            return HSLToRGBA(color);
+        }
+
+        public static Color HSLToRGBA(HSLColor hsl)
+        {
+            float c = (1 - Math.Abs(2 * hsl.lightness / 100.0f - 1)) * hsl.saturation / 100.0f;
+            float x = c * (1 - Math.Abs((hsl.hue / 60.0f) % 2 - 1));
+            float m = hsl.lightness / 100.0f - c / 2.0f;
+
+            float r, g, b;
+            if (hsl.hue >= 0 && hsl.hue < 60)
+            {
+                r = c;
+                g = x;
+                b = 0;
+            }
+            else if (hsl.hue >= 60 && hsl.hue < 120)
+            {
+                r = x;
+                g = c;
+                b = 0;
+            }
+            else if (hsl.hue >= 120 && hsl.hue < 180)
+            {
+                r = 0;
+                g = c;
+                b = x;
+            }
+            else if (hsl.hue >= 180 && hsl.hue < 240)
+            {
+                r = 0;
+                g = x;
+                b = c;
+            }
+            else if (hsl.hue >= 240 && hsl.hue < 300)
+            {
+                r = x;
+                g = 0;
+                b = c;
+            }
+            else
+            {
+                r = c;
+                g = 0;
+                b = x;
+            }
+
+            return new Color(
+                (float)Math.Round((byte)Math.Round((r + m) * 255f) / 255f, 2),
+                (float)Math.Round((byte)Math.Round((g + m) * 255f) / 255f, 2),
+                (float)Math.Round((byte)Math.Round((b + m) * 255f) / 255f, 2)
+            );
+        }
+
+
+        public static HSLColor RGBAToHSL(Color color)
+        {
+            float[] hsl = new float[3];
+
+            float max = new[] { color.red, color.green, color.blue }.Max();
+            float min = new[] { color.red, color.green, color.blue }.Min();
+
+            float delta = max - min;
+
+            hsl[2] = (max + min) / 2;
+
+            if (delta == 0)
+            {
+                hsl[0] = 0;
+                hsl[1] = 0;
+            }
+            else
+            {
+                hsl[1] = hsl[2] < 0.5 ? delta / (max + min) : delta / (2 - max - min);
+
+                if (max == color.red)
+                {
+                    hsl[0] = (color.green - color.blue) / delta + (color.green < color.blue ? 6 : 0);
+                }
+                else if (max == color.green)
+                {
+                    hsl[0] = (color.blue - color.red) / delta + 2;
+                }
+                else if (max == color.blue)
+                {
+                    hsl[0] = (color.red - color.green) / delta + 4;
+                }
+
+                hsl[0] *= 60;
+            }
+
+            return new HSLColor(hsl[0] / 100f, (float)Math.Round(hsl[1], 2), (float)Math.Round(hsl[2], 2));
+        }
+    }
+
+    public class CMYKColor
+    {
+        public float cyan, magenta, yellow, black, alpha;
+
+        #region Constructors
+
+        public CMYKColor(float cyan, float magenta, float yellow, float black)
+        {
+            this.cyan = cyan;
+            this.magenta = magenta;
+            this.yellow = yellow;
+            this.black = black;
+            alpha = 1f;
+        }
+
+        public CMYKColor(float cyan, float magenta, float yellow, float black, float alpha)
+        {
+            this.cyan = cyan;
+            this.magenta = magenta;
+            this.yellow = yellow;
+            this.black = black;
+            this.alpha = alpha;
+        }
+
+        public CMYKColor(Color color)
+        {
+            CMYKColor cmyk = RGBAToCMYK(color);
+            cyan = cmyk.cyan;
+            magenta = cmyk.magenta;
+            yellow = cmyk.yellow;
+            black = cmyk.black;
+            alpha = cmyk.alpha;
+        }
+
+        #endregion
+
+        public static CMYKColor Zero()
+        {
+            return new CMYKColor(0, 0, 0, 0, 0);
+        }
+
+        public static Color ToColor(CMYKColor color)
+        {
+            return CMYKToRGBA(color);
+        }
+        
+        private static CMYKColor RGBAToCMYK(Color color)
+        {
+            float c = 1 - color.red;
+            float m = 1 - color.green;
+            float y = 1 - color.blue;
+            float k = Math.Min(c, Math.Min(m, y));
+
+            if (k == 1)
+            {
+                return new CMYKColor(0, 0, 0, 1);
+            }
+
+            return new CMYKColor(
+                    (c - k) / (1 - k),
+                    (m - k) / (1 - k),
+                    (y - k) / (1 - k),
+                    k);
+        }
+
+        private static Color CMYKToRGBA(CMYKColor cmyk)
+        {
+            return new Color((1 - cmyk.cyan) * (1 - cmyk.black),
+                             (1 - cmyk.magenta) * (1 - cmyk.black),
+                             (1 - cmyk.yellow) * (1 - cmyk.black),
+                             cmyk.alpha);
         }
     }
 }
