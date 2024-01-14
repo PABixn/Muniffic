@@ -194,6 +194,27 @@ namespace eg
         
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            Color color = obj as Color;
+            if ((object)color == null)
+            {
+                return false;
+            }
+
+            return red == color.red && green == color.green && blue == color.blue && alpha == color.alpha;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         #endregion
     }
 
@@ -305,6 +326,27 @@ namespace eg
         public override string ToString()
         {
             return string.Format("Hue: {0}, Saturation: {1}, Value: {2}, Alpha: {3}", hue, saturation, value, alpha);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            HSVColor color = obj as HSVColor;
+            if ((object)color == null)
+            {
+                return false;
+            }
+
+            return hue == color.hue && saturation == color.saturation && value == color.value && alpha == color.alpha;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         #endregion
@@ -512,6 +554,27 @@ namespace eg
         public override string ToString()
         {
             return string.Format("Hue: {0}, Saturation: {1}, Lightness: {2}, Alpha: {3}", hue, saturation, lightness, alpha);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            HSLColor color = obj as HSLColor;
+            if ((object)color == null)
+            {
+                return false;
+            }
+
+            return hue == color.hue && saturation == color.saturation && lightness == color.lightness && alpha == color.alpha;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         #endregion
@@ -725,6 +788,27 @@ namespace eg
         public override string ToString()
         {
             return string.Format("Cyan: {0}, Magenta: {1}, Yellow: {2}, Black: {3}, Alpha: {4}", cyan, magenta, yellow, black, alpha);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            CMYKColor color = obj as CMYKColor;
+            if ((object)color == null)
+            {
+                return false;
+            }
+
+            return cyan == color.cyan && magenta == color.magenta && yellow == color.yellow && black == color.black && alpha == color.alpha;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         #endregion
