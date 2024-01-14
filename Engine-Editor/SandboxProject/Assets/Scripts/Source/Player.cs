@@ -31,6 +31,7 @@ namespace Sandbox
             Entity cameraEntity = Entity.FindEntityByName("Camera");
             if (cameraEntity != null)
             {
+                
                 camera = cameraEntity.As<Camera>();
             }
             else

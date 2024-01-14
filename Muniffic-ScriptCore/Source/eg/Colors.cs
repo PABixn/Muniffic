@@ -12,7 +12,7 @@ namespace eg
     /// </summary>
     public class Color
     {
-        public float red, green, blue, alpha;
+        public float r, g, b, alpha;
 
         #region Constructors
 
@@ -25,9 +25,9 @@ namespace eg
             green = green > 1 ? 1 : green < 0 ? 0 : green;
             blue = blue > 1 ? 1 : blue < 0 ? 0 : blue;
 
-            this.red = red;
-            this.green = green;
-            this.blue = blue;
+            this.r = red;
+            this.g = green;
+            this.b = blue;
             alpha = 1f;
         }
 
@@ -41,9 +41,9 @@ namespace eg
             blue = blue > 1 ? 1 : blue < 0 ? 0 : blue;
             alpha = alpha > 1 ? 1 : alpha < 0 ? 0 : alpha;
 
-            this.red = red;
-            this.green = green;
-            this.blue = blue;
+            this.r = red;
+            this.g = green;
+            this.b = blue;
             this.alpha = alpha;
         }
 
@@ -53,9 +53,9 @@ namespace eg
         /// <param name="color">Vector3 with corresponding RGBA values.</param>
         public Color(Vector4 color)
         {
-            red = color.X;
-            green = color.Y;
-            blue = color.Z;
+            r = color.X;
+            g = color.Y;
+            b = color.Z;
             alpha = color.W;
         }
 
@@ -65,9 +65,9 @@ namespace eg
         /// <param name="color">Vector3 with corresponding RGB values.</param>
         public Color(Vector3 color)
         {
-            red = color.X;
-            green = color.Y;
-            blue = color.Z;
+            r = color.X;
+            g = color.Y;
+            b = color.Z;
             alpha = 1f;
         }
         
@@ -87,31 +87,31 @@ namespace eg
 
                 if (hex.Length == 6)
                 {
-                    red = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
-                    green = int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
-                    blue = int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
+                    r = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
+                    g = int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
+                    b = int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
                     alpha = 1f;
                 }
                 else if (hex.Length == 8)
                 {
-                    red = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
-                    green = int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
-                    blue = int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
+                    r = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
+                    g = int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
+                    b = int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
                     alpha = int.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
                 }
                 else
                 {
-                    red = 0.0f;
-                    green = 0.0f;
-                    blue = 0.0f;
+                    r = 0.0f;
+                    g = 0.0f;
+                    b = 0.0f;
                     alpha = 0.0f; //error
                 }
             }
             catch(System.FormatException)
             {
-                red = 0.0f;
-                green = 0.0f;
-                blue = 0.0f;
+                r = 0.0f;
+                g = 0.0f;
+                b = 0.0f;
                 alpha = 0.0f; //error
             }
         }
@@ -133,7 +133,7 @@ namespace eg
         /// <returns>String with color in hex format.</returns>
         public static string ToHex(Color color)
         {
-            return string.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", (int)(color.red * 255), (int)(color.green * 255), (int)(color.blue * 255), (int)(color.alpha * 255));
+            return string.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", (int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255), (int)(color.alpha * 255));
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace eg
         /// <returns>Vector4 with corresponding RGBA values.</returns>
         public static Vector4 ToVector4(Color color)
         {
-            return new Vector4(color.red, color.green, color.blue, color.alpha);
+            return new Vector4(color.r, color.g, color.b, color.alpha);
         }
 
         /// <summary>
@@ -153,39 +153,39 @@ namespace eg
         /// <returns>Vector4 with corresponding RGB values.</returns>
         public static Vector3 ToVector3(Color color)
         {
-            return new Vector3(color.red, color.green, color.blue);
+            return new Vector3(color.r, color.g, color.b);
         }
 
         #region Operators
 
         public static Color operator +(Color a, Color b)
         {
-            return new Color(a.red + b.red, a.green + b.green, a.blue + b.blue, a.alpha + b.alpha);
+            return new Color(a.r + b.r, a.g + b.g, a.b + b.b, a.alpha + b.alpha);
         }
 
         public static Color operator -(Color a, Color b)
         {
-            return new Color(a.red - b.red, a.green - b.green, a.blue - b.blue, a.alpha - b.alpha);
+            return new Color(a.r - b.r, a.g - b.g, a.b - b.b, a.alpha - b.alpha);
         }
 
         public static Color operator *(Color a, Color b)
         {
-            return new Color(a.red * b.red, a.green * b.green, a.blue * b.blue, a.alpha * b.alpha);
+            return new Color(a.r * b.r, a.g * b.g, a.b * b.b, a.alpha * b.alpha);
         }
 
         public static Color operator /(Color a, Color b)
         {
-            return new Color(a.red / b.red, a.green / b.green, a.blue / b.blue, a.alpha / b.alpha);
+            return new Color(a.r / b.r, a.g / b.g, a.b / b.b, a.alpha / b.alpha);
         }
 
         public static bool operator ==(Color a, Color b)
         {
-            return a.red == b.red && a.green == b.green && a.blue == b.blue && a.alpha == b.alpha;
+            return a.r == b.r && a.g == b.g && a.b == b.b && a.alpha == b.alpha;
         }
 
         public static bool operator !=(Color a, Color b)
         {
-            return a.red != b.red || a.green != b.green || a.blue != b.blue || a.alpha != b.alpha;
+            return a.r != b.r || a.g != b.g || a.b != b.b || a.alpha != b.alpha;
         }
 
         public override string ToString()
@@ -207,7 +207,7 @@ namespace eg
                 return false;
             }
 
-            return red == color.red && green == color.green && blue == color.blue && alpha == color.alpha;
+            return r == color.r && g == color.g && b == color.b && alpha == color.alpha;
         }
 
         public override int GetHashCode()
@@ -215,6 +215,63 @@ namespace eg
             return base.GetHashCode();
         }
 
+        #endregion
+
+        #region Named Colors
+
+        public static Color white { get => new Color(1f, 1f, 1f); }
+        public static Color black { get => new Color(0f, 0f, 0f); }
+        public static Color red { get => new Color(1f, 0f, 0f); }
+        public static Color green { get => new Color(0f, 1f, 0f); }
+        public static Color blue { get => new Color(0f, 0f, 1f); }
+        public static Color yellow { get => new Color(1f, 1f, 0f); }
+        public static Color cyan { get => new Color(0f, 1f, 1f); }
+        public static Color magenta { get => new Color(1f, 0f, 1f); }
+        public static Color gray { get => new Color(0.5f, 0.5f, 0.5f); }
+        public static Color silver { get => new Color(0.75f, 0.75f, 0.75f); }
+        public static Color maroon { get => new Color(0.5f, 0f, 0f); }
+        public static Color olive { get => new Color(0.5f, 0.5f, 0f); }
+        public static Color lime { get => new Color(0f, 1f, 0f); }
+        public static Color aqua { get => new Color(0f, 1f, 1f); }
+        public static Color teal { get => new Color(0f, 0.5f, 0.5f); }
+        public static Color navy { get => new Color(0f, 0f, 0.5f); }
+        public static Color fuchsia { get => new Color(1f, 0f, 1f); }
+        public static Color purple { get => new Color(0.5f, 0f, 0.5f); }
+        public static Color orange { get => new Color(1f, 0.647f, 0f); }
+        public static Color brown { get => new Color(0.647f, 0.165f, 0.165f); }
+        public static Color darkGray { get => new Color(0.3f, 0.3f, 0.3f); }
+        public static Color mediumGray { get => new Color(0.6f, 0.6f, 0.6f); }
+        public static Color lightGray { get => new Color(0.8f, 0.8f, 0.8f); }
+        public static Color violet { get => new Color(0.933f, 0.509f, 0.933f); }
+        public static Color indigo { get => new Color(0.294f, 0.0f, 0.51f); }
+        public static Color blueViolet { get => new Color(0.541f, 0.169f, 0.886f); }
+        public static Color royalBlue { get => new Color(0.255f, 0.412f, 0.882f); }
+        public static Color cornflowerBlue { get => new Color(0.392f, 0.584f, 0.929f); }
+        public static Color dodgerBlue { get => new Color(0.118f, 0.565f, 1.0f); }
+        public static Color steelBlue { get => new Color(0.275f, 0.51f, 0.706f); }
+        public static Color skyBlue { get => new Color(0.529f, 0.808f, 0.922f); }
+        public static Color deepSkyBlue { get => new Color(0.0f, 0.749f, 1.0f); }
+        public static Color lightSkyBlue { get => new Color(0.529f, 0.808f, 0.98f); }
+        public static Color pink { get => new Color(1.0f, 0.753f, 0.796f); }
+        public static Color peach { get => new Color(1.0f, 0.855f, 0.725f); }
+        public static Color lavender { get => new Color(0.902f, 0.902f, 0.98f); }
+        public static Color mint { get => new Color(0.686f, 0.933f, 0.686f); }
+        public static Color coral { get => new Color(1.0f, 0.498f, 0.314f); }
+        public static Color turquoise { get => new Color(0.251f, 0.878f, 0.816f); }
+        public static Color gold { get => new Color(1.0f, 0.843f, 0.0f); }
+        public static Color silverGray { get => new Color(0.749f, 0.749f, 0.749f); }
+        public static Color darkSlateGray { get => new Color(0.184f, 0.31f, 0.31f); }
+        public static Color salmon { get => new Color(0.98f, 0.502f, 0.447f); }
+        public static Color pastelPink { get => new Color(1.0f, 0.769f, 0.796f); }
+        public static Color pastelBlue { get => new Color(0.68f, 0.78f, 0.937f); }
+        public static Color pastelGreen { get => new Color(0.596f, 0.984f, 0.596f); }
+        public static Color pastelYellow { get => new Color(0.961f, 0.961f, 0.863f); }
+        public static Color pastelPurple { get => new Color(0.7f, 0.507f, 0.714f); }
+        public static Color sienna { get => new Color(0.627f, 0.322f, 0.176f); }
+        public static Color khaki { get => new Color(0.941f, 0.902f, 0.549f); }
+        public static Color oliveDrab { get => new Color(0.419f, 0.556f, 0.137f); }
+        public static Color sandyBrown { get => new Color(0.957f, 0.643f, 0.376f); }
+        public static Color rosyBrown { get => new Color(0.737f, 0.561f, 0.561f); }
         #endregion
     }
 
@@ -408,8 +465,8 @@ namespace eg
         {
             float[] hsv = new float[3];
 
-            float max = new[] { color.red, color.green, color.blue }.Max();
-            float min = new[] { color.red, color.green, color.blue }.Min();
+            float max = new[] { color.r, color.g, color.b }.Max();
+            float min = new[] { color.r, color.g, color.b }.Min();
 
             float delta = max - min;
 
@@ -420,17 +477,17 @@ namespace eg
             {
                 return new HSVColor(hsv[0] / 100f, (float)Math.Round(hsv[1], 2), (float)Math.Round(hsv[2], 2));
             }
-            if (color.red == max)
+            if (color.r == max)
             {
-                hsv[0] = ((color.green - color.blue) / delta);
+                hsv[0] = ((color.g - color.b) / delta);
             }
-            else if (color.green == max)
+            else if (color.g == max)
             {
-                hsv[0] = ((color.blue - color.red) / delta) + 2.0f;
+                hsv[0] = ((color.b - color.r) / delta) + 2.0f;
             }
-            else if (color.blue == max)
+            else if (color.b == max)
             {
-                hsv[0] = ((color.red - color.green) / delta) + 4.0f;
+                hsv[0] = ((color.r - color.g) / delta) + 4.0f;
             }
 
             hsv[0] *= 60.0f;
@@ -637,8 +694,8 @@ namespace eg
         {
             float[] hsl = new float[3];
 
-            float max = new[] { color.red, color.green, color.blue }.Max();
-            float min = new[] { color.red, color.green, color.blue }.Min();
+            float max = new[] { color.r, color.g, color.b }.Max();
+            float min = new[] { color.r, color.g, color.b }.Min();
 
             float delta = max - min;
 
@@ -653,17 +710,17 @@ namespace eg
             {
                 hsl[1] = hsl[2] < 0.5 ? delta / (max + min) : delta / (2 - max - min);
 
-                if (max == color.red)
+                if (max == color.r)
                 {
-                    hsl[0] = (color.green - color.blue) / delta + (color.green < color.blue ? 6 : 0);
+                    hsl[0] = (color.g - color.b) / delta + (color.g < color.b ? 6 : 0);
                 }
-                else if (max == color.green)
+                else if (max == color.g)
                 {
-                    hsl[0] = (color.blue - color.red) / delta + 2;
+                    hsl[0] = (color.b - color.r) / delta + 2;
                 }
-                else if (max == color.blue)
+                else if (max == color.b)
                 {
-                    hsl[0] = (color.red - color.green) / delta + 4;
+                    hsl[0] = (color.r - color.g) / delta + 4;
                 }
 
                 hsl[0] *= 60;
@@ -817,9 +874,9 @@ namespace eg
 
         private static CMYKColor RGBAToCMYK(Color color)
         {
-            float c = 1 - color.red;
-            float m = 1 - color.green;
-            float y = 1 - color.blue;
+            float c = 1 - color.r;
+            float m = 1 - color.g;
+            float y = 1 - color.b;
             float k = Math.Min(c, Math.Min(m, y));
 
             if (k == 1)
