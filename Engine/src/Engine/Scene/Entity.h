@@ -60,6 +60,7 @@ namespace eg {
 
 		UUID GetUUID()  { return GetComponent<IDComponent>().ID; }
 		const std::string GetName() { return GetComponent<TagComponent>().Tag; }
+		void SetName(const std::string& name) { GetComponent<TagComponent>().Tag = name; }
 
 		bool operator==(const Entity& other) const
 		{

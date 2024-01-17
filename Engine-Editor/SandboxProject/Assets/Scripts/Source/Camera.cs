@@ -8,28 +8,42 @@ using eg;
 
 namespace Sandbox
 {
-    public class Camera : Entity
+    public class Camera : DefaultBehaviour
     {
         private Entity m_Player;
+        private TransformComponent m_Transform;
 
         public float DistanceFromPlayer = 5.0f;
         public float Speed = 5.0f;
 
         void OnCreate()
         {
-            m_Player = FindEntityByName("Player");
+            m_Transform = GetComponent<TransformComponent>();
+            m_Player = Entity.FindEntityByName("Player");
+            m_Player.AddComponent<TextComponent>();
+            m_Player.GetComponent<TextComponent>().text = "Hello World!";
+            m_Player.GetComponent<TextComponent>().color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
         }
 
         void OnUpdate(float ts)
         {
             if (m_Player != null)
-                Translation = new Vector3(m_Player.Translation.XY, DistanceFromPlayer);
+                m_Transform.translation = new Vector3(m_Player.GetComponent<TransformComponent>().translation.XY, DistanceFromPlayer);
 
             float speed = 5f;
             Vector3 velocity = new Vector3(0);
+            
             if (Input.IsKeyDown(KeyCode.Up))
             {
                 velocity.Y = speed;
+            }
+            else if(Input.IsKeyDown(KeyCode.R))
+            {
+                m_Player.RemoveComponent<TextComponent>();
+            }
+            else if(Input.IsKeyDown(KeyCode.C))
+            {
+                m_Player.AddComponent<TextComponent>();
             }
             else if (Input.IsKeyDown(KeyCode.Down))
             {
@@ -52,9 +66,9 @@ namespace Sandbox
                 velocity.X = 0f;
             }
 
-            Vector3 translation = Translation;
+            Vector3 translation = m_Transform.translation;
             translation += velocity * ts;
-            Translation = translation;
+            m_Transform.translation = translation;
         }
 
     }

@@ -7,6 +7,8 @@ namespace eg
 {
 	class Commands
 	{
+		const static int MAX_COMMANDS = 200;
+
 		using AllSavedComponents = std::tuple<std::optional<TagComponent>,
 			std::optional<TransformComponent>,
 			std::optional<SpriteRendererComponent>,
