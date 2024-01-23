@@ -17,6 +17,11 @@
 
 namespace eg {
 
+	struct InheritableComponent
+	{
+		bool isInherited = false;
+	};
+
 	struct IDComponent
 	{
 		UUID ID;
@@ -37,7 +42,7 @@ namespace eg {
 			: Tag(tag) {}
 	};
 
-	struct TransformComponent
+	struct TransformComponent : public InheritableComponent
 	{
 		glm::vec3 Translation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation{ 0.0f, 0.0f, 0.0f };
@@ -58,7 +63,7 @@ namespace eg {
 		}
 	};
 
-	struct SpriteRendererComponent
+	struct SpriteRendererComponent : public InheritableComponent
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<Texture2D> Texture;
@@ -70,9 +75,9 @@ namespace eg {
 			: Color(color) {}
 	};
 
-	struct CircleRendererComponent
+	struct CircleRendererComponent : public InheritableComponent
 	{
-		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		glm::vec4 Color { 1.0f, 1.0f, 1.0f, 1.0f };
 		float Thickness = 1.0f;
 		float Fade = 0.005f;
 
@@ -82,7 +87,7 @@ namespace eg {
 			: Color(color) {}
 	};
 
-	struct CameraComponent
+	struct CameraComponent : public InheritableComponent
 	{
 		SceneCamera Camera;
 		bool Primary = true; // TODO: think about moving to Scene
@@ -131,7 +136,7 @@ namespace eg {
 
 	//Physics 2D
 
-	struct RigidBody2DComponent
+	struct RigidBody2DComponent : public InheritableComponent
 	{
 		enum class BodyType
 		{
@@ -151,7 +156,7 @@ namespace eg {
 
 	};
 
-	struct BoxCollider2DComponent
+	struct BoxCollider2DComponent : public InheritableComponent
 	{
 
 		glm::vec2 Offset = { 0.0f, 0.0f };
@@ -170,7 +175,7 @@ namespace eg {
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 
-	struct CircleCollider2DComponent
+	struct CircleCollider2DComponent : public InheritableComponent
 	{
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		float Radius = 0.5f;
@@ -187,7 +192,7 @@ namespace eg {
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
-	struct TextComponent
+	struct TextComponent : public InheritableComponent
 	{
 		std::string TextString;
 		Ref<Font> FontAsset = Font::GetDefaultFont();

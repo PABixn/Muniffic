@@ -7,7 +7,8 @@
 #include "../../../../Engine/vendor/entt/include/entt.hpp"
 
 
-namespace eg {
+namespace eg
+{
 
 	class Entity
 	{
@@ -53,14 +54,98 @@ namespace eg {
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
+		bool IsChild(Entity& child)
+		{
+			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
+			auto it = std::find(children.begin(), children.end(), child.GetUUID());
 
-		operator bool() const { return m_EntityHandle != entt::null; }
-		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
-		operator entt::entity() const { return m_EntityHandle; }
+			if (it != children.end())
+				return true;
+			else
+				return false;
+		}
+
+		bool IsChildOfAny(Entity& child)
+		{
+			if (IsChild(child))
+				return true;
+
+			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
+			for (auto& childUUID : children)
+			{
+				auto childEntity = m_Scene->GetEntityByUUID(childUUID);
+				if (childEntity.IsChild(child))
+					return true;
+				else
+					return childEntity.IsChildOfAny(child);
+			}
+			return false;
+		}
+
+		std::vector<Entity> GetChildren()
+		{
+			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
+			std::vector<Entity> entities;
+			for (auto& child : children)
+			{
+				entities.push_back(m_Scene->GetEntityByUUID(child));
+			}
+			return entities;
+		}
+
+		std::vector<Entity> GetAnyChildren()
+
+		{
+			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
+			std::vector<Entity> entities;
+			for (auto& child : children)
+			{
+				entities.push_back(m_Scene->GetEntityByUUID(child));
+				auto childEntity = m_Scene->GetEntityByUUID(child);
+				auto childChildren = childEntity.GetAnyChildren();
+				entities.insert(entities.end(), childChildren.begin(), childChildren.end());
+			}
+			return entities;
+		}
+
+		std::optional<Entity> GetParent()
+		{
+			auto& parent = m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
+			if(parent == NULL)
+				return std::nullopt;
+			else
+				return m_Scene->GetEntityByUUID(parent);
+		}
+
+		void SetParent(Entity entity)
+		{
+			auto& parent = m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
+			parent = entity.GetUUID();
+		}
+
+		void AddChild(Entity child)
+		{
+			if (!IsChild(child))
+				m_Scene->m_EntityInfoMap[GetUUID()]->m_Children.push_back(child.GetUUID());
+		}
+
+		void RemoveChild(Entity child)
+		{
+			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
+			auto it = std::find(children.begin(), children.end(), child.GetUUID());
+			if (it != children.end())
+				children.erase(it);
+		}
 
 		UUID GetUUID()  { return GetComponent<IDComponent>().ID; }
 		const std::string GetName() { return GetComponent<TagComponent>().Tag; }
 		void SetName(const std::string& name) { GetComponent<TagComponent>().Tag = name; }
+		entt::entity GetHandle() { return m_EntityHandle; }
+		Scene* GetScene() { return m_Scene; }
+
+		operator bool() const { return m_EntityHandle != entt::null; }
+		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
+		operator entt::entity() const { return m_EntityHandle; }
 
 		bool operator==(const Entity& other) const
 		{
@@ -70,9 +155,9 @@ namespace eg {
 		{
 			return !(*this == other);
 		}
+
 	private:
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;
 	};
-
 }

@@ -22,7 +22,7 @@ namespace Sandbox
             m_Player = Entity.FindEntityByName("Player");
             m_Player.AddComponent<TextComponent>();
             m_Player.GetComponent<TextComponent>().text = "Hello World!";
-            m_Player.GetComponent<TextComponent>().color = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+            m_Player.GetComponent<TextComponent>().color = Color.blue;
         }
 
         void OnUpdate(float ts)

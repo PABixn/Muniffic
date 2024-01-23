@@ -1,5 +1,4 @@
 #include "egpch.h"
-#include "Scene.h"
 
 #include "Components.h"
 #include "ScriptableEntity.h"
@@ -107,6 +106,7 @@ namespace eg {
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityMap[uuid] = (entt::entity)entity;
+		m_EntityInfoMap[uuid] = new EntityInfo(NULL);
 
 		return entity;
 	}

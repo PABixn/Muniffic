@@ -2,6 +2,7 @@
 #include <string>
 #include "Engine.h"
 #include <variant>
+#include <cstddef>
 
 namespace eg
 {
@@ -331,6 +332,27 @@ namespace eg
 			ChangeRawValueCommand<T>* previousCommand = dynamic_cast<ChangeRawValueCommand<T>*>(GetCurrentCommand());
 			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
 				Command* command = new ChangeRawValueCommand<T>(value_ptr, previousValue, label);
+
+			return command;
+		}
+
+		template<typename T, typename Component>
+		static Command* ExecuteRawValueCommand(T* value_ptr, T previousValue, Entity entity, const std::string label, bool bypass = false)
+		{
+			Command* command = nullptr;
+			ChangeRawValueCommand<T>* previousCommand = dynamic_cast<ChangeRawValueCommand<T>*>(GetCurrentCommand());
+			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
+				Command* command = new ChangeRawValueCommand<T>(value_ptr, previousValue, label);
+
+			for (Entity e : entity.GetAnyChildren())
+			{
+				Component& parentComp = entity.GetComponent<Component>();
+				Component* parentCompPtr = &parentComp;
+				int offset = reinterpret_cast<char*>(value_ptr) - reinterpret_cast<char*>(parentCompPtr);
+				Component& childComp = e.GetComponent<Component>();
+				Component* childCompPtr = &childComp;
+				memcpy(reinterpret_cast<char*>(childCompPtr) + offset, value_ptr, sizeof(T));
+			}
 
 			return command;
 		}

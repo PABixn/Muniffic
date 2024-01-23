@@ -64,12 +64,39 @@ namespace eg {
 		ImGui::End();
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
+		if (entity.GetParent().has_value() && forceDraw == false)
+			return;
+		
+		bool opened = false;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
+		opened = ImGui::TreeNodeEx((void*)(uint64_t)entity.GetUUID(), flags, tag.c_str());
+
+		if (ImGui::BeginDragDropSource())
+		{
+			ImGui::SetDragDropPayload("Entity", &entity, sizeof(Entity));
+			ImGui::Text(tag.c_str());
+			ImGui::EndDragDropSource();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+			{
+				Entity draggedEntity = *(Entity*)payload->Data;
+				if (draggedEntity != entity && !entity.IsChild(draggedEntity) && !draggedEntity.IsChildOfAny(entity))
+				{ 
+					entity.AddChild(draggedEntity);
+					if (draggedEntity.GetParent().has_value())
+						draggedEntity.GetParent().value().RemoveChild(draggedEntity);
+					draggedEntity.SetParent(entity);
+				}
+			}
+		}
+
 		if (ImGui::IsItemClicked())
 			m_SelectionContext = entity;
 
@@ -83,17 +110,17 @@ namespace eg {
 		if (opened)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-			bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
-			if (opened)
-				ImGui::TreePop();
+
+			for(Entity& child : entity.GetChildren())
+				DrawEntityNode(child, true);
+
 			ImGui::TreePop();
 		}
 	}
 
-	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
+	static void DrawVec3Control(Entity entity, const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
 	{
 		float x = values.x, y = values.y, z = values.z;
-
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
 
@@ -123,7 +150,7 @@ namespace eg {
 		ImGui::SameLine();
 	
 		if (ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f"))
-			Commands::ExecuteRawValueCommand<float>(&values.x, x, label + std::string("##X"));
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
@@ -140,7 +167,7 @@ namespace eg {
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		if(ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f"))
-			Commands::ExecuteRawValueCommand<float>(&values.y, y, label + std::string("##Y"));
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
@@ -157,7 +184,7 @@ namespace eg {
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		if(ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f"))
-			Commands::ExecuteRawValueCommand<float>(&values.z, z, label + std::string("##Z"));
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
@@ -250,16 +277,16 @@ namespace eg {
 
 		ImGui::PopItemWidth();
 		
-		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
+		DrawComponent<TransformComponent>("Transform", entity, [entity](auto& component)
 			{
-				DrawVec3Control("Translation", component.Translation);
+				DrawVec3Control(entity, "Translation", component.Translation);
 				//glm::vec3 rotation = glm::degrees(component.Rotation);
-				DrawVec3Control("Rotation", component.Rotation);
+				DrawVec3Control(entity, "Rotation", component.Rotation);
 				//component.Rotation = glm::radians(rotation);
-				DrawVec3Control("Scale", component.Scale, 1.0f);
+				DrawVec3Control(entity, "Scale", component.Scale, 1.0f);
 			}, m_Context);
 
-		DrawComponent<CameraComponent>("Camera", entity, [](auto& component) {
+		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component) {
 			auto& camera = component.Camera;
 
 			if(ImGui::Checkbox("Primary", &component.Primary))
@@ -613,12 +640,12 @@ namespace eg {
 
 			}, m_Context);
 
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)
 			{
 				glm::vec4 color = component.Color;
 
 				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
-					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
+					Commands::ExecuteRawValueCommand<glm::vec4>(&component.Color, color, "SpriteRendererComponent-Color");
 
 				
 				ImGui::Button("Texture", {100.0f, 0.0f});
@@ -644,24 +671,24 @@ namespace eg {
 
 				float factor = component.TilingFactor;
 				if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
-					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
+					Commands::ExecuteRawValueCommand<float>(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
 				
 			}, m_Context);
 
-		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
+		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [entity](auto& component)
 			{
 				float thickness = component.Thickness, fade = component.Fade;
 				glm::vec4 color = component.Color;
 				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
-					Commands::ExecuteRawValueCommand(&component.Color, color, "CircleRendererComponent-Color");
+					Commands::ExecuteRawValueCommand<glm::vec4>(&component.Color, color, "CircleRendererComponent-Color");
 
 				if(ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
-					Commands::ExecuteRawValueCommand(&component.Thickness, thickness, "CircleRendererComponent-Thickness");
+					Commands::ExecuteRawValueCommand<float>(&component.Thickness, thickness, "CircleRendererComponent-Thickness");
 				if(ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
-					Commands::ExecuteRawValueCommand(&component.Fade, fade, "CircleRendererComponent-Fade");
+					Commands::ExecuteRawValueCommand<float>(&component.Fade, fade, "CircleRendererComponent-Fade");
 			}, m_Context);
 
-		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [](auto& component) {
+		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [entity](auto& component) {
 			const char* bodyTypeString[] = { "Static", "Dynamic", "Kinematic"};
 			const char* currentBodyTypeString = bodyTypeString[(int)component.Type];
 			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
@@ -674,7 +701,7 @@ namespace eg {
 						currentBodyTypeString = bodyTypeString[i];
 						RigidBody2DComponent::BodyType type = component.Type;
 						component.Type = (RigidBody2DComponent::BodyType)i;
-						Commands::ExecuteRawValueCommand(&component.Type, type, "RigidBody2DComponent-Body Type", true);
+						Commands::ExecuteRawValueCommand<RigidBody2DComponent::BodyType>(&component.Type, type, "RigidBody2DComponent-Body Type", true);
 					}
 
 					if (isSelected)
@@ -688,54 +715,54 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<bool>(&component.FixedRotation, !component.FixedRotation, "RigidBody2DComponent-Fixed Rotation");
 		}, m_Context);
 
-		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component) {
+		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [entity](auto& component) {
 			float density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset, size = component.Size;
 
 			if(ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
-				Commands::ExecuteRawValueCommand(&component.Offset, offset, "BoxCollider2DComponent-Offset");
+				Commands::ExecuteRawValueCommand<glm::vec2>(&component.Offset, offset, "BoxCollider2DComponent-Offset");
 			if(ImGui::DragFloat2("Size", glm::value_ptr(component.Size), 0.1f))
-				Commands::ExecuteRawValueCommand(&component.Size, size, "BoxCollider2DComponent-Size");
+				Commands::ExecuteRawValueCommand<glm::vec2>(&component.Size, size, "BoxCollider2DComponent-Size");
 			if(ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Density, density, "BoxCollider2DComponent-Density");
+				Commands::ExecuteRawValueCommand<float>(&component.Density, density, "BoxCollider2DComponent-Density");
 			if(ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Friction, friction, "BoxCollider2DComponent-Friction");
+				Commands::ExecuteRawValueCommand<float>(&component.Friction, friction, "BoxCollider2DComponent-Friction");
 			if(ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Restitution, restitution, "BoxCollider2DComponent-Restitution");
+				Commands::ExecuteRawValueCommand<float>(&component.Restitution, restitution, "BoxCollider2DComponent-Restitution");
 			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
-				Commands::ExecuteRawValueCommand(&component.RestitutionThreshold, restitutionThreshold, "BoxCollider2DComponent-Restitution Threshold");
+				Commands::ExecuteRawValueCommand<float>(&component.RestitutionThreshold, restitutionThreshold, "BoxCollider2DComponent-Restitution Threshold");
 		}, m_Context);
 
-		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component) {
+		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [entity](auto& component) {
 			float radius = component.Radius, density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset;
 
 			if(ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
-				Commands::ExecuteRawValueCommand(&component.Offset, offset, "CircleCollider2DComponent-Offset");
+				Commands::ExecuteRawValueCommand<glm::vec2>(&component.Offset, offset, "CircleCollider2DComponent-Offset");
 			if(ImGui::DragFloat("Radius", &component.Radius, 0.1f))
-				Commands::ExecuteRawValueCommand(&component.Radius, radius, "CircleCollider2DComponent-Radius");
+				Commands::ExecuteRawValueCommand<float>(&component.Radius, radius, "CircleCollider2DComponent-Radius");
 			if(ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Density, density, "CircleCollider2DComponent-Density");
+				Commands::ExecuteRawValueCommand<float>(&component.Density, density, "CircleCollider2DComponent-Density");
 			if(ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Friction, friction, "CircleCollider2DComponent-Friction");
+				Commands::ExecuteRawValueCommand<float>(&component.Friction, friction, "CircleCollider2DComponent-Friction");
 			if(ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Restitution, restitution, "CircleCollider2DComponent-Restitution");
+				Commands::ExecuteRawValueCommand<float>(&component.Restitution, restitution, "CircleCollider2DComponent-Restitution");
 			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
-				Commands::ExecuteRawValueCommand(&component.RestitutionThreshold, restitutionThreshold, "CircleCollider2DComponent-Restitution Threshold");
+				Commands::ExecuteRawValueCommand<float>(&component.RestitutionThreshold, restitutionThreshold, "CircleCollider2DComponent-Restitution Threshold");
 			}, m_Context);
 
-		DrawComponent<TextComponent>("Text Renderer", entity, [](auto& component)
+		DrawComponent<TextComponent>("Text Renderer", entity, [entity](auto& component)
 			{
 				float kerning = component.Kerning, lineSpacing = component.LineSpacing;
 				glm::vec4 color = component.Color;
 
 				ImGui::InputTextMultiline("Text String", &component.TextString);
 				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
-					Commands::ExecuteRawValueCommand(&component.Color, color, "TextComponent-Color");
+					Commands::ExecuteRawValueCommand<glm::vec4>(&component.Color, color, "TextComponent-Color");
 				if(ImGui::DragFloat("Kerning", &component.Kerning, 0.025f))
-					Commands::ExecuteRawValueCommand(&component.Kerning, kerning, "TextComponent-Kerning");
+					Commands::ExecuteRawValueCommand<float>(&component.Kerning, kerning, "TextComponent-Kerning");
 				if(ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f))
-					Commands::ExecuteRawValueCommand(&component.LineSpacing, lineSpacing, "TextComponent-Line Spacing");
+					Commands::ExecuteRawValueCommand<float>(&component.LineSpacing, lineSpacing, "TextComponent-Line Spacing");
 			}, m_Context);
 	}
 
