@@ -238,7 +238,7 @@ namespace eg
 		m_ContentBrowserPanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
-			(*m_UnsavedChangesPanel).OnImGuiRender();
+			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
 		}
 
 		ImGui::Begin("Stats");

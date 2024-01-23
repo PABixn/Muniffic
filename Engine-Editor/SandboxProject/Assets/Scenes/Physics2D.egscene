@@ -5,7 +5,7 @@ Entities:
     TagComponent:
       Tag: Text
     TransformComponent:
-      Translation: [7.69999981, 1.60000002, 0]
+      Translation: [1.89999998, 1.60000002, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     TextComponent:
@@ -60,13 +60,13 @@ Entities:
     TagComponent:
       Tag: Circle
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [2.5, 0, 0]
       Rotation: [-12.0299997, -1.79999995, 2.5]
       Scale: [2.5, 1, 1]
     CircleRendererComponent:
       Color: [1, 1, 1, 1]
       Thickness: 1
-      Fade: 0.00499999989
+      Fade: 0
   - Entity: 16108228054420389651
     Name: Cube
     TagComponent:
@@ -151,9 +151,9 @@ Entities:
     TagComponent:
       Tag: Circle
     TransformComponent:
-      Translation: [2.79999995, 1, 0]
+      Translation: [0.200000003, 0.699999988, 0]
       Rotation: [0, 0, 0]
-      Scale: [2.5, 2.5, 1]
+      Scale: [-1.60000002, 1.39999998, 1.29999995]
     CircleRendererComponent:
       Color: [1, 1, 1, 1]
       Thickness: 1
@@ -173,7 +173,7 @@ Entities:
     TagComponent:
       Tag: Circle
     TransformComponent:
-      Translation: [2.4000001, 2.98023224e-08, 0]
+      Translation: [4.30000019, 2.98023224e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     CircleRendererComponent:

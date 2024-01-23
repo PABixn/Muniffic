@@ -320,7 +320,11 @@ namespace eg
 			ChangeValueCommand<T>* previousCommand = dynamic_cast<ChangeValueCommand<T>*>(GetCurrentCommand());
 			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
 				Command* command = new ChangeValueCommand<T>(function, value, previousValue, label);
-
+			else {
+				if (GetIsSaved()) {
+					SetIsSaved(false);
+				}
+			}
 			return command;
 		}
 
@@ -331,6 +335,11 @@ namespace eg
 			ChangeRawValueCommand<T>* previousCommand = dynamic_cast<ChangeRawValueCommand<T>*>(GetCurrentCommand());
 			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
 				Command* command = new ChangeRawValueCommand<T>(value_ptr, previousValue, label);
+			else {
+				if (GetIsSaved()) {
+					SetIsSaved(false);
+				}
+			}
 
 			return command;
 		}
@@ -345,5 +354,6 @@ namespace eg
 
 	private:
 		static std::vector<Commands::Command*> commandHistory;
+
 	};
 }

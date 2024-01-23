@@ -9,18 +9,24 @@ namespace eg {
 		return UnsavedChangesPanelRender;
 	}
 	UnsavedChangesPanel::UnsavedChangesPanel() {};
-	void UnsavedChangesPanel::OnImGuiRender() {/*
-		ImGui::SetNextWindowPos(ImVec2(1050, 1050));
+	void UnsavedChangesPanel::OnImGuiRender() {
+		ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth()/2, Application::Get().GetWindow().GetHeight() / 2));
+		/*
 		ImGui::SetNextWindowSize(ImVec2(350, 350));*/
-		ImGui::Begin("Unsaved Changes", nullptr, ImGuiWindowFlags_NoTitleBar);
+		ImGui::Begin("Unsaved Changes", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 		ImGui::Text("Warning: Unsaved changes");
-		if (ImGui::Button("Save")) {
+		bool SaveBttn = ImGui::Button("Save");
+		ImGui::SameLine();
+		bool NotSaveBttn = ImGui::Button("Don's save");
+		ImGui::SameLine();
+		bool CancelBttn = ImGui::Button("cancel");
+		if (SaveBttn) {
 			(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
 			Application::Get().Close();
-		}else if (ImGui::Button("Don't save")) {
+		}else if (NotSaveBttn) {
 			Application::Get().Close();
 		}
-		else if (ImGui::Button("Cancel")) {
+		else if (CancelBttn) {
 			SetUnsavedChangesPanelRender(false);
 		}
 		ImGui::End();

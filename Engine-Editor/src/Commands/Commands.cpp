@@ -4,12 +4,14 @@ namespace eg
 {
 	std::vector<Commands::Command*> Commands::commandHistory;
 	int Commands::currentCommandIndex;
+	int LastSavedCommandIndex = -1;
 	bool isSaved = true;
 	void SetIsSaved(bool val) {
 		if (!isSaved == val) {
 			Application::Get().ChangeNameWithCurrentProject(val);
 			isSaved = val;
 		}
+		if (val)LastSavedCommandIndex = Commands::currentCommandIndex;
 	}
 	bool GetIsSaved() {
 		return isSaved;
@@ -30,6 +32,9 @@ namespace eg
 				m_SelectionContext = {};
 			m_Context->DestroyEntity(e);
 			SetCurrentCommand(true);
+		}
+		if (LastSavedCommandIndex == currentCommandIndex) {
+			SetIsSaved(true);
 		}
 	}
 
@@ -98,7 +103,10 @@ namespace eg
 	void Commands::SetCurrentCommand(bool isUndo)
 	{
 		currentCommandIndex += isUndo ? -1 : 1;
-		SetIsSaved(false);
+		if (isUndo && (LastSavedCommandIndex == currentCommandIndex)) {
+			SetIsSaved(true);
+		}
+		else SetIsSaved(false);
 	}
 
 	bool Commands::CanRevert(bool isUndo)
