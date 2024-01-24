@@ -1,27 +1,19 @@
-#include "Engine.h"
-#include "Engine/Core/EntryPoint.h"
-#include "Imgui/imgui.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "EditorApp.h"
+#include <Imgui/imgui.h>
 #include "EditorLayer.h"
-
 namespace eg {
 
-	class Editor : public Application 
+	bool Editor::OnWindowClose(WindowCloseEvent& e)
 	{
-	public:
-		Editor(ApplicationSpecification spec)
-			: Application(spec)
+		if (GetIsSaved())
 		{
-			PushLayer(new EditorLayer());
+			SetRunning(false);
+			return true;
 		}
+		(*(dynamic_cast<EditorLayer*>(this->GetFirstLayer()))).GetUnsavedChangesPanel()->SetUnsavedChangesPanelRender(true);
+		return false;
+	}
 
-		~Editor() {}
-
-		void OnUpdate()  {
-		}
-	};
-	
 	Application* CreateApplication(ApplicationCommandLineArgs args) {
 		ApplicationSpecification spec;
 		spec.Name = "Editor";
@@ -29,4 +21,6 @@ namespace eg {
 
 		return new Editor(spec);
 	};
+
+
 }

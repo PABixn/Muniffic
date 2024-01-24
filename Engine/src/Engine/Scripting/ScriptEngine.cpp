@@ -389,6 +389,7 @@ namespace eg
 
 	Ref<ScriptClass> ScriptEngine::GetEntityClass(const std::string &name)
 	{
+		ScriptEngineData* data = s_Data;
 		if (s_Data->EntityClasses.find(name) == s_Data->EntityClasses.end())
 			return nullptr;
 		return s_Data->EntityClasses.at(name);

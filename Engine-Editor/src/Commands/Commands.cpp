@@ -1,9 +1,21 @@
 #include "Commands.h"
-
+#include "Engine/Core/Application.h"
 namespace eg
 {
 	std::vector<Commands::Command*> Commands::commandHistory;
 	int Commands::currentCommandIndex;
+	int LastSavedCommandIndex = -1;
+	bool isSaved = true;
+	void SetIsSaved(bool val) {
+		if (!isSaved == val) {
+			Application::Get().ChangeNameWithCurrentProject(val);
+			isSaved = val;
+		}
+		if (val)LastSavedCommandIndex = Commands::currentCommandIndex;
+	}
+	bool GetIsSaved() {
+		return isSaved;
+	}
 
 	void Commands::CreateEntityCommand::Execute(CommandArgs arg)
 	{
@@ -20,6 +32,9 @@ namespace eg
 				m_SelectionContext = {};
 			m_Context->DestroyEntity(e);
 			SetCurrentCommand(true);
+		}
+		if (LastSavedCommandIndex == currentCommandIndex) {
+			SetIsSaved(true);
 		}
 	}
 
@@ -79,6 +94,7 @@ namespace eg
 
 		commandHistory.push_back(command);
 		currentCommandIndex = commandHistory.size() - 1;
+		SetIsSaved(false);
 	}
 
 	Commands::Command* Commands::GetCurrentCommand(int offset)
@@ -92,6 +108,10 @@ namespace eg
 	void Commands::SetCurrentCommand(bool isUndo)
 	{
 		currentCommandIndex += isUndo ? -1 : 1;
+		if (isUndo && (LastSavedCommandIndex == currentCommandIndex)) {
+			SetIsSaved(true);
+		}
+		else SetIsSaved(false);
 	}
 
 	bool Commands::CanRevert(bool isUndo)

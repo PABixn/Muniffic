@@ -16,8 +16,10 @@ namespace eg {
 
 		std::vector<Layer*>::iterator begin() { return m_Layers.begin(); }
 		std::vector<Layer*>::iterator end() { return m_Layers.end(); }
+		Layer* GetFirstLayer() { return m_Layers[0]; }
 	private:
 		std::vector<Layer*> m_Layers;
 		uint32_t m_LayerInsertIndex = 0;
+		
 	};
 }

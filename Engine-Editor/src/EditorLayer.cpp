@@ -236,6 +236,10 @@ namespace eg
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();
+		
+		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
+			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
+		}
 
 		ImGui::Begin("Stats");
 		std::string name = "None";
@@ -672,6 +676,7 @@ namespace eg
 
 			m_ActiveScenePath = filepath;
 		}
+		SetIsSaved(true);
 	}
 
 	void EditorLayer::Save()
@@ -682,6 +687,7 @@ namespace eg
 		{
 			SerializeScene(m_ActiveScene, m_ActiveScenePath);
 		}
+		SetIsSaved(true);
 	}
 
 	void EditorLayer::NewProject()
