@@ -120,7 +120,6 @@ namespace eg
 			std::function<void(T)> m_Function;
 		};
 
-
 		template<typename T>
 		class ChangeRawValueCommand : public Command
 		{
@@ -137,7 +136,7 @@ namespace eg
 			{
 				m_Value = *m_ValuePtr;
 				*m_ValuePtr = m_PreviousValue;
-
+				
 				SetCurrentCommand(true);
 			}
 
@@ -154,6 +153,47 @@ namespace eg
 			T* m_ValuePtr;
 			T m_Value;
 			T m_PreviousValue;
+			const std::string m_Label;
+		};
+
+		template<typename T, typename Component>
+		class ChangeRawComponentValueCommand : public Command
+		{
+		public:
+			ChangeRawComponentValueCommand(T* value_ptr, T previousValue, Entity entity, const std::string label)
+				: m_Entity(entity), m_ValuePtr(value_ptr), m_PreviousValue(previousValue), m_Label(label), m_Value(*value_ptr)
+			{
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs args) override {};
+
+			void Undo() override
+			{
+				m_Value = *m_ValuePtr;
+				*m_ValuePtr = m_PreviousValue;
+
+				ApplyToChildren<T, Component>(m_ValuePtr, m_Entity);
+
+				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				*m_ValuePtr = m_Value;
+
+				ApplyToChildren<T, Component>(m_ValuePtr, m_Entity);
+
+				SetCurrentCommand(false);
+			}
+
+			const std::string GetLabel() const { return m_Label; }
+
+		protected:
+			T* m_ValuePtr;
+			T m_Value;
+			T m_PreviousValue;
+			Entity m_Entity;
 			const std::string m_Label;
 		};
 
@@ -312,6 +352,23 @@ namespace eg
 		static EntitySave SaveEntity(Entity& entity);
 		static void RestoreEntity(Entity& entity, EntitySave& entitySave);
 
+		template<typename T, typename Component>
+		static void ApplyToChildren(T* value_ptr, Entity& entity)
+		{
+			for (Entity e : entity.GetAnyChildren())
+			{
+				if (e.HasComponent<Component>())
+				{
+					Component& parentComp = entity.GetComponent<Component>();
+					Component* parentCompPtr = &parentComp;
+					int offset = reinterpret_cast<char*>(value_ptr) - reinterpret_cast<char*>(parentCompPtr);
+					Component& childComp = e.GetComponent<Component>();
+					Component* childCompPtr = &childComp;
+					memcpy(reinterpret_cast<char*>(childCompPtr) + offset, value_ptr, sizeof(T));
+				}
+			}
+		}
+
 		template<typename T>
 		static Command* ExecuteValueCommand(std::function<void(T)> function, T value, T previousValue, const std::string label, bool bypass = false)
 		{
@@ -340,19 +397,11 @@ namespace eg
 		static Command* ExecuteRawValueCommand(T* value_ptr, T previousValue, Entity entity, const std::string label, bool bypass = false)
 		{
 			Command* command = nullptr;
-			ChangeRawValueCommand<T>* previousCommand = dynamic_cast<ChangeRawValueCommand<T>*>(GetCurrentCommand());
+			ChangeRawComponentValueCommand<T, Component>* previousCommand = dynamic_cast<ChangeRawComponentValueCommand<T, Component>*>(GetCurrentCommand());
 			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
-				Command* command = new ChangeRawValueCommand<T>(value_ptr, previousValue, label);
+				Command* command = new ChangeRawComponentValueCommand<T, Component>(value_ptr, previousValue, entity, label);
 
-			for (Entity e : entity.GetAnyChildren())
-			{
-				Component& parentComp = entity.GetComponent<Component>();
-				Component* parentCompPtr = &parentComp;
-				int offset = reinterpret_cast<char*>(value_ptr) - reinterpret_cast<char*>(parentCompPtr);
-				Component& childComp = e.GetComponent<Component>();
-				Component* childCompPtr = &childComp;
-				memcpy(reinterpret_cast<char*>(childCompPtr) + offset, value_ptr, sizeof(T));
-			}
+			ApplyToChildren<T, Component>(value_ptr, entity);
 
 			return command;
 		}
@@ -364,7 +413,7 @@ namespace eg
 			command->Execute(args);
 			return command;
 		}
-
+		 
 	private:
 		static std::vector<Commands::Command*> commandHistory;
 	};
