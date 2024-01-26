@@ -33,7 +33,20 @@ namespace eg {
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
-		if (m_Context) {
+
+		if (m_Context)
+		{
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+				{
+					Entity draggedEntity = *(Entity*)payload->Data;
+					Commands::ExecuteChangeParentCommand(draggedEntity, std::nullopt);
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
 			m_Context->m_Registry.each([&](auto entityID)
 				{
 					Entity entity{ entityID, m_Context.get() };
@@ -41,7 +54,9 @@ namespace eg {
 				});
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+			{
 				m_SelectionContext = {};
+			}
 
 			// Right click on blank space
 			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
@@ -51,7 +66,7 @@ namespace eg {
 					Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Entity", {}, m_Context, m_SelectionContext));
 				}
 				ImGui::EndPopup();
-			}	
+			}
 		}
 
 		ImGui::Begin("Properties");
@@ -87,14 +102,10 @@ namespace eg {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
 			{
 				Entity draggedEntity = *(Entity*)payload->Data;
-				if (draggedEntity != entity && !entity.IsChild(draggedEntity) && !draggedEntity.IsChildOfAny(entity))
-				{ 
-					entity.AddChild(draggedEntity);
-					if (draggedEntity.GetParent().has_value())
-						draggedEntity.GetParent().value().RemoveChild(draggedEntity);
-					draggedEntity.SetParent(entity);
-				}
+				Commands::ExecuteChangeParentCommand(draggedEntity, entity);
 			}
+
+			ImGui::EndDragDropTarget();
 		}
 
 		if (ImGui::IsItemClicked())
@@ -293,7 +304,7 @@ namespace eg {
 			auto& camera = component.Camera;
 
 			if(ImGui::Checkbox("Primary", &component.Primary))
-				Commands::ExecuteRawValueCommand<bool, CameraComponent>(&component.Primary, !component.Primary, entity, "CameraComponent-Primary");
+				Commands::ExecuteRawValueCommand<bool>(&component.Primary, !component.Primary, "CameraComponent-Primary");
 
 			const char* projectionTypeString[] = { "Perspective","Orthographic" };
 			const char* currentProjectionTypeString = projectionTypeString[(int)camera.GetProjectionType()];
@@ -367,7 +378,7 @@ namespace eg {
 						}, farClip, camera.GetOrthographicFarClip(), "CameraComponent-Far");
 
 				if(ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
-					Commands::ExecuteRawValueCommand<bool, CameraComponent>(&component.FixedAspectRatio, !component.FixedAspectRatio, entity, "CameraComponent-Fixed Aspect Ratio");
+					Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
 			}
 			}, m_Context);
 

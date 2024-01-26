@@ -8,6 +8,8 @@ namespace eg
 {
 	class Commands
 	{
+	public:
+
 		const static int MAX_COMMANDS = 200;
 
 		using AllSavedComponents = std::tuple<std::optional<TagComponent>,
@@ -21,19 +23,18 @@ namespace eg
 			std::optional<CircleCollider2DComponent>,
 			std::optional<TextComponent>>;
 
-	public:
 		struct CommandArgs
 		{
 		public:
 			CommandArgs(const std::string& name, Entity entity,
-			Ref<Scene>& context,
-			Entity& selectionContext)
-				: name(name), entity(entity), m_Context(context), selectionContext(selectionContext) {  }
+				Ref<Scene>& context,
+				Entity& selectionContext)
+				: m_Name(name), m_Entity(entity), m_Context(context), m_SelectionContext(selectionContext) {  }
 
-			const std::string& name;
-			Entity entity;
+			const std::string& m_Name;
+			Entity m_Entity;
 			Ref<Scene>& m_Context;
-			Entity& selectionContext;
+			Entity& m_SelectionContext;
 		};
 
 		struct SavedEntity
@@ -342,6 +343,29 @@ namespace eg
 			EntitySave m_EntitySave;
 		};
 
+		class ChangeParentCommand : public Command
+		{
+		public:
+			ChangeParentCommand(Entity& entity, std::optional<Entity> parent)
+				: m_Entity(entity), m_Parent(parent), m_PreviousParent(entity.GetParent())
+			{
+				Commands::AddCommand(this);
+
+				ChangeParent(m_Entity, m_Parent);
+			}
+
+			void Execute(CommandArgs arg) override {};
+			void Undo() override;
+			void Redo() override;
+
+			void ChangeParent(Entity& entity, std::optional<Entity> parent);
+
+		protected:
+			Entity m_Entity;
+			std::optional<Entity> m_Parent;
+			std::optional<Entity> m_PreviousParent;
+		};
+
 		static void SetCurrentCommand(bool isUndo);
 		static void AddCommand(Command* command);
 		static bool CanRevert(bool isUndo);
@@ -406,10 +430,16 @@ namespace eg
 			return command;
 		}
 
+		static Command* ExecuteChangeParentCommand(Entity& entity, std::optional<Entity> parent)
+		{
+			Command* command = new ChangeParentCommand(entity, parent);
+			return command;
+		}
+
 		template<typename T>
 		static Command* ExecuteCommand(CommandArgs args)
 		{
-			Command* command = new T(args.m_Context, args.selectionContext);
+			Command* command = new T(args.m_Context, args.m_SelectionContext);
 			command->Execute(args);
 			return command;
 		}

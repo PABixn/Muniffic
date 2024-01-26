@@ -117,10 +117,13 @@ namespace eg
 				return m_Scene->GetEntityByUUID(parent);
 		}
 
-		void SetParent(Entity entity)
+		void SetParent(std::optional<Entity> entity)
 		{
 			auto& parent = m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
-			parent = entity.GetUUID();
+			if(entity.has_value())
+				parent = entity.value().GetUUID();
+			else
+				parent = NULL;
 		}
 
 		void AddChild(Entity child)

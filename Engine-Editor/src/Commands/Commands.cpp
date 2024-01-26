@@ -7,8 +7,8 @@ namespace eg
 
 	void Commands::CreateEntityCommand::Execute(CommandArgs arg)
 	{
-		UUID e = m_Context->CreateEntity(arg.name).GetUUID();
-		m_CreatedEntity = SavedEntity(arg.name, e);
+		UUID e = m_Context->CreateEntity(arg.m_Name).GetUUID();
+		m_CreatedEntity = SavedEntity(arg.m_Name, e);
 	}
 
 	void Commands::CreateEntityCommand::Undo()
@@ -32,13 +32,13 @@ namespace eg
 
 	void Commands::DeleteEntityCommand::Execute(CommandArgs arg)
 	{
-		if (arg.entity.HasComponent<TagComponent>())
+		if (arg.m_Entity.HasComponent<TagComponent>())
 		{
-			if (m_SelectionContext == arg.entity)
+			if (m_SelectionContext == arg.m_Entity)
 				m_SelectionContext = {};
-			m_DeletedEntity = SavedEntity(arg.entity.GetName(), arg.entity.GetUUID());
-			m_EntitySave = SaveEntity(arg.entity);
-			m_Context->DestroyEntity(arg.entity);
+			m_DeletedEntity = SavedEntity(arg.m_Entity.GetName(), arg.m_Entity.GetUUID());
+			m_EntitySave = SaveEntity(arg.m_Entity);
+			m_Context->DestroyEntity(arg.m_Entity);
 		}
 	}
 
@@ -61,6 +61,41 @@ namespace eg
 			m_EntitySave = SaveEntity(entity);
 			m_Context->DestroyEntity(entity);
 		}
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::ChangeParentCommand::ChangeParent(Entity& entity, std::optional<Entity> parent)
+	{
+		if (parent.has_value())
+		{
+			Entity parentEntity = parent.value();
+			if (entity != parentEntity && !parentEntity.IsChild(entity) && !entity.IsChildOfAny(parentEntity))
+			{
+				parentEntity.AddChild(entity);
+				if (entity.GetParent().has_value())
+					entity.GetParent().value().RemoveChild(entity);
+				entity.SetParent(parentEntity);
+			}
+		}
+		else
+		{
+			if (entity.GetParent().has_value())
+				entity.GetParent().value().RemoveChild(entity);
+			entity.SetParent(std::nullopt);
+		}
+	}
+
+	void Commands::ChangeParentCommand::Undo()
+	{
+		ChangeParent(m_Entity, m_PreviousParent);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::ChangeParentCommand::Redo()
+	{
+		ChangeParent(m_Entity, m_Parent);
 
 		SetCurrentCommand(false);
 	}
