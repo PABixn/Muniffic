@@ -84,6 +84,8 @@ namespace eg
 				entity.GetParent().value().RemoveChild(entity);
 			entity.SetParent(std::nullopt);
 		}
+
+		Commands::SetInheritedComponents(InheritableComponents{}, entity, parent);
 	}
 
 	void Commands::ChangeParentCommand::Undo()

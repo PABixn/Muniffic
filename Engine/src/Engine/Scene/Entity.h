@@ -42,6 +42,14 @@ namespace eg
 		}
 
 		template<typename T>
+		Component* GetInheritableComponent()
+		{
+			EG_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+
+			return dynamic_cast<Component*>(&m_Scene->m_Registry.get<T>(m_EntityHandle));
+		}
+
+		template<typename T>
 		bool HasComponent()
 		{
 			return m_Scene->m_Registry.all_of<T>(m_EntityHandle);

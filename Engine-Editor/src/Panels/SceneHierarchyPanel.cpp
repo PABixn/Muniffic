@@ -227,13 +227,38 @@ namespace eg {
 				ImGui::OpenPopup("ComponentSettings");
 			}
 
-			if (name != std::string("Transform"))
-				if (ImGui::BeginPopup("ComponentSettings"))
+			
+			if (ImGui::BeginPopup("ComponentSettings"))
+			{
+				if (name != std::string("Transform"))
 				{
 					if (ImGui::MenuItem("Remove Component"))
 						Commands::ExecuteCommand<Commands::RemoveComponentCommand<T>>(Commands::CommandArgs("", entity, context, entity));
-					ImGui::EndPopup();
 				}
+
+				if (entity.HasComponent<T>())
+				{
+					if (entity.GetChildren().size() > 0)
+					{
+						if (ImGui::MenuItem(entity.GetInheritableComponent<T>()->isInheritedInChildren == false ?
+							"Inherit component in children" :
+							"Stop inheriting component in children"))
+							Commands::ExecuteInheritComponentCommand<T>(entity, entity.GetInheritableComponent<T>()->isInheritedInChildren);
+					}
+
+					if (entity.GetParent().has_value())
+					{
+						if (ImGui::MenuItem(entity.GetInheritableComponent<T>()->isInherited == false ?
+							"Inherit from parent" :
+							"Stop inheriting from parent"))
+							Commands::ExecuteInheritComponentCommand<T>(entity, entity.GetInheritableComponent<T>()->isInherited, true);
+					}
+				}
+					
+				ImGui::EndPopup();
+			}
+			
+
 			if (open)
 			{
 				uiFunction(component);

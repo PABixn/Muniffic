@@ -366,6 +366,41 @@ namespace eg
 			std::optional<Entity> m_PreviousParent;
 		};
 
+		template<typename Component>
+		class InheritComponentCommand : public Command
+		{
+		public:
+			InheritComponentCommand(Entity& entity, bool isUndo, bool applyToEntity)
+				: m_Entity(entity), m_isUndo(isUndo), m_applyToEntity(applyToEntity)
+			{
+				Commands::AddCommand(this);
+
+				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo);
+			}
+
+			void Execute(CommandArgs arg) override {};
+
+			void Undo() override
+			{
+				InheritInChildren<Component>(m_Entity, m_applyToEntity, !m_isUndo);
+
+				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				InheritInChildren<Component>(m_Entity, m_applyToEntity, m_isUndo);
+
+				SetCurrentCommand(false);
+			}
+
+
+		protected:
+			Entity m_Entity;
+			bool m_isUndo;
+			bool m_applyToEntity;
+		};
+
 		static void SetCurrentCommand(bool isUndo);
 		static void AddCommand(Command* command);
 		static bool CanRevert(bool isUndo);
@@ -376,6 +411,52 @@ namespace eg
 		static EntitySave SaveEntity(Entity& entity);
 		static void RestoreEntity(Entity& entity, EntitySave& entitySave);
 
+		template<typename... Component>
+		static void SetInheritedComponents(ComponentGroup<Component...>, Entity& entity, std::optional<Entity> parent)
+		{
+			(TryInheritInChildren<Component>(entity, parent), ...);
+		}
+
+		template<typename Component>
+		static void TryInheritInChildren(Entity& entity, std::optional<Entity> parent)
+		{
+			if (parent.has_value())
+			{
+				if (entity.HasComponent<Component>() && parent.value().HasComponent<Component>())
+				{
+					InheritInChildren<Component>(entity, true, !parent.value().GetInheritableComponent<Component>()->isInheritedInChildren);
+				}
+			}
+			else
+			{
+				if(entity.HasComponent<Component>())
+					entity.GetInheritableComponent<Component>()->isInherited = false;
+			}
+		}
+
+		template<typename Component>
+		static void InheritInChildren(Entity& entity, bool applyToEntity, bool isUndo = false)
+		{
+			if (entity.GetInheritableComponent<Component>() == nullptr)
+				return;
+
+			entity.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
+
+			if(applyToEntity)
+				entity.GetInheritableComponent<Component>()->isInherited = !isUndo;
+
+			for (Entity& e : entity.GetAnyChildren())
+			{
+				if (e.HasComponent<Component>())
+				{
+					e.GetInheritableComponent<Component>()->isInherited = !isUndo;
+
+					if(e.GetChildren().size() > 0)
+						e.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
+				}
+			}
+		}
+
 		template<typename T, typename Component>
 		static void ApplyToChildren(T* value_ptr, Entity& entity)
 		{
@@ -383,12 +464,15 @@ namespace eg
 			{
 				if (e.HasComponent<Component>())
 				{
-					Component& parentComp = entity.GetComponent<Component>();
-					Component* parentCompPtr = &parentComp;
-					int offset = reinterpret_cast<char*>(value_ptr) - reinterpret_cast<char*>(parentCompPtr);
-					Component& childComp = e.GetComponent<Component>();
-					Component* childCompPtr = &childComp;
-					memcpy(reinterpret_cast<char*>(childCompPtr) + offset, value_ptr, sizeof(T));
+					if (e.GetInheritableComponent<Component>()->isInherited)
+					{
+						Component& parentComp = entity.GetComponent<Component>();
+						Component* parentCompPtr = &parentComp;
+						int offset = reinterpret_cast<char*>(value_ptr) - reinterpret_cast<char*>(parentCompPtr);
+						Component& childComp = e.GetComponent<Component>();
+						Component* childCompPtr = &childComp;
+						memcpy(reinterpret_cast<char*>(childCompPtr) + offset, value_ptr, sizeof(T));
+					}
 				}
 			}
 		}
@@ -433,6 +517,13 @@ namespace eg
 		static Command* ExecuteChangeParentCommand(Entity& entity, std::optional<Entity> parent)
 		{
 			Command* command = new ChangeParentCommand(entity, parent);
+			return command;
+		}
+
+		template<typename Component>
+		static Command* ExecuteInheritComponentCommand(Entity& entity, bool isUndo = false, bool applyToEntity = false)
+		{
+			Command* command = new InheritComponentCommand<Component>(entity, isUndo, applyToEntity);
 			return command;
 		}
 
