@@ -70,7 +70,7 @@ namespace eg
 		{
 			if (m_SelectionContext == entity)
 				m_SelectionContext = {};
-			m_DeletedEntity = { entity.GetName(), entity.GetUUID() };
+			m_DeletedEntity = SavedEntity(entity.GetName(), entity.GetUUID());
 			m_Children = entity.GetChildren();
 
 			for (auto& child : m_Children)
