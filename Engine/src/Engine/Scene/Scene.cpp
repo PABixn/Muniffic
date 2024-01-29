@@ -114,6 +114,7 @@ namespace eg {
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_EntityMap.erase(entity.GetUUID());
+		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 	}
 

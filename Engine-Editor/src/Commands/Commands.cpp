@@ -14,7 +14,7 @@ namespace eg
 	void Commands::CreateEntityCommand::Undo()
 	{
 		Entity e = m_Context->GetEntityByUUID(m_CreatedEntity.uuid);
-		if (e.HasComponent<TagComponent>())
+		if (e.Exists())
 		{
 			if (m_SelectionContext == e)
 				m_SelectionContext = {};
@@ -32,11 +32,18 @@ namespace eg
 
 	void Commands::DeleteEntityCommand::Execute(CommandArgs arg)
 	{
-		if (arg.m_Entity.HasComponent<TagComponent>())
+		if (arg.m_Entity.Exists())
 		{
 			if (m_SelectionContext == arg.m_Entity)
 				m_SelectionContext = {};
 			m_DeletedEntity = SavedEntity(arg.m_Entity.GetName(), arg.m_Entity.GetUUID());
+			m_Children = arg.m_Entity.GetChildren();
+
+			for (auto& child : m_Children)
+			{
+				ChangeParent(child, arg.m_Entity.GetParent());
+			}
+
 			m_EntitySave = SaveEntity(arg.m_Entity);
 			m_Context->DestroyEntity(arg.m_Entity);
 		}
@@ -46,6 +53,12 @@ namespace eg
 	{
 		Entity e = m_Context->CreateEntityWithID(m_DeletedEntity.uuid, m_DeletedEntity.name);
 		RestoreEntity(e, m_EntitySave);
+		
+		for (auto& child : m_Children)
+		{
+			ChangeParent(child, e);
+		}
+
 		SetCurrentCommand(true);
 	}
 
@@ -53,11 +66,18 @@ namespace eg
 	{
 		Entity entity = m_Context->GetEntityByUUID(m_DeletedEntity.uuid);
 
-		if (entity.HasComponent<TagComponent>())
+		if (entity.Exists())
 		{
 			if (m_SelectionContext == entity)
 				m_SelectionContext = {};
 			m_DeletedEntity = { entity.GetName(), entity.GetUUID() };
+			m_Children = entity.GetChildren();
+
+			for (auto& child : m_Children)
+			{
+				ChangeParent(child, entity.GetParent());
+			}
+
 			m_EntitySave = SaveEntity(entity);
 			m_Context->DestroyEntity(entity);
 		}
@@ -65,7 +85,7 @@ namespace eg
 		SetCurrentCommand(false);
 	}
 
-	void Commands::ChangeParentCommand::ChangeParent(Entity& entity, std::optional<Entity> parent)
+	void Commands::ChangeParent(Entity& entity, std::optional<Entity> parent)
 	{
 		if (parent.has_value())
 		{

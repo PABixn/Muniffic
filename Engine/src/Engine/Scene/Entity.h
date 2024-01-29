@@ -62,6 +62,11 @@ namespace eg
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
+		bool Exists()
+		{
+			return m_Scene->m_Registry.valid(m_EntityHandle);
+		}
+
 		bool IsChild(Entity& child)
 		{
 			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;

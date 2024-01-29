@@ -122,8 +122,11 @@ namespace eg {
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-			for(Entity& child : entity.GetChildren())
-				DrawEntityNode(child, true);
+			if (entity.Exists())
+			{
+				for (Entity& child : entity.GetChildren())
+					DrawEntityNode(child, true);
+			}
 
 			ImGui::TreePop();
 		}

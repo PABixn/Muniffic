@@ -341,6 +341,7 @@ namespace eg
 		protected:
 			SavedEntity m_DeletedEntity;
 			EntitySave m_EntitySave;
+			std::vector<Entity> m_Children;
 		};
 
 		class ChangeParentCommand : public Command
@@ -357,8 +358,6 @@ namespace eg
 			void Execute(CommandArgs arg) override {};
 			void Undo() override;
 			void Redo() override;
-
-			void ChangeParent(Entity& entity, std::optional<Entity> parent);
 
 		protected:
 			Entity m_Entity;
@@ -410,6 +409,7 @@ namespace eg
 		static void SetComponent(Entity& entity, T* component);
 		static EntitySave SaveEntity(Entity& entity);
 		static void RestoreEntity(Entity& entity, EntitySave& entitySave);
+		static void ChangeParent(Entity& entity, std::optional<Entity> parent);
 
 		template<typename... Component>
 		static void SetInheritedComponents(ComponentGroup<Component...>, Entity& entity, std::optional<Entity> parent)
