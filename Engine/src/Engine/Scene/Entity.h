@@ -139,10 +139,21 @@ namespace eg
 				parent = NULL;
 		}
 
+		void SetParent(UUID entity)
+		{
+			auto& parent = m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
+			parent = entity;
+		}
+
 		void AddChild(Entity child)
 		{
 			if (!IsChild(child))
 				m_Scene->m_EntityInfoMap[GetUUID()]->m_Children.push_back(child.GetUUID());
+		}
+
+		void AddChild(UUID child)
+		{
+			m_Scene->m_EntityInfoMap[GetUUID()]->m_Children.push_back(child);
 		}
 
 		void RemoveChild(Entity child)
@@ -151,6 +162,11 @@ namespace eg
 			auto it = std::find(children.begin(), children.end(), child.GetUUID());
 			if (it != children.end())
 				children.erase(it);
+		}
+
+		EntityInfo* GetEntityInfo()
+		{
+			return m_Scene->m_EntityInfoMap[GetUUID()];
 		}
 
 		UUID GetUUID()  { return GetComponent<IDComponent>().ID; }

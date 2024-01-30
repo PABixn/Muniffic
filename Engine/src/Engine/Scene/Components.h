@@ -49,7 +49,7 @@ namespace eg {
 		glm::vec3 Rotation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Scale{ 1.0f, 1.0f, 1.0f };
 
-		TransformComponent() { isInheritedInChildren = true; };
+		TransformComponent() { isInheritedInChildren = true; isInherited = true; };
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const glm::vec3 & translation)
 			: Translation(translation) {}
