@@ -37,20 +37,14 @@ namespace eg
 			Entity& m_SelectionContext;
 		};
 
-		struct SavedEntity
-		{
-		public:
-			SavedEntity(const std::string& name, UUID uuid)
-				: name(name), uuid(uuid) {  }
-
-			SavedEntity() = default;
-
-			std::string name;
-			UUID uuid;
-		};
-
 		struct EntitySave
 		{
+		public:
+			EntitySave(const std::string& name, UUID uuid)
+				: m_Name(name), m_UUID(uuid) {  }
+
+			EntitySave() = default;
+
 			AllSavedComponents components;
 
 			AllSavedComponents GetAllComponents()
@@ -78,6 +72,10 @@ namespace eg
 			{
 				return std::get<std::optional<T>>(components);
 			}
+
+			std::string m_Name;
+			UUID m_UUID;
+			UUID m_Parent;
 		};
 
 		class Command
@@ -320,7 +318,7 @@ namespace eg
 			void Redo() override;
 
 		protected:
-			SavedEntity m_CreatedEntity;
+			EntitySave m_CreatedEntity;
 		};
 
 		class DeleteEntityCommand : public EntityCommand
@@ -339,9 +337,8 @@ namespace eg
 			void Redo() override;
 
 		protected:
-			SavedEntity m_DeletedEntity;
-			EntitySave m_EntitySave;
-			std::vector<Entity> m_Children;
+			EntitySave m_DeletedEntity;
+			std::vector<EntitySave> m_Children;
 		};
 
 		class ChangeParentCommand : public Command

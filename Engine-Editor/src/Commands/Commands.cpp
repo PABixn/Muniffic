@@ -7,13 +7,13 @@ namespace eg
 
 	void Commands::CreateEntityCommand::Execute(CommandArgs arg)
 	{
-		UUID e = m_Context->CreateEntity(arg.m_Name).GetUUID();
-		m_CreatedEntity = SavedEntity(arg.m_Name, e);
+		Entity e = m_Context->CreateEntity(arg.m_Name);
+		m_CreatedEntity = SaveEntity(e);
 	}
 
 	void Commands::CreateEntityCommand::Undo()
 	{
-		Entity e = m_Context->GetEntityByUUID(m_CreatedEntity.uuid);
+		Entity e = m_Context->GetEntityByUUID(m_CreatedEntity.m_UUID);
 		if (e.Exists())
 		{
 			if (m_SelectionContext == e)
@@ -25,7 +25,7 @@ namespace eg
 
 	void Commands::CreateEntityCommand::Redo()
 	{
-		m_Context->CreateEntityWithID(m_CreatedEntity.uuid, m_CreatedEntity.name);
+		m_Context->CreateEntityWithID(m_CreatedEntity.m_UUID, m_CreatedEntity.m_Name);
 
 		SetCurrentCommand(false);
 	}
@@ -36,27 +36,44 @@ namespace eg
 		{
 			if (m_SelectionContext == arg.m_Entity)
 				m_SelectionContext = {};
-			m_DeletedEntity = SavedEntity(arg.m_Entity.GetName(), arg.m_Entity.GetUUID());
-			m_Children = arg.m_Entity.GetChildren();
 
-			for (auto& child : m_Children)
+			m_DeletedEntity = SaveEntity(arg.m_Entity);
+
+			for (auto& child : arg.m_Entity.GetAnyChildren())
 			{
-				ChangeParent(child, arg.m_Entity.GetParent());
+				EntitySave saved = SaveEntity(child);
+				m_Children.push_back(saved);
+				m_Context->DestroyEntity(child);
 			}
 
-			m_EntitySave = SaveEntity(arg.m_Entity);
 			m_Context->DestroyEntity(arg.m_Entity);
 		}
 	}
 
 	void Commands::DeleteEntityCommand::Undo()
 	{
-		Entity e = m_Context->CreateEntityWithID(m_DeletedEntity.uuid, m_DeletedEntity.name);
-		RestoreEntity(e, m_EntitySave);
+		Entity e = m_Context->CreateEntityWithID(m_DeletedEntity.m_UUID, m_DeletedEntity.m_Name);
+		RestoreEntity(e, m_DeletedEntity);
 		
+		if (m_DeletedEntity.m_Parent != NULL)
+		{
+			Entity parent = m_Context->GetEntityByUUID(m_DeletedEntity.m_Parent);
+			ChangeParent(e, parent);
+		}
+		else
+			ChangeParent(e, std::nullopt);
+
 		for (auto& child : m_Children)
 		{
-			ChangeParent(child, e);
+			Entity childrenEntity = m_Context->CreateEntityWithID(child.m_UUID, child.m_Name);
+			RestoreEntity(childrenEntity, child);
+			if (child.m_Parent != NULL)
+			{
+				Entity parent = m_Context->GetEntityByUUID(child.m_Parent);
+				ChangeParent(childrenEntity, parent);
+			}
+			else
+				ChangeParent(childrenEntity, std::nullopt);
 		}
 
 		SetCurrentCommand(true);
@@ -64,21 +81,22 @@ namespace eg
 
 	void Commands::DeleteEntityCommand::Redo()
 	{
-		Entity entity = m_Context->GetEntityByUUID(m_DeletedEntity.uuid);
+		Entity entity = m_Context->GetEntityByUUID(m_DeletedEntity.m_UUID);
 
 		if (entity.Exists())
 		{
 			if (m_SelectionContext == entity)
 				m_SelectionContext = {};
-			m_DeletedEntity = SavedEntity(entity.GetName(), entity.GetUUID());
-			m_Children = entity.GetChildren();
 
-			for (auto& child : m_Children)
+			m_DeletedEntity = SaveEntity(entity);
+
+			for (auto& child : entity.GetAnyChildren())
 			{
-				ChangeParent(child, entity.GetParent());
+				EntitySave saved = SaveEntity(child);
+				m_Children.push_back(saved);
+				m_Context->DestroyEntity(child);
 			}
 
-			m_EntitySave = SaveEntity(entity);
 			m_Context->DestroyEntity(entity);
 		}
 
@@ -291,6 +309,10 @@ namespace eg
 	{
 		EntitySave entitySave;
 
+		entitySave.m_UUID = entity.GetUUID();
+		entitySave.m_Name = entity.GetName();
+		entitySave.m_Parent = entity.GetParentUUID();
+
 		Commands::AllSavedComponents components = entitySave.GetAllComponents();
 
 		std::apply([&entity, &entitySave](auto&&... args) {((TrySaveComponent(entity, entitySave, args)), ...); }, components);
@@ -300,6 +322,7 @@ namespace eg
 
 	void Commands::RestoreEntity(Entity& entity, EntitySave& entitySave)
 	{
+
 		Commands::AllSavedComponents components = entitySave.GetAllComponents();
 
 		std::apply([&entity](auto&&... args) {(( TrySetComponent(entity, &args)), ...); }, components);

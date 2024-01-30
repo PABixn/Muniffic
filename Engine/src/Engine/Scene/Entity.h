@@ -106,6 +106,11 @@ namespace eg
 			return entities;
 		}
 
+		std::vector<UUID> GetChildrenUUID()
+		{
+			return m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
+		}
+
 		std::vector<Entity> GetAnyChildren()
 
 		{
@@ -128,6 +133,11 @@ namespace eg
 				return std::nullopt;
 			else
 				return m_Scene->GetEntityByUUID(parent);
+		}
+
+		UUID GetParentUUID()
+		{
+			return m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
 		}
 
 		void SetParent(std::optional<Entity> entity)
