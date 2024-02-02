@@ -41,7 +41,7 @@ namespace eg {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
 				{
 					Entity draggedEntity = *(Entity*)payload->Data;
-					Commands::ExecuteChangeParentCommand(draggedEntity, std::nullopt);
+					Commands::ExecuteChangeParentCommand(draggedEntity, std::nullopt, m_Context);
 				}
 
 				ImGui::EndDragDropTarget();
@@ -81,7 +81,7 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
-		if (entity.GetParent().has_value() && forceDraw == false)
+		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false))
 			return;
 		
 		bool opened = false;
@@ -102,7 +102,7 @@ namespace eg {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
 			{
 				Entity draggedEntity = *(Entity*)payload->Data;
-				Commands::ExecuteChangeParentCommand(draggedEntity, entity);
+				Commands::ExecuteChangeParentCommand(draggedEntity, entity, m_Context);
 			}
 
 			ImGui::EndDragDropTarget();
@@ -246,7 +246,7 @@ namespace eg {
 						if (ImGui::MenuItem(entity.GetInheritableComponent<T>()->isInheritedInChildren == false ?
 							"Inherit component in children" :
 							"Stop inheriting component in children"))
-							Commands::ExecuteInheritComponentCommand<T>(entity, entity.GetInheritableComponent<T>()->isInheritedInChildren);
+							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInheritedInChildren);
 					}
 
 					if (entity.GetParent().has_value())
@@ -254,7 +254,7 @@ namespace eg {
 						if (ImGui::MenuItem(entity.GetInheritableComponent<T>()->isInherited == false ?
 							"Inherit from parent" :
 							"Stop inheriting from parent"))
-							Commands::ExecuteInheritComponentCommand<T>(entity, entity.GetInheritableComponent<T>()->isInherited, true);
+							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInherited, true);
 					}
 				}
 					

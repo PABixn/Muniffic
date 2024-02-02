@@ -43,8 +43,9 @@ namespace eg
 			{
 				EntitySave saved = SaveEntity(child);
 				m_Children.push_back(saved);
-				m_Context->DestroyEntity(child);
 			}
+
+			arg.m_Entity.RemoveAnyChildren();
 
 			m_Context->DestroyEntity(arg.m_Entity);
 		}
@@ -128,14 +129,20 @@ namespace eg
 
 	void Commands::ChangeParentCommand::Undo()
 	{
-		ChangeParent(m_Entity, m_PreviousParent);
+		Entity entity = m_Context->GetEntityByUUID(m_Entity);
+        std::optional<Entity> previousParent = m_PreviousParent.has_value() ? std::optional<Entity>(m_Context->GetEntityByUUID(m_PreviousParent.value())) : std::nullopt;
+
+		ChangeParent(entity, previousParent);
 
 		SetCurrentCommand(true);
 	}
 
 	void Commands::ChangeParentCommand::Redo()
 	{
-		ChangeParent(m_Entity, m_Parent);
+		Entity entity = m_Context->GetEntityByUUID(m_Entity);
+		std::optional<Entity> parent = m_Parent.has_value() ? std::optional<Entity>(m_Context->GetEntityByUUID(m_Parent.value())) : std::nullopt;
+
+		ChangeParent(entity, parent);
 
 		SetCurrentCommand(false);
 	}

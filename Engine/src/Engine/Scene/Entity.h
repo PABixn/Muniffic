@@ -67,6 +67,11 @@ namespace eg
 			return m_Scene->m_Registry.valid(m_EntityHandle);
 		}
 
+		bool IsDrawable()
+		{
+			return m_Scene->m_Registry.all_of<IDComponent>(m_EntityHandle);
+		}
+
 		bool IsChild(Entity& child)
 		{
 			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
@@ -173,6 +178,18 @@ namespace eg
 			if (it != children.end())
 				children.erase(it);
 		}
+
+		void RemoveAnyChildren()
+		{
+			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
+			for (auto& child : children)
+			{
+				auto childEntity = m_Scene->GetEntityByUUID(child);
+				childEntity.RemoveAnyChildren();
+				m_Scene->DestroyEntity(childEntity);
+			}
+		}
+
 
 		EntityInfo* GetEntityInfo()
 		{

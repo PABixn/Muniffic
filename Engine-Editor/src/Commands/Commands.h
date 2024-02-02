@@ -344,12 +344,15 @@ namespace eg
 		class ChangeParentCommand : public Command
 		{
 		public:
-			ChangeParentCommand(Entity& entity, std::optional<Entity> parent)
-				: m_Entity(entity), m_Parent(parent), m_PreviousParent(entity.GetParent())
+			ChangeParentCommand(Entity& entity, std::optional<Entity> parent, Ref<Scene>& context)
+				: m_Entity(entity.GetUUID()), m_Context(context)
 			{
 				Commands::AddCommand(this);
 
-				ChangeParent(m_Entity, m_Parent);
+				m_Parent = parent.has_value() ? std::optional(parent.value().GetUUID()) : std::nullopt;
+				m_PreviousParent = entity.GetParent().has_value() ? std::optional(entity.GetParent().value().GetUUID()) : std::nullopt;
+
+				ChangeParent(entity, parent);
 			}
 
 			void Execute(CommandArgs arg) override {};
@@ -357,17 +360,18 @@ namespace eg
 			void Redo() override;
 
 		protected:
-			Entity m_Entity;
-			std::optional<Entity> m_Parent;
-			std::optional<Entity> m_PreviousParent;
+			UUID m_Entity;
+			std::optional<UUID> m_Parent;
+			std::optional<UUID> m_PreviousParent;
+			Ref<Scene>& m_Context;
 		};
 
 		template<typename Component>
 		class InheritComponentCommand : public Command
 		{
 		public:
-			InheritComponentCommand(Entity& entity, bool isUndo, bool applyToEntity)
-				: m_Entity(entity), m_isUndo(isUndo), m_applyToEntity(applyToEntity)
+			InheritComponentCommand(Entity& entity, bool isUndo, bool applyToEntity, Ref<Scene>& context)
+				: m_Entity(entity.GetUUID()), m_isUndo(isUndo), m_applyToEntity(applyToEntity), m_Context(context)
 			{
 				Commands::AddCommand(this);
 
@@ -378,23 +382,28 @@ namespace eg
 
 			void Undo() override
 			{
-				InheritInChildren<Component>(m_Entity, m_applyToEntity, !m_isUndo);
+				Entity entity = m_Context->GetEntityByUUID(m_Entity);
+
+				InheritInChildren<Component>(entity, m_applyToEntity, !m_isUndo);
 
 				SetCurrentCommand(true);
 			}
 
 			void Redo() override
 			{
-				InheritInChildren<Component>(m_Entity, m_applyToEntity, m_isUndo);
+				Entity entity = m_Context->GetEntityByUUID(m_Entity);
+
+				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo);
 
 				SetCurrentCommand(false);
 			}
 
 
 		protected:
-			Entity m_Entity;
+			UUID m_Entity;
 			bool m_isUndo;
 			bool m_applyToEntity;
+			Ref<Scene>& m_Context;
 		};
 
 		static void SetCurrentCommand(bool isUndo);
@@ -511,16 +520,16 @@ namespace eg
 			return command;
 		}
 
-		static Command* ExecuteChangeParentCommand(Entity& entity, std::optional<Entity> parent)
+		static Command* ExecuteChangeParentCommand(Entity& entity, std::optional<Entity> parent, Ref<Scene>& context)
 		{
-			Command* command = new ChangeParentCommand(entity, parent);
+			Command* command = new ChangeParentCommand(entity, parent, context);
 			return command;
 		}
 
 		template<typename Component>
-		static Command* ExecuteInheritComponentCommand(Entity& entity, bool isUndo = false, bool applyToEntity = false)
+		static Command* ExecuteInheritComponentCommand(Entity& entity, Ref<Scene>& context, bool isUndo = false, bool applyToEntity = false)
 		{
-			Command* command = new InheritComponentCommand<Component>(entity, isUndo, applyToEntity);
+			Command* command = new InheritComponentCommand<Component>(entity, isUndo, applyToEntity, context);
 			return command;
 		}
 

@@ -613,8 +613,11 @@ namespace eg
 		// Draw selected entity outline
 		if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
 		{
-			const TransformComponent &transform = selectedEntity.GetComponent<TransformComponent>();
-			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
+			if(selectedEntity.HasComponent<TransformComponent>())
+			{
+				const TransformComponent &transform = selectedEntity.GetComponent<TransformComponent>();
+				Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
+			}
 		}
 
 		Renderer2D::EndScene();
