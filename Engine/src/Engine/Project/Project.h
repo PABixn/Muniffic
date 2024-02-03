@@ -4,7 +4,7 @@
 #include <filesystem>
 
 namespace eg {
-
+	
 	struct ProjectConfig
 	{
 		std::string Name = "Untitiled";
@@ -67,6 +67,9 @@ namespace eg {
 		static const std::filesystem::path& GetStartScene() {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_Config.StartScene; 
+		}
+		std::string GetProjectName() {
+			return m_Config.Name;
 		}
 
 	private:

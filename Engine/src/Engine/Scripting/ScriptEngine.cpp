@@ -145,7 +145,7 @@ namespace eg
 		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
-		s_Data->EntityClass = ScriptClass("eg", "Entity", true);
+		s_Data->EntityClass = ScriptClass("eg", "DefaultBehaviour", true);
 	}
 
 	void ScriptEngine::Shutdown()
@@ -183,7 +183,7 @@ namespace eg
 		const MonoTableInfo *typeDefinitionsTable = mono_image_get_table_info(s_Data->AppAssemblyImage, MONO_TABLE_TYPEDEF);
 		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
 
-		MonoClass *entityClass = mono_class_from_name(s_Data->CoreAssemblyImage, "eg", "Entity");
+		MonoClass *entityClass = mono_class_from_name(s_Data->CoreAssemblyImage, "eg", "DefaultBehaviour");
 
 		for (int32_t i = 0; i < numTypes; i++)
 		{
@@ -317,7 +317,7 @@ namespace eg
 
 		ScriptGlue::RegisterComponents();
 
-		s_Data->EntityClass = ScriptClass("eg", "Entity", true);
+		s_Data->EntityClass = ScriptClass("eg", "DefaultBehaviour", true);
 	}
 
 	void ScriptEngine::OnRuntimeStart(Scene *scene)
@@ -389,6 +389,7 @@ namespace eg
 
 	Ref<ScriptClass> ScriptEngine::GetEntityClass(const std::string &name)
 	{
+		ScriptEngineData* data = s_Data;
 		if (s_Data->EntityClasses.find(name) == s_Data->EntityClasses.end())
 			return nullptr;
 		return s_Data->EntityClasses.at(name);

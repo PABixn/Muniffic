@@ -11,6 +11,7 @@
 #include "ImGuizmo.h"
 #include "Engine/Scene/Components.h"
 #include "Engine/Math/Math.h"
+#include "Commands/Commands.h"
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Renderer/Font.h"
 
@@ -246,6 +247,10 @@ namespace eg
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();
+		
+		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
+			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
+		}
 
 		ImGui::Begin("Stats");
 		std::string name = "None";
@@ -263,7 +268,9 @@ namespace eg
 		ImGui::End();
 
 		ImGui::Begin("Settings");
-		ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders);
+
+		if(ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
+			Commands::ExecuteRawValueCommand(&m_ShowPhysicsColliders, !m_ShowPhysicsColliders, "Show Physics Colliders");
 		ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
 		ImGui::End();
 
@@ -460,6 +467,27 @@ namespace eg
 
 		switch (e.GetKeyCode())
 		{
+		case Key::Z:
+			{
+				if (controlPressed)
+				{
+					if(Commands::CanRevert(true))
+						Commands::GetCurrentCommand()->Undo();
+				}
+
+				break;
+			}
+			case Key::Y:
+			{
+				if (controlPressed)
+				{
+					if (Commands::CanRevert(false))
+						Commands::GetCurrentCommand(1)->Redo();
+				}
+
+				break;
+			}
+			
 		case Key::S:
 		{
 			if (controlPressed)
@@ -659,6 +687,7 @@ namespace eg
 
 			m_ActiveScenePath = filepath;
 		}
+		SetIsSaved(true);
 	}
 
 	void EditorLayer::Save()
@@ -669,6 +698,7 @@ namespace eg
 		{
 			SerializeScene(m_ActiveScene, m_ActiveScenePath);
 		}
+		SetIsSaved(true);
 	}
 
 	void EditorLayer::NewProject()

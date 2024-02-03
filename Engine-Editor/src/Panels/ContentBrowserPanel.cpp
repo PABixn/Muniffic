@@ -1,6 +1,7 @@
 #include "egpch.h"
 #include "ContentBrowserPanel.h"
 #include <Imgui/imgui.h>
+#include "../Commands/Commands.h"
 #include "Engine/Project/Project.h"
 
 namespace eg {
@@ -19,7 +20,9 @@ namespace eg {
 		if (m_CurrentDirectory != std::filesystem::path(Project::GetAssetDirectory())) {
 			if (ImGui::Button("<-"))
 			{
+				std::filesystem::path oldPath = m_CurrentDirectory;
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
+				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
 		}
 
@@ -53,7 +56,11 @@ namespace eg {
 			ImGui::PopStyleColor();
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 				if (directoryEntry.is_directory())
+				{
+					std::filesystem::path oldPath = m_CurrentDirectory;
 					m_CurrentDirectory /= path.filename();
+					Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
+				}
 			}
 			ImGui::TextWrapped(name.c_str());
 
@@ -63,8 +70,13 @@ namespace eg {
 		}
 		ImGui::Columns(1);
 
-		ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-		ImGui::SliderFloat("Padding", &padding, 0, 32);
+		float size = thumbnailSize, offset = padding;
+
+		if(ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512))
+			Commands::ExecuteRawValueCommand(&thumbnailSize, size, std::string("ContentBrowserPanel-Thumbnail Size"));
+			
+		if(ImGui::SliderFloat("Padding", &padding, 0, 32))
+			Commands::ExecuteRawValueCommand(&padding, offset, std::string("ContentBrowserPanel-Padding"));
 
 		ImGui::End();
 	}

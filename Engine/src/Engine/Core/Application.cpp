@@ -5,6 +5,8 @@
 #include "glad/glad.h"
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/Project/Project.h"
+
 
 
 namespace eg
@@ -45,7 +47,7 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		m_LayerStack.PushLayer(layer);
 	}
-
+	
 	void Application::PushOverlay(Layer *layer)
 	{
 		EG_PROFILE_FUNCTION();
@@ -111,6 +113,7 @@ namespace eg
 		m_Running = false;
 		return true;
 	}
+
 	bool Application::OnWindowResize(WindowResizeEvent &e)
 	{
 		EG_PROFILE_FUNCTION();
@@ -138,5 +141,25 @@ namespace eg
 			function();
 
 		m_MainThreadQueue.clear();
+	}
+
+	void Application::SetRunning(bool val) {
+		m_Running = val;
+	}
+
+	void Application::ChangeName(const char* text) {
+		if (auto WinWindow = dynamic_cast<WindowsWindow*>(&this->GetWindow()))
+			glfwSetWindowTitle((WinWindow)->GetGLFWwindow(), text);
+
+	}
+
+	void Application::ChangeNameWithCurrentProject(bool saved) {
+		std::string TitleText = "Muniffic editor [";
+		TitleText += Project::GetActive().get()->GetProjectName();
+		TitleText += "]";
+		TitleText += saved ? "" : "*";
+		if (auto WinWindow = dynamic_cast<WindowsWindow*>(&this->GetWindow()))
+			glfwSetWindowTitle((WinWindow)->GetGLFWwindow(), TitleText.c_str());
+
 	}
 }

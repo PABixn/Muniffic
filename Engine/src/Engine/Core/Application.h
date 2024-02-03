@@ -6,7 +6,6 @@
 #include "Engine/Core/Timestep.h"
 #include "Engine/Resources/Systems/ResourceSystem.h"
 
-
 int main(int argc, char** argv);
 
 namespace eg {
@@ -33,27 +32,29 @@ namespace eg {
 	 class Application
 	{
 	public:
+
 		Application(const ApplicationSpecification specification);
 		~Application();
 
-		
 
 		void OnEvent(Event& e);
-
+		Layer* GetFirstLayer() { return m_LayerStack.GetFirstLayer(); }
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
 		inline static Application& Get() { return *s_Instance; }
 		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 		inline Window& GetWindow() { return *m_Window; }
-
+		
 		void Close();
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 		void SubmitToMainThread(std::function<void()> function);
+		void ChangeName(const char* text);
+		void ChangeNameWithCurrentProject(bool saved);
 	private:
 		void Run();
-		bool OnWindowClose(WindowCloseEvent& e);
+		virtual bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 
 		void ExecuteMainThreadQueue();
@@ -75,6 +76,8 @@ namespace eg {
 		static Application* s_Instance;
 		friend int ::main(int argc, char** argv);
 		
+	protected:
+		void SetRunning(bool val);
 	};
 	 //To be defined in client
 	 Application* CreateApplication(ApplicationCommandLineArgs args);
