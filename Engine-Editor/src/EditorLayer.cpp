@@ -1,19 +1,20 @@
 #include "egpch.h"
 #include "EditorLayer.h"
 #include "Imgui/imgui.h"
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include "Engine/Core/Core.h"
 #include "Engine/Scene/SceneSerializer.h"
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Events/KeyEvent.h"
-#include <optional>
-#include "ImGuizmo.h"
 #include "Engine/Scene/Components.h"
 #include "Engine/Math/Math.h"
 #include "Commands/Commands.h"
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Renderer/Font.h"
+#include <optional>
+#include "ImGuizmo.h"
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 
 namespace eg
@@ -38,7 +39,6 @@ namespace eg
 		}
 
 		EG_PROFILE_FUNCTION();
-		m_Texture = Texture2D::Create("assets/textures/cubes.png");
 		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");
 		m_IconPause = Texture2D::Create("resources/icons/PauseButton.png");
 		m_IconSimulate = Texture2D::Create("resources/icons/SimulateButton.png");
@@ -242,11 +242,20 @@ namespace eg
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Resources"))
+			{
+				if(ImGui::MenuItem("Add Resource", "Ctrl+R+A"))
+					m_AddResourcePanel = CreateScope<AddResourcePanel>();
+
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();
+		
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
@@ -360,6 +369,8 @@ namespace eg
 		UI_Toolbar();
 
 		ImGui::End();
+		if (m_AddResourcePanel)
+			m_AddResourcePanel->OnImGuiRender();
 	}
 
 	void EditorLayer::UI_Toolbar()

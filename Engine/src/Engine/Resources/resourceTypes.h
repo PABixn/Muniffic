@@ -6,13 +6,14 @@
 namespace eg {
 	enum class ResourceType
 	{
-		Texture,
+		Animation,
 		Shader,
 		Font,
 		Text,
 		Image,
 		Script,
 		NativeScript,
+		None,
 		Custom
 	};
 

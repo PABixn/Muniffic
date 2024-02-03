@@ -4,7 +4,7 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Engine/Renderer/EditorCamera.h"
 #include "Panels/ContentBrowserPanel.h"
-
+#include "Panels/AddResourcePanel.h"
 
 namespace eg {
 	class EditorLayer : public Layer
@@ -94,6 +94,7 @@ namespace eg {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
+		Scope<AddResourcePanel> m_AddResourcePanel;
 
 		enum class SceneState
 		{
