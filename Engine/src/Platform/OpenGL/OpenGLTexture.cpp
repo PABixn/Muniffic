@@ -104,9 +104,9 @@ namespace eg {
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, imgResource.Data);
+			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, (void*)(((ImageResourceData*)imgResource.Data)->pixels));
 
-			stbi_image_free(imgResource.Data);
+			stbi_image_free(((ImageResourceData*)imgResource.Data)->pixels);
 		}
 
 	}

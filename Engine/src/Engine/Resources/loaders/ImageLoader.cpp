@@ -2,6 +2,7 @@
 #include "ImageLoader.h"
 #include <filesystem>
 #include <stb_image.h>
+#include <cstdio>
 
 namespace eg
 {
@@ -11,7 +12,9 @@ namespace eg
 			return false;
 		}
 
-		std::filesystem::path fullPath = loader->TypePath / name;
+		std::filesystem::path fullPath = name;
+		EG_CORE_TRACE("Root directory: {}", fullPath.root_directory().string().c_str());
+		EG_CORE_TRACE("Parent path: {}", fullPath.parent_path().string().c_str());
 
 		int32_t width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
@@ -24,7 +27,7 @@ namespace eg
 		if (failReason)
 		{
 			EG_ERROR("Image resource loader failed to load file {}, {}", fullPath.string().c_str(), failReason);
-
+			 
 			if (data)
 			{
 				stbi_image_free(data);
