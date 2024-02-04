@@ -371,12 +371,12 @@ namespace eg
 		class InheritComponentCommand : public Command
 		{
 		public:
-			InheritComponentCommand(Entity& entity, bool isUndo, bool applyToEntity, Ref<Scene>& context)
-				: m_Entity(entity.GetUUID()), m_isUndo(isUndo), m_applyToEntity(applyToEntity), m_Context(context)
+			InheritComponentCommand(Entity& entity, Ref<Scene>& context, bool isUndo, bool applyToEntity, bool copyToChildren)
+				: m_Entity(entity.GetUUID()), m_isUndo(isUndo), m_applyToEntity(applyToEntity), m_Context(context), m_copyToChildren(copyToChildren)
 			{
 				Commands::AddCommand(this);
 
-				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo);
+				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo, m_copyToChildren);
 			}
 
 			void Execute(CommandArgs arg) override {};
@@ -385,7 +385,7 @@ namespace eg
 			{
 				Entity entity = m_Context->GetEntityByUUID(m_Entity);
 
-				InheritInChildren<Component>(entity, m_applyToEntity, !m_isUndo);
+				InheritInChildren<Component>(entity, m_applyToEntity, !m_isUndo, m_copyToChildren);
 
 				SetCurrentCommand(true);
 			}
@@ -394,7 +394,7 @@ namespace eg
 			{
 				Entity entity = m_Context->GetEntityByUUID(m_Entity);
 
-				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo);
+				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo, m_copyToChildren);
 
 				SetCurrentCommand(false);
 			}
@@ -405,6 +405,7 @@ namespace eg
 			bool m_isUndo;
 			bool m_applyToEntity;
 			Ref<Scene>& m_Context;
+			bool m_copyToChildren;
 		};
 
 		static void SetCurrentCommand(bool isUndo);
@@ -442,24 +443,32 @@ namespace eg
 		}
 
 		template<typename Component>
-		static void InheritInChildren(Entity& entity, bool applyToEntity, bool isUndo = false)
+		static void InheritInChildren(Entity& entity, bool applyToEntity, bool isUndo, bool copyToChildren = false)
 		{
 			if (entity.GetInheritableComponent<Component>() == nullptr)
 				return;
 
-			entity.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
+			if (copyToChildren == false)
+			{
+				entity.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
 
-			if(applyToEntity)
-				entity.GetInheritableComponent<Component>()->isInherited = !isUndo;
+				if (applyToEntity)
+					entity.GetInheritableComponent<Component>()->isInherited = !isUndo;
+			}
 
 			for (Entity& e : entity.GetAnyChildren())
 			{
-				if (e.HasComponent<Component>())
+				if (copyToChildren)
+				{
+					if (!e.HasComponent<Component>() && !isUndo)
+						e.AddComponent<Component>();
+					else if (e.HasComponent<Component>() && isUndo)
+						e.RemoveComponent<Component>();
+				}
+				else if (e.HasComponent<Component>())
 				{
 					e.GetInheritableComponent<Component>()->isInherited = !isUndo;
-
-					if(e.GetChildren().size() > 0)
-						e.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
+					e.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
 				}
 			}
 		}
@@ -528,9 +537,9 @@ namespace eg
 		}
 
 		template<typename Component>
-		static Command* ExecuteInheritComponentCommand(Entity& entity, Ref<Scene>& context, bool isUndo = false, bool applyToEntity = false)
+		static Command* ExecuteInheritComponentCommand(Entity& entity, Ref<Scene>& context, bool isUndo = false, bool applyToEntity = false, bool copyToChildren = false)
 		{
-			Command* command = new InheritComponentCommand<Component>(entity, isUndo, applyToEntity, context);
+			Command* command = new InheritComponentCommand<Component>(entity, context, isUndo, applyToEntity, copyToChildren);
 			return command;
 		}
 

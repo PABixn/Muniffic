@@ -251,6 +251,9 @@ namespace eg {
 							"Inherit component in children" :
 							"Stop inheriting component in children"))
 							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInheritedInChildren);
+
+						if(ImGui::MenuItem("Copy to children"))
+							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInheritedInChildren, false, true);
 					}
 
 					if (entity.GetParent().has_value())
