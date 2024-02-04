@@ -8,12 +8,17 @@ namespace eg
 	void Commands::CreateEntityCommand::Execute(CommandArgs arg)
 	{
 		Entity e = m_Context->CreateEntity(arg.m_Name);
+
+		if (arg.m_Parent.has_value())
+			ChangeParent(e, arg.m_Parent);
+
 		m_CreatedEntity = SaveEntity(e);
 	}
 
 	void Commands::CreateEntityCommand::Undo()
 	{
 		Entity e = m_Context->GetEntityByUUID(m_CreatedEntity.m_UUID);
+
 		if (e.Exists())
 		{
 			if (m_SelectionContext == e)
@@ -187,7 +192,9 @@ namespace eg
 		if (!entity.HasComponent<TagComponent>())
 			entity.AddComponent<TagComponent>();
 
-		entity.GetComponent<TagComponent>().Tag = component->Tag;
+		auto& tagComponent = entity.GetComponent<TagComponent>();
+
+		tagComponent.Tag = component->Tag;
 	}
 
 	template<>
@@ -196,9 +203,13 @@ namespace eg
 		if (!entity.HasComponent<TransformComponent>())
 			entity.AddComponent<TransformComponent>();
 
-		entity.GetComponent<TransformComponent>().Translation = component->Translation;
-		entity.GetComponent<TransformComponent>().Rotation = component->Rotation;
-		entity.GetComponent<TransformComponent>().Scale = component->Scale;
+		auto& transformComponent = entity.GetComponent<TransformComponent>();
+
+		transformComponent.Translation = component->Translation;
+		transformComponent.Rotation = component->Rotation;
+		transformComponent.Scale = component->Scale;
+		transformComponent.isInherited = component->isInherited;
+		transformComponent.isInheritedInChildren = component->isInheritedInChildren;
 	}
 
 	template<>
@@ -207,9 +218,13 @@ namespace eg
 		if (!entity.HasComponent<SpriteRendererComponent>())
 			entity.AddComponent<SpriteRendererComponent>();
 
-		entity.GetComponent<SpriteRendererComponent>().Color = component->Color;
-		entity.GetComponent<SpriteRendererComponent>().Texture = component->Texture;
-		entity.GetComponent<SpriteRendererComponent>().TilingFactor = component->TilingFactor;
+		auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
+
+		spriteRendererComponent.Color = component->Color;
+		spriteRendererComponent.Texture = component->Texture;
+		spriteRendererComponent.TilingFactor = component->TilingFactor;
+		spriteRendererComponent.isInherited = component->isInherited;
+		spriteRendererComponent.isInheritedInChildren = component->isInheritedInChildren;
 	}
 
 	template<>
@@ -218,11 +233,15 @@ namespace eg
 		if (!entity.HasComponent<CameraComponent>())
 			entity.AddComponent<CameraComponent>();
 
-		entity.GetComponent<CameraComponent>().Primary = component->Primary;
-		entity.GetComponent<CameraComponent>().FixedAspectRatio = component->FixedAspectRatio;
-		entity.GetComponent<CameraComponent>().Camera.SetProjectionType(component->Camera.GetProjectionType());
-		entity.GetComponent<CameraComponent>().Camera.SetPerspective(component->Camera.GetPerspectiveVerticalFOV(), component->Camera.GetPerspectiveNearClip(), component->Camera.GetPerspectiveFarClip());
-		entity.GetComponent<CameraComponent>().Camera.SetOrthographic(component->Camera.GetOrthographicSize(), component->Camera.GetOrthographicNearClip(), component->Camera.GetOrthographicFarClip());
+		auto& cameraComponent = entity.GetComponent<CameraComponent>();
+
+		cameraComponent.Primary = component->Primary;
+		cameraComponent.FixedAspectRatio = component->FixedAspectRatio;
+		cameraComponent.Camera.SetProjectionType(component->Camera.GetProjectionType());
+		cameraComponent.Camera.SetPerspective(component->Camera.GetPerspectiveVerticalFOV(), component->Camera.GetPerspectiveNearClip(), component->Camera.GetPerspectiveFarClip());
+		cameraComponent.Camera.SetOrthographic(component->Camera.GetOrthographicSize(), component->Camera.GetOrthographicNearClip(), component->Camera.GetOrthographicFarClip());
+		cameraComponent.isInherited = component->isInherited;
+		cameraComponent.isInheritedInChildren = component->isInheritedInChildren;
 	}
 
 	template<>
@@ -231,7 +250,11 @@ namespace eg
 		if (!entity.HasComponent<ScriptComponent>())
 			entity.AddComponent<ScriptComponent>();
 
-		entity.GetComponent<ScriptComponent>().Name = component->Name;
+		auto& scriptComponent = entity.GetComponent<ScriptComponent>();
+
+		scriptComponent.Name = component->Name;
+		scriptComponent.isInherited = component->isInherited;
+		scriptComponent.isInheritedInChildren = component->isInheritedInChildren;
 	}
 
 	template<>
@@ -240,9 +263,13 @@ namespace eg
 		if (!entity.HasComponent<CircleRendererComponent>())
 			entity.AddComponent<CircleRendererComponent>();
 
-		entity.GetComponent<CircleRendererComponent>().Color = component->Color;
-		entity.GetComponent<CircleRendererComponent>().Fade = component->Fade;
-		entity.GetComponent<CircleRendererComponent>().Thickness = component->Thickness;
+		auto& circleRendererComponent = entity.GetComponent<CircleRendererComponent>();
+
+		circleRendererComponent.Color = component->Color;
+		circleRendererComponent.Fade = component->Fade;
+		circleRendererComponent.Thickness = component->Thickness;
+		circleRendererComponent.isInherited = component->isInherited;
+		circleRendererComponent.isInheritedInChildren = component->isInheritedInChildren;
 	}
 
 	template<>
@@ -251,12 +278,16 @@ namespace eg
 		if (!entity.HasComponent<BoxCollider2DComponent>())
 			entity.AddComponent<BoxCollider2DComponent>();
 
-		entity.GetComponent<BoxCollider2DComponent>().Offset = component->Offset;
-		entity.GetComponent<BoxCollider2DComponent>().Size = component->Size;
-		entity.GetComponent<BoxCollider2DComponent>().Density = component->Density;
-		entity.GetComponent<BoxCollider2DComponent>().Friction = component->Friction;
-		entity.GetComponent<BoxCollider2DComponent>().Restitution = component->Restitution;
-		entity.GetComponent<BoxCollider2DComponent>().RestitutionThreshold = component->RestitutionThreshold;
+		auto& boxCollider2DComponent = entity.GetComponent<BoxCollider2DComponent>();
+
+		boxCollider2DComponent.Offset = component->Offset;
+		boxCollider2DComponent.Size = component->Size;
+		boxCollider2DComponent.Density = component->Density;
+		boxCollider2DComponent.Friction = component->Friction;
+		boxCollider2DComponent.Restitution = component->Restitution;
+		boxCollider2DComponent.RestitutionThreshold = component->RestitutionThreshold;
+		boxCollider2DComponent.isInherited = component->isInherited;
+		boxCollider2DComponent.isInheritedInChildren = component->isInheritedInChildren;
 	}
 
 	template<>
@@ -265,12 +296,16 @@ namespace eg
 		if (!entity.HasComponent<CircleCollider2DComponent>())
 			entity.AddComponent<CircleCollider2DComponent>();
 
-		entity.GetComponent<CircleCollider2DComponent>().Offset = component->Offset;
-		entity.GetComponent<CircleCollider2DComponent>().Radius = component->Radius;
-		entity.GetComponent<CircleCollider2DComponent>().Density = component->Density;
-		entity.GetComponent<CircleCollider2DComponent>().Friction = component->Friction;
-		entity.GetComponent<CircleCollider2DComponent>().Restitution = component->Restitution;
-		entity.GetComponent<CircleCollider2DComponent>().RestitutionThreshold = component->RestitutionThreshold;
+		auto& circleCollider2DComponent = entity.GetComponent<CircleCollider2DComponent>();
+
+		circleCollider2DComponent.Offset = component->Offset;
+		circleCollider2DComponent.Radius = component->Radius;
+		circleCollider2DComponent.Density = component->Density;
+		circleCollider2DComponent.Friction = component->Friction;
+		circleCollider2DComponent.Restitution = component->Restitution;
+		circleCollider2DComponent.RestitutionThreshold = component->RestitutionThreshold;
+		circleCollider2DComponent.isInherited = component->isInherited;
+		circleCollider2DComponent.isInheritedInChildren = component->isInheritedInChildren;
 	}
 
 	template<>
@@ -279,8 +314,12 @@ namespace eg
 		if (!entity.HasComponent<RigidBody2DComponent>())
 			entity.AddComponent<RigidBody2DComponent>();
 
-		entity.GetComponent<RigidBody2DComponent>().Type = component->Type;
-		entity.GetComponent<RigidBody2DComponent>().FixedRotation = component->FixedRotation;
+		auto& rigidBody2DComponent = entity.GetComponent<RigidBody2DComponent>();
+
+		rigidBody2DComponent.Type = component->Type;
+		rigidBody2DComponent.FixedRotation = component->FixedRotation;
+		rigidBody2DComponent.isInherited = component->isInherited;
+		rigidBody2DComponent.isInheritedInChildren = component->isInheritedInChildren;
 	}
 
 	template<>
@@ -289,12 +328,15 @@ namespace eg
 		if (!entity.HasComponent<TextComponent>())
 			entity.AddComponent<TextComponent>();
 
-		entity.GetComponent<TextComponent>().Color = component->Color;
-		entity.GetComponent<TextComponent>().FontAsset = component->FontAsset;
-		entity.GetComponent<TextComponent>().Kerning = component->Kerning;
-		entity.GetComponent<TextComponent>().LineSpacing = component->LineSpacing;
-		entity.GetComponent<TextComponent>().TextString = component->TextString;
-	
+		auto& textComponent = entity.GetComponent<TextComponent>();
+
+		textComponent.Color = component->Color;
+		textComponent.FontAsset = component->FontAsset;
+		textComponent.Kerning = component->Kerning;
+		textComponent.LineSpacing = component->LineSpacing;
+		textComponent.TextString = component->TextString;
+		textComponent.isInherited = component->isInherited;
+		textComponent.isInheritedInChildren = component->isInheritedInChildren;
 	}
 
 	template<typename T>

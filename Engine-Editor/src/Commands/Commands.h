@@ -28,13 +28,14 @@ namespace eg
 		public:
 			CommandArgs(const std::string& name, Entity entity,
 				Ref<Scene>& context,
-				Entity& selectionContext)
-				: m_Name(name), m_Entity(entity), m_Context(context), m_SelectionContext(selectionContext) {  }
+				Entity& selectionContext, std::optional<Entity> parent = std::nullopt)
+				: m_Name(name), m_Entity(entity), m_Context(context), m_SelectionContext(selectionContext), m_Parent(parent) {  }
 
 			const std::string& m_Name;
 			Entity m_Entity;
 			Ref<Scene>& m_Context;
 			Entity& m_SelectionContext;
+			std::optional<Entity> m_Parent;
 		};
 
 		struct EntitySave

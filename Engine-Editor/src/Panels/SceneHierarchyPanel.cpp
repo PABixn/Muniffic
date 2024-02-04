@@ -115,6 +115,10 @@ namespace eg {
 		{
 			if (ImGui::MenuItem("Delete Entity"))
 				Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Context, m_SelectionContext));
+
+			if(ImGui::MenuItem("Create Child Entity"))
+				Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Child Entity", {}, m_Context, m_SelectionContext, entity));
+
 			ImGui::EndPopup();
 		}
 
