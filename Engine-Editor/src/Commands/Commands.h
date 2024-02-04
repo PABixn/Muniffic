@@ -12,6 +12,13 @@ namespace eg
 
 		const static int MAX_COMMANDS = 200;
 
+		enum class InheritanceCommandType
+		{
+			COPY_COMPONENT,
+			COPY_COMPONENT_VALUES,
+			COPY_COMPONENT_AND_VALUES
+		};
+
 		using AllSavedComponents = std::tuple<std::optional<TagComponent>,
 			std::optional<TransformComponent>,
 			std::optional<SpriteRendererComponent>,
@@ -371,12 +378,12 @@ namespace eg
 		class InheritComponentCommand : public Command
 		{
 		public:
-			InheritComponentCommand(Entity& entity, Ref<Scene>& context, bool isUndo, bool applyToEntity, bool copyToChildren)
-				: m_Entity(entity.GetUUID()), m_isUndo(isUndo), m_applyToEntity(applyToEntity), m_Context(context), m_copyToChildren(copyToChildren)
+			InheritComponentCommand(Entity& entity, Ref<Scene>& context, bool isUndo, bool applyToEntity)
+				: m_Entity(entity.GetUUID()), m_isUndo(isUndo), m_applyToEntity(applyToEntity), m_Context(context)
 			{
 				Commands::AddCommand(this);
 
-				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo, m_copyToChildren);
+				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo);
 			}
 
 			void Execute(CommandArgs arg) override {};
@@ -385,7 +392,7 @@ namespace eg
 			{
 				Entity entity = m_Context->GetEntityByUUID(m_Entity);
 
-				InheritInChildren<Component>(entity, m_applyToEntity, !m_isUndo, m_copyToChildren);
+				InheritInChildren<Component>(entity, m_applyToEntity, !m_isUndo);
 
 				SetCurrentCommand(true);
 			}
@@ -394,7 +401,7 @@ namespace eg
 			{
 				Entity entity = m_Context->GetEntityByUUID(m_Entity);
 
-				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo, m_copyToChildren);
+				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo);
 
 				SetCurrentCommand(false);
 			}
@@ -405,7 +412,54 @@ namespace eg
 			bool m_isUndo;
 			bool m_applyToEntity;
 			Ref<Scene>& m_Context;
-			bool m_copyToChildren;
+		};
+
+		template<typename T>
+		class ManageComponentInheritanceCommand : public Command
+		{
+		public:
+			ManageComponentInheritanceCommand(Entity& entity, Ref<Scene>& context, InheritanceCommandType commandType, bool isUndo)
+				: m_Entity(entity.GetUUID()), m_CommandType(commandType), m_isUndo(isUndo), m_Context(context)
+			{
+				switch (commandType)
+				{
+					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, isUndo); break;
+				}
+
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs arg) override {};
+
+			void Undo() override
+			{
+				Entity entity = m_Context->GetEntityByUUID(m_Entity);
+
+				switch (m_CommandType)
+				{
+					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, !m_isUndo); break;
+				}
+
+				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				Entity entity = m_Context->GetEntityByUUID(m_Entity);
+
+				switch (m_CommandType)
+				{
+					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, m_isUndo); break;
+				}
+
+				SetCurrentCommand(false);
+			}
+
+		protected:
+			UUID m_Entity;
+			InheritanceCommandType m_CommandType;
+			bool m_isUndo;
+			Ref<Scene>& m_Context;
 		};
 
 		static void SetCurrentCommand(bool isUndo);
@@ -418,6 +472,18 @@ namespace eg
 		static EntitySave SaveEntity(Entity& entity);
 		static void RestoreEntity(Entity& entity, EntitySave& entitySave);
 		static void ChangeParent(Entity& entity, std::optional<Entity> parent);
+
+		template<typename Component>
+		static void CopyComponentToChildren(Entity& entity, bool isUndo)
+		{
+			for(Entity e : entity.GetAnyChildren())
+			{
+				if (e.HasComponent<Component>() && isUndo)
+					e.RemoveComponent<Component>();
+				else if(!e.HasComponent<Component>() && !isUndo)
+					e.AddComponent<Component>();
+			}
+		}
 
 		template<typename... Component>
 		static void SetInheritedComponents(ComponentGroup<Component...>, Entity& entity, std::optional<Entity> parent)
@@ -443,29 +509,20 @@ namespace eg
 		}
 
 		template<typename Component>
-		static void InheritInChildren(Entity& entity, bool applyToEntity, bool isUndo, bool copyToChildren = false)
+		static void InheritInChildren(Entity& entity, bool applyToEntity, bool isUndo)
 		{
 			if (entity.GetInheritableComponent<Component>() == nullptr)
 				return;
 
-			if (copyToChildren == false)
-			{
-				entity.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
 
-				if (applyToEntity)
-					entity.GetInheritableComponent<Component>()->isInherited = !isUndo;
-			}
+			entity.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
+
+			if (applyToEntity)
+				entity.GetInheritableComponent<Component>()->isInherited = !isUndo;
 
 			for (Entity& e : entity.GetAnyChildren())
 			{
-				if (copyToChildren)
-				{
-					if (!e.HasComponent<Component>() && !isUndo)
-						e.AddComponent<Component>();
-					else if (e.HasComponent<Component>() && isUndo)
-						e.RemoveComponent<Component>();
-				}
-				else if (e.HasComponent<Component>())
+				if (e.HasComponent<Component>())
 				{
 					e.GetInheritableComponent<Component>()->isInherited = !isUndo;
 					e.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
@@ -537,9 +594,16 @@ namespace eg
 		}
 
 		template<typename Component>
-		static Command* ExecuteInheritComponentCommand(Entity& entity, Ref<Scene>& context, bool isUndo = false, bool applyToEntity = false, bool copyToChildren = false)
+		static Command* ExecuteInheritComponentCommand(Entity& entity, Ref<Scene>& context, bool isUndo = false, bool applyToEntity = false)
 		{
-			Command* command = new InheritComponentCommand<Component>(entity, context, isUndo, applyToEntity, copyToChildren);
+			Command* command = new InheritComponentCommand<Component>(entity, context, isUndo, applyToEntity);
+			return command;
+		}
+
+		template<typename Component>
+		static Command* ExecuteManageComponentInheritanceCommand(Entity& entity, Ref<Scene>& context, InheritanceCommandType commandType, bool isUndo = false)
+		{
+			Command* command = new ManageComponentInheritanceCommand<Component>(entity, context, commandType, isUndo);
 			return command;
 		}
 

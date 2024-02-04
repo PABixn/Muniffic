@@ -253,7 +253,10 @@ namespace eg {
 							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInheritedInChildren);
 
 						if(ImGui::MenuItem("Copy to children"))
-							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInheritedInChildren, false, true);
+							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT);
+
+						if(ImGui::MenuItem("Remove from children"))
+							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT, true);
 					}
 
 					if (entity.GetParent().has_value())
