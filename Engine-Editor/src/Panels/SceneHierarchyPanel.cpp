@@ -257,6 +257,9 @@ namespace eg {
 
 						if(ImGui::MenuItem("Remove from children"))
 							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT, true);
+
+						if(ImGui::MenuItem("Copy values to children"))
+							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT_VALUES);
 					}
 
 					if (entity.GetParent().has_value())

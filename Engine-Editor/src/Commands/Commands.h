@@ -424,6 +424,7 @@ namespace eg
 				switch (commandType)
 				{
 					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, isUndo); break;
+					case InheritanceCommandType::COPY_COMPONENT_VALUES: CopyValuesToChildren<T>(entity, m_PreviousValues); break;
 				}
 
 				Commands::AddCommand(this);
@@ -438,6 +439,8 @@ namespace eg
 				switch (m_CommandType)
 				{
 					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, !m_isUndo); break;
+					case InheritanceCommandType::COPY_COMPONENT_VALUES: RevertValuesInChildren<T>(entity, m_PreviousValues); break;
+					
 				}
 
 				SetCurrentCommand(true);
@@ -450,6 +453,7 @@ namespace eg
 				switch (m_CommandType)
 				{
 					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, m_isUndo); break;
+					case InheritanceCommandType::COPY_COMPONENT_VALUES: CopyValuesToChildren<T>(entity, m_PreviousValues); break;
 				}
 
 				SetCurrentCommand(false);
@@ -460,6 +464,7 @@ namespace eg
 			InheritanceCommandType m_CommandType;
 			bool m_isUndo;
 			Ref<Scene>& m_Context;
+			std::unordered_map<UUID, T> m_PreviousValues;
 		};
 
 		static void SetCurrentCommand(bool isUndo);
@@ -474,13 +479,40 @@ namespace eg
 		static void ChangeParent(Entity& entity, std::optional<Entity> parent);
 
 		template<typename Component>
+		static void RevertValuesInChildren(Entity& entity, std::unordered_map<UUID, Component>& previousValues)
+		{
+			for (Entity e : entity.GetAnyChildren())
+			{
+				if (e.HasComponent<Component>())
+				{
+					SetComponent(e, &previousValues[e.GetUUID()]);
+				}
+			}
+		}
+
+		template<typename Component>
+		static void CopyValuesToChildren(Entity& entity, std::unordered_map<UUID, Component>& previousValues)
+		{
+			for (Entity e : entity.GetAnyChildren())
+			{
+				if (e.HasComponent<Component>())
+				{
+					Component& parentComp = entity.GetComponent<Component>();
+					Component childComp = e.GetComponent<Component>();
+					previousValues[e.GetUUID()] = childComp;
+					SetComponent(e, &parentComp);
+				}
+			}
+		}
+
+		template<typename Component>
 		static void CopyComponentToChildren(Entity& entity, bool isUndo)
 		{
-			for(Entity e : entity.GetAnyChildren())
+			for (Entity e : entity.GetAnyChildren())
 			{
 				if (e.HasComponent<Component>() && isUndo)
 					e.RemoveComponent<Component>();
-				else if(!e.HasComponent<Component>() && !isUndo)
+				else if (!e.HasComponent<Component>() && !isUndo)
 					e.AddComponent<Component>();
 			}
 		}
