@@ -180,7 +180,7 @@ namespace eg
 				m_Value = *m_ValuePtr;
 				*m_ValuePtr = m_PreviousValue;
 
-				ApplyToChildren<T, Component>(m_ValuePtr, m_Entity);
+				m_Entity.ApplyValueToChildren<T, Component>(m_ValuePtr);
 
 				SetCurrentCommand(true);
 			}
@@ -189,7 +189,7 @@ namespace eg
 			{
 				*m_ValuePtr = m_Value;
 
-				ApplyToChildren<T, Component>(m_ValuePtr, m_Entity);
+				m_Entity.ApplyValueToChildren<T, Component>(m_ValuePtr);
 
 				SetCurrentCommand(false);
 			}
@@ -277,7 +277,7 @@ namespace eg
 				if (!m_SelectionContext.HasComponent<T>())
 				{
 					m_SelectionContext.AddComponent<T>();
-					Commands::SetComponent(m_SelectionContext, &m_Component);
+					Entity::SetComponent(m_SelectionContext, &m_Component);
 				}
 				SetCurrentCommand(true);
 			}
@@ -383,7 +383,7 @@ namespace eg
 			{
 				Commands::AddCommand(this);
 
-				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo);
+				entity.InheritComponentInChildren<Component>(m_applyToEntity, m_isUndo);
 			}
 
 			void Execute(CommandArgs arg) override {};
@@ -392,7 +392,7 @@ namespace eg
 			{
 				Entity entity = m_Context->GetEntityByUUID(m_Entity);
 
-				InheritInChildren<Component>(entity, m_applyToEntity, !m_isUndo);
+				entity.InheritComponentInChildren<Component>(m_applyToEntity, !m_isUndo);
 
 				SetCurrentCommand(true);
 			}
@@ -401,7 +401,7 @@ namespace eg
 			{
 				Entity entity = m_Context->GetEntityByUUID(m_Entity);
 
-				InheritInChildren<Component>(entity, m_applyToEntity, m_isUndo);
+				entity.InheritComponentInChildren<Component>(m_applyToEntity, m_isUndo);
 
 				SetCurrentCommand(false);
 			}
@@ -423,12 +423,12 @@ namespace eg
 			{
 				switch (commandType)
 				{
-					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, isUndo); break;
-					case InheritanceCommandType::COPY_COMPONENT_VALUES: CopyValuesToChildren<T>(entity, m_PreviousValues); break;
+					case InheritanceCommandType::COPY_COMPONENT: entity.CopyComponentToChildren<T>(isUndo); break;
+					case InheritanceCommandType::COPY_COMPONENT_VALUES: entity.CopyComponentValuesToChildren<T>(m_PreviousValues); break;
 					case InheritanceCommandType::COPY_COMPONENT_AND_VALUES: 
 					{
-						CopyComponentToChildren<T>(entity, isUndo);
-						CopyValuesToChildren<T>(entity, m_PreviousValues);
+						entity.CopyComponentToChildren<T>(isUndo);
+						entity.CopyComponentValuesToChildren<T>(m_PreviousValues);
 						break;
 					}
 				}
@@ -444,12 +444,12 @@ namespace eg
 
 				switch (m_CommandType)
 				{
-					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, !m_isUndo); break;
-					case InheritanceCommandType::COPY_COMPONENT_VALUES: RevertValuesInChildren<T>(entity, m_PreviousValues); break;
+					case InheritanceCommandType::COPY_COMPONENT: entity.CopyComponentToChildren<T>(!m_isUndo); break;
+					case InheritanceCommandType::COPY_COMPONENT_VALUES: entity.RevertComponentValuesInChildren<T>(m_PreviousValues); break;
 					case InheritanceCommandType::COPY_COMPONENT_AND_VALUES:
 					{
-						CopyComponentToChildren<T>(entity, !m_isUndo);
-						RevertValuesInChildren<T>(entity, m_PreviousValues);
+						entity.CopyComponentToChildren<T>(!m_isUndo);
+						entity.RevertComponentValuesInChildren<T>(m_PreviousValues);
 						break;
 					}
 					
@@ -464,12 +464,12 @@ namespace eg
 
 				switch (m_CommandType)
 				{
-					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, m_isUndo); break;
-					case InheritanceCommandType::COPY_COMPONENT_VALUES: CopyValuesToChildren<T>(entity, m_PreviousValues); break;
+					case InheritanceCommandType::COPY_COMPONENT: entity.CopyComponentToChildren<T>(m_isUndo); break;
+					case InheritanceCommandType::COPY_COMPONENT_VALUES: entity.CopyComponentValuesToChildren<T>(m_PreviousValues); break;
 					case InheritanceCommandType::COPY_COMPONENT_AND_VALUES:
 					{
-						CopyComponentToChildren<T>(entity, m_isUndo);
-						CopyValuesToChildren<T>(entity, m_PreviousValues);
+						entity.CopyComponentToChildren<T>(m_isUndo);
+						entity.CopyComponentValuesToChildren<T>(m_PreviousValues);
 						break;
 					}
 				}
@@ -490,50 +490,9 @@ namespace eg
 		static bool CanRevert(bool isUndo);
 		static Command* GetCurrentCommand(int offset = 0);
 		static int currentCommandIndex;
-		template<typename T>
-		static void SetComponent(Entity& entity, T* component);
 		static EntitySave SaveEntity(Entity& entity);
 		static void RestoreEntity(Entity& entity, EntitySave& entitySave);
 		static void ChangeParent(Entity& entity, std::optional<Entity> parent);
-
-		template<typename Component>
-		static void RevertValuesInChildren(Entity& entity, std::unordered_map<UUID, Component>& previousValues)
-		{
-			for (Entity e : entity.GetAnyChildren())
-			{
-				if (e.HasComponent<Component>())
-				{
-					SetComponent(e, &previousValues[e.GetUUID()]);
-				}
-			}
-		}
-
-		template<typename Component>
-		static void CopyValuesToChildren(Entity& entity, std::unordered_map<UUID, Component>& previousValues)
-		{
-			for (Entity e : entity.GetAnyChildren())
-			{
-				if (e.HasComponent<Component>())
-				{
-					Component& parentComp = entity.GetComponent<Component>();
-					Component childComp = e.GetComponent<Component>();
-					previousValues[e.GetUUID()] = childComp;
-					SetComponent(e, &parentComp);
-				}
-			}
-		}
-
-		template<typename Component>
-		static void CopyComponentToChildren(Entity& entity, bool isUndo)
-		{
-			for (Entity e : entity.GetAnyChildren())
-			{
-				if (e.HasComponent<Component>() && isUndo)
-					e.RemoveComponent<Component>();
-				else if (!e.HasComponent<Component>() && !isUndo)
-					e.AddComponent<Component>();
-			}
-		}
 
 		template<typename... Component>
 		static void SetInheritedComponents(ComponentGroup<Component...>, Entity& entity, std::optional<Entity> parent)
@@ -548,55 +507,13 @@ namespace eg
 			{
 				if (entity.HasComponent<Component>() && parent.value().HasComponent<Component>())
 				{
-					InheritInChildren<Component>(entity, true, !parent.value().GetInheritableComponent<Component>()->isInheritedInChildren);
+					entity.InheritComponentInChildren<Component>(true, !parent.value().GetInheritableComponent<Component>()->isInheritedInChildren);
 				}
 			}
 			else
 			{
 				if(entity.HasComponent<Component>())
 					entity.GetInheritableComponent<Component>()->isInherited = false;
-			}
-		}
-
-		template<typename Component>
-		static void InheritInChildren(Entity& entity, bool applyToEntity, bool isUndo)
-		{
-			if (entity.GetInheritableComponent<Component>() == nullptr)
-				return;
-
-
-			entity.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
-
-			if (applyToEntity)
-				entity.GetInheritableComponent<Component>()->isInherited = !isUndo;
-
-			for (Entity& e : entity.GetAnyChildren())
-			{
-				if (e.HasComponent<Component>())
-				{
-					e.GetInheritableComponent<Component>()->isInherited = !isUndo;
-					e.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
-				}
-			}
-		}
-
-		template<typename T, typename Component>
-		static void ApplyToChildren(T* value_ptr, Entity& entity)
-		{
-			for (Entity e : entity.GetAnyChildren())
-			{
-				if (e.HasComponent<Component>())
-				{
-					if (e.GetInheritableComponent<Component>()->isInherited)
-					{
-						Component& parentComp = entity.GetComponent<Component>();
-						Component* parentCompPtr = &parentComp;
-						int offset = reinterpret_cast<char*>(value_ptr) - reinterpret_cast<char*>(parentCompPtr);
-						Component& childComp = e.GetComponent<Component>();
-						Component* childCompPtr = &childComp;
-						memcpy(reinterpret_cast<char*>(childCompPtr) + offset, value_ptr, sizeof(T));
-					}
-				}
 			}
 		}
 
@@ -632,7 +549,7 @@ namespace eg
 			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
 				Command* command = new ChangeRawComponentValueCommand<T, Component>(value_ptr, previousValue, entity, label);
 
-			ApplyToChildren<T, Component>(value_ptr, entity);
+			entity.ApplyValueToChildren<T, Component>(value_ptr);
 
 			return command;
 		}

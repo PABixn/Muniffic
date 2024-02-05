@@ -190,6 +190,86 @@ namespace eg
 			}
 		}
 
+		template<typename Component>
+		void RevertComponentValuesInChildren(std::unordered_map<UUID, Component>& previousValues)
+		{
+			for (Entity e : GetAnyChildren())
+			{
+				if (e.HasComponent<Component>())
+				{
+					Entity::SetComponent(e, &previousValues[e.GetUUID()]);
+				}
+			}
+		}
+
+		template<typename Component>
+		void CopyComponentValuesToChildren(std::unordered_map<UUID, Component>& previousValues)
+		{
+			for (Entity e : GetAnyChildren())
+			{
+				if (e.HasComponent<Component>())
+				{
+					Component& parentComp = GetComponent<Component>();
+					Component childComp = e.GetComponent<Component>();
+					previousValues[e.GetUUID()] = childComp;
+					Entity::SetComponent(e, &parentComp);
+				}
+			}
+		}
+
+		template<typename Component>
+		void CopyComponentToChildren(bool isUndo)
+		{
+			for (Entity e : GetAnyChildren())
+			{
+				if (e.HasComponent<Component>() && isUndo)
+					e.RemoveComponent<Component>();
+				else if (!e.HasComponent<Component>() && !isUndo)
+					e.AddComponent<Component>();
+			}
+		}
+
+		template<typename Component>
+		void InheritComponentInChildren(bool applyToEntity, bool isUndo)
+		{
+			if (GetInheritableComponent<Component>() == nullptr)
+				return;
+
+
+			GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
+
+			if (applyToEntity)
+				GetInheritableComponent<Component>()->isInherited = !isUndo;
+
+			for (Entity& e : GetAnyChildren())
+			{
+				if (e.HasComponent<Component>())
+				{
+					e.GetInheritableComponent<Component>()->isInherited = !isUndo;
+					e.GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
+				}
+			}
+		}
+
+		template<typename T, typename Component>
+		void ApplyValueToChildren(T* value_ptr)
+		{
+			for (Entity e : GetAnyChildren())
+			{
+				if (e.HasComponent<Component>())
+				{
+					if (e.GetInheritableComponent<Component>()->isInherited)
+					{
+						Component& parentComp = GetComponent<Component>();
+						Component* parentCompPtr = &parentComp;
+						int offset = reinterpret_cast<char*>(value_ptr) - reinterpret_cast<char*>(parentCompPtr);
+						Component& childComp = e.GetComponent<Component>();
+						Component* childCompPtr = &childComp;
+						memcpy(reinterpret_cast<char*>(childCompPtr) + offset, value_ptr, sizeof(T));
+					}
+				}
+			}
+		}
 
 		EntityInfo* GetEntityInfo()
 		{
@@ -214,6 +294,9 @@ namespace eg
 		{
 			return !(*this == other);
 		}
+
+		template<typename T>
+		static void SetComponent(Entity& entity, T* component);
 
 	private:
 		entt::entity m_EntityHandle{ entt::null };
