@@ -425,6 +425,12 @@ namespace eg
 				{
 					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, isUndo); break;
 					case InheritanceCommandType::COPY_COMPONENT_VALUES: CopyValuesToChildren<T>(entity, m_PreviousValues); break;
+					case InheritanceCommandType::COPY_COMPONENT_AND_VALUES: 
+					{
+						CopyComponentToChildren<T>(entity, isUndo);
+						CopyValuesToChildren<T>(entity, m_PreviousValues);
+						break;
+					}
 				}
 
 				Commands::AddCommand(this);
@@ -440,6 +446,12 @@ namespace eg
 				{
 					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, !m_isUndo); break;
 					case InheritanceCommandType::COPY_COMPONENT_VALUES: RevertValuesInChildren<T>(entity, m_PreviousValues); break;
+					case InheritanceCommandType::COPY_COMPONENT_AND_VALUES:
+					{
+						CopyComponentToChildren<T>(entity, !m_isUndo);
+						RevertValuesInChildren<T>(entity, m_PreviousValues);
+						break;
+					}
 					
 				}
 
@@ -454,6 +466,12 @@ namespace eg
 				{
 					case InheritanceCommandType::COPY_COMPONENT: CopyComponentToChildren<T>(entity, m_isUndo); break;
 					case InheritanceCommandType::COPY_COMPONENT_VALUES: CopyValuesToChildren<T>(entity, m_PreviousValues); break;
+					case InheritanceCommandType::COPY_COMPONENT_AND_VALUES:
+					{
+						CopyComponentToChildren<T>(entity, m_isUndo);
+						CopyValuesToChildren<T>(entity, m_PreviousValues);
+						break;
+					}
 				}
 
 				SetCurrentCommand(false);

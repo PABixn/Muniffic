@@ -260,6 +260,9 @@ namespace eg {
 
 						if(ImGui::MenuItem("Copy values to children"))
 							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT_VALUES);
+
+						if(ImGui::MenuItem("Copy component with values to children"))
+							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT_AND_VALUES);
 					}
 
 					if (entity.GetParent().has_value())
@@ -811,7 +814,8 @@ namespace eg {
 				float kerning = component.Kerning, lineSpacing = component.LineSpacing;
 				glm::vec4 color = component.Color;
 
-				ImGui::InputTextMultiline("Text String", &component.TextString);
+				if(ImGui::InputTextMultiline("Text String", &component.TextString))
+					Commands::ExecuteRawValueCommand<std::string, TextComponent>(&component.TextString, component.TextString, entity, "TextComponent-Text String");
 				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand<glm::vec4, TextComponent>(&component.Color, color, entity, "TextComponent-Color");
 				if(ImGui::DragFloat("Kerning", &component.Kerning, 0.025f))
