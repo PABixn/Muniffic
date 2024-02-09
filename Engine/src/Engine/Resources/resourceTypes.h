@@ -35,5 +35,14 @@ namespace eg {
 		uint32_t height;
 		unsigned char* pixels;
 	};
+
+	struct TextureResourceData
+	{
+		int width = 0, height = 0, originalHeight = 0, originalWidth = 0;
+		int top = 0, bottom = 0, left = 0, right = 0;
+		int channels = 0;
+		std::filesystem::path imagePath = "";
+		std::string imageName = "";
+	};
 }
 

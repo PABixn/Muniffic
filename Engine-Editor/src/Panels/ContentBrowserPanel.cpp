@@ -36,11 +36,21 @@ namespace eg {
 			columnCount = 1;
 
 		ImGui::Columns(columnCount, 0, false);
-		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory)) {\
+		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory)) {
+			
 			const auto& path = directoryEntry.path();
+
+			if(path.extension() == ".mnmeta")
+				continue;
+
+			std::filesystem::path metaPath = path.parent_path() / (path.stem().string() + ".mnmeta");
+			
+			if (!directoryEntry.is_directory() && !std::filesystem::exists(metaPath))
+				continue;
+
 			auto name = path.filename().string();
 			ImGui::PushID(name.c_str());
-
+			
 			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0,0,0,0));
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });

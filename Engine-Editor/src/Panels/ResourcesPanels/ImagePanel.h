@@ -1,5 +1,8 @@
 #pragma once
+#include "Engine.h"
 #include <filesystem>
+#include <functional>
+
 
 namespace eg {
 
@@ -8,9 +11,18 @@ namespace eg {
 		ImagePanel() = default;
 		ImagePanel(const std::filesystem::path& path);
 
+		bool InitImagePanel(const std::filesystem::path& path);
+
 		void OnImGuiRender();
+		void ShowImagePanel(bool show) { m_ShowImagePanel = show; }
 	private:
-		uint32_t width = 0, height = 0, originalHeight = 0, originalWidth = 0;
-		std::filesystem::path m_ImagePath;
+		void ResetData();
+	private:
+		void* m_ResourceData = nullptr;
+		Resource* m_LoadedResource = nullptr;
+		TextureResourceData m_TextureData;
+		std::filesystem::path m_DestinationPath = "";
+		Ref<Texture2D> m_PreviewData = nullptr;
+		bool m_ShowImagePanel = false;
 	};
 }

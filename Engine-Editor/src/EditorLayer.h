@@ -44,6 +44,8 @@ namespace eg {
 
 		void OnDuplicateEntity();
 
+		void CloseAddResourcePanel();
+
 		//UI Panels
 		void UI_Toolbar();
 	private:
@@ -102,6 +104,8 @@ namespace eg {
 		};
 
 		SceneState m_SceneState = SceneState::Edit;
+
+		friend class AddResourcePanel;
 	public:
 		UnsavedChangesPanel* m_UnsavedChangesPanel;
 		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };

@@ -244,8 +244,8 @@ namespace eg
 
 			if (ImGui::BeginMenu("Resources"))
 			{
-				if(ImGui::MenuItem("Add Resource", "Ctrl+R+A"))
-					m_AddResourcePanel = CreateScope<AddResourcePanel>();
+				if (ImGui::MenuItem("Add Resource", "Ctrl+A"))
+					m_AddResourcePanel->showResourcePanel(true);
 
 				ImGui::EndMenu();
 			}
@@ -508,6 +508,11 @@ namespace eg
 					Save();
 			break;
 		}
+		case Key::A:
+		{
+			if(controlPressed)
+				m_AddResourcePanel->showResourcePanel(true);
+		}
 		case Key::N:
 		{
 			if (controlPressed)
@@ -734,6 +739,7 @@ namespace eg
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+			m_AddResourcePanel = CreateScope<AddResourcePanel>();
 		}
 	}
 
@@ -811,6 +817,11 @@ namespace eg
 			Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
 			m_SceneHierarchyPanel.SetSelectedEntity(newEntity);
 		}
+	}
+
+	void EditorLayer::CloseAddResourcePanel()
+	{
+		m_AddResourcePanel = nullptr;
 	}
 
 }
