@@ -21,8 +21,9 @@ namespace eg {
 		void* m_ResourceData = nullptr;
 		Resource* m_LoadedResource = nullptr;
 		TextureResourceData m_TextureData;
-		std::filesystem::path m_DestinationPath = "";
+		std::filesystem::path m_OriginalResourcePath = "";
 		Ref<Texture2D> m_PreviewData = nullptr;
 		bool m_ShowImagePanel = false;
+		std::filesystem::path m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 	};
 }

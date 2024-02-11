@@ -1,40 +1,43 @@
 #include "egpch.h"
 #include "ImagePanel.h"
-#include <imgui/imgui.h>
+#include "Engine/Resources/ResourceDatabase.h"
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Resources/ResourceSerializer.h"
 #include "Engine/Project/Project.h"
 
+#include <imgui/imgui.h>
+
 namespace eg
 {
+
 	ImagePanel::ImagePanel(const std::filesystem::path& path)
 	{
-		m_TextureData.imagePath = path;
+		m_TextureData.ResourcePath = path;
 	}
 
 	bool ImagePanel::InitImagePanel(const std::filesystem::path& path)
 	{
-		m_TextureData.imagePath = path;
+		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		bool resourceLoad = false;
 		m_LoadedResource = new Resource();
-		resourceLoad = resourceSystemLoad(m_TextureData.imagePath.string(), ResourceType::Image, m_LoadedResource);
+		resourceLoad = resourceSystemLoad(path.string(), ResourceType::Image, m_LoadedResource);
 		
 
 		if (!resourceLoad) {
 			return false;
 		}
 		else {
+			m_OriginalResourcePath = path;
 			m_ResourceData = new TextureResourceData();
-			((TextureResourceData*)m_ResourceData)->imagePath = m_TextureData.imagePath;
-			((TextureResourceData*)m_ResourceData)->imageName = m_TextureData.imagePath.stem().string();
-			m_DestinationPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
-			((TextureResourceData*)m_ResourceData)->height = ((ImageResourceData*)m_LoadedResource->Data)->height;
-			((TextureResourceData*)m_ResourceData)->width = ((ImageResourceData*)m_LoadedResource->Data)->width;
-			((TextureResourceData*)m_ResourceData)->channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
-			((TextureResourceData*)m_ResourceData)->top = 0;
-			((TextureResourceData*)m_ResourceData)->bottom = ((ImageResourceData*)m_LoadedResource->Data)->height;
-			((TextureResourceData*)m_ResourceData)->left = 0;
-			((TextureResourceData*)m_ResourceData)->right = ((ImageResourceData*)m_LoadedResource->Data)->width;
+			((TextureResourceData*)m_ResourceData)->ResourcePath = m_BasePath / m_TextureData.ResourcePath.filename().string();
+			((TextureResourceData*)m_ResourceData)->ImageName = m_TextureData.ResourcePath.stem().string();
+			((TextureResourceData*)m_ResourceData)->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
+			((TextureResourceData*)m_ResourceData)->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
+			((TextureResourceData*)m_ResourceData)->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
+			((TextureResourceData*)m_ResourceData)->Top = 0;
+			((TextureResourceData*)m_ResourceData)->Bottom = ((ImageResourceData*)m_LoadedResource->Data)->height;
+			((TextureResourceData*)m_ResourceData)->Left = 0;
+			((TextureResourceData*)m_ResourceData)->Right = ((ImageResourceData*)m_LoadedResource->Data)->width;
 			m_PreviewData = Texture2D::Create("resources/icons/PlayButton.png");
 		}
 	}
@@ -45,60 +48,53 @@ namespace eg
 			return;
 		ImGui::Begin("Image");
 
-		if (((TextureResourceData*)m_ResourceData)->imagePath.empty())
+		if (((TextureResourceData*)m_ResourceData)->ResourcePath.empty())
 		{
 			ImGui::Text("No image chosen");
 		}
 		else
 		{
 			ImGui::Image((void*)(intptr_t)m_PreviewData->GetRendererID(), ImVec2(200, 200));
-			ImGui::Text("Image: %s", ((TextureResourceData*)m_ResourceData)->imagePath.string().c_str());
+			ImGui::Text("Image: %s", ((TextureResourceData*)m_ResourceData)->ResourcePath.string().c_str());
 			if (ImGui::Button("Change Image"))
 			{
 				std::string path = FileDialogs::OpenFile("Image (*.png)\0*.png\0");
 				if (!path.empty())
-					((TextureResourceData*)m_ResourceData)->imagePath = path;
+					((TextureResourceData*)m_ResourceData)->ResourcePath = path;
 			}
-			ImGui::Text("Destination: %s", m_DestinationPath.string().c_str());
+			ImGui::Text("Destination: %s", m_BasePath.string().c_str());
 			if (ImGui::Button("Change Destination"))
 			{
 				std::string path = FileDialogs::OpenFile("");
 				if (!path.empty())
-					((TextureResourceData*)m_ResourceData)->imagePath = path;
+					((TextureResourceData*)m_ResourceData)->ResourcePath = path;
 			}
 
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
-			std::strncpy(buffer, ((TextureResourceData*)m_ResourceData)->imageName.c_str(), sizeof(buffer));
+			std::strncpy(buffer, ((TextureResourceData*)m_ResourceData)->ImageName.c_str(), sizeof(buffer));
 
 
-			ImGui::Text("Original Height: %d", ((TextureResourceData*)m_ResourceData)->height);
-			ImGui::Text("Original Width: %d", ((TextureResourceData*)m_ResourceData)->width);
+			ImGui::Text("Original Height: %d", ((TextureResourceData*)m_ResourceData)->Height);
+			ImGui::Text("Original Width: %d", ((TextureResourceData*)m_ResourceData)->Width);
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
-				((TextureResourceData*)m_ResourceData)->imageName = std::string(buffer);
+				((TextureResourceData*)m_ResourceData)->ImageName = std::string(buffer);
 			}
 			//ImGui::Text("Image Name: %s", ((TextureResourceData*)m_ResourceData)->imageName.c_str());
-			ImGui::DragInt("Width", &((TextureResourceData*)m_ResourceData)->width);
-			ImGui::DragInt("Height", &((TextureResourceData*)m_ResourceData)->height);
-			ImGui::DragInt("Top", &((TextureResourceData*)m_ResourceData)->top);
-			ImGui::DragInt("Bottom", &((TextureResourceData*)m_ResourceData)->bottom);
-			ImGui::DragInt("Left", &((TextureResourceData*)m_ResourceData)->left);
-			ImGui::DragInt("Right", &((TextureResourceData*)m_ResourceData)->right);
-			ImGui::DragInt("Channels", &((TextureResourceData*)m_ResourceData)->channels, 1, 1, 4);
+			ImGui::DragInt("Width", &((TextureResourceData*)m_ResourceData)->Width);
+			ImGui::DragInt("Height", &((TextureResourceData*)m_ResourceData)->Height);
+			ImGui::DragInt("Top", &((TextureResourceData*)m_ResourceData)->Top);
+			ImGui::DragInt("Bottom", &((TextureResourceData*)m_ResourceData)->Bottom);
+			ImGui::DragInt("Left", &((TextureResourceData*)m_ResourceData)->Left);
+			ImGui::DragInt("Right", &((TextureResourceData*)m_ResourceData)->Right);
+			ImGui::DragInt("Channels", &((TextureResourceData*)m_ResourceData)->Channels, 1, 1, 4);
 			//Todo:: Add image preview, ability to change the image and choose the path to the resource
 
 			//ImGui::Image((void*)(intptr_t)textureID, ImVec2(200, 200));
 			if (ImGui::Button("Save"))
 			{
-				ResourceSerializer serializer;
-				std::string name = ((TextureResourceData*)m_ResourceData)->imageName;
-				
-				serializer.SerializeTextureResource(m_DestinationPath /(name + ".mnmeta"), *((TextureResourceData*)m_ResourceData));
-				name += ((TextureResourceData*)m_ResourceData)->imagePath.extension().string();
-				std::filesystem::path finalPath = m_DestinationPath / name;
-				if(finalPath != ((TextureResourceData*)m_ResourceData)->imagePath)
-					std::filesystem::copy(((TextureResourceData*)m_ResourceData)->imagePath, finalPath, std::filesystem::copy_options::overwrite_existing);
+				ResourceDatabase::AddResource(((TextureResourceData*)m_ResourceData)->ResourcePath, m_OriginalResourcePath, m_ResourceData, ResourceType::Image);
 				m_ShowImagePanel = false;
 			}
 
@@ -111,17 +107,19 @@ namespace eg
 	}
 	void ImagePanel::ResetData()
 	{
-m_TextureData = TextureResourceData();
-		m_TextureData.imagePath = "";
-		m_TextureData.imageName = "";
-		m_TextureData.height = 0;
-		m_TextureData.width = 0;
-		m_TextureData.channels = 0;
-		m_TextureData.top = 0;
-		m_TextureData.bottom = 0;
-		m_TextureData.left = 0;
-		m_TextureData.right = 0;
-		m_DestinationPath = "";
+		m_TextureData = TextureResourceData();
+		m_TextureData.ResourcePath = "";
+		m_TextureData.ImageName = "";
+		m_TextureData.Height = 0;
+		m_TextureData.Width = 0;
+		m_TextureData.Channels = 0;
+		m_TextureData.Top = 0;
+		m_TextureData.Bottom = 0;
+		m_TextureData.Left = 0;
+		m_TextureData.Right = 0;
+		m_TextureData.Extension = "png";
+		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
+		m_OriginalResourcePath = "";
 		m_PreviewData = nullptr;
 	}
 }

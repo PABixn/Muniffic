@@ -5,6 +5,7 @@
 #include "SceneCamera.h"
 #include "Engine/Core/UUID.h"
 #include "Engine/Renderer/Texture.h"
+#include "Engine/Renderer/SubTexture2D.h"
 #include "Engine/Renderer/Font.h"
 
 #include "glm/gtc/matrix_transform.hpp"

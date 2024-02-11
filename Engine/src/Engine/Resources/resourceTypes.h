@@ -38,11 +38,12 @@ namespace eg {
 
 	struct TextureResourceData
 	{
-		int width = 0, height = 0, originalHeight = 0, originalWidth = 0;
-		int top = 0, bottom = 0, left = 0, right = 0;
-		int channels = 0;
-		std::filesystem::path imagePath = "";
-		std::string imageName = "";
+		int Width = 0, Height = 0, OriginalHeight = 0, OriginalWidth = 0;
+		int Top = 0, Bottom = 0, Left = 0, Right = 0;
+		int Channels = 0;
+		std::filesystem::path ResourcePath = "";
+		std::string ImageName = "";
+		std::string Extension = "";
 	};
 }
 
