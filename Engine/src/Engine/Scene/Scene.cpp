@@ -536,4 +536,9 @@ namespace eg {
 	{
 	}
 
+	template<>
+	void Scene::OnComponentAdded<SpriteRendererComponentST>(Entity entity, SpriteRendererComponentST& component)
+	{
+	}
+
 }

@@ -173,6 +173,16 @@ namespace eg
 	}
 
 	template<>
+	void Commands::SetComponent<SpriteRendererComponentST>(Entity& entity, SpriteRendererComponentST* component)
+	{
+		if (!entity.HasComponent<SpriteRendererComponentST>())
+			entity.AddComponent<SpriteRendererComponentST>();
+
+		entity.GetComponent<SpriteRendererComponentST>().Color = component->Color;
+		entity.GetComponent<SpriteRendererComponentST>().SubTexture = component->SubTexture;
+	}
+
+	template<>
 	void Commands::SetComponent<CircleRendererComponent>(Entity& entity, CircleRendererComponent* component)
 	{
 		if (!entity.HasComponent<CircleRendererComponent>())

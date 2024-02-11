@@ -203,6 +203,21 @@ namespace eg {
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
+		if (entity.HasComponent<SpriteRendererComponentST>())
+		{
+			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponentST>();
+			out << YAML::Key << "SpriteRendererComponentST";
+			out << YAML::BeginMap; // SpriteRendererComponent
+			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+			if (spriteRendererComponent.SubTexture->GetTexture())
+			{
+				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.SubTexture->GetTexture()->GetPath();
+				out << YAML::Key << "MinCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetTexCoords()[0];
+				out << YAML::Key << "MaxCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetTexCoords()[2];
+			}
+			out << YAML::EndMap; 
+		}
+
 		if (entity.HasComponent<CircleRendererComponent>())
 		{
 			auto& circleRendererComponent = entity.GetComponent<CircleRendererComponent>();
@@ -502,6 +517,23 @@ namespace eg {
 						auto path = Project::GetAssetFileSystemPath(texturePath);
 						src.Texture = Texture2D::Create(path.string());
 					}
+				}
+
+				auto spriteRendererComponentST = entity["SpriteRendererComponentST"];
+				if (spriteRendererComponentST)
+				{
+					auto& src = deserializedEntity.AddComponent<SpriteRendererComponentST>();
+					src.Color = spriteRendererComponentST["Color"].as<glm::vec4>();
+					if (spriteRendererComponentST["TexturePath"])
+					{
+						std::string texturePath = spriteRendererComponentST["TexturePath"].as<std::string>();
+						auto path = Project::GetAssetFileSystemPath(texturePath);
+						auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
+						auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();
+						Ref<Texture2D> texture = Texture2D::Create(path.string());
+						src.SubTexture = CreateRef<SubTexture2D>(texture, minCoords, maxCoords);
+					}
+
 				}
 
 				auto circleRendererComponent = entity["CircleRendererComponent"];

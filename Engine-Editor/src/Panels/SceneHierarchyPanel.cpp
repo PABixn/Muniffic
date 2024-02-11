@@ -244,6 +244,7 @@ namespace eg {
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
+			DisplayAddComponentEntry<SpriteRendererComponentST>("SubTexture Sprite Renderer 2D");
 
 			ImGui::EndPopup();
 		}
@@ -613,7 +614,7 @@ namespace eg {
 
 			}, m_Context);
 
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer 2D", entity, [](auto& component)
 			{
 				glm::vec4 color = component.Color;
 
@@ -643,9 +644,57 @@ namespace eg {
 				}
 
 				float factor = component.TilingFactor;
-				if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
+				if(ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
 					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
 				
+			}, m_Context);
+
+		DrawComponent<SpriteRendererComponentST>("Sprite Renderer", entity, [](auto& component)
+			{
+				glm::vec4 color = component.Color;
+
+				if (ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
+
+
+				ImGui::Button("Texture", { 100.0f, 0.0f });
+
+				
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path texturePath = std::filesystem::path(path);
+						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+						if (texture->IsLoaded())
+						{
+							Ref<Texture2D> oldTexture = component.SubTexture->GetTexture();
+							component.SubTexture->SetTexture(texture);
+							Ref<Texture2D> newTexture = component.SubTexture->GetTexture();
+							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
+						}
+						else
+							EG_WARN("Could not load texture {0}", texturePath.filename().string());
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				for (int i = 0; i < 4; i++)
+				{
+					ImGui::Text("UVs");
+					ImGui::SameLine();
+					ImGui::PushID(i);
+					glm::vec2 uv = component.SubTexture->GetCoords(i);
+					if (ImGui::DragFloat2("##UV", glm::value_ptr(uv), 0.01f, 0.0f, 1.0f))
+					{
+						glm::vec2 newCoords = component.SubTexture->GetCoords(i);
+						Commands::ExecuteRawValueCommand(&newCoords, uv, "SpriteRendererComponent-UVs");
+					}
+					ImGui::PopID();
+				}
+
 			}, m_Context);
 
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
