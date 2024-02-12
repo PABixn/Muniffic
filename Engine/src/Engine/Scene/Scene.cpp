@@ -337,6 +337,17 @@ namespace eg {
 			}
 		}
 
+		// Draw Subtexture sprites
+		{
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponentST>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponentST>(entity);
+
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+			}
+		}
+
 		// Draw circles
 		{
 			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();

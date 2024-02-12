@@ -649,7 +649,7 @@ namespace eg {
 				
 			}, m_Context);
 
-		DrawComponent<SpriteRendererComponentST>("Sprite Renderer", entity, [](auto& component)
+		DrawComponent<SpriteRendererComponentST>("SubTexture Sprite Renderer 2D", entity, [](auto& component)
 			{
 				glm::vec4 color = component.Color;
 
@@ -681,19 +681,31 @@ namespace eg {
 					ImGui::EndDragDropTarget();
 				}
 
-				for (int i = 0; i < 4; i++)
-				{
-					ImGui::Text("UVs");
+				
+					ImGui::Text("Min Coords:");
 					ImGui::SameLine();
-					ImGui::PushID(i);
-					glm::vec2 uv = component.SubTexture->GetCoords(i);
-					if (ImGui::DragFloat2("##UV", glm::value_ptr(uv), 0.01f, 0.0f, 1.0f))
+					ImGui::PushID(0);
+					glm::vec2 minCoords = component.SubTexture->GetCoords(0);
+					if (ImGui::DragFloat2("##UV", (float*)component.SubTexture->GetCoordsPtr(0), 0.01f, 0.0f, 1.0f))
 					{
-						glm::vec2 newCoords = component.SubTexture->GetCoords(i);
-						Commands::ExecuteRawValueCommand(&newCoords, uv, "SpriteRendererComponent-UVs");
+						glm::vec2 newCoords = component.SubTexture->GetCoords(0);
+						Commands::ExecuteRawValueCommand(&newCoords, minCoords, "SpriteRendererComponent-MinTexCoords");
 					}
 					ImGui::PopID();
-				}
+					ImGui::Text("Max Coords:");
+					ImGui::SameLine();
+					ImGui::PushID(2);
+					glm::vec2 maxCoords = component.SubTexture->GetCoords(2);
+					if (ImGui::DragFloat2("##UV", (float*)component.SubTexture->GetCoordsPtr(2), 0.01f, 0.0f, 1.0f))
+					{
+						glm::vec2 newCoords = component.SubTexture->GetCoords(2);
+						Commands::ExecuteRawValueCommand(&newCoords, maxCoords, "SpriteRendererComponent-MaxTexCoords");
+					}
+					ImGui::PopID();
+				
+					float factor = component.TilingFactor;
+					if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
+						Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
 
 			}, m_Context);
 

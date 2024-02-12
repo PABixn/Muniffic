@@ -76,8 +76,12 @@ namespace eg {
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<SubTexture2D> SubTexture;
+		float TilingFactor = 1.0f;
 
-		SpriteRendererComponentST() = default;
+		SpriteRendererComponentST()
+		{
+			SubTexture = CreateRef<SubTexture2D>();
+		};
 		SpriteRendererComponentST(const SpriteRendererComponentST&) = default;
 		SpriteRendererComponentST(const glm::vec4& color)
 			: Color(color) {}

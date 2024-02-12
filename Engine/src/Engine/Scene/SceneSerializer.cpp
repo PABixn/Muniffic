@@ -209,11 +209,12 @@ namespace eg {
 			out << YAML::Key << "SpriteRendererComponentST";
 			out << YAML::BeginMap; // SpriteRendererComponent
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+			out << YAML::Key << "TilignFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 			if (spriteRendererComponent.SubTexture->GetTexture())
 			{
 				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.SubTexture->GetTexture()->GetPath();
-				out << YAML::Key << "MinCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetTexCoords()[0];
-				out << YAML::Key << "MaxCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetTexCoords()[2];
+				out << YAML::Key << "MinCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(0);
+				out << YAML::Key << "MaxCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(2);
 			}
 			out << YAML::EndMap; 
 		}
@@ -524,6 +525,7 @@ namespace eg {
 				{
 					auto& src = deserializedEntity.AddComponent<SpriteRendererComponentST>();
 					src.Color = spriteRendererComponentST["Color"].as<glm::vec4>();
+					src.TilingFactor = spriteRendererComponentST["TilingFactor"].as<float>();
 					if (spriteRendererComponentST["TexturePath"])
 					{
 						std::string texturePath = spriteRendererComponentST["TexturePath"].as<std::string>();
