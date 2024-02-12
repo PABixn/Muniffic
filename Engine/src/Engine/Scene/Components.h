@@ -108,7 +108,7 @@ namespace eg {
 
 	class ScriptableEntity;
 
-	struct NativeScriptComponent
+	struct NativeScriptComponent : Component
 	{
 		ScriptableEntity* Instance = nullptr;
 

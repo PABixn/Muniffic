@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.PerformanceData;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Sandbox
             m_Transform = GetComponent<TransformComponent>();
             m_Player = Entity.FindEntityByName("Player");
             m_Player.AddComponent<TextComponent>();
-            m_Player.GetComponent<TextComponent>().text = "Hello World!";
+            m_Player.GetComponent<TextComponent>().text = "Hello Worldfasdfasdfads!";
             m_Player.GetComponent<TextComponent>().color = Color.blue;
         }
 

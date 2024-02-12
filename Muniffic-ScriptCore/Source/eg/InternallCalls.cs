@@ -12,6 +12,48 @@ namespace eg
     {
         #region Entity
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Entity_IsInheritedFromParent(ulong ID, Type componentType);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Entity_IsInheritedInChildren(ulong ID, Type componentType);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Entity_SetParent(ulong ID, ulong parentID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Entity_GetParent(ulong ID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Entity_IsChild(ulong ID, ulong childID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Entity_IsChildOfAny(ulong ID, ulong childID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_AddChild(ulong ID, ulong childID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_RemoveChild(ulong ID, ulong childID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_RemoveAnyChildren(ulong ID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_CopyComponentValuesToChildren(ulong ID, Type componentType);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_CopyComponentToChildren(ulong ID, Type componentType, bool isUndo);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Entity_InheritComponent(ulong ID, Type componentType, bool isUndo);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string Entity_GetAnyChildren(ulong ID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string Entity_GetChildren(ulong ID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static ulong Entity_FindEntityByName(string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

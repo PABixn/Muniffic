@@ -84,6 +84,7 @@ namespace eg {
 			const auto& tag = srcSceneRegistry.get<TagComponent>(entity).Tag;
 			Entity newEntity = scene->CreateEntityWithID(uuid, tag);
 			enttMap[uuid] = (entt::entity)newEntity;
+			scene->m_EntityInfoMap[uuid] = other->m_EntityInfoMap[uuid];
 		}
 
 		// Copy components (except IDComponent and TagComponent)

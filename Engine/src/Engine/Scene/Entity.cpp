@@ -80,6 +80,15 @@ namespace eg {
 	}
 
 	template<>
+	void Entity::SetComponent<NativeScriptComponent>(Entity& entity, NativeScriptComponent* component)
+	{
+		if (!entity.HasComponent<NativeScriptComponent>())
+			entity.AddComponent<NativeScriptComponent>();
+
+		auto& nativeScriptComponent = entity.GetComponent<NativeScriptComponent>();
+	}
+
+	template<>
 	void Entity::SetComponent<CircleRendererComponent>(Entity& entity, CircleRendererComponent* component)
 	{
 		if (!entity.HasComponent<CircleRendererComponent>())

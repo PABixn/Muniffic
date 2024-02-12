@@ -149,7 +149,8 @@ namespace eg
 		{
 			auto& parent = m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
 			if(entity.has_value())
-				parent = entity.value().GetUUID();
+				if(entity.value().GetUUID() != GetUUID())
+					parent = entity.value().GetUUID();
 			else
 				parent = NULL;
 		}
@@ -162,13 +163,14 @@ namespace eg
 
 		void AddChild(Entity child)
 		{
-			if (!IsChild(child))
+			if (!IsChild(child) && child.GetUUID() != GetUUID())
 				m_Scene->m_EntityInfoMap[GetUUID()]->m_Children.push_back(child.GetUUID());
 		}
 
 		void AddChild(UUID child)
 		{
-			m_Scene->m_EntityInfoMap[GetUUID()]->m_Children.push_back(child);
+			if(child != GetUUID())
+				m_Scene->m_EntityInfoMap[GetUUID()]->m_Children.push_back(child);
 		}
 
 		void RemoveChild(Entity child)
@@ -198,6 +200,20 @@ namespace eg
 				if (e.HasComponent<Component>())
 				{
 					Entity::SetComponent(e, &previousValues[e.GetUUID()]);
+				}
+			}
+		}
+
+		template<typename Component>
+		void CopyComponentValuesToChildren()
+		{
+			for (Entity e : GetAnyChildren())
+			{
+				if (e.HasComponent<Component>())
+				{
+					Component& parentComp = GetComponent<Component>();
+					Component childComp = e.GetComponent<Component>();
+					Entity::SetComponent(e, &parentComp);
 				}
 			}
 		}

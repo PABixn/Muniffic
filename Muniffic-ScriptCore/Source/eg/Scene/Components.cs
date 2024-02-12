@@ -15,6 +15,30 @@ namespace eg
         /// Reference to entity the component is attached to.
         /// </summary>
         public Entity Entity { get; internal set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this component is inherited from its parent entity.
+        /// </summary>
+        /// <returns><c>true</c> if this component is inherited from its parent entity; otherwise, <c>false</c>.</returns>
+        public bool isInherited
+        {
+            get
+            {
+                return InternalCalls.Entity_IsInheritedFromParent(Entity.ID, this.GetType());
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this component is inherited in any of its child entities.
+        /// </summary>
+        /// <returns><c>true</c> if this component is inherited in any of its child entities; otherwise, <c>false</c>.</returns>
+        public bool isInheritedInChildren
+        {
+            get
+            {
+                return InternalCalls.Entity_IsInheritedInChildren(Entity.ID, this.GetType());
+            }
+        }
     }
 
     public class TransformComponent : Component
