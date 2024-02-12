@@ -19,7 +19,9 @@ project "Engine"
 		"vendor/glm/glm/**.hpp",
 		"vendor/glm/glm/**.inl",
 		"vendor/ImGuizmo/ImGuizmo.h",
-		"vendor/ImGuizmo/ImGuizmo.cpp"
+		"vendor/ImGuizmo/ImGuizmo.cpp",
+		"vendor/SFML/include/SFML/**.hpp",
+		"vendor/SFML/include/SFML/**.cpp",
 	}
 
 	includedirs 
@@ -41,8 +43,8 @@ project "Engine"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.mono}",
+		"%{IncludeDir.SFML}",
 	}
-
 	links
 	{
 		"Box2D",

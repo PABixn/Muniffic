@@ -230,6 +230,15 @@ namespace eg
 	
 	}
 
+	template<>
+	void Commands::SetComponent<AudioListenerComponent>(Entity& entity, AudioListenerComponent* component)
+	{
+		if (!entity.HasComponent<AudioListenerComponent>())
+			entity.AddComponent<AudioListenerComponent>();
+		entity.GetComponent<AudioListenerComponent>().Audio.OpenAudio((component->Audio.GetPath().string()));
+
+	}
+
 	template<typename T>
 	void TrySetComponent(Entity& entity, std::optional<T>* component)
 	{

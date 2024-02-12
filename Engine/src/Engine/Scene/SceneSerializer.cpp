@@ -342,6 +342,17 @@ namespace eg {
 			out << YAML::EndMap; // TextComponent
 		}
 
+		if (entity.HasComponent<AudioListenerComponent>())
+		{
+			out << YAML::Key << "AudioListenerComponent";
+			out << YAML::BeginMap;
+
+			auto& audioListenerComponent = entity.GetComponent<AudioListenerComponent>();
+			out << YAML::Key << "AudioFilePath" << YAML::Value << audioListenerComponent.Audio.GetPath().string();
+
+			out << YAML::EndMap;
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -380,7 +391,7 @@ namespace eg {
 		}
 		catch (YAML::ParserException e)
 		{
-			EG_CORE_ERROR("Failed to load .hazel file '{0}'\n     {1}", filepath, e.what());
+			EG_CORE_ERROR("Failed to load .mnproj file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
 		if(!data["Scene"])
@@ -554,6 +565,14 @@ namespace eg {
 					tc.Color = textComponent["Color"].as<glm::vec4>();
 					tc.Kerning = textComponent["Kerning"].as<float>();
 					tc.LineSpacing = textComponent["LineSpacing"].as<float>();
+				}
+
+				auto audioListenerComponent = entity["AudioListenerComponent"];
+				if (audioListenerComponent)
+				{
+					auto& alc = deserializedEntity.AddComponent<AudioListenerComponent>(); 
+					auto s = (audioListenerComponent["AudioFilePath"].as<std::string>());
+					alc.Audio = BasicAudio(s);
 				}
 			}
 		}

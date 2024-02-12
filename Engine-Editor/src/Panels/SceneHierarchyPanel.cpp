@@ -244,6 +244,7 @@ namespace eg {
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
+			DisplayAddComponentEntry<AudioListenerComponent>("Audio Listener");
 
 			ImGui::EndPopup();
 		}
@@ -737,7 +738,25 @@ namespace eg {
 				if(ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f))
 					Commands::ExecuteRawValueCommand(&component.LineSpacing, lineSpacing, "TextComponent-Line Spacing");
 			}, m_Context);
+
+		DrawComponent<AudioListenerComponent>("Audio Listener", entity, [](auto& component)
+		{
+			if (component.Audio.GetPath()!="") {
+				ImGui::Button(component.Audio.GetFileName().c_str(), {100.0f, 0.0f});
+			}else ImGui::Button("Audio", { 100.0f, 0.0f });
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::filesystem::path audioPath = std::filesystem::path(path);
+					std::string s = audioPath.string();
+					//component.Audio = BasicAudio();
+					component.Audio.SetPath(std::filesystem::path(s));
+				}
+				ImGui::EndDragDropTarget();
+			}
+		}, m_Context);
 	}
-
-
 }

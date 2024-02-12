@@ -6,7 +6,7 @@
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Project/Project.h"
-
+#include "SFML/Audio.hpp"
 
 namespace eg
 {

@@ -754,6 +754,8 @@ namespace eg
 		m_ActiveScene->OnSimulationStart();
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		
+
 	}
 
 	void EditorLayer::OnScenePause()

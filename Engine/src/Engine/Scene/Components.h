@@ -6,6 +6,7 @@
 #include "Engine/Core/UUID.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/Font.h"
+#include "Engine/Audio/BasicAudio.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/exponential.hpp"
@@ -196,6 +197,11 @@ namespace eg {
 		float LineSpacing = 0.0f;
 	};
 
+	struct AudioListenerComponent
+	{
+		BasicAudio Audio;
+	};
+
 	template<typename... Component>
 	struct ComponentGroup
 	{
@@ -205,5 +211,5 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
-		CircleCollider2DComponent, TextComponent>;
+		CircleCollider2DComponent, TextComponent, AudioListenerComponent>;
 }

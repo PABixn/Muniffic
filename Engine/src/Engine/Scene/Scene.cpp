@@ -18,7 +18,12 @@
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_circle_shape.h>
 
+#include <Mmsystem.h>
+#include <mciapi.h>
+#pragma comment(lib, "Winmm.lib")
+
 namespace eg {
+	bool EvaluateSceneAudio = true;
 
 	Scene::Scene()
 	{
@@ -146,6 +151,24 @@ namespace eg {
 	void Scene::OnSimulationStart()
 	{
 		OnPhysics2DStart();
+		// Audio
+		if (EvaluateSceneAudio) {
+			static std::list<Entity> EntitiesWithAudioListenerComponent;
+			if (!EntitiesWithAudioListenerComponent.size()) {
+				auto view = m_Registry.view<AudioListenerComponent>();
+				for (auto e : view)
+				{
+					view.get<AudioListenerComponent>(e).Audio.Play();/*
+					std::string s = "open \"";
+					s.append(audioFilePath);
+					s.append(".mp3\" type mpegvideo alias mp3");
+					std::wstring stemp = std::wstring(s.begin(), s.end());
+					LPCWSTR sw = stemp.c_str();
+					mciSendString(sw, NULL, 0, NULL);
+					mciSendString(L"play mp3 from 0", NULL, 0, NULL);*/
+				}
+			}
+		}
 	}
 
 	void Scene::OnSimulationStop()
@@ -153,9 +176,6 @@ namespace eg {
 		OnPhysics2DStop();
 	}
 
-	
-
-	
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
@@ -211,6 +231,7 @@ namespace eg {
 					}
 				}
 			}
+
 		}
 
 		// Render 2D
@@ -533,6 +554,10 @@ namespace eg {
 
 	template<>
 	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<AudioListenerComponent>(Entity entity, AudioListenerComponent& component)
 	{
 	}
 
