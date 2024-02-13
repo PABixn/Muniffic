@@ -17,6 +17,7 @@ namespace eg
 
 	bool ImagePanel::InitImagePanel(const std::filesystem::path& path)
 	{
+		m_TextureData.ResourcePath = path;
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		bool resourceLoad = false;
 		m_LoadedResource = new Resource();
@@ -31,6 +32,7 @@ namespace eg
 			m_ResourceData = new TextureResourceData();
 			((TextureResourceData*)m_ResourceData)->ResourcePath = m_BasePath / m_TextureData.ResourcePath.filename().string();
 			((TextureResourceData*)m_ResourceData)->ImageName = m_TextureData.ResourcePath.stem().string();
+			((TextureResourceData*)m_ResourceData)->Extension = m_TextureData.ResourcePath.extension().string();
 			((TextureResourceData*)m_ResourceData)->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
 			((TextureResourceData*)m_ResourceData)->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
 			((TextureResourceData*)m_ResourceData)->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
@@ -38,7 +40,7 @@ namespace eg
 			((TextureResourceData*)m_ResourceData)->Bottom = ((ImageResourceData*)m_LoadedResource->Data)->height;
 			((TextureResourceData*)m_ResourceData)->Left = 0;
 			((TextureResourceData*)m_ResourceData)->Right = ((ImageResourceData*)m_LoadedResource->Data)->width;
-			m_PreviewData = Texture2D::Create("resources/icons/PlayButton.png");
+			m_PreviewData = Texture2D::Create(path.string());
 		}
 	}
 
@@ -74,7 +76,8 @@ namespace eg
 			memset(buffer, 0, sizeof(buffer));
 			std::strncpy(buffer, ((TextureResourceData*)m_ResourceData)->ImageName.c_str(), sizeof(buffer));
 
-
+			if(ImGui::InputText("##ImageName", buffer, sizeof(buffer)))
+				((TextureResourceData*)m_ResourceData)->ImageName = std::string(buffer);
 			ImGui::Text("Original Height: %d", ((TextureResourceData*)m_ResourceData)->Height);
 			ImGui::Text("Original Width: %d", ((TextureResourceData*)m_ResourceData)->Width);
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
@@ -82,8 +85,8 @@ namespace eg
 				((TextureResourceData*)m_ResourceData)->ImageName = std::string(buffer);
 			}
 			//ImGui::Text("Image Name: %s", ((TextureResourceData*)m_ResourceData)->imageName.c_str());
-			ImGui::DragInt("Width", &((TextureResourceData*)m_ResourceData)->Width);
-			ImGui::DragInt("Height", &((TextureResourceData*)m_ResourceData)->Height);
+			//ImGui::DragInt("Width", &((TextureResourceData*)m_ResourceData)->Width);
+			//ImGui::DragInt("Height", &((TextureResourceData*)m_ResourceData)->Height);
 			ImGui::DragInt("Top", &((TextureResourceData*)m_ResourceData)->Top);
 			ImGui::DragInt("Bottom", &((TextureResourceData*)m_ResourceData)->Bottom);
 			ImGui::DragInt("Left", &((TextureResourceData*)m_ResourceData)->Left);

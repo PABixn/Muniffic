@@ -16,6 +16,7 @@ namespace eg
 				
 			}
 		}
+		return std::vector<std::filesystem::path>();
 	}
 
 	std::vector<std::filesystem::path> ResourceDatabase::FindResourcesByName(const std::string& name)
@@ -28,7 +29,7 @@ namespace eg
 		ResourceSerializer serializer;
 		std::filesystem::path metaDataDestination = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Textures.mnmeta";
 		serializer.SerializeTextureResource(metaDataDestination, *((TextureResourceData*)data));
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures" / (((TextureResourceData*)data)->ImageName + "." + ((TextureResourceData*)data)->Extension);
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures" / (((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
 
 		if (finalPath != ((TextureResourceData*)data)->ResourcePath)
 			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);

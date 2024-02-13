@@ -13,17 +13,17 @@ namespace eg
 		YAML::Emitter out;
 		out << YAML::Key << "TextureResource";
 		out << YAML::Value << YAML::BeginMap;
-		out << YAML::Key << "Path" << YAML::Value << data.imagePath.string();
-		out << YAML::Key << "Name" << YAML::Value << data.imageName;
-		out << YAML::Key << "Width" << YAML::Value << data.width;
-		out << YAML::Key << "Height" << YAML::Value << data.height;
-		out << YAML::Key << "OriginalWidth" << YAML::Value << data.originalWidth;
-		out << YAML::Key << "OriginalHeight" << YAML::Value << data.originalHeight;
-		out << YAML::Key << "Top" << YAML::Value << data.top;
-		out << YAML::Key << "Bottom" << YAML::Value << data.bottom;
-		out << YAML::Key << "Left" << YAML::Value << data.left;
-		out << YAML::Key << "Right" << YAML::Value << data.right;
-		out << YAML::Key << "Channels" << YAML::Value << data.channels;
+		out << YAML::Key << "Path" << YAML::Value << data.ResourcePath.string();
+		out << YAML::Key << "Name" << YAML::Value << data.ImageName;
+		out << YAML::Key << "Width" << YAML::Value << data.Width;
+		out << YAML::Key << "Height" << YAML::Value << data.Height;
+		out << YAML::Key << "OriginalWidth" << YAML::Value << data.OriginalWidth;
+		out << YAML::Key << "OriginalHeight" << YAML::Value << data.OriginalHeight;
+		out << YAML::Key << "Top" << YAML::Value << data.Top;
+		out << YAML::Key << "Bottom" << YAML::Value << data.Bottom;
+		out << YAML::Key << "Left" << YAML::Value << data.Left;
+		out << YAML::Key << "Right" << YAML::Value << data.Right;
+		out << YAML::Key << "Channels" << YAML::Value << data.Channels;
 		out << YAML::EndMap;
 		
 		std::ofstream fout(filepath);
@@ -50,17 +50,17 @@ namespace eg
 			return false;
 
 		auto textureResource = data["TextureResource"];
-		Resourcedata->imagePath = textureResource["Path"].as<std::string>();
-		Resourcedata->imageName = textureResource["Name"].as<std::string>();
-		Resourcedata->width = textureResource["Width"].as<int>();
-		Resourcedata->height = textureResource["Height"].as<int>();
-		Resourcedata->originalWidth = textureResource["OriginalWidth"].as<int>();
-		Resourcedata->originalHeight = textureResource["OriginalHeight"].as<int>();
-		Resourcedata->top = textureResource["Top"].as<int>();
-		Resourcedata->bottom = textureResource["Bottom"].as<int>();
-		Resourcedata->left = textureResource["Left"].as<int>();
-		Resourcedata->right = textureResource["Right"].as<int>();
-		Resourcedata->channels = textureResource["Channels"].as<int>();
+		Resourcedata->ResourcePath = textureResource["Path"].as<std::string>();
+		Resourcedata->ImageName = textureResource["Name"].as<std::string>();
+		Resourcedata->Width = textureResource["Width"].as<int>();
+		Resourcedata->Height = textureResource["Height"].as<int>();
+		Resourcedata->OriginalWidth = textureResource["OriginalWidth"].as<int>();
+		Resourcedata->OriginalHeight = textureResource["OriginalHeight"].as<int>();
+		Resourcedata->Top = textureResource["Top"].as<int>();
+		Resourcedata->Bottom = textureResource["Bottom"].as<int>();
+		Resourcedata->Left = textureResource["Left"].as<int>();
+		Resourcedata->Right = textureResource["Right"].as<int>();
+		Resourcedata->Channels = textureResource["Channels"].as<int>();
 		return true;
 	}
 }
