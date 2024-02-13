@@ -146,10 +146,11 @@ namespace eg
             InternalCalls.Entity_InheritComponent(ID, typeof(T), false);
         }
 
+    
         /// <summary>
         /// Sets the parent entity of the current entity.
         /// </summary>
-        /// <param name="entity">The parent entity.</param>
+        /// <param name="entity">The UUID of the parent entity.</param>
         public void SetParent(ulong entity)
         {
             InternalCalls.Entity_SetParent(ID, entity);
