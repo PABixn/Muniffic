@@ -235,6 +235,7 @@ namespace eg
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
+		
 		m_ContentBrowserPanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
@@ -544,7 +545,7 @@ namespace eg
 				if (selectedEntity)
 				{
 					m_SceneHierarchyPanel.SetSelectedEntity({});
-					m_ActiveScene->DestroyEntity(selectedEntity);
+					Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", selectedEntity, m_ActiveScene, selectedEntity));
 				}
 			}
 			break;
@@ -616,8 +617,11 @@ namespace eg
 		// Draw selected entity outline
 		if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
 		{
-			const TransformComponent &transform = selectedEntity.GetComponent<TransformComponent>();
-			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
+			if(selectedEntity.HasComponent<TransformComponent>())
+			{
+				const TransformComponent &transform = selectedEntity.GetComponent<TransformComponent>();
+				Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
+			}
 		}
 
 		Renderer2D::EndScene();

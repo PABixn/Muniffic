@@ -11,6 +11,7 @@
 
 #include "box2d/b2_body.h"
 #include "../Engine-Editor/src/Commands/Commands.h"
+#include <mono/metadata/appdomain.h>
 
 namespace eg
 {
@@ -43,6 +44,94 @@ namespace eg
 			}
 
 			return nullptr;
+		}
+
+		template<typename... Component>
+		bool IsInheritedInChildren(MonoType* managedType, Entity e)
+		{
+			bool isInherited = false;
+
+			([&managedType, &e, &isInherited]()
+				{
+					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
+						isInherited = e.GetInheritableComponent<Component>()->isInheritedInChildren;
+				}(), ...);
+
+			return isInherited;
+		}
+
+		template<typename... Component>
+		bool IsInheritedInChildren(ComponentGroup<Component...>, MonoType* managedType, Entity e)
+		{
+			return IsInheritedInChildren<Component...>(managedType, e);
+		}
+
+		template<typename... Component>
+		bool IsInheritedFromParent(MonoType* managedType, Entity e)
+		{
+			bool isInherited = false;
+
+			([&managedType, &e, &isInherited]()
+				{
+					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
+						isInherited = e.GetInheritableComponent<Component>()->isInherited;
+				}(), ...);
+
+			return isInherited;
+		}
+
+		template<typename... Component>
+		bool IsInheritedFromParent(ComponentGroup<Component...>, MonoType* managedType, Entity e)
+		{
+			return IsInheritedFromParent<Component...>(managedType, e);
+		}
+
+		template<typename... Component>
+		void CopyComponentToChildren(MonoType* managedType, Entity e, bool isUndo)
+		{
+			([&managedType, &e, &isUndo]()
+				{
+					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
+						e.CopyComponentToChildren<Component>(isUndo);
+				}(), ...);
+		}
+
+		template<typename... Component>
+		void CopyComponentToChildren(ComponentGroup<Component...>, MonoType* managedType, Entity e, bool isUndo)
+		{
+			CopyComponentToChildren<Component...>(managedType, e, isUndo);
+		}
+
+		template<typename... Component>
+		void CopyComponentValuesToChildren(MonoType* managedType, Entity e)
+		{
+			([&managedType, &e]()
+				{
+					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
+						e.CopyComponentValuesToChildren<Component>();
+				}(), ...);
+		}
+
+		template<typename... Component>
+		void CopyComponentValuesToChildren(ComponentGroup<Component...>, MonoType* managedType, Entity e)
+		{
+			CopyComponentValuesToChildren<Component...>(managedType, e);
+		}
+
+		template<typename... Component>
+		void InheritComponent(MonoType* managedType, Entity e, bool isUndo)
+		{
+			([&managedType, &e, &isUndo]()
+				{
+					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
+						e.InheritComponentInChildren<Component>(false, isUndo);
+				}(), ...);
+		}
+
+		template<typename... Component>
+		void InheritComponent(ComponentGroup<Component...>, MonoType* managedType, Entity e, bool isUndo)
+		{
+			InheritComponent<Component...>(managedType, e, isUndo);
 		}
 
 		template<typename... Component>
@@ -87,6 +176,162 @@ namespace eg
 	{
 		return ScriptEngine::GetManagedInstance(uuid);
 	} 
+
+	static bool Entity_IsInheritedInChildren(UUID uuid, MonoReflectionType* componentType)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->GetEntityByUUID(uuid);
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		EG_CORE_ASSERT(s_EntityHasComponentFunctions.find(managedType) != s_EntityHasComponentFunctions.end(), "Entity_IsInherited: Component type not registered!");
+		return Utils::IsInheritedInChildren(AllComponents{}, managedType, e);
+	}
+
+	static bool Entity_IsInheritedFromParent(UUID uuid, MonoReflectionType* componentType)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->GetEntityByUUID(uuid);
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		EG_CORE_ASSERT(s_EntityHasComponentFunctions.find(managedType) != s_EntityHasComponentFunctions.end(), "Entity_IsInherited: Component type not registered!");
+		return Utils::IsInheritedFromParent(AllComponents{}, managedType, e);
+	}
+
+	static void Entity_CopyComponentToChildren(UUID uuid, MonoReflectionType* componentType, bool isUndo)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->GetEntityByUUID(uuid);
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		EG_CORE_ASSERT(s_EntityHasComponentFunctions.find(managedType) != s_EntityHasComponentFunctions.end(), "Entity_CopyComponentToChildren: Component type not registered!");
+		Utils::CopyComponentToChildren(AllComponents{}, managedType, e, isUndo);
+	}
+
+	static void Entity_CopyComponentValuesToChildren(UUID uuid, MonoReflectionType* componentType)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->GetEntityByUUID(uuid);
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		EG_CORE_ASSERT(s_EntityHasComponentFunctions.find(managedType) != s_EntityHasComponentFunctions.end(), "Entity_CopyComponentValuesToChildren: Component type not registered!");
+		Utils::CopyComponentValuesToChildren(AllComponents{}, managedType, e);
+	}
+
+	static void Entity_RemoveAnyChildren(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.RemoveAnyChildren();
+	}
+
+	static void Entity_RemoveChild(UUID uuid, UUID childUUID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Entity child = scene->GetEntityByUUID(childUUID);
+		entity.RemoveChild(child);
+	}
+
+	static void Entity_AddChild(UUID uuid, UUID childUUID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Entity child = scene->GetEntityByUUID(childUUID);
+		entity.AddChild(child);
+	}
+
+	static bool Entity_IsChildOfAny(UUID uuid, UUID childUUID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Entity child = scene->GetEntityByUUID(childUUID);
+		return entity.IsChildOfAny(child);
+
+	}
+
+	static bool Entity_IsChild(UUID uuid, UUID childUUID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Entity child = scene->GetEntityByUUID(childUUID);
+		return entity.IsChild(child);
+	
+	}
+
+	static uint64_t Entity_GetParent(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		std::optional<Entity> parent = entity.GetParent();
+		if (!parent.has_value())
+			return 0;
+		return parent.value().GetUUID();
+	}
+
+	static void Entity_SetParent(UUID uuid, UUID parentUUID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Entity parent = scene->GetEntityByUUID(parentUUID);
+		entity.SetParent(parent);
+	}
+
+	static void Entity_InheritComponent(UUID uuid, MonoReflectionType* componentType, bool isUndo)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity e = scene->GetEntityByUUID(uuid);
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		EG_CORE_ASSERT(s_EntityHasComponentFunctions.find(managedType) != s_EntityHasComponentFunctions.end(), "Entity_RemoveComponent: Component type not registered!");
+		if (!s_EntityHasComponentFunctions.at(managedType)(e))
+		{
+			EG_CORE_WARN("Entity does not have component of type {}", mono_type_get_name(managedType));
+			return;
+		}
+
+		Utils::InheritComponent(AllComponents{}, managedType, e, isUndo);
+	}
+
+	static MonoString* Entity_GetAnyChildren(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		std::string children = "";
+
+		for (auto& child : entity.GetAnyChildren())
+		{
+			children += std::to_string(child.GetUUID()) + ",";
+		}
+
+		return ScriptEngine::CreateString(children.c_str());
+	}
+
+	static MonoString* Entity_GetChildren(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		std::string children = "";
+
+		for (auto& child : entity.GetChildren())
+		{
+			children += std::to_string(child.GetUUID()) + ",";
+		}
+
+		return ScriptEngine::CreateString(children.c_str());
+	}
 
 	static bool Entity_HasComponent(UUID uuid, MonoReflectionType *componentType)
 	{
@@ -831,6 +1076,20 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(Entity_RemoveComponent);
 		EG_ADD_INTERNAL_CALL(Entity_GetName);
 		EG_ADD_INTERNAL_CALL(Entity_SetName);
+		EG_ADD_INTERNAL_CALL(Entity_GetChildren);
+		EG_ADD_INTERNAL_CALL(Entity_GetAnyChildren);
+		EG_ADD_INTERNAL_CALL(Entity_InheritComponent);
+		EG_ADD_INTERNAL_CALL(Entity_CopyComponentToChildren);
+		EG_ADD_INTERNAL_CALL(Entity_CopyComponentValuesToChildren);
+		EG_ADD_INTERNAL_CALL(Entity_RemoveAnyChildren);
+		EG_ADD_INTERNAL_CALL(Entity_RemoveChild);
+		EG_ADD_INTERNAL_CALL(Entity_AddChild);
+		EG_ADD_INTERNAL_CALL(Entity_IsChildOfAny);
+		EG_ADD_INTERNAL_CALL(Entity_IsChild);
+		EG_ADD_INTERNAL_CALL(Entity_GetParent);
+		EG_ADD_INTERNAL_CALL(Entity_SetParent);
+		EG_ADD_INTERNAL_CALL(Entity_IsInheritedFromParent);
+		EG_ADD_INTERNAL_CALL(Entity_IsInheritedInChildren);
 
 		EG_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		EG_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
