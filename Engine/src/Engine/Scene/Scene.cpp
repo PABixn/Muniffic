@@ -328,7 +328,7 @@ namespace eg {
 
 		// Draw sprites
 		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
@@ -339,10 +339,10 @@ namespace eg {
 
 		// Draw Subtexture sprites
 		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponentST>);
+			auto group = m_Registry.view<TransformComponent, SpriteComponentSTComponent>();
 			for (auto entity : group)
 			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponentST>(entity);
+				auto [transform, sprite] = group.get<TransformComponent, SpriteComponentSTComponent>(entity);
 
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 			}
@@ -485,6 +485,8 @@ namespace eg {
 		static_assert(sizeof(T) == 0);
 	}
 
+	
+
 	template<>
 	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
 	{
@@ -548,7 +550,7 @@ namespace eg {
 	}
 
 	template<>
-	void Scene::OnComponentAdded<SpriteRendererComponentST>(Entity entity, SpriteRendererComponentST& component)
+	void Scene::OnComponentAdded<SpriteComponentSTComponent>(Entity entity, SpriteComponentSTComponent& component)
 	{
 	}
 

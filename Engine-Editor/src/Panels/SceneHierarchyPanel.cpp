@@ -244,7 +244,7 @@ namespace eg {
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
-			DisplayAddComponentEntry<SpriteRendererComponentST>("SubTexture Sprite Renderer 2D");
+			DisplayAddComponentEntry<SpriteComponentSTComponent>("SubTexture Sprite Renderer 2D");
 
 			ImGui::EndPopup();
 		}
@@ -649,7 +649,7 @@ namespace eg {
 				
 			}, m_Context);
 
-		DrawComponent<SpriteRendererComponentST>("SubTexture Sprite Renderer 2D", entity, [](auto& component)
+		DrawComponent<SpriteComponentSTComponent>("SubTexture Sprite Renderer 2D", entity, [](auto& component)
 			{
 				glm::vec4 color = component.Color;
 

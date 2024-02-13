@@ -173,13 +173,13 @@ namespace eg
 	}
 
 	template<>
-	void Commands::SetComponent<SpriteRendererComponentST>(Entity& entity, SpriteRendererComponentST* component)
+	void Commands::SetComponent<SpriteComponentSTComponent>(Entity& entity, SpriteComponentSTComponent* component)
 	{
-		if (!entity.HasComponent<SpriteRendererComponentST>())
-			entity.AddComponent<SpriteRendererComponentST>();
+		if (!entity.HasComponent<SpriteComponentSTComponent>())
+			entity.AddComponent<SpriteComponentSTComponent>();
 
-		entity.GetComponent<SpriteRendererComponentST>().Color = component->Color;
-		entity.GetComponent<SpriteRendererComponentST>().SubTexture = component->SubTexture;
+		entity.GetComponent<SpriteComponentSTComponent>().Color = component->Color;
+		entity.GetComponent<SpriteComponentSTComponent>().SubTexture = component->SubTexture;
 	}
 
 	template<>

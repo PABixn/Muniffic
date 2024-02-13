@@ -67,23 +67,22 @@ namespace eg {
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		SpriteRendererComponent(const glm::vec4& color)
+		SpriteRendererComponent(const glm::vec4& color)  
 			: Color(color) {}
 	};
 
-
-	struct SpriteRendererComponentST
+	struct SpriteComponentSTComponent
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<SubTexture2D> SubTexture;
 		float TilingFactor = 1.0f;
 
-		SpriteRendererComponentST()
+		SpriteComponentSTComponent()
 		{
 			SubTexture = CreateRef<SubTexture2D>();
 		};
-		SpriteRendererComponentST(const SpriteRendererComponentST&) = default;
-		SpriteRendererComponentST(const glm::vec4& color)
+		SpriteComponentSTComponent(const SpriteComponentSTComponent&) = default;
+		SpriteComponentSTComponent(const glm::vec4& color)
 			: Color(color) {}
 	};
 
@@ -222,5 +221,5 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
-		CircleCollider2DComponent, TextComponent, SpriteRendererComponentST>;
+		CircleCollider2DComponent, TextComponent, SpriteComponentSTComponent>;
 }
