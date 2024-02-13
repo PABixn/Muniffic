@@ -682,6 +682,7 @@ namespace eg {
 				}
 
 				
+					//ImGui::Text("Texture Coordinates:")
 					ImGui::Text("Min Coords:");
 					ImGui::SameLine();
 					ImGui::PushID(0);
@@ -689,9 +690,19 @@ namespace eg {
 					if (ImGui::DragFloat2("##UV", (float*)component.SubTexture->GetCoordsPtr(0), 0.01f, 0.0f, 1.0f))
 					{
 						glm::vec2 newCoords = component.SubTexture->GetCoords(0);
-						Commands::ExecuteRawValueCommand(&newCoords, minCoords, "SpriteRendererComponent-MinTexCoords");
+						std::vector<glm::vec2> oldCoords = {minCoords, component.SubTexture->GetCoords(1),component.SubTexture->GetCoords(3) };
+						std::vector<glm::vec2> newCoordsVec = {newCoords, { component.SubTexture->GetCoords(2).x, newCoords.y }, { newCoords.x, component.SubTexture->GetCoords(2).y } };
+						component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
+						component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
+						Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+							{
+								component.SubTexture->SetTexCoords(0, coords[0]);
+								component.SubTexture->SetTexCoords(1, coords[1]);
+								component.SubTexture->SetTexCoords(3, coords[2]);
+							}, newCoordsVec, oldCoords, "SpriteRendererComponent-MinTexCoords", true);
 					}
 					ImGui::PopID();
+
 					ImGui::Text("Max Coords:");
 					ImGui::SameLine();
 					ImGui::PushID(2);
@@ -699,7 +710,16 @@ namespace eg {
 					if (ImGui::DragFloat2("##UV", (float*)component.SubTexture->GetCoordsPtr(2), 0.01f, 0.0f, 1.0f))
 					{
 						glm::vec2 newCoords = component.SubTexture->GetCoords(2);
-						Commands::ExecuteRawValueCommand(&newCoords, maxCoords, "SpriteRendererComponent-MaxTexCoords");
+						std::vector<glm::vec2> oldCoords = { component.SubTexture->GetCoords(1), maxCoords, component.SubTexture->GetCoords(3) };
+						std::vector<glm::vec2> newCoordsVec = { { newCoords.x, component.SubTexture->GetCoords(0).x }, newCoords, { component.SubTexture->GetCoords(0).x ,newCoords.y } };
+						component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
+						component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
+						Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+							{
+								component.SubTexture->SetTexCoords(1, coords[0]);
+								component.SubTexture->SetTexCoords(2, coords[1]);
+								component.SubTexture->SetTexCoords(3, coords[2]);
+							}, newCoordsVec, oldCoords, "SpriteRendererComponent-MinTexCoords", true);
 					}
 					ImGui::PopID();
 				

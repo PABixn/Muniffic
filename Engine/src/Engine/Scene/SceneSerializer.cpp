@@ -209,7 +209,7 @@ namespace eg {
 			out << YAML::Key << "SpriteComponentSTComponent";
 			out << YAML::BeginMap; // SpriteRendererComponent
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
-			out << YAML::Key << "TilignFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
+			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 			if (spriteRendererComponent.SubTexture->GetTexture())
 			{
 				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.SubTexture->GetTexture()->GetPath();
