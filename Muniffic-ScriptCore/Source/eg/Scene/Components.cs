@@ -15,6 +15,30 @@ namespace eg
         /// Reference to entity the component is attached to.
         /// </summary>
         public Entity Entity { get; internal set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this component is inherited from its parent entity.
+        /// </summary>
+        /// <returns><c>true</c> if this component is inherited from its parent entity; otherwise, <c>false</c>.</returns>
+        public bool isInherited
+        {
+            get
+            {
+                return InternalCalls.Entity_IsInheritedFromParent(Entity.ID, this.GetType());
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this component is inherited in any of its child entities.
+        /// </summary>
+        /// <returns><c>true</c> if this component is inherited in any of its child entities; otherwise, <c>false</c>.</returns>
+        public bool isInheritedInChildren
+        {
+            get
+            {
+                return InternalCalls.Entity_IsInheritedInChildren(Entity.ID, this.GetType());
+            }
+        }
     }
 
     public class TransformComponent : Component
@@ -198,36 +222,54 @@ namespace eg
             InternalCalls.CameraComponent_SetProjectionType(Entity.ID, ref type);
         }
 
+        /// <summary>
+        /// Gets or sets the orthographic size of the camera.
+        /// </summary>
         public float ortographicSize
         {
             get => InternalCalls.CameraComponent_GetOrthographicSize(Entity.ID);
             set => InternalCalls.CameraComponent_SetOrthographicSize(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Gets or sets the near clip plane distance of the camera in orthographic projection.
+        /// </summary>
         public float ortographicNearClip
         {
             get => InternalCalls.CameraComponent_GetOrthographicNearClip(Entity.ID);
             set => InternalCalls.CameraComponent_SetOrthographicNearClip(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Gets or sets the far clip plane distance of the camera in orthographic projection.
+        /// </summary>
         public float ortographicFarClip
         {
             get => InternalCalls.CameraComponent_GetOrthographicFarClip(Entity.ID);
             set => InternalCalls.CameraComponent_SetOrthographicFarClip(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Gets or sets the vertical field of view of the camera in perspective projection.
+        /// </summary>
         public float perspectiveVerticalFov
         {
             get => InternalCalls.CameraComponent_GetPerspectiveVerticalFOV(Entity.ID);
             set => InternalCalls.CameraComponent_SetPerspectiveVerticalFOV(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Gets or sets the near clip plane distance of the camera in perspective projection.
+        /// </summary>
         public float perspectiveNearClip
         {
             get => InternalCalls.CameraComponent_GetPerspectiveNearClip(Entity.ID);
             set => InternalCalls.CameraComponent_SetPerspectiveNearClip(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Gets or sets the far clip plane distance of the camera in perspective projection.
+        /// </summary>
         public float perspectiveFarClip
         {
             get => InternalCalls.CameraComponent_GetPerspectiveFarClip(Entity.ID);

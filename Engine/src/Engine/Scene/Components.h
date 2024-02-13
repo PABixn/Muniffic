@@ -18,6 +18,12 @@
 
 namespace eg {
 
+	struct Component
+	{
+		bool isInheritedInChildren = false;
+		bool isInherited = false;
+	};
+
 	struct IDComponent
 	{
 		UUID ID;
@@ -28,7 +34,7 @@ namespace eg {
 			: ID(uuid) {}
 	};
 
-	struct TagComponent
+	struct TagComponent : Component
 	{
 		std::string Tag;
 
@@ -38,13 +44,13 @@ namespace eg {
 			: Tag(tag) {}
 	};
 
-	struct TransformComponent
+	struct TransformComponent : Component
 	{
 		glm::vec3 Translation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Scale{ 1.0f, 1.0f, 1.0f };
 
-		TransformComponent() = default;
+		TransformComponent() { isInheritedInChildren = true; isInherited = true; };
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const glm::vec3 & translation)
 			: Translation(translation) {}
@@ -59,7 +65,7 @@ namespace eg {
 		}
 	};
 
-	struct SpriteRendererComponent
+	struct SpriteRendererComponent: Component
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<Texture2D> Texture;
@@ -86,9 +92,9 @@ namespace eg {
 			: Color(color) {}
 	};
 
-	struct CircleRendererComponent
+	struct CircleRendererComponent: Component
 	{
-		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		glm::vec4 Color { 1.0f, 1.0f, 1.0f, 1.0f };
 		float Thickness = 1.0f;
 		float Fade = 0.005f;
 
@@ -98,7 +104,7 @@ namespace eg {
 			: Color(color) {}
 	};
 
-	struct CameraComponent
+	struct CameraComponent: Component
 	{
 		SceneCamera Camera;
 		bool Primary = true; // TODO: think about moving to Scene
@@ -108,7 +114,7 @@ namespace eg {
 		CameraComponent(const CameraComponent&) = default;
 	};
 
-	struct ScriptComponent
+	struct ScriptComponent: Component
 	{
 		std::string Name;
 
@@ -118,7 +124,7 @@ namespace eg {
 
 	class ScriptableEntity;
 
-	struct NativeScriptComponent
+	struct NativeScriptComponent : Component
 	{
 		ScriptableEntity* Instance = nullptr;
 
@@ -147,7 +153,7 @@ namespace eg {
 
 	//Physics 2D
 
-	struct RigidBody2DComponent
+	struct RigidBody2DComponent: Component
 	{
 		enum class BodyType
 		{
@@ -167,7 +173,7 @@ namespace eg {
 
 	};
 
-	struct BoxCollider2DComponent
+	struct BoxCollider2DComponent: Component
 	{
 
 		glm::vec2 Offset = { 0.0f, 0.0f };
@@ -186,7 +192,7 @@ namespace eg {
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 
-	struct CircleCollider2DComponent
+	struct CircleCollider2DComponent: Component
 	{
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		float Radius = 0.5f;
@@ -203,7 +209,7 @@ namespace eg {
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
-	struct TextComponent
+	struct TextComponent: Component
 	{
 		std::string TextString;
 		Ref<Font> FontAsset = Font::GetDefaultFont();
@@ -216,6 +222,12 @@ namespace eg {
 	struct ComponentGroup
 	{
 	};
+
+	using InheritableComponents =
+		ComponentGroup<TransformComponent, SpriteRendererComponent,
+		CircleRendererComponent, CameraComponent, ScriptComponent,
+		RigidBody2DComponent, BoxCollider2DComponent,
+		CircleCollider2DComponent, TextComponent>;
 
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
