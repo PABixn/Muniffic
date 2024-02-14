@@ -848,7 +848,7 @@ namespace eg {
 			DrawQuad(transform, src.Color, entityID);
 	}
 
-	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteComponentSTComponent& src, int entityID)
+	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererSTComponent& src, int entityID)
 	{
 		if(src.SubTexture->GetTexture())
 			DrawQuad(transform, src.SubTexture, src.TilingFactor, src.Color, entityID);

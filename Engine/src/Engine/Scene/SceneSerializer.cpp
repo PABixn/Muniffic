@@ -221,10 +221,10 @@ namespace eg {
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
-		if (entity.HasComponent<SpriteComponentSTComponent>())
+		if (entity.HasComponent<SpriteRendererSTComponent>())
 		{
-			auto& spriteRendererComponent = entity.GetComponent<SpriteComponentSTComponent>();
-			out << YAML::Key << "SpriteComponentSTComponent";
+			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererSTComponent>();
+			out << YAML::Key << "SpriteRendererSTComponent";
 			out << YAML::BeginMap; // SpriteRendererComponent
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
@@ -584,10 +584,10 @@ namespace eg {
 						src.isInheritedInChildren = spriteRendererComponent["IsInheritedInChildren"].as<bool>();
 				}
 
-				auto spriteRendererComponentST = entity["SpriteComponentSTComponent"];
+				auto spriteRendererComponentST = entity["SpriteRendererSTComponent"];
 				if (spriteRendererComponentST)
 				{
-					auto& src = deserializedEntity.AddComponent<SpriteComponentSTComponent>();
+					auto& src = deserializedEntity.AddComponent<SpriteRendererSTComponent>();
 					src.Color = spriteRendererComponentST["Color"].as<glm::vec4>();
 					src.TilingFactor = spriteRendererComponentST["TilingFactor"].as<float>();
 					if (spriteRendererComponentST["TexturePath"])

@@ -329,6 +329,7 @@ namespace eg {
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
+			DisplayAddComponentEntry<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D");
 
 			ImGui::EndPopup();
 		}
@@ -732,6 +733,86 @@ namespace eg {
 					Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
 				
 			}, m_Context);
+
+
+		//
+		DrawComponent<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D", entity, [](auto& component)
+			{
+				glm::vec4 color = component.Color;
+
+				if (ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
+
+
+				ImGui::Button("Texture", { 100.0f, 0.0f });
+
+
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path texturePath = std::filesystem::path(path);
+						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+						if (texture->IsLoaded())
+						{
+							Ref<Texture2D> oldTexture = component.SubTexture->GetTexture();
+							component.SubTexture->SetTexture(texture);
+							Ref<Texture2D> newTexture = component.SubTexture->GetTexture();
+							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
+						}
+						else
+							EG_WARN("Could not load texture {0}", texturePath.filename().string());
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::Text("Min Coords:");
+				ImGui::SameLine();
+				ImGui::PushID(0);
+				glm::vec2 minCoords = component.SubTexture->GetCoords(0);
+				if (ImGui::DragFloat2("##UV", (float*)component.SubTexture->GetCoordsPtr(0), 0.01f, 0.0f, 1.0f))
+				{
+					glm::vec2 newCoords = component.SubTexture->GetCoords(0);
+					std::vector<glm::vec2> oldCoords = { minCoords, component.SubTexture->GetCoords(1),component.SubTexture->GetCoords(3) };
+					std::vector<glm::vec2> newCoordsVec = { newCoords, { component.SubTexture->GetCoords(2).x, newCoords.y }, { newCoords.x, component.SubTexture->GetCoords(2).y } };
+					component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
+					component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
+					Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+						{
+							component.SubTexture->SetTexCoords(0, coords[0]);
+							component.SubTexture->SetTexCoords(1, coords[1]);
+							component.SubTexture->SetTexCoords(3, coords[2]);
+						}, newCoordsVec, oldCoords, "SpriteRendererComponent-MinTexCoords", true);
+				}
+				ImGui::PopID();
+				ImGui::Text("Max Coords:");
+				ImGui::SameLine();
+				ImGui::PushID(2);
+				glm::vec2 maxCoords = component.SubTexture->GetCoords(2);
+				if (ImGui::DragFloat2("##UV", (float*)component.SubTexture->GetCoordsPtr(2), 0.01f, 0.0f, 1.0f))
+				{
+					glm::vec2 newCoords = component.SubTexture->GetCoords(2);
+					std::vector<glm::vec2> oldCoords = { component.SubTexture->GetCoords(1), maxCoords, component.SubTexture->GetCoords(3) };
+					std::vector<glm::vec2> newCoordsVec = { { newCoords.x, component.SubTexture->GetCoords(0).x }, newCoords, { component.SubTexture->GetCoords(0).x ,newCoords.y } };
+					component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
+					component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
+					Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+						{
+							component.SubTexture->SetTexCoords(1, coords[0]);
+							component.SubTexture->SetTexCoords(2, coords[1]);
+							component.SubTexture->SetTexCoords(3, coords[2]);
+						}, newCoordsVec, oldCoords, "SpriteRendererComponent-MaxTexCoords", true);
+				}
+				ImGui::PopID();
+
+				float factor = component.TilingFactor;
+				if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
+					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
+
+			}, m_Context);
+		//
 
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [entity](auto& component)
 			{

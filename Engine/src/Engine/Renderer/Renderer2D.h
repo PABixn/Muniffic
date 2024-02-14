@@ -59,7 +59,7 @@ namespace eg {
 		static void SetLineThickness(float thickness);
 
 		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID = -1);
-		static void DrawSprite(const glm::mat4& transform, SpriteComponentSTComponent& src, int entityID = -1);
+		static void DrawSprite(const glm::mat4& transform, SpriteRendererSTComponent& src, int entityID = -1);
 
 		// Stats
 		struct Statistics {
