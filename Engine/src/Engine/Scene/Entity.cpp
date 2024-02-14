@@ -50,6 +50,21 @@ namespace eg {
 	}
 
 	template<>
+	void Entity::SetComponent<SpriteRendererSTComponent>(Entity& entity, SpriteRendererSTComponent* component)
+	{
+		if (!entity.HasComponent<SpriteRendererSTComponent>())
+			entity.AddComponent<SpriteRendererSTComponent>();
+
+		auto& spriteRendererSTComponent = entity.GetComponent<SpriteRendererSTComponent>();
+
+		spriteRendererSTComponent.Color = component->Color;
+		spriteRendererSTComponent.SubTexture = component->SubTexture;
+		spriteRendererSTComponent.TilingFactor = component->TilingFactor;
+		spriteRendererSTComponent.isInherited = component->isInherited;
+		spriteRendererSTComponent.isInheritedInChildren = component->isInheritedInChildren;
+	}
+
+	template<>
 	void Entity::SetComponent<CameraComponent>(Entity& entity, CameraComponent* component)
 	{
 		if (!entity.HasComponent<CameraComponent>())

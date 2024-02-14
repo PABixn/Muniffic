@@ -1,11 +1,27 @@
 Scene: Untitled
 Entities:
+  - Entity: 5084326991007996806
+    Name: Cube
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererSTComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TexturePath: C:\Users\kurak\OneDrive\Dokumenty\dev\Muniffic\Engine-Editor\SandboxProject\Assets\Textures\Chess_Board.png
+      MinCoords: [0, 0.319999993]
+      MaxCoords: [1, 1]
   - Entity: 12466326309952554741
     Name: Cube
     TagComponent:
       Tag: Circle
     TransformComponent:
-      Translation: [2.29999995, 2.98023224e-08, 0]
+      Translation: [4.30000019, 2.98023224e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
@@ -27,11 +43,10 @@ Entities:
       IsInheritedInChildren: false
   - Entity: 1597444277314487850
     Name: Cube
-    Parent: 3898880785194007479
     TagComponent:
       Tag: Circle
     TransformComponent:
-      Translation: [2.29999995, 0.699999988, 0]
+      Translation: [0.200000003, 0.699999988, 0]
       Rotation: [0, 0, 0]
       Scale: [-1.60000002, 1.39999998, 1.29999995]
       IsInherited: true
@@ -58,16 +73,13 @@ Entities:
       IsInheritedInChildren: false
   - Entity: 3898880785194007479
     Name: Cube
-    Children:
-      - 1567858812585259299
-      - 1597444277314487850
     TagComponent:
       Tag: Player
     TransformComponent:
       Translation: [3.79999995, 4.5999999, 0]
       Rotation: [0, 0, 0.649262488]
       Scale: [1, 1, 1]
-      IsInherited: false
+      IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
@@ -104,7 +116,6 @@ Entities:
       IsInheritedInChildren: false
   - Entity: 1567858812585259299
     Name: Cube
-    Parent: 3898880785194007479
     TagComponent:
       Tag: Camera
     TransformComponent:
@@ -134,21 +145,33 @@ Entities:
           Value: 0
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 10642011015283237485
+  - Entity: 16108228054420389651
     Name: Cube
     TagComponent:
-      Tag: Text
+      Tag: Empty Entity
     TransformComponent:
-      Translation: [1.89999998, 1.60000002, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Translation: [5.06258726, -0.334269524, -3.81469999e-06]
+      Rotation: [0, -0, -2.26661325]
+      Scale: [12.6000099, 0.999999583, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    TextComponent:
-      TextString: Hello
-      Color: [1, 1, 1, 1]
-      Kerning: 0
-      LineSpacing: 0
+    SpriteRendererComponent:
+      Color: [1, 0.568627477, 0.31764707, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
       IsInherited: false
       IsInheritedInChildren: false
   - Entity: 5817885789038573713
@@ -198,44 +221,12 @@ Entities:
       IsInheritedInChildren: false
   - Entity: 16442485196201648565
     Name: Cube
-    Children:
-      - 16108228054420389651
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
-      Translation: [1.10000002, -2.9000001, 0]
+      Translation: [0, -2.9000001, 0]
       Rotation: [0, -0, -0.786272645]
       Scale: [12.6000042, 0.999999881, 1]
-      IsInherited: false
-      IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [1, 0.568627477, 0.31764707, 1]
-      TilingFactor: 1
-      IsInherited: false
-      IsInheritedInChildren: false
-    RigidBody2DComponent:
-      Body Type: Static
-      FixedRotation: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 16108228054420389651
-    Name: Cube
-    Parent: 16442485196201648565
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [1.10000002, -0.334269524, -3.81469999e-06]
-      Rotation: [0, -0, -2.26661325]
-      Scale: [12.6000099, 0.999999583, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
@@ -255,5 +246,22 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 10642011015283237485
+    Name: Cube
+    TagComponent:
+      Tag: Text
+    TransformComponent:
+      Translation: [1.89999998, 1.60000002, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    TextComponent:
+      TextString: Hello
+      Color: [1, 1, 1, 1]
+      Kerning: 0
+      LineSpacing: 0
       IsInherited: false
       IsInheritedInChildren: false

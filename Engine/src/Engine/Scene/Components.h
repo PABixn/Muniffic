@@ -5,6 +5,7 @@
 #include "SceneCamera.h"
 #include "Engine/Core/UUID.h"
 #include "Engine/Renderer/Texture.h"
+#include "Engine/Renderer/SubTexture2D.h"
 #include "Engine/Renderer/Font.h"
 
 #include "glm/gtc/matrix_transform.hpp"
@@ -72,7 +73,22 @@ namespace eg {
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		SpriteRendererComponent(const glm::vec4& color)
+		SpriteRendererComponent(const glm::vec4& color)  
+			: Color(color) {}
+	};
+
+	struct SpriteRendererSTComponent : Component
+	{
+		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		Ref<SubTexture2D> SubTexture;
+		float TilingFactor = 1.0f;
+
+		SpriteRendererSTComponent()
+		{
+			SubTexture = CreateRef<SubTexture2D>();
+		};
+		SpriteRendererSTComponent(const SpriteRendererSTComponent&) = default;
+		SpriteRendererSTComponent(const glm::vec4& color)
 			: Color(color) {}
 	};
 
@@ -217,5 +233,5 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
-		CircleCollider2DComponent, TextComponent>;
+		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent>;
 }

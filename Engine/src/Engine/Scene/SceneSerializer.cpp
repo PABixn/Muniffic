@@ -221,6 +221,22 @@ namespace eg {
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
 
+		if (entity.HasComponent<SpriteRendererSTComponent>())
+		{
+			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererSTComponent>();
+			out << YAML::Key << "SpriteRendererSTComponent";
+			out << YAML::BeginMap; // SpriteRendererComponent
+			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
+			if (spriteRendererComponent.SubTexture->GetTexture())
+			{
+				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.SubTexture->GetTexture()->GetPath();
+				out << YAML::Key << "MinCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(0);
+				out << YAML::Key << "MaxCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(2);
+			}
+			out << YAML::EndMap; 
+		}
+
 		if (entity.HasComponent<CircleRendererComponent>())
 		{
 			auto& circleRendererComponent = entity.GetComponent<CircleRendererComponent>();
@@ -566,6 +582,24 @@ namespace eg {
 						src.isInherited = spriteRendererComponent["IsInherited"].as<bool>();
 					if(spriteRendererComponent["IsInheritedInChildren"])
 						src.isInheritedInChildren = spriteRendererComponent["IsInheritedInChildren"].as<bool>();
+				}
+
+				auto spriteRendererComponentST = entity["SpriteRendererSTComponent"];
+				if (spriteRendererComponentST)
+				{
+					auto& src = deserializedEntity.AddComponent<SpriteRendererSTComponent>();
+					src.Color = spriteRendererComponentST["Color"].as<glm::vec4>();
+					src.TilingFactor = spriteRendererComponentST["TilingFactor"].as<float>();
+					if (spriteRendererComponentST["TexturePath"])
+					{
+						std::string texturePath = spriteRendererComponentST["TexturePath"].as<std::string>();
+						auto path = Project::GetAssetFileSystemPath(texturePath);
+						auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
+						auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();
+						Ref<Texture2D> texture = Texture2D::Create(path.string());
+						src.SubTexture = CreateRef<SubTexture2D>(texture, minCoords, maxCoords);
+					}
+
 				}
 
 				auto circleRendererComponent = entity["CircleRendererComponent"];
