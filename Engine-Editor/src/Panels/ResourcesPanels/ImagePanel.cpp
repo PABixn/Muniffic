@@ -23,14 +23,13 @@ namespace eg
 		m_LoadedResource = new Resource();
 		resourceLoad = resourceSystemLoad(path.string(), ResourceType::Image, m_LoadedResource);
 		
-
 		if (!resourceLoad) {
 			return false;
 		}
 		else {
 			m_OriginalResourcePath = path;
 			m_ResourceData = new TextureResourceData();
-			((TextureResourceData*)m_ResourceData)->ResourcePath = m_BasePath / m_TextureData.ResourcePath.filename().string();
+			((TextureResourceData*)m_ResourceData)->ResourcePath = "Textures";
 			((TextureResourceData*)m_ResourceData)->ImageName = m_TextureData.ResourcePath.stem().string();
 			((TextureResourceData*)m_ResourceData)->Extension = m_TextureData.ResourcePath.extension().string();
 			((TextureResourceData*)m_ResourceData)->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
@@ -61,6 +60,7 @@ namespace eg
 			if (ImGui::Button("Change Image"))
 			{
 				std::string path = FileDialogs::OpenFile("Image (*.png)\0*.png\0");
+				std::cout << path << std::endl;
 				if (!path.empty())
 					((TextureResourceData*)m_ResourceData)->ResourcePath = path;
 			}
@@ -68,6 +68,7 @@ namespace eg
 			if (ImGui::Button("Change Destination"))
 			{
 				std::string path = FileDialogs::OpenFile("");
+				std::cout << path << std::endl;
 				if (!path.empty())
 					((TextureResourceData*)m_ResourceData)->ResourcePath = path;
 			}
@@ -97,7 +98,7 @@ namespace eg
 			//ImGui::Image((void*)(intptr_t)textureID, ImVec2(200, 200));
 			if (ImGui::Button("Save"))
 			{
-				ResourceDatabase::AddResource(((TextureResourceData*)m_ResourceData)->ResourcePath, m_OriginalResourcePath, m_ResourceData, ResourceType::Image);
+				ResourceDatabase::AddResource(m_OriginalResourcePath, m_ResourceData, ResourceType::Image);
 				m_ShowImagePanel = false;
 			}
 

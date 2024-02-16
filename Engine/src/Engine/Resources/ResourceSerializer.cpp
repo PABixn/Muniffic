@@ -10,10 +10,11 @@ namespace eg
 {
 	void ResourceSerializer::SerializeTextureResource(const std::filesystem::path& filepath, const TextureResourceData& data)
 	{
+		std::filesystem::path keyPath = data.ResourcePath / std::filesystem::path(data.ImageName);
+
 		YAML::Emitter out;
-		out << YAML::Key << "TextureResource";
+		out << YAML::Key << keyPath.string() + data.Extension;
 		out << YAML::Value << YAML::BeginMap;
-		out << YAML::Key << "Path" << YAML::Value << data.ResourcePath.string();
 		out << YAML::Key << "Name" << YAML::Value << data.ImageName;
 		out << YAML::Key << "Width" << YAML::Value << data.Width;
 		out << YAML::Key << "Height" << YAML::Value << data.Height;
