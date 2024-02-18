@@ -250,6 +250,21 @@ namespace eg {
 			out << YAML::EndMap; // CircleRendererComponent
 		}
 
+		if (entity.HasComponent<AnimatorComponent>())
+		{
+			auto& animatorComponent = entity.GetComponent<AnimatorComponent>();
+			out << YAML::Key << "AnimatorComponent";
+			out << YAML::BeginMap; // AnimatorComponent
+			out << YAML::Key << "Speed" << YAML::Value << animatorComponent.Animator2D->GetSpeed();
+			out << YAML::Key << "Animations" << YAML::BeginSeq;
+			for (auto& animation : *animatorComponent.Animator2D->GetAnimations())
+			{
+				out << animation.GetName();
+			}
+			out << YAML::EndMap; // Animations
+			out << YAML::EndMap; // AnimatorComponent
+		}
+
 		if (entity.HasComponent<CameraComponent>())
 		{
 			out << YAML::Key << "CameraComponent";
@@ -614,6 +629,24 @@ namespace eg {
 						crc.isInherited = circleRendererComponent["IsInherited"].as<bool>();
 					if(circleRendererComponent["IsInheritedInChildren"])
 						crc.isInheritedInChildren = circleRendererComponent["IsInheritedInChildren"].as<bool>();
+				}
+
+				auto animatorComponent = entity["AnimatorComponent"];
+				if (animatorComponent)
+				{
+					auto& ac = deserializedEntity.AddComponent<AnimatorComponent>();
+					ac.Animator2D = CreateRef<Animator>();
+					ac.Animator2D->SetSpeed(animatorComponent["Speed"].as<float>());
+
+					auto animations = animatorComponent["Animations"];
+					if (animations)
+					{
+						for (auto animation : animations)
+						{
+							std::string name = animation.first.as<std::string>();
+							const Animation anim = Animation::Create(name);
+						}
+					}
 				}
 
 				auto rigidBody2DComponent = entity["RigidBody2DComponent"];

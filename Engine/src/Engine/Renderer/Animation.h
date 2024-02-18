@@ -1,5 +1,6 @@
 #pragma once
 #include "vector"
+#include "unordered_map"
 #include "Engine/Core/Core.h"
 #include "Engine/Renderer/SubTexture2D.h"
 
@@ -11,11 +12,12 @@ namespace eg {
 		Animation(const std::vector<Ref<SubTexture2D>>& frames, float frameRate = 1.0f, bool loop = true);
 		~Animation() = default;
 
-		void Update(float dt);
+		static const Animation& Create(const std::string& path);
+
+		void Update(float dt, float speed);
 		void Play();
 		void Pause();
 		void Stop();
-		void SetSpeed(float speed);
 		void SetLoop(bool loop);
 		void SetFrame(int frame);
 		void SetFrameRate(float frameRate);
@@ -28,16 +30,16 @@ namespace eg {
 		inline int GetCurrentFrame() const { return m_frame; }
 		inline bool IsPlaying() const { return m_playing; }
 		inline bool IsLooping() const { return m_loop; }
-		inline float GetSpeed() const { return m_speed; }
 		inline float GetFrameRate() const { return m_frameRate; }
+		inline const std::string& GetName() const { return m_name; }
 
 	private:
-		float m_speed;
 		float m_frameRate;
 		int m_frameCount;
 		int m_frame;
 		bool m_loop;
 		bool m_playing;
 		std::vector<Ref<SubTexture2D>> m_frames;
+		std::string m_name;
 	};
 }

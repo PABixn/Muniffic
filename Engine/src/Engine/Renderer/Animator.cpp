@@ -65,4 +65,9 @@ namespace eg {
 		m_Animations->erase(m_Animations->begin() + index);
 	}
 
+	void Animator::RemoveLastAnimation()
+	{
+		m_Animations->pop_back();
+	}
+
 }

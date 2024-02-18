@@ -910,21 +910,26 @@ namespace eg {
 			{
 				if (ImGui::Button("Add Empty Animation"))
 				{
-					Commands::ExecuteValueCommand<Ref<>>([&component](std::vector<glm::vec2> coords)
+					component.Animator2D->AddEmptyAnimation();
+					Commands::ExecuteValueCommand([&component]()
 						{
-							component.Animator2D->
-						}, newCoordsVec, oldCoords, "SpriteRendererComponent-MaxTexCoords", true);
+							component.Animator2D->RemoveLastAnimation();
+						}, Animation(), NULL, "SpriteRendererComponent-MaxTexCoords", true);
 				}
 
-				for (auto& [name, animation] : component.Animator2D->)
+				const Ref<std::vector<Animation>> animations = component.Animator2D->GetAnimations();
+				if (animations->size() > 0)
 				{
-					ImGui::PushID(name.c_str());
-					if (ImGui::TreeNode(name.c_str()))
+					for (const Animation& animation : *animations)
 					{
+						ImGui::PushID(animation.GetName.c_str());
+						if (ImGui::TreeNode(animation.GetName.c_str()))
+						{
+							ImGui::PopID();
+							ImGui::TreePop();
+						}
 						ImGui::PopID();
-						ImGui::TreePop();
 					}
-					ImGui::PopID();
 				}
 			}, m_Context);
 	}

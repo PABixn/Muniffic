@@ -244,5 +244,6 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
-		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent>;
+		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent,
+		AnimatorComponent>;
 }
