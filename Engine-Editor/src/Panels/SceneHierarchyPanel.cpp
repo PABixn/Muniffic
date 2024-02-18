@@ -330,6 +330,7 @@ namespace eg {
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
 			DisplayAddComponentEntry<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D");
+			DisplayAddComponentEntry<AnimatorComponent>("Animator");
 
 			ImGui::EndPopup();
 		}
@@ -904,7 +905,32 @@ namespace eg {
 				if(ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f))
 					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing");
 			}, m_Context);
+
+			DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
+			{
+				if (ImGui::Button("Add Empty Animation"))
+				{
+					Commands::ExecuteValueCommand<Ref<>>([&component](std::vector<glm::vec2> coords)
+						{
+							component.Animator2D->
+						}, newCoordsVec, oldCoords, "SpriteRendererComponent-MaxTexCoords", true);
+				}
+
+				for (auto& [name, animation] : component.Animator2D->)
+				{
+					ImGui::PushID(name.c_str());
+					if (ImGui::TreeNode(name.c_str()))
+					{
+						ImGui::PopID();
+						ImGui::TreePop();
+					}
+					ImGui::PopID();
+				}
+			}, m_Context);
 	}
+
+	//void AddAnimation
+
 
 
 }
