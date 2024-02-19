@@ -489,6 +489,62 @@ namespace eg
 			std::unordered_map<UUID, T> m_PreviousValues;
 		};
 
+		enum class VectorCommandType
+		{
+			ADD,
+			REMOVE_LAST,
+			ADD_AT,
+			REMOVE_AT
+		};
+
+		template<typename T>
+		class VectorCommand : public Command
+		{
+
+			public:
+				VectorCommand(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue, size_t index = 0)
+					: m_Vector(vector), m_RevertCommand(revertCommand), m_ForwardCommand(forwardCommand), m_OldValue(oldValue), m_NewValue(newValue), m_Index(index)
+				{
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs arg) override {};
+
+			void Undo() override
+			{
+				switch (m_RevertCommand)
+				{
+				case VectorCommandType::ADD: m_Vector->push_back(m_OldValue); break;
+				case VectorCommandType::REMOVE_LAST: m_Vector->pop_back(); break;
+				case VectorCommandType::ADD_AT: m_Vector->insert(m_Vector->begin() + m_Index, m_OldValue); break;
+				case VectorCommandType::REMOVE_AT: m_Vector->erase(m_Vector->begin() + m_Index); break;
+				}
+
+				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				switch (m_ForwardCommand)
+				{
+					case VectorCommandType::ADD: m_Vector->push_back(m_NewValue); break;
+					case VectorCommandType::REMOVE_LAST: m_Vector->pop_back(); break;
+					case VectorCommandType::ADD_AT: m_Vector->insert(m_Vector->begin() + m_Index, m_NewValue); break;
+					case VectorCommandType::REMOVE_AT: m_Vector->erase(m_Vector->begin() + m_Index); break;
+				}
+
+				SetCurrentCommand(false);
+			}
+
+			protected:
+				Ref<std::vector<T>> m_Vector;
+				VectorCommandType m_RevertCommand;
+				VectorCommandType m_ForwardCommand;
+				T m_OldValue;
+				T m_NewValue;
+				int m_Index;
+		};
+
 		static void SetCurrentCommand(bool isUndo);
 		static void AddCommand(Command* command);
 		static bool CanRevert(bool isUndo);
@@ -587,6 +643,15 @@ namespace eg
 			return command;
 		}
 
+		
+
+		template<typename T>
+		static Command* ExecuteVectorCommand(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue)
+		{
+			Command* command = new VectorCommand<T>(vector, revertCommand, forwardCommand, oldValue, newValue);
+			return command;
+		}
+
 		template<typename T>
 		static Command* ExecuteCommand(CommandArgs args)
 		{
@@ -594,6 +659,10 @@ namespace eg
 			command->Execute(args);
 			return command;
 		}
+
+		
+
+		
 		 
 	private:
 		static std::vector<Commands::Command*> commandHistory;

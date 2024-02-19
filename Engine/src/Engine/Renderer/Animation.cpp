@@ -8,6 +8,12 @@ namespace eg
 	{
 	}
 
+	Animation::Animation(const std::string& path)
+		: m_frameRate(1.0f), m_loop(true), m_playing(false), m_frameCount(0), m_frame(0)
+	{
+		m_name = path;
+	}
+
 	Animation::Animation(const std::vector<Ref<SubTexture2D>>& frames, float frameRate, bool loop)
 		: m_frames(frames), m_frameRate(frameRate), m_loop(loop), m_playing(false), m_frameCount(frames.size()), m_frame(0)
 	{

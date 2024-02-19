@@ -184,4 +184,17 @@ namespace eg {
 		textComponent.isInherited = component->isInherited;
 		textComponent.isInheritedInChildren = component->isInheritedInChildren;
 	}
+
+	template<>
+	void Entity::SetComponent<AnimatorComponent>(Entity& entity, AnimatorComponent* component)
+	{
+		if (!entity.HasComponent<AnimatorComponent>())
+			entity.AddComponent<AnimatorComponent>();
+
+		auto& animatorComponent = entity.GetComponent<AnimatorComponent>();
+
+		animatorComponent.Animator2D = component->Animator2D;
+		animatorComponent.isInherited = component->isInherited;
+		animatorComponent.isInheritedInChildren = component->isInheritedInChildren;
+	}
 }

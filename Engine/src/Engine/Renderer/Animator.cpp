@@ -4,12 +4,12 @@
 namespace eg {
 		
 	Animator::Animator()
-		: m_AnimationIndex(0)
+		: m_AnimationIndex(0), m_Speed(1.0f), m_Animations(CreateRef<std::vector<Animation>>())
 	{
 	}
 
-	Animator::Animator(Ref<std::vector<Animation>> animations)
-		:m_AnimationIndex(0), m_Animations(animations)
+	Animator::Animator(Ref<std::vector<Animation>> animations, float speed)
+		:m_AnimationIndex(0), m_Animations(animations), m_Speed(speed)
 	{
 	}
 
@@ -26,6 +26,11 @@ namespace eg {
 	void Animator::Stop()
 	{
 		(*m_Animations)[m_AnimationIndex].Stop();
+	}
+
+	void Animator::Update(float dt)
+	{
+		(*m_Animations)[m_AnimationIndex].Update(dt, m_Speed);
 	}
 
 	void Animator::ChangeAnimation(int animationIndex)
@@ -58,6 +63,11 @@ namespace eg {
 	void Animator::AddEmptyAnimation()
 	{
 		m_Animations->push_back(Animation());
+	}
+
+	void Animator::AddAnimationWithName(const std::string& name)
+	{
+		m_Animations->push_back(Animation(name));
 	}
 
 	void Animator::RemoveAnimation(int index)

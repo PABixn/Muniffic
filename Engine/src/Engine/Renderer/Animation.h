@@ -9,6 +9,7 @@ namespace eg {
 	class Animation {
 	public:
 		Animation();
+		Animation(const std::string& path);
 		Animation(const std::vector<Ref<SubTexture2D>>& frames, float frameRate = 1.0f, bool loop = true);
 		~Animation() = default;
 
