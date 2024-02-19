@@ -1,12 +1,13 @@
-Textures\obraz.png
+Resources
 ---
-Name: obraz
-Width: 1200
-Height: 966
-OriginalWidth: 0
-OriginalHeight: 0
-Top: 0
-Bottom: 966
-Left: 0
-Right: 1200
-Channels: 3
+- Textures\obraz.png
+- Name: obraz.png
+  Width: 1200
+  Height: 966
+  OriginalWidth: 0
+  OriginalHeight: 0
+  Top: 0
+  Bottom: 966
+  Left: 0
+  Right: 1200
+  Channels: 3

@@ -380,9 +380,10 @@ namespace eg {
 		}
 		catch (YAML::ParserException e)
 		{
-			EG_CORE_ERROR("Failed to load .hazel file '{0}'\n     {1}", filepath, e.what());
+			EG_CORE_ERROR("Failed to load .mnproj file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
+
 		if(!data["Scene"])
 			return false;
 
