@@ -1,6 +1,6 @@
 #include "egpch.h"
 #include "SceneCamera.h"
-
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace eg {

@@ -1,10 +1,10 @@
 #include "egpch.h"
 #include "Project.h"
-
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 #include "ProjectSerializer.h"
 
 namespace eg {
-
+	ConsolePanel consolePanel;
 	Project::Project(ProjectConfig projectConfig)
 		: m_Config(projectConfig)
 	{
@@ -13,6 +13,7 @@ namespace eg {
 	Ref<Project> Project::New()
 	{
 		s_ActiveProject = CreateRef<Project>();
+		consolePanel.Log("Project created successfully", ConsolePanel::LogType::Info);
 		return s_ActiveProject;
 	}
 
@@ -22,8 +23,10 @@ namespace eg {
 		if (serializer.Serialize(path))
 		{
 			s_ActiveProject->m_ProjectDirectory = path.parent_path();
+			consolePanel.Log("Project saved successfully", ConsolePanel::LogType::Info);
 			return true;
 		}
+		consolePanel.Log("Error during project saving", ConsolePanel::LogType::Error);
 		return false;
 	}
 
@@ -35,8 +38,10 @@ namespace eg {
 		{
 			project->m_ProjectDirectory = path.parent_path();
 			s_ActiveProject = project;
+			consolePanel.Log("Project loaded successfully", ConsolePanel::LogType::Info);
 			return s_ActiveProject;
 		}
+		consolePanel.Log("Error during project loading", ConsolePanel::LogType::Error);
 		return nullptr;
 	}
 }

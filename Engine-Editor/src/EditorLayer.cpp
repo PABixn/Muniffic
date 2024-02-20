@@ -71,7 +71,7 @@ namespace eg
 	{
 
 		EG_PROFILE_FUNCTION();
-
+		m_ConsolePanel->Log("EditorLayer OnUpdate called", ConsolePanel::LogType::Info);
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
@@ -145,7 +145,7 @@ namespace eg
 		}
 
 		OnOverlayRender();
-
+		m_ConsolePanel->Log("EditorLayer OnUpdate completed", ConsolePanel::LogType::Info);
 		m_FrameBuffer->Unbind();
 	}
 
@@ -237,6 +237,7 @@ namespace eg
 		m_SceneHierarchyPanel.OnImGuiRender();
 		
 		m_ContentBrowserPanel->OnImGuiRender();
+		m_ConsolePanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
@@ -638,6 +639,7 @@ namespace eg
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
 		m_ActiveScenePath = std::filesystem::path();
+		m_ConsolePanel->Log("New Scene Created", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::OpenScene()
@@ -646,6 +648,10 @@ namespace eg
 		if (!filepath.empty())
 		{
 			OpenScene(filepath);
+		}
+		else {
+			m_ConsolePanel->Log("Empty file path", ConsolePanel::LogType::Error);
+			return;
 		}
 	}
 
@@ -656,7 +662,7 @@ namespace eg
 
 		if (path.extension().string() != ".egscene")
 		{
-			EG_WARN("Could not load {0} - not a scene file", path.filename().string());
+			m_ConsolePanel->Log("Could not load " + path.filename().string() + " - not a scene file", ConsolePanel::LogType::Error);
 			return;
 		}
 
@@ -680,6 +686,11 @@ namespace eg
 
 			m_ActiveScenePath = filepath;
 		}
+		else {
+			m_ConsolePanel->Log("Empty file path", ConsolePanel::LogType::Error);
+			return;
+		}
+		m_ConsolePanel->Log("Scene saved", ConsolePanel::LogType::Info);
 		SetIsSaved(true);
 	}
 
@@ -691,20 +702,24 @@ namespace eg
 		{
 			SerializeScene(m_ActiveScene, m_ActiveScenePath);
 		}
+		m_ConsolePanel->Log("Scene saved", ConsolePanel::LogType::Info);
 		SetIsSaved(true);
 	}
 
 	void EditorLayer::NewProject()
 	{
 		Project::New();
+		m_ConsolePanel->Log("New project created", ConsolePanel::LogType::Info);
 	}
 
 	bool EditorLayer::OpenProject()
 	{
 		std::string filepath = FileDialogs::OpenFile("Muniffic Project (*.mnproj)\0*.mnproj\0");
 		if (filepath.empty())
+			m_ConsolePanel->Log("Empty file path", ConsolePanel::LogType::Error);
 			return false;
 		OpenProject(filepath);
+		m_ConsolePanel->Log("Project opened", ConsolePanel::LogType::Info);
 		return true;
 	}
 
@@ -716,21 +731,29 @@ namespace eg
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+			m_ConsolePanel->Log("Project opened", ConsolePanel::LogType::Info);
+		}
+		else
+		{
+			m_ConsolePanel->Log("Failed to open project", ConsolePanel::LogType::Error);
 		}
 	}
 
 	void EditorLayer::SaveProjectAs()
 	{
+		m_ConsolePanel->Log("Project saved", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::SaveProject()
 	{
+		m_ConsolePanel->Log("Project saved", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path &path)
 	{
 		SceneSerializer serializer(scene);
 		serializer.Serialize(path.string());
+		m_ConsolePanel->Log("Scene serialized", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::OnScenePlay()
@@ -740,7 +763,7 @@ namespace eg
 		if (m_SceneState == SceneState::Simulate)
 			OnSceneStop();
 		m_SceneState = SceneState::Play;
-
+		m_ConsolePanel->Log("Scene started", ConsolePanel::LogType::Info);
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart();
 
@@ -756,7 +779,7 @@ namespace eg
 
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnSimulationStart();
-
+		m_ConsolePanel->Log("Simulation started", ConsolePanel::LogType::Info);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
@@ -764,7 +787,7 @@ namespace eg
 	{
 		if (m_SceneState == SceneState::Edit)
 			return;
-
+		m_ConsolePanel->Log("Scene paused", ConsolePanel::LogType::Info);
 		m_ActiveScene->SetPaused(true);
 	}
 
@@ -780,18 +803,24 @@ namespace eg
 		m_SceneState = SceneState::Edit;
 		m_ActiveScene->OnRuntimeStop();
 		m_ActiveScene = m_EditorScene;
+		m_ConsolePanel->Log("Scene stopped", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::OnDuplicateEntity()
 	{
-		if (m_SceneState == SceneState::Play)
+		if (m_SceneState == SceneState::Play){
+			m_ConsolePanel->Log("Cannot duplicate entities while playing", ConsolePanel::LogType::Warning);
 			return;
-
+		}	
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity)
 		{
 			Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
 			m_SceneHierarchyPanel.SetSelectedEntity(newEntity);
+			m_ConsolePanel->Log("Entity duplicated", ConsolePanel::LogType::Info);
+		}
+		else {
+			m_ConsolePanel->Log("No entity selected for duplication", ConsolePanel::LogType::Warning);
 		}
 	}
 

@@ -4,8 +4,10 @@
 #include "Engine/Renderer/OrthographicCameraController.h"
 #include "glad/glad.h"
 #include "Engine/Core/KeyCodes.h"
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 namespace eg {
+	ConsolePanel consolePanel;
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
 		: m_AspectRatio(aspectRatio), m_Bounds({ -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel }), 
 		m_Camera(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top), m_Rotation(rotation)

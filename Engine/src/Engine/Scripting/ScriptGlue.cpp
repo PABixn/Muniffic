@@ -13,6 +13,8 @@
 #include "../Engine-Editor/src/Commands/Commands.h"
 #include <mono/metadata/appdomain.h>
 
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
+
 namespace eg
 {
 

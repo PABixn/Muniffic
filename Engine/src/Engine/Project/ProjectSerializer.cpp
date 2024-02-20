@@ -3,9 +3,11 @@
 
 #include <fstream>
 #include "yaml-cpp/yaml.h"
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 namespace eg
 {
+	ConsolePanel consolePanel;
 	ProjectSerializer::ProjectSerializer(Ref<Project> project)
 		: m_Project(project)
 	{
@@ -48,6 +50,7 @@ namespace eg
 		catch (const YAML::Exception& e)
 		{
 			EG_CORE_ERROR("Failed to load project file '{0}': {1}", path.string(), e.what());
+			consolePanel.Log("Failed to load project file: " + path.string(), ConsolePanel::LogType::Error);
 			return false;
 		}
 
@@ -55,6 +58,7 @@ namespace eg
 		if (!projectNode)
 		{
 			EG_CORE_ERROR("Invalid project file '{0}'", path.string());
+			consolePanel.Log("Invalid project file: " + path.string(), ConsolePanel::LogType::Error);
 			return false;
 		}
 
@@ -63,7 +67,7 @@ namespace eg
 		config.AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
 		config.SceneDirectory = projectNode["SceneDirectory"].as<std::string>();
 		config.ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
-
+		consolePanel.Log("Successfully loaded: " + path.string(), ConsolePanel::LogType::Info);
 		return true;
 	}
 }

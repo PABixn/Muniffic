@@ -9,6 +9,7 @@
 #include <cstring>
 #include "../Commands/Commands.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include "ConsolePanel.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -18,7 +19,7 @@
 #endif
 
 namespace eg {
-
+	ConsolePanel consolePanel;
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
 		SetContext(scene);
@@ -82,6 +83,7 @@ namespace eg {
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
 		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false))
+			consolePanel.Log("Drawing Entity Node failed", ConsolePanel::LogType::Error);
 			return;
 		
 		bool opened = false;
@@ -722,7 +724,7 @@ namespace eg {
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
 						}
 						else
-							EG_WARN("Could not load texture {0}", texturePath.filename().string());
+							ConsolePanel::Log("Could not load texture " + texturePath.filename().string(), ConsolePanel::LogType::Error);
 					}
 					ImGui::EndDragDropTarget();
 				}

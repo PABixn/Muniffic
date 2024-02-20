@@ -3,13 +3,11 @@
 #include "Engine/Core/UUID.h"
 #include "Scene.h"
 #include "Engine/Scene/Components.h"
-
 #include "../../../../Engine/vendor/entt/include/entt.hpp"
 
 
 namespace eg
 {
-
 	class Entity
 	{
 	public:

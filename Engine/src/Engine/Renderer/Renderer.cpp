@@ -2,9 +2,10 @@
 #include "Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Engine/Renderer/Renderer2D.h"
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 namespace eg {
-
+	ConsolePanel consolePanel;
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
 
 	void Renderer::Init()
@@ -12,10 +13,12 @@ namespace eg {
 		EG_PROFILE_FUNCTION();
 		RenderCommand::Init();
 		Renderer2D::Init();
+		consolePanel.Log("Renderer Initialized", ConsolePanel::LogType::Info);
 	}
 
 	void Renderer::Shutdown()
 	{
+		consolePanel.Log("Renderer Shutdown", ConsolePanel::LogType::Info);
 		Renderer2D::Shutdown();
 	}
 
@@ -27,6 +30,7 @@ namespace eg {
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
 		m_SceneData->ViewProjectionMatrix = camera.GetViewProjection();
+
 	}
 
 	void Renderer::EndScene()
