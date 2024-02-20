@@ -5,10 +5,8 @@
 #include "Engine/Core/MouseButtonCodes.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
-#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 namespace eg {
-	ConsolePanel consolePanel;
 	EditorCamera::EditorCamera(float fov, float aspectRatio, float nearClip, float farClip)
 		: m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip), Camera(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
 	{

@@ -94,7 +94,7 @@ namespace eg {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
-		
+		Scope<ConsolePanel> m_ConsolePanel;
 
 		enum class SceneState
 		{
@@ -105,8 +105,7 @@ namespace eg {
 	public:
 		UnsavedChangesPanel* m_UnsavedChangesPanel;
 		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
-		ConsolePanel* m_ConsolePanel;
-		ConsolePanel* GetConsolePanel() { return m_ConsolePanel; };
+		
 
 	};
 

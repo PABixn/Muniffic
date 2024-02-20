@@ -107,7 +107,7 @@ namespace YAML
 }
 
 namespace eg {
-
+	ConsolePanel consolePanel;
 #define READ_SCRIPT_FIELD(FieldType, Type)             \
 	case ScriptFieldType::FieldType:                   \
 	{                                                  \
@@ -146,7 +146,7 @@ namespace eg {
 		case RigidBody2DComponent::BodyType::Kinematic: return "Kinematic";
 		}
 		EG_CORE_ASSERT(false, "Unknown RigidBody2DComponent::BodyType!");
-		consolePanel.Log("Unknown type of RigidBody2DComponent", ConsolePanel::LogType::Error);
+		ConsolePanel::Log("Unknown type of RigidBody2DComponent", ConsolePanel::LogType::Error);
 		return std::string();
 	
 	}
@@ -157,7 +157,7 @@ namespace eg {
 		if (bodyType == "Dynamic")   return RigidBody2DComponent::BodyType::Dynamic;
 		if (bodyType == "Kinematic") return RigidBody2DComponent::BodyType::Kinematic;
 		EG_CORE_ASSERT(false, "Unknown RigidBody2DComponent::BodyType!");
-		consolePanel.Log("Unknown type of RigidBody2DComponent", ConsolePanel::LogType::Error);
+		ConsolePanel::Log("Unknown type of RigidBody2DComponent", ConsolePanel::LogType::Error);
 		return RigidBody2DComponent::BodyType::Static;
 	}
 
@@ -399,7 +399,7 @@ namespace eg {
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
-		consolePanel.Log("Scene serialized", ConsolePanel::LogType::Info);
+		ConsolePanel::Log("Scene serialized", ConsolePanel::LogType::Info);
 	}
 
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
@@ -417,7 +417,7 @@ namespace eg {
 		catch (YAML::ParserException e)
 		{
 			EG_CORE_ERROR("Failed to load .hazel file '{0}'\n     {1}", filepath, e.what());
-			consolePanel.Log("Deserialize: .hazel file loaded unsuccessfully!", ConsolePanel::LogType::Error);
+			ConsolePanel::Log("Deserialize: .hazel file loaded unsuccessfully!", ConsolePanel::LogType::Error);
 			return false;
 		}
 		if(!data["Scene"])
@@ -425,7 +425,7 @@ namespace eg {
 
 		std::string sceneName = data["Scene"].as<std::string>();
 		EG_CORE_TRACE("Deserializing scene '{0}'", sceneName);
-		consolePanel.Log("Deserializing scene " + sceneName, ConsolePanel::LogType::Info);
+		ConsolePanel::Log("Deserializing scene " + sceneName, ConsolePanel::LogType::Info);
 
 		auto entities = data["Entities"];
 		if (entities)
@@ -440,7 +440,7 @@ namespace eg {
 					name =  tagComponent["Tag"].as<std::string>();
 
 				EG_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
-				consolePanel.Log("Deserialized entity with name " + name, ConsolePanel::LogType::Info);
+				ConsolePanel::Log("Deserialized entity with name " + name, ConsolePanel::LogType::Info);
 
 				Entity deserializedEntity = m_Scene->CreateEntityWithID(uuid, name);
 
@@ -521,7 +521,7 @@ namespace eg {
 
 								if (fields.find(name) == fields.end()) {
 									EG_CORE_WARN("Field not found!");
-									consolePanel.Log("Field not found!", ConsolePanel::LogType::Error);
+									ConsolePanel::Log("Field not found!", ConsolePanel::LogType::Error);
 									continue;
 								}
 								fieldInstance.Field = fields.at(fieldName);

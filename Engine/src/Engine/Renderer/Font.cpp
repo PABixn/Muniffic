@@ -11,7 +11,6 @@
 #include "msdfgen.h"
 
 namespace eg {
-	ConsolePanel consolePanel;
 	template<typename T, typename S, int N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
 	static Ref<Texture2D> CreateAndCacheAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs, const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height)
 	{
@@ -50,7 +49,7 @@ namespace eg {
 			if (!fontHandle)
 			{
 				EG_CORE_ERROR("Failed to load font: {0}", font.string());
-				consolePanel.Log("Failed to load font: " + font.string(), ConsolePanel::LogType::Error);
+				ConsolePanel::Log("Failed to load font: " + font.string(), ConsolePanel::LogType::Error);
 				return;
 			}
 
@@ -75,7 +74,7 @@ namespace eg {
 			int glyphsLoaded = m_Data->FontGeometry.loadCharset(fontHandle, fontScale, charset);
 
 			EG_CORE_INFO("Loaded {} glyphs from font (out of{})", glyphsLoaded, charset.size());
-			consolePanel.Log("Loaded " + std::to_string(glyphsLoaded) + " glyphs from font (out of " + std::to_string(charset.size()) + ")", ConsolePanel::LogType::Info);
+			ConsolePanel::Log("Loaded " + std::to_string(glyphsLoaded) + " glyphs from font (out of " + std::to_string(charset.size()) + ")", ConsolePanel::LogType::Info);
 
 			double emSize = 40.0;
 

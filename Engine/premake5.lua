@@ -41,6 +41,7 @@ project "Engine"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.mono}",
+		"vendor"
 	}
 
 	links

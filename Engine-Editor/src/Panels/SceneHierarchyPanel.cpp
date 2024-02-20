@@ -19,7 +19,6 @@
 #endif
 
 namespace eg {
-	ConsolePanel consolePanel;
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
 		SetContext(scene);
@@ -82,10 +81,10 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
-		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false))
-			consolePanel.Log("Drawing Entity Node failed", ConsolePanel::LogType::Error);
+		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false)) {
+			ConsolePanel::Log("Drawing Entity Node failed", ConsolePanel::LogType::Error);
 			return;
-		
+		}
 		bool opened = false;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -723,8 +722,8 @@ namespace eg {
 							component.Texture = texture;
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
 						}
-						else
-							ConsolePanel::Log("Could not load texture " + texturePath.filename().string(), ConsolePanel::LogType::Error);
+						//else
+							//ConsolePanel::Log("Could not load texture " + texturePath.filename().string(), ConsolePanel::LogType::Error);
 					}
 					ImGui::EndDragDropTarget();
 				}

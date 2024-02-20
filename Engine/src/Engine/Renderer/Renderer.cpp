@@ -5,7 +5,6 @@
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 namespace eg {
-	ConsolePanel consolePanel;
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
 
 	void Renderer::Init()
@@ -13,12 +12,12 @@ namespace eg {
 		EG_PROFILE_FUNCTION();
 		RenderCommand::Init();
 		Renderer2D::Init();
-		consolePanel.Log("Renderer Initialized", ConsolePanel::LogType::Info);
+		ConsolePanel::Log("Renderer Initialized", ConsolePanel::LogType::Info);
 	}
 
 	void Renderer::Shutdown()
 	{
-		consolePanel.Log("Renderer Shutdown", ConsolePanel::LogType::Info);
+		ConsolePanel::Log("Renderer Shutdown", ConsolePanel::LogType::Info);
 		Renderer2D::Shutdown();
 	}
 

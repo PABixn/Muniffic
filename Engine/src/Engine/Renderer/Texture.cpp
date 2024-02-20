@@ -5,12 +5,13 @@
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 namespace eg {
-	ConsolePanel consolePanel;
 	Ref<Texture2D> Texture2D::Create(const std::string& path)
 	{
 		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::API::None: EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::None: 
+				ConsolePanel::Log("RendererAPI::None is currently not supported!", ConsolePanel::LogType::Error);
+				EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL: return CreateRef<OpenGLTexture2D>(path);
 		}
 
@@ -24,7 +25,7 @@ namespace eg {
 		{
 			case RendererAPI::API::None: EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case RendererAPI::API::OpenGL: 
-				consolePanel.Log("2D Texture Created", ConsolePanel::LogType::Info);
+				ConsolePanel::Log("2D Texture Created", ConsolePanel::LogType::Info);
 				return CreateRef<OpenGLTexture2D>(specification);
 		}
 
