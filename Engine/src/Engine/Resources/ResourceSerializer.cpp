@@ -5,35 +5,51 @@
 #include <fstream>
 #include <optional>
 #include <iostream>
+#include "ResourceUtils.h"
 
 namespace eg
 {
-	void ResourceSerializer::CacheTexture(TextureResourceData& data)
+	std::unordered_map<std::filesystem::path, TextureResourceData*> ResourceSerializer::TextureResourceDataCache;
+
+	void ResourceSerializer::SerializeResourceCache()
 	{
-		ResourceCache* cached = new ResourceCache();
+		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
+		YAML::Emitter textureOut;
 
-		cached->Type = ResourceType::Image;
-		cached->data = &data;
-
-		std::filesystem::path keyPath = data.ResourcePath / std::filesystem::path(data.ImageName);
-
-		if (ResourceDataCache.find(keyPath) == ResourceDataCache.end())
+		for(auto& [key, value] : TextureResourceDataCache)
 		{
-			delete ResourceDataCache[keyPath]->data;
-			delete ResourceDataCache[keyPath];
-			ResourceDataCache.erase(keyPath);
+			textureOut << YAML::BeginMap;
+			textureOut << YAML::Key << "ResourcePath" << YAML::Value << value->ResourcePath.string();
+			textureOut << YAML::Key << "ImageName" << YAML::Value << value->ImageName;
+			textureOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
+			textureOut << YAML::Key << "Width" << YAML::Value << value->Width;
+			textureOut << YAML::Key << "Height" << YAML::Value << value->Height;
+			textureOut << YAML::Key << "Channels" << YAML::Value << value->Channels;
+			textureOut << YAML::EndMap;
 		}
 
-		ResourceDataCache[keyPath] = cached;
+		std::ofstream file(textureMetadataPath);
+		file << textureOut.c_str();
 	}
 
-	bool ResourceSerializer::ReadCachedTexture(std::filesystem::path& keyPath)
+	void ResourceSerializer::CacheTexture(TextureResourceData* data)
 	{
-		TextureResourceData* data = new TextureResourceData();
+		std::filesystem::path keyPath = data->ResourcePath / std::filesystem::path(data->ImageName);
 
-		if (ResourceDataCache.find(keyPath) == ResourceDataCache.end())
-			return false;
+		if (TextureResourceDataCache.find(keyPath) != TextureResourceDataCache.end())
+		{
+			delete TextureResourceDataCache[keyPath];
+			TextureResourceDataCache.erase(keyPath);
+		}
 
-		ResourceCache* cached = ResourceDataCache[keyPath];
+		TextureResourceDataCache[keyPath] = data;
+	}
+
+	TextureResourceData* ResourceSerializer::ReadCachedTexture(std::filesystem::path& keyPath)
+	{
+		if (TextureResourceDataCache.find(keyPath) == TextureResourceDataCache.end())
+			return nullptr;
+
+		return TextureResourceDataCache[keyPath];
 	}
 }

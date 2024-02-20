@@ -27,12 +27,6 @@ namespace eg {
 		void* Data;
 	};
 
-	struct ResourceCache
-	{
-		ResourceType Type;
-		void* data;
-	};
-
 	struct ImageResourceData
 	{
 		uint8_t channelCount;
