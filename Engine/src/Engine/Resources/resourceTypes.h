@@ -27,10 +27,13 @@ namespace eg {
 		void* Data;
 	};
 
-	struct ResourceData
-	{};
+	struct ResourceCache
+	{
+		ResourceType Type;
+		void* data;
+	};
 
-	struct ImageResourceData : ResourceData
+	struct ImageResourceData
 	{
 		uint8_t channelCount;
 		uint32_t width;
@@ -38,7 +41,7 @@ namespace eg {
 		unsigned char* pixels;
 	};
 
-	struct TextureResourceData : ResourceData
+	struct TextureResourceData
 	{
 		int Width = 0, Height = 0, OriginalHeight = 0, OriginalWidth = 0;
 		int Top = 0, Bottom = 0, Left = 0, Right = 0;

@@ -5,12 +5,16 @@
 
 namespace eg {
 
-	class ResourceSerializer {
+	class ResourceSerializer
+	{
 	public:
 		ResourceSerializer() = default;
 		~ResourceSerializer() = default;
 
-		void SerializeTextureResource(const std::filesystem::path& filepath, const TextureResourceData& data);
-		bool DeserializeTextureResource(const std::string& path, TextureResourceData* data);
+		void CacheTexture(TextureResourceData& data);
+		bool ReadCachedTexture(std::filesystem::path& keyPath);
+
+	private:
+		static std::unordered_map<std::filesystem::path, ResourceCache*> ResourceDataCache;
 	};
 }

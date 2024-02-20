@@ -6,8 +6,6 @@
 
 namespace eg
 {
-	std::vector<ResourceData> ResourceDataCache;
-
 	std::filesystem::path GetMetadataPath(ResourceType type)
 	{
 		switch (type)
@@ -85,7 +83,7 @@ namespace eg
 	{
 		ResourceSerializer serializer;
 		std::filesystem::path metaDataDestination = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Textures.mnmeta";
-		serializer.SerializeTextureResource(metaDataDestination, *((TextureResourceData*)data));
+		serializer.CacheTexture(*((TextureResourceData*)data));
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
 
 		if (finalPath != originalResourcePath)
