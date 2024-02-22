@@ -38,7 +38,7 @@ namespace eg
 	void AddTextureResource(const std::filesystem::path& originalResourcePath, TextureResourceData* data)
 	{
 		ResourceSerializer serializer;
-		serializer.CacheTexture(*((TextureResourceData*)data));
+		serializer.CacheTexture(data);
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
 
 		if (finalPath != originalResourcePath)

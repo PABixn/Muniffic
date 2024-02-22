@@ -12,7 +12,7 @@ namespace eg
         /// The entity this script is attached to.
         /// </summary>
         public Entity entity;
-
+ 
         protected DefaultBehaviour()
         {
             entity = new Entity(0);

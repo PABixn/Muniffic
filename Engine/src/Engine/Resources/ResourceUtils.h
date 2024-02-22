@@ -54,5 +54,5 @@ namespace eg
 			else
 				return ResourceType::None;
 		}
-	}
+	};
 }
