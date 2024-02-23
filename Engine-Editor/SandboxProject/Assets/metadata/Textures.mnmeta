@@ -1,13 +1,13 @@
-Resources
----
-- Textures\obraz.png
-- Name: obraz.png
-  Width: 1200
-  Height: 966
-  OriginalWidth: 0
-  OriginalHeight: 0
-  Top: 0
-  Bottom: 966
-  Left: 0
-  Right: 1200
-  Channels: 3
+Resources:
+  - ResourcePath: Textures
+    ImageName: obraz
+    Extension: .png
+    Width: 1200
+    Height: 966
+    Channels: 3
+  - ResourcePath: Textures
+    ImageName: baner1 (1)
+    Extension: .png
+    Width: 1000
+    Height: 200
+    Channels: 4

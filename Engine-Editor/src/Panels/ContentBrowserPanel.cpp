@@ -3,6 +3,8 @@
 #include <Imgui/imgui.h>
 #include "../Commands/Commands.h"
 #include "Engine/Project/Project.h"
+#include "Engine/Resources/ResourceUtils.h"
+#include "Engine/Resources/ResourceSerializer.h"
 
 namespace eg {
 
@@ -36,8 +38,38 @@ namespace eg {
 			columnCount = 1;
 
 		ImGui::Columns(columnCount, 0, false);
-		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory)) {
-			
+
+		ResourceType type = ResourceUtils::GetResourceTypeFromText(m_CurrentDirectory.filename().string());
+
+		if (type == ResourceType::Image)
+		{
+			for (auto& [key, value] : ResourceSerializer::TextureResourceDataCache)
+			{
+				auto name = value->ImageName + value->Extension;
+				ImGui::PushID(name.c_str());
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+				ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+				if (ImGui::BeginDragDropSource())
+				{
+					std::filesystem::path path(value->GetAbsolutePath());
+					const wchar_t* pathStr = path.c_str();
+					ImGui::SetDragDropPayload("ContentBrowserPanel", pathStr, (wcslen(pathStr) + 1) * sizeof(wchar_t));
+					ImGui::EndDragDropSource();
+				}
+
+				ImGui::PopStyleColor();
+
+				ImGui::TextWrapped(name.c_str());
+
+				ImGui::NextColumn();
+
+				ImGui::PopID();
+			}
+		}
+
+		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
+		{
 			const auto& path = directoryEntry.path();
 
 			if(path.extension() == ".mnmeta")
@@ -64,6 +96,7 @@ namespace eg {
 			}
 
 			ImGui::PopStyleColor();
+
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 				if (directoryEntry.is_directory())
 				{
@@ -72,6 +105,7 @@ namespace eg {
 					Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 				}
 			}
+
 			ImGui::TextWrapped(name.c_str());
 
 			ImGui::NextColumn();

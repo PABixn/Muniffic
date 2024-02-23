@@ -11,11 +11,11 @@ namespace eg {
 		ResourceSerializer() = default;
 		~ResourceSerializer() = default;
 
-		void CacheTexture(TextureResourceData* data);
-		TextureResourceData* ReadCachedTexture(std::filesystem::path& keyPath);
+		static void CacheTexture(TextureResourceData* data);
+		static TextureResourceData* ReadCachedTexture(std::filesystem::path& keyPath);
 		static void SerializeResourceCache();
+		static bool DeserializeResourceCache();
 
-	private:
 		static std::unordered_map<std::filesystem::path, TextureResourceData*> TextureResourceDataCache;
 	};
 }

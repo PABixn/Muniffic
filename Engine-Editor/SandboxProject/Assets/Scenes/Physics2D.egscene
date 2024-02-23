@@ -61,12 +61,12 @@ Entities:
       Tag: Circle
     TransformComponent:
       Translation: [2.5, 0, 0]
-      Rotation: [-12.0299997, -1.79999995, 2.5]
-      Scale: [2.5, 1, 1]
-    CircleRendererComponent:
+      Rotation: [0, 0, 0]
+      Scale: [10.1999998, 4.19999981, 1]
+    SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      Thickness: 1
-      Fade: 0
+      TilignFactor: 1
+      TexturePath: C:\Users\bez18\Documents\GitHub\Muniffic\Engine-Editor\SandboxProject\Assets\Textures\baner1 (1).png
   - Entity: 16108228054420389651
     Name: Cube
     TagComponent:

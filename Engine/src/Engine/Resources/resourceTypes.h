@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <string>
 #include <filesystem>
+#include "Engine/Project/Project.h"
 
 namespace eg {
 	enum class ResourceType
@@ -43,6 +44,16 @@ namespace eg {
 		std::filesystem::path ResourcePath = "";
 		std::string ImageName = "";
 		std::string Extension = "";
+
+		std::filesystem::path GetRelativePath()
+		{
+			return ResourcePath / std::filesystem::path(ImageName + Extension);
+		}
+
+		std::filesystem::path GetAbsolutePath()
+		{
+			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / GetRelativePath();
+		}
 	};
 }
 

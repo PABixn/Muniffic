@@ -19,7 +19,7 @@ namespace eg
 
 	std::filesystem::path ResourceDatabase::FindResourceByKeyPath(const std::filesystem::path& keyPath)
 	{
-		std::filesystem::path metadata = ResourceUtils::GetMetadataPath(ResourceUtils::GetResourceType(keyPath));
+		std::filesystem::path metadata = ResourceUtils::GetMetadataPath(ResourceUtils::GetResourceTypeFromKeyPath(keyPath));
 
 		YAML::Node data;
 
@@ -37,8 +37,7 @@ namespace eg
 
 	void AddTextureResource(const std::filesystem::path& originalResourcePath, TextureResourceData* data)
 	{
-		ResourceSerializer serializer;
-		serializer.CacheTexture(data);
+		ResourceSerializer::CacheTexture(data);
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
 
 		if (finalPath != originalResourcePath)

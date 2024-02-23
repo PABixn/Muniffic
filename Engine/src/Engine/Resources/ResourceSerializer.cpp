@@ -11,10 +11,63 @@ namespace eg
 {
 	std::unordered_map<std::filesystem::path, TextureResourceData*> ResourceSerializer::TextureResourceDataCache;
 
+	bool ResourceSerializer::DeserializeResourceCache()
+	{
+		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
+
+		YAML::Node textureNode;
+
+		if (!std::filesystem::exists(textureMetadataPath))
+		{
+			return false;
+		}
+
+		try
+		{
+			textureNode = YAML::LoadFile(textureMetadataPath.string());
+		}
+		catch(YAML::ParserException e)
+		{
+			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", textureMetadataPath, e.what());
+			return false;
+		}
+
+		if (!textureNode["Resources"])
+			return false;
+
+		auto textureResources = textureNode["Resources"];
+
+		if (textureResources)
+		{
+			for (auto resource : textureResources)
+			{
+				std::filesystem::path resourcePath = resource["ResourcePath"].as<std::string>();
+				std::string imageName = resource["ImageName"].as<std::string>();
+				std::string extension = resource["Extension"].as<std::string>();
+				int width = resource["Width"].as<int>();
+				int height = resource["Height"].as<int>();
+				int channels = resource["Channels"].as<int>();
+
+				TextureResourceData* data = new TextureResourceData();
+				data->ResourcePath = resourcePath;
+				data->ImageName = imageName;
+				data->Extension = extension;
+				data->Width = width;
+				data->Height = height;
+				data->Channels = channels;
+
+				CacheTexture(data);
+			}
+		}
+	}
+
 	void ResourceSerializer::SerializeResourceCache()
 	{
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
 		YAML::Emitter textureOut;
+
+		textureOut << YAML::BeginMap;
+		textureOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
 
 		for(auto& [key, value] : TextureResourceDataCache)
 		{
@@ -28,8 +81,12 @@ namespace eg
 			textureOut << YAML::EndMap;
 		}
 
-		std::ofstream file(textureMetadataPath);
+		YAML::EndSeq;
+		YAML::EndMap;
+
+		std::ofstream file(textureMetadataPath, std::ios::trunc);
 		file << textureOut.c_str();
+		file.close();
 	}
 
 	void ResourceSerializer::CacheTexture(TextureResourceData* data)

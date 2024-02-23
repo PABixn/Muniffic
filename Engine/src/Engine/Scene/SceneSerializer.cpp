@@ -8,6 +8,7 @@
 #include <optional>
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Project/Project.h"
+#include "Engine/Resources/ResourceSerializer.h"
 
 namespace YAML
 {
@@ -364,6 +365,8 @@ namespace eg {
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
+
+		ResourceSerializer::SerializeResourceCache();
 	}
 
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
@@ -558,6 +561,9 @@ namespace eg {
 				}
 			}
 		}
+
+		ResourceSerializer::DeserializeResourceCache();
+
 		return true;
 	}
 
