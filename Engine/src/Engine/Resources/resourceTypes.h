@@ -47,7 +47,7 @@ namespace eg {
 
 		std::filesystem::path GetRelativePath()
 		{
-			return ResourcePath / std::filesystem::path(ImageName + Extension);
+			return std::filesystem::path(Project::GetProjectName()) / Project::GetAssetDirectory() / ResourcePath / std::filesystem::path(ImageName + Extension);
 		}
 
 		std::filesystem::path GetAbsolutePath()

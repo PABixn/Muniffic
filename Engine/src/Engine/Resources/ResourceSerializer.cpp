@@ -95,7 +95,8 @@ namespace eg
 
 		if (TextureResourceDataCache.find(keyPath) != TextureResourceDataCache.end())
 		{
-			delete TextureResourceDataCache[keyPath];
+			if (TextureResourceDataCache[keyPath] != nullptr)
+				delete TextureResourceDataCache[keyPath];
 			TextureResourceDataCache.erase(keyPath);
 		}
 
@@ -108,5 +109,23 @@ namespace eg
 			return nullptr;
 
 		return TextureResourceDataCache[keyPath];
+	}
+
+	void ResourceSerializer::DeleteCachedResource(const std::filesystem::path& keyPath, ResourceType resourceType)
+	{
+		if (resourceType == ResourceType::Image)
+		{
+			if (TextureResourceDataCache.find(keyPath) != TextureResourceDataCache.end())
+			{
+				if(TextureResourceDataCache[keyPath] != nullptr)
+					delete TextureResourceDataCache[keyPath];
+				TextureResourceDataCache[keyPath] = nullptr;
+				TextureResourceDataCache.erase(keyPath);
+			}
+		}
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported for deletion");
+		}
 	}
 }

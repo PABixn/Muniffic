@@ -502,9 +502,7 @@ namespace eg {
 					if (spriteRendererComponent["TexturePath"])
 					{
 						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
-						//TODO: Later should be handled by the asset manager
-						auto path = Project::GetAssetFileSystemPath(texturePath);
-						src.Texture = Texture2D::Create(path.string());
+						src.Texture = Texture2D::Create(texturePath);
 					}
 				}
 

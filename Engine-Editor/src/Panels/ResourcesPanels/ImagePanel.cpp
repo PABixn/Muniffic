@@ -56,19 +56,17 @@ namespace eg
 		else
 		{
 			ImGui::Image((void*)(intptr_t)m_PreviewData->GetRendererID(), ImVec2(200, 200));
-			ImGui::Text("Image: %s", ((TextureResourceData*)m_ResourceData)->ResourcePath.string().c_str());
+			ImGui::Text("Image: %s", (((TextureResourceData*)m_ResourceData)->ResourcePath / std::filesystem::path(((TextureResourceData*)m_ResourceData)->ImageName + ((TextureResourceData*)m_ResourceData)->Extension)).string().c_str());
 			if (ImGui::Button("Change Image"))
 			{
 				std::string path = FileDialogs::OpenFile("Image (*.png)\0*.png\0");
-				std::cout << path << std::endl;
 				if (!path.empty())
 					((TextureResourceData*)m_ResourceData)->ResourcePath = path;
 			}
-			ImGui::Text("Destination: %s", m_BasePath.string().c_str());
+			ImGui::Text("Destination: %s", (m_BasePath / std::filesystem::path(((TextureResourceData*)m_ResourceData)->ImageName + ((TextureResourceData*)m_ResourceData)->Extension)).string().c_str());
 			if (ImGui::Button("Change Destination"))
 			{
 				std::string path = FileDialogs::OpenFile("");
-				std::cout << path << std::endl;
 				if (!path.empty())
 					((TextureResourceData*)m_ResourceData)->ResourcePath = path;
 			}

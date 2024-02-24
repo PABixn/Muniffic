@@ -6,9 +6,8 @@
 #include "Engine/Resources/ResourceUtils.h"
 #include "Engine/Resources/ResourceSerializer.h"
 
-namespace eg {
-
-
+namespace eg
+{
 	ContentBrowserPanel::ContentBrowserPanel()
 	: m_BaseDirectory(Project::GetProjectDirectory() / Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{
@@ -50,9 +49,23 @@ namespace eg {
 				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 				ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
+				if (ImGui::BeginPopupContextItem("FileOptions"))
+				{
+					if (ImGui::MenuItem("Delete"))
+					{
+						ResourceSerializer::DeleteCachedResource(key, type);
+						ImGui::PopStyleColor();
+						ImGui::NextColumn();
+						ImGui::EndPopup();
+						ImGui::PopID();
+						break;
+					}
+					ImGui::EndPopup();
+				}
+
 				if (ImGui::BeginDragDropSource())
 				{
-					std::filesystem::path path(value->GetAbsolutePath());
+					std::filesystem::path path(value->GetRelativePath());
 					const wchar_t* pathStr = path.c_str();
 					ImGui::SetDragDropPayload("ContentBrowserPanel", pathStr, (wcslen(pathStr) + 1) * sizeof(wchar_t));
 					ImGui::EndDragDropSource();

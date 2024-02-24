@@ -55,18 +55,25 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 5817885789038573713
+  - Entity: 12466326309952554741
     Name: Cube
     TagComponent:
       Tag: Circle
     TransformComponent:
-      Translation: [2.5, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [10.1999998, 4.19999981, 1]
-    SpriteRendererComponent:
+      Translation: [4.30000019, 2.98023224e-08, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
       Color: [1, 1, 1, 1]
-      TilignFactor: 1
-      TexturePath: C:\Users\bez18\Documents\GitHub\Muniffic\Engine-Editor\SandboxProject\Assets\Textures\baner1 (1).png
+      Thickness: 1
+      Fade: 0.00499999989
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
   - Entity: 16108228054420389651
     Name: Cube
     TagComponent:
@@ -152,34 +159,15 @@ Entities:
       Tag: Circle
     TransformComponent:
       Translation: [0.200000003, 0.699999988, 0]
-      Rotation: [0, 0, 0]
-      Scale: [-1.60000002, 1.39999998, 1.29999995]
-    CircleRendererComponent:
+      Rotation: [6.19999981, 0, 0]
+      Scale: [5.0999999, 3.5999999, 1.29999995]
+    SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      Thickness: 1
-      Fade: 0.00499999989
+      TilignFactor: 1
+      TexturePath: SandboxProject\Assets\Textures\baner1 (1).png
     RigidBody2DComponent:
       Body Type: Dynamic
       FixedRotation: false
-    CircleCollider2DComponent:
-      Offset: [0, 0]
-      Radius: 0.5
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-  - Entity: 12466326309952554741
-    Name: Cube
-    TagComponent:
-      Tag: Circle
-    TransformComponent:
-      Translation: [4.30000019, 2.98023224e-08, 0]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-    CircleRendererComponent:
-      Color: [1, 1, 1, 1]
-      Thickness: 1
-      Fade: 0.00499999989
     CircleCollider2DComponent:
       Offset: [0, 0]
       Radius: 0.5
