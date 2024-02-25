@@ -6,6 +6,7 @@
 #include "Engine/Core/UUID.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/SubTexture2D.h"
+#include "Engine/Renderer/Animator.h"
 #include "Engine/Renderer/Font.h"
 
 #include "glm/gtc/matrix_transform.hpp"
@@ -90,6 +91,19 @@ namespace eg {
 		SpriteRendererSTComponent(const SpriteRendererSTComponent&) = default;
 		SpriteRendererSTComponent(const glm::vec4& color)
 			: Color(color) {}
+	};
+
+	struct AnimatorComponent : Component
+	{
+		Ref<Animator> Animator2D;
+
+		AnimatorComponent()
+		{
+			Animator2D = CreateRef<Animator>();
+		};
+		AnimatorComponent(const AnimatorComponent&) = default;
+		AnimatorComponent(const Ref<Animator>& animator)
+			: Animator2D(animator) {}
 	};
 
 	struct CircleRendererComponent: Component
@@ -233,5 +247,6 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
-		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent>;
+		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent,
+		AnimatorComponent>;
 }

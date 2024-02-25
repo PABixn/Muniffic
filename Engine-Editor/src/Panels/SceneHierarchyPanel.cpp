@@ -330,6 +330,7 @@ namespace eg {
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
 			DisplayAddComponentEntry<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D");
+			DisplayAddComponentEntry<AnimatorComponent>("Animator");
 
 			ImGui::EndPopup();
 		}
@@ -904,7 +905,44 @@ namespace eg {
 				if(ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f))
 					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing");
 			}, m_Context);
+
+			DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
+			{
+				ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f);
+				ImGui::DragInt("Current Animation", component.Animator2D->GetAnimationIndexPtr(), 1, 0, component.Animator2D->GetAnimations()->size() - 1);
+
+				if (ImGui::Button("Add Empty Animation"))
+				{
+					std::string name = "Animation" + std::to_string(component.Animator2D->GetAnimations()->size());
+					component.Animator2D->AddAnimationWithName(name);
+					Commands::ExecuteVectorCommand(component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, Animation(), Animation());
+				}
+
+				const Ref<std::vector<Animation>> animations = component.Animator2D->GetAnimations();
+				ImGui::Text("Animations:");
+				if (animations->size() > 0)
+				{
+					int i = 0;
+					for (const Animation& animation : *animations)
+					{
+						ImGui::PushID(i);
+						if (ImGui::TreeNode(animation.GetName().c_str()))
+						{
+							//TODO: Playing the animation if the animation is looped play non-stop else play once and show button on top to play again
+							// 
+							//TODO: Display the animation properties if someone wants to change the animation properties show the popup window which will ask if the user wants to change the properties in the scene or in the prefab
+							//ImGui::PopID();
+							//ImGui::TreePop();
+						}
+						ImGui::PopID();
+						i++;
+					}
+				}
+			}, m_Context);
 	}
+
+	//void AddAnimation
+
 
 
 }

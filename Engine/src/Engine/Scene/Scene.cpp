@@ -558,4 +558,9 @@ namespace eg {
 	{
 	}
 
+	template<>
+	void Scene::OnComponentAdded<AnimatorComponent>(Entity entity, AnimatorComponent& component)
+	{
+	}
+
 }
