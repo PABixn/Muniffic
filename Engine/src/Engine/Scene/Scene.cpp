@@ -153,20 +153,22 @@ namespace eg {
 		OnPhysics2DStart();
 		// Audio
 		if (EvaluateSceneAudio) {
+			static std::list<Entity> EntitiesWithAudioSourceComponent;
 			static std::list<Entity> EntitiesWithAudioListenerComponent;
 			if (!EntitiesWithAudioListenerComponent.size()) {
-				auto view = m_Registry.view<AudioListenerComponent>();
-				for (auto e : view)
+				auto ASourceView = m_Registry.view<AudioSourceComponent>();
+				//auto AListenerView = m_Registry.view<AudioListenerComponent>();
+				/*/
+				for (auto e : AListenerView)
 				{
-					view.get<AudioListenerComponent>(e).Audio.Play();/*
-					std::string s = "open \"";
-					s.append(audioFilePath);
-					s.append(".mp3\" type mpegvideo alias mp3");
-					std::wstring stemp = std::wstring(s.begin(), s.end());
-					LPCWSTR sw = stemp.c_str();
-					mciSendString(sw, NULL, 0, NULL);
-					mciSendString(L"play mp3 from 0", NULL, 0, NULL);*/
-				}
+					static SoLoud::Soloud& soloud = (AListenerView.get<AudioListenerComponent>(e)).soloudInstance;
+					soloud.init();*/
+					for (auto f : ASourceView)
+					{
+						ASourceView.get<AudioSourceComponent>(f).Audio.Play();	
+					}
+					
+				//}
 			}
 		}
 	}
@@ -558,6 +560,10 @@ namespace eg {
 	}
 	template<>
 	void Scene::OnComponentAdded<AudioListenerComponent>(Entity entity, AudioListenerComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<AudioSourceComponent>(Entity entity, AudioSourceComponent& component)
 	{
 	}
 

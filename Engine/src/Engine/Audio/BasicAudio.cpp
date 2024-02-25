@@ -1,29 +1,42 @@
 #include "egpch.h"
+#include "soloud_wav.h"
+#include "soloud.h"
 #include "Engine/Audio/BasicAudio.h"
-#include <Mmsystem.h>
-#include <mciapi.h>
+#include <thread>
+
 #pragma comment(lib, "Winmm.lib")
 namespace eg {
-	BasicAudio::BasicAudio(std::string& path) {
+	BasicAudio::BasicAudio(std::string& path)  {
 		m_Path = std::filesystem::path(path);
-		OpenCurrentAudio();
+		LoadCurrentAudio();
+		m_Wav.load(path.c_str());
 	}
-	void BasicAudio::OpenCurrentAudio() {
-		std::string message = "open \"";
-		message.append(m_Path.string());
-		message.append("\" type mpegvideo alias mp3");
-		std::wstring stemp = std::wstring(message.begin(), message.end());
-		LPCWSTR sw = stemp.c_str();
-		m_IsGood = mciSendString(sw, NULL, 0, NULL) == 0 ? true : false;
+
+	void BasicAudio::LoadCurrentAudio() {
+		std::string a = m_Path.string();
+		const char* silli = a.c_str();
+		m_Wav.load(silli);
 	}
 	void BasicAudio::OpenAudio(std::string path) {
 		m_Path = std::filesystem::path(path);
-		OpenCurrentAudio();
+		LoadCurrentAudio();
 	}
 	bool BasicAudio::Play() {
-		OpenCurrentAudio();
-		auto s = mciSendString(L"play mp3 from 0", NULL, 0, NULL) == 0;
-		return s;
+		LoadCurrentAudio();
+		 SoLoud::Soloud SoLoudInstance =  SoLoud::Soloud();
+		//SoLoudInstance.reset();
+		SoLoudInstance.init();
+		/*
+		std::thread myThread([&]() {
+		auto ss = */SoLoudInstance.play(m_Wav);/*
+			while (SoLoudInstance.isValidVoiceHandle(ss))
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			}
+		});
+		myThread.detach();*/
+		//SoLoudInstance.deinit();
+		return true;
 	}
 	std::string BasicAudio::GetFileName() {
 		return m_Path.filename().string();

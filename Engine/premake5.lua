@@ -20,14 +20,13 @@ project "Engine"
 		"vendor/glm/glm/**.inl",
 		"vendor/ImGuizmo/ImGuizmo.h",
 		"vendor/ImGuizmo/ImGuizmo.cpp",
-		"vendor/SFML/include/SFML/**.hpp",
-		"vendor/SFML/include/SFML/**.cpp",
 	}
 
 	includedirs 
 	{
 		"src",
 		".",
+		"vendor",
 		"vendor/spdlog/include",
 		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.filewatch}",
@@ -43,7 +42,7 @@ project "Engine"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.mono}",
-		"%{IncludeDir.SFML}",
+		"%{IncludeDir.SoLoud}",
 	}
 	links
 	{
@@ -56,6 +55,7 @@ project "Engine"
 		"Imgui",
 		"msdf-atlas-gen",
 		"%{Library.mono}",
+		"SoLoud"
 	}
 
 	defines{

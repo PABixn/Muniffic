@@ -13,7 +13,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
-
+#include "SoLoud/include/soloud.h"
 
 
 namespace eg {
@@ -199,6 +199,11 @@ namespace eg {
 
 	struct AudioListenerComponent
 	{
+		SoLoud::Soloud soloudInstance;
+	};
+
+	struct AudioSourceComponent
+	{
 		BasicAudio Audio;
 	};
 
@@ -211,5 +216,5 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
-		CircleCollider2DComponent, TextComponent, AudioListenerComponent>;
+		CircleCollider2DComponent, TextComponent, AudioListenerComponent, AudioSourceComponent>;
 }

@@ -32,6 +32,7 @@ group "Dependencies"
 	include "Engine/vendor/imgui"
 	include "Engine/vendor/msdf-atlas-gen"
 	include "Engine/vendor/yaml-cpp"
+	include "Engine/vendor/SoLoud"
 group ""
 
 group "Core"
@@ -41,8 +42,4 @@ group ""
 
 group "Tools"
 	include "Engine-Editor"
-group ""
-
-group "Misc"
-	include "Sandbox"
 group ""

@@ -2,7 +2,6 @@
 #include <string>
 #include "Engine.h"
 #include <variant>
-
 namespace eg
 {
 	void SetIsSaved(bool val);

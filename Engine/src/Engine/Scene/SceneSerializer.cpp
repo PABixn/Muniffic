@@ -347,11 +347,23 @@ namespace eg {
 			out << YAML::Key << "AudioListenerComponent";
 			out << YAML::BeginMap;
 
-			auto& audioListenerComponent = entity.GetComponent<AudioListenerComponent>();
-			out << YAML::Key << "AudioFilePath" << YAML::Value << audioListenerComponent.Audio.GetPath().string();
+			//auto& audioListenerComponent = entity.GetComponent<AudioListenerComponent>();
+			//out << YAML::Key << "AudioFilePath" << YAML::Value << audioListenerComponent.Audio.GetPath().string();
 
 			out << YAML::EndMap;
 		}
+
+		if (entity.HasComponent<AudioSourceComponent>())
+		{
+			out << YAML::Key << "AudioSourceComponent";
+			out << YAML::BeginMap;
+
+			auto& audioSourceComponent = entity.GetComponent<AudioSourceComponent>();
+			out << YAML::Key << "AudioFilePath" << YAML::Value << audioSourceComponent.Audio.GetPath().string();
+
+			out << YAML::EndMap;
+		}
+
 
 		out << YAML::EndMap; // Entity
 	}
@@ -567,12 +579,18 @@ namespace eg {
 					tc.LineSpacing = textComponent["LineSpacing"].as<float>();
 				}
 
+				auto audioSourceComponent = entity["AudioSourceComponent"];
+				if (audioSourceComponent)
+				{
+					auto& alc = deserializedEntity.AddComponent<AudioSourceComponent>();
+					auto s = (audioSourceComponent["AudioFilePath"].as<std::string>());
+					alc.Audio.SetPath(s);
+				}
 				auto audioListenerComponent = entity["AudioListenerComponent"];
 				if (audioListenerComponent)
 				{
-					auto& alc = deserializedEntity.AddComponent<AudioListenerComponent>(); 
-					auto s = (audioListenerComponent["AudioFilePath"].as<std::string>());
-					alc.Audio = BasicAudio(s);
+					deserializedEntity.AddComponent<AudioListenerComponent>();
+					//auto s = (audioListenerComponent["AudioFilePath"].as<std::string>());
 				}
 			}
 		}

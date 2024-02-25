@@ -245,6 +245,7 @@ namespace eg {
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
 			DisplayAddComponentEntry<AudioListenerComponent>("Audio Listener");
+			DisplayAddComponentEntry<AudioSourceComponent>("Audio Source");
 
 			ImGui::EndPopup();
 		}
@@ -739,11 +740,12 @@ namespace eg {
 					Commands::ExecuteRawValueCommand(&component.LineSpacing, lineSpacing, "TextComponent-Line Spacing");
 			}, m_Context);
 
-		DrawComponent<AudioListenerComponent>("Audio Listener", entity, [](auto& component)
+		DrawComponent<AudioSourceComponent>("Audio Source", entity, [](auto& component)
 		{
-			if (component.Audio.GetPath()!="") {
-				ImGui::Button(component.Audio.GetFileName().c_str(), {100.0f, 0.0f});
-			}else ImGui::Button("Audio", { 100.0f, 0.0f });
+			if (component.Audio.GetPath() != "") {
+				ImGui::Button(component.Audio.GetFileName().c_str(), { 100.0f, 0.0f });
+			}
+			else ImGui::Button("Audio", { 100.0f, 0.0f });
 
 			if (ImGui::BeginDragDropTarget())
 			{
@@ -757,6 +759,11 @@ namespace eg {
 				}
 				ImGui::EndDragDropTarget();
 			}
+		}, m_Context);
+
+		DrawComponent<AudioListenerComponent>("Audio Listener", entity, [](auto& component)
+		{
+			ImGui::Text("i am an audio listener");
 		}, m_Context);
 	}
 }

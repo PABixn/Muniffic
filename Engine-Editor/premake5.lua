@@ -26,7 +26,7 @@ project "Engine-Editor"
 	
 	links
 	{
-		"Engine"
+		"Engine",
 	}
 	
 	filter "system:windows"

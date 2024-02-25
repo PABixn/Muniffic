@@ -235,8 +235,13 @@ namespace eg
 	{
 		if (!entity.HasComponent<AudioListenerComponent>())
 			entity.AddComponent<AudioListenerComponent>();
-		entity.GetComponent<AudioListenerComponent>().Audio.OpenAudio((component->Audio.GetPath().string()));
-
+	}
+	template<>
+	void Commands::SetComponent<AudioSourceComponent>(Entity& entity, AudioSourceComponent* component)
+	{
+		if (!entity.HasComponent<AudioSourceComponent>())
+			entity.AddComponent<AudioSourceComponent>();
+		entity.GetComponent<AudioSourceComponent>().Audio.SetPath((component->Audio.GetPath().string()));
 	}
 
 	template<typename T>

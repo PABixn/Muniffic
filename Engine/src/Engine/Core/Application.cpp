@@ -6,8 +6,6 @@
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Project/Project.h"
-#include "SFML/Audio.hpp"
-
 namespace eg
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -17,6 +15,7 @@ namespace eg
 	Application::Application(const ApplicationSpecification applicationSpec)
 		: m_Specification(applicationSpec)
 	{
+		
 		EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
