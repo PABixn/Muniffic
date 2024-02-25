@@ -5,7 +5,6 @@
 #include "Engine/Renderer/RenderCommand.h"
 #include "Engine/Renderer/MSDFData.h"
 #include "UniformBuffer.h"
-#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -227,7 +226,6 @@ namespace eg {
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 		s_Data.TextureSlotIndex = 1;
-		ConsolePanel::Log("Renderer2D: Shutdown", ConsolePanel::LogType::Info);
 	}
 
 
@@ -237,7 +235,6 @@ namespace eg {
 
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
-		ConsolePanel::Log("Renderer2D: Scene Began", ConsolePanel::LogType::Info);
 		StartBatch();
 	}
 
@@ -247,7 +244,6 @@ namespace eg {
 		
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
-		ConsolePanel::Log("Renderer2D: Scene Began", ConsolePanel::LogType::Info);
 		StartBatch();
 	}
 
@@ -256,7 +252,6 @@ namespace eg {
 		EG_PROFILE_FUNCTION();
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
-		ConsolePanel::Log("Renderer2D: Scene Began", ConsolePanel::LogType::Info);
 		StartBatch();
 
 	}
@@ -266,7 +261,6 @@ namespace eg {
 		uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
 		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 		Flush();
-		ConsolePanel::Log("Renderer2D: Scene Ended", ConsolePanel::LogType::Info);
 	}
 
 	void Renderer2D::Flush() {
@@ -513,7 +507,6 @@ namespace eg {
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
-		ConsolePanel::Log("Renderer2D: Quad Drew", ConsolePanel::LogType::Info);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color) {
@@ -854,7 +847,6 @@ namespace eg {
 
 	void Renderer2D::ResetStats() {
 		memset(&s_Data.Stats, 0, sizeof(Statistics));
-		ConsolePanel::Log("Renderer2D: Stats Reset", ConsolePanel::LogType::Info);
 	}
 
 	Renderer2D::Statistics Renderer2D::GetStats() {

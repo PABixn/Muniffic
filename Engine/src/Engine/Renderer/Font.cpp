@@ -49,7 +49,7 @@ namespace eg {
 			if (!fontHandle)
 			{
 				EG_CORE_ERROR("Failed to load font: {0}", font.string());
-				ConsolePanel::Log("Failed to load font: " + font.string(), ConsolePanel::LogType::Error);
+				ConsolePanel::Log("File: Font.cpp - Failed to load font: " + font.string(), ConsolePanel::LogType::Error);
 				return;
 			}
 
@@ -74,7 +74,7 @@ namespace eg {
 			int glyphsLoaded = m_Data->FontGeometry.loadCharset(fontHandle, fontScale, charset);
 
 			EG_CORE_INFO("Loaded {} glyphs from font (out of{})", glyphsLoaded, charset.size());
-			ConsolePanel::Log("Loaded " + std::to_string(glyphsLoaded) + " glyphs from font (out of " + std::to_string(charset.size()) + ")", ConsolePanel::LogType::Info);
+			ConsolePanel::Log("File: Font.cpp - Loaded " + std::to_string(glyphsLoaded) + " glyphs from font (out of " + std::to_string(charset.size()) + ")", ConsolePanel::LogType::Info);
 
 			double emSize = 40.0;
 

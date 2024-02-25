@@ -49,7 +49,7 @@ namespace eg
 		catch (const YAML::Exception& e)
 		{
 			EG_CORE_ERROR("Failed to load project file '{0}': {1}", path.string(), e.what());
-			ConsolePanel::Log("Failed to load project file: " + path.string(), ConsolePanel::LogType::Error);
+			ConsolePanel::Log("File: ProjectSerializer.cpp - Failed to load project file: " + path.string(), ConsolePanel::LogType::Error);
 			return false;
 		}
 
@@ -57,7 +57,7 @@ namespace eg
 		if (!projectNode)
 		{
 			EG_CORE_ERROR("Invalid project file '{0}'", path.string());
-			ConsolePanel::Log("Invalid project file: " + path.string(), ConsolePanel::LogType::Error);
+			ConsolePanel::Log("File: ProjectSerializer.cpp - Invalid project file: " + path.string(), ConsolePanel::LogType::Error);
 			return false;
 		}
 
@@ -66,7 +66,7 @@ namespace eg
 		config.AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
 		config.SceneDirectory = projectNode["SceneDirectory"].as<std::string>();
 		config.ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();
-		ConsolePanel::Log("Successfully loaded: " + path.string(), ConsolePanel::LogType::Info);
+		ConsolePanel::Log("File: ProjectSerializer.cpp - Successfully loaded: " + path.string(), ConsolePanel::LogType::Info);
 		return true;
 	}
 }

@@ -82,7 +82,6 @@ namespace eg {
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
 		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false)) {
-			ConsolePanel::Log("Drawing Entity Node failed", ConsolePanel::LogType::Error);
 			return;
 		}
 		bool opened = false;

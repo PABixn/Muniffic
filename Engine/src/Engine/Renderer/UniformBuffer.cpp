@@ -12,15 +12,15 @@ namespace eg {
 		{
 		case RendererAPI::API::None:    
 			EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); 
-			ConsolePanel::Log("RendererAPI::None is currently not supported!", ConsolePanel::LogType::Error);
+			ConsolePanel::Log("File: UniformBuffer.cpp - RendererAPI::None is currently not supported!", ConsolePanel::LogType::Error);
 			return nullptr;
 		case RendererAPI::API::OpenGL:  
-			ConsolePanel::Log("Successfully Created UniformBuffer", ConsolePanel::LogType::Info);
+			ConsolePanel::Log("File: UniformBuffer.cpp - Successfully Created UniformBuffer", ConsolePanel::LogType::Info);
 			return CreateRef<OpenGLUniformBuffer>(size, binding);
 		}
 
 		EG_CORE_ASSERT(false, "Unknown RendererAPI!");
-		ConsolePanel::Log("Unknown RendererAPI!", ConsolePanel::LogType::Error);
+		ConsolePanel::Log("File: UniformBuffer.cpp - Unknown RendererAPI!", ConsolePanel::LogType::Error);
 		return nullptr;
 	}
 

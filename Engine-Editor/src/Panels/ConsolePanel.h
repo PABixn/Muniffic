@@ -9,6 +9,8 @@
 #include <string>
 #include <xstring>
 #include <unordered_map>
+#include <chrono>
+#include <ctime>
 
 namespace eg {
 	
@@ -35,7 +37,8 @@ namespace eg {
 		static void Log(const std::string& message, LogType type);
 		void Draw();
 		static std::vector<LogMessage*> Logs;
-	private:
-		friend class Entity;
+		static void ClearLogs();
+		static std::string getCurrentTime();
+
 	};
 }

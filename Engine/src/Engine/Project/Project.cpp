@@ -12,7 +12,7 @@ namespace eg {
 	Ref<Project> Project::New()
 	{
 		s_ActiveProject = CreateRef<Project>();
-		ConsolePanel::Log("Project created successfully", ConsolePanel::LogType::Info);
+		ConsolePanel::Log("File: Project.cpp - Project created successfully", ConsolePanel::LogType::Info);
 		return s_ActiveProject;
 	}
 
@@ -22,10 +22,10 @@ namespace eg {
 		if (serializer.Serialize(path))
 		{
 			s_ActiveProject->m_ProjectDirectory = path.parent_path();
-			ConsolePanel::Log("Project saved successfully", ConsolePanel::LogType::Info);
+			ConsolePanel::Log("File: Project.cpp - Project saved successfully", ConsolePanel::LogType::Info);
 			return true;
 		}
-		ConsolePanel::Log("Error during project saving", ConsolePanel::LogType::Error);
+		ConsolePanel::Log("File: Project.cpp - Error during project saving", ConsolePanel::LogType::Error);
 		return false;
 	}
 
@@ -37,10 +37,10 @@ namespace eg {
 		{
 			project->m_ProjectDirectory = path.parent_path();
 			s_ActiveProject = project;
-			ConsolePanel::Log("Project loaded successfully", ConsolePanel::LogType::Info);
+			ConsolePanel::Log("File: Project.cpp - Project loaded successfully", ConsolePanel::LogType::Info);
 			return s_ActiveProject;
 		}
-		ConsolePanel::Log("Error during project loading", ConsolePanel::LogType::Error);
+		ConsolePanel::Log("File: Project.cpp - Error during project loading", ConsolePanel::LogType::Error);
 		return nullptr;
 	}
 }

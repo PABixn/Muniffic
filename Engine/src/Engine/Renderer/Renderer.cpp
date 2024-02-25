@@ -12,12 +12,12 @@ namespace eg {
 		EG_PROFILE_FUNCTION();
 		RenderCommand::Init();
 		Renderer2D::Init();
-		ConsolePanel::Log("Renderer Initialized", ConsolePanel::LogType::Info);
+		ConsolePanel::Log("File: Renderer.cpp - Renderer Initialized", ConsolePanel::LogType::Info);
 	}
 
 	void Renderer::Shutdown()
 	{
-		ConsolePanel::Log("Renderer Shutdown", ConsolePanel::LogType::Info);
+		ConsolePanel::Log("File: Renderer.cpp - Renderer Shutdown", ConsolePanel::LogType::Info);
 		Renderer2D::Shutdown();
 	}
 

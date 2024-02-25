@@ -88,7 +88,7 @@ namespace eg {
 
 		// Copy components (except IDComponent and TagComponent)
 		CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
-		ConsolePanel::Log("Scene copied", ConsolePanel::LogType::Info);
+		ConsolePanel::Log("File: Scene.cpp - Scene copied", ConsolePanel::LogType::Info);
 		return scene;
 	}
 
@@ -107,7 +107,7 @@ namespace eg {
 
 		m_EntityMap[uuid] = (entt::entity)entity;
 		m_EntityInfoMap[uuid] = new EntityInfo(NULL);
-		ConsolePanel::Log("Entity created: " + tag.Tag, ConsolePanel::LogType::Info);
+		ConsolePanel::Log("File: Scene.cpp - Entity created: " + tag.Tag, ConsolePanel::LogType::Info);
 		return entity;
 	}
 
@@ -118,7 +118,7 @@ namespace eg {
 		m_EntityMap.erase(entity.GetUUID());
 		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
-		ConsolePanel::Log("Entity destroyed", ConsolePanel::LogType::Info);
+		ConsolePanel::Log("File: Scene.cpp - Entity destroyed", ConsolePanel::LogType::Info);
 	}
 
 	void Scene::OnRuntimeStart()
