@@ -105,6 +105,7 @@ namespace eg
 				std::filesystem::path relativePath(path);
 				const wchar_t* pathStr = relativePath.c_str();
 				ImGui::SetDragDropPayload("ContentBrowserPanel", pathStr, (wcslen(pathStr)+1) * sizeof(wchar_t));
+				ImGui::Text(name.c_str());
 				ImGui::EndDragDropSource();
 			}
 

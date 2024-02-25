@@ -5,6 +5,7 @@
 #include "Engine/Renderer/EditorCamera.h"
 
 #include "../../../vendor/entt/include/entt.hpp"
+#include "EntityInfo.h"
 
 class b2World;
 
@@ -82,6 +83,7 @@ namespace eg {
 		int m_StepFrames = 0;
 
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
+		std::unordered_map<UUID, EntityInfo*> m_EntityInfoMap;
 
 		friend class Entity;
 		friend class SceneHierarchyPanel;

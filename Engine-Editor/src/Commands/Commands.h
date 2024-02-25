@@ -2,6 +2,7 @@
 #include <string>
 #include "Engine.h"
 #include <variant>
+#include <cstddef>
 
 namespace eg
 {
@@ -9,7 +10,16 @@ namespace eg
 	bool GetIsSaved();
 	class Commands
 	{
+	public:
+
 		const static int MAX_COMMANDS = 200;
+
+		enum class InheritanceCommandType
+		{
+			COPY_COMPONENT,
+			COPY_COMPONENT_VALUES,
+			COPY_COMPONENT_AND_VALUES
+		};
 
 		using AllSavedComponents = std::tuple<std::optional<TagComponent>,
 			std::optional<TransformComponent>,
@@ -20,37 +30,32 @@ namespace eg
 			std::optional<RigidBody2DComponent>,
 			std::optional<BoxCollider2DComponent>,
 			std::optional<CircleCollider2DComponent>,
-			std::optional<TextComponent>>;
+			std::optional<TextComponent>,
+			std::optional<SpriteRendererSTComponent>>;
 
-	public:
 		struct CommandArgs
 		{
 		public:
 			CommandArgs(const std::string& name, Entity entity,
-			Ref<Scene>& context,
-			Entity& selectionContext)
-				: name(name), entity(entity), m_Context(context), selectionContext(selectionContext) {  }
+				Ref<Scene>& context,
+				Entity& selectionContext, std::optional<Entity> parent = std::nullopt)
+				: m_Name(name), m_Entity(entity), m_Context(context), m_SelectionContext(selectionContext), m_Parent(parent) {  }
 
-			const std::string& name;
-			Entity entity;
+			const std::string& m_Name;
+			Entity m_Entity;
 			Ref<Scene>& m_Context;
-			Entity& selectionContext;
-		};
-
-		struct SavedEntity
-		{
-		public:
-			SavedEntity(const std::string& name, UUID uuid)
-				: name(name), uuid(uuid) {  }
-
-			SavedEntity() = default;
-
-			std::string name;
-			UUID uuid;
+			Entity& m_SelectionContext;
+			std::optional<Entity> m_Parent;
 		};
 
 		struct EntitySave
 		{
+		public:
+			EntitySave(const std::string& name, UUID uuid)
+				: m_Name(name), m_UUID(uuid) {  }
+
+			EntitySave() = default;
+
 			AllSavedComponents components;
 
 			AllSavedComponents GetAllComponents()
@@ -64,7 +69,8 @@ namespace eg
 					GetComponent<RigidBody2DComponent>(),
 					GetComponent<BoxCollider2DComponent>(),
 					GetComponent<CircleCollider2DComponent>(),
-					GetComponent<TextComponent>());
+					GetComponent<TextComponent>(),
+					GetComponent<SpriteRendererSTComponent>());
 			}
 
 			template<typename T>
@@ -78,6 +84,10 @@ namespace eg
 			{
 				return std::get<std::optional<T>>(components);
 			}
+
+			std::string m_Name;
+			UUID m_UUID;
+			UUID m_Parent;
 		};
 
 		class Command
@@ -121,7 +131,6 @@ namespace eg
 			std::function<void(T)> m_Function;
 		};
 
-
 		template<typename T>
 		class ChangeRawValueCommand : public Command
 		{
@@ -138,7 +147,7 @@ namespace eg
 			{
 				m_Value = *m_ValuePtr;
 				*m_ValuePtr = m_PreviousValue;
-
+				
 				SetCurrentCommand(true);
 			}
 
@@ -155,6 +164,47 @@ namespace eg
 			T* m_ValuePtr;
 			T m_Value;
 			T m_PreviousValue;
+			const std::string m_Label;
+		};
+
+		template<typename T, typename Component>
+		class ChangeRawComponentValueCommand : public Command
+		{
+		public:
+			ChangeRawComponentValueCommand(T* value_ptr, T previousValue, Entity entity, const std::string label)
+				: m_Entity(entity), m_ValuePtr(value_ptr), m_PreviousValue(previousValue), m_Label(label), m_Value(*value_ptr)
+			{
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs args) override {};
+
+			void Undo() override
+			{
+				m_Value = *m_ValuePtr;
+				*m_ValuePtr = m_PreviousValue;
+
+				m_Entity.ApplyValueToChildren<T, Component>(m_ValuePtr);
+
+				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				*m_ValuePtr = m_Value;
+
+				m_Entity.ApplyValueToChildren<T, Component>(m_ValuePtr);
+
+				SetCurrentCommand(false);
+			}
+
+			const std::string GetLabel() const { return m_Label; }
+
+		protected:
+			T* m_ValuePtr;
+			T m_Value;
+			T m_PreviousValue;
+			Entity m_Entity;
 			const std::string m_Label;
 		};
 
@@ -231,7 +281,7 @@ namespace eg
 				if (!m_SelectionContext.HasComponent<T>())
 				{
 					m_SelectionContext.AddComponent<T>();
-					Commands::SetComponent(m_SelectionContext, &m_Component);
+					Entity::SetComponent(m_SelectionContext, &m_Component);
 				}
 				SetCurrentCommand(true);
 			}
@@ -280,7 +330,7 @@ namespace eg
 			void Redo() override;
 
 		protected:
-			SavedEntity m_CreatedEntity;
+			EntitySave m_CreatedEntity;
 		};
 
 		class DeleteEntityCommand : public EntityCommand
@@ -299,8 +349,144 @@ namespace eg
 			void Redo() override;
 
 		protected:
-			SavedEntity m_DeletedEntity;
-			EntitySave m_EntitySave;
+			EntitySave m_DeletedEntity;
+			std::vector<EntitySave> m_Children;
+		};
+
+		class ChangeParentCommand : public Command
+		{
+		public:
+			ChangeParentCommand(Entity& entity, std::optional<Entity> parent, Ref<Scene>& context)
+				: m_Entity(entity.GetUUID()), m_Context(context)
+			{
+				Commands::AddCommand(this);
+
+				m_Parent = parent.has_value() ? std::optional(parent.value().GetUUID()) : std::nullopt;
+				m_PreviousParent = entity.GetParent().has_value() ? std::optional(entity.GetParent().value().GetUUID()) : std::nullopt;
+
+				ChangeParent(entity, parent);
+			}
+
+			void Execute(CommandArgs arg) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_Entity;
+			std::optional<UUID> m_Parent;
+			std::optional<UUID> m_PreviousParent;
+			Ref<Scene>& m_Context;
+		};
+
+		template<typename Component>
+		class InheritComponentCommand : public Command
+		{
+		public:
+			InheritComponentCommand(Entity& entity, Ref<Scene>& context, bool isUndo, bool applyToEntity)
+				: m_Entity(entity.GetUUID()), m_isUndo(isUndo), m_applyToEntity(applyToEntity), m_Context(context)
+			{
+				Commands::AddCommand(this);
+
+				entity.InheritComponentInChildren<Component>(m_applyToEntity, m_isUndo);
+			}
+
+			void Execute(CommandArgs arg) override {};
+
+			void Undo() override
+			{
+				Entity entity = m_Context->GetEntityByUUID(m_Entity);
+
+				entity.InheritComponentInChildren<Component>(m_applyToEntity, !m_isUndo);
+
+				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				Entity entity = m_Context->GetEntityByUUID(m_Entity);
+
+				entity.InheritComponentInChildren<Component>(m_applyToEntity, m_isUndo);
+
+				SetCurrentCommand(false);
+			}
+
+
+		protected:
+			UUID m_Entity;
+			bool m_isUndo;
+			bool m_applyToEntity;
+			Ref<Scene>& m_Context;
+		};
+
+		template<typename T>
+		class ManageComponentInheritanceCommand : public Command
+		{
+		public:
+			ManageComponentInheritanceCommand(Entity& entity, Ref<Scene>& context, InheritanceCommandType commandType, bool isUndo)
+				: m_Entity(entity.GetUUID()), m_CommandType(commandType), m_isUndo(isUndo), m_Context(context)
+			{
+				switch (commandType)
+				{
+					case InheritanceCommandType::COPY_COMPONENT: entity.CopyComponentToChildren<T>(isUndo); break;
+					case InheritanceCommandType::COPY_COMPONENT_VALUES: entity.CopyComponentValuesToChildren<T>(m_PreviousValues); break;
+					case InheritanceCommandType::COPY_COMPONENT_AND_VALUES: 
+					{
+						entity.CopyComponentToChildren<T>(isUndo);
+						entity.CopyComponentValuesToChildren<T>(m_PreviousValues);
+						break;
+					}
+				}
+
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs arg) override {};
+
+			void Undo() override
+			{
+				Entity entity = m_Context->GetEntityByUUID(m_Entity);
+
+				switch (m_CommandType)
+				{
+					case InheritanceCommandType::COPY_COMPONENT: entity.CopyComponentToChildren<T>(!m_isUndo); break;
+					case InheritanceCommandType::COPY_COMPONENT_VALUES: entity.RevertComponentValuesInChildren<T>(m_PreviousValues); break;
+					case InheritanceCommandType::COPY_COMPONENT_AND_VALUES:
+					{
+						entity.CopyComponentToChildren<T>(!m_isUndo);
+						entity.RevertComponentValuesInChildren<T>(m_PreviousValues);
+						break;
+					}
+					
+				}
+
+				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				Entity entity = m_Context->GetEntityByUUID(m_Entity);
+
+				switch (m_CommandType)
+				{
+					case InheritanceCommandType::COPY_COMPONENT: entity.CopyComponentToChildren<T>(m_isUndo); break;
+					case InheritanceCommandType::COPY_COMPONENT_VALUES: entity.CopyComponentValuesToChildren<T>(m_PreviousValues); break;
+					case InheritanceCommandType::COPY_COMPONENT_AND_VALUES:
+					{
+						entity.CopyComponentToChildren<T>(m_isUndo);
+						entity.CopyComponentValuesToChildren<T>(m_PreviousValues);
+						break;
+					}
+				}
+
+				SetCurrentCommand(false);
+			}
+
+		protected:
+			UUID m_Entity;
+			InheritanceCommandType m_CommandType;
+			bool m_isUndo;
+			Ref<Scene>& m_Context;
+			std::unordered_map<UUID, T> m_PreviousValues;
 		};
 
 		static void SetCurrentCommand(bool isUndo);
@@ -308,10 +494,32 @@ namespace eg
 		static bool CanRevert(bool isUndo);
 		static Command* GetCurrentCommand(int offset = 0);
 		static int currentCommandIndex;
-		template<typename T>
-		static void SetComponent(Entity& entity, T* component);
 		static EntitySave SaveEntity(Entity& entity);
 		static void RestoreEntity(Entity& entity, EntitySave& entitySave);
+		static void ChangeParent(Entity& entity, std::optional<Entity> parent);
+
+		template<typename... Component>
+		static void SetInheritedComponents(ComponentGroup<Component...>, Entity& entity, std::optional<Entity> parent)
+		{
+			(TryInheritInChildren<Component>(entity, parent), ...);
+		}
+
+		template<typename Component>
+		static void TryInheritInChildren(Entity& entity, std::optional<Entity> parent)
+		{
+			if (parent.has_value())
+			{
+				if (entity.HasComponent<Component>() && parent.value().HasComponent<Component>())
+				{
+					entity.InheritComponentInChildren<Component>(true, !parent.value().GetInheritableComponent<Component>()->isInheritedInChildren);
+				}
+			}
+			else
+			{
+				if(entity.HasComponent<Component>())
+					entity.GetInheritableComponent<Component>()->isInherited = false;
+			}
+		}
 
 		template<typename T>
 		static Command* ExecuteValueCommand(std::function<void(T)> function, T value, T previousValue, const std::string label, bool bypass = false)
@@ -346,14 +554,47 @@ namespace eg
 			return command;
 		}
 
-		template<typename T>
-		static Command* ExecuteCommand(CommandArgs args)
+		template<typename T, typename Component>
+		static Command* ExecuteRawValueCommand(T* value_ptr, T previousValue, Entity entity, const std::string label, bool bypass = false)
 		{
-			Command* command = new T(args.m_Context, args.selectionContext);
-			command->Execute(args);
+			Command* command = nullptr;
+			ChangeRawComponentValueCommand<T, Component>* previousCommand = dynamic_cast<ChangeRawComponentValueCommand<T, Component>*>(GetCurrentCommand());
+			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
+				Command* command = new ChangeRawComponentValueCommand<T, Component>(value_ptr, previousValue, entity, label);
+
+			entity.ApplyValueToChildren<T, Component>(value_ptr);
+
 			return command;
 		}
 
+		static Command* ExecuteChangeParentCommand(Entity& entity, std::optional<Entity> parent, Ref<Scene>& context)
+		{
+			Command* command = new ChangeParentCommand(entity, parent, context);
+			return command;
+		}
+
+		template<typename Component>
+		static Command* ExecuteInheritComponentCommand(Entity& entity, Ref<Scene>& context, bool isUndo = false, bool applyToEntity = false)
+		{
+			Command* command = new InheritComponentCommand<Component>(entity, context, isUndo, applyToEntity);
+			return command;
+		}
+
+		template<typename Component>
+		static Command* ExecuteManageComponentInheritanceCommand(Entity& entity, Ref<Scene>& context, InheritanceCommandType commandType, bool isUndo = false)
+		{
+			Command* command = new ManageComponentInheritanceCommand<Component>(entity, context, commandType, isUndo);
+			return command;
+		}
+
+		template<typename T>
+		static Command* ExecuteCommand(CommandArgs args)
+		{
+			Command* command = new T(args.m_Context, args.m_SelectionContext);
+			command->Execute(args);
+			return command;
+		}
+		 
 	private:
 		static std::vector<Commands::Command*> commandHistory;
 

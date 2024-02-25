@@ -1,5 +1,4 @@
 #include "egpch.h"
-#include "Scene.h"
 
 #include "Components.h"
 #include "ScriptableEntity.h"
@@ -85,6 +84,7 @@ namespace eg {
 			const auto& tag = srcSceneRegistry.get<TagComponent>(entity).Tag;
 			Entity newEntity = scene->CreateEntityWithID(uuid, tag);
 			enttMap[uuid] = (entt::entity)newEntity;
+			scene->m_EntityInfoMap[uuid] = other->m_EntityInfoMap[uuid];
 		}
 
 		// Copy components (except IDComponent and TagComponent)
@@ -107,13 +107,17 @@ namespace eg {
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityMap[uuid] = (entt::entity)entity;
+		m_EntityInfoMap[uuid] = new EntityInfo(NULL);
 
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		if (entity.GetParent().has_value())
+			entity.GetParent().value().RemoveChild(entity);
 		m_EntityMap.erase(entity.GetUUID());
+		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 	}
 
@@ -328,10 +332,21 @@ namespace eg {
 
 		// Draw sprites
 		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+			}
+		}
+
+		// Draw Subtexture sprites
+		{
+			auto group = m_Registry.view<TransformComponent, SpriteRendererSTComponent>();
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererSTComponent>(entity);
 
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 			}
@@ -474,6 +489,8 @@ namespace eg {
 		static_assert(sizeof(T) == 0);
 	}
 
+	
+
 	template<>
 	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
 	{
@@ -533,6 +550,11 @@ namespace eg {
 
 	template<>
 	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteRendererSTComponent>(Entity entity, SpriteRendererSTComponent& component)
 	{
 	}
 

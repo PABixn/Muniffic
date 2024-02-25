@@ -172,6 +172,20 @@ namespace eg {
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 		out << YAML::Key << "Name" << YAML::Value << "Cube";
 
+		if (entity.GetParent().has_value())
+			out << YAML::Key << "Parent" << YAML::Value << entity.GetParent().value().GetUUID();
+
+		if (entity.GetChildren().size() > 0)
+		{
+			out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
+
+			for (auto child : entity.GetChildren())
+				out << YAML::Value << child.GetUUID();
+
+			out << YAML::EndSeq; // EntityInfo
+		}
+
+
 		if (entity.HasComponent<TagComponent>())
 		{
 			auto& tag = entity.GetComponent<TagComponent>().Tag;
@@ -189,6 +203,8 @@ namespace eg {
 			out << YAML::Key << "Translation" << YAML::Value << transform.Translation;
 			out << YAML::Key << "Rotation" << YAML::Value << transform.Rotation;
 			out << YAML::Key << "Scale" << YAML::Value << transform.Scale;
+			out << YAML::Key << "IsInherited" << YAML::Value << transform.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << transform.isInheritedInChildren;
 			out << YAML::EndMap; // TransformComponent
 		}
 
@@ -198,10 +214,28 @@ namespace eg {
 			out << YAML::Key << "SpriteRendererComponent";
 			out << YAML::BeginMap; // SpriteRendererComponent
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
-			out << YAML::Key << "TilignFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
+			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 			if(spriteRendererComponent.Texture)
 				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.Texture->GetPath();
+			out << YAML::Key << "IsInherited" << YAML::Value << spriteRendererComponent.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << spriteRendererComponent.isInheritedInChildren;
 			out << YAML::EndMap; // SpriteRendererComponent
+		}
+
+		if (entity.HasComponent<SpriteRendererSTComponent>())
+		{
+			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererSTComponent>();
+			out << YAML::Key << "SpriteRendererSTComponent";
+			out << YAML::BeginMap; // SpriteRendererComponent
+			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
+			if (spriteRendererComponent.SubTexture->GetTexture())
+			{
+				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.SubTexture->GetTexture()->GetPath();
+				out << YAML::Key << "MinCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(0);
+				out << YAML::Key << "MaxCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(2);
+			}
+			out << YAML::EndMap; 
 		}
 
 		if (entity.HasComponent<CircleRendererComponent>())
@@ -212,6 +246,8 @@ namespace eg {
 			out << YAML::Key << "Color" << YAML::Value << circleRendererComponent.Color;
 			out << YAML::Key << "Thickness" << YAML::Value << circleRendererComponent.Thickness;
 			out << YAML::Key << "Fade" << YAML::Value << circleRendererComponent.Fade;
+			out << YAML::Key << "IsInherited" << YAML::Value << circleRendererComponent.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << circleRendererComponent.isInheritedInChildren;
 			out << YAML::EndMap; // CircleRendererComponent
 		}
 
@@ -237,6 +273,8 @@ namespace eg {
 			out << YAML::Key << "Primary" << YAML::Value << cameraComponent.Primary;
 			out << YAML::Key << "FixedAspectRatio" << YAML::Value << cameraComponent.FixedAspectRatio;
 
+			out << YAML::Key << "IsInherited" << YAML::Value << cameraComponent.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << cameraComponent.isInheritedInChildren;
 			out << YAML::EndMap; // CameraComponent
 		}
 
@@ -287,6 +325,9 @@ namespace eg {
 				}
 				out << YAML::EndSeq;
 			}
+
+			out << YAML::Key << "IsInherited" << YAML::Value << scriptComponent.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << scriptComponent.isInheritedInChildren;
 			out << YAML::EndMap; // ScriptComponent
 
 		}
@@ -297,6 +338,8 @@ namespace eg {
 			out << YAML::BeginMap; // RigidBody2DComponent
 			out << YAML::Key << "Body Type" << YAML::Value << RigidBody2dBodyTypeToString(rb.Type);
 			out << YAML::Key << "FixedRotation" << YAML::Value << rb.FixedRotation;
+			out << YAML::Key << "IsInherited" << YAML::Value << rb.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << rb.isInheritedInChildren;
 			out << YAML::EndMap; // RigidBody2DComponent
 		}
 
@@ -311,6 +354,8 @@ namespace eg {
 			out << YAML::Key << "Friction" << YAML::Value << bc.Friction;
 			out << YAML::Key << "Restitution" << YAML::Value << bc.Restitution;
 			out << YAML::Key << "RestitutionThreshold" << YAML::Value << bc.RestitutionThreshold;
+			out << YAML::Key << "IsInherited" << YAML::Value << bc.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << bc.isInheritedInChildren;
 			out << YAML::EndMap; // BoxCollider2DComponent
 		}
 
@@ -325,6 +370,8 @@ namespace eg {
 			out << YAML::Key << "Friction" << YAML::Value << cc.Friction;
 			out << YAML::Key << "Restitution" << YAML::Value << cc.Restitution;
 			out << YAML::Key << "RestitutionThreshold" << YAML::Value << cc.RestitutionThreshold;
+			out << YAML::Key << "IsInherited" << YAML::Value << cc.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << cc.isInheritedInChildren;
 			out << YAML::EndMap; // CircleCollider2DComponent
 		}
 
@@ -339,7 +386,8 @@ namespace eg {
 			out << YAML::Key << "Color" << YAML::Value << textComponent.Color;
 			out << YAML::Key << "Kerning" << YAML::Value << textComponent.Kerning;
 			out << YAML::Key << "LineSpacing" << YAML::Value << textComponent.LineSpacing;
-
+			out << YAML::Key << "IsInherited" << YAML::Value << textComponent.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << textComponent.isInheritedInChildren;
 			out << YAML::EndMap; // TextComponent
 		}
 
@@ -409,6 +457,19 @@ namespace eg {
 
 				Entity deserializedEntity = m_Scene->CreateEntityWithID(uuid, name);
 
+				if(entity["Parent"])
+					deserializedEntity.SetParent(entity["Parent"].as<UUID>());
+
+				auto children = entity["Children"];
+
+				if (children)
+				{
+					for (auto child : children)
+					{
+						deserializedEntity.AddChild(child.as<UUID>());
+					}
+				}
+
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
 				{
@@ -417,6 +478,10 @@ namespace eg {
 					tc.Translation = transformComponent["Translation"].as<glm::vec3>();
 					tc.Rotation = transformComponent["Rotation"].as<glm::vec3>();
 					tc.Scale = transformComponent["Scale"].as<glm::vec3>();
+					if(transformComponent["IsInherited"])
+						tc.isInherited = transformComponent["IsInherited"].as<bool>();
+					if(transformComponent["IsInheritedInChildren"])
+						tc.isInheritedInChildren = transformComponent["IsInheritedInChildren"].as<bool>();
 				}
 
 				YAML::Node cameraComponent = entity["CameraComponent"];
@@ -437,6 +502,11 @@ namespace eg {
 
 					cc.Primary = cameraComponent["Primary"].as<bool>();
 					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+
+					if(cameraComponent["IsInherited"])
+						cc.isInherited = cameraComponent["IsInherited"].as<bool>();
+					if(cameraComponent["IsInheritedInChildren"])
+						cc.isInheritedInChildren = cameraComponent["IsInheritedInChildren"].as<bool>();
 				}
 
 				auto scriptComponent = entity["ScriptComponent"];
@@ -490,6 +560,11 @@ namespace eg {
 							}
 						}
 					}
+
+					if(scriptComponent["IsInherited"])
+						sc.isInherited = scriptComponent["IsInherited"].as<bool>();
+					if(scriptComponent["IsInheritedInChildren"])
+						sc.isInheritedInChildren = scriptComponent["IsInheritedInChildren"].as<bool>();
 				}
 
 				auto spriteRendererComponent = entity["SpriteRendererComponent"];
@@ -504,6 +579,29 @@ namespace eg {
 						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
 						src.Texture = Texture2D::Create(texturePath);
 					}
+
+					if(spriteRendererComponent["IsInherited"])
+						src.isInherited = spriteRendererComponent["IsInherited"].as<bool>();
+					if(spriteRendererComponent["IsInheritedInChildren"])
+						src.isInheritedInChildren = spriteRendererComponent["IsInheritedInChildren"].as<bool>();
+				}
+
+				auto spriteRendererComponentST = entity["SpriteRendererSTComponent"];
+				if (spriteRendererComponentST)
+				{
+					auto& src = deserializedEntity.AddComponent<SpriteRendererSTComponent>();
+					src.Color = spriteRendererComponentST["Color"].as<glm::vec4>();
+					src.TilingFactor = spriteRendererComponentST["TilingFactor"].as<float>();
+					if (spriteRendererComponentST["TexturePath"])
+					{
+						std::string texturePath = spriteRendererComponentST["TexturePath"].as<std::string>();
+						auto path = Project::GetAssetFileSystemPath(texturePath);
+						auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
+						auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();
+						Ref<Texture2D> texture = Texture2D::Create(path.string());
+						src.SubTexture = CreateRef<SubTexture2D>(texture, minCoords, maxCoords);
+					}
+
 				}
 
 				auto circleRendererComponent = entity["CircleRendererComponent"];
@@ -513,6 +611,11 @@ namespace eg {
 					crc.Color = circleRendererComponent["Color"].as<glm::vec4>();
 					crc.Thickness = circleRendererComponent["Thickness"].as<float>();
 					crc.Fade = circleRendererComponent["Fade"].as<float>();
+
+					if(circleRendererComponent["IsInherited"])
+						crc.isInherited = circleRendererComponent["IsInherited"].as<bool>();
+					if(circleRendererComponent["IsInheritedInChildren"])
+						crc.isInheritedInChildren = circleRendererComponent["IsInheritedInChildren"].as<bool>();
 				}
 
 				auto rigidBody2DComponent = entity["RigidBody2DComponent"];
@@ -521,6 +624,11 @@ namespace eg {
 					auto& rb = deserializedEntity.AddComponent<RigidBody2DComponent>();
 					rb.Type = RigidBody2dBodyTypeFromString(rigidBody2DComponent["Body Type"].as<std::string>());
 					rb.FixedRotation = rigidBody2DComponent["FixedRotation"].as<bool>();
+
+					if(rigidBody2DComponent["IsInherited"])
+						rb.isInherited = rigidBody2DComponent["IsInherited"].as<bool>();
+					if(rigidBody2DComponent["IsInheritedInChildren"])
+						rb.isInheritedInChildren = rigidBody2DComponent["IsInheritedInChildren"].as<bool>();
 				}
 
 				auto boxCollider2DComponent = entity["BoxCollider2DComponent"];
@@ -533,6 +641,11 @@ namespace eg {
 					bc.Friction = boxCollider2DComponent["Friction"].as<float>();
 					bc.Restitution = boxCollider2DComponent["Restitution"].as<float>();
 					bc.RestitutionThreshold = boxCollider2DComponent["RestitutionThreshold"].as<float>();
+
+					if(boxCollider2DComponent["IsInherited"])
+						bc.isInherited = boxCollider2DComponent["IsInherited"].as<bool>();
+					if(boxCollider2DComponent["IsInheritedInChildren"])
+						bc.isInheritedInChildren = boxCollider2DComponent["IsInheritedInChildren"].as<bool>();
 				}
 
 				auto circleCollider2DComponent = entity["CircleCollider2DComponent"];
@@ -545,6 +658,11 @@ namespace eg {
 					cc.Friction = circleCollider2DComponent["Friction"].as<float>();
 					cc.Restitution = circleCollider2DComponent["Restitution"].as<float>();
 					cc.RestitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+
+					if(circleCollider2DComponent["IsInherited"])
+						cc.isInherited = circleCollider2DComponent["IsInherited"].as<bool>();
+					if(circleCollider2DComponent["IsInheritedInChildren"])
+						cc.isInheritedInChildren = circleCollider2DComponent["IsInheritedInChildren"].as<bool>();
 				}
 
 				auto textComponent = entity["TextComponent"];
@@ -556,6 +674,11 @@ namespace eg {
 					tc.Color = textComponent["Color"].as<glm::vec4>();
 					tc.Kerning = textComponent["Kerning"].as<float>();
 					tc.LineSpacing = textComponent["LineSpacing"].as<float>();
+
+					if(textComponent["IsInherited"])
+						tc.isInherited = textComponent["IsInherited"].as<bool>();
+					if(textComponent["IsInheritedInChildren"])
+						tc.isInheritedInChildren = textComponent["IsInheritedInChildren"].as<bool>();
 				}
 			}
 		}
