@@ -5,9 +5,3 @@ Resources:
     Width: 1200
     Height: 966
     Channels: 3
-  - ResourcePath: Textures
-    ImageName: baner1 (1)
-    Extension: .png
-    Width: 1000
-    Height: 200
-    Channels: 4

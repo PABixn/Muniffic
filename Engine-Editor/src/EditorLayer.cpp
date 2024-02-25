@@ -571,7 +571,7 @@ namespace eg
 				if (selectedEntity)
 				{
 					m_SceneHierarchyPanel.SetSelectedEntity({});
-					m_ActiveScene->DestroyEntity(selectedEntity);
+					Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", selectedEntity, m_ActiveScene, selectedEntity));
 				}
 			}
 			break;

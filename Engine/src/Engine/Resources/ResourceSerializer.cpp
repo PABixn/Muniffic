@@ -119,7 +119,6 @@ namespace eg
 			{
 				if(TextureResourceDataCache[keyPath] != nullptr)
 					delete TextureResourceDataCache[keyPath];
-				TextureResourceDataCache[keyPath] = nullptr;
 				TextureResourceDataCache.erase(keyPath);
 			}
 		}
