@@ -15,7 +15,6 @@ namespace eg {
 		ImGui::SetNextWindowSize(ImVec2(350, 350));*/
 		ImGui::Begin("Unsaved Changes", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 		ImGui::Text("Warning: Unsaved changes");
-		ConsolePanel::Log("You have unsaved changes", ConsolePanel::LogType::Warning);
 		bool SaveBttn = ImGui::Button("Save");
 		ImGui::SameLine();
 		bool NotSaveBttn = ImGui::Button("Don't save");

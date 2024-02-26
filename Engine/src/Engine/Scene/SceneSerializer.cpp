@@ -399,7 +399,7 @@ namespace eg {
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
-		ConsolePanel::Log("File: SceneSerializer.cpp - Scene serialized", ConsolePanel::LogType::Info);
+		//ConsolePanel::Log("File: SceneSerializer.cpp - Scene serialized", ConsolePanel::LogType::Info);
 	}
 
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
@@ -521,7 +521,7 @@ namespace eg {
 
 								if (fields.find(name) == fields.end()) {
 									EG_CORE_WARN("Field not found!");
-									ConsolePanel::Log("File: SceneSerializer.cpp - Field not found!", ConsolePanel::LogType::Error);
+									//ConsolePanel::Log("File: SceneSerializer.cpp - Field not found!", ConsolePanel::LogType::Error);
 									continue;
 								}
 								fieldInstance.Field = fields.at(fieldName);
