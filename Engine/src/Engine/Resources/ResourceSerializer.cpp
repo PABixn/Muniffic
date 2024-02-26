@@ -47,6 +47,7 @@ namespace eg
 				int width = resource["Width"].as<int>();
 				int height = resource["Height"].as<int>();
 				int channels = resource["Channels"].as<int>();
+				bool isSubTexture = resource["IsSubTexture"].as<bool>();
 
 				TextureResourceData* data = new TextureResourceData();
 				data->ResourcePath = resourcePath;
@@ -55,6 +56,17 @@ namespace eg
 				data->Width = width;
 				data->Height = height;
 				data->Channels = channels;
+				data->IsSubTexture = isSubTexture;
+
+				if (isSubTexture)
+				{
+					auto texCoords = resource["TexCoords"];
+					for (int i = 0; i < 4; i++)
+					{
+						auto coord = texCoords[i];
+						data->m_TexCoords[i] = { coord["x"].as<float>(), coord["y"].as<float>() };
+					}
+				}
 
 				CacheTexture(data);
 			}
@@ -78,6 +90,19 @@ namespace eg
 			textureOut << YAML::Key << "Width" << YAML::Value << value->Width;
 			textureOut << YAML::Key << "Height" << YAML::Value << value->Height;
 			textureOut << YAML::Key << "Channels" << YAML::Value << value->Channels;
+			textureOut << YAML::Key << "IsSubTexture" << YAML::Value << value->IsSubTexture;
+			if (value->IsSubTexture)
+			{
+				textureOut << YAML::Key << "TexCoords" << YAML::Value << YAML::BeginSeq;
+				for (int i = 0; i < 4; i++)
+				{
+					textureOut << YAML::BeginMap;
+					textureOut << YAML::Key << "x" << YAML::Value << value->m_TexCoords[i].x;
+					textureOut << YAML::Key << "y" << YAML::Value << value->m_TexCoords[i].y;
+					textureOut << YAML::EndMap;
+				}
+				textureOut << YAML::EndSeq;
+			}
 			textureOut << YAML::EndMap;
 		}
 

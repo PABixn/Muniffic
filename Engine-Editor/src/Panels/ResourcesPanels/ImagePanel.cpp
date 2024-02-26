@@ -35,10 +35,6 @@ namespace eg
 			((TextureResourceData*)m_ResourceData)->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
 			((TextureResourceData*)m_ResourceData)->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
 			((TextureResourceData*)m_ResourceData)->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
-			((TextureResourceData*)m_ResourceData)->Top = 0;
-			((TextureResourceData*)m_ResourceData)->Bottom = ((ImageResourceData*)m_LoadedResource->Data)->height;
-			((TextureResourceData*)m_ResourceData)->Left = 0;
-			((TextureResourceData*)m_ResourceData)->Right = ((ImageResourceData*)m_LoadedResource->Data)->width;
 			m_PreviewData = Texture2D::Create(path.string());
 		}
 	}
@@ -86,10 +82,6 @@ namespace eg
 			//ImGui::Text("Image Name: %s", ((TextureResourceData*)m_ResourceData)->imageName.c_str());
 			//ImGui::DragInt("Width", &((TextureResourceData*)m_ResourceData)->Width);
 			//ImGui::DragInt("Height", &((TextureResourceData*)m_ResourceData)->Height);
-			ImGui::DragInt("Top", &((TextureResourceData*)m_ResourceData)->Top);
-			ImGui::DragInt("Bottom", &((TextureResourceData*)m_ResourceData)->Bottom);
-			ImGui::DragInt("Left", &((TextureResourceData*)m_ResourceData)->Left);
-			ImGui::DragInt("Right", &((TextureResourceData*)m_ResourceData)->Right);
 			ImGui::DragInt("Channels", &((TextureResourceData*)m_ResourceData)->Channels, 1, 1, 4);
 			//Todo:: Add image preview, ability to change the image and choose the path to the resource
 
@@ -115,10 +107,6 @@ namespace eg
 		m_TextureData.Height = 0;
 		m_TextureData.Width = 0;
 		m_TextureData.Channels = 0;
-		m_TextureData.Top = 0;
-		m_TextureData.Bottom = 0;
-		m_TextureData.Left = 0;
-		m_TextureData.Right = 0;
 		m_TextureData.Extension = "png";
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		m_OriginalResourcePath = "";

@@ -5,3 +5,4 @@ Resources:
     Width: 1200
     Height: 966
     Channels: 3
+    IsSubTexture: false

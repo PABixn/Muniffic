@@ -38,8 +38,9 @@ namespace eg {
 
 	struct TextureResourceData
 	{
-		int Width = 0, Height = 0, OriginalHeight = 0, OriginalWidth = 0;
-		int Top = 0, Bottom = 0, Left = 0, Right = 0;
+		int Width = 0, Height = 0;
+		glm::vec2 m_TexCoords[4];
+		bool IsSubTexture = false;
 		int Channels = 0;
 		std::filesystem::path ResourcePath = "";
 		std::string ImageName = "";
