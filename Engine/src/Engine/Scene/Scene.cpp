@@ -7,7 +7,7 @@
 #include "Engine/Physics/Physics2D.h"
 
 #include <glm/glm.hpp>
-
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 #include "Entity.h"
 
 // Box2D
@@ -18,7 +18,6 @@
 #include <box2d/b2_circle_shape.h>
 
 namespace eg {
-
 	Scene::Scene()
 	{
 	}
@@ -89,7 +88,7 @@ namespace eg {
 
 		// Copy components (except IDComponent and TagComponent)
 		CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
-
+		ConsolePanel::Log("File: Scene.cpp - Scene copied", ConsolePanel::LogType::Info);
 		return scene;
 	}
 
@@ -108,7 +107,7 @@ namespace eg {
 
 		m_EntityMap[uuid] = (entt::entity)entity;
 		m_EntityInfoMap[uuid] = new EntityInfo(NULL);
-
+		ConsolePanel::Log("File: Scene.cpp - Entity created: " + tag.Tag, ConsolePanel::LogType::Info);
 		return entity;
 	}
 
@@ -119,6 +118,7 @@ namespace eg {
 		m_EntityMap.erase(entity.GetUUID());
 		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
+		ConsolePanel::Log("File: Scene.cpp - Entity destroyed", ConsolePanel::LogType::Info);
 	}
 
 	void Scene::OnRuntimeStart()

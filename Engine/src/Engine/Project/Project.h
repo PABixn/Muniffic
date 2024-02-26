@@ -69,7 +69,7 @@ namespace eg {
 			return s_ActiveProject->m_Config.StartScene; 
 		}
 		std::string GetProjectName() {
-			return m_Config.Name;
+			return "Untitled";
 		}
 
 	private:

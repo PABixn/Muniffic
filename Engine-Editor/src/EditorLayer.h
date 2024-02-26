@@ -4,6 +4,7 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Engine/Renderer/EditorCamera.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "Panels/ConsolePanel.h"
 
 
 namespace eg {
@@ -48,6 +49,7 @@ namespace eg {
 		void UI_Toolbar();
 	private:
 		friend class UnsavedChangesPanel;
+		friend class ConsolePanel;
 		OrthographicCameraController m_Camera;
 		//Temp
 		Ref<Shader> m_Shader;
@@ -92,6 +94,7 @@ namespace eg {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
+		Scope<ConsolePanel> m_ConsolePanel;
 
 		enum class SceneState
 		{
@@ -102,6 +105,7 @@ namespace eg {
 	public:
 		UnsavedChangesPanel* m_UnsavedChangesPanel;
 		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
+		
 
 	};
 

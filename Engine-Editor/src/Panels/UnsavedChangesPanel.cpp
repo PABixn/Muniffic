@@ -1,7 +1,7 @@
 #include "UnsavedChangesPanel.h"
+#include "ConsolePanel.h"
 namespace eg {
 	bool UnsavedChangesPanelRender = false;
-
 	void UnsavedChangesPanel::SetUnsavedChangesPanelRender(bool val) {
 		UnsavedChangesPanelRender = val;
 	}
@@ -17,9 +17,9 @@ namespace eg {
 		ImGui::Text("Warning: Unsaved changes");
 		bool SaveBttn = ImGui::Button("Save");
 		ImGui::SameLine();
-		bool NotSaveBttn = ImGui::Button("Don's save");
+		bool NotSaveBttn = ImGui::Button("Don't save");
 		ImGui::SameLine();
-		bool CancelBttn = ImGui::Button("cancel");
+		bool CancelBttn = ImGui::Button("Cancel");
 		if (SaveBttn) {
 			(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
 			Application::Get().Close();

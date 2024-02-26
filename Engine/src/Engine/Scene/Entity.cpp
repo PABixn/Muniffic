@@ -1,8 +1,7 @@
 #include "egpch.h"
 #include "Entity.h"
-
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 namespace eg {
-
 	Entity::Entity(entt::entity handle, Scene* scene)
 		: m_EntityHandle(handle), m_Scene(scene)
 	{
@@ -17,6 +16,7 @@ namespace eg {
 		auto& tagComponent = entity.GetComponent<TagComponent>();
 
 		tagComponent.Tag = component->Tag;
+		ConsolePanel::Log("File: Entity.cpp - Tag component set successfully", ConsolePanel::LogType::Info);
 	}
 
 	template<>
@@ -32,6 +32,7 @@ namespace eg {
 		transformComponent.Scale = component->Scale;
 		transformComponent.isInherited = component->isInherited;
 		transformComponent.isInheritedInChildren = component->isInheritedInChildren;
+		ConsolePanel::Log("File: Entity.cpp - Transform component set successfully", ConsolePanel::LogType::Info);
 	}
 
 	template<>
@@ -47,6 +48,7 @@ namespace eg {
 		spriteRendererComponent.TilingFactor = component->TilingFactor;
 		spriteRendererComponent.isInherited = component->isInherited;
 		spriteRendererComponent.isInheritedInChildren = component->isInheritedInChildren;
+		ConsolePanel::Log("File: Entity.cpp - Sprite Renderer component set successfully", ConsolePanel::LogType::Info);
 	}
 
 	template<>
@@ -79,6 +81,7 @@ namespace eg {
 		cameraComponent.Camera.SetOrthographic(component->Camera.GetOrthographicSize(), component->Camera.GetOrthographicNearClip(), component->Camera.GetOrthographicFarClip());
 		cameraComponent.isInherited = component->isInherited;
 		cameraComponent.isInheritedInChildren = component->isInheritedInChildren;
+		ConsolePanel::Log("File: Entity.cpp - Camera component set successfully", ConsolePanel::LogType::Info);
 	}
 
 	template<>
@@ -92,6 +95,7 @@ namespace eg {
 		scriptComponent.Name = component->Name;
 		scriptComponent.isInherited = component->isInherited;
 		scriptComponent.isInheritedInChildren = component->isInheritedInChildren;
+		ConsolePanel::Log("File: Entity.cpp - Script component set successfully", ConsolePanel::LogType::Info);
 	}
 
 	template<>
@@ -101,6 +105,7 @@ namespace eg {
 			entity.AddComponent<NativeScriptComponent>();
 
 		auto& nativeScriptComponent = entity.GetComponent<NativeScriptComponent>();
+		ConsolePanel::Log("File: Entity.cpp - Native Script component set successfully", ConsolePanel::LogType::Info);
 	}
 
 	template<>
@@ -116,6 +121,7 @@ namespace eg {
 		circleRendererComponent.Thickness = component->Thickness;
 		circleRendererComponent.isInherited = component->isInherited;
 		circleRendererComponent.isInheritedInChildren = component->isInheritedInChildren;
+		ConsolePanel::Log("File: Entity.cpp - Circle Renderer component set successfully", ConsolePanel::LogType::Info);
 	}
 
 	template<>
@@ -134,6 +140,7 @@ namespace eg {
 		boxCollider2DComponent.RestitutionThreshold = component->RestitutionThreshold;
 		boxCollider2DComponent.isInherited = component->isInherited;
 		boxCollider2DComponent.isInheritedInChildren = component->isInheritedInChildren;
+		ConsolePanel::Log("File: Entity.cpp - Box Collider 2D component set successfully", ConsolePanel::LogType::Info);
 	}
 
 	template<>
@@ -152,6 +159,7 @@ namespace eg {
 		circleCollider2DComponent.RestitutionThreshold = component->RestitutionThreshold;
 		circleCollider2DComponent.isInherited = component->isInherited;
 		circleCollider2DComponent.isInheritedInChildren = component->isInheritedInChildren;
+		ConsolePanel::Log("File: Entity.cpp - Circle Collider 2D component set successfully", ConsolePanel::LogType::Info);
 	}
 
 	template<>
@@ -166,6 +174,7 @@ namespace eg {
 		rigidBody2DComponent.FixedRotation = component->FixedRotation;
 		rigidBody2DComponent.isInherited = component->isInherited;
 		rigidBody2DComponent.isInheritedInChildren = component->isInheritedInChildren;
+		ConsolePanel::Log("File: Entity.cpp - Rigid Body 2D component set successfully", ConsolePanel::LogType::Info);
 	}
 
 	template<>
@@ -183,5 +192,6 @@ namespace eg {
 		textComponent.TextString = component->TextString;
 		textComponent.isInherited = component->isInherited;
 		textComponent.isInheritedInChildren = component->isInheritedInChildren;
+		ConsolePanel::Log("File: Entity.cpp - Text component set successfully", ConsolePanel::LogType::Info);
 	}
 }
