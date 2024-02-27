@@ -236,6 +236,7 @@ namespace eg
 		
 		m_ContentBrowserPanel->OnImGuiRender();
 		m_ConsolePanel->OnImGuiRender();
+		m_LayersPanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
@@ -732,6 +733,7 @@ namespace eg
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 			m_ConsolePanel = CreateScope<ConsolePanel>();
+			m_LayersPanel = CreateScope<LayersPanel>();
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		}
 		else

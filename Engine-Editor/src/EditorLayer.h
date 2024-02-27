@@ -5,6 +5,7 @@
 #include "Engine/Renderer/EditorCamera.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/ConsolePanel.h"
+#include "Panels/LayersPanel.h"
 
 
 namespace eg {
@@ -50,6 +51,7 @@ namespace eg {
 	private:
 		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;
+		friend class LayersPanel;
 		OrthographicCameraController m_Camera;
 		//Temp
 		Ref<Shader> m_Shader;
@@ -95,6 +97,7 @@ namespace eg {
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 		Scope<ConsolePanel> m_ConsolePanel;
+		Scope<LayersPanel> m_LayersPanel;
 
 		enum class SceneState
 		{
