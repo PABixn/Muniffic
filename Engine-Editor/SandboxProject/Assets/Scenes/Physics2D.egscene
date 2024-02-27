@@ -216,7 +216,7 @@ Entities:
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TilingFactor: 1
-      TexturePath: SandboxProject\Assets\Textures\baner1 (1).png
+      TexturePath:
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:

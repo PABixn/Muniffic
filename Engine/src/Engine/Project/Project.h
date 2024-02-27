@@ -77,6 +77,12 @@ namespace eg {
 			return s_ActiveProject->m_Config.StartScene; 
 		}
 
+		static const std::filesystem::path GetResourcesPath()
+		{
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			return s_ActiveProject->m_ProjectDirectory.parent_path();
+		}
+
 	private:
 		ProjectConfig m_Config;
 		std::filesystem::path m_ProjectDirectory;

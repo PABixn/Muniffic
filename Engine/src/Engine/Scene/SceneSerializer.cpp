@@ -594,7 +594,13 @@ namespace eg {
 					if (spriteRendererComponent["TexturePath"])
 					{
 						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
-						src.Texture = Texture2D::Create(texturePath);
+						if (std::filesystem::exists(texturePath))
+							src.Texture = Texture2D::Create(texturePath);
+						else
+						{
+							src.Texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							EG_CORE_WARN("Texture not found: {0}", texturePath);
+						}
 					}
 
 					if(spriteRendererComponent["IsInherited"])

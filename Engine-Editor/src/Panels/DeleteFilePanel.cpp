@@ -3,8 +3,15 @@
 namespace eg
 {
 	DeleteFilePanel::DeleteFilePanel()
-		: m_Result(FileDeleteMethod::Cancel), m_Show(false)
+		: m_Result(FileDeleteMethod::Cancel), m_Show(false), m_KeyPath(std::filesystem::path()), m_Type(ResourceType::None)
 	{ }
+
+	void DeleteFilePanel::ShowWindow(std::filesystem::path keyPath, ResourceType type)
+	{
+		m_Show = true;
+		m_KeyPath = keyPath;
+		m_Type = type;
+	}
 
 	void DeleteFilePanel::OnImGuiRender()
 	{

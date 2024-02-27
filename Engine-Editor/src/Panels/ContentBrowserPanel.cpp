@@ -39,6 +39,18 @@ namespace eg
 
 		ImGui::Columns(columnCount, 0, false);
 
+		if (m_DeleteFilePanel->GetResult() != FileDeleteMethod::Cancel)
+		{
+			if (m_DeleteFilePanel->GetResult() == FileDeleteMethod::DeleteFromProject)
+				Commands::ExecuteDeleteResourceCommand(m_DeleteFilePanel->GetKeyPath(), m_DeleteFilePanel->GetType());
+			else if (m_DeleteFilePanel->GetResult() == FileDeleteMethod::DeleteFromDisk)
+				Commands::ExecuteDeleteResourceCommand(m_DeleteFilePanel->GetKeyPath(), m_DeleteFilePanel->GetType(), true);
+
+			m_DeleteFilePanel->SetResult(FileDeleteMethod::Cancel);
+			m_DeleteFilePanel->SetKeyPath(std::filesystem::path());
+			m_DeleteFilePanel->SetType(ResourceType::None);
+		}
+
 		ResourceType type = ResourceUtils::GetResourceTypeFromText(m_CurrentDirectory.filename().string());
 
 		if (type == ResourceType::Image)
@@ -54,8 +66,7 @@ namespace eg
 				{
 					if (ImGui::MenuItem("Delete"))
 					{
-						DeleteFilePanel* deleteFilePanel = dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer())->GetDeleteFilePanel();
-						deleteFilePanel->m_Show = true;
+						m_DeleteFilePanel->ShowWindow(key, type);
 						ImGui::PopStyleColor();
 						ImGui::NextColumn();
 						ImGui::EndPopup();

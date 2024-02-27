@@ -116,7 +116,7 @@ namespace eg
 
 	void ResourceSerializer::CacheTexture(TextureResourceData* data)
 	{
-		std::filesystem::path keyPath = data->ResourcePath / std::filesystem::path(data->ImageName);
+		std::filesystem::path keyPath = data->ResourcePath / std::filesystem::path(data->ImageName + data->Extension);
 
 		if (TextureResourceDataCache.find(keyPath) != TextureResourceDataCache.end())
 		{
@@ -147,7 +147,7 @@ namespace eg
 				if (deleteFile)
 				{
 					std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
-					std::filesystem::remove(keyPath);
+					remove(finalPath.string().c_str());
 				}
 			}
 		}

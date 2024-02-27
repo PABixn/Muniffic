@@ -255,9 +255,10 @@ namespace eg
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		
+		m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
 		m_ContentBrowserPanel->OnImGuiRender();
 
-		if(m_DeleteFilePanel->m_Show)
+		if(m_DeleteFilePanel->IsShown())
 			m_DeleteFilePanel->OnImGuiRender();
 		
 		
