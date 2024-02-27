@@ -18,6 +18,8 @@ namespace eg {
 		virtual void OnUpdate(Timestep ts) override;
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& e) override;
+
+		DeleteFilePanel* GetDeleteFilePanel() { return m_DeleteFilePanel; }
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
@@ -97,6 +99,7 @@ namespace eg {
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
+		DeleteFilePanel* m_DeleteFilePanel;
 
 		enum class SceneState
 		{

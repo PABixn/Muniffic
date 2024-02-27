@@ -1,6 +1,9 @@
 #pragma once
+
 #include <filesystem>
 #include "Engine/Renderer/Texture.h"
+#include "DeleteFilePanel.h"
+
 namespace eg {
 	
 	class ContentBrowserPanel {

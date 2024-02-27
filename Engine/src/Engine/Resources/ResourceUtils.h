@@ -10,6 +10,17 @@ namespace eg
 	class ResourceUtils
 	{
 	public:
+		static void* GetResourcePointer(ResourceType type, std::filesystem::path& key)
+		{
+			switch (type)
+			{
+			case ResourceType::Image:
+				return ResourceSerializer::TextureResourceDataCache[key];
+			default:
+				return nullptr;
+			}
+		}
+
 		static std::filesystem::path GetMetadataPath(ResourceType type)
 		{
 			switch (type)

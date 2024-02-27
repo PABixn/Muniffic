@@ -5,6 +5,7 @@
 #include "Engine/Project/Project.h"
 #include "Engine/Resources/ResourceUtils.h"
 #include "Engine/Resources/ResourceSerializer.h"
+#include "../EditorLayer.h"
 
 namespace eg
 {
@@ -53,7 +54,8 @@ namespace eg
 				{
 					if (ImGui::MenuItem("Delete"))
 					{
-						ResourceSerializer::DeleteCachedResource(key, type);
+						DeleteFilePanel* deleteFilePanel = dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer())->GetDeleteFilePanel();
+						deleteFilePanel->m_Show = true;
 						ImGui::PopStyleColor();
 						ImGui::NextColumn();
 						ImGui::EndPopup();

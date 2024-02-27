@@ -256,6 +256,9 @@ namespace eg
 		m_SceneHierarchyPanel.OnImGuiRender();
 		
 		m_ContentBrowserPanel->OnImGuiRender();
+
+		if(m_DeleteFilePanel->m_Show)
+			m_DeleteFilePanel->OnImGuiRender();
 		
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
@@ -744,6 +747,7 @@ namespace eg
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
+			m_DeleteFilePanel = new DeleteFilePanel();
 		}
 	}
 

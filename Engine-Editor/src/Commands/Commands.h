@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include <variant>
 #include <cstddef>
+#include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/ResourceUtils.h"
 
 namespace eg
 {
@@ -96,6 +98,29 @@ namespace eg
 			virtual void Undo() = 0;
 			virtual void Execute(CommandArgs) = 0;
 			virtual void Redo() = 0;
+		};
+
+		class DeleteResourceCommand : public Command
+		{
+		public:
+			DeleteResourceCommand(std::filesystem::path keyPath, ResourceType resourceType, bool deleteFile = false)
+				: m_KeyPath(keyPath), m_ResourceType(resourceType), m_DeleteFile(deleteFile), m_Resource(ResourceUtils::GetResourcePointer(resourceType, keyPath))
+			{
+				if(m_DeleteFile == false)
+					Commands::AddCommand(this);
+
+				ResourceSerializer::DeleteCachedResource(keyPath, resourceType, deleteFile);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+			protected:
+				std::filesystem::path m_KeyPath;
+				ResourceType m_ResourceType;
+				bool m_DeleteFile;
+				void* m_Resource;
 		};
 
 		template<typename T>
@@ -575,6 +600,12 @@ namespace eg
 				if(entity.HasComponent<Component>())
 					entity.GetInheritableComponent<Component>()->isInherited = false;
 			}
+		}
+
+		static Command* ExecuteDeleteResourceCommand(std::filesystem::path keyPath, ResourceType resourceType, bool deleteFile = false)
+		{
+			Command* command = new DeleteResourceCommand(keyPath, resourceType, deleteFile);
+			return command;
 		}
 
 		template<typename T>

@@ -167,6 +167,21 @@ namespace eg
 		SetCurrentCommand(false);
 	}
 
+	void Commands::DeleteResourceCommand::Undo()
+	{
+		if(m_ResourceType == ResourceType::Image)
+			ResourceSerializer::TextureResourceDataCache[m_KeyPath] = (TextureResourceData*)m_Resource;
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::DeleteResourceCommand::Redo()
+	{
+		ResourceSerializer::DeleteCachedResource(m_KeyPath, m_ResourceType, m_DeleteFile);
+
+		SetCurrentCommand(false);
+	}
+
 	void Commands::AddCommand(Command* command)
 	{
 		if(currentCommandIndex == -1)

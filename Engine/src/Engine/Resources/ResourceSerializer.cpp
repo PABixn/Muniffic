@@ -136,15 +136,19 @@ namespace eg
 		return TextureResourceDataCache[keyPath];
 	}
 
-	void ResourceSerializer::DeleteCachedResource(const std::filesystem::path& keyPath, ResourceType resourceType)
+	void ResourceSerializer::DeleteCachedResource(const std::filesystem::path& keyPath, ResourceType resourceType, bool deleteFile)
 	{
 		if (resourceType == ResourceType::Image)
 		{
 			if (TextureResourceDataCache.find(keyPath) != TextureResourceDataCache.end())
 			{
-				if(TextureResourceDataCache[keyPath] != nullptr)
-					delete TextureResourceDataCache[keyPath];
+				TextureResourceData* data = TextureResourceDataCache[keyPath];
 				TextureResourceDataCache.erase(keyPath);
+				if (deleteFile)
+				{
+					std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
+					std::filesystem::remove(keyPath);
+				}
 			}
 		}
 		else
