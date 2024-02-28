@@ -26,6 +26,12 @@ namespace eg {
 		static std::vector<LayerInfo*> Layers;
 		void OnImGuiRender();
 		void AddLayer();
+		void DeleteLayer(int selectedLayer);
+		void RepairIndexes();
+		std::string GetSelectedLayerName();
+		void RenameLayer(std::string name);
+	private:
+		int selectedLayer;
 	};
 
 }
