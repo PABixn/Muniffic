@@ -237,7 +237,7 @@ namespace eg
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();
 		
-		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
+		if ((*(this->m_UnsavedChangesPanel)).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
 		}
 

@@ -13,7 +13,6 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
-#include "SoLoud/include/soloud.h"
 
 
 namespace eg {
@@ -199,7 +198,8 @@ namespace eg {
 
 	struct AudioListenerComponent
 	{
-		SoLoud::Soloud soloudInstance;
+		//SoLoud::Soloud soloudInstance;
+		int a;
 	};
 
 	struct AudioSourceComponent

@@ -21,12 +21,13 @@ project "Engine-Editor"
 		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.ImGuizmo}"
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.SFML}"
 	}
 	
 	links
 	{
-		"Engine",
+		"Engine"
 	}
 	
 	filter "system:windows"

@@ -153,23 +153,11 @@ namespace eg {
 		OnPhysics2DStart();
 		// Audio
 		if (EvaluateSceneAudio) {
-			static std::list<Entity> EntitiesWithAudioSourceComponent;
-			static std::list<Entity> EntitiesWithAudioListenerComponent;
-			if (!EntitiesWithAudioListenerComponent.size()) {
 				auto ASourceView = m_Registry.view<AudioSourceComponent>();
-				//auto AListenerView = m_Registry.view<AudioListenerComponent>();
-				/*/
-				for (auto e : AListenerView)
+				for (auto f : ASourceView)
 				{
-					static SoLoud::Soloud& soloud = (AListenerView.get<AudioListenerComponent>(e)).soloudInstance;
-					soloud.init();*/
-					for (auto f : ASourceView)
-					{
-						ASourceView.get<AudioSourceComponent>(f).Audio.Play();	
-					}
-					
-				//}
-			}
+					ASourceView.get<AudioSourceComponent>(f).Audio.Play();	
+				}
 		}
 	}
 

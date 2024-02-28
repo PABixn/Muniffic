@@ -122,8 +122,8 @@ Entities:
     TagComponent:
       Tag: Player
     TransformComponent:
-      Translation: [1.54763281, 1.34000003, 0]
-      Rotation: [0, 0, 2.44200158]
+      Translation: [-2.25, 2.24000001, -3.5]
+      Rotation: [0, 0, 2.44125986]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
@@ -155,7 +155,7 @@ Entities:
     TagComponent:
       Tag: Circle
     TransformComponent:
-      Translation: [-0.5, -190.309036, 0]
+      Translation: [-0.5, -369.516937, 0]
       Rotation: [0, 0, 0]
       Scale: [-1.60000002, 1.39999998, 1.29999995]
     CircleRendererComponent:

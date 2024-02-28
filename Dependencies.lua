@@ -17,12 +17,14 @@ IncludeDir["SPIRV_Cross"] = "%{wks.location}/Engine/vendor/SPIRV-Cross"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 IncludeDir["msdfgen"] = "%{wks.location}/Engine/vendor/msdf-atlas-gen/msdfgen"
 IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Engine/vendor/msdf-atlas-gen/msdf-atlas-gen"
-IncludeDir["SoLoud"] = "%{wks.location}/Engine/vendor/SoLoud/include"
+--IncludeDir["SoLoud"] = "%{wks.location}/Engine/vendor/SoLoud/include"
+IncludeDir["SFML"] = "%{wks.location}/Engine/vendor/SFML/include"
 
 LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
 LibraryDir["mono"] = "%{wks.location}/Engine/vendor/mono/lib/%{cfg.buildcfg}"
+LibraryDir["SFML"] = "%{wks.location}/Engine/vendor/SFML/lib"
 
 Library = {}
 Library["mono"] = "%{LibraryDir.mono}/libmono-static-sgen.lib"
@@ -38,6 +40,8 @@ Library["SPIRV_Tools_Debug"] = "%{LibraryDir.VulkanSDK}/SPIRV-Toolsd.lib"
 Library["ShaderC_Release"] = "%{LibraryDir.VulkanSDK}/shaderc_shared.lib"
 Library["SPIRV_Cross_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-core.lib"
 Library["SPIRV_Cross_GLSL_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-glsl.lib"
+
+Library["SFML"] = "%{LibraryDir.SFML}/sfml-audio.lib"
 
 -- Windows
 Library["WinSock"] = "Ws2_32.lib"

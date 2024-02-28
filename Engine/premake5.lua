@@ -10,6 +10,8 @@ project "Engine"
 	pchheader "egpch.h"
 	pchsource "src/egpch.cpp"
 
+	defines "SFML_STATIC"
+
 	files
 	{
 		"src/**.h",
@@ -42,7 +44,8 @@ project "Engine"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.mono}",
-		"%{IncludeDir.SoLoud}",
+		--"%{IncludeDir.SoLoud}",
+		"%{IncludeDir.SFML}",
 	}
 	links
 	{
@@ -55,7 +58,25 @@ project "Engine"
 		"Imgui",
 		"msdf-atlas-gen",
 		"%{Library.mono}",
-		"SoLoud"
+		--"SoLoud"
+		"%{Library.SFML}",
+		--"%{Library.SFML}",
+		--[[
+		"winmm.lib",
+		"sfml-system-d.lib",
+		"openal32.lib",
+		"flac.lib",
+		"vorbisenc.lib",
+		"vorbisfile.lib",
+		"vorbis.lib",
+		"ogg.lib",
+		"sfml-audio-d.lib",
+		]]--
+		--"sfml-audio.lib",
+	}
+	libdirs
+	{
+		"%{LibraryDir.SFML}"
 	}
 
 	defines{
