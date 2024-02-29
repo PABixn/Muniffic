@@ -28,6 +28,21 @@ namespace eg
 			}
 		}
 
+		if(ImGui::Button("+"))
+		{
+			ImGui::OpenPopup("CreateNewResource");
+		}
+
+		if (ImGui::BeginPopup("CreateNewResource"))
+		{
+			if (ImGui::MenuItem("Create Folder"))
+			{
+				std::filesystem::path newDirectory = m_CurrentDirectory / "New Folder";
+				std::filesystem::create_directory(newDirectory);
+			}
+			ImGui::EndPopup();
+		}
+
 		static float padding = 16.0f;
 		static float thumbnailSize = 128.0f;
 		float cellSize = thumbnailSize + padding;

@@ -229,11 +229,11 @@ namespace eg {
 			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
 			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+
 			if (ImGui::Button("+", ImVec2{ lineHeight,lineHeight }))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
-
 			
 			if (ImGui::BeginPopup("ComponentSettings"))
 			{
@@ -309,7 +309,6 @@ namespace eg {
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
-				std::cout<<tag<<std::endl;
 			}
 		}
 
