@@ -28,6 +28,8 @@ namespace eg
 			}
 		}
 
+		ImGui::SameLine();
+
 		if(ImGui::Button("+"))
 		{
 			ImGui::OpenPopup("CreateNewResource");
@@ -112,21 +114,35 @@ namespace eg
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
 			const auto& path = directoryEntry.path();
-
-			if(path.extension() == ".mnmeta")
-				continue;
-
-			std::filesystem::path metaPath = path.parent_path() / (path.stem().string() + ".mnmeta");
 			
-			if (!directoryEntry.is_directory() && !std::filesystem::exists(metaPath))
+			if (!directoryEntry.is_directory())
 				continue;
 
 			auto name = path.filename().string();
 			ImGui::PushID(name.c_str());
 			
-			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+			Ref<Texture2D> icon = m_DirectoryIcon;
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0,0,0,0));
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+			if (ImGui::BeginPopupContextItem("DirectoryOptions"))
+			{
+				if (ImGui::MenuItem("Delete"))
+				{
+					remove(path);
+					ImGui::PopStyleColor();
+					ImGui::NextColumn();
+					ImGui::EndPopup();
+					ImGui::PopID();
+					break;
+				}
+				if(ImGui::MenuItem("Change name"))
+				{
+					m_RenameFolderPanel->ShowWindow(path);
+				}
+
+				ImGui::EndPopup();
+			}
 
 			if (ImGui::BeginDragDropSource())
 			{
@@ -140,12 +156,9 @@ namespace eg
 			ImGui::PopStyleColor();
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-				if (directoryEntry.is_directory())
-				{
-					std::filesystem::path oldPath = m_CurrentDirectory;
-					m_CurrentDirectory /= path.filename();
-					Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
-				}
+				std::filesystem::path oldPath = m_CurrentDirectory;
+				m_CurrentDirectory /= path.filename();
+				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
 
 			ImGui::TextWrapped(name.c_str());
@@ -154,6 +167,7 @@ namespace eg
 
 			ImGui::PopID();
 		}
+
 		ImGui::Columns(1);
 
 		float size = thumbnailSize, offset = padding;

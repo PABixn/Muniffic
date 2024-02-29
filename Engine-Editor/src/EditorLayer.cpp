@@ -256,10 +256,14 @@ namespace eg
 		m_SceneHierarchyPanel.OnImGuiRender();
 		
 		m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
+		m_ContentBrowserPanel->SetRenameFolderPanel(m_RenameFolderPanel);
 		m_ContentBrowserPanel->OnImGuiRender();
 
 		if(m_DeleteFilePanel->IsShown())
 			m_DeleteFilePanel->OnImGuiRender();
+
+		if(m_RenameFolderPanel->IsShown())
+			m_RenameFolderPanel->OnImGuiRender();
 		
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
@@ -749,6 +753,7 @@ namespace eg
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
 			m_DeleteFilePanel = new DeleteFilePanel();
+			m_RenameFolderPanel = new RenameFolderPanel();
 		}
 	}
 
