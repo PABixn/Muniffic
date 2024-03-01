@@ -95,7 +95,7 @@ namespace eg
 
 				if (ImGui::BeginDragDropSource())
 				{
-					std::filesystem::path path(value->GetRelativePath());
+					std::filesystem::path path(value->GetKeyPath());
 					const wchar_t* pathStr = path.c_str();
 					ImGui::SetDragDropPayload("ContentBrowserPanel", pathStr, (wcslen(pathStr) + 1) * sizeof(wchar_t));
 					ImGui::EndDragDropSource();
@@ -151,6 +151,31 @@ namespace eg
 				ImGui::SetDragDropPayload("ContentBrowserPanel", pathStr, (wcslen(pathStr)+1) * sizeof(wchar_t));
 				ImGui::Text(name.c_str());
 				ImGui::EndDragDropSource();
+			}
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+				{
+					std::filesystem::path keyPath = std::filesystem::path((const wchar_t*)payload->Data);
+					ResourceType type = ResourceUtils::GetResourceTypeFromBackslashKeyPath(keyPath);
+					std::filesystem::path droppedPath = Project::GetProjectName() / Project::GetAssetDirectory() / droppedPath;
+					if (std::filesystem::exists(droppedPath))
+					{
+						std::filesystem::path newPath = path / droppedPath.filename();
+						std::filesystem::rename(Project::GetProjectDirectory().parent_path() / droppedPath, newPath);
+
+						if (type == ResourceType::Image)
+						{
+							ResourceSerializer::TextureResourceDataCache[keyPath]->ResourcePath = path;
+						}
+					}
+					else
+					{
+						EG_CORE_ERROR("File does not exist");
+					}
+				}
+				ImGui::EndDragDropTarget();
 			}
 
 			ImGui::PopStyleColor();

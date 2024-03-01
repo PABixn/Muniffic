@@ -714,7 +714,7 @@ namespace eg {
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 					{
 						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath = std::filesystem::path(path);
+						std::filesystem::path texturePath = (Project::GetProjectName()) / Project::GetAssetDirectory() / std::filesystem::path(path);
 						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 						if (texture->IsLoaded())
 						{

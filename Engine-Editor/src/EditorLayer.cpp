@@ -316,7 +316,7 @@ namespace eg
 			{
 				const wchar_t *path = (const wchar_t *)payload->Data;
 
-				OpenScene(path);
+				OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
 			}
 			ImGui::EndDragDropTarget();
 		}

@@ -46,6 +46,11 @@ namespace eg {
 		std::string ImageName = "";
 		std::string Extension = "";
 
+		std::filesystem::path GetKeyPath()
+		{
+			return ResourcePath / std::filesystem::path(ImageName + Extension);
+		}
+
 		std::filesystem::path GetRelativePath()
 		{
 			return std::filesystem::path(Project::GetProjectName()) / Project::GetAssetDirectory() / ResourcePath / std::filesystem::path(ImageName + Extension);

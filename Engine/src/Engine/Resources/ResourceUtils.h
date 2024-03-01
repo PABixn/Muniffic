@@ -85,5 +85,27 @@ namespace eg
 			else
 				return ResourceType::None;
 		}
+
+		static ResourceType GetResourceTypeFromBackslashKeyPath(const std::filesystem::path& keyPath)
+		{
+			std::string type = keyPath.string().substr(keyPath.string().find('\\'));
+
+			if (type == "Textures")
+				return ResourceType::Image;
+			else if (type == "Shaders")
+				return ResourceType::Shader;
+			else if (type == "Fonts")
+				return ResourceType::Font;
+			else if (type == "Texts")
+				return ResourceType::Text;
+			else if (type == "Animations")
+				return ResourceType::Animation;
+			else if (type == "Scripts")
+				return ResourceType::Script;
+			else if (type == "NativeScripts")
+				return ResourceType::NativeScript;
+			else
+				return ResourceType::None;
+		}
 	};
 }
