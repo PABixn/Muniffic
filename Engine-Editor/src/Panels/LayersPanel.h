@@ -7,6 +7,8 @@
 #include "egpch.h"
 #include <vector>
 #include "ConsolePanel.h"
+#include "Engine/Core/UUID.h"
+#include "SceneHierarchyPanel.h"
 
 namespace eg {
 
@@ -17,11 +19,11 @@ namespace eg {
 			std::string name;
 			int index;
 			bool isVisible;
-			LayerInfo(){
+			LayerInfo() {
 				this->index = LayersPanel::Layers.size();
 				this->name = "New Layer " + std::to_string(this->index);
 				this->isVisible = TRUE;
-			}
+			};
 		};
 		static std::vector<LayerInfo*> Layers;
 		void OnImGuiRender();

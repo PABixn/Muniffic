@@ -64,7 +64,9 @@ namespace eg {
 		void SetPaused(bool paused) { m_IsPaused = paused; }
 
 		void Step(int frames = 1);
-
+		const std::unordered_map<UUID, entt::entity>& GetEntityMap() const {
+			return m_EntityMap;
+		};
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

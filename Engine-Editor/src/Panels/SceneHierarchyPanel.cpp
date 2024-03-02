@@ -10,6 +10,7 @@
 #include "../Commands/Commands.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include "ConsolePanel.h"
+#include "LayersPanel.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -311,6 +312,8 @@ namespace eg {
 				tag = std::string(buffer);
 				std::cout<<tag<<std::endl;
 			}
+
+			
 		}
 
 		ImGui::SameLine();
@@ -335,7 +338,24 @@ namespace eg {
 		}
 
 		ImGui::PopItemWidth();
+		ImGui::Text("Layer: ");
+		ImGui::SameLine();
+		if (ImGui::Button(LayersPanel::Layers[entity.GetEntityInfo()->m_Layer]->name.c_str())) {
+			ImGui::OpenPopup("Change Layer");
+		};
 		
+		if (ImGui::BeginPopup("Change Layer")) {
+			for (int i = 0; i < LayersPanel::Layers.size(); i++) {
+				if (ImGui::MenuItem(LayersPanel::Layers[i]->name.c_str()))
+				{
+					entity.GetEntityInfo()->m_Layer = i;
+					ImGui::CloseCurrentPopup();
+				};
+			};
+			ImGui::EndPopup();
+		};
+
+
 		DrawComponent<TransformComponent>("Transform", entity, [entity](auto& component)
 			{
 				DrawVec3Control(entity, "Translation", component.Translation);

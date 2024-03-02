@@ -25,7 +25,6 @@ namespace eg {
 	Scene::~Scene()
 	{
 	}
-
 	template<typename... Component>
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
 	{

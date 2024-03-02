@@ -14,7 +14,8 @@ namespace eg
 			: m_Parent(parent) { }
 
 		UUID m_Parent;
-		int m_Layer;
+		int m_Layer = 0;
 		std::vector<UUID> m_Children;
+
 	};
 }

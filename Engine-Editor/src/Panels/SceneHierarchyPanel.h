@@ -10,7 +10,6 @@ namespace eg {
 		SceneHierarchyPanel(const Ref<Scene>& scene);
 
 		void SetContext(const Ref<Scene>& scene);
-
 		void OnImGuiRender();
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
@@ -18,7 +17,6 @@ namespace eg {
 	private:
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
-
 		void DrawEntityNode(Entity entity, bool forceDraw = false);
 		void DrawComponents(Entity entity);
 	private:
