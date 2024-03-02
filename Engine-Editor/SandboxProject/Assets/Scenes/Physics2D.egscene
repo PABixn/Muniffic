@@ -13,7 +13,7 @@ Entities:
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TilingFactor: 1
-      TexturePath: C:\Users\bez18\Documents\GitHub\Muniffic\Engine-Editor\resources/graphics/image_not_found.png
+      TexturePath: C:\Muniffic\Engine-Editor\resources/graphics/image_not_found.png
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:

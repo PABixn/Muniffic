@@ -1,5 +1,6 @@
 Resources:
-  - ResourcePath: Textures
+  - UUID: 17029160433850338785
+    ResourcePath: Textures\New Folder
     ImageName: cubes
     Extension: .png
     Width: 800

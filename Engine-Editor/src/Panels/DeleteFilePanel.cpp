@@ -3,13 +3,13 @@
 namespace eg
 {
 	DeleteFilePanel::DeleteFilePanel()
-		: m_Result(FileDeleteMethod::Cancel), m_Show(false), m_KeyPath(std::filesystem::path()), m_Type(ResourceType::None)
+		: m_Result(FileDeleteMethod::Cancel), m_Show(false), m_UUID(0), m_Type(ResourceType::None)
 	{ }
 
-	void DeleteFilePanel::ShowWindow(std::filesystem::path keyPath, ResourceType type)
+	void DeleteFilePanel::ShowWindow(UUID uuid, ResourceType type)
 	{
 		m_Show = true;
-		m_KeyPath = keyPath;
+		m_UUID = uuid;
 		m_Type = type;
 	}
 

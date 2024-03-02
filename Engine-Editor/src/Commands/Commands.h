@@ -103,13 +103,13 @@ namespace eg
 		class DeleteResourceCommand : public Command
 		{
 		public:
-			DeleteResourceCommand(std::filesystem::path keyPath, ResourceType resourceType, bool deleteFile = false)
-				: m_KeyPath(keyPath), m_ResourceType(resourceType), m_DeleteFile(deleteFile), m_Resource(ResourceUtils::GetResourcePointer(resourceType, keyPath))
+			DeleteResourceCommand(UUID uuid, ResourceType resourceType, bool deleteFile = false)
+				: m_UUID(uuid), m_ResourceType(resourceType), m_DeleteFile(deleteFile), m_Resource(ResourceUtils::GetResourcePointer(uuid, resourceType))
 			{
 				if(m_DeleteFile == false)
 					Commands::AddCommand(this);
 
-				ResourceSerializer::DeleteCachedResource(keyPath, resourceType, deleteFile);
+				ResourceSerializer::DeleteCachedResource(m_UUID, resourceType, deleteFile);
 			}
 
 			void Execute(CommandArgs args) override {};
@@ -117,7 +117,7 @@ namespace eg
 			void Redo() override;
 
 			protected:
-				std::filesystem::path m_KeyPath;
+				UUID m_UUID;
 				ResourceType m_ResourceType;
 				bool m_DeleteFile;
 				void* m_Resource;
@@ -602,9 +602,9 @@ namespace eg
 			}
 		}
 
-		static Command* ExecuteDeleteResourceCommand(std::filesystem::path keyPath, ResourceType resourceType, bool deleteFile = false)
+		static Command* ExecuteDeleteResourceCommand(UUID uuid, ResourceType resourceType, bool deleteFile = false)
 		{
-			Command* command = new DeleteResourceCommand(keyPath, resourceType, deleteFile);
+			Command* command = new DeleteResourceCommand(uuid, resourceType, deleteFile);
 			return command;
 		}
 

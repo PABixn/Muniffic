@@ -10,12 +10,39 @@ namespace eg
 	class ResourceUtils
 	{
 	public:
-		static void* GetResourcePointer(ResourceType type, std::filesystem::path& key)
+		static ResourceType GetCurrentResourceDirectoryType(std::filesystem::path path)
+		{
+			if (path.string().rfind(Project::GetAssetDirectory().string()) != std::string::npos)
+			{
+				size_t pos = path.string().rfind(Project::GetAssetDirectory().string());
+				if (pos + Project::GetAssetDirectory().string().length() < path.string().length())
+				{
+					std::string resourcePath = path.string().substr(pos + Project::GetAssetDirectory().string().length() + 1);
+					std::string type = resourcePath.substr(0, resourcePath.find('\\'));
+					return GetResourceTypeFromText(type);
+				}
+			}
+		}
+
+		static std::filesystem::path GetResourcePath(std::filesystem::path path)
+		{
+			return path.string().substr(path.string().rfind(Project::GetAssetDirectory().string()) + Project::GetAssetDirectory().string().length() + 1);
+		}
+
+		static std::filesystem::path GetKeyPath(UUID uuid)
+		{
+			ResourceType& type = ResourceSerializer::ResourceTypeInfo[uuid];
+
+			if (type == ResourceType::Image)
+				return ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::TextureResourceDataCache[uuid]->ImageName + ResourceSerializer::TextureResourceDataCache[uuid]->Extension);
+		}
+
+		static void* GetResourcePointer(UUID uuid, ResourceType type)
 		{
 			switch (type)
 			{
 			case ResourceType::Image:
-				return ResourceSerializer::TextureResourceDataCache[key];
+				return ResourceSerializer::TextureResourceDataCache[uuid];
 			default:
 				return nullptr;
 			}
@@ -64,48 +91,27 @@ namespace eg
 				return ResourceType::None;
 		}
 
-		static ResourceType GetResourceTypeFromKeyPath(const std::filesystem::path& keyPath)
+		static std::string GetResourceTypeText(ResourceType type)
 		{
-			std::string type = keyPath.string().substr(keyPath.string().find('/'));
-
-			if (type == "Textures")
-				return ResourceType::Image;
-			else if (type == "Shaders")
-				return ResourceType::Shader;
-			else if (type == "Fonts")
-				return ResourceType::Font;
-			else if (type == "Texts")
-				return ResourceType::Text;
-			else if (type == "Animations")
-				return ResourceType::Animation;
-			else if (type == "Scripts")
-				return ResourceType::Script;
-			else if (type == "NativeScripts")
-				return ResourceType::NativeScript;
-			else
-				return ResourceType::None;
-		}
-
-		static ResourceType GetResourceTypeFromBackslashKeyPath(const std::filesystem::path& keyPath)
-		{
-			std::string type = keyPath.string().substr(keyPath.string().find('\\'));
-
-			if (type == "Textures")
-				return ResourceType::Image;
-			else if (type == "Shaders")
-				return ResourceType::Shader;
-			else if (type == "Fonts")
-				return ResourceType::Font;
-			else if (type == "Texts")
-				return ResourceType::Text;
-			else if (type == "Animations")
-				return ResourceType::Animation;
-			else if (type == "Scripts")
-				return ResourceType::Script;
-			else if (type == "NativeScripts")
-				return ResourceType::NativeScript;
-			else
-				return ResourceType::None;
+			switch (type)
+			{
+			case ResourceType::Image:
+				return "Textures";
+			case ResourceType::Shader:
+				return "Shaders";
+			case ResourceType::Font:
+				return "Fonts";
+			case ResourceType::Text:
+				return "Texts";
+			case ResourceType::Animation:
+				return "Animations";
+			case ResourceType::Script:
+				return "Scripts";
+			case ResourceType::NativeScript:
+				return "NativeScripts";
+			default:
+				return "";
+			}
 		}
 	};
 }

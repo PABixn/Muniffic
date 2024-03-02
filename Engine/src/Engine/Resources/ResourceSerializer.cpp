@@ -9,7 +9,8 @@
 
 namespace eg
 {
-	std::unordered_map<std::filesystem::path, TextureResourceData*> ResourceSerializer::TextureResourceDataCache;
+	std::unordered_map<UUID, TextureResourceData*> ResourceSerializer::TextureResourceDataCache;
+	std::unordered_map<UUID, ResourceType> ResourceSerializer::ResourceTypeInfo;
 
 	bool ResourceSerializer::DeserializeResourceCache()
 	{
@@ -41,24 +42,18 @@ namespace eg
 		{
 			for (auto resource : textureResources)
 			{
-				std::filesystem::path resourcePath = resource["ResourcePath"].as<std::string>();
-				std::string imageName = resource["ImageName"].as<std::string>();
-				std::string extension = resource["Extension"].as<std::string>();
-				int width = resource["Width"].as<int>();
-				int height = resource["Height"].as<int>();
-				int channels = resource["Channels"].as<int>();
-				bool isSubTexture = resource["IsSubTexture"].as<bool>();
+				UUID uuid = resource["UUID"].as<uint64_t>();
 
 				TextureResourceData* data = new TextureResourceData();
-				data->ResourcePath = resourcePath;
-				data->ImageName = imageName;
-				data->Extension = extension;
-				data->Width = width;
-				data->Height = height;
-				data->Channels = channels;
-				data->IsSubTexture = isSubTexture;
+				data->ResourcePath = resource["ResourcePath"].as<std::string>();
+				data->ImageName = resource["ImageName"].as<std::string>();
+				data->Extension = resource["Extension"].as<std::string>();
+				data->Width = resource["Width"].as<int>();
+				data->Height = resource["Height"].as<int>();
+				data->Channels = resource["Channels"].as<int>();
+				data->IsSubTexture = resource["IsSubTexture"].as<bool>();
 
-				if (isSubTexture)
+				if (data->IsSubTexture)
 				{
 					auto texCoords = resource["TexCoords"];
 					for (int i = 0; i < 4; i++)
@@ -68,7 +63,7 @@ namespace eg
 					}
 				}
 
-				CacheTexture(data);
+				CacheTexture(uuid, data);
 			}
 		}
 	}
@@ -84,6 +79,7 @@ namespace eg
 		for(auto& [key, value] : TextureResourceDataCache)
 		{
 			textureOut << YAML::BeginMap;
+			textureOut << YAML::Key << "UUID" << YAML::Value << key;
 			textureOut << YAML::Key << "ResourcePath" << YAML::Value << value->ResourcePath.string();
 			textureOut << YAML::Key << "ImageName" << YAML::Value << value->ImageName;
 			textureOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
@@ -91,6 +87,8 @@ namespace eg
 			textureOut << YAML::Key << "Height" << YAML::Value << value->Height;
 			textureOut << YAML::Key << "Channels" << YAML::Value << value->Channels;
 			textureOut << YAML::Key << "IsSubTexture" << YAML::Value << value->IsSubTexture;
+			//textureOut << YAML::Key << "ResourceType" << YAML::Value << "Image";
+
 			if (value->IsSubTexture)
 			{
 				textureOut << YAML::Key << "TexCoords" << YAML::Value << YAML::BeginSeq;
@@ -114,40 +112,40 @@ namespace eg
 		file.close();
 	}
 
-	void ResourceSerializer::CacheTexture(TextureResourceData* data)
+	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
 	{
-		std::filesystem::path keyPath = data->ResourcePath / std::filesystem::path(data->ImageName + data->Extension);
-
-		if (TextureResourceDataCache.find(keyPath) != TextureResourceDataCache.end())
+		if (TextureResourceDataCache.find(uuid) != TextureResourceDataCache.end())
 		{
-			if (TextureResourceDataCache[keyPath] != nullptr)
-				delete TextureResourceDataCache[keyPath];
-			TextureResourceDataCache.erase(keyPath);
+			if (TextureResourceDataCache[uuid] != nullptr)
+				delete TextureResourceDataCache[uuid];
+			TextureResourceDataCache.erase(uuid);
 		}
 
-		TextureResourceDataCache[keyPath] = data;
+		TextureResourceDataCache[uuid] = data;
+		ResourceTypeInfo[uuid] = ResourceType::Image;
 	}
 
-	TextureResourceData* ResourceSerializer::ReadCachedTexture(std::filesystem::path& keyPath)
+	/*TextureResourceData* ResourceSerializer::ReadCachedTexture(std::filesystem::path& keyPath)
 	{
 		if (TextureResourceDataCache.find(keyPath) == TextureResourceDataCache.end())
 			return nullptr;
 
 		return TextureResourceDataCache[keyPath];
-	}
+	}*/
 
-	void ResourceSerializer::DeleteCachedResource(const std::filesystem::path& keyPath, ResourceType resourceType, bool deleteFile)
+	void ResourceSerializer::DeleteCachedResource(UUID uuid, ResourceType resourceType, bool deleteFile)
 	{
 		if (resourceType == ResourceType::Image)
 		{
-			if (TextureResourceDataCache.find(keyPath) != TextureResourceDataCache.end())
+			if (TextureResourceDataCache.find(uuid) != TextureResourceDataCache.end())
 			{
-				TextureResourceData* data = TextureResourceDataCache[keyPath];
-				TextureResourceDataCache.erase(keyPath);
+				TextureResourceData* data = TextureResourceDataCache[uuid];
+				TextureResourceDataCache.erase(uuid);
+				ResourceTypeInfo.erase(uuid);
 				if (deleteFile)
 				{
 					std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
-					remove(finalPath.string().c_str());
+					std::remove(finalPath.string().c_str());
 				}
 			}
 		}

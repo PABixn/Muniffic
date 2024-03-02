@@ -170,14 +170,14 @@ namespace eg
 	void Commands::DeleteResourceCommand::Undo()
 	{
 		if(m_ResourceType == ResourceType::Image)
-			ResourceSerializer::TextureResourceDataCache[m_KeyPath] = (TextureResourceData*)m_Resource;
+			ResourceSerializer::TextureResourceDataCache[m_UUID] = (TextureResourceData*)m_Resource;
 
 		SetCurrentCommand(true);
 	}
 
 	void Commands::DeleteResourceCommand::Redo()
 	{
-		ResourceSerializer::DeleteCachedResource(m_KeyPath, m_ResourceType, m_DeleteFile);
+		ResourceSerializer::DeleteCachedResource(m_UUID, m_ResourceType, m_DeleteFile);
 
 		SetCurrentCommand(false);
 	}

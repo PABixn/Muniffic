@@ -19,25 +19,12 @@ namespace eg
 
 	std::filesystem::path ResourceDatabase::FindResourceByKeyPath(const std::filesystem::path& keyPath)
 	{
-		std::filesystem::path metadata = ResourceUtils::GetMetadataPath(ResourceUtils::GetResourceTypeFromKeyPath(keyPath));
-
-		YAML::Node data;
-
-		try
-		{
-			data = YAML::LoadFile(metadata.string());
-		}
-		catch (YAML::ParserException e)
-		{
-			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", metadata, e.what());
-		}
-
 		return std::filesystem::path();
 	}
 
 	void AddTextureResource(const std::filesystem::path& originalResourcePath, TextureResourceData* data)
 	{
-		ResourceSerializer::CacheTexture(data);
+		ResourceSerializer::CacheTexture(UUID(), data);
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
 
 		if (finalPath != originalResourcePath)

@@ -26,6 +26,35 @@ namespace eg
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+				{
+					uint64_t uuid = *(uint64_t*)payload->Data;
+					ResourceType type = ResourceSerializer::ResourceTypeInfo[uuid];
+					std::filesystem::path keyPath = ResourceUtils::GetKeyPath(uuid);
+
+					std::filesystem::path droppedPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / keyPath;
+
+					if (std::filesystem::exists(droppedPath))
+					{
+						std::filesystem::path newPath = m_CurrentDirectory.parent_path() / keyPath.filename();
+
+						std::rename(droppedPath.string().c_str(), newPath.string().c_str());
+
+						if (type == ResourceType::Image)
+						{
+							ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath = ResourceUtils::GetResourcePath(m_CurrentDirectory.parent_path());
+						}
+					}
+					else
+					{
+						EG_CORE_ERROR("File does not exist");
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
 		}
 
 		ImGui::SameLine();
@@ -59,21 +88,24 @@ namespace eg
 		if (m_DeleteFilePanel->GetResult() != FileDeleteMethod::Cancel)
 		{
 			if (m_DeleteFilePanel->GetResult() == FileDeleteMethod::DeleteFromProject)
-				Commands::ExecuteDeleteResourceCommand(m_DeleteFilePanel->GetKeyPath(), m_DeleteFilePanel->GetType());
+				Commands::ExecuteDeleteResourceCommand(m_DeleteFilePanel->GetUUID(), m_DeleteFilePanel->GetType());
 			else if (m_DeleteFilePanel->GetResult() == FileDeleteMethod::DeleteFromDisk)
-				Commands::ExecuteDeleteResourceCommand(m_DeleteFilePanel->GetKeyPath(), m_DeleteFilePanel->GetType(), true);
+				Commands::ExecuteDeleteResourceCommand(m_DeleteFilePanel->GetUUID(), m_DeleteFilePanel->GetType(), true);
 
 			m_DeleteFilePanel->SetResult(FileDeleteMethod::Cancel);
-			m_DeleteFilePanel->SetKeyPath(std::filesystem::path());
+			m_DeleteFilePanel->SetUUID(0);
 			m_DeleteFilePanel->SetType(ResourceType::None);
 		}
 
-		ResourceType type = ResourceUtils::GetResourceTypeFromText(m_CurrentDirectory.filename().string());
+		ResourceType type = ResourceUtils::GetCurrentResourceDirectoryType(m_CurrentDirectory);
 
 		if (type == ResourceType::Image)
 		{
 			for (auto& [key, value] : ResourceSerializer::TextureResourceDataCache)
 			{
+				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
+					continue;
+
 				auto name = value->ImageName + value->Extension;
 				ImGui::PushID(name.c_str());
 				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
@@ -95,9 +127,7 @@ namespace eg
 
 				if (ImGui::BeginDragDropSource())
 				{
-					std::filesystem::path path(value->GetKeyPath());
-					const wchar_t* pathStr = path.c_str();
-					ImGui::SetDragDropPayload("ContentBrowserPanel", pathStr, (wcslen(pathStr) + 1) * sizeof(wchar_t));
+					ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(uint64_t));
 					ImGui::EndDragDropSource();
 				}
 
@@ -157,17 +187,21 @@ namespace eg
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
-					std::filesystem::path keyPath = std::filesystem::path((const wchar_t*)payload->Data);
-					ResourceType type = ResourceUtils::GetResourceTypeFromBackslashKeyPath(keyPath);
-					std::filesystem::path droppedPath = Project::GetProjectName() / Project::GetAssetDirectory() / droppedPath;
+					uint64_t uuid = *(uint64_t*)payload->Data;
+					ResourceType type = ResourceSerializer::ResourceTypeInfo[uuid];
+					std::filesystem::path keyPath = ResourceUtils::GetKeyPath(uuid);
+
+					std::filesystem::path droppedPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / keyPath;
+
 					if (std::filesystem::exists(droppedPath))
 					{
-						std::filesystem::path newPath = path / droppedPath.filename();
-						std::filesystem::rename(Project::GetProjectDirectory().parent_path() / droppedPath, newPath);
+						std::filesystem::path newPath = path / keyPath.filename();
+
+						std::rename(droppedPath.string().c_str(), newPath.string().c_str());
 
 						if (type == ResourceType::Image)
 						{
-							ResourceSerializer::TextureResourceDataCache[keyPath]->ResourcePath = path;
+							ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath = ResourceUtils::GetResourcePath(path);
 						}
 					}
 					else
