@@ -9,6 +9,9 @@
 #include <cstring>
 #include "../Commands/Commands.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include "stb_image.h"
+#include "Engine/Resources/ResourceSerializer.h"
+#include "iostream"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -75,9 +78,43 @@ namespace eg {
 			DrawComponents(m_SelectionContext);
 		}
 		ImGui::End();
-
+		if (m_PreviewAbsoluteImagePath != "" ) {
+			ImGui::Begin("Preview");
+			GLuint my_opengl_texture; 
+			for (const std::pair<std::filesystem::path, TextureResourceData*>& pairOfPathAndData : ResourceSerializer::TextureResourceDataCache) {
+				auto CacheImageData = (pairOfPathAndData.second);
+				if (CacheImageData->GetAbsolutePath() == m_PreviewAbsoluteImagePath){
+					stbi_set_flip_vertically_on_load(false);
+					unsigned char* image = stbi_load(m_PreviewAbsoluteImagePath.string().c_str(), &(CacheImageData->Width), &(CacheImageData->Height), &(CacheImageData->Channels), STBI_rgb_alpha);
+					if (image) {
+						glGenTextures(1, &my_opengl_texture);
+						glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (CacheImageData->Width), (CacheImageData->Height), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+						glGenerateMipmap(GL_TEXTURE_2D); 
+						auto s = ImGui::GetWindowWidth();
+						ImVec2 r = ImVec2((int)s, (int)((s * (CacheImageData->Height)) / (CacheImageData->Width)));
+						ImGui::Image((void*)(intptr_t)my_opengl_texture, r);
+						stbi_image_free(image);
+					}
+					else
+					{
+						std::string s = m_PreviewRelativeImagePath.string();
+						const char* charPath = s.c_str();
+						size_t resultLength = strlen(charPath) + 17;
+						char* resultMsg = new char[resultLength];
+						strcpy(resultMsg, "file: ");
+						strcat(resultMsg, charPath);
+						strcat(resultMsg, " not found\0");
+						ImGui::Text(resultMsg);
+						delete[] resultMsg;
+					}
+				}
+			}
+			ImGui::End();
+		}
 		ImGui::End();
 	}
+
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
@@ -109,7 +146,7 @@ namespace eg {
 		}
 
 		if (ImGui::IsItemClicked())
-			m_SelectionContext = entity;
+			SetSelectedEntity(entity);
 
 		if (ImGui::BeginPopupContextItem())
 		{

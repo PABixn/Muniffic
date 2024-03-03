@@ -6,6 +6,7 @@
 #include "Engine/Resources/ResourceUtils.h"
 #include "Engine/Resources/ResourceSerializer.h"
 #include "../EditorLayer.h"
+#include "Engine/Core/Application.h"
 
 namespace eg
 {
@@ -60,8 +61,12 @@ namespace eg
 				auto name = value->ImageName + value->Extension;
 				ImGui::PushID(name.c_str());
 				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-				ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
-
+				if (ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 }))
+				{
+					auto* s = (*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).GetSceneHierarchyPanel(); 
+					(*s).SetPreviewAbsoluteImagePath(std::filesystem::path(value->GetAbsolutePath()));
+					(*s).SetPreviewRelativeImagePath(std::filesystem::path(value->GetRelativePath()));
+				}
 				if (ImGui::BeginPopupContextItem("FileOptions"))
 				{
 					if (ImGui::MenuItem("Delete"))

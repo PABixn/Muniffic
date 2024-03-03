@@ -6,3 +6,10 @@ Resources:
     Height: 966
     Channels: 3
     IsSubTexture: false
+  - ResourcePath: Textures
+    ImageName: cubes
+    Extension: .png
+    Width: 800
+    Height: 600
+    Channels: 4
+    IsSubTexture: false
