@@ -12,7 +12,7 @@
 #include "stb_image.h"
 #include "Engine/Resources/ResourceSerializer.h"
 #include "iostream"
-
+#include "shellapi.h"
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
  */
@@ -22,6 +22,14 @@
 
 namespace eg {
 
+	const char* add(const char* begining, const char* middle, const char* ending) {
+		size_t resultLength = strlen(middle) + strlen(begining) + strlen(ending);
+		char* resultMsg = new char[resultLength];
+		strcpy(resultMsg, begining);
+		strcat(resultMsg, middle);
+		strcat(resultMsg, ending);
+		return resultMsg;
+	}
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
 		SetContext(scene);
@@ -92,21 +100,21 @@ namespace eg {
 						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (CacheImageData->Width), (CacheImageData->Height), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 						glGenerateMipmap(GL_TEXTURE_2D); 
 						auto s = ImGui::GetWindowWidth();
-						ImVec2 r = ImVec2((int)s, (int)((s * (CacheImageData->Height)) / (CacheImageData->Width)));
-						ImGui::Image((void*)(intptr_t)my_opengl_texture, r);
+						std::string absImgName = m_PreviewAbsoluteImagePath.filename().string();
+						ImGui::Text(add("file: ",absImgName.c_str(), ""));
+						if (ImGui::Button("open")) {
+							std::string path = m_PreviewAbsoluteImagePath.string();
+							ShellExecuteA(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+						}
+						ImGui::Text(add("size: ", std::to_string(CacheImageData->Width).c_str(), add(" x ", std::to_string(CacheImageData->Height).c_str(),"")));
+						ImGui::Text(add("scale of preview: ", (std::to_string(std::round(s / CacheImageData->Width * 100.0) / 100.0)).substr(0, 4).c_str(), ""));
+						ImGui::Image((void*)(intptr_t)my_opengl_texture, ImVec2((int)s, (int)((s * (CacheImageData->Height)) / (CacheImageData->Width))));
 						stbi_image_free(image);
 					}
 					else
 					{
-						std::string s = m_PreviewRelativeImagePath.string();
-						const char* charPath = s.c_str();
-						size_t resultLength = strlen(charPath) + 17;
-						char* resultMsg = new char[resultLength];
-						strcpy(resultMsg, "file: ");
-						strcat(resultMsg, charPath);
-						strcat(resultMsg, " not found\0");
-						ImGui::Text(resultMsg);
-						delete[] resultMsg;
+						std::string absImgPath = m_PreviewAbsoluteImagePath.string();
+						ImGui::TextWrapped(add("file: ", absImgPath.c_str(), " not found"));
 					}
 				}
 			}
