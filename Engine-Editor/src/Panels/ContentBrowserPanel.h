@@ -14,6 +14,7 @@ namespace eg {
 		void OnImGuiRender();
 		void SetDeleteFilePanel(DeleteFilePanel* deleteFilePanel) { m_DeleteFilePanel = deleteFilePanel; }
 		void SetRenameFolderPanel(RenameFolderPanel* renameFolderPanel) { m_RenameFolderPanel = renameFolderPanel; }
+		std::filesystem::path GetCurrentPath() { return m_CurrentDirectory; }
 
 	private:
 		std::filesystem::path m_BaseDirectory;

@@ -114,6 +114,13 @@ namespace eg
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
 	{
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->ImageName + data->Extension);
+		if (!std::filesystem::exists(finalPath))
+		{
+			EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
+			return;
+		}
+
 		if (TextureResourceDataCache.find(uuid) != TextureResourceDataCache.end())
 		{
 			if (TextureResourceDataCache[uuid] != nullptr)

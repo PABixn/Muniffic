@@ -10,6 +10,26 @@ namespace eg
 	class ResourceUtils
 	{
 	public:
+		static ResourceType GetResourceTypeByExtension(const std::string& extension)
+		{
+			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".tga" || extension == ".gif" || extension == ".psd" || extension == ".hdr" || extension == ".pic" || extension == ".pnm")
+				return ResourceType::Image;
+			else if (extension == ".shader")
+				return ResourceType::Shader;
+			else if (extension == ".ttf" || extension == ".otf")
+				return ResourceType::Font;
+			else if (extension == ".txt")
+				return ResourceType::Text;
+			else if (extension == ".anim")
+				return ResourceType::Animation;
+			else if (extension == ".mnscript")
+				return ResourceType::Script;
+			else if (extension == ".nativescript")
+				return ResourceType::NativeScript;
+			else
+				return ResourceType::None;
+		}
+
 		static ResourceType GetCurrentResourceDirectoryType(std::filesystem::path path)
 		{
 			if (path.string().rfind(Project::GetAssetDirectory().string()) != std::string::npos)

@@ -5,6 +5,7 @@
 #include "Engine/Project/Project.h"
 #include "Engine/Resources/ResourceUtils.h"
 #include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/ResourceDatabase.h"
 #include "../EditorLayer.h"
 
 namespace eg
@@ -14,6 +15,7 @@ namespace eg
 	{
 		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
+		ResourceDatabase::SetCurrentPath(&m_CurrentDirectory);
 	}
 
 	void ContentBrowserPanel::OnImGuiRender() {
@@ -26,6 +28,8 @@ namespace eg
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
+
+			//accept dragging files from windows
 
 			if (ImGui::BeginDragDropTarget())
 			{
@@ -41,11 +45,16 @@ namespace eg
 					{
 						std::filesystem::path newPath = m_CurrentDirectory.parent_path() / keyPath.filename();
 
-						std::rename(droppedPath.string().c_str(), newPath.string().c_str());
-
-						if (type == ResourceType::Image)
+						int result = std::rename(droppedPath.string().c_str(), newPath.string().c_str());
+						
+						if (result == 0)
 						{
-							ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath = ResourceUtils::GetResourcePath(m_CurrentDirectory.parent_path());
+							if (type == ResourceType::Image)
+								ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath = ResourceUtils::GetResourcePath(m_CurrentDirectory.parent_path());
+						}
+						else
+						{
+							EG_CORE_ERROR("Failed to move file");
 						}
 					}
 					else

@@ -12,6 +12,12 @@ namespace eg {
 		std::vector<std::filesystem::path> FindResourcesByName(const std::string& name);
 		std::filesystem::path FindResourceByKeyPath(const std::filesystem::path& keyPath);
 		bool DeleteResource(const std::filesystem::path& filePath);
+		static void LoadResource(const std::filesystem::path& filePath);
 		static void AddResource(const std::filesystem::path& originalResourcePath, void* data, ResourceType resourceType);
+		static void SetCurrentPath(std::filesystem::path* directory);
+		static std::filesystem::path* GetCurrentPath();
+
+	private:
+		static std::filesystem::path* m_CurrentDirectory;
 	};
 }

@@ -20,6 +20,7 @@ namespace eg {
 		virtual void OnEvent(Event& e) override;
 
 		DeleteFilePanel* GetDeleteFilePanel() { return m_DeleteFilePanel; }
+		std::filesystem::path GetCurrentPath() { m_ContentBrowserPanel->GetCurrentPath(); }
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
