@@ -106,6 +106,10 @@ namespace eg {
 
 		m_EntityMap[uuid] = (entt::entity)entity;
 		m_EntityInfoMap[uuid] = new EntityInfo(NULL);
+		if (LayersPanel::Layers.size() > 0) {
+			LayersPanel::Layers[LayersPanel::GetSelectedLayer()]->AddEntity(uuid);
+			GetEntityByUUID(uuid).GetEntityInfo()->m_Layer = LayersPanel::GetSelectedLayer();
+		}
 		ConsolePanel::Log("File: Scene.cpp - Entity created: " + tag.Tag, ConsolePanel::LogType::Info);
 		return entity;
 	}
@@ -113,7 +117,8 @@ namespace eg {
 	void Scene::DestroyEntity(Entity entity)
 	{
 		if (entity.GetParent().has_value())
-			entity.GetParent().value().RemoveChild(entity);
+			if (entity.GetParent().value().IsDrawable())
+				entity.GetParent().value().RemoveChild(entity);
 		m_EntityMap.erase(entity.GetUUID());
 		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);

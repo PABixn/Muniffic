@@ -6,6 +6,7 @@
 
 #include "../../../vendor/entt/include/entt.hpp"
 #include "EntityInfo.h"
+//#include "../../Engine-Editor/src/Panels/LayersPanel.h"
 
 class b2World;
 

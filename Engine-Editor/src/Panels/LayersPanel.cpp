@@ -2,22 +2,20 @@
 
 namespace eg {
 	
+    Ref<Scene> LayersPanel::m_Context;
     std::vector<LayersPanel::LayerInfo*> LayersPanel::Layers;
-    int selectedLayer;
+    int LayersPanel::selectedLayer = 0;
 
-    /*void LayersPanel::SetContext(const Ref<Scene>& scene) {
-        this->m_Context = scene;
-    };*/
-
-    /*LayersPanel::LayersPanel(const Ref<Scene>& scene) {
-        SetContext(scene);
-	};*/
-
-    //LayersPanel::LayersPanel() {};
+    void LayersPanel::SetContext(const Ref<Scene>& scene) {
+        LayersPanel::m_Context = scene;
+    }
 
     void LayersPanel::RepairIndexes() {
         for (int i = 0; i < LayersPanel::Layers.size(); i++) {
             LayersPanel::Layers[i]->index = i;
+            for (int j = 0; j < LayersPanel::Layers[i]->entitiesUUID.size(); j++) {
+                m_Context->GetEntityByUUID(LayersPanel::Layers[i]->entitiesUUID[j]).GetEntityInfo()->m_Layer = i;
+            }
         }
     };
     void LayersPanel::RenameLayer(std::string name) {
@@ -26,16 +24,25 @@ namespace eg {
 
     std::string LayersPanel::GetSelectedLayerName() {
         return LayersPanel::Layers[selectedLayer]->name;
-    }
+    };
+
+    /*int LayersPanel::EntityLayerIndex(UUID uuid) {
+        for (int i = 0; i < LayersPanel::Layers.size(); i++) {
+            if (std::find(LayersPanel::Layers[i]->entitiesUUID.begin(), LayersPanel::Layers[i]->entitiesUUID.end(), uuid) != LayersPanel::Layers[i]->entitiesUUID.end()) {
+                return i;
+            };
+        };
+    };*/
 
     void LayersPanel::OnImGuiRender() {
         ImGui::Begin("Layers");
         if (LayersPanel::Layers.size() == 0) {
 			this->AddLayer();
+            this->AssignLayerForExcistingEntities();
 		}
         for (auto& layer : LayersPanel::Layers) {
             if (ImGui::Button(layer->name.c_str())) {
-                selectedLayer = layer->index;
+                LayersPanel::selectedLayer = layer->index;
                 ConsolePanel::Log("Selected Layer: " + layer->name, ConsolePanel::LogType::Info);
             };
             ImGui::SameLine();
@@ -54,11 +61,11 @@ namespace eg {
         if (ImGui::BeginPopup("Rename Layer")) {
             static char buffer[256];
             memset(buffer, 0, sizeof(buffer));
-            std::strncpy(buffer, LayersPanel::Layers[selectedLayer]->name.c_str(), sizeof(buffer));
+            std::strncpy(buffer, LayersPanel::Layers[LayersPanel::selectedLayer]->name.c_str(), sizeof(buffer));
             if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
-				LayersPanel::Layers[selectedLayer]->name = std::string(buffer);
-				std::cout << LayersPanel::Layers[selectedLayer]->name << std::endl;
+				LayersPanel::Layers[LayersPanel::selectedLayer]->name = std::string(buffer);
+				std::cout << LayersPanel::Layers[LayersPanel::selectedLayer]->name << std::endl;
 			}
             if (ImGui::Button("Rename")) {
 				ImGui::CloseCurrentPopup();
@@ -67,31 +74,36 @@ namespace eg {
 		};
         ImGui::SameLine();
         if (ImGui::Button("Delete Layer")) {
-            this->DeleteLayer(this->selectedLayer);
+            this->DeleteLayer(this->LayersPanel::selectedLayer);
         };
 
         if (ImGui::Button("Up")) {
-            if (selectedLayer > 0) {
-                std::swap(LayersPanel::Layers[selectedLayer], LayersPanel::Layers[selectedLayer - 1]);
-                selectedLayer--;
+            if (LayersPanel::selectedLayer > 0) {
+                std::swap(LayersPanel::Layers[LayersPanel::selectedLayer], LayersPanel::Layers[LayersPanel::selectedLayer - 1]);
+                LayersPanel::selectedLayer--;
                 this->RepairIndexes();
             };
 		};
         ImGui::SameLine();
         if (ImGui::Button("Down")) {
-            if (selectedLayer < LayersPanel::Layers.size() - 1) {
-                std::swap(LayersPanel::Layers[selectedLayer], LayersPanel::Layers[selectedLayer + 1]);
-                selectedLayer++;
+            if (LayersPanel::selectedLayer < LayersPanel::Layers.size() - 1) {
+                std::swap(LayersPanel::Layers[LayersPanel::selectedLayer], LayersPanel::Layers[LayersPanel::selectedLayer + 1]);
+                LayersPanel::selectedLayer++;
                 this->RepairIndexes();
             };
         };
-        ImGui::Text("Selected Layer: %s", LayersPanel::Layers[selectedLayer]->name.c_str());
-        ImGui::Text(("Selected Layer Index: " + std::to_string(LayersPanel::Layers[selectedLayer]->index)).c_str());
+        ImGui::Text("Selected Layer: %s", LayersPanel::Layers[LayersPanel::selectedLayer]->name.c_str());
+        ImGui::Text(("Selected Layer Index: " + std::to_string(LayersPanel::Layers[LayersPanel::selectedLayer]->index)).c_str());
         
 
         ImGui::End();  
     };
 
+    void LayersPanel::AssignLayerForExcistingEntities() {
+        for (auto& pair : m_Context->GetEntityMap()) {
+            LayersPanel::Layers[0]->AddEntity(pair.first);
+        }
+    }
 
     void LayersPanel::AddLayer() {
         LayersPanel::Layers.push_back(new LayersPanel::LayerInfo());
@@ -100,12 +112,9 @@ namespace eg {
 
     void LayersPanel::DeleteLayer(int selectedLayer) {
         if (LayersPanel::Layers.size() > 1) {
+            LayersPanel::selectedLayer = 0;
             //window to choose what to do with entities
-            /*for (auto& pair : m_Context->GetEntityInfoMap()) {
-                if (pair.second->m_Layer == selectedLayer) {
-                    m_Context->DestroyEntity(m_Context->GetEntityByUUID(pair.first));
-				}
-            }*/
+            LayersPanel::Layers[selectedLayer]->DeleteAllEntities();
             LayersPanel::Layers.erase(LayersPanel::Layers.begin() + selectedLayer);
             this->RepairIndexes();
             ConsolePanel::Log("File: LayersPanel.cpp - Layer Deleted", ConsolePanel::LogType::Info);

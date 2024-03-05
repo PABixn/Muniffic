@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
 namespace eg {
+	
 	Entity::Entity(entt::entity handle, Scene* scene)
 		: m_EntityHandle(handle), m_Scene(scene)
 	{

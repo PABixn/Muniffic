@@ -19,26 +19,51 @@ namespace eg {
 			std::string name;
 			int index;
 			bool isVisible;
+			std::vector<UUID> entitiesUUID;
 			LayerInfo() {
 				this->index = LayersPanel::Layers.size();
 				this->name = "New Layer " + std::to_string(this->index);
 				this->isVisible = TRUE;
 			};
+			void AddEntity(UUID uuid) {
+				this->entitiesUUID.push_back(uuid);
+			};
+			void RemoveEntity(UUID uuid) {
+				for (int i = 0; i < this->entitiesUUID.size(); i++) {
+					if (entitiesUUID[i] == uuid) {
+						this->entitiesUUID.erase(entitiesUUID.begin() + i);
+					}
+				}
+			};
+			void DeleteAllEntities() {
+				for (int i = 0; i < entitiesUUID.size(); i++) {
+					if (m_Context->GetEntityByUUID(entitiesUUID[i]).GetAnyChildren().size() > 0) {
+						for (auto& child : m_Context->GetEntityByUUID(entitiesUUID[i]).GetAnyChildren()) {
+							LayersPanel::Layers[this->index]->RemoveEntity(child.GetUUID());
+						};
+						m_Context->GetEntityByUUID(entitiesUUID[i]).RemoveAnyChildren();
+					};
+					m_Context->DestroyEntity(m_Context->GetEntityByUUID(entitiesUUID[i]));
+				}
+			};
+			
 		};
 		static std::vector<LayerInfo*> Layers;
 		void OnImGuiRender();
-		void AddLayer();
+		static void AddLayer();
 		void DeleteLayer(int selectedLayer);
 		void RepairIndexes();
+		//static int EntityLayerIndex(UUID uuid);
 		std::string GetSelectedLayerName();
 		void RenameLayer(std::string name);
-
-		LayersPanel() = default;
-		//LayersPanel(const Ref<Scene>& scene);
-		//void SetContext(const Ref<Scene>& scene);
+		void SetContext(const Ref<Scene>& scene);
+		void AssignLayerForExcistingEntities();
+		static int GetSelectedLayer() {
+			return selectedLayer;
+		};
 	private:
-		int selectedLayer = 0;
-		//Ref<Scene> m_Context;
+		static int selectedLayer;
+		static Ref<Scene> m_Context;
 	};
 
 }
