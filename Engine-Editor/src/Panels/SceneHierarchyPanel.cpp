@@ -908,7 +908,7 @@ namespace eg {
 			DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
 			{
 				ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f);
-				ImGui::DragInt("Current Animation", component.Animator2D->GetAnimationIndexPtr(), 1, 0, component.Animator2D->GetAnimations()->size() - 1);
+				ImGui::Text("Current Animation: %s", component.Animator2D->GetCurrentAnimation().GetName().c_str());
 
 				if (ImGui::Button("Add Empty Animation"))
 				{
