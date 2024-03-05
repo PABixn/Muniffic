@@ -27,14 +27,22 @@ namespace eg {
 
 		void CreateProject(ProjectConfig projectConfig);
 
-		static const std::filesystem::path& GetAssetDirectory() {
+		static const std::filesystem::path& GetAssetDirectory()
+		{
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_Config.AssetDirectory; 
 		}
 
-		static const std::filesystem::path& GetProjectDirectory() {
+		static const std::filesystem::path& GetProjectDirectory()
+		{
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_ProjectDirectory; 
+		}
+
+		static const std::string GetProjectName()
+		{
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			return s_ActiveProject->m_Config.Name; 
 		}
 
 		//TODO: Move this to AssetManager
@@ -68,8 +76,11 @@ namespace eg {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_Config.StartScene; 
 		}
-		std::string GetProjectName() {
-			return m_Config.Name;
+
+		static const std::filesystem::path GetResourcesPath()
+		{
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			return s_ActiveProject->m_ProjectDirectory.parent_path();
 		}
 
 	private:

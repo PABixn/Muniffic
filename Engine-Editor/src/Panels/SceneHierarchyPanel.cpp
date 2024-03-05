@@ -229,11 +229,11 @@ namespace eg {
 			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
 			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+
 			if (ImGui::Button("+", ImVec2{ lineHeight,lineHeight }))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
-
 			
 			if (ImGui::BeginPopup("ComponentSettings"))
 			{
@@ -309,7 +309,6 @@ namespace eg {
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
-				std::cout<<tag<<std::endl;
 			}
 		}
 
@@ -715,7 +714,7 @@ namespace eg {
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 					{
 						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath = std::filesystem::path(path);
+						std::filesystem::path texturePath = (Project::GetProjectName()) / Project::GetAssetDirectory() / std::filesystem::path(path);
 						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 						if (texture->IsLoaded())
 						{

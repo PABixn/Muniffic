@@ -167,6 +167,35 @@ namespace eg
 		SetCurrentCommand(false);
 	}
 
+	void Commands::DeleteResourceCommand::Undo()
+	{
+		if(m_ResourceType == ResourceType::Image)
+			ResourceSerializer::TextureResourceDataCache[m_UUID] = (TextureResourceData*)m_Resource;
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::DeleteResourceCommand::Redo()
+	{
+		ResourceDatabase::RemoveResource(m_UUID, m_ResourceType, m_DeleteFile);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::DeleteDirectoryCommand::Undo()
+	{
+		std::filesystem::create_directory(m_Directory);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::DeleteDirectoryCommand::Redo()
+	{
+		ResourceDatabase::DeleteDirectory(m_Directory);
+
+		SetCurrentCommand(false);
+	}
+
 	void Commands::AddCommand(Command* command)
 	{
 		if(currentCommandIndex == -1)

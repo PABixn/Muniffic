@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <string>
 #include <filesystem>
+#include "Engine/Project/Project.h"
+#include "Engine/Core/UUID.h"
 
 namespace eg {
 	enum class ResourceType
@@ -27,7 +29,6 @@ namespace eg {
 		void* Data;
 	};
 
-
 	struct ImageResourceData
 	{
 		uint8_t channelCount;
@@ -36,13 +37,42 @@ namespace eg {
 		unsigned char* pixels;
 	};
 
+	struct AnimationResourceData
+	{
+		float m_frameRate;
+		int m_frameCount;
+		bool m_loop;
+		std::string name;
+		std::vector<UUID> m_frames;
+		std::filesystem::path ResourcePath = "";
+		std::string AnimationName = "";
+		std::string Extension = "";
+	};
+
 	struct TextureResourceData
 	{
-		int width = 0, height = 0, originalHeight = 0, originalWidth = 0;
-		int top = 0, bottom = 0, left = 0, right = 0;
-		int channels = 0;
-		std::filesystem::path imagePath = "";
-		std::string imageName = "";
+		int Width = 0, Height = 0;
+		glm::vec2 m_TexCoords[4];
+		bool IsSubTexture = false;
+		int Channels = 0;
+		std::filesystem::path ResourcePath = "";
+		std::string ImageName = "";
+		std::string Extension = "";
+
+		std::filesystem::path GetKeyPath()
+		{
+			return ResourcePath / std::filesystem::path(ImageName + Extension);
+		}
+
+		std::filesystem::path GetRelativePath()
+		{
+			return std::filesystem::path(Project::GetProjectName()) / Project::GetAssetDirectory() / ResourcePath / std::filesystem::path(ImageName + Extension);
+		}
+
+		std::filesystem::path GetAbsolutePath()
+		{
+			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / GetRelativePath();
+		}
 	};
 }
 

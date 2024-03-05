@@ -82,7 +82,7 @@ namespace eg
 		loader.Type = ResourceType::Image;
 		loader.load = imageLoaderLoad;
 		loader.unload = imageLoaderUnload;
-		loader.TypePath = "textures";
+		loader.TypePath = "Textures";
 
 		return loader;
 	}

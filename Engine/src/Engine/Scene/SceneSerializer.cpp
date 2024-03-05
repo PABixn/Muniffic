@@ -8,6 +8,7 @@
 #include <optional>
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Project/Project.h"
+#include "Engine/Resources/ResourceSerializer.h"
 
 namespace YAML
 {
@@ -429,6 +430,8 @@ namespace eg {
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
+
+		ResourceSerializer::SerializeResourceCache();
 	}
 
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
@@ -445,9 +448,10 @@ namespace eg {
 		}
 		catch (YAML::ParserException e)
 		{
-			EG_CORE_ERROR("Failed to load .hazel file '{0}'\n     {1}", filepath, e.what());
+			EG_CORE_ERROR("Failed to load .mnproj file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
+
 		if(!data["Scene"])
 			return false;
 
@@ -590,9 +594,13 @@ namespace eg {
 					if (spriteRendererComponent["TexturePath"])
 					{
 						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
-						//TODO: Later should be handled by the asset manager
-						auto path = Project::GetAssetFileSystemPath(texturePath);
-						src.Texture = Texture2D::Create(path.string());
+						if (std::filesystem::exists(texturePath))
+							src.Texture = Texture2D::Create(texturePath);
+						else
+						{
+							src.Texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							EG_CORE_WARN("Texture not found: {0}", texturePath);
+						}
 					}
 
 					if(spriteRendererComponent["IsInherited"])
@@ -717,6 +725,9 @@ namespace eg {
 				}
 			}
 		}
+
+		ResourceSerializer::DeserializeResourceCache();
+
 		return true;
 	}
 

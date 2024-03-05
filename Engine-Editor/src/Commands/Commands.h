@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include <variant>
 #include <cstddef>
+#include "Engine/Resources/ResourceDatabase.h"
+#include "Engine/Resources/ResourceUtils.h"
 
 namespace eg
 {
@@ -96,6 +98,48 @@ namespace eg
 			virtual void Undo() = 0;
 			virtual void Execute(CommandArgs) = 0;
 			virtual void Redo() = 0;
+		};
+
+		class DeleteDirectoryCommand : public Command
+		{
+		public:
+			DeleteDirectoryCommand(const std::filesystem::path& directory)
+				: m_Directory(directory)
+			{
+				Commands::AddCommand(this);
+
+				ResourceDatabase::DeleteDirectory(directory);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::filesystem::path m_Directory;
+		};
+
+		class DeleteResourceCommand : public Command
+		{
+		public:
+			DeleteResourceCommand(UUID uuid, ResourceType resourceType, bool deleteFile = false)
+				: m_UUID(uuid), m_ResourceType(resourceType), m_DeleteFile(deleteFile), m_Resource(ResourceUtils::GetResourcePointer(uuid, resourceType))
+			{
+				if(m_DeleteFile == false)
+					Commands::AddCommand(this);
+
+				ResourceDatabase::RemoveResource(m_UUID, resourceType, deleteFile);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+			protected:
+				UUID m_UUID;
+				ResourceType m_ResourceType;
+				bool m_DeleteFile;
+				void* m_Resource;
 		};
 
 		template<typename T>
@@ -577,6 +621,18 @@ namespace eg
 			}
 		}
 
+		static Command* ExecuteDeleteResourceCommand(UUID uuid, ResourceType resourceType, bool deleteFile = false)
+		{
+			Command* command = new DeleteResourceCommand(uuid, resourceType, deleteFile);
+			return command;
+		}
+
+		static Command* ExecuteDeleteDirectoryCommand(const std::filesystem::path& directory)
+		{
+			Command* command = new DeleteDirectoryCommand(directory);
+			return command;
+		}
+
 		template<typename T>
 		static Command* ExecuteValueCommand(std::function<void(T)> function, T value, T previousValue, const std::string label, bool bypass = false)
 		{
@@ -643,8 +699,6 @@ namespace eg
 			return command;
 		}
 
-		
-
 		template<typename T>
 		static Command* ExecuteVectorCommand(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue)
 		{
@@ -659,10 +713,6 @@ namespace eg
 			command->Execute(args);
 			return command;
 		}
-
-		
-
-		
 		 
 	private:
 		static std::vector<Commands::Command*> commandHistory;
