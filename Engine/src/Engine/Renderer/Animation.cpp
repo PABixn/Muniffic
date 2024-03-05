@@ -19,10 +19,14 @@ namespace eg
 	{
 	}
 
-	const Animation& Animation::Create(const std::string& path)
+	Ref<Animation> Animation::Create(const std::string& path)
 	{
-		//TODO: Load animation from file
-		return Animation();
+		return CreateRef<Animation>(path);
+	}
+
+	Ref<Animation> Animation::Create(const std::vector<Ref<SubTexture2D>>& frames, float frameRate, bool loop)
+	{
+		return CreateRef<Animation>(frames, frameRate, loop);
 	}
 
 	void Animation::Update(float dt, float speed)

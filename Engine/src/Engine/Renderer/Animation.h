@@ -13,7 +13,8 @@ namespace eg {
 		Animation(const std::vector<Ref<SubTexture2D>>& frames, float frameRate = 1.0f, bool loop = true);
 		~Animation() = default;
 
-		static const Animation& Create(const std::string& path);
+		static Ref<Animation> Create(const std::string& path);
+		static Ref<Animation> Create(const std::vector<Ref<SubTexture2D>>& frames, float frameRate = 1.0f, bool loop = true);
 
 		void Update(float dt, float speed);
 		void Play();
@@ -29,9 +30,13 @@ namespace eg {
 		inline const Ref<SubTexture2D>& GetFrame(int frame) const { return m_frames[frame]; }
 		inline int GetFrameCount() const { return m_frameCount; }
 		inline int GetCurrentFrame() const { return m_frame; }
+		inline int* GetCurrentFramePtr() { return &m_frame; }
 		inline bool IsPlaying() const { return m_playing; }
+		inline bool* IsPlayingPtr() { return &m_playing; }
 		inline bool IsLooping() const { return m_loop; }
+		inline bool* IsLoopingPtr() { return &m_loop; }
 		inline float GetFrameRate() const { return m_frameRate; }
+		inline float* GetFrameRatePtr() { return &m_frameRate; }
 		inline const std::string& GetName() const { return m_name; }
 
 	private:

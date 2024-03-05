@@ -12,6 +12,11 @@ namespace eg {
 		m_TexCoords[3] = { min.x, max.y };
 	}
 
+	Ref<SubTexture2D> SubTexture2D::Create(const Ref<Texture2D>& texture, const glm::vec2& min, const glm::vec2& max)
+	{
+		return CreateRef<SubTexture2D>(texture, min, max);
+	}
+
 	Ref<SubTexture2D> SubTexture2D::CreateFromCoords(const Ref<Texture2D>& texture, const glm::vec2& coords, const glm::vec2& cellSize, const glm::vec2& spriteSize /*= { 1, 1 }*/)
 	{
 
