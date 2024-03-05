@@ -35,6 +35,34 @@ namespace eg
 		return std::filesystem::path();
 	}
 
+	void ResourceDatabase::DeleteDirectory(const std::filesystem::path& directory)
+	{
+		ResourceType type = ResourceUtils::GetCurrentResourceDirectoryType(directory);
+		std::filesystem::path resourcePath = ResourceUtils::GetResourcePath(directory);
+		std::vector<UUID> resourcesToDelete;
+
+		if (type == ResourceType::Image)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::TextureResourceDataCache)
+			{
+				if (data->ResourcePath == resourcePath)
+					resourcesToDelete.push_back(uuid);
+			}
+
+			for (auto& uuid : resourcesToDelete)
+			{
+				ResourceSerializer::TextureResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+			}
+		}
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported for deletion");
+		}
+
+		std::filesystem::remove_all(directory);
+	}
+
 	void ResourceDatabase::RemoveResource(UUID uuid, ResourceType resourceType, bool deleteFile)
 	{
 		if (resourceType == ResourceType::Image)

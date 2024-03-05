@@ -108,7 +108,7 @@ namespace eg
 			{
 				Commands::AddCommand(this);
 
-				std::filesystem::remove_all(directory);
+				ResourceDatabase::DeleteDirectory(directory);
 			}
 
 			void Execute(CommandArgs args) override {};

@@ -191,7 +191,7 @@ namespace eg
 
 	void Commands::DeleteDirectoryCommand::Redo()
 	{
-		std::filesystem::remove_all(m_Directory);
+		ResourceDatabase::DeleteDirectory(m_Directory);
 
 		SetCurrentCommand(false);
 	}

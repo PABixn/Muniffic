@@ -16,6 +16,7 @@ namespace eg {
 		static void RenameResource(const std::filesystem::path& oldPath, const std::filesystem::path& newPath);
 		static void LoadResource(const std::filesystem::path& filePath);
 		static void AddResource(const std::filesystem::path& originalResourcePath, void* data, ResourceType resourceType);
+		static void DeleteDirectory(const std::filesystem::path& directory);
 
 		static void SetCurrentPath(std::filesystem::path* directory);
 		static std::filesystem::path* GetCurrentPath();
