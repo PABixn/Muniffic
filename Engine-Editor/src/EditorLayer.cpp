@@ -636,6 +636,7 @@ namespace eg
 			OnSceneStop();
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_LayersPanel->SetContext(m_ActiveScene);
 
 		m_ActiveScenePath = std::filesystem::path();
 		ConsolePanel::Log("File: EditorLayer.cpp - New Scene Created", ConsolePanel::LogType::Info);
@@ -672,6 +673,7 @@ namespace eg
 			m_EditorScene = newScene;
 			m_ActiveScene = newScene;
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+			m_LayersPanel->SetContext(m_ActiveScene);
 			m_ActiveScenePath = path;
 		}
 	}
@@ -772,6 +774,7 @@ namespace eg
 		m_ActiveScene->OnRuntimeStart();
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_LayersPanel->SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnSceneSimulate()
@@ -785,6 +788,7 @@ namespace eg
 		m_ActiveScene->OnSimulationStart();
 		ConsolePanel::Log("File: EditorLayer.cpp - Simulation started", ConsolePanel::LogType::Info);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_LayersPanel->SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnScenePause()

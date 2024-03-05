@@ -67,6 +67,9 @@ namespace eg {
 		const std::unordered_map<UUID, entt::entity>& GetEntityMap() const {
 			return m_EntityMap;
 		};
+		const std::unordered_map<UUID, EntityInfo*>& GetEntityInfoMap() const {
+			return m_EntityInfoMap;
+		};
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

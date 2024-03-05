@@ -12,8 +12,8 @@ namespace eg {
 		void SetContext(const Ref<Scene>& scene);
 		void OnImGuiRender();
 
-		Entity GetSelectedEntity() const { return m_SelectionContext; }
-		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; }
+		Entity GetSelectedEntity() const { return m_SelectionContext; };
+		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; };
 	private:
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);

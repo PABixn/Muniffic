@@ -8,7 +8,7 @@
 #include <vector>
 #include "ConsolePanel.h"
 #include "Engine/Core/UUID.h"
-#include "SceneHierarchyPanel.h"
+#include "Engine.h"
 
 namespace eg {
 
@@ -32,8 +32,13 @@ namespace eg {
 		void RepairIndexes();
 		std::string GetSelectedLayerName();
 		void RenameLayer(std::string name);
+
+		LayersPanel() = default;
+		//LayersPanel(const Ref<Scene>& scene);
+		//void SetContext(const Ref<Scene>& scene);
 	private:
-		int selectedLayer;
+		int selectedLayer = 0;
+		//Ref<Scene> m_Context;
 	};
 
 }
