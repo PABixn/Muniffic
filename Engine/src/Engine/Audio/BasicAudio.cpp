@@ -22,8 +22,8 @@ namespace eg {
 		LoadCurrentAudio();
 	}
 	bool BasicAudio::Play() {
-		/*
 		sf::SoundBuffer buffer;
+		/*
 		LoadCurrentAudio(); 
 		Ref<SoLoud::Soloud> SoLoudInstance = CreateRef<SoLoud::Soloud>(SoLoud::Soloud()); 
 		(*SoLoudInstance.get()).init();

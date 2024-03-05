@@ -44,7 +44,6 @@ project "Engine"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.mono}",
-		--"%{IncludeDir.SoLoud}",
 		"%{IncludeDir.SFML}",
 	}
 	links
@@ -58,25 +57,23 @@ project "Engine"
 		"Imgui",
 		"msdf-atlas-gen",
 		"%{Library.mono}",
-		--"SoLoud"
-		"%{Library.SFML}",
-		--"%{Library.SFML}",
-		--[[
-		"winmm.lib",
-		"sfml-system-d.lib",
-		"openal32.lib",
-		"flac.lib",
-		"vorbisenc.lib",
-		"vorbisfile.lib",
-		"vorbis.lib",
-		"ogg.lib",
+		--sfml static linking required libs :3
+		--"sfml-audio-d-2.dll",
+		--"openal32.lib",
+		--"openal32.dll",
+		--"flac.lib",
+		--"vorbisenc.lib",
+		--"vorbisfile.lib",
+		--"vorbis.lib",
+		--"ogg.lib",
 		"sfml-audio-d.lib",
-		]]--
-		--"sfml-audio.lib",
+		--"sfml-system-d.lib",
+		--end of sfml static linking required libs
 	}
 	libdirs
 	{
-		"%{LibraryDir.SFML}"
+		"%{LibraryDir.SFML}",
+		"%{LibraryDir.SFMLdyn}",
 	}
 
 	defines{
