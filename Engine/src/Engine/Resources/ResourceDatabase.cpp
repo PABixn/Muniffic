@@ -119,6 +119,16 @@ namespace eg
 		ResourceSerializer::CacheTexture(UUID(), data);
 	}
 
+	void AddAnimationResource(const std::filesystem::path& originalResourcePath, AnimationResourceData* data)
+	{
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->AnimationName + data->Extension);
+
+		if (finalPath != originalResourcePath)
+			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
+
+		ResourceSerializer::CacheAnimation(UUID(), data);
+	}
+
 	void ResourceDatabase::LoadResource(const std::filesystem::path& filePath)
 	{
 		ResourceType type = ResourceUtils::GetResourceTypeByExtension(filePath.extension().string());
@@ -146,8 +156,11 @@ namespace eg
 	{
 		switch (resourceType)
 		{
-		case::eg::ResourceType::Image:
+		case ResourceType::Image:
 			AddTextureResource(originalResourcePath, (TextureResourceData*)data);
+			break;
+		case ResourceType::Animation:
+			AddAnimationResource(originalResourcePath, (AnimationResourceData*)data);
 			break;
 		}
 	}

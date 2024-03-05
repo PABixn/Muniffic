@@ -10,15 +10,22 @@
 namespace eg
 {
 	std::unordered_map<UUID, TextureResourceData*> ResourceSerializer::TextureResourceDataCache;
+	std::unordered_map<UUID, AnimationResourceData*> ResourceSerializer::AnimationResourceDataCache;
 	std::unordered_map<UUID, ResourceType> ResourceSerializer::ResourceTypeInfo;
 
 	bool ResourceSerializer::DeserializeResourceCache()
 	{
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
+		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
 
-		YAML::Node textureNode;
+		YAML::Node textureNode, animationNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
+		{
+			return false;
+		}
+
+		if (!std::filesystem::exists(animationMetadataPath))
 		{
 			return false;
 		}
@@ -33,10 +40,24 @@ namespace eg
 			return false;
 		}
 
+		try
+		{
+			animationNode = YAML::LoadFile(animationMetadataPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", animationMetadataPath, e.what());
+			return false;
+		}
+
 		if (!textureNode["Resources"])
 			return false;
 
+		if (!animationNode["Resources"])
+			return false;
+
 		auto textureResources = textureNode["Resources"];
+		auto animationResources = animationNode["Resources"];
 
 		if (textureResources)
 		{
@@ -66,12 +87,38 @@ namespace eg
 				CacheTexture(uuid, data);
 			}
 		}
+
+		if (animationResources)
+		{
+			for (auto resource : animationResources)
+			{
+				UUID uuid = resource["UUID"].as<uint64_t>();
+
+				AnimationResourceData* data = new AnimationResourceData();
+				data->ResourcePath = resource["ResourcePath"].as<std::string>();
+				data->AnimationName = resource["AnimationName"].as<std::string>();
+				data->Extension = resource["Extension"].as<std::string>();
+				data->m_frameRate = resource["FrameRate"].as<float>();
+				data->m_frameCount = resource["FrameCount"].as<int>();
+				data->m_loop = resource["Loop"].as<bool>();
+				data->name = resource["Name"].as<std::string>();
+
+				auto frames = resource["Frames"];
+				for (auto frame : frames)
+				{
+					data->m_frames.push_back(frame.as<uint64_t>());
+				}
+
+				CacheAnimation(uuid, data);
+			}
+		}
 	}
 
 	void ResourceSerializer::SerializeResourceCache()
 	{
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
-		YAML::Emitter textureOut;
+		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
+		YAML::Emitter textureOut, animationOut;
 
 		textureOut << YAML::BeginMap;
 		textureOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
@@ -101,7 +148,28 @@ namespace eg
 				}
 				textureOut << YAML::EndSeq;
 			}
+
 			textureOut << YAML::EndMap;
+		}
+
+		for (auto& [key, value] : AnimationResourceDataCache)
+		{
+			animationOut << YAML::BeginMap;
+			animationOut << YAML::Key << "UUID" << YAML::Value << key;
+			animationOut << YAML::Key << "ResourcePath" << YAML::Value << value->ResourcePath.string();
+			animationOut << YAML::Key << "AnimationName" << YAML::Value << value->AnimationName;
+			animationOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
+			animationOut << YAML::Key << "FrameRate" << YAML::Value << value->m_frameRate;
+			animationOut << YAML::Key << "FrameCount" << YAML::Value << value->m_frameCount;
+			animationOut << YAML::Key << "Loop" << YAML::Value << value->m_loop;
+			animationOut << YAML::Key << "Name" << YAML::Value << value->name;
+			animationOut << YAML::Key << "Frames" << YAML::Value << YAML::BeginSeq;
+			for (auto& frame : value->m_frames)
+			{
+				animationOut << frame;
+			}
+			animationOut << YAML::EndSeq;
+			animationOut << YAML::EndMap;
 		}
 
 		YAML::EndSeq;
@@ -130,5 +198,26 @@ namespace eg
 
 		TextureResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Image;
+	}
+
+	void ResourceSerializer::CacheAnimation(UUID uuid, AnimationResourceData* data)
+	{
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->AnimationName + data->Extension);
+
+		if (!std::filesystem::exists(finalPath))
+		{
+			EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
+			return;
+		}
+
+		if (AnimationResourceDataCache.find(uuid) != AnimationResourceDataCache.end())
+		{
+			if (AnimationResourceDataCache[uuid] != nullptr)
+				delete AnimationResourceDataCache[uuid];
+			AnimationResourceDataCache.erase(uuid);
+		}
+
+		AnimationResourceDataCache[uuid] = data;
+		ResourceTypeInfo[uuid] = ResourceType::Animation;
 	}
 }

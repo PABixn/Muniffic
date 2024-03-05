@@ -40,10 +40,13 @@ namespace eg {
 	struct AnimationResourceData
 	{
 		float m_frameRate;
-		int m_framceCount;
+		int m_frameCount;
 		bool m_loop;
 		std::string name;
 		std::vector<UUID> m_frames;
+		std::filesystem::path ResourcePath = "";
+		std::string AnimationName = "";
+		std::string Extension = "";
 	};
 
 	struct TextureResourceData
