@@ -197,9 +197,7 @@ namespace eg
 						std::rename(droppedPath.string().c_str(), newPath.string().c_str());
 
 						if (type == ResourceType::Image)
-						{
 							ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath = ResourceUtils::GetResourcePath(path);
-						}
 					}
 					else
 					{

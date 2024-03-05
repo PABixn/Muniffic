@@ -1,1 +1,17 @@
 Resources:
+  - UUID: 11275176267002146931
+    ResourcePath: Textures\fasdfasd
+    ImageName: Chess_Board
+    Extension: .png
+    Width: 480
+    Height: 480
+    Channels: 1
+    IsSubTexture: false
+  - UUID: 2214472246128756250
+    ResourcePath: Textures\fasdfasd
+    ImageName: cubes
+    Extension: .png
+    Width: 800
+    Height: 600
+    Channels: 4
+    IsSubTexture: false
