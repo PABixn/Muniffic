@@ -134,7 +134,6 @@ namespace eg
 			textureOut << YAML::Key << "Height" << YAML::Value << value->Height;
 			textureOut << YAML::Key << "Channels" << YAML::Value << value->Channels;
 			textureOut << YAML::Key << "IsSubTexture" << YAML::Value << value->IsSubTexture;
-			//textureOut << YAML::Key << "ResourceType" << YAML::Value << "Image";
 
 			if (value->IsSubTexture)
 			{
@@ -175,9 +174,13 @@ namespace eg
 		YAML::EndSeq;
 		YAML::EndMap;
 
-		std::ofstream file(textureMetadataPath, std::ios::trunc);
-		file << textureOut.c_str();
-		file.close();
+		std::ofstream textureFile(textureMetadataPath, std::ios::trunc);
+		std::ofstream animationFile(animationMetadataPath, std::ios::trunc);
+		textureFile << textureOut.c_str();
+		animationFile << animationOut.c_str();
+
+		textureFile.close();
+		animationFile.close();
 	}
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
