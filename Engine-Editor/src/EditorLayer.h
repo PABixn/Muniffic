@@ -102,6 +102,7 @@ namespace eg {
 		Scope<AddResourcePanel> m_AddResourcePanel;
 		DeleteFilePanel* m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
+		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
 
 		enum class SceneState
 		{

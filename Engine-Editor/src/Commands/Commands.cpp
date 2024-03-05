@@ -177,7 +177,21 @@ namespace eg
 
 	void Commands::DeleteResourceCommand::Redo()
 	{
-		ResourceSerializer::DeleteCachedResource(m_UUID, m_ResourceType, m_DeleteFile);
+		ResourceDatabase::RemoveResource(m_UUID, m_ResourceType, m_DeleteFile);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::DeleteDirectoryCommand::Undo()
+	{
+		std::filesystem::create_directory(m_Directory);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::DeleteDirectoryCommand::Redo()
+	{
+		std::filesystem::remove_all(m_Directory);
 
 		SetCurrentCommand(false);
 	}

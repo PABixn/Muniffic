@@ -94,18 +94,6 @@ namespace eg
 
 		ImGui::Columns(columnCount, 0, false);
 
-		if (m_DeleteFilePanel->GetResult() != FileDeleteMethod::Cancel)
-		{
-			if (m_DeleteFilePanel->GetResult() == FileDeleteMethod::DeleteFromProject)
-				Commands::ExecuteDeleteResourceCommand(m_DeleteFilePanel->GetUUID(), m_DeleteFilePanel->GetType());
-			else if (m_DeleteFilePanel->GetResult() == FileDeleteMethod::DeleteFromDisk)
-				Commands::ExecuteDeleteResourceCommand(m_DeleteFilePanel->GetUUID(), m_DeleteFilePanel->GetType(), true);
-
-			m_DeleteFilePanel->SetResult(FileDeleteMethod::Cancel);
-			m_DeleteFilePanel->SetUUID(0);
-			m_DeleteFilePanel->SetType(ResourceType::None);
-		}
-
 		ResourceType type = ResourceUtils::GetCurrentResourceDirectoryType(m_CurrentDirectory);
 
 		if (type == ResourceType::Image)
@@ -168,14 +156,14 @@ namespace eg
 			{
 				if (ImGui::MenuItem("Delete"))
 				{
-					remove(path);
+					m_DeleteDirectoryPanel->ShowWindow(path);
 					ImGui::PopStyleColor();
 					ImGui::NextColumn();
 					ImGui::EndPopup();
 					ImGui::PopID();
 					break;
 				}
-				if(ImGui::MenuItem("Change name"))
+				if(ImGui::MenuItem("Rename"))
 				{
 					m_RenameFolderPanel->ShowWindow(path);
 				}

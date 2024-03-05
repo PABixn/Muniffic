@@ -3,7 +3,7 @@
 namespace eg
 {
 	DeleteFilePanel::DeleteFilePanel()
-		: m_Result(FileDeleteMethod::Cancel), m_Show(false), m_UUID(0), m_Type(ResourceType::None)
+		: m_Show(false), m_UUID(0), m_Type(ResourceType::None)
 	{ }
 
 	void DeleteFilePanel::ShowWindow(UUID uuid, ResourceType type)
@@ -21,13 +21,13 @@ namespace eg
 		ImGui::Text("Warning: Choose delete method");
 		if(ImGui::Button("Delete file from project"))
 		{
-			m_Result = FileDeleteMethod::DeleteFromProject;
+			Commands::ExecuteDeleteResourceCommand(m_UUID, m_Type, false);
 			m_Show = false;
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Delete file from disk"))
 		{
-			m_Result = FileDeleteMethod::DeleteFromDisk;
+			Commands::ExecuteDeleteResourceCommand(m_UUID, m_Type, true);
 			m_Show = false;
 		}
 		ImGui::SameLine();

@@ -17,7 +17,6 @@ namespace eg {
 		//static TextureResourceData* ReadCachedTexture(std::filesystem::path& keyPath);
 		static void SerializeResourceCache();
 		static bool DeserializeResourceCache();
-		static void DeleteCachedResource(UUID uuid, ResourceType resourceType, bool deleteFile);
 
 		static std::unordered_map<UUID, TextureResourceData*> TextureResourceDataCache;
 		static std::unordered_map<UUID, ResourceType> ResourceTypeInfo;

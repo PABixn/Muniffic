@@ -3,6 +3,7 @@
 #include <string>
 #include <filesystem>
 #include "Engine/Project/Project.h"
+#include "Engine/Core/UUID.h"
 
 namespace eg {
 	enum class ResourceType
@@ -34,6 +35,15 @@ namespace eg {
 		uint32_t width;
 		uint32_t height;
 		unsigned char* pixels;
+	};
+
+	struct AnimationResourceData
+	{
+		float m_frameRate;
+		int m_framceCount;
+		bool m_loop;
+		std::string name;
+		std::vector<UUID> m_frames;
 	};
 
 	struct TextureResourceData

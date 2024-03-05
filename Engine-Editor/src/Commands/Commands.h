@@ -3,7 +3,7 @@
 #include "Engine.h"
 #include <variant>
 #include <cstddef>
-#include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/ResourceDatabase.h"
 #include "Engine/Resources/ResourceUtils.h"
 
 namespace eg
@@ -100,6 +100,25 @@ namespace eg
 			virtual void Redo() = 0;
 		};
 
+		class DeleteDirectoryCommand : public Command
+		{
+		public:
+			DeleteDirectoryCommand(const std::filesystem::path& directory)
+				: m_Directory(directory)
+			{
+				Commands::AddCommand(this);
+
+				std::filesystem::remove_all(directory);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::filesystem::path m_Directory;
+		};
+
 		class DeleteResourceCommand : public Command
 		{
 		public:
@@ -109,7 +128,7 @@ namespace eg
 				if(m_DeleteFile == false)
 					Commands::AddCommand(this);
 
-				ResourceSerializer::DeleteCachedResource(m_UUID, resourceType, deleteFile);
+				ResourceDatabase::RemoveResource(m_UUID, resourceType, deleteFile);
 			}
 
 			void Execute(CommandArgs args) override {};
@@ -608,6 +627,12 @@ namespace eg
 			return command;
 		}
 
+		static Command* ExecuteDeleteDirectoryCommand(const std::filesystem::path& directory)
+		{
+			Command* command = new DeleteDirectoryCommand(directory);
+			return command;
+		}
+
 		template<typename T>
 		static Command* ExecuteValueCommand(std::function<void(T)> function, T value, T previousValue, const std::string label, bool bypass = false)
 		{
@@ -674,8 +699,6 @@ namespace eg
 			return command;
 		}
 
-		
-
 		template<typename T>
 		static Command* ExecuteVectorCommand(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue)
 		{
@@ -690,10 +713,6 @@ namespace eg
 			command->Execute(args);
 			return command;
 		}
-
-		
-
-		
 		 
 	private:
 		static std::vector<Commands::Command*> commandHistory;

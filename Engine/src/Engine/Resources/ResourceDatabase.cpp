@@ -35,13 +35,60 @@ namespace eg
 		return std::filesystem::path();
 	}
 
+	void ResourceDatabase::RemoveResource(UUID uuid, ResourceType resourceType, bool deleteFile)
+	{
+		if (resourceType == ResourceType::Image)
+		{
+			if (ResourceSerializer::TextureResourceDataCache.find(uuid) != ResourceSerializer::TextureResourceDataCache.end())
+			{
+				TextureResourceData* data = ResourceSerializer::TextureResourceDataCache[uuid];
+				ResourceSerializer::TextureResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+				if (deleteFile)
+				{
+					std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
+					std::remove(finalPath.string().c_str());
+				}
+			}
+		}
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported for deletion");
+		}
+	}
+
+	void ResourceDatabase::RenameResource(const std::filesystem::path& oldPath, const std::filesystem::path& newPath)
+	{
+		std::filesystem::rename(oldPath, newPath);
+		ResourceType type;
+
+		if(std::filesystem::is_directory(newPath))
+			type = ResourceUtils::GetCurrentResourceDirectoryType(oldPath);
+		else
+			type = ResourceUtils::GetResourceTypeByExtension(oldPath.extension().string());
+
+		bool isDirectory = std::filesystem::is_directory(newPath);
+
+		if (type == ResourceType::Image)
+		{
+			std::filesystem::path newResourcePath = ResourceUtils::GetResourcePath(isDirectory ? newPath : newPath.parent_path());
+
+			for (auto& [uuid, data] : ResourceSerializer::TextureResourceDataCache)
+			{
+				if (data->ResourcePath == ResourceUtils::GetResourcePath(oldPath))
+					data->ResourcePath = newResourcePath;
+			}
+		}
+	}
+
 	void AddTextureResource(const std::filesystem::path& originalResourcePath, TextureResourceData* data)
 	{
-		ResourceSerializer::CacheTexture(UUID(), data);
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->ImageName + data->Extension);
 
 		if (finalPath != originalResourcePath)
 			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
+
+		ResourceSerializer::CacheTexture(UUID(), data);
 	}
 
 	void ResourceDatabase::LoadResource(const std::filesystem::path& filePath)

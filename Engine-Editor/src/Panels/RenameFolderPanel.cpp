@@ -1,4 +1,5 @@
 #include "RenameFolderPanel.h"
+#include "Engine/Resources/ResourceDatabase.h"
 
 namespace eg
 {
@@ -23,7 +24,7 @@ namespace eg
 		if (ImGui::Button("Rename"))
 		{
 			std::filesystem::path newPath = m_Path.parent_path() / buffer;
-			std::filesystem::rename(m_Path, newPath);
+			ResourceDatabase::RenameResource(m_Path, newPath);
 			m_Show = false;
 		}
 		ImGui::SameLine();

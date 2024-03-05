@@ -131,34 +131,4 @@ namespace eg
 		TextureResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Image;
 	}
-
-	/*TextureResourceData* ResourceSerializer::ReadCachedTexture(std::filesystem::path& keyPath)
-	{
-		if (TextureResourceDataCache.find(keyPath) == TextureResourceDataCache.end())
-			return nullptr;
-
-		return TextureResourceDataCache[keyPath];
-	}*/
-
-	void ResourceSerializer::DeleteCachedResource(UUID uuid, ResourceType resourceType, bool deleteFile)
-	{
-		if (resourceType == ResourceType::Image)
-		{
-			if (TextureResourceDataCache.find(uuid) != TextureResourceDataCache.end())
-			{
-				TextureResourceData* data = TextureResourceDataCache[uuid];
-				TextureResourceDataCache.erase(uuid);
-				ResourceTypeInfo.erase(uuid);
-				if (deleteFile)
-				{
-					std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
-					std::remove(finalPath.string().c_str());
-				}
-			}
-		}
-		else
-		{
-			EG_CORE_ERROR("Resource type not supported for deletion");
-		}
-	}
 }
