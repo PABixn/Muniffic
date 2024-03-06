@@ -12,6 +12,8 @@ namespace eg {
 		std::vector<std::filesystem::path> FindResourcesByName(const std::string& name);
 		std::filesystem::path FindResourceByKeyPath(const std::filesystem::path& keyPath);
 
+		
+
 		static void RemoveResource(UUID uuid, ResourceType resourceType, bool deleteFile);
 		static void RenameResource(const std::filesystem::path& oldPath, const std::filesystem::path& newPath);
 		static void LoadResource(const std::filesystem::path& filePath);
@@ -20,6 +22,15 @@ namespace eg {
 
 		static void SetCurrentPath(std::filesystem::path* directory);
 		static std::filesystem::path* GetCurrentPath();
+
+		static UUID GetResourceUUID(const std::filesystem::path& filePath);
+		static UUID GetResourceUUID(const std::string& filePath);
+		static UUID GetResourceUUID(const char* filePath);
+		static UUID GetResourceUUID(const wchar_t* filePath);
+		static UUID GetResourceUUID(const std::filesystem::path& filePath, ResourceType resourceType);
+		static UUID GetResourceUUID(const std::string& filePath, ResourceType resourceType);
+		static UUID GetResourceUUID(const char* filePath, ResourceType resourceType);
+		static UUID GetResourceUUID(const wchar_t* filePath, ResourceType resourceType);
 	private:
 		static std::filesystem::path* m_CurrentDirectory;
 	};

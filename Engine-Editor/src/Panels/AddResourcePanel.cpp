@@ -2,13 +2,12 @@
 #include "Engine.h"
 #include "AddResourcePanel.h"
 #include "Engine/Utils/PlatformUtils.h"
-#include <imgui/imgui.h>
-#include "ResourcesPanels/ImagePanel.h"
 #include "Engine/Resources/resourceTypes.h"
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Resources/ResourceSerializer.h"
 #include "Engine/Resources/resourceTypes.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include <imgui/imgui.h>
 #include "../EditorLayer.h"
 
 namespace eg
@@ -45,6 +44,16 @@ namespace eg
 					{
 						bool initialized = m_ImagePanel->InitImagePanel(m_ResourcePath);
 						if (initialized)
+							m_ImagePanel->ShowImagePanel(true);
+					}
+				}
+				if (ImGui::Button("Animation"))
+				{
+					bool resourceChosen = ChooseNewResource("Image (*.png)\0*.png\0");
+					if (resourceChosen)
+					{
+						bool initialized = m_AnimationPanel->InitAnimationPanel(m_ResourcePath);
+						if(initialized)
 							m_ImagePanel->ShowImagePanel(true);
 					}
 				}

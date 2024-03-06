@@ -84,5 +84,36 @@ namespace eg
 		m_frameRate = frameRate;
 	}
 
+	void Animation::SetName(const std::string& name)
+	{
+		m_name = name;
+	}
+
+	void Animation::ClearFrames()
+	{
+		m_frames.clear();
+		m_frameCount = 0;
+	}
+
+	void Animation::RemoveFrame(int index)
+	{
+		if (index < m_frameCount)
+		{
+			m_frames.erase(m_frames.begin() + index);
+			m_frameCount--;
+		}
+	}
+
+	void Animation::AddFrame(const Ref<SubTexture2D>& frame)
+	{
+		m_frames.push_back(frame);
+		m_frameCount++;
+	}
+
+	void Animation::AddFrames(const std::vector<Ref<SubTexture2D>>& frames)
+	{
+		m_frames.insert(m_frames.end(), frames.begin(), frames.end());
+		m_frameCount += frames.size();
+	}
 
 }

@@ -18,13 +18,16 @@ namespace eg
 	private:
 		void ResetData();
 		void SaveAnimation();
+		void SetFrames();
 	private:
-		void* m_ResourceData = nullptr;
+		AnimationResourceData* m_ResourceData = nullptr;
+		TextureResourceData* m_TextureData = nullptr;
 		Resource* m_LoadedResource = nullptr;
 		int m_FrameWidth = 0, m_FrameHeight = 0;
 		int m_Column = 0, m_Row = 0;
 		int m_ColumnCount = 0, m_RowCount = 0;
-		TextureResourceData m_TextureData;
+
+		//TextureResourceData m_TextureData;
 		std::filesystem::path m_OriginalResourcePath = "";
 		Ref<Texture2D> m_PreviewOriginImage = nullptr;
 		Ref<Animation> m_PreviewData = nullptr;

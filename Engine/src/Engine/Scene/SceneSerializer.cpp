@@ -655,7 +655,7 @@ namespace eg {
 						{
 							//TODO: if animation uses prefab
 							std::string name = animation.first.as<std::string>();
-							const Animation anim = Animation::Create(name);
+							const Animation anim(name);
 							//TODO: else load all data for animation from scene file
 						}
 					}
