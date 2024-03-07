@@ -9,11 +9,13 @@
 #include "ConsolePanel.h"
 #include "Engine/Core/UUID.h"
 #include "Engine.h"
+#include "LayerDeletingPanel.h"
 
 namespace eg {
 
 	class LayersPanel {
 	public:
+		friend class LayerDeletingPanel;
 		class LayerInfo {
 		public:
 			std::string name;
@@ -46,14 +48,21 @@ namespace eg {
 					m_Context->DestroyEntity(m_Context->GetEntityByUUID(entitiesUUID[i]));
 				}
 			};
+			void MoveAllEntitiesToLayer(int layerIndex) {
+				for (int i = 0; i < entitiesUUID.size(); i++) {
+					m_Context->GetEntityByUUID(entitiesUUID[i]).GetEntityInfo()->m_Layer = layerIndex;
+					LayersPanel::Layers[layerIndex]->AddEntity(entitiesUUID[i]);
+				}
+				entitiesUUID.clear();
+			};
 			
 		};
 		static std::vector<LayerInfo*> Layers;
 		void OnImGuiRender();
 		static void AddLayer();
-		void DeleteLayer(int selectedLayer);
-		void RepairIndexes();
-		//static int EntityLayerIndex(UUID uuid);
+		static void DeleteLayer(int selectedLayer);
+		static void DeleteLayer(int selectedLayer, int moveTo);
+		static void RepairIndexes();
 		std::string GetSelectedLayerName();
 		void RenameLayer(std::string name);
 		void SetContext(const Ref<Scene>& scene);
@@ -61,7 +70,12 @@ namespace eg {
 		static int GetSelectedLayer() {
 			return selectedLayer;
 		};
+		LayerDeletingPanel* m_LayerDeletingPanel;
+		void SetLayerDeletingPanel(LayerDeletingPanel* layerDeletingPanel) {
+			m_LayerDeletingPanel = layerDeletingPanel;
+		};
 	private:
+		
 		static int selectedLayer;
 		static Ref<Scene> m_Context;
 	};

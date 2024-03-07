@@ -26,13 +26,6 @@ namespace eg {
         return LayersPanel::Layers[selectedLayer]->name;
     };
 
-    /*int LayersPanel::EntityLayerIndex(UUID uuid) {
-        for (int i = 0; i < LayersPanel::Layers.size(); i++) {
-            if (std::find(LayersPanel::Layers[i]->entitiesUUID.begin(), LayersPanel::Layers[i]->entitiesUUID.end(), uuid) != LayersPanel::Layers[i]->entitiesUUID.end()) {
-                return i;
-            };
-        };
-    };*/
 
     void LayersPanel::OnImGuiRender() {
         ImGui::Begin("Layers");
@@ -74,14 +67,14 @@ namespace eg {
 		};
         ImGui::SameLine();
         if (ImGui::Button("Delete Layer")) {
-            this->DeleteLayer(this->LayersPanel::selectedLayer);
+            m_LayerDeletingPanel->Show();
         };
 
         if (ImGui::Button("Up")) {
             if (LayersPanel::selectedLayer > 0) {
                 std::swap(LayersPanel::Layers[LayersPanel::selectedLayer], LayersPanel::Layers[LayersPanel::selectedLayer - 1]);
                 LayersPanel::selectedLayer--;
-                this->RepairIndexes();
+                LayersPanel::RepairIndexes();
             };
 		};
         ImGui::SameLine();
@@ -89,7 +82,7 @@ namespace eg {
             if (LayersPanel::selectedLayer < LayersPanel::Layers.size() - 1) {
                 std::swap(LayersPanel::Layers[LayersPanel::selectedLayer], LayersPanel::Layers[LayersPanel::selectedLayer + 1]);
                 LayersPanel::selectedLayer++;
-                this->RepairIndexes();
+                LayersPanel::RepairIndexes();
             };
         };
         ImGui::Text("Selected Layer: %s", LayersPanel::Layers[LayersPanel::selectedLayer]->name.c_str());
@@ -113,16 +106,28 @@ namespace eg {
     void LayersPanel::DeleteLayer(int selectedLayer) {
         if (LayersPanel::Layers.size() > 1) {
             LayersPanel::selectedLayer = 0;
-            //window to choose what to do with entities
             LayersPanel::Layers[selectedLayer]->DeleteAllEntities();
             LayersPanel::Layers.erase(LayersPanel::Layers.begin() + selectedLayer);
-            this->RepairIndexes();
+            LayersPanel::RepairIndexes();
             ConsolePanel::Log("File: LayersPanel.cpp - Layer Deleted", ConsolePanel::LogType::Info);
         }
         else {
             ConsolePanel::Log("File: LayersPanel.cpp - Can't delete last layer", ConsolePanel::LogType::Error);
         };
 	};
+
+    void LayersPanel::DeleteLayer(int selectedLayer, int moveTo) {
+        if (LayersPanel::Layers.size() > 1) {
+            LayersPanel::selectedLayer = 0;
+            LayersPanel::Layers[selectedLayer]->MoveAllEntitiesToLayer(moveTo);
+            LayersPanel::Layers.erase(LayersPanel::Layers.begin() + selectedLayer);
+            LayersPanel::RepairIndexes();
+            ConsolePanel::Log("File: LayersPanel.cpp - Layer Deleted", ConsolePanel::LogType::Info);
+        }
+        else {
+            ConsolePanel::Log("File: LayersPanel.cpp - Can't delete last layer", ConsolePanel::LogType::Error);
+        };
+    };
 
     
     

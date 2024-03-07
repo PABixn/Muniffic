@@ -236,10 +236,16 @@ namespace eg
 		
 		m_ContentBrowserPanel->OnImGuiRender();
 		m_ConsolePanel->OnImGuiRender();
+
+		m_LayersPanel->SetLayerDeletingPanel(m_LayerDeletingPanel);
 		m_LayersPanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
+		}
+
+		if (m_LayerDeletingPanel->IsShown()) {
+			m_LayerDeletingPanel->OnImGuiRender();
 		}
 
 		ImGui::Begin("Stats");
@@ -736,6 +742,7 @@ namespace eg
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 			m_ConsolePanel = CreateScope<ConsolePanel>();
 			m_LayersPanel = CreateScope<LayersPanel>();
+			m_LayerDeletingPanel = new LayerDeletingPanel();
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		}
 		else
