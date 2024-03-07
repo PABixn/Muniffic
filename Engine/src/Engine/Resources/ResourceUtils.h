@@ -55,6 +55,10 @@ namespace eg
 
 			if (type == ResourceType::Image)
 				return ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::TextureResourceDataCache[uuid]->ImageName + ResourceSerializer::TextureResourceDataCache[uuid]->Extension);
+			else if(type == ResourceType::Animation)
+				return ResourceSerializer::AnimationResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::AnimationResourceDataCache[uuid]->AnimationName + ResourceSerializer::AnimationResourceDataCache[uuid]->Extension);
+			else
+				return std::filesystem::path();
 		}
 
 		static void* GetResourcePointer(UUID uuid, ResourceType type)
@@ -63,6 +67,8 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return ResourceSerializer::TextureResourceDataCache[uuid];
+			case ResourceType::Animation:
+				return ResourceSerializer::AnimationResourceDataCache[uuid];
 			default:
 				return nullptr;
 			}

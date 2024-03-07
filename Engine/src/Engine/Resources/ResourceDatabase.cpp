@@ -107,6 +107,20 @@ namespace eg
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
+		else if (type == ResourceType::Animation)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
+			{
+				if (data->ResourcePath == resourcePath)
+					resourcesToDelete.push_back(uuid);
+			}
+
+			for (auto& uuid : resourcesToDelete)
+			{
+				ResourceSerializer::AnimationResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+			}
+		}
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported for deletion");
@@ -129,6 +143,14 @@ namespace eg
 					std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
 					std::remove(finalPath.string().c_str());
 				}
+			}
+		}
+		if(resourceType == ResourceType::Animation)
+		{
+			if (ResourceSerializer::AnimationResourceDataCache.find(uuid) != ResourceSerializer::AnimationResourceDataCache.end())
+			{
+				ResourceSerializer::AnimationResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
 		else
@@ -158,6 +180,20 @@ namespace eg
 				if (data->ResourcePath == ResourceUtils::GetResourcePath(oldPath))
 					data->ResourcePath = newResourcePath;
 			}
+		}
+		else if (type == ResourceType::Animation)
+		{
+			std::filesystem::path newResourcePath = ResourceUtils::GetResourcePath(isDirectory ? newPath : newPath.parent_path());
+
+			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
+			{
+				if (data->ResourcePath == ResourceUtils::GetResourcePath(oldPath))
+					data->ResourcePath = newResourcePath;
+			}
+		}
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported for renaming: {0}", oldPath.string());
 		}
 	}
 
