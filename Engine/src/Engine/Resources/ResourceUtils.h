@@ -133,5 +133,11 @@ namespace eg
 				return "";
 			}
 		}
+
+		static ResourceType GetResourceTypeByKeyPath(std::filesystem::path path)
+		{
+			std::string type = path.string().substr(0, path.string().find('\\'));
+			return GetResourceTypeFromText(type);
+		}
 	};
 }
