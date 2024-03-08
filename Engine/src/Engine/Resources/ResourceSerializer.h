@@ -15,7 +15,6 @@ namespace eg {
 
 		static void CacheTexture(UUID uuid, TextureResourceData* data);
 		static void CacheAnimation(UUID uuid, AnimationResourceData* data);
-		//static TextureResourceData* ReadCachedTexture(std::filesystem::path& keyPath);
 		static void SerializeResourceCache();
 		static bool DeserializeResourceCache();
 

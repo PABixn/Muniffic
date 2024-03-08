@@ -50,12 +50,6 @@ namespace eg
 			return false;
 		}
 
-		if (!textureNode["Resources"])
-			return false;
-
-		if (!animationNode["Resources"])
-			return false;
-
 		auto textureResources = textureNode["Resources"];
 		auto animationResources = animationNode["Resources"];
 
