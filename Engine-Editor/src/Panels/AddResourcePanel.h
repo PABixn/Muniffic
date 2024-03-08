@@ -13,9 +13,12 @@ namespace eg {
 		AddResourcePanel();
 
 		void OnImGuiRender();
+		void Update(float ts);
 
 		bool ChooseNewResource(const std::string filter);
 		void showResourcePanel(bool show) { m_showResourcePanel = show; }
+
+		bool IsResourcePanelOpen() { return m_showResourcePanel; }
 	private:
 		Ref<ImagePanel> m_ImagePanel;
 		Ref<AnimationPanel> m_AnimationPanel;

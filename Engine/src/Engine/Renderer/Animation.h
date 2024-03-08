@@ -35,8 +35,8 @@ namespace eg {
 		inline const Ref<SubTexture2D>& GetFrame() const { return m_frames[(int)m_frame]; }
 		inline const Ref<SubTexture2D>& GetFrame(int frame) const { return m_frames[frame]; }
 		inline int GetFrameCount() const { return m_frameCount; }
-		inline int GetCurrentFrame() const { return m_frame; }
-		inline int* GetCurrentFramePtr() { return &m_frame; }
+		inline float GetCurrentFrame() const { return m_frame; }
+		inline float* GetCurrentFramePtr() { return &m_frame; }
 		inline bool IsPlaying() const { return m_playing; }
 		inline bool* IsPlayingPtr() { return &m_playing; }
 		inline bool IsLooping() const { return m_loop; }
@@ -48,7 +48,7 @@ namespace eg {
 	private:
 		float m_frameRate;
 		int m_frameCount;
-		int m_frame;
+		float m_frame = 0;
 		bool m_loop;
 		bool m_playing;
 		std::vector<Ref<SubTexture2D>> m_frames;

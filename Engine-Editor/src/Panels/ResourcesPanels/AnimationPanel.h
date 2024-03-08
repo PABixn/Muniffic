@@ -14,10 +14,11 @@ namespace eg
 		void OnImGuiRender();
 		void OnUpdate(float dt) { m_PreviewData->Update(dt, 1.0f); }
 
-		void ShowAnimationPanel(bool show) { m_ShowImagePanel = show; }
+		void ShowAnimationPanel(bool show) { m_ShowAnimationPanel = show; }
+
+		bool IsAnimationPanelOpen() { return m_ShowAnimationPanel; }
 	private:
 		void ResetData();
-		void SaveAnimation();
 		void SetFrames();
 	private:
 		AnimationResourceData* m_ResourceData = nullptr;
@@ -31,7 +32,7 @@ namespace eg
 		std::filesystem::path m_OriginalResourcePath = "";
 		Ref<Texture2D> m_PreviewOriginImage = nullptr;
 		Ref<Animation> m_PreviewData = nullptr;
-		bool m_ShowImagePanel = false;
+		bool m_ShowAnimationPanel = false;
 		std::filesystem::path m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animation";
 	};
 }
