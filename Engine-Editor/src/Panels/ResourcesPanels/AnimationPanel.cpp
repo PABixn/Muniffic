@@ -37,8 +37,8 @@ namespace eg {
 		frames.push_back(SubTexture2D::Create(m_PreviewOriginImage, { 0, 0 }, { 1, 1 }));
 		m_PreviewData = Animation::Create(frames);
 		m_ResourceData = new AnimationResourceData();
-		m_ResourceData->ResourcePath = "Animation";
-		m_ResourceData->AnimationName = m_LoadedResource->Name;
+		m_ResourceData->ResourcePath = "";
+		m_ResourceData->AnimationName = std::filesystem::path(m_LoadedResource->Name).stem().string();
 		m_ResourceData->Extension = ".anim";
 		SetFrames();
 		return true;
@@ -115,6 +115,12 @@ namespace eg {
 			ImGui::Text("Animation: %s", m_ResourceData->AnimationName.c_str());
 			if(m_PreviewData->GetFrameCount() > 0)
 				ImGui::Image((void*)m_PreviewData->GetFrame()->GetTexture()->GetRendererID(), ImVec2(128, 128), { m_PreviewData->GetFrame()->GetMin().x , m_PreviewData->GetFrame()->GetMin().y}, { m_PreviewData->GetFrame()->GetMax().x , m_PreviewData->GetFrame()->GetMax().y });
+
+			char buffer2[512];
+			memset(buffer2, 0, sizeof(buffer2));
+			std::strncpy(buffer2, m_ResourceData->ResourcePath.string().c_str(), sizeof(buffer2));
+			if(ImGui::InputText("Resource Path: ", buffer2, sizeof(buffer2)))
+					m_ResourceData->ResourcePath = std::filesystem::path(std::string(buffer2));
 			if (ImGui::Button("Save"))
 			{
 				for (int i = 0; i < m_PreviewData->GetFrameCount(); i++)
@@ -131,10 +137,10 @@ namespace eg {
 					data->m_TexCoords[2] = m_PreviewData->GetFrame(i)->GetMax();
 					data->m_TexCoords[3] = { m_PreviewData->GetFrame(i)->GetMin().x, m_PreviewData->GetFrame(i)->GetMax().y };
 					data->IsSubTexture = true;
+					std::filesystem::path finalPath = data->ResourcePath / m_ResourceData->ResourcePath / (std::filesystem::path(data->ImageName).stem().string() + data->Extension);
+					ResourceDatabase::AddResource(finalPath, (void*)data, ResourceType::Image);
 
-					ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)data, ResourceType::Image);
-
-					//m_ResourceData->m_frames.push_back(ResourceDatabase::GetResourceUUID(m_OriginalResourcePath, ResourceType::Image));
+					m_ResourceData->m_frames.push_back(ResourceDatabase::GetResourceUUID(finalPath, ResourceType::Image));
 					delete data;
 				}
 				m_ResourceData->m_frameRate = m_PreviewData->GetFrameRate();
@@ -143,7 +149,7 @@ namespace eg {
 				m_ResourceData->name = m_ResourceData->AnimationName;
 				m_ResourceData->Extension = ".anim";
 				
-				ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_ResourceData, ResourceType::Animation);
+				ResourceDatabase::AddResource(std::filesystem::path("Animation") / m_ResourceData->ResourcePath / (m_ResourceData->AnimationName + m_ResourceData->Extension), (void*)m_ResourceData, ResourceType::Animation);
 				ShowAnimationPanel(false);
 			}
 			ImGui::End();
