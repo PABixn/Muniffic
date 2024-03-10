@@ -34,7 +34,7 @@ namespace eg
 		{
 			textureNode = YAML::LoadFile(textureMetadataPath.string());
 		}
-		catch(YAML::ParserException e)
+		catch (YAML::ParserException e)
 		{
 			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", textureMetadataPath, e.what());
 			return false;
@@ -117,7 +117,7 @@ namespace eg
 		textureOut << YAML::BeginMap;
 		textureOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
 
-		for(auto& [key, value] : TextureResourceDataCache)
+		for (auto& [key, value] : TextureResourceDataCache)
 		{
 			textureOut << YAML::BeginMap;
 			textureOut << YAML::Key << "UUID" << YAML::Value << key;

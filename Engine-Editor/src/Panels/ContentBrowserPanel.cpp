@@ -87,9 +87,7 @@ namespace eg
 				ImGui::EndDragDropTarget();
 			}
 		}
-			}
-		}
-		bool tableView = true;
+		bool tableView = false;
 		if (tableView) {
 			ImGui::BeginTable("table view",2, ImGuiTableFlags_BordersInner);
 			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthStretch); 
@@ -162,13 +160,6 @@ namespace eg
 
 		ImGui::Columns(columnCount, 0, false);
 
-		ResourceType type = ResourceUtils::GetCurrentResourceDirectoryType(m_CurrentDirectory);
-
-			m_DeleteFilePanel->SetResult(FileDeleteMethod::Cancel);
-			m_DeleteFilePanel->SetKeyPath(std::filesystem::path());
-			m_DeleteFilePanel->SetType(ResourceType::None);
-		}
-		auto r = m_CurrentDirectory.filename().string();
 		ResourceType type = ResourceUtils::GetResourceTypeFromText(m_CurrentDirectory.filename().string());
 
 		if (type == ResourceType::Image)
@@ -187,7 +178,6 @@ namespace eg
 					(*s).SetPreviewAbsoluteImagePath(std::filesystem::path(value->GetAbsolutePath()));
 					(*s).SetPreviewRelativeImagePath(std::filesystem::path(value->GetRelativePath()));
 				}
-				ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 				if (ImGui::BeginPopupContextItem("FileOptions"))
 				{

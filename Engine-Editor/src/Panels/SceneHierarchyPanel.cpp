@@ -9,6 +9,10 @@
 #include <cstring>
 #include "../Commands/Commands.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include "stb_image.h"
+#include "Engine/Resources/ResourceSerializer.h"
+#include "iostream"
+#include "shellapi.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -18,6 +22,15 @@
 #endif
 
 namespace eg {
+
+	const char* add(const char* begining, const char* middle, const char* ending) {
+		size_t resultLength = strlen(middle) + strlen(begining) + strlen(ending);
+		char* resultMsg = new char[resultLength];
+		strcpy(resultMsg, begining);
+		strcat(resultMsg, middle);
+		strcat(resultMsg, ending);
+		return resultMsg;
+	}
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
@@ -78,8 +91,8 @@ namespace eg {
 		if (m_PreviewAbsoluteImagePath != "" ) {
 			ImGui::Begin("Preview");
 			GLuint my_opengl_texture; 
-			for (const std::pair<std::filesystem::path, TextureResourceData*>& pairOfPathAndData : ResourceSerializer::TextureResourceDataCache) {
-				auto CacheImageData = (pairOfPathAndData.second);
+			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceSerializer::TextureResourceDataCache) {
+				auto CacheImageData = (pairOfUUIDAndData.second);
 				if (CacheImageData->GetAbsolutePath() == m_PreviewAbsoluteImagePath){
 					stbi_set_flip_vertically_on_load(false);
 					unsigned char* image = stbi_load(m_PreviewAbsoluteImagePath.string().c_str(), &(CacheImageData->Width), &(CacheImageData->Height), &(CacheImageData->Channels), STBI_rgb_alpha);
@@ -142,7 +155,7 @@ namespace eg {
 		}
 
 		if (ImGui::IsItemClicked())
-			m_SelectionContext = entity;
+			SetSelectedEntity(entity);
 
 		if (ImGui::BeginPopupContextItem())
 		{
