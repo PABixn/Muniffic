@@ -35,6 +35,21 @@ namespace eg
 		return std::filesystem::path();
 	}
 
+	std::string ResourceDatabase::GetResourceName(UUID uuid)
+	{
+		ResourceType type = ResourceSerializer::ResourceTypeInfo.at(uuid);
+
+		if (type == ResourceType::Image)
+			return ResourceSerializer::TextureResourceDataCache[uuid]->ImageName;
+		else if (type == ResourceType::Animation)
+			return ResourceSerializer::AnimationResourceDataCache[uuid]->AnimationName;
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported");
+			return std::string();
+		}
+	}
+
 	std::filesystem::path ResourceDatabase::GetFullPath(UUID uuid)
 	{
 		ResourceType type = ResourceSerializer::ResourceTypeInfo.at(uuid);
@@ -227,9 +242,11 @@ namespace eg
 		std::filesystem::rename(oldPath, newPath);
 	}
 
-	void ResourceDatabase::RenameDirectory(const std::filesystem::path& oldPath, const std::filesystem::path& newPath)
+	void ResourceDatabase::RenameDirectory(const std::filesystem::path& oldPath, const std::string& name)
 	{
 		ResourceType type = ResourceUtils::GetCurrentResourceDirectoryType(oldPath);
+
+		const std::filesystem::path newPath = oldPath.parent_path() / name;
 
 		std::filesystem::rename(oldPath, newPath);
 

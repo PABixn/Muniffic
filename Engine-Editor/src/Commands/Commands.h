@@ -100,6 +100,52 @@ namespace eg
 			virtual void Redo() = 0;
 		};
 
+		class RenameDirectoryCommand : public Command
+		{
+		public:
+			RenameDirectoryCommand(const std::filesystem::path& path, const std::string& newName)
+				: m_NewName(newName), m_Path(path)
+			{
+				Commands::AddCommand(this);
+
+				m_OldName = path.filename().string();
+
+				ResourceDatabase::RenameDirectory(path, newName);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::filesystem::path m_Path;
+			std::string m_OldName;
+			std::string m_NewName;
+		};
+
+		class RenameResourceCommand : public Command
+		{
+		public:
+			RenameResourceCommand(UUID uuid, const std::string& newName)
+				: m_UUID(uuid), m_NewName(newName)
+			{
+				Commands::AddCommand(this);
+
+				m_OldName = ResourceDatabase::GetResourceName(uuid);
+
+				ResourceDatabase::RenameResource(uuid, newName);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_UUID;
+			std::string m_NewName;
+			std::string m_OldName;
+		};
+
 		class MoveResourceCommand : public Command
 		{
 		public:
@@ -661,6 +707,18 @@ namespace eg
 				if(entity.HasComponent<Component>())
 					entity.GetInheritableComponent<Component>()->isInherited = false;
 			}
+		}
+
+		static Command* ExecuteRenameDirectoryCommand(const std::filesystem::path& path, const std::string& newName)
+		{
+			Command* command = new RenameDirectoryCommand(path, newName);
+			return command;
+		}
+
+		static Command* ExecuteRenameResourceCommand(UUID uuid, const std::string& newName)
+		{
+			Command* command = new RenameResourceCommand(uuid, newName);
+			return command;
 		}
 
 		static Command* ExecuteMoveResourceCommand(UUID uuid, const std::filesystem::path& path)

@@ -1,5 +1,6 @@
 #include "RenameResourcePanel.h"
 #include "Engine/Resources/ResourceDatabase.h"
+#include "../../Engine-Editor/src/Commands/Commands.h"
 
 namespace eg
 {
@@ -23,7 +24,8 @@ namespace eg
 		ImGui::InputText("##ResourceName", buffer, 256);
 		if (ImGui::Button("Rename"))
 		{
-			ResourceDatabase::RenameResource(m_UUID, buffer);
+			Commands::ExecuteRenameResourceCommand(m_UUID, buffer);
+			//ResourceDatabase::RenameResource(m_UUID, buffer);
 			m_Show = false;
 		}
 		ImGui::SameLine();
