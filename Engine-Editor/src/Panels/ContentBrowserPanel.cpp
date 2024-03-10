@@ -15,11 +15,51 @@ namespace eg
 	{
 		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
-		ResourceDatabase::SetCurrentPath(&m_CurrentDirectory);
+		m_ImageIcon = Texture2D::Create("resources/icons/contentBrowser/ImageIcon.png");
 	}
+	void ContentBrowserPanel::DrawCenteredText(const std::string& text, const float& cellSize){
+		auto textWidth = ImGui::CalcTextSize(text .c_str()).x;
+		auto CursorX = ImGui::GetCursorPosX();
+		float offset = (cellSize - textWidth) * 0.43f;
+		if (textWidth < cellSize) {
+			ImGui::SetCursorPosX(CursorX + offset);
+			ImGui::TextWrapped(text.c_str());
+		}
+		else {
+		int a = ceil(textWidth / cellSize)+1;
+		for (int i = 0; i < a; i++) {
+			if (i>=2)
+			{
+				auto r = text.substr((text.length() / a) * i, (text.length() / a)-3);
+				r += "...";
+				textWidth = ImGui::CalcTextSize(r.c_str()).x;
+				CursorX = ImGui::GetCursorPosX();
+				offset = (cellSize - textWidth) * 0.45f;
+				ImGui::SetCursorPosX(CursorX + offset);
+				ImGui::TextWrapped(r.c_str());
+				return;
+			}
+			auto r = text.substr((text.length() / a) * i, (text.length() / a));
+			textWidth = ImGui::CalcTextSize(r.c_str()).x;
+			CursorX = ImGui::GetCursorPosX();
+			offset = (cellSize - textWidth) * 0.45f;
+			ImGui::SetCursorPosX(CursorX + offset);
+			ImGui::TextWrapped(r.c_str());
+		}
+		auto r = text.substr((text.length() / a) * a);
+		if (r != "")
+		{
+			textWidth = ImGui::CalcTextSize(r.c_str()).x;
+			CursorX = ImGui::GetCursorPosX();
+			offset = (cellSize - textWidth) * 0.5f;
+			ImGui::SetCursorPosX(CursorX + offset);
+			ImGui::TextWrapped(r.c_str());
+		}
+		}
 
+	}
 	void ContentBrowserPanel::OnImGuiRender() {
-		ImGui::Begin("Content Browser");
+		ImGui::Begin("Content Browser", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse);
 
 		if (m_CurrentDirectory != std::filesystem::path(Project::GetAssetDirectory())) {
 			if (ImGui::Button("<-"))
@@ -65,6 +105,49 @@ namespace eg
 				ImGui::EndDragDropTarget();
 			}
 		}
+			}
+		}
+		bool tableView = true;
+		if (tableView) {
+			ImGui::BeginTable("table view",2, ImGuiTableFlags_BordersInner);
+			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthStretch); 
+			for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
+			{
+				const auto& path = directoryEntry.path();
+
+				if (path.extension() == ".mnmeta")
+					continue;
+
+				std::filesystem::path metaPath = path.parent_path() / (path.stem().string() + ".mnmeta");
+
+				if (!directoryEntry.is_directory() && !std::filesystem::exists(metaPath))
+					continue;
+
+				ImGui::SetNextItemWidth(0.1f);
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+				auto name = path.filename().string();
+				ImGui::PushID(name.c_str());
+				Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+				ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { 20,20 }, { 0, 1 }, { 1, 0 });
+				ImGui::TableNextColumn();
+
+				ImGui::PopStyleColor();
+
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+					if (directoryEntry.is_directory())
+					{
+						std::filesystem::path oldPath = m_CurrentDirectory;
+						m_CurrentDirectory /= path.filename();
+						Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
+					}
+				}
+
+				ImGui::Text(name.c_str());
+
+				ImGui::PopID();
+			}
 
 		ImGui::SameLine();
 
@@ -83,8 +166,11 @@ namespace eg
 			ImGui::EndPopup();
 		}
 
+			ImGui::EndTable();
+		}
+		else {
 		static float padding = 16.0f;
-		static float thumbnailSize = 128.0f;
+		static float thumbnailSize = 100.0f;
 		float cellSize = thumbnailSize + padding;
 
 		float panelWidth = ImGui::GetContentRegionAvail().x;
@@ -96,6 +182,13 @@ namespace eg
 
 		ResourceType type = ResourceUtils::GetCurrentResourceDirectoryType(m_CurrentDirectory);
 
+			m_DeleteFilePanel->SetResult(FileDeleteMethod::Cancel);
+			m_DeleteFilePanel->SetKeyPath(std::filesystem::path());
+			m_DeleteFilePanel->SetType(ResourceType::None);
+		}
+		auto r = m_CurrentDirectory.filename().string();
+		ResourceType type = ResourceUtils::GetResourceTypeFromText(m_CurrentDirectory.filename().string());
+
 		if (type == ResourceType::Image)
 		{
 			for (auto& [key, value] : ResourceSerializer::TextureResourceDataCache)
@@ -106,6 +199,12 @@ namespace eg
 				auto name = value->ImageName + value->Extension;
 				ImGui::PushID(name.c_str());
 				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+				if (ImGui::ImageButton((ImTextureID)m_ImageIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 }))
+				{
+					auto* s = (*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).GetSceneHierarchyPanel(); 
+					(*s).SetPreviewAbsoluteImagePath(std::filesystem::path(value->GetAbsolutePath()));
+					(*s).SetPreviewRelativeImagePath(std::filesystem::path(value->GetRelativePath()));
+				}
 				ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 				if (ImGui::BeginPopupContextItem("FileOptions"))
@@ -129,8 +228,8 @@ namespace eg
 				}
 
 				ImGui::PopStyleColor();
-
-				ImGui::TextWrapped(name.c_str());
+				
+				DrawCenteredText(name.c_str(), cellSize);
 
 				ImGui::NextColumn();
 
@@ -147,8 +246,7 @@ namespace eg
 
 			auto name = path.filename().string();
 			ImGui::PushID(name.c_str());
-			
-			Ref<Texture2D> icon = m_DirectoryIcon;
+			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0,0,0,0));
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
@@ -215,7 +313,7 @@ namespace eg
 				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
 
-			ImGui::TextWrapped(name.c_str());
+			DrawCenteredText(name, cellSize);
 
 			ImGui::NextColumn();
 
@@ -225,13 +323,15 @@ namespace eg
 		ImGui::Columns(1);
 
 		float size = thumbnailSize, offset = padding;
-
+		/*
 		if(ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512))
 			Commands::ExecuteRawValueCommand(&thumbnailSize, size, std::string("ContentBrowserPanel-Thumbnail Size"));
 			
 		if(ImGui::SliderFloat("Padding", &padding, 0, 32))
 			Commands::ExecuteRawValueCommand(&padding, offset, std::string("ContentBrowserPanel-Padding"));
+			*/
 
+		}
 		ImGui::End();
 	}
 
