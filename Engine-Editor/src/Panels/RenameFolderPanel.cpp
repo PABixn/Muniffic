@@ -9,8 +9,8 @@ namespace eg
 
 	void RenameFolderPanel::ShowWindow(std::filesystem::path path)
 	{
-		m_Show = true;
 		m_Path = path;
+		m_Show = true;
 	}
 
 	void RenameFolderPanel::OnImGuiRender()
@@ -24,7 +24,7 @@ namespace eg
 		if (ImGui::Button("Rename"))
 		{
 			std::filesystem::path newPath = m_Path.parent_path() / buffer;
-			ResourceDatabase::RenameResource(m_Path, newPath);
+			ResourceDatabase::RenameDirectory(m_Path, newPath);
 			m_Show = false;
 		}
 		ImGui::SameLine();

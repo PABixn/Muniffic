@@ -35,31 +35,13 @@ namespace eg
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
-					uint64_t uuid = *(uint64_t*)payload->Data;
-					ResourceType type = ResourceSerializer::ResourceTypeInfo[uuid];
-					std::filesystem::path keyPath = ResourceUtils::GetKeyPath(uuid);
-
-					std::filesystem::path droppedPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / keyPath;
-
-					if (std::filesystem::exists(droppedPath))
+					if (ResourceUtils::CanDrop(m_CurrentDirectory.parent_path()))
 					{
-						std::filesystem::path newPath = m_CurrentDirectory.parent_path() / keyPath.filename();
+						uint64_t uuid = *(uint64_t*)payload->Data;
 
-						int result = std::rename(droppedPath.string().c_str(), newPath.string().c_str());
-						
-						if (result == 0)
-						{
-							if (type == ResourceType::Image)
-								ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath = ResourceUtils::GetResourcePath(m_CurrentDirectory.parent_path());
-						}
-						else
-						{
-							EG_CORE_ERROR("Failed to move file");
-						}
-					}
-					else
-					{
-						EG_CORE_ERROR("File does not exist");
+						Commands::ExecuteMoveResourceCommand(uuid, m_CurrentDirectory.parent_path());
+
+						//ResourceDatabase::MoveResource(uuid, m_CurrentDirectory.parent_path());
 					}
 				}
 				ImGui::EndDragDropTarget();
@@ -119,6 +101,12 @@ namespace eg
 						ImGui::PopID();
 						break;
 					}
+
+					if (ImGui::MenuItem("Rename"))
+					{
+						m_RenameResourcePanel->ShowWindow(key);
+					}
+
 					ImGui::EndPopup();
 				}
 
@@ -163,6 +151,7 @@ namespace eg
 					ImGui::PopID();
 					break;
 				}
+
 				if(ImGui::MenuItem("Rename"))
 				{
 					m_RenameFolderPanel->ShowWindow(path);
@@ -184,24 +173,11 @@ namespace eg
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
-					uint64_t uuid = *(uint64_t*)payload->Data;
-					ResourceType type = ResourceSerializer::ResourceTypeInfo[uuid];
-					std::filesystem::path keyPath = ResourceUtils::GetKeyPath(uuid);
-
-					std::filesystem::path droppedPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / keyPath;
-
-					if (std::filesystem::exists(droppedPath))
+					if (ResourceUtils::CanDrop(path))
 					{
-						std::filesystem::path newPath = path / keyPath.filename();
-
-						std::rename(droppedPath.string().c_str(), newPath.string().c_str());
-
-						if (type == ResourceType::Image)
-							ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath = ResourceUtils::GetResourcePath(path);
-					}
-					else
-					{
-						EG_CORE_ERROR("File does not exist");
+						uint64_t uuid = *(uint64_t*)payload->Data;
+						
+						Commands::ExecuteMoveResourceCommand(uuid, path);
 					}
 				}
 				ImGui::EndDragDropTarget();

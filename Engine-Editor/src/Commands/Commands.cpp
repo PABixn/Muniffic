@@ -196,6 +196,34 @@ namespace eg
 		SetCurrentCommand(false);
 	}
 
+	void Commands::LoadResourceCommand::Undo()
+	{
+		ResourceDatabase::RemoveResource(m_Path);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::LoadResourceCommand::Redo()
+	{
+		ResourceDatabase::LoadResource(m_Path);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::MoveResourceCommand::Undo()
+	{
+		ResourceDatabase::MoveResource(m_UUID, m_OldPath);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::MoveResourceCommand::Redo()
+	{
+		ResourceDatabase::MoveResource(m_UUID, m_Path);
+
+		SetCurrentCommand(false);
+	}
+
 	void Commands::AddCommand(Command* command)
 	{
 		if(currentCommandIndex == -1)
