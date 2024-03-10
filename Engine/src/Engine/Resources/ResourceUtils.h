@@ -46,7 +46,40 @@ namespace eg
 
 		static std::filesystem::path GetResourcePath(std::filesystem::path path)
 		{
+			std::filesystem::path keyPath = GetKeyPath(path);
+
+			if (std::filesystem::is_directory(path))
+				return keyPath;
+
+			if (keyPath.string().rfind('\\') != std::string::npos)
+				return keyPath.string().substr(0, keyPath.string().rfind('\\'));
+			else
+				return path;
+		}
+
+		static std::filesystem::path GetKeyPath(std::filesystem::path path)
+		{
+			if(path.string().rfind(Project::GetAssetDirectory().string()) == std::string::npos)
+				return std::filesystem::path();
+
+			if (path.string().rfind(Project::GetAssetDirectory().string()) + Project::GetAssetDirectory().string().length() + 1 >= path.string().length())
+				return std::filesystem::path();
+
 			return path.string().substr(path.string().rfind(Project::GetAssetDirectory().string()) + Project::GetAssetDirectory().string().length() + 1);
+		}
+
+		static bool CanDrop(const std::filesystem::path& path)
+		{
+			if (!std::filesystem::is_directory(path))
+				return false;
+
+			if (path.string().rfind(Project::GetAssetDirectory().string()) == std::string::npos)
+				return false;
+
+			if (path.string().rfind(Project::GetAssetDirectory().string()) + Project::GetAssetDirectory().string().length() + 1 >= path.string().length())
+				return false;
+
+			return true;
 		}
 
 		static std::filesystem::path GetKeyPath(UUID uuid)
@@ -55,6 +88,10 @@ namespace eg
 
 			if (type == ResourceType::Image)
 				return ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::TextureResourceDataCache[uuid]->ImageName + ResourceSerializer::TextureResourceDataCache[uuid]->Extension);
+			else if(type == ResourceType::Animation)
+				return ResourceSerializer::AnimationResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::AnimationResourceDataCache[uuid]->AnimationName + ResourceSerializer::AnimationResourceDataCache[uuid]->Extension);
+			else
+				return std::filesystem::path();
 		}
 
 		static void* GetResourcePointer(UUID uuid, ResourceType type)
@@ -63,6 +100,8 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return ResourceSerializer::TextureResourceDataCache[uuid];
+			case ResourceType::Animation:
+				return ResourceSerializer::AnimationResourceDataCache[uuid];
 			default:
 				return nullptr;
 			}
@@ -132,6 +171,12 @@ namespace eg
 			default:
 				return "";
 			}
+		}
+
+		static ResourceType GetResourceTypeByKeyPath(std::filesystem::path path)
+		{
+			std::string type = path.string().substr(0, path.string().find('\\'));
+			return GetResourceTypeFromText(type);
 		}
 	};
 }

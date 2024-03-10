@@ -52,7 +52,8 @@ namespace eg
 
 		outResource->Data = imageResourceData;
 		outResource->DataSize = sizeof(imageResourceData);
-		outResource->Name = name;
+		outResource->Name = fullPath.filename().string();
+		outResource->Path = fullPath.parent_path().string();
 
 		return true;
 	}

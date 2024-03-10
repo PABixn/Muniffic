@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Core/Window.h"
 #include "Platform/OpenGL/OpenGLContext.h"
-#include "Engine/Resources/ResourceDatabase.h"
+#include "../../Engine-Editor/src/Commands/Commands.h"
 
 namespace eg
 {
@@ -39,7 +39,7 @@ namespace eg
 			{
 				for (int i = 0; i < count; i++)
 				{
-					ResourceDatabase::LoadResource(paths[i]);
+					Commands::ExecuteLoadResourceCommand(paths[i]);
 				}
 			}
 		};

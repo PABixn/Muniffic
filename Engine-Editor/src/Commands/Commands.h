@@ -100,6 +100,94 @@ namespace eg
 			virtual void Redo() = 0;
 		};
 
+		class RenameDirectoryCommand : public Command
+		{
+		public:
+			RenameDirectoryCommand(const std::filesystem::path& path, const std::string& newName)
+				: m_NewName(newName), m_Path(path)
+			{
+				Commands::AddCommand(this);
+
+				m_OldName = path.filename().string();
+
+				ResourceDatabase::RenameDirectory(path, newName);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::filesystem::path m_Path;
+			std::string m_OldName;
+			std::string m_NewName;
+		};
+
+		class RenameResourceCommand : public Command
+		{
+		public:
+			RenameResourceCommand(UUID uuid, const std::string& newName)
+				: m_UUID(uuid), m_NewName(newName)
+			{
+				Commands::AddCommand(this);
+
+				m_OldName = ResourceDatabase::GetResourceName(uuid);
+
+				ResourceDatabase::RenameResource(uuid, newName);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_UUID;
+			std::string m_NewName;
+			std::string m_OldName;
+		};
+
+		class MoveResourceCommand : public Command
+		{
+		public:
+			MoveResourceCommand(UUID uuid, const std::filesystem::path& path)
+				: m_UUID(uuid), m_Path(path)
+			{
+				Commands::AddCommand(this);
+
+				m_OldPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceDatabase::GetResourcePath(uuid);
+
+				ResourceDatabase::MoveResource(uuid, path);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_UUID;
+			std::filesystem::path m_Path;
+			std::filesystem::path m_OldPath;
+		};
+
+		class LoadResourceCommand : public Command
+		{
+		public:
+			LoadResourceCommand(const std::filesystem::path& path)
+				: m_Path(path)
+			{
+				Commands::AddCommand(this);
+
+				ResourceDatabase::LoadResource(path);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::filesystem::path m_Path;
+		};
+
 		class DeleteDirectoryCommand : public Command
 		{
 		public:
@@ -135,11 +223,11 @@ namespace eg
 			void Undo() override;
 			void Redo() override;
 
-			protected:
-				UUID m_UUID;
-				ResourceType m_ResourceType;
-				bool m_DeleteFile;
-				void* m_Resource;
+		protected:
+			UUID m_UUID;
+			ResourceType m_ResourceType;
+			bool m_DeleteFile;
+			void* m_Resource;
 		};
 
 		template<typename T>
@@ -619,6 +707,30 @@ namespace eg
 				if(entity.HasComponent<Component>())
 					entity.GetInheritableComponent<Component>()->isInherited = false;
 			}
+		}
+
+		static Command* ExecuteRenameDirectoryCommand(const std::filesystem::path& path, const std::string& newName)
+		{
+			Command* command = new RenameDirectoryCommand(path, newName);
+			return command;
+		}
+
+		static Command* ExecuteRenameResourceCommand(UUID uuid, const std::string& newName)
+		{
+			Command* command = new RenameResourceCommand(uuid, newName);
+			return command;
+		}
+
+		static Command* ExecuteMoveResourceCommand(UUID uuid, const std::filesystem::path& path)
+		{
+			Command* command = new MoveResourceCommand(uuid, path);
+			return command;
+		}
+
+		static Command* ExecuteLoadResourceCommand(const std::filesystem::path& path)
+		{
+			Command* command = new LoadResourceCommand(path);
+			return command;
 		}
 
 		static Command* ExecuteDeleteResourceCommand(UUID uuid, ResourceType resourceType, bool deleteFile = false)

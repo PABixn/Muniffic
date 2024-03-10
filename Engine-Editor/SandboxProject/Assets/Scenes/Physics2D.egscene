@@ -216,7 +216,7 @@ Entities:
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TilingFactor: 1
-      TextureUUID: 2214472246128756250
+      TextureUUID: 0
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:
