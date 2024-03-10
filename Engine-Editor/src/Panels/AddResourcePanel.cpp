@@ -31,7 +31,7 @@ namespace eg
 					{
 						bool initialized = m_AnimationPanel->InitAnimationPanel(m_ResourcePath);
 						if(initialized)
-							m_AnimationPanel->ShowAnimationPanel(true);
+							m_AnimationPanel->OpenAnimationPanel();
 					}
 				}
 				if (ImGui::Button("Shader"))

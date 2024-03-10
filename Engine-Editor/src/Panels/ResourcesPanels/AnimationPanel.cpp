@@ -20,16 +20,20 @@ namespace eg {
 		resourceLoad = resourceSystemLoad(path.string(), ResourceType::Image, m_LoadedResource);
 
 		if (!resourceLoad) {
+			EG_CORE_ERROR("Failed to load resource: {0}", path.string());
+			DeleteData();
+			ResetData();
+			m_LoadedResource = nullptr;
 			return false;
 		}
 		m_OriginalResourcePath = path;
 		m_TextureData = new TextureResourceData();
 		(m_TextureData)->ResourcePath = "Textures";
-		((TextureResourceData*)m_TextureData)->ImageName = m_LoadedResource->Path.stem().string();
-		((TextureResourceData*)m_TextureData)->Extension = m_LoadedResource->Path.extension().string();
-		((TextureResourceData*)m_TextureData)->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
-		((TextureResourceData*)m_TextureData)->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
-		((TextureResourceData*)m_TextureData)->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
+		m_TextureData->ImageName = m_LoadedResource->Path.stem().string();
+		m_TextureData->Extension = m_LoadedResource->Path.extension().string();
+		m_TextureData->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
+		m_TextureData->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
+		m_TextureData->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
 		m_FrameHeight = ((ImageResourceData*)m_LoadedResource->Data)->height;
 		m_FrameWidth = ((ImageResourceData*)m_LoadedResource->Data)->width;
 		m_PreviewOriginImage = Texture2D::Create(path.string());
@@ -47,8 +51,9 @@ namespace eg {
 	void AnimationPanel::SetFrames()
 	{
 		m_PreviewData->ClearFrames();
-		for (int i = m_Column; i < m_Column + m_ColumnCount; i++)
+		
 			for (int j = m_Row; j < m_Row + m_RowCount; j++)
+				for (int i = m_Column; i < m_Column + m_ColumnCount; i++)
 			{
 				glm::vec2 min = { (i * (float)m_FrameWidth) / (float)m_TextureData->Width, (j * (float)m_FrameHeight) / (float)m_TextureData->Height };
 				float maxX = ((i + 1) * (float)m_FrameWidth) / (float)m_TextureData->Width;
@@ -58,12 +63,23 @@ namespace eg {
 			}
 	}
 
+	void AnimationPanel::DeleteData()
+	{
+		delete ((ImageResourceData*)m_LoadedResource->Data)->pixels;
+		delete (ImageResourceData*)m_LoadedResource->Data;
+		delete m_LoadedResource;
+		delete m_TextureData;
+		delete m_ResourceData;
+		m_PreviewOriginImage = nullptr;
+		m_PreviewData = nullptr;
+	}
+
 	void AnimationPanel::OnImGuiRender()
 	{
 		if (m_ShowAnimationPanel)
 		{
 			ImGui::Begin("Animation Preview");
-			if (ImGui::DragInt("Frame Width: %d", &m_FrameWidth, 1.0f, 0, m_PreviewOriginImage->GetWidth()))
+			if (ImGui::DragInt("Frame Width: %d", &m_FrameWidth, 1.0f, 1, m_PreviewOriginImage->GetWidth()))
 			{
 				if (m_ColumnCount > (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth) - m_Column)
 				{
@@ -71,7 +87,7 @@ namespace eg {
 				}
 				SetFrames();
 			}
-			if (ImGui::DragInt("Frame Height: %d", &m_FrameHeight, 1.0f, 0, m_PreviewOriginImage->GetHeight()))
+			if (ImGui::DragInt("Frame Height: %d", &m_FrameHeight, 1.0f, 1, m_PreviewOriginImage->GetHeight()))
 			{
 				if (m_RowCount > (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight) - m_Row)
 				{
@@ -102,7 +118,19 @@ namespace eg {
 				SetFrames();
 			}
 			ImGui::Text("Image Preview:");
-			ImGui::Image((void*)m_PreviewOriginImage->GetRendererID(), ImVec2(128, 128));
+				for (int j = 0; j < (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight); j++)
+					for (int i = 0; i < (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth); i++)
+				{
+					if(i != 0)
+					ImGui::SameLine();
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 200.0f);
+					bool isSelected = i >= m_Column && i < m_Column + m_ColumnCount && j >= m_Row && j < m_Row + m_RowCount;
+					ImVec4 borderColor = isSelected ? ImVec4{0.0f, 1.0f, 0.0f, 1.0f} : ImVec4{1.0f, 0.0f, 0.0f, 1.0f};
+					ImGui::PushStyleColor(ImGuiCol_Border, borderColor);
+					ImGui::Image((void*)m_PreviewOriginImage->GetRendererID(), ImVec2(256/ (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth), 256/ (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight)), { i * (float)m_FrameWidth / (float)m_TextureData->Width, j * (float)m_FrameHeight / (float)m_TextureData->Height }, { (i + 1) * (float)m_FrameWidth / (float)m_TextureData->Width, (j + 1) * (float)m_FrameHeight / (float)m_TextureData->Height });
+					ImGui::PopStyleColor();
+					ImGui::PopStyleVar();
+				}
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
 			ImGui::DragFloat("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500);
 			ImGui::Checkbox("Loop", m_PreviewData->IsLoopingPtr());
@@ -150,10 +178,19 @@ namespace eg {
 				m_ResourceData->Extension = ".anim";
 				
 				ResourceDatabase::AddResource(std::filesystem::path("Animation") / m_ResourceData->ResourcePath / (m_ResourceData->AnimationName + m_ResourceData->Extension), (void*)m_ResourceData, ResourceType::Animation);
-				ShowAnimationPanel(false);
+				CloseAnimationPanel();
 			}
+			if (ImGui::Button("Cancel"))
+				CloseAnimationPanel();
 			ImGui::End();
 		}
+	}
+
+	void AnimationPanel::CloseAnimationPanel()
+	{
+		DeleteData();
+		ResetData();
+		ShowAnimationPanel(false);
 	}
 
 	void AnimationPanel::ResetData()
