@@ -135,7 +135,7 @@ namespace eg {
 				{
 					if(i != 0)
 					ImGui::SameLine();
-					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 200.0f);
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
 					bool isSelected = i >= m_Column && i < m_Column + m_ColumnCount && j >= m_Row && j < m_Row + m_RowCount;
 					ImVec4 borderColor = isSelected ? ImVec4{0.0f, 1.0f, 0.0f, 1.0f} : ImVec4{1.0f, 0.0f, 0.0f, 1.0f};
 					ImGui::PushStyleColor(ImGuiCol_Border, borderColor);
