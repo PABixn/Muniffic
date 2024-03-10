@@ -22,22 +22,17 @@ namespace eg
 
 		data = stbi_load(fullPath.string().c_str(), &width, &height, &channels, 0);
 
-		const char* failReason = stbi_failure_reason();
-
-		if (failReason)
-		{
-			EG_ERROR("Image resource loader failed to load file {}, {}", fullPath.string().c_str(), failReason);
-			 
-			if (data)
-			{
-				stbi_image_free(data);
-			}
-
-			return false;
-		}
+		
 
 		if (!data)
 		{
+			const char* failReason = stbi_failure_reason();
+			if (failReason)
+			{
+				EG_ERROR("Image resource loader failed to load file {}, {}", fullPath.string().c_str(), failReason);
+
+				return false;
+			}
 			EG_ERROR("Image resource loader failed to load file {}", fullPath);
 			return false;
 		}

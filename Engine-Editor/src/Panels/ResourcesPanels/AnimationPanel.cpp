@@ -65,11 +65,23 @@ namespace eg {
 
 	void AnimationPanel::DeleteData()
 	{
-		delete ((ImageResourceData*)m_LoadedResource->Data)->pixels;
-		delete (ImageResourceData*)m_LoadedResource->Data;
-		delete m_LoadedResource;
-		delete m_TextureData;
-		delete m_ResourceData;
+		if (m_LoadedResource)
+		{
+			if (m_LoadedResource->Data)
+			{
+				if (((ImageResourceData*)m_LoadedResource->Data)->pixels)
+					delete ((ImageResourceData*)m_LoadedResource->Data)->pixels;
+				delete (ImageResourceData*)m_LoadedResource->Data;
+			}
+			delete m_LoadedResource;
+		}
+		
+		
+		if(m_TextureData)
+			delete m_TextureData;
+		if(m_ResourceData)
+			delete m_ResourceData;
+
 		m_PreviewOriginImage = nullptr;
 		m_PreviewData = nullptr;
 	}
