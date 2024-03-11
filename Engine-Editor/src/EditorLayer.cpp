@@ -259,6 +259,7 @@ namespace eg
 		m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
 		m_ContentBrowserPanel->SetRenameFolderPanel(m_RenameFolderPanel);
 		m_ContentBrowserPanel->SetDeleteDirectoryPanel(m_DeleteDirectoryPanel);
+		m_ContentBrowserPanel->SetRenameResourcePanel(m_RenameResourcePanel);
 		m_ContentBrowserPanel->OnImGuiRender();
 
 		if(m_DeleteFilePanel->IsShown())
@@ -269,6 +270,9 @@ namespace eg
 		
 		if (m_DeleteDirectoryPanel->IsShown())
 			m_DeleteDirectoryPanel->OnImGuiRender();
+
+		if (m_RenameResourcePanel->IsShown())
+			m_RenameResourcePanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
@@ -759,6 +763,7 @@ namespace eg
 			m_DeleteFilePanel = new DeleteFilePanel();
 			m_RenameFolderPanel = new RenameFolderPanel();
 			m_DeleteDirectoryPanel = new DeleteDirectoryPanel();
+			m_RenameResourcePanel = new RenameResourcePanel();
 		}
 	}
 

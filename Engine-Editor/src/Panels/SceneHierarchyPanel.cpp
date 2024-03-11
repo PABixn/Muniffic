@@ -9,6 +9,10 @@
 #include <cstring>
 #include "../Commands/Commands.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include "stb_image.h"
+#include "Engine/Resources/ResourceSerializer.h"
+#include "iostream"
+#include "shellapi.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -18,6 +22,15 @@
 #endif
 
 namespace eg {
+
+	const char* add(const char* begining, const char* middle, const char* ending) {
+		size_t resultLength = strlen(middle) + strlen(begining) + strlen(ending);
+		char* resultMsg = new char[resultLength];
+		strcpy(resultMsg, begining);
+		strcat(resultMsg, middle);
+		strcat(resultMsg, ending);
+		return resultMsg;
+	}
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
@@ -75,7 +88,40 @@ namespace eg {
 			DrawComponents(m_SelectionContext);
 		}
 		ImGui::End();
-
+		if (m_PreviewAbsoluteImagePath != "" ) {
+			ImGui::Begin("Preview");
+			GLuint my_opengl_texture; 
+			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceSerializer::TextureResourceDataCache) {
+				auto CacheImageData = (pairOfUUIDAndData.second);
+				if (CacheImageData->GetAbsolutePath() == m_PreviewAbsoluteImagePath){
+					stbi_set_flip_vertically_on_load(false);
+					unsigned char* image = stbi_load(m_PreviewAbsoluteImagePath.string().c_str(), &(CacheImageData->Width), &(CacheImageData->Height), &(CacheImageData->Channels), STBI_rgb_alpha);
+					if (image) {
+						glGenTextures(1, &my_opengl_texture);
+						glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (CacheImageData->Width), (CacheImageData->Height), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+						glGenerateMipmap(GL_TEXTURE_2D); 
+						auto s = ImGui::GetWindowWidth();
+						std::string absImgName = m_PreviewAbsoluteImagePath.filename().string();
+						ImGui::TextWrapped(add("file: ",absImgName.c_str(), ""));
+						if (ImGui::Button("open")) {
+							std::string path = m_PreviewAbsoluteImagePath.string();
+							ShellExecuteA(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+						}
+						ImGui::TextWrapped(add("size: ", std::to_string(CacheImageData->Width).c_str(), add(" x ", std::to_string(CacheImageData->Height).c_str(),"")));
+						ImGui::TextWrapped(add("scale of preview: ", (std::to_string(std::round(s / CacheImageData->Width * 100.0) / 100.0)).substr(0, 4).c_str(), ""));
+						ImGui::Image((void*)(intptr_t)my_opengl_texture, ImVec2((int)s, (int)((s * (CacheImageData->Height)) / (CacheImageData->Width))));
+						stbi_image_free(image);
+					}
+					else
+					{
+						std::string absImgPath = m_PreviewAbsoluteImagePath.string();
+						ImGui::TextWrapped(add("file: ", absImgPath.c_str(), " not found"));
+					}
+				}
+			}
+			ImGui::End();
+		}
 		ImGui::End();
 	}
 
@@ -109,7 +155,7 @@ namespace eg {
 		}
 
 		if (ImGui::IsItemClicked())
-			m_SelectionContext = entity;
+			SetSelectedEntity(entity);
 
 		if (ImGui::BeginPopupContextItem())
 		{

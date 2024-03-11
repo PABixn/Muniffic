@@ -71,7 +71,7 @@ namespace eg {
 
 		std::filesystem::path GetAbsolutePath()
 		{
-			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / GetRelativePath();
+			return Project::GetProjectDirectory().parent_path() / GetRelativePath();
 		}
 	};
 }

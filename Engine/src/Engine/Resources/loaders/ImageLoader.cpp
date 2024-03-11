@@ -6,9 +6,10 @@
 
 namespace eg
 {
-	bool imageLoaderLoad(ResourceLoader* loader, std::string name, Resource* outResource)
+	bool imageLoaderLoad(ResourceLoader *loader, std::string name, Resource *outResource)
 	{
-		if (!loader || name.empty() || !outResource) {
+		if (!loader || name.empty() || !outResource)
+		{
 			return false;
 		}
 
@@ -18,15 +19,13 @@ namespace eg
 
 		int32_t width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
-		stbi_uc* data = nullptr;
+		stbi_uc *data = nullptr;
 
 		data = stbi_load(fullPath.string().c_str(), &width, &height, &channels, 0);
 
-		
-
 		if (!data)
 		{
-			const char* failReason = stbi_failure_reason();
+			const char *failReason = stbi_failure_reason();
 			if (failReason)
 			{
 				EG_ERROR("Image resource loader failed to load file {}, {}", fullPath.string().c_str(), failReason);
@@ -37,23 +36,22 @@ namespace eg
 			return false;
 		}
 
-		ImageResourceData* imageResourceData = new ImageResourceData;
+		ImageResourceData *imageResourceData = new ImageResourceData;
 
 		imageResourceData->pixels = data;
 		imageResourceData->width = width;
 		imageResourceData->height = height;
 		imageResourceData->channelCount = channels;
 
-
 		outResource->Data = imageResourceData;
 		outResource->DataSize = sizeof(imageResourceData);
-		outResource->Path = fullPath.parent_path();
 		outResource->Name = fullPath.filename().string();
+		outResource->Path = fullPath.parent_path().string();
 
 		return true;
 	}
 
-	void imageLoaderUnload(ResourceLoader* loader, Resource* resource)
+	void imageLoaderUnload(ResourceLoader *loader, Resource *resource)
 	{
 		if (!loader || !resource)
 		{

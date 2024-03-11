@@ -20,6 +20,7 @@ namespace eg {
 		virtual void OnEvent(Event& e) override;
 
 		DeleteFilePanel* GetDeleteFilePanel() { return m_DeleteFilePanel; }
+		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		std::filesystem::path GetCurrentPath() { m_ContentBrowserPanel->GetCurrentPath(); }
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
@@ -103,6 +104,7 @@ namespace eg {
 		DeleteFilePanel* m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
+		RenameResourcePanel* m_RenameResourcePanel;
 
 		enum class SceneState
 		{

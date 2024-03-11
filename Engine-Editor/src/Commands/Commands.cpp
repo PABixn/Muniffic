@@ -196,6 +196,63 @@ namespace eg
 		SetCurrentCommand(false);
 	}
 
+	void Commands::LoadResourceCommand::Undo()
+	{
+		ResourceDatabase::RemoveResource(m_Path);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::LoadResourceCommand::Redo()
+	{
+		ResourceDatabase::LoadResource(m_Path);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::MoveResourceCommand::Undo()
+	{
+		ResourceDatabase::MoveResource(m_UUID, m_OldPath);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::MoveResourceCommand::Redo()
+	{
+		ResourceDatabase::MoveResource(m_UUID, m_Path);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::RenameResourceCommand::Undo()
+	{
+		ResourceDatabase::RenameResource(m_UUID, m_OldName);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::RenameResourceCommand::Redo()
+	{
+		ResourceDatabase::RenameResource(m_UUID, m_NewName);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::RenameDirectoryCommand::Undo()
+	{
+		std::filesystem::path newPath = m_Path.parent_path() / m_NewName;
+		ResourceDatabase::RenameDirectory(newPath, m_OldName);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::RenameDirectoryCommand::Redo()
+	{
+		ResourceDatabase::RenameDirectory(m_Path, m_NewName);
+
+		SetCurrentCommand(false);
+	}
+
 	void Commands::AddCommand(Command* command)
 	{
 		if(currentCommandIndex == -1)

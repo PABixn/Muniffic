@@ -1,5 +1,6 @@
 #include "RenameFolderPanel.h"
 #include "Engine/Resources/ResourceDatabase.h"
+#include "../../Engine-Editor/src/Commands/Commands.h"
 
 namespace eg
 {
@@ -9,8 +10,8 @@ namespace eg
 
 	void RenameFolderPanel::ShowWindow(std::filesystem::path path)
 	{
-		m_Show = true;
 		m_Path = path;
+		m_Show = true;
 	}
 
 	void RenameFolderPanel::OnImGuiRender()
@@ -23,8 +24,8 @@ namespace eg
 		ImGui::InputText("##FolderName", buffer, 256);
 		if (ImGui::Button("Rename"))
 		{
-			std::filesystem::path newPath = m_Path.parent_path() / buffer;
-			ResourceDatabase::RenameResource(m_Path, newPath);
+			Commands::ExecuteRenameDirectoryCommand(m_Path, buffer);
+			//ResourceDatabase::RenameDirectory(m_Path, buffer);
 			m_Show = false;
 		}
 		ImGui::SameLine();
