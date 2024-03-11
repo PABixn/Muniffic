@@ -43,6 +43,14 @@ namespace eg {
 		(*m_Animations)[m_AnimationIndex].Play();
 	}
 
+	void Animator::ChangeAnimation(const std::string& animationName)
+	{
+		int index = GetAnimationIndex(animationName);
+		if (index >= 0)
+			ChangeAnimation(index);
+	
+	}
+
 	void Animator::SetAnimations(Ref<std::vector<Animation>> animations)
 	{
 		m_Animations = animations;
@@ -111,6 +119,27 @@ namespace eg {
 			return;
 		if (CanTransition(fromAnimIndex, toAnimIndex))
 			m_Transitions[fromAnimIndex].push_back(toAnimIndex);
+	}
+
+	void Animator::RemoveTransition(size_t fromIndex, size_t toIndex)
+	{
+		if (fromIndex < m_Transitions.size())
+		{
+			auto it = std::find(m_Transitions[fromIndex].begin(), m_Transitions[fromIndex].end(), toIndex);
+			if (it != m_Transitions[fromIndex].end())
+				m_Transitions[fromIndex].erase(it);
+		}
+	}
+
+	void Animator::RemoveTransition(const std::string& fromName, const std::string& toName)
+	{
+		int fromAnimIndex = GetAnimationIndex(fromName);
+		if (fromAnimIndex < 0)
+			return;
+		int toAnimIndex = GetAnimationIndex(toName);
+		if (toAnimIndex < 0)
+			return;
+		RemoveTransition(fromAnimIndex, toAnimIndex);
 	}
 
 	bool Animator::CanTransition(size_t fromIndex, size_t toIndex)

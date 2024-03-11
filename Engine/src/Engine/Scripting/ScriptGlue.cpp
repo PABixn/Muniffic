@@ -564,6 +564,126 @@ namespace eg
 	}
 #pragma endregion
 
+#pragma region Animator
+	static void AnimatorComponent_PlayAnimation(UUID uuid, MonoString* animationName)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->Play();
+	}
+
+	static void AnimatorComponent_StopAnimation(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->Stop();
+	}
+
+	static void AnimatorComponent_UpdateAnimation(UUID uuid, float dt)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->Update(dt);
+	}
+
+	static void AnimatorComponent_ChangeAnimation(UUID uuid, MonoString* animationName)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->ChangeAnimation(Utils::MonoStringToString(animationName));
+	}
+
+	static void AnimatorComponent_PauseAnimation(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->Pause();
+	}
+
+	static void AnimatorComponent_StopAnimation(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->Stop();
+	}
+
+	static void AnimatorComponent_SetSpeed(UUID uuid, float speed)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->SetSpeed(speed);
+	}
+
+	static float AnimatorComponent_GetSpeed(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<AnimatorComponent>().Animator2D->GetSpeed();
+	}
+
+	static void AnimatorComponent_AddAnimation(UUID uuid, MonoString* animationName)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->AddAnimationWithName(Utils::MonoStringToString(animationName));
+	}
+
+	static void AnimatorComponent_RemoveAnimation(UUID uuid, MonoString* animationName)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->RemoveAnimation(Utils::MonoStringToString(animationName));
+	}
+
+	static void AnimatorComponent_RemoveLastAnimation(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->RemoveLastAnimation();
+	}
+
+	static void AnimatorComponent_AddTransition(UUID uuid, MonoString* fromName, MonoString* toName)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->AddTransition(Utils::MonoStringToString(fromName), Utils::MonoStringToString(toName));
+	}
+
+	static void AnimatorComponent_AddTransitionByIndex(UUID uuid, int fromIndex, int toIndex)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->AddTransition(fromIndex, toIndex);
+	}
+
+	static void AnimatorComponent_RemoveTransition(UUID uuid, MonoString* fromName, MonoString* toName)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->RemoveTransition(Utils::MonoStringToString(fromName), Utils::MonoStringToString(toName));
+	}
+
+	static void AnimatorComponent_RemoveTransitionByIndex(UUID uuid, int fromIndex, int toIndex)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->RemoveTransition(fromIndex, toIndex);
+	}
+
+	static bool AnimatorComponent_CanTransition(UUID uuid, MonoString* fromName, MonoString* toName)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<AnimatorComponent>().Animator2D->CanTransition(Utils::MonoStringToString(fromName), Utils::MonoStringToString(toName));
+	}
+
+	static bool AnimatorComponent_CanTransitionByIndex(UUID uuid, int fromIndex, int toIndex)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<AnimatorComponent>().Animator2D->CanTransition(fromIndex, toIndex);
+	}
+#pragma endregion
 	#pragma region Camera
 	static bool CameraComponent_IsPrimary(UUID uuid)
 	{
@@ -1111,6 +1231,24 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(CircleRendererComponent_SetThickness);
 		EG_ADD_INTERNAL_CALL(CircleRendererComponent_GetFade);
 		EG_ADD_INTERNAL_CALL(CircleRendererComponent_SetFade);
+
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_PlayAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_StopAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_UpdateAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_ChangeAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_PauseAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_StopAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_SetSpeed);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_GetSpeed);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_AddAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveLastAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_AddTransition);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_AddTransitionByIndex);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveTransition);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveTransitionByIndex);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_CanTransition);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_CanTransitionByIndex);
 
 		EG_ADD_INTERNAL_CALL(CameraComponent_IsPrimary);
 		EG_ADD_INTERNAL_CALL(CameraComponent_SetPrimary);

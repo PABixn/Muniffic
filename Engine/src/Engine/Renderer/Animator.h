@@ -13,6 +13,7 @@ namespace eg {
 		void Stop();
 		void Update(float dt);
 		void ChangeAnimation(size_t animationIndex);
+		void ChangeAnimation(const std::string& animationName);
 		void SetAnimations(Ref<std::vector<Animation>> animations);
 		void SetAnimation(size_t index, const Animation& animation);
 		void AddAnimation(const Animation& animation);
@@ -36,6 +37,8 @@ namespace eg {
 		
 		void AddTransition(size_t fromIndex, size_t toIndex);
 		void AddTransition(const std::string& fromName, const std::string& toName);
+		void RemoveTransition(size_t fromIndex, size_t toIndex);
+		void RemoveTransition(const std::string& fromName, const std::string& toName);
 		bool CanTransition(size_t fromIndex, size_t toIndex);
 		bool CanTransition(const std::string& fromName, const std::string& toName);
 

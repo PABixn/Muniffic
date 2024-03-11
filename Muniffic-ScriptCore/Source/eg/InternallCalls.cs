@@ -141,6 +141,11 @@ namespace eg
         internal extern static void CircleRendererComponent_SetFade(ulong UUID, ref float fade);
         #endregion
 
+        #region Animator
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string AnimatorComponent_GetCurrentAnimation(ulong UUID);
+        #endregion
+
         #region Camera
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool CameraComponent_IsPrimary(ulong UUID);
