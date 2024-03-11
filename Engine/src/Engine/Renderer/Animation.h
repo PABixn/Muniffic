@@ -1,8 +1,9 @@
 #pragma once
+#include "Engine/Core/Core.h"
+#include "Engine/Core/UUID.h"
+#include "Engine/Renderer/SubTexture2D.h"
 #include "vector"
 #include "unordered_map"
-#include "Engine/Core/Core.h"
-#include "Engine/Renderer/SubTexture2D.h"
 
 namespace eg {
 	
@@ -10,7 +11,9 @@ namespace eg {
 	public:
 		Animation();
 		Animation(const std::string& path);
+		Animation(const UUID&, const std::string& path);
 		Animation(const std::vector<Ref<SubTexture2D>>& frames, float frameRate = 1.0f, bool loop = true);
+		Animation(const UUID& id, const std::vector<Ref<SubTexture2D>>& frames, float frameRate = 1.0f, bool loop = true);
 		~Animation() = default;
 
 		static Ref<Animation> Create(const std::string& path);
@@ -24,6 +27,7 @@ namespace eg {
 		void SetFrame(int frame);
 		void SetFrameRate(float frameRate);
 		void SetName(const std::string& name);
+		void SetID(const UUID& id);
 		//void SetFrameSize(int frameSize);
 
 		void RemoveFrame(int index);
@@ -44,6 +48,7 @@ namespace eg {
 		inline float GetFrameRate() const { return m_frameRate; }
 		inline float* GetFrameRatePtr() { return &m_frameRate; }
 		inline const std::string& GetName() const { return m_name; }
+		inline const UUID& GetID() const { return m_AnimationID; }
 
 	private:
 		float m_frameRate;
@@ -51,7 +56,9 @@ namespace eg {
 		float m_frame = 0;
 		bool m_loop;
 		bool m_playing;
+		UUID m_AnimationID;
 		std::vector<Ref<SubTexture2D>> m_frames;
+
 		std::string m_name;
 	};
 }

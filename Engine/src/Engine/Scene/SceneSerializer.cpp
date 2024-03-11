@@ -9,6 +9,7 @@
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Project/Project.h"
 #include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/ResourceDatabase.h"
 
 namespace YAML
 {
@@ -261,7 +262,7 @@ namespace eg {
 			for (auto& animation : *animatorComponent.Animator2D->GetAnimations())
 			{
 				//TODO: if animation uses prefab
-				out << animation.GetName();
+				out << ResourceDataBase::F;
 				//TODO: else serialize animation
 			}
 			out << YAML::EndMap; // Animations
