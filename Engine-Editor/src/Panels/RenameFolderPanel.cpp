@@ -20,7 +20,7 @@ namespace eg
 
 		ImGui::Begin("Rename folder", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 		ImGui::Text("Enter new folder name");
-		static char buffer[256];
+		char buffer[256];
 		ImGui::InputText("##FolderName", buffer, 256);
 		if (ImGui::Button("Rename"))
 		{

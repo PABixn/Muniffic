@@ -1,9 +1,17 @@
 Resources:
-  - UUID: 11372721064612347296
+  - UUID: 11320502713073136089
     ResourcePath: Textures
-    ImageName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
+    ImageName: sdfav
     Extension: .png
-    Width: 604
-    Height: 569
-    Channels: 3
+    Width: 800
+    Height: 600
+    Channels: 4
+    IsSubTexture: false
+  - UUID: 10555617421055740568
+    ResourcePath: Textures
+    ImageName: Chess_Board
+    Extension: .png
+    Width: 480
+    Height: 480
+    Channels: 1
     IsSubTexture: false

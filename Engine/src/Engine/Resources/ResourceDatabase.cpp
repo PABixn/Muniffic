@@ -20,9 +20,30 @@ namespace eg
 		return std::vector<std::filesystem::path>();
 	}
 
-	std::filesystem::path ResourceDatabase::FindResourceByKeyPath(const std::filesystem::path& keyPath)
+	UUID ResourceDatabase::FindResourceByKeyPath(const std::filesystem::path& keyPath, ResourceType type)
 	{
-		return std::filesystem::path();
+		if (type == ResourceType::Image)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::TextureResourceDataCache)
+			{
+				if (data->ResourcePath / std::filesystem::path(data->ImageName + data->Extension) == keyPath)
+					return uuid;
+			}
+		}
+		else if (type == ResourceType::Animation)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
+			{
+				if (data->ResourcePath / std::filesystem::path(data->AnimationName + data->Extension) == keyPath)
+					return uuid;
+			}
+		}
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported");
+		}
+
+		return 0;
 	}
 
 	std::string ResourceDatabase::GetResourceName(UUID uuid)
@@ -289,6 +310,12 @@ namespace eg
 	void ResourceDatabase::LoadResource(const std::filesystem::path& filePath)
 	{
 		ResourceType type = ResourceUtils::GetResourceTypeByExtension(filePath.extension().string());
+
+		if (ResourceDatabase::FindResourceByKeyPath(ResourceUtils::GetKeyPath(filePath), type) != 0)
+		{
+			EG_CORE_ERROR("Resource already exists: {0}", filePath.string());
+			return;
+		}
 
 		if (type == ResourceType::Image)
 		{

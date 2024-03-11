@@ -37,13 +37,19 @@ namespace eg {
 		unsigned char* pixels;
 	};
 
+	struct AnimationFrameResourceData
+	{
+		int Width = 0, Height = 0;
+		int Channels = 0;
+	};
+
 	struct AnimationResourceData
 	{
-		float m_frameRate = 60.0f;
-		int m_frameCount = 0;
-		bool m_loop = false;
-		std::string name = "";
-		std::vector<UUID> m_frames;
+		float m_frameRate;
+		int m_frameCount;
+		bool m_loop;
+		std::string name;
+		std::vector<AnimationFrameResourceData*> m_frames;
 		std::filesystem::path ResourcePath = "";
 		std::string AnimationName = "";
 		std::string Extension = "";
@@ -71,7 +77,7 @@ namespace eg {
 
 		std::filesystem::path GetAbsolutePath()
 		{
-			return Project::GetProjectDirectory().parent_path() / GetRelativePath();
+			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / GetRelativePath();
 		}
 	};
 }

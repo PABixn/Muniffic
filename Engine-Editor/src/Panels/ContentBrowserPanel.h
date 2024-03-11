@@ -14,6 +14,7 @@ namespace eg {
 		ContentBrowserPanel();
 		~ContentBrowserPanel() = default;
 		void OnImGuiRender();
+		void RenderFile(UUID key, const std::string& name, ResourceType type);
 		void SetDeleteFilePanel(DeleteFilePanel* deleteFilePanel) { m_DeleteFilePanel = deleteFilePanel; }
 		void SetRenameFolderPanel(RenameFolderPanel* renameFolderPanel) { m_RenameFolderPanel = renameFolderPanel; }
 		void SetDeleteDirectoryPanel(DeleteDirectoryPanel* deleteDirectoryPanel) { m_DeleteDirectoryPanel = deleteDirectoryPanel; }
