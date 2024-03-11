@@ -10,7 +10,7 @@ namespace eg {
 	public:
 		std::vector<std::filesystem::path> GetResourcesInDirectory(const std::filesystem::path& directory);
 		std::vector<std::filesystem::path> FindResourcesByName(const std::string& name);
-		std::filesystem::path FindResourceByKeyPath(const std::filesystem::path& keyPath);
+		static UUID FindResourceByKeyPath(const std::filesystem::path& keyPath, ResourceType type);
 		static std::filesystem::path GetResourcePath(UUID uuid);
 		static std::filesystem::path GetFullPath(UUID uuid);
 		static std::string GetResourceName(UUID uuid);
