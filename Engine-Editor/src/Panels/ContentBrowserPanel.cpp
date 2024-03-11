@@ -65,6 +65,11 @@ namespace eg
 			ImGui::EndPopup();
 		}
 
+		ImGui::SameLine();
+
+		static char buffer[256];
+		ImGui::InputText("##Filter", buffer, 256);
+
 		static float padding = 16.0f;
 		static float thumbnailSize = 128.0f;
 		float cellSize = thumbnailSize + padding;
@@ -83,6 +88,9 @@ namespace eg
 			for (auto& [key, value] : ResourceSerializer::TextureResourceDataCache)
 			{
 				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
+					continue;
+
+				if(value->ImageName.find(buffer) == std::string::npos)
 					continue;
 
 				auto name = value->ImageName + value->Extension;
