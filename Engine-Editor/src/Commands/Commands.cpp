@@ -324,7 +324,6 @@ namespace eg
 
 	void Commands::RestoreEntity(Entity& entity, EntitySave& entitySave)
 	{
-
 		Commands::AllSavedComponents components = entitySave.GetAllComponents();
 
 		std::apply([&entity](auto&&... args) {(( TrySetComponent(entity, &args)), ...); }, components);

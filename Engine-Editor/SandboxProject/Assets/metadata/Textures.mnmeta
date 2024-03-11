@@ -7,3 +7,11 @@ Resources:
     Height: 600
     Channels: 4
     IsSubTexture: false
+  - UUID: 10555617421055740568
+    ResourcePath: Textures
+    ImageName: Chess_Board
+    Extension: .png
+    Width: 480
+    Height: 480
+    Channels: 1
+    IsSubTexture: false

@@ -18,6 +18,49 @@ namespace eg
 		ResourceDatabase::SetCurrentPath(&m_CurrentDirectory);
 	}
 
+	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)
+	{
+		static float thumbnailSize = 128.0f;
+
+		ImGui::PushID(name.c_str());
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+		if (ImGui::BeginPopupContextItem("FileOptions"))
+		{
+			if (ImGui::MenuItem("Delete"))
+			{
+				m_DeleteFilePanel->ShowWindow(key, type);
+				ImGui::PopStyleColor();
+				ImGui::NextColumn();
+				ImGui::EndPopup();
+				ImGui::PopID();
+				return;
+			}
+
+			if (ImGui::MenuItem("Rename"))
+			{
+				m_RenameResourcePanel->ShowWindow(key);
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (ImGui::BeginDragDropSource())
+		{
+			ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(uint64_t));
+			ImGui::EndDragDropSource();
+		}
+
+		ImGui::PopStyleColor();
+
+		ImGui::TextWrapped(name.c_str());
+
+		ImGui::NextColumn();
+
+		ImGui::PopID();
+	}
+
 	void ContentBrowserPanel::OnImGuiRender() {
 		ImGui::Begin("Content Browser");
 
@@ -94,43 +137,23 @@ namespace eg
 					continue;
 
 				auto name = value->ImageName + value->Extension;
-				ImGui::PushID(name.c_str());
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-				ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				
+				RenderFile(key, name, type);
+			}
+		}
+		else if (type == ResourceType::Animation)
+		{
+			for (auto& [key, value] : ResourceSerializer::AnimationResourceDataCache)
+			{
+				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
+					continue;
 
-				if (ImGui::BeginPopupContextItem("FileOptions"))
-				{
-					if (ImGui::MenuItem("Delete"))
-					{
-						m_DeleteFilePanel->ShowWindow(key, type);
-						ImGui::PopStyleColor();
-						ImGui::NextColumn();
-						ImGui::EndPopup();
-						ImGui::PopID();
-						break;
-					}
+				if(value->AnimationName.find(buffer) == std::string::npos)
+					continue;
 
-					if (ImGui::MenuItem("Rename"))
-					{
-						m_RenameResourcePanel->ShowWindow(key);
-					}
-
-					ImGui::EndPopup();
-				}
-
-				if (ImGui::BeginDragDropSource())
-				{
-					ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(uint64_t));
-					ImGui::EndDragDropSource();
-				}
-
-				ImGui::PopStyleColor();
-
-				ImGui::TextWrapped(name.c_str());
-
-				ImGui::NextColumn();
-
-				ImGui::PopID();
+				auto name = value->AnimationName + value->Extension;
+				
+				RenderFile(key, name, type);
 			}
 		}
 
