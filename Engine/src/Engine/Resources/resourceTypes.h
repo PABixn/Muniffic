@@ -37,13 +37,19 @@ namespace eg {
 		unsigned char* pixels;
 	};
 
+	struct AnimationFrameResourceData
+	{
+		int Width = 0, Height = 0;
+		int Channels = 0;
+	};
+
 	struct AnimationResourceData
 	{
 		float m_frameRate;
 		int m_frameCount;
 		bool m_loop;
 		std::string name;
-		std::vector<UUID> m_frames;
+		std::vector<AnimationFrameResourceData*> m_frames;
 		std::filesystem::path ResourcePath = "";
 		std::string AnimationName = "";
 		std::string Extension = "";

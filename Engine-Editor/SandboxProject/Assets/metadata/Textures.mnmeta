@@ -1,0 +1,9 @@
+Resources:
+  - UUID: 11320502713073136089
+    ResourcePath: Textures
+    ImageName: sdfav
+    Extension: .png
+    Width: 800
+    Height: 600
+    Channels: 4
+    IsSubTexture: false
