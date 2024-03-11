@@ -21,14 +21,10 @@ namespace eg
 		YAML::Node textureNode, animationNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
-		{
 			return false;
-		}
 
 		if (!std::filesystem::exists(animationMetadataPath))
-		{
 			return false;
-		}
 
 		try
 		{
@@ -100,11 +96,7 @@ namespace eg
 				auto frames = resource["Frames"];
 				for (auto frame : frames)
 				{
-					AnimationFrameResourceData* frameData = new AnimationFrameResourceData();
-					frameData->Width = frame["Width"].as<int>();
-					frameData->Height = frame["Height"].as<int>();
-					frameData->Channels = frame["Channels"].as<int>();
-					data->m_frames.push_back(frameData);
+					data->m_frames.push_back(frame.as<uint64_t>());
 				}
 
 				CacheAnimation(uuid, data);
@@ -163,11 +155,7 @@ namespace eg
 			animationOut << YAML::Key << "Frames" << YAML::Value << YAML::BeginSeq;
 			for (auto& frame : value->m_frames)
 			{
-				animationOut << YAML::BeginMap;
-				animationOut << YAML::Key << "Width" << YAML::Value << frame->Width;
-				animationOut << YAML::Key << "Height" << YAML::Value << frame->Height;
-				animationOut << YAML::Key << "Channels" << YAML::Value << frame->Channels;
-				animationOut << YAML::EndMap;
+				animationOut << frame;
 			}
 			animationOut << YAML::EndSeq;
 			animationOut << YAML::EndMap;

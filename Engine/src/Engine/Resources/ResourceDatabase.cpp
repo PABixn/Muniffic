@@ -287,24 +287,24 @@ namespace eg
 		}
 	}
 
-	void AddTextureResource(const std::filesystem::path& originalResourcePath, TextureResourceData* data)
+	void AddTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, TextureResourceData* data)
 	{
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->ImageName + data->Extension);
 
 		if (finalPath != originalResourcePath)
 			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
 
-		ResourceSerializer::CacheTexture(UUID(), data);
+		ResourceSerializer::CacheTexture(uuid, data);
 	}
 
-	void AddAnimationResource(const std::filesystem::path& originalResourcePath, AnimationResourceData* data)
+	void AddAnimationResource(UUID uuid, const std::filesystem::path& originalResourcePath, AnimationResourceData* data)
 	{
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->AnimationName + data->Extension);
 
 		if (finalPath != originalResourcePath)
 			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
 
-		ResourceSerializer::CacheAnimation(UUID(), data);
+		ResourceSerializer::CacheAnimation(uuid, data);
 	}
 
 	void ResourceDatabase::LoadResource(const std::filesystem::path& filePath)
@@ -328,7 +328,7 @@ namespace eg
 			data->Height = ((ImageResourceData*)loadedResource->Data)->height;
 			data->Width = ((ImageResourceData*)loadedResource->Data)->width;
 			data->Channels = ((ImageResourceData*)loadedResource->Data)->channelCount;
-			AddTextureResource(filePath, data);
+			AddTextureResource(UUID(), filePath, data);
 		}
 		else
 		{
@@ -365,16 +365,20 @@ namespace eg
 		}
 	}
 
-	void ResourceDatabase::AddResource(const std::filesystem::path& originalResourcePath, void* data, ResourceType resourceType)
+	UUID ResourceDatabase::AddResource(const std::filesystem::path& originalResourcePath, void* data, ResourceType resourceType)
 	{
+		UUID uuid = UUID();
+
 		switch (resourceType)
 		{
 		case ResourceType::Image:
-			AddTextureResource(originalResourcePath, (TextureResourceData*)data);
+			AddTextureResource(uuid, originalResourcePath, (TextureResourceData*)data);
 			break;
 		case ResourceType::Animation:
-			AddAnimationResource(originalResourcePath, (AnimationResourceData*)data);
+			AddAnimationResource(uuid, originalResourcePath, (AnimationResourceData*)data);
 			break;
 		}
+
+		return uuid;
 	}
 }

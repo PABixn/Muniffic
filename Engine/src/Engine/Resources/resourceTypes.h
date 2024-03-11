@@ -37,10 +37,21 @@ namespace eg {
 		unsigned char* pixels;
 	};
 
-	struct AnimationFrameResourceData
+	struct SpriteResourceData
+	{
+		std::string name;
+		glm::vec2 m_TexCoords[4];
+	};
+
+	struct SpriteAtlasResourceData
 	{
 		int Width = 0, Height = 0;
+		int SpriteWidth = 0, SpriteHeight = 0;
 		int Channels = 0;
+		std::filesystem::path ResourcePath = "";
+		std::string AtlasName = "";
+		std::string Extension = "";
+		std::vector<SpriteResourceData*> Sprites;
 	};
 
 	struct AnimationResourceData
@@ -49,7 +60,7 @@ namespace eg {
 		int m_frameCount;
 		bool m_loop;
 		std::string name;
-		std::vector<AnimationFrameResourceData*> m_frames;
+		std::vector<UUID> m_frames;
 		std::filesystem::path ResourcePath = "";
 		std::string AnimationName = "";
 		std::string Extension = "";
