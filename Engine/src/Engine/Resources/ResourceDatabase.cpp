@@ -10,56 +10,6 @@ namespace eg
 {
 	std::filesystem::path* ResourceDatabase::m_CurrentDirectory;
 
-	void ResourceDatabase::SetCurrentPath(std::filesystem::path* directory)
-	{
-		m_CurrentDirectory = directory;
-	}
-
-	std::filesystem::path* ResourceDatabase::GetCurrentPath()
-	{
-		return m_CurrentDirectory;
-	}
-
-	UUID ResourceDatabase::GetResourceUUID(const std::filesystem::path& filePath)
-	{
-		return UUID();
-	}
-
-	UUID ResourceDatabase::GetResourceUUID(const std::string& filePath)
-	{
-		return UUID();
-	}
-
-	UUID ResourceDatabase::GetResourceUUID(const char* filePath)
-	{
-		return UUID();
-	}
-
-	UUID ResourceDatabase::GetResourceUUID(const wchar_t* filePath)
-	{
-		return UUID();
-	}
-
-	UUID ResourceDatabase::GetResourceUUID(const std::filesystem::path& filePath, ResourceType resourceType)
-	{
-		return UUID();
-	}
-
-	UUID ResourceDatabase::GetResourceUUID(const std::string& filePath, ResourceType resourceType)
-	{
-		return UUID();
-	}
-
-	UUID ResourceDatabase::GetResourceUUID(const char* filePath, ResourceType resourceType)
-	{
-		return UUID();
-	}
-
-	UUID ResourceDatabase::GetResourceUUID(const wchar_t* filePath, ResourceType resourceType)
-	{
-		return UUID();
-	}
-
 	std::vector<std::filesystem::path> ResourceDatabase::GetResourcesInDirectory(const std::filesystem::path& directory)
 	{
 		return std::vector<std::filesystem::path>();
