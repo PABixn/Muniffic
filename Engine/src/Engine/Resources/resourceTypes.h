@@ -65,6 +65,7 @@ namespace eg {
 		glm::vec2 m_TexCoords[4];
 		std::filesystem::path ResourcePath = "";
 		std::string SubTextureName = "";
+		std::string Extension = "";
 		UUID m_Texture;
 	};
 

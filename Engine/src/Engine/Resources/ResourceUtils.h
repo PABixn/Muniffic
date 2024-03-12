@@ -14,6 +14,8 @@ namespace eg
 		{
 			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".tga" || extension == ".gif" || extension == ".psd" || extension == ".hdr" || extension == ".pic" || extension == ".pnm")
 				return ResourceType::Image;
+			else if (extension == ".subtex")
+				return ResourceType::SubTexture;
 			else if (extension == ".shader")
 				return ResourceType::Shader;
 			else if (extension == ".ttf" || extension == ".otf")
@@ -90,6 +92,8 @@ namespace eg
 
 			if (type == ResourceType::Image)
 				return ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::TextureResourceDataCache[uuid]->ImageName + ResourceSerializer::TextureResourceDataCache[uuid]->Extension);
+			else if(type == ResourceType::SubTexture)
+				return ResourceSerializer::SubTextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::SubTextureResourceDataCache[uuid]->SubTextureName + ResourceSerializer::SubTextureResourceDataCache[uuid]->Extension);
 			else if(type == ResourceType::Animation)
 				return ResourceSerializer::AnimationResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::AnimationResourceDataCache[uuid]->AnimationName + ResourceSerializer::AnimationResourceDataCache[uuid]->Extension);
 			else if(type == ResourceType::SpriteAtlas)
@@ -104,6 +108,8 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return ResourceSerializer::TextureResourceDataCache[uuid];
+			case ResourceType::SubTexture:
+				return ResourceSerializer::SubTextureResourceDataCache[uuid];
 			case ResourceType::Animation:
 				return ResourceSerializer::AnimationResourceDataCache[uuid];
 			case ResourceType::SpriteAtlas:
@@ -144,6 +150,8 @@ namespace eg
 		{
 			if (type == "Textures")
 				return ResourceType::Image;
+			else if (type == "SubTextures")
+				return ResourceType::SubTexture;
 			else if(type == "SpriteAtlases")
 				return ResourceType::SpriteAtlas;
 			else if (type == "Shaders")
@@ -168,6 +176,8 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return "Textures";
+			case ResourceType::SubTexture:
+				return "SubTextures";
 			case ResourceType::SpriteAtlas:
 				return "SpriteAtlases";
 			case ResourceType::Shader:
