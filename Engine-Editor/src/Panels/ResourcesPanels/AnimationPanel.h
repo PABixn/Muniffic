@@ -34,6 +34,8 @@ namespace eg
 		//TextureResourceData m_TextureData;
 		std::filesystem::path m_OriginalResourcePath = "";
 
+		UUID m_TextureUUID;
+
 		Ref<Texture2D> m_PreviewOriginImage = nullptr;
 		Ref<Animation> m_PreviewData = nullptr;
 		bool m_ShowAnimationPanel = false;

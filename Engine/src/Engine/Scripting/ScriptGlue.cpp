@@ -600,13 +600,6 @@ namespace eg
 		entity.GetComponent<AnimatorComponent>().Animator2D->Pause();
 	}
 
-	static void AnimatorComponent_StopAnimation(UUID uuid)
-	{
-		Scene* scene = ScriptEngine::GetSceneContext();
-		Entity entity = scene->GetEntityByUUID(uuid);
-		entity.GetComponent<AnimatorComponent>().Animator2D->Stop();
-	}
-
 	static void AnimatorComponent_SetSpeed(UUID uuid, float speed)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();

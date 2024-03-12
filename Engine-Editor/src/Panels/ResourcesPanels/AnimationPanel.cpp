@@ -36,6 +36,9 @@ namespace eg {
 		m_TextureData->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
 		m_FrameHeight = ((ImageResourceData*)m_LoadedResource->Data)->height;
 		m_FrameWidth = ((ImageResourceData*)m_LoadedResource->Data)->width;
+
+		m_TextureUUID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_TextureData, ResourceType::Image);
+
 		m_PreviewOriginImage = Texture2D::Create(path.string());
 		std::vector<Ref<SubTexture2D>> frames;
 		frames.push_back(SubTexture2D::Create(m_PreviewOriginImage, { 0, 0 }, { 1, 1 }));
@@ -163,32 +166,31 @@ namespace eg {
 					m_ResourceData->ResourcePath = std::filesystem::path(std::string(buffer2));
 			if (ImGui::Button("Save"))
 			{
+				SpriteAtlasResourceData* data = new SpriteAtlasResourceData();
+				data->ResourcePath = "Textures" / m_ResourceData->ResourcePath;
+				data->AtlasName = m_ResourceData->AnimationName;
+				data->Extension = m_TextureData->Extension;
 				for (int i = 0; i < m_PreviewData->GetFrameCount(); i++)
 				{
-					TextureResourceData* data = new TextureResourceData();
-					data->ResourcePath = "Textures";
-					data->ImageName = m_ResourceData->AnimationName + std::to_string(i);
-					data->Extension = ".png";
-					data->Height = m_PreviewData->GetFrame(i)->GetTexture()->GetHeight();
-					data->Width = m_PreviewData->GetFrame(i)->GetTexture()->GetWidth();
-					data->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
+					SubTextureResourceData* data = new SubTextureResourceData();
+					data->ResourcePath = "SubTextures" / m_ResourceData->ResourcePath;
+					data->m_Texture = m_TextureUUID;
+					data->SubTextureName = m_ResourceData->AnimationName + std::to_string(i);
 					data->m_TexCoords[0] = m_PreviewData->GetFrame(i)->GetMin();
 					data->m_TexCoords[1] = { m_PreviewData->GetFrame(i)->GetMax().x, m_PreviewData->GetFrame(i)->GetMin().y };
 					data->m_TexCoords[2] = m_PreviewData->GetFrame(i)->GetMax();
 					data->m_TexCoords[3] = { m_PreviewData->GetFrame(i)->GetMin().x, m_PreviewData->GetFrame(i)->GetMax().y };
-					data->IsSubTexture = true;
-					std::filesystem::path finalPath = data->ResourcePath / m_ResourceData->ResourcePath / (std::filesystem::path(data->ImageName).stem().string() + data->Extension);
-					m_ResourceData->m_frames.push_back(ResourceDatabase::AddResource(finalPath, (void*)data, ResourceType::Image));
+					m_ResourceData->m_frames.push_back(ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)data, ResourceType::SubTexture));
 					delete data;
 				}
 				m_ResourceData->m_frameRate = m_PreviewData->GetFrameRate();
 				m_ResourceData->m_frameCount = m_PreviewData->GetFrameCount();
 				m_ResourceData->m_loop = m_PreviewData->IsLooping();
-				m_ResourceData->name = m_ResourceData->AnimationName;
 				m_ResourceData->Extension = ".anim";
 				
 				ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_ResourceData, ResourceType::Animation);
 				CloseAnimationPanel();
+				delete data;
 			}
 			if (ImGui::Button("Cancel"))
 				CloseAnimationPanel();

@@ -262,7 +262,7 @@ namespace eg {
 			for (auto& animation : *animatorComponent.Animator2D->GetAnimations())
 			{
 				//TODO: if animation uses prefab
-				out << ResourceDatabase::FindResourceByKeyPath(animation.Get);
+				//out << ResourceDatabase::FindResourceByKeyPath(animation.);
 				//TODO: else serialize animation
 			}
 			out << YAML::EndMap; // Animations

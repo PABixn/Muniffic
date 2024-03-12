@@ -119,6 +119,8 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Textures.mnmeta";
+			case ResourceType::SubTexture:
+				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "SubTextures.mnmeta";
 			case ResourceType::SpriteAtlas:
 				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "SpriteAtlases.mnmeta";
 			case ResourceType::Shader:
