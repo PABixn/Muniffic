@@ -621,6 +621,13 @@ namespace eg
 		return entity.GetComponent<AnimatorComponent>().Animator2D->GetSpeed();
 	}
 
+	static const Animation& AnimatorComponent_GetCurrentAnimation(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<AnimatorComponent>().Animator2D->GetCurrentAnimation();
+	}
+
 	static void AnimatorComponent_AddAnimation(UUID uuid, MonoString* animationName)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -1240,6 +1247,7 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_StopAnimation);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_SetSpeed);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_GetSpeed);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_GetCurrentAnimation);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_AddAnimation);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveAnimation);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveLastAnimation);

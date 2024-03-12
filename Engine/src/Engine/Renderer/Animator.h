@@ -25,6 +25,7 @@ namespace eg {
 		void RemoveLastAnimation();
 		void SetSpeed(float speed) { m_Speed = speed; }
 
+		const Animation& GetCurrentAnimation() const { return (*m_Animations)[m_AnimationIndex]; }
 		Ref<std::vector<Animation>> GetAnimations() { return m_Animations; }
 		const Ref<std::vector<Animation>> GetAnimations() const { return m_Animations; }
 		const Animation& GetAnimation(int index) { return (*m_Animations)[index]; }
