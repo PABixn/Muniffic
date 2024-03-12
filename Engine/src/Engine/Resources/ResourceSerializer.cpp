@@ -11,19 +11,24 @@ namespace eg
 {
 	std::unordered_map<UUID, TextureResourceData*> ResourceSerializer::TextureResourceDataCache;
 	std::unordered_map<UUID, AnimationResourceData*> ResourceSerializer::AnimationResourceDataCache;
+	std::unordered_map<UUID, SpriteAtlasResourceData*> ResourceSerializer::SpriteAtlasResourceDataCache;
 	std::unordered_map<UUID, ResourceType> ResourceSerializer::ResourceTypeInfo;
 
 	bool ResourceSerializer::DeserializeResourceCache()
 	{
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
 		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
+		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
 
-		YAML::Node textureNode, animationNode;
+		YAML::Node textureNode, animationNode, spriteAtlasNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
 			return false;
 
 		if (!std::filesystem::exists(animationMetadataPath))
+			return false;
+
+		if (!std::filesystem::exists(spriteAtlasMetadataPath))
 			return false;
 
 		try
@@ -46,8 +51,19 @@ namespace eg
 			return false;
 		}
 
+		try
+		{
+			spriteAtlasNode = YAML::LoadFile(spriteAtlasMetadataPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", spriteAtlasMetadataPath, e.what());
+			return false;
+		}
+
 		auto textureResources = textureNode["Resources"];
 		auto animationResources = animationNode["Resources"];
+		auto spriteAtlasResources = spriteAtlasNode["Resources"];
 
 		if (textureResources)
 		{
@@ -101,6 +117,30 @@ namespace eg
 
 				CacheAnimation(uuid, data);
 			}
+
+			if (spriteAtlasResources)
+			{
+				for (auto resource : spriteAtlasResources)
+				{
+					UUID uuid = resource["UUID"].as<uint64_t>();
+
+					SpriteAtlasResourceData* data = new SpriteAtlasResourceData();
+					data->ResourcePath = resource["ResourcePath"].as<std::string>();
+					data->AtlasName = resource["AtlasName"].as<std::string>();
+					data->Extension = resource["Extension"].as<std::string>();
+					data->Width = resource["Width"].as<int>();
+					data->Height = resource["Height"].as<int>();
+					data->Channels = resource["Channels"].as<int>();
+
+					auto sprites = resource["Sprites"];
+					for (auto sprite : sprites)
+					{
+						data->Sprites.push_back(sprite.as<uint64_t>());
+					}
+
+					CacheSpriteAtlas(uuid, data);
+				}
+			}
 		}
 	}
 
@@ -108,7 +148,8 @@ namespace eg
 	{
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
 		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
-		YAML::Emitter textureOut, animationOut;
+		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
+		YAML::Emitter textureOut, animationOut, spriteAtlasOut;
 
 		textureOut << YAML::BeginMap;
 		textureOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
@@ -141,6 +182,12 @@ namespace eg
 			textureOut << YAML::EndMap;
 		}
 
+		textureOut << YAML::EndSeq;
+		textureOut << YAML::EndMap;
+
+		animationOut << YAML::BeginMap;
+		animationOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
+
 		for (auto& [key, value] : AnimationResourceDataCache)
 		{
 			animationOut << YAML::BeginMap;
@@ -161,16 +208,45 @@ namespace eg
 			animationOut << YAML::EndMap;
 		}
 
-		YAML::EndSeq;
-		YAML::EndMap;
+		animationOut << YAML::EndSeq;
+		animationOut << YAML::EndMap;
+
+		spriteAtlasOut << YAML::BeginMap;
+		spriteAtlasOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
+
+		for (auto& [key, value] : SpriteAtlasResourceDataCache)
+		{
+			spriteAtlasOut << YAML::BeginMap;
+			spriteAtlasOut << YAML::Key << "UUID" << YAML::Value << key;
+			spriteAtlasOut << YAML::Key << "ResourcePath" << YAML::Value << value->ResourcePath.string();
+			spriteAtlasOut << YAML::Key << "AtlasName" << YAML::Value << value->AtlasName;
+			spriteAtlasOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
+			spriteAtlasOut << YAML::Key << "Width" << YAML::Value << value->Width;
+			spriteAtlasOut << YAML::Key << "Height" << YAML::Value << value->Height;
+			spriteAtlasOut << YAML::Key << "Channels" << YAML::Value << value->Channels;
+			spriteAtlasOut << YAML::Key << "Sprites" << YAML::Value << YAML::BeginSeq;
+			for (auto& sprite : value->Sprites)
+			{
+				spriteAtlasOut << sprite;
+			}
+			spriteAtlasOut << YAML::EndSeq;
+			spriteAtlasOut << YAML::EndMap;
+		}
+
+		spriteAtlasOut << YAML::EndSeq;
+		spriteAtlasOut << YAML::EndMap;
 
 		std::ofstream textureFile(textureMetadataPath, std::ios::trunc);
 		std::ofstream animationFile(animationMetadataPath, std::ios::trunc);
+		std::ofstream spriteAtlasFile(spriteAtlasMetadataPath, std::ios::trunc);
+
 		textureFile << textureOut.c_str();
 		animationFile << animationOut.c_str();
+		spriteAtlasFile << spriteAtlasOut.c_str();
 
 		textureFile.close();
 		animationFile.close();
+		spriteAtlasFile.close();
 	}
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
@@ -212,5 +288,26 @@ namespace eg
 
 		AnimationResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Animation;
+	}
+
+	void ResourceSerializer::CacheSpriteAtlas(UUID uuid, SpriteAtlasResourceData* data)
+	{
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->AtlasName + data->Extension);
+
+		if (!std::filesystem::exists(finalPath))
+		{
+			EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
+			return;
+		}
+
+		if (SpriteAtlasResourceDataCache.find(uuid) != SpriteAtlasResourceDataCache.end())
+		{
+			if (SpriteAtlasResourceDataCache[uuid] != nullptr)
+				delete SpriteAtlasResourceDataCache[uuid];
+			SpriteAtlasResourceDataCache.erase(uuid);
+		}
+
+		SpriteAtlasResourceDataCache[uuid] = data;
+		ResourceTypeInfo[uuid] = ResourceType::SpriteAtlas;
 	}
 }
