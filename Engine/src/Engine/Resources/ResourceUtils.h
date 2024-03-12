@@ -18,6 +18,8 @@ namespace eg
 				return ResourceType::Shader;
 			else if (extension == ".ttf" || extension == ".otf")
 				return ResourceType::Font;
+			else if (extension == ".spratl")
+				return ResourceType::SpriteAtlas;
 			else if (extension == ".txt")
 				return ResourceType::Text;
 			else if (extension == ".anim")
@@ -90,6 +92,8 @@ namespace eg
 				return ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::TextureResourceDataCache[uuid]->ImageName + ResourceSerializer::TextureResourceDataCache[uuid]->Extension);
 			else if(type == ResourceType::Animation)
 				return ResourceSerializer::AnimationResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::AnimationResourceDataCache[uuid]->AnimationName + ResourceSerializer::AnimationResourceDataCache[uuid]->Extension);
+			else if(type == ResourceType::SpriteAtlas)
+				return ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->AtlasName + ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->Extension);
 			else
 				return std::filesystem::path();
 		}
@@ -102,6 +106,8 @@ namespace eg
 				return ResourceSerializer::TextureResourceDataCache[uuid];
 			case ResourceType::Animation:
 				return ResourceSerializer::AnimationResourceDataCache[uuid];
+			case ResourceType::SpriteAtlas:
+				return ResourceSerializer::SpriteAtlasResourceDataCache[uuid];
 			default:
 				return nullptr;
 			}
@@ -113,6 +119,8 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Textures.mnmeta";
+			case ResourceType::SpriteAtlas:
+				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "SpriteAtlases.mnmeta";
 			case ResourceType::Shader:
 				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Shaders.mnmeta";
 			case ResourceType::Font:
@@ -134,6 +142,8 @@ namespace eg
 		{
 			if (type == "Textures")
 				return ResourceType::Image;
+			else if(type == "SpriteAtlases")
+				return ResourceType::SpriteAtlas;
 			else if (type == "Shaders")
 				return ResourceType::Shader;
 			else if (type == "Fonts")
@@ -156,6 +166,8 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return "Textures";
+			case ResourceType::SpriteAtlas:
+				return "SpriteAtlases";
 			case ResourceType::Shader:
 				return "Shaders";
 			case ResourceType::Font:
