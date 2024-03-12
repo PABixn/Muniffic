@@ -317,6 +317,16 @@ namespace eg
 		ResourceSerializer::CacheAnimation(uuid, data);
 	}
 
+	void AddSpriteAtlasResource(UUID uuid, const std::filesystem::path& originalResourcePath, SpriteAtlasResourceData* data)
+	{
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->SpriteAtlasName + data->Extension);
+
+		if (finalPath != originalResourcePath)
+			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
+
+		ResourceSerializer::CacheSpriteAtlas(uuid, data);
+	}
+
 	void ResourceDatabase::LoadResource(const std::filesystem::path& filePath)
 	{
 		ResourceType type = ResourceUtils::GetResourceTypeByExtension(filePath.extension().string());
@@ -386,6 +396,9 @@ namespace eg
 			break;
 		case ResourceType::Animation:
 			AddAnimationResource(uuid, originalResourcePath, (AnimationResourceData*)data);
+			break;
+		case ResourceType::SpriteAtlas:
+			AddSpriteAtlasResource(uuid, originalResourcePath, (SpriteAtlasResourceData*)data);
 			break;
 		}
 

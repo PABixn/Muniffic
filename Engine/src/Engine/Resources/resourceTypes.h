@@ -9,6 +9,7 @@ namespace eg {
 	enum class ResourceType
 	{
 		Animation,
+		SpriteAtlas,
 		Shader,
 		Font,
 		Text,
@@ -37,21 +38,14 @@ namespace eg {
 		unsigned char* pixels;
 	};
 
-	struct SpriteResourceData
-	{
-		std::string name;
-		glm::vec2 m_TexCoords[4];
-	};
-
 	struct SpriteAtlasResourceData
 	{
 		int Width = 0, Height = 0;
-		int SpriteWidth = 0, SpriteHeight = 0;
 		int Channels = 0;
 		std::filesystem::path ResourcePath = "";
 		std::string AtlasName = "";
 		std::string Extension = "";
-		std::vector<SpriteResourceData*> Sprites;
+		std::vector<UUID> Sprites;
 	};
 
 	struct AnimationResourceData
