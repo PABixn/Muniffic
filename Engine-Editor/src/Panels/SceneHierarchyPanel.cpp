@@ -45,8 +45,20 @@ namespace eg {
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+		//kys1
 		ImGui::Begin("Scene Hierarchy");
-
+		ImGui::PopStyleVar();
+		static std::string search;
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(15.f, 10.f));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 30.f);
+		ImGui::PushItemWidth(ImGui::GetWindowWidth()-50.f);
+		ImGui::SetCursorPosX(25.f);
+		ImGui::SetCursorPosY(40.f);
+		ImGui::InputText("##entitySearch", &search);
+		ImGui::PopItemWidth();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 		if (m_Context)
 		{
 			if (ImGui::BeginDragDropTarget())
@@ -60,12 +72,23 @@ namespace eg {
 				ImGui::EndDragDropTarget();
 			}
 
-			m_Context->m_Registry.each([&](auto entityID)
+			if (search.empty()) {
+				m_Context->m_Registry.each([&](auto entityID)
 				{
 					Entity entity{ entityID, m_Context.get() };
 					DrawEntityNode(entity);
 				});
-
+			}
+			else {
+				m_Context->m_Registry.each([&](auto entityID)
+				{
+					Entity entity{ entityID, m_Context.get() };
+					std::string s = entity.GetName();
+					auto r = search;
+					if (s.find(r)!=std::string::npos)
+						DrawEntityNode(entity);
+				});
+			}
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			{
 				m_SelectionContext = {};
@@ -127,15 +150,17 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
+		//kys2
 		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false))
 			return;
 		
 		bool opened = false;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
-		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
-		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_FramePadding/* = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0)| ImGuiTreeNodeFlags_OpenOnArrow*/;
+		//flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f));
 		opened = ImGui::TreeNodeEx((void*)(uint64_t)entity.GetUUID(), flags, tag.c_str());
-
+		ImGui::PopStyleVar();
 		if (ImGui::BeginDragDropSource())
 		{
 			ImGui::SetDragDropPayload("Entity", &entity, sizeof(Entity));
@@ -174,8 +199,9 @@ namespace eg {
 
 			if (entity.Exists())
 			{
-				for (Entity& child : entity.GetChildren())
+				for (Entity& child : entity.GetChildren()) {
 					DrawEntityNode(child, true);
+				}
 			}
 
 			ImGui::TreePop();
