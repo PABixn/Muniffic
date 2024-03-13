@@ -37,7 +37,7 @@ namespace eg {
 		m_FrameHeight = ((ImageResourceData*)m_LoadedResource->Data)->height;
 		m_FrameWidth = ((ImageResourceData*)m_LoadedResource->Data)->width;
 
-		m_TextureUUID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_TextureData, ResourceType::Image);
+		
 
 		m_PreviewOriginImage = Texture2D::Create(path.string());
 		std::vector<Ref<SubTexture2D>> frames;
@@ -148,7 +148,7 @@ namespace eg {
 				}
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
 			ImGui::DragFloat("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500);
-			ImGui::Checkbox("Loop", m_PreviewData->IsLoopingPtr());
+			ImGui::Checkbox("Loop", m_PreviewData->IsLoopedPtr());
 			char buffer[512];
 			memset(buffer, 0, sizeof(buffer));
 			std::strncpy(buffer, m_ResourceData->AnimationName.c_str(), sizeof(buffer));
@@ -166,31 +166,40 @@ namespace eg {
 					m_ResourceData->ResourcePath = std::filesystem::path(std::string(buffer2));
 			if (ImGui::Button("Save"))
 			{
-				SpriteAtlasResourceData* data = new SpriteAtlasResourceData();
-				data->ResourcePath = "Textures" / m_ResourceData->ResourcePath;
-				data->AtlasName = m_ResourceData->AnimationName;
-				data->Extension = m_TextureData->Extension;
+				SpriteAtlasResourceData* saData = new SpriteAtlasResourceData();
+				saData->ResourcePath = "Textures" / m_ResourceData->ResourcePath;
+				saData->AtlasName = m_ResourceData->AnimationName;
+				saData->Extension = ResourceDatabase::GetResourceTypeExtension(ResourceType::SpriteAtlas);
+				saData->Width = m_TextureData->Width;
+				saData->Height = m_TextureData->Height;
+				saData->Channels = m_TextureData->Channels;
+				m_TextureUUID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_TextureData, ResourceType::Image);
 				for (int i = 0; i < m_PreviewData->GetFrameCount(); i++)
 				{
 					SubTextureResourceData* data = new SubTextureResourceData();
 					data->ResourcePath = "SubTextures" / m_ResourceData->ResourcePath;
-					data->m_Texture = m_TextureUUID;
+					data->Texture = m_TextureUUID;
 					data->SubTextureName = m_ResourceData->AnimationName + std::to_string(i);
-					data->m_TexCoords[0] = m_PreviewData->GetFrame(i)->GetMin();
-					data->m_TexCoords[1] = { m_PreviewData->GetFrame(i)->GetMax().x, m_PreviewData->GetFrame(i)->GetMin().y };
-					data->m_TexCoords[2] = m_PreviewData->GetFrame(i)->GetMax();
-					data->m_TexCoords[3] = { m_PreviewData->GetFrame(i)->GetMin().x, m_PreviewData->GetFrame(i)->GetMax().y };
-					m_ResourceData->m_frames.push_back(ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)data, ResourceType::SubTexture));
+					data->TexCoords[0] = m_PreviewData->GetFrame(i)->GetMin();
+					data->TexCoords[1] = { m_PreviewData->GetFrame(i)->GetMax().x, m_PreviewData->GetFrame(i)->GetMin().y };
+					data->TexCoords[2] = m_PreviewData->GetFrame(i)->GetMax();
+					data->TexCoords[3] = { m_PreviewData->GetFrame(i)->GetMin().x, m_PreviewData->GetFrame(i)->GetMax().y };
+					UUID uuid = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)data, ResourceType::SubTexture);
+					m_ResourceData->Frames.push_back(uuid);
+					saData->Sprites.push_back(uuid);
 					delete data;
 				}
-				m_ResourceData->m_frameRate = m_PreviewData->GetFrameRate();
-				m_ResourceData->m_frameCount = m_PreviewData->GetFrameCount();
-				m_ResourceData->m_loop = m_PreviewData->IsLooping();
+				m_ResourceData->FrameRate = m_PreviewData->GetFrameRate();
+				m_ResourceData->FrameCount = m_PreviewData->GetFrameCount();
+				m_ResourceData->Loop = m_PreviewData->IsLooped();
 				m_ResourceData->Extension = ".anim";
 				
 				ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_ResourceData, ResourceType::Animation);
+				ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)saData, ResourceType::SpriteAtlas);
 				CloseAnimationPanel();
-				delete data;
+
+				
+				delete saData;
 			}
 			if (ImGui::Button("Cancel"))
 				CloseAnimationPanel();

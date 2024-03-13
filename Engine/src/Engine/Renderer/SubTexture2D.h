@@ -1,5 +1,6 @@
 #pragma once
 #include "Texture.h"
+#include "Engine/Core/UUID.h"
 #include <glm/glm.hpp>
 
 namespace eg {
@@ -17,6 +18,7 @@ namespace eg {
 
 		SubTexture2D(const Ref<Texture2D>& texture, const glm::vec2& min, const glm::vec2& max);
 		static Ref<SubTexture2D> Create(const Ref<Texture2D>& texture, const glm::vec2& min, const glm::vec2& max);
+		static Ref<SubTexture2D> Create(UUID id);
 
 		const Ref<Texture2D> GetTexture() const { return m_Texture; }
 		Ref<Texture2D> GetTexture() { return m_Texture; }

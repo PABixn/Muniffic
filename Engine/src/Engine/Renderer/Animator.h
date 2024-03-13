@@ -34,6 +34,7 @@ namespace eg {
 		float* GetSpeedPtr() { return &m_Speed; }
 		size_t GetAnimationIndex() const { return m_AnimationIndex; }
 		size_t* GetAnimationIndexPtr() { return &m_AnimationIndex; }
+		const std::vector<std::pair<size_t, size_t>>& GetTransitions() const { return m_Transitions; }
 		
 		
 		void AddTransition(size_t fromIndex, size_t toIndex);
@@ -51,6 +52,6 @@ namespace eg {
 		float m_Speed = 0;
 		size_t m_AnimationIndex = 0;
 		Ref<std::vector<Animation>> m_Animations;
-		std::vector<std::vector<size_t>> m_Transitions;
+		std::vector<std::pair<size_t, size_t>> m_Transitions;
 	};
 }

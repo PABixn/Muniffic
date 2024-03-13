@@ -64,7 +64,6 @@ namespace eg {
 	void Animator::AddAnimation(const Animation& animation)
 	{
 		m_Animations->push_back(animation);
-		m_Transitions.push_back(std::vector<size_t>());
 	}
 
 	void Animator::ResizeAnimations(size_t size)
@@ -76,7 +75,6 @@ namespace eg {
 	void Animator::AddEmptyAnimation()
 	{
 		m_Animations->push_back(Animation());
-		m_Transitions.push_back(std::vector<size_t>());
 	}
 
 	void Animator::AddAnimationWithName(const std::string& name)
@@ -105,8 +103,8 @@ namespace eg {
 
 	void Animator::AddTransition(size_t fromIndex, size_t toIndex)
 	{
-		if (fromIndex < m_Transitions.size() && toIndex != fromIndex && CanTransition(fromIndex, toIndex))
-			m_Transitions[fromIndex].push_back(toIndex);
+		if (fromIndex < m_Transitions.size() && toIndex != fromIndex && !CanTransition(fromIndex, toIndex))
+			m_Transitions.push_back(std::make_pair(fromIndex, toIndex));
 	}
 
 	void Animator::AddTransition(const std::string& fromName, const std::string& toName)
@@ -117,17 +115,16 @@ namespace eg {
 		int toAnimIndex = GetAnimationIndex(toName);
 		if (toAnimIndex < 0)
 			return;
-		if (CanTransition(fromAnimIndex, toAnimIndex))
-			m_Transitions[fromAnimIndex].push_back(toAnimIndex);
+		AddTransition(fromAnimIndex, toAnimIndex);
 	}
 
 	void Animator::RemoveTransition(size_t fromIndex, size_t toIndex)
 	{
-		if (fromIndex < m_Transitions.size())
+		if (fromIndex < m_Transitions.size() &&  toIndex < m_Transitions.size())
 		{
-			auto it = std::find(m_Transitions[fromIndex].begin(), m_Transitions[fromIndex].end(), toIndex);
-			if (it != m_Transitions[fromIndex].end())
-				m_Transitions[fromIndex].erase(it);
+			for(int i = 0; i < m_Transitions.size(); i++)
+				if (m_Transitions[i].first == fromIndex && m_Transitions[i].second == toIndex)
+					m_Transitions.erase(m_Transitions.begin() + i);
 		}
 	}
 
@@ -144,7 +141,10 @@ namespace eg {
 
 	bool Animator::CanTransition(size_t fromIndex, size_t toIndex)
 	{
-		return std::find(m_Transitions[fromIndex].begin(), m_Transitions[fromIndex].end(), toIndex) != m_Transitions[fromIndex].end();
+		for (int i = 0; i < m_Transitions.size(); i++)
+			if (m_Transitions[i].first == fromIndex && m_Transitions[i].second == toIndex)
+				return true;
+		return false;
 	}
 
 	bool Animator::CanTransition(const std::string& fromName, const std::string& toName)

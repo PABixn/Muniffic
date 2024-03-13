@@ -9,7 +9,10 @@ namespace eg
 	public:
 		OpenGLTexture2D(const TextureSpecification& specification);
 		OpenGLTexture2D(const std::string& path);
+		OpenGLTexture2D(const UUID& id);
 		virtual ~OpenGLTexture2D();
+
+		void Load(const std::string& path);
 
 		virtual const TextureSpecification& GetSpecification() const override { return m_Specification; }
 		virtual uint32_t GetWidth() const override { return m_Width; }

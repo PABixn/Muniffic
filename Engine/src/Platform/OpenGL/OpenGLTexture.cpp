@@ -1,6 +1,7 @@
 #include "egpch.h"
 #include "OpenGLTexture.h"
 #include "Engine/Resources/Systems/ResourceSystem.h"
+#include "Engine/Resources/ResourceDatabase.h"
 #include "stb_image.h"
 
 namespace eg {
@@ -60,6 +61,23 @@ namespace eg {
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 		: m_Path(path)
 	{
+		Load(path);
+	}
+
+	OpenGLTexture2D::OpenGLTexture2D(const UUID& id)
+	{
+		std::filesystem::path path = ResourceDatabase::GetFullPath(id);
+		Load(path.string());
+	}
+
+	OpenGLTexture2D::~OpenGLTexture2D()
+	{
+		EG_PROFILE_FUNCTION();
+		glDeleteTextures(1, &m_RendererID);
+	}
+
+	void OpenGLTexture2D::Load(const std::string& path)
+	{
 		EG_PROFILE_FUNCTION();
 		Resource imgResource;
 		if (!resourceSystemLoad(path, ResourceType::Image, &imgResource)) {
@@ -108,13 +126,6 @@ namespace eg {
 
 			stbi_image_free(((ImageResourceData*)imgResource.Data)->pixels);
 		}
-
-	}
-
-	OpenGLTexture2D::~OpenGLTexture2D()
-	{
-		EG_PROFILE_FUNCTION();
-		glDeleteTextures(1, &m_RendererID);
 	}
 
 	static uint32_t TextureFormatTobpp(GLenum format) {

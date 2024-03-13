@@ -125,6 +125,21 @@ namespace eg {
 		ImGui::End();
 	}
 
+	void SceneHierarchyPanel::Update(float dt)
+	{
+		if (m_SelectionContext)
+		{
+			if (m_SelectionContext.HasComponent<AnimatorComponent>())
+			{
+				auto& animator = m_SelectionContext.GetComponent<AnimatorComponent>().Animator2D;
+				if (animator)
+				{
+					animator->Update(dt);
+				}
+			}
+		}
+	}
+
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
 		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false))
@@ -962,6 +977,7 @@ namespace eg {
 			{
 				ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f);
 				ImGui::Text("Current Animation: %s", component.Animator2D->GetCurrentAnimation().GetName().c_str());
+				ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation().GetFrame()->GetTexture()->GetRendererID(), {100.0f, 100.0f});
 
 				if (ImGui::Button("Add Empty Animation"))
 				{
@@ -975,17 +991,64 @@ namespace eg {
 				if (animations->size() > 0)
 				{
 					int i = 0;
-					for (const Animation& animation : *animations)
+					for (auto animation : *animations)
 					{
+						
 						ImGui::PushID(i);
 						if (ImGui::TreeNode(animation.GetName().c_str()))
 						{
+							ImGui::DragFloat("Frame rate ", animation.GetFrameRatePtr(), 0.1f, 0.0f, 60.0f);
+							ImGui::Checkbox("Looped", animation.IsLoopedPtr());
+							ImGui::Checkbox("Playing", animation.IsPlayingPtr());
+							ImGui::TreeNode("Frames");
+							for (int j = 0; j < animation.GetFrames().size(); j++)
+							{
+								ImGui::PushID(animations->size() + j);
+								ImGui::Text("Frame %d", j);
+								ImGui::PopID();
+							}
 							//TODO: Playing the animation if the animation is looped play non-stop else play once and show button on top to play again
 							// 
 							//TODO: Display the animation properties if someone wants to change the animation properties show the popup window which will ask if the user wants to change the properties in the scene or in the prefab
 							//ImGui::PopID();
 							//ImGui::TreePop();
 						}
+						if (ImGui::BeginDragDropTarget())
+						{
+							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+							{
+								uint64_t* uuid = (uint64_t*)payload->Data;
+
+								std::filesystem::path animationPath = ResourceUtils::GetKeyPath(*uuid);
+
+								Ref<Animation> animation = Animation::Create(*uuid);
+								if (animation)
+								{
+									Ref<Animation> oldAnim = component.Animator2D->GetAnimation(i);
+									component.Animator2D->SetAnimation(i, animation);
+									Ref<Animation> newAnim = component.Animator2D->GetAnimation(i);
+									component.SubTextureUUID = *uuid;
+									Commands::ExecuteRawValueCommand<Ref<Animation>>(newAnim, oldAnim, "AnimatorComponent-ChangeAnimation", true);
+								}
+								else
+									EG_WARN("Could not load animation from {0}", animationPath);
+							}
+							ImGui::EndDragDropTarget();
+						}
+						ImGui::PopID();
+						i++;
+					}
+				}
+
+				std::vector<std::pair<size_t, size_t>> transitions = component.Animator2D->GetTransitions();
+				ImGui::Text("Transitions:");
+				if (transitions.size() > 0)
+				{
+					int i = 0;
+					for (const auto& transition : transitions)
+					{
+						ImGui::PushID(i);
+						ImGui::Text("Transition from %s to %s", animations->at(transition.first).GetName().c_str(), animations->at(transition.second).GetName().c_str());
 						ImGui::PopID();
 						i++;
 					}

@@ -97,6 +97,7 @@ namespace eg
 			m_Camera.OnUpdate(ts);
 
 		m_EditorCamera.OnUpdate(ts);
+		m_SceneHierarchyPanel.Update(ts);
 
 		Renderer2D::ResetStats();
 		m_FrameBuffer->Bind();

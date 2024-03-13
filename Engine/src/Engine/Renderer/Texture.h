@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Engine/Core/UUID.h"
 namespace eg {
 
 	enum class ImageFormat
@@ -43,5 +43,7 @@ namespace eg {
 	public:
 		static Ref<Texture2D> Create(const TextureSpecification& specification);
 		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(const UUID& id);
+		//TODO:: Add Create function for creating texture from UUID
 	};
 }

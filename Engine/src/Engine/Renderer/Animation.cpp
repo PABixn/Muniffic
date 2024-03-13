@@ -1,6 +1,7 @@
 #include "egpch.h"
 #include "Animation.h"
-
+#include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/Systems/ResourceSystem.h"
 namespace eg
 {
 	Animation::Animation()
@@ -38,6 +39,36 @@ namespace eg
 	Ref<Animation> Animation::Create(const std::vector<Ref<SubTexture2D>>& frames, float frameRate, bool loop)
 	{
 		return CreateRef<Animation>(frames, frameRate, loop);
+	}
+
+	Ref<Animation> Animation::Create(const UUID& id)
+	{
+		AnimationResourceData* animData = ResourceSerializer::AnimationResourceDataCache.at(id);
+		if (!animData)
+			return nullptr;
+		Ref<Animation> anim = CreateRef<Animation>();
+		anim->m_AnimationID = id;
+		anim->m_name = animData->AnimationName;
+		anim->m_frameRate = animData->FrameRate;
+		anim->m_loop = animData->Loop;
+		anim->m_frameCount = animData->Frames.size();
+		anim->m_frame = 0;
+
+		for (auto& frame : animData->Frames)
+		{
+			anim->AddFrame(SubTexture2D::Create(frame));
+		}
+		SubTextureResourceData* subTexData = ResourceSerializer::SubTextureResourceDataCache.at(animData->Frames.at(0));
+		if(!subTexData)
+			return nullptr;
+		TextureResourceData* texData = ResourceSerializer::TextureResourceDataCache.at(subTexData->Texture);
+		if(!texData)
+			return nullptr;
+		Resource* res = new Resource();
+		resourceSystemLoad((texData->ResourcePath / (texData->ImageName + texData->Extension)).string(), ResourceType::Image, res);
+		if(!res)
+			return nullptr;
+		
 	}
 
 	void Animation::Update(float dt, float speed)

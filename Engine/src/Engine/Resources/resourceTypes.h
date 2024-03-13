@@ -51,10 +51,10 @@ namespace eg {
 
 	struct AnimationResourceData
 	{
-		float m_frameRate;
-		int m_frameCount;
-		bool m_loop;
-		std::vector<UUID> m_frames;
+		float FrameRate;
+		int FrameCount;
+		bool Loop;
+		std::vector<UUID> Frames;
 		std::filesystem::path ResourcePath = "";
 		std::string AnimationName = "";
 		std::string Extension = "";
@@ -62,10 +62,10 @@ namespace eg {
 
 	struct SubTextureResourceData
 	{
-		glm::vec2 m_TexCoords[4];
+		glm::vec2 TexCoords[4];
 		std::filesystem::path ResourcePath = "";
 		std::string SubTextureName = "";
-		UUID m_Texture;
+		UUID Texture;
 	};
 
 	struct TextureResourceData
