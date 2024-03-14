@@ -6,7 +6,7 @@ namespace eg {
 	class Animator {
 	public:
 		Animator();
-		Animator(Ref<std::vector<Animation>> animations, float speed);
+		Animator(Ref<std::vector<Ref<Animation>>> animations, float speed);
 		
 		void Play();
 		void Pause();
@@ -14,7 +14,7 @@ namespace eg {
 		void Update(float dt);
 		void ChangeAnimation(size_t animationIndex);
 		void ChangeAnimation(const std::string& animationName);
-		void SetAnimations(std::vector<Ref<Animation>> animations);
+		void SetAnimations(Ref<std::vector<Ref<Animation>>> animations);
 		void SetAnimation(size_t index, Ref<Animation> animation);
 		void AddAnimation(Ref<Animation> animation);
 		void ResizeAnimations(size_t size);
@@ -25,12 +25,11 @@ namespace eg {
 		void RemoveLastAnimation();
 		void SetSpeed(float speed) { m_Speed = speed; }
 
-		Ref<Animation> GetCurrentAnimation() const { return m_Animations[m_AnimationIndex]; }
-		const Animation& GetCurrentAnimationRef() const { return *m_Animations[m_AnimationIndex]; }
-		std::vector<Ref<Animation>> GetAnimations() { return m_Animations; }
-		const std::vector<Ref<Animation>> GetAnimations() const { return m_Animations; }
+		Ref<Animation> GetCurrentAnimation() const { return (*m_Animations)[m_AnimationIndex]; }
+		//const Animation& GetCurrentAnimationRef() const { return *m_Animations[m_AnimationIndex]; }
+		const Ref<std::vector<Ref<Animation>>>& GetAnimations() const { return m_Animations; }
 		Ref<Animation> GetAnimation(const std::string& name);
-		const Animation& GetAnimation(int index) { return *(m_Animations[index]).get(); }
+		Ref<Animation> GetAnimation(int index) { return (*m_Animations)[index]; }
 
 		float GetSpeed() const { return m_Speed; }
 		float* GetSpeedPtr() { return &m_Speed; }
@@ -52,7 +51,7 @@ namespace eg {
 	private:
 		float m_Speed = 0;
 		size_t m_AnimationIndex = 0;
-		std::vector<Ref<Animation>> m_Animations;
+		Ref<std::vector<Ref<Animation>>> m_Animations;
 		std::vector<std::pair<size_t, size_t>> m_Transitions;
 	};
 }

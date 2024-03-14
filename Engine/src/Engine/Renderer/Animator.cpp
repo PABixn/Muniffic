@@ -8,39 +8,39 @@ namespace eg {
 	{
 	}
 
-	Animator::Animator(std::vector<Ref<Animation>> animations, float speed)
+	Animator::Animator(Ref<std::vector<Ref<Animation>>> animations, float speed)
 		:m_AnimationIndex(0), m_Animations(animations), m_Speed(speed)
 	{
-		m_Transitions.resize(animations.size());
+		m_Transitions.resize(animations->size());
 	}
 
 	void Animator::Play()
 	{
-		m_Animations[m_AnimationIndex]->Play();
+		(*m_Animations)[m_AnimationIndex]->Play();
 	}
 
 	void Animator::Pause()
 	{
-		m_Animations[m_AnimationIndex]->Pause();
+		(*m_Animations)[m_AnimationIndex]->Pause();
 	}
 
 	void Animator::Stop()
 	{
-		m_Animations[m_AnimationIndex]->Stop();
+		(*m_Animations)[m_AnimationIndex]->Stop();
 	}
 
 	void Animator::Update(float dt)
 	{
-		m_Animations[m_AnimationIndex]->Update(dt, m_Speed);
+		(*m_Animations)[m_AnimationIndex]->Update(dt, m_Speed);
 	}
 
 	void Animator::ChangeAnimation(size_t animationIndex)
 	{
 		if (!CanTransition(m_AnimationIndex, animationIndex))
 			return;
-		m_Animations[m_AnimationIndex]->Stop();
+		(*m_Animations)[m_AnimationIndex]->Stop();
 		m_AnimationIndex = animationIndex;
-		m_Animations[m_AnimationIndex]->Play();
+		(*m_Animations)[m_AnimationIndex]->Play();
 	}
 
 	void Animator::ChangeAnimation(const std::string& animationName)
@@ -51,7 +51,7 @@ namespace eg {
 	
 	}
 
-	void Animator::SetAnimations(std::vector<Ref<Animation>> animations)
+	void Animator::SetAnimations(Ref<std::vector<Ref<Animation>>> animations)
 	{
 		m_Animations = animations;
 	}
@@ -63,42 +63,42 @@ namespace eg {
 
 	void Animator::AddAnimation(Ref<Animation> animation)
 	{
-		m_Animations.push_back(animation);
+		m_Animations->push_back(animation);
 	}
 
 	void Animator::ResizeAnimations(size_t size)
 	{
-		m_Animations.resize(size);
+		m_Animations->resize(size);
 		m_Transitions.resize(size);
 	}
 
 	void Animator::AddEmptyAnimation()
 	{
-		m_Animations.push_back(CreateRef<Animation>());
+		m_Animations->push_back(CreateRef<Animation>());
 	}
 
 	void Animator::AddAnimationWithName(const std::string& name)
 	{
-		m_Animations.push_back(CreateRef<Animation>(name));
+		m_Animations->push_back(CreateRef<Animation>(name));
 	}
 
 	void Animator::RemoveAnimation(size_t index)
 	{
-		if (index >= m_Animations.size())
+		if (index >= m_Animations->size())
 			return;
-		m_Animations.erase(m_Animations.begin() + index);
+		m_Animations->erase(m_Animations->begin() + index);
 	}
 
 	void Animator::RemoveAnimation(const std::string& name)
 	{
 		size_t animIndex = GetAnimationIndex(name);
 		if (animIndex >= 0)
-			m_Animations.erase(m_Animations.begin() + animIndex);
+			m_Animations->erase(m_Animations->begin() + animIndex);
 	}
 
 	void Animator::RemoveLastAnimation()
 	{
-		m_Animations.pop_back();
+		m_Animations->pop_back();
 	}
 
 	void Animator::AddTransition(size_t fromIndex, size_t toIndex)
@@ -164,13 +164,13 @@ namespace eg {
 			int index = GetAnimationIndex(name);
 			if (index < 0)
 				return nullptr;
-			return m_Animations[GetAnimationIndex(name)]; }
+			return (*m_Animations)[GetAnimationIndex(name)]; }
 	}
 
 	int Animator::GetAnimationIndex(const std::string& name)
 	{
 		int i = 0;
-		for (Ref<Animation> anim : m_Animations)
+		for (Ref<Animation> anim : (*m_Animations))
 		{
 			if (anim->GetName() == name)
 				return i;
