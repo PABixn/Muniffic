@@ -121,26 +121,28 @@ namespace eg
 
 		static std::filesystem::path GetMetadataPath(ResourceType type)
 		{
+			std::filesystem::path baseDirectory = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata";
+
 			switch (type)
 			{
 			case ResourceType::Image:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Textures.mnmeta";
+				return baseDirectory / "Textures.mnmeta";
 			case ResourceType::SubTexture:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "SubTextures.mnmeta";
+				return baseDirectory / "SubTextures.mnmeta";
 			case ResourceType::SpriteAtlas:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "SpriteAtlases.mnmeta";
+				return baseDirectory / "SpriteAtlases.mnmeta";
 			case ResourceType::Shader:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Shaders.mnmeta";
+				return baseDirectory / "Shaders.mnmeta";
 			case ResourceType::Font:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Fonts.mnmeta";
+				return baseDirectory / "Fonts.mnmeta";
 			case ResourceType::Text:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Texts.mnmeta";
+				return baseDirectory / "Texts.mnmeta";
 			case ResourceType::Animation:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Animations.mnmeta";
+				return baseDirectory / "Animations.mnmeta";
 			case ResourceType::Script:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Scripts.mnmeta";
+				return baseDirectory / "Scripts.mnmeta";
 			case ResourceType::NativeScript:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "NativeScripts.mnmeta";
+				return baseDirectory / "NativeScripts.mnmeta";
 			default:
 				return std::filesystem::path();
 			}
