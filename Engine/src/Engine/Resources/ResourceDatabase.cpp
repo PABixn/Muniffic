@@ -37,7 +37,7 @@ namespace eg
 				if (data->ResourcePath / std::filesystem::path(data->SubTextureName + data->Extension) == keyPath)
 					return uuid;
 			}
-		})
+		}
 		else if (type == ResourceType::Animation)
 		{
 			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
@@ -93,8 +93,6 @@ namespace eg
 				return ".anim";
 			case ResourceType::SpriteAtlas:
 				return ".atlas";
-			case ResourceType::SubTexture:
-				return ".subtexture";
 			case ResourceType::Shader:
 				return ".shader";
 			case ResourceType::Font:
@@ -212,7 +210,7 @@ namespace eg
 				if (data->ResourcePath == ResourceUtils::GetResourcePath(path) && data->SubTextureName + data->Extension == path.filename().string())
 					return uuid;
 			}
-		})
+		}
 		else if (type == ResourceType::Animation)
 		{
 			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
