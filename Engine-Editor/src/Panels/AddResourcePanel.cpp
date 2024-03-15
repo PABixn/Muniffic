@@ -16,6 +16,7 @@ namespace eg
 	AddResourcePanel::AddResourcePanel()
 	{
 		m_ImagePanel = CreateRef<ImagePanel>();
+		m_SpriteSheetPanel = CreateRef<SpriteSheetPanel>();
 	}
 	void AddResourcePanel::OnImGuiRender()
 	{
@@ -48,6 +49,16 @@ namespace eg
 							m_ImagePanel->ShowImagePanel(true);
 					}
 				}
+				if (ImGui::Button("SpriteSheet"))
+				{
+					bool resourceChoosen = ChooseNewResource("Image (*.png)\0*.png\0");
+					if (resourceChoosen)
+					{
+						bool initialized = m_SpriteSheetPanel->InitSpriteSheetPanel(m_ResourcePath);
+						if (initialized)
+							m_SpriteSheetPanel->ShowSpriteSheetPanel(true);
+					}
+				}
 				if (ImGui::Button("Script"))
 				{
 					bool resourceChosen = ChooseNewResource("Script (*.cs)\0*.cs\0");
@@ -69,6 +80,7 @@ namespace eg
 				ImGui::End();
 
 		m_ImagePanel->OnImGuiRender();
+		m_SpriteSheetPanel->OnImGuiRender();
 		
 	}
 	bool AddResourcePanel::ChooseNewResource(const std::string filter)

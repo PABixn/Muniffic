@@ -4,6 +4,8 @@
 #include "Engine/Renderer/Texture.h"
 #include "DeleteFilePanel.h"
 #include "RenameFolderPanel.h"
+#include "EditFilePanel.h"
+#include "InvalidDataPanel.h"
 
 namespace eg {
 	

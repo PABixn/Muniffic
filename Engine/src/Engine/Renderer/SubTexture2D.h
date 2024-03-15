@@ -24,6 +24,7 @@ namespace eg {
 		inline void SetTexCoords(int index, glm::vec2 coords) { if(index < 4) m_TexCoords[index] = coords; };
 		inline void SetTexture(const Ref<Texture2D>& texture) { m_Texture = texture; };
 		static Ref<SubTexture2D> CreateFromCoords(const Ref<Texture2D>& texture, const glm::vec2& coords, const glm::vec2& cellSize, const glm::vec2& spriteSize = { 1, 1 });
+		const std::filesystem::path GetPath() { return m_FilePath; }
 		private:
 			Ref<Texture2D> m_Texture;
 			glm::vec2 m_TexCoords[4];
