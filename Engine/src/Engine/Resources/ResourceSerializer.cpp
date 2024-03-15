@@ -20,8 +20,9 @@ namespace eg
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
 		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
+		std::filesystem::path subTextureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SubTexture);
 
-		YAML::Node textureNode, animationNode, spriteAtlasNode;
+		YAML::Node textureNode, animationNode, spriteAtlasNode, subTextureNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
 			return false;
@@ -30,6 +31,9 @@ namespace eg
 			return false;
 
 		if (!std::filesystem::exists(spriteAtlasMetadataPath))
+			return false;
+
+		if (!std::filesystem::exists(subTextureMetadataPath))
 			return false;
 
 		try
@@ -62,10 +66,20 @@ namespace eg
 			return false;
 		}
 
+		try
+		{
+			subTextureNode = YAML::LoadFile(subTextureMetadataPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", subTextureMetadataPath, e.what());
+			return false;
+		}
+
 		auto textureResources = textureNode["Resources"];
 		auto animationResources = animationNode["Resources"];
 		auto spriteAtlasResources = spriteAtlasNode["Resources"];
-		auto subtextureResource = textureNode["SubTextures"];
+		auto subtextureResource = subTextureNode["SubTextures"];
 
 		if (textureResources)
 		{
@@ -94,13 +108,14 @@ namespace eg
 				SubTextureResourceData* data = new SubTextureResourceData();
 				data->ResourcePath = resource["ResourcePath"].as<std::string>();
 				data->SubTextureName = resource["SubTextureName"].as<std::string>();
-				data->Texture = resource["Texture"].as<uint64_t>();
+				data->Extension = resource["Extension"].as<std::string>();
+				data->m_Texture = resource["Texture"].as<uint64_t>();
 
 				auto texCoords = resource["TexCoords"];
 				for (int i = 0; i < 4; i++)
 				{
-					data->TexCoords[i].x = texCoords[i]["x"].as<float>();
-					data->TexCoords[i].y = texCoords[i]["y"].as<float>();
+					data->m_TexCoords[i].x = texCoords[i]["x"].as<float>();
+					data->m_TexCoords[i].y = texCoords[i]["y"].as<float>();
 				}
 
 				CacheSubTexture(uuid, data);
@@ -117,15 +132,15 @@ namespace eg
 				data->ResourcePath = resource["ResourcePath"].as<std::string>();
 				data->AnimationName = resource["AnimationName"].as<std::string>();
 				data->Extension = resource["Extension"].as<std::string>();
-				data->FrameRate = resource["FrameRate"].as<float>();
-				data->FrameCount = resource["FrameCount"].as<int>();
-				data->Loop = resource["Loop"].as<bool>();
+				data->m_frameRate = resource["FrameRate"].as<float>();
+				data->m_frameCount = resource["FrameCount"].as<int>();
+				data->m_loop = resource["Loop"].as<bool>();
 				data->AnimationName = resource["Name"].as<std::string>();
 
 				auto frames = resource["Frames"];
 				for (auto frame : frames)
 				{
-					data->Frames.push_back(frame.as<uint64_t>());
+					data->m_frames.push_back(frame.as<uint64_t>());
 				}
 
 				CacheAnimation(uuid, data);
@@ -194,12 +209,13 @@ namespace eg
 			subtextureOut << YAML::Key << "UUID" << YAML::Value << key;
 			subtextureOut << YAML::Key << "ResourcePath" << YAML::Value << value->ResourcePath.string();
 			subtextureOut << YAML::Key << "SubTextureName" << YAML::Value << value->SubTextureName;
-			subtextureOut << YAML::Key << "Texture" << YAML::Value << value->Texture;
+			subtextureOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
+			subtextureOut << YAML::Key << "Texture" << YAML::Value << value->m_Texture;
 			subtextureOut << YAML::Key << "TexCoords" << YAML::Value << YAML::BeginSeq;
 			for (int i = 0; i < 4; i++)
 			{
 				subtextureOut << YAML::BeginMap;
-				subtextureOut << value->TexCoords[i];
+				subtextureOut << value->m_TexCoords[i];
 				subtextureOut << YAML::EndMap;
 			}
 			subtextureOut << YAML::EndSeq;
@@ -219,12 +235,12 @@ namespace eg
 			animationOut << YAML::Key << "ResourcePath" << YAML::Value << value->ResourcePath.string();
 			animationOut << YAML::Key << "AnimationName" << YAML::Value << value->AnimationName;
 			animationOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
-			animationOut << YAML::Key << "FrameRate" << YAML::Value << value->FrameRate;
-			animationOut << YAML::Key << "FrameCount" << YAML::Value << value->FrameCount;
-			animationOut << YAML::Key << "Loop" << YAML::Value << value->Loop;
+			animationOut << YAML::Key << "FrameRate" << YAML::Value << value->m_frameRate;
+			animationOut << YAML::Key << "FrameCount" << YAML::Value << value->m_frameCount;
+			animationOut << YAML::Key << "Loop" << YAML::Value << value->m_loop;
 			animationOut << YAML::Key << "Name" << YAML::Value << value->AnimationName;
 			animationOut << YAML::Key << "Frames" << YAML::Value << YAML::BeginSeq;
-			for (auto& frame : value->Frames)
+			for (auto& frame : value->m_frames)
 			{
 				animationOut << frame;
 			}
@@ -263,14 +279,17 @@ namespace eg
 		std::ofstream textureFile(textureMetadataPath, std::ios::trunc);
 		std::ofstream animationFile(animationMetadataPath, std::ios::trunc);
 		std::ofstream spriteAtlasFile(spriteAtlasMetadataPath, std::ios::trunc);
+		std::ofstream subTextureFile(subTextureMetadataPath, std::ios::trunc);
 
 		textureFile << textureOut.c_str();
 		animationFile << animationOut.c_str();
 		spriteAtlasFile << spriteAtlasOut.c_str();
+		subTextureFile << subtextureOut.c_str();
 
 		textureFile.close();
 		animationFile.close();
 		spriteAtlasFile.close();
+		subTextureFile.close();
 	}
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
