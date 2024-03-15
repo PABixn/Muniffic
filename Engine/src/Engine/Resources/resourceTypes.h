@@ -3,11 +3,14 @@
 #include <string>
 #include <filesystem>
 #include "Engine/Project/Project.h"
+#include "Engine/Core/UUID.h"
 
 namespace eg {
 	enum class ResourceType
 	{
 		Animation,
+		SpriteAtlas,
+		SubTexture,
 		Shader,
 		Font,
 		Text,
@@ -36,11 +39,39 @@ namespace eg {
 		unsigned char* pixels;
 	};
 
+	struct SpriteAtlasResourceData
+	{
+		int Width = 0, Height = 0;
+		int Channels = 0;
+		std::filesystem::path ResourcePath = "";
+		std::string AtlasName = "";
+		std::string Extension = "";
+		std::vector<UUID> Sprites;
+	};
+
+	struct AnimationResourceData
+	{
+		float m_frameRate;
+		int m_frameCount;
+		bool m_loop;
+		std::vector<UUID> m_frames;
+		std::filesystem::path ResourcePath = "";
+		std::string AnimationName = "";
+		std::string Extension = "";
+	};
+
+	struct SubTextureResourceData
+	{
+		glm::vec2 m_TexCoords[4];
+		std::filesystem::path ResourcePath = "";
+		std::string SubTextureName = "";
+		std::string Extension = "";
+		UUID m_Texture;
+	};
+
 	struct TextureResourceData
 	{
 		int Width = 0, Height = 0;
-		glm::vec2 m_TexCoords[4];
-		bool IsSubTexture = false;
 		int Channels = 0;
 		std::filesystem::path ResourcePath = "";
 		std::string ImageName = "";
@@ -61,5 +92,6 @@ namespace eg {
 			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / GetRelativePath();
 		}
 	};
+
 }
 

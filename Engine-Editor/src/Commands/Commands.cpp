@@ -170,14 +170,85 @@ namespace eg
 	void Commands::DeleteResourceCommand::Undo()
 	{
 		if(m_ResourceType == ResourceType::Image)
-			ResourceSerializer::TextureResourceDataCache[m_KeyPath] = (TextureResourceData*)m_Resource;
+			ResourceSerializer::TextureResourceDataCache[m_UUID] = (TextureResourceData*)m_Resource;
 
 		SetCurrentCommand(true);
 	}
 
 	void Commands::DeleteResourceCommand::Redo()
 	{
-		ResourceSerializer::DeleteCachedResource(m_KeyPath, m_ResourceType, m_DeleteFile);
+		ResourceDatabase::RemoveResource(m_UUID, m_ResourceType, m_DeleteFile);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::DeleteDirectoryCommand::Undo()
+	{
+		std::filesystem::create_directory(m_Directory);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::DeleteDirectoryCommand::Redo()
+	{
+		ResourceDatabase::DeleteDirectory(m_Directory);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::LoadResourceCommand::Undo()
+	{
+		ResourceDatabase::RemoveResource(m_Path);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::LoadResourceCommand::Redo()
+	{
+		ResourceDatabase::LoadResource(m_Path);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::MoveResourceCommand::Undo()
+	{
+		ResourceDatabase::MoveResource(m_UUID, m_OldPath);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::MoveResourceCommand::Redo()
+	{
+		ResourceDatabase::MoveResource(m_UUID, m_Path);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::RenameResourceCommand::Undo()
+	{
+		ResourceDatabase::RenameResource(m_UUID, m_OldName);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::RenameResourceCommand::Redo()
+	{
+		ResourceDatabase::RenameResource(m_UUID, m_NewName);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::RenameDirectoryCommand::Undo()
+	{
+		std::filesystem::path newPath = m_Path.parent_path() / m_NewName;
+		ResourceDatabase::RenameDirectory(newPath, m_OldName);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::RenameDirectoryCommand::Redo()
+	{
+		ResourceDatabase::RenameDirectory(m_Path, m_NewName);
 
 		SetCurrentCommand(false);
 	}
@@ -253,7 +324,6 @@ namespace eg
 
 	void Commands::RestoreEntity(Entity& entity, EntitySave& entitySave)
 	{
-
 		Commands::AllSavedComponents components = entitySave.GetAllComponents();
 
 		std::apply([&entity](auto&&... args) {(( TrySetComponent(entity, &args)), ...); }, components);

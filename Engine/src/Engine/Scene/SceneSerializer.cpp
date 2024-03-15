@@ -9,6 +9,7 @@
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Project/Project.h"
 #include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/ResourceDatabase.h"
 
 namespace YAML
 {
@@ -216,7 +217,7 @@ namespace eg {
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 			if(spriteRendererComponent.Texture)
-				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.Texture->GetPath();
+				out << YAML::Key << "TextureUUID" << YAML::Value << spriteRendererComponent.TextureUUID;
 			out << YAML::Key << "IsInherited" << YAML::Value << spriteRendererComponent.isInherited;
 			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << spriteRendererComponent.isInheritedInChildren;
 			out << YAML::EndMap; // SpriteRendererComponent
@@ -231,7 +232,7 @@ namespace eg {
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 			if (spriteRendererComponent.SubTexture->GetTexture())
 			{
-				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.SubTexture->GetTexture()->GetPath();
+				out << YAML::Key << "TextureUUID" << YAML::Value << spriteRendererComponent.SubTextureUUID;
 				out << YAML::Key << "MinCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(0);
 				out << YAML::Key << "MaxCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(2);
 			}
@@ -261,7 +262,7 @@ namespace eg {
 			for (auto& animation : *animatorComponent.Animator2D->GetAnimations())
 			{
 				//TODO: if animation uses prefab
-				out << animation.GetName();
+				//out << ResourceDatabase::FindResourceByKeyPath(animation.);
 				//TODO: else serialize animation
 			}
 			out << YAML::EndMap; // Animations
@@ -458,6 +459,8 @@ namespace eg {
 		std::string sceneName = data["Scene"].as<std::string>();
 		EG_CORE_TRACE("Deserializing scene '{0}'", sceneName);
 
+		ResourceSerializer::DeserializeResourceCache();
+
 		auto entities = data["Entities"];
 		if (entities)
 		{
@@ -591,15 +594,18 @@ namespace eg {
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 					if(spriteRendererComponent["TilingFactor"])
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
-					if (spriteRendererComponent["TexturePath"])
+					if (spriteRendererComponent["TextureUUID"])
 					{
-						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
-						if (std::filesystem::exists(texturePath))
-							src.Texture = Texture2D::Create(texturePath);
+						uint64_t textureUUID = spriteRendererComponent["TextureUUID"].as<uint64_t>();
+						if (ResourceSerializer::TextureResourceDataCache.find(textureUUID) != ResourceSerializer::TextureResourceDataCache.end())
+						{
+							std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceSerializer::TextureResourceDataCache[textureUUID]->ResourcePath / std::string(ResourceSerializer::TextureResourceDataCache[textureUUID]->ImageName + ResourceSerializer::TextureResourceDataCache[textureUUID]->Extension);
+							src.Texture = Texture2D::Create(finalPath.string());
+						}
 						else
 						{
 							src.Texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
-							EG_CORE_WARN("Texture not found: {0}", texturePath);
+							EG_CORE_WARN("Texture not found: {0}", textureUUID);
 						}
 					}
 
@@ -615,14 +621,25 @@ namespace eg {
 					auto& src = deserializedEntity.AddComponent<SpriteRendererSTComponent>();
 					src.Color = spriteRendererComponentST["Color"].as<glm::vec4>();
 					src.TilingFactor = spriteRendererComponentST["TilingFactor"].as<float>();
-					if (spriteRendererComponentST["TexturePath"])
+					if (spriteRendererComponentST["TextureUUID"])
 					{
-						std::string texturePath = spriteRendererComponentST["TexturePath"].as<std::string>();
-						auto path = Project::GetAssetFileSystemPath(texturePath);
-						auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
-						auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();
-						Ref<Texture2D> texture = Texture2D::Create(path.string());
-						src.SubTexture = CreateRef<SubTexture2D>(texture, minCoords, maxCoords);
+						uint64_t textureUUID = spriteRendererComponentST["TextureUUID"].as<uint64_t>();
+
+
+						if (ResourceSerializer::TextureResourceDataCache.find(textureUUID) != ResourceSerializer::TextureResourceDataCache.end())
+						{
+							std::filesystem::path texturePath = ResourceSerializer::TextureResourceDataCache[textureUUID]->ResourcePath / std::string(ResourceSerializer::TextureResourceDataCache[textureUUID]->ImageName + ResourceSerializer::TextureResourceDataCache[textureUUID]->Extension);
+							auto path = Project::GetAssetFileSystemPath(texturePath);
+							auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
+							auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();
+							Ref<Texture2D> texture = Texture2D::Create(path.string());
+							src.SubTexture = CreateRef<SubTexture2D>(texture, minCoords, maxCoords);
+						}
+						else
+						{
+							Ref<Texture2D> texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							src.SubTexture = CreateRef<SubTexture2D>(texture, glm::vec2(0,0), glm::vec2(1000, 1000));
+						}
 					}
 
 				}
@@ -655,7 +672,7 @@ namespace eg {
 						{
 							//TODO: if animation uses prefab
 							std::string name = animation.first.as<std::string>();
-							const Animation anim = Animation::Create(name);
+							const Animation anim(name);
 							//TODO: else load all data for animation from scene file
 						}
 					}
@@ -725,8 +742,6 @@ namespace eg {
 				}
 			}
 		}
-
-		ResourceSerializer::DeserializeResourceCache();
 
 		return true;
 	}

@@ -5,6 +5,7 @@
 #include "Engine/Project/Project.h"
 #include "Engine/Resources/ResourceUtils.h"
 #include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/ResourceDatabase.h"
 #include "../EditorLayer.h"
 
 namespace eg
@@ -14,6 +15,50 @@ namespace eg
 	{
 		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
+		ResourceDatabase::SetCurrentPath(&m_CurrentDirectory);
+	}
+
+	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)
+	{
+		static float thumbnailSize = 128.0f;
+
+		ImGui::PushID(name.c_str());
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+		if (ImGui::BeginPopupContextItem("FileOptions"))
+		{
+			if (ImGui::MenuItem("Delete"))
+			{
+				m_DeleteFilePanel->ShowWindow(key, type);
+				ImGui::PopStyleColor();
+				ImGui::NextColumn();
+				ImGui::EndPopup();
+				ImGui::PopID();
+				return;
+			}
+
+			if (ImGui::MenuItem("Rename"))
+			{
+				m_RenameResourcePanel->ShowWindow(key);
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (ImGui::BeginDragDropSource())
+		{
+			ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(uint64_t));
+			ImGui::EndDragDropSource();
+		}
+
+		ImGui::PopStyleColor();
+
+		ImGui::TextWrapped(name.c_str());
+
+		ImGui::NextColumn();
+
+		ImGui::PopID();
 	}
 
 	void ContentBrowserPanel::OnImGuiRender() {
@@ -25,6 +70,24 @@ namespace eg
 				std::filesystem::path oldPath = m_CurrentDirectory;
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
+			}
+
+			//accept dragging files from windows
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+				{
+					if (ResourceUtils::CanDrop(m_CurrentDirectory.parent_path()))
+					{
+						uint64_t uuid = *(uint64_t*)payload->Data;
+
+						Commands::ExecuteMoveResourceCommand(uuid, m_CurrentDirectory.parent_path());
+
+						//ResourceDatabase::MoveResource(uuid, m_CurrentDirectory.parent_path());
+					}
+				}
+				ImGui::EndDragDropTarget();
 			}
 		}
 
@@ -45,6 +108,11 @@ namespace eg
 			ImGui::EndPopup();
 		}
 
+		ImGui::SameLine();
+
+		static char buffer[256];
+		ImGui::InputText("##Filter", buffer, 256);
+
 		static float padding = 16.0f;
 		static float thumbnailSize = 128.0f;
 		float cellSize = thumbnailSize + padding;
@@ -56,58 +124,36 @@ namespace eg
 
 		ImGui::Columns(columnCount, 0, false);
 
-		if (m_DeleteFilePanel->GetResult() != FileDeleteMethod::Cancel)
-		{
-			if (m_DeleteFilePanel->GetResult() == FileDeleteMethod::DeleteFromProject)
-				Commands::ExecuteDeleteResourceCommand(m_DeleteFilePanel->GetKeyPath(), m_DeleteFilePanel->GetType());
-			else if (m_DeleteFilePanel->GetResult() == FileDeleteMethod::DeleteFromDisk)
-				Commands::ExecuteDeleteResourceCommand(m_DeleteFilePanel->GetKeyPath(), m_DeleteFilePanel->GetType(), true);
-
-			m_DeleteFilePanel->SetResult(FileDeleteMethod::Cancel);
-			m_DeleteFilePanel->SetKeyPath(std::filesystem::path());
-			m_DeleteFilePanel->SetType(ResourceType::None);
-		}
-
-		ResourceType type = ResourceUtils::GetResourceTypeFromText(m_CurrentDirectory.filename().string());
+		ResourceType type = ResourceUtils::GetCurrentResourceDirectoryType(m_CurrentDirectory);
 
 		if (type == ResourceType::Image)
 		{
 			for (auto& [key, value] : ResourceSerializer::TextureResourceDataCache)
 			{
+				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
+					continue;
+
+				if(value->ImageName.find(buffer) == std::string::npos)
+					continue;
+
 				auto name = value->ImageName + value->Extension;
-				ImGui::PushID(name.c_str());
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-				ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				
+				RenderFile(key, name, type);
+			}
+		}
+		else if (type == ResourceType::Animation)
+		{
+			for (auto& [key, value] : ResourceSerializer::AnimationResourceDataCache)
+			{
+				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
+					continue;
 
-				if (ImGui::BeginPopupContextItem("FileOptions"))
-				{
-					if (ImGui::MenuItem("Delete"))
-					{
-						m_DeleteFilePanel->ShowWindow(key, type);
-						ImGui::PopStyleColor();
-						ImGui::NextColumn();
-						ImGui::EndPopup();
-						ImGui::PopID();
-						break;
-					}
-					ImGui::EndPopup();
-				}
+				if(value->AnimationName.find(buffer) == std::string::npos)
+					continue;
 
-				if (ImGui::BeginDragDropSource())
-				{
-					std::filesystem::path path(value->GetKeyPath());
-					const wchar_t* pathStr = path.c_str();
-					ImGui::SetDragDropPayload("ContentBrowserPanel", pathStr, (wcslen(pathStr) + 1) * sizeof(wchar_t));
-					ImGui::EndDragDropSource();
-				}
-
-				ImGui::PopStyleColor();
-
-				ImGui::TextWrapped(name.c_str());
-
-				ImGui::NextColumn();
-
-				ImGui::PopID();
+				auto name = value->AnimationName + value->Extension;
+				
+				RenderFile(key, name, type);
 			}
 		}
 
@@ -129,14 +175,15 @@ namespace eg
 			{
 				if (ImGui::MenuItem("Delete"))
 				{
-					remove(path);
+					m_DeleteDirectoryPanel->ShowWindow(path);
 					ImGui::PopStyleColor();
 					ImGui::NextColumn();
 					ImGui::EndPopup();
 					ImGui::PopID();
 					break;
 				}
-				if(ImGui::MenuItem("Change name"))
+
+				if(ImGui::MenuItem("Rename"))
 				{
 					m_RenameFolderPanel->ShowWindow(path);
 				}
@@ -157,22 +204,11 @@ namespace eg
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
-					std::filesystem::path keyPath = std::filesystem::path((const wchar_t*)payload->Data);
-					ResourceType type = ResourceUtils::GetResourceTypeFromBackslashKeyPath(keyPath);
-					std::filesystem::path droppedPath = Project::GetProjectName() / Project::GetAssetDirectory() / droppedPath;
-					if (std::filesystem::exists(droppedPath))
+					if (ResourceUtils::CanDrop(path))
 					{
-						std::filesystem::path newPath = path / droppedPath.filename();
-						std::filesystem::rename(Project::GetProjectDirectory().parent_path() / droppedPath, newPath);
-
-						if (type == ResourceType::Image)
-						{
-							ResourceSerializer::TextureResourceDataCache[keyPath]->ResourcePath = path;
-						}
-					}
-					else
-					{
-						EG_CORE_ERROR("File does not exist");
+						uint64_t uuid = *(uint64_t*)payload->Data;
+						
+						Commands::ExecuteMoveResourceCommand(uuid, path);
 					}
 				}
 				ImGui::EndDragDropTarget();

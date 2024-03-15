@@ -2,22 +2,19 @@
 
 #include "Engine/Core/Application.h"
 #include "Imgui/imgui.h"
-#include "Engine/Core/UUID.h"
-#include "../Commands/Commands.h"
 
 namespace eg
 {
-	class DeleteFilePanel
+	class RenameResourcePanel
 	{
 	public:
-		DeleteFilePanel();
+		RenameResourcePanel();
 		void OnImGuiRender();
-		void ShowWindow(UUID uuid, ResourceType type);
+		void ShowWindow(UUID uuid);
 		bool IsShown() { return m_Show; }
-		
+
 	protected:
 		bool m_Show;
 		UUID m_UUID;
-		ResourceType m_Type;
 	};
 }

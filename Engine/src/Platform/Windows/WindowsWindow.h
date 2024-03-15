@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Core/Window.h"
 #include "Platform/OpenGL/OpenGLContext.h"
+#include "../../Engine-Editor/src/Commands/Commands.h"
 
 namespace eg
 {
@@ -33,6 +34,14 @@ namespace eg
 			uint32_t Width = 0, Height = 0;
 			bool VSync = true;
 			EventCallbackFn EventCallback;
+			
+			void DropFile(int count, const char** paths)
+			{
+				for (int i = 0; i < count; i++)
+				{
+					Commands::ExecuteLoadResourceCommand(paths[i]);
+				}
+			}
 		};
 		WindowData m_Data;
 		float m_Time;

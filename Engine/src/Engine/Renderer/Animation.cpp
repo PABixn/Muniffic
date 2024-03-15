@@ -4,25 +4,40 @@
 namespace eg
 {
 	Animation::Animation()
-		: m_frameRate(1.0f), m_loop(true), m_playing(false), m_frameCount(0), m_frame(0)
+		: m_frameRate(1.0f), m_loop(true), m_playing(false), m_frameCount(0), m_frame(0), m_AnimationID(UUID())
 	{
 	}
 
 	Animation::Animation(const std::string& path)
-		: m_frameRate(1.0f), m_loop(true), m_playing(false), m_frameCount(0), m_frame(0)
+		: m_frameRate(1.0f), m_loop(true), m_playing(false), m_frameCount(0), m_frame(0), m_AnimationID(UUID())
+	{
+		m_name = path;
+	}
+
+	Animation::Animation(const UUID&, const std::string& path)
+		: m_frameRate(1.0f), m_loop(true), m_playing(false), m_frameCount(0), m_frame(0), m_AnimationID(UUID())
 	{
 		m_name = path;
 	}
 
 	Animation::Animation(const std::vector<Ref<SubTexture2D>>& frames, float frameRate, bool loop)
-		: m_frames(frames), m_frameRate(frameRate), m_loop(loop), m_playing(false), m_frameCount(frames.size()), m_frame(0)
+		: m_frames(frames), m_frameRate(frameRate), m_loop(loop), m_playing(false), m_frameCount(frames.size()), m_frame(0), m_AnimationID(UUID())
 	{
 	}
 
-	const Animation& Animation::Create(const std::string& path)
+	Animation::Animation(const UUID& id, const std::vector<Ref<SubTexture2D>>& frames, float frameRate, bool loop)
+		: m_frames(frames), m_frameRate(frameRate), m_loop(loop), m_playing(false), m_frameCount(frames.size()), m_frame(0), m_AnimationID(id)
 	{
-		//TODO: Load animation from file
-		return Animation();
+	}
+
+	Ref<Animation> Animation::Create(const std::string& path)
+	{
+		return CreateRef<Animation>(path);
+	}
+
+	Ref<Animation> Animation::Create(const std::vector<Ref<SubTexture2D>>& frames, float frameRate, bool loop)
+	{
+		return CreateRef<Animation>(frames, frameRate, loop);
 	}
 
 	void Animation::Update(float dt, float speed)
@@ -80,5 +95,40 @@ namespace eg
 		m_frameRate = frameRate;
 	}
 
+	void Animation::SetName(const std::string& name)
+	{
+		m_name = name;
+	}
+
+	void Animation::SetID(const UUID& id)
+	{
+	}
+
+	void Animation::ClearFrames()
+	{
+		m_frames.clear();
+		m_frameCount = 0;
+	}
+
+	void Animation::RemoveFrame(int index)
+	{
+		if (index < m_frameCount)
+		{
+			m_frames.erase(m_frames.begin() + index);
+			m_frameCount--;
+		}
+	}
+
+	void Animation::AddFrame(const Ref<SubTexture2D>& frame)
+	{
+		m_frames.push_back(frame);
+		m_frameCount++;
+	}
+
+	void Animation::AddFrames(const std::vector<Ref<SubTexture2D>>& frames)
+	{
+		m_frames.insert(m_frames.end(), frames.begin(), frames.end());
+		m_frameCount += frames.size();
+	}
 
 }

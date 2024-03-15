@@ -3,7 +3,7 @@
 #include "Engine.h"
 #include <variant>
 #include <cstddef>
-#include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/ResourceDatabase.h"
 #include "Engine/Resources/ResourceUtils.h"
 
 namespace eg
@@ -100,27 +100,134 @@ namespace eg
 			virtual void Redo() = 0;
 		};
 
-		class DeleteResourceCommand : public Command
+		class RenameDirectoryCommand : public Command
 		{
 		public:
-			DeleteResourceCommand(std::filesystem::path keyPath, ResourceType resourceType, bool deleteFile = false)
-				: m_KeyPath(keyPath), m_ResourceType(resourceType), m_DeleteFile(deleteFile), m_Resource(ResourceUtils::GetResourcePointer(resourceType, keyPath))
+			RenameDirectoryCommand(const std::filesystem::path& path, const std::string& newName)
+				: m_NewName(newName), m_Path(path)
 			{
-				if(m_DeleteFile == false)
-					Commands::AddCommand(this);
+				Commands::AddCommand(this);
 
-				ResourceSerializer::DeleteCachedResource(keyPath, resourceType, deleteFile);
+				m_OldName = path.filename().string();
+
+				ResourceDatabase::RenameDirectory(path, newName);
 			}
 
 			void Execute(CommandArgs args) override {};
 			void Undo() override;
 			void Redo() override;
 
-			protected:
-				std::filesystem::path m_KeyPath;
-				ResourceType m_ResourceType;
-				bool m_DeleteFile;
-				void* m_Resource;
+		protected:
+			std::filesystem::path m_Path;
+			std::string m_OldName;
+			std::string m_NewName;
+		};
+
+		class RenameResourceCommand : public Command
+		{
+		public:
+			RenameResourceCommand(UUID uuid, const std::string& newName)
+				: m_UUID(uuid), m_NewName(newName)
+			{
+				Commands::AddCommand(this);
+
+				m_OldName = ResourceDatabase::GetResourceName(uuid);
+
+				ResourceDatabase::RenameResource(uuid, newName);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_UUID;
+			std::string m_NewName;
+			std::string m_OldName;
+		};
+
+		class MoveResourceCommand : public Command
+		{
+		public:
+			MoveResourceCommand(UUID uuid, const std::filesystem::path& path)
+				: m_UUID(uuid), m_Path(path)
+			{
+				Commands::AddCommand(this);
+
+				m_OldPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceDatabase::GetResourcePath(uuid);
+
+				ResourceDatabase::MoveResource(uuid, path);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_UUID;
+			std::filesystem::path m_Path;
+			std::filesystem::path m_OldPath;
+		};
+
+		class LoadResourceCommand : public Command
+		{
+		public:
+			LoadResourceCommand(const std::filesystem::path& path)
+				: m_Path(path)
+			{
+				Commands::AddCommand(this);
+
+				ResourceDatabase::LoadResource(path);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::filesystem::path m_Path;
+		};
+
+		class DeleteDirectoryCommand : public Command
+		{
+		public:
+			DeleteDirectoryCommand(const std::filesystem::path& directory)
+				: m_Directory(directory)
+			{
+				Commands::AddCommand(this);
+
+				ResourceDatabase::DeleteDirectory(directory);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::filesystem::path m_Directory;
+		};
+
+		class DeleteResourceCommand : public Command
+		{
+		public:
+			DeleteResourceCommand(UUID uuid, ResourceType resourceType, bool deleteFile = false)
+				: m_UUID(uuid), m_ResourceType(resourceType), m_DeleteFile(deleteFile), m_Resource(ResourceUtils::GetResourcePointer(uuid, resourceType))
+			{
+				if(m_DeleteFile == false)
+					Commands::AddCommand(this);
+
+				ResourceDatabase::RemoveResource(m_UUID, resourceType, deleteFile);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_UUID;
+			ResourceType m_ResourceType;
+			bool m_DeleteFile;
+			void* m_Resource;
 		};
 
 		template<typename T>
@@ -602,9 +709,39 @@ namespace eg
 			}
 		}
 
-		static Command* ExecuteDeleteResourceCommand(std::filesystem::path keyPath, ResourceType resourceType, bool deleteFile = false)
+		static Command* ExecuteRenameDirectoryCommand(const std::filesystem::path& path, const std::string& newName)
 		{
-			Command* command = new DeleteResourceCommand(keyPath, resourceType, deleteFile);
+			Command* command = new RenameDirectoryCommand(path, newName);
+			return command;
+		}
+
+		static Command* ExecuteRenameResourceCommand(UUID uuid, const std::string& newName)
+		{
+			Command* command = new RenameResourceCommand(uuid, newName);
+			return command;
+		}
+
+		static Command* ExecuteMoveResourceCommand(UUID uuid, const std::filesystem::path& path)
+		{
+			Command* command = new MoveResourceCommand(uuid, path);
+			return command;
+		}
+
+		static Command* ExecuteLoadResourceCommand(const std::filesystem::path& path)
+		{
+			Command* command = new LoadResourceCommand(path);
+			return command;
+		}
+
+		static Command* ExecuteDeleteResourceCommand(UUID uuid, ResourceType resourceType, bool deleteFile = false)
+		{
+			Command* command = new DeleteResourceCommand(uuid, resourceType, deleteFile);
+			return command;
+		}
+
+		static Command* ExecuteDeleteDirectoryCommand(const std::filesystem::path& directory)
+		{
+			Command* command = new DeleteDirectoryCommand(directory);
 			return command;
 		}
 
@@ -674,8 +811,6 @@ namespace eg
 			return command;
 		}
 
-		
-
 		template<typename T>
 		static Command* ExecuteVectorCommand(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue)
 		{
@@ -690,10 +825,6 @@ namespace eg
 			command->Execute(args);
 			return command;
 		}
-
-		
-
-		
 		 
 	private:
 		static std::vector<Commands::Command*> commandHistory;

@@ -1,7 +1,9 @@
 #pragma once
+
 #include <filesystem>
 #include "resourceTypes.h"
 #include <string>
+#include "Engine/Core/UUID.h"
 
 namespace eg {
 
@@ -11,12 +13,17 @@ namespace eg {
 		ResourceSerializer() = default;
 		~ResourceSerializer() = default;
 
-		static void CacheTexture(TextureResourceData* data);
-		static TextureResourceData* ReadCachedTexture(std::filesystem::path& keyPath);
+		static void CacheTexture(UUID uuid, TextureResourceData* data);
+		static void CacheSubTexture(UUID uuid, SubTextureResourceData* data);
+		static void CacheAnimation(UUID uuid, AnimationResourceData* data);
+		static void CacheSpriteAtlas(UUID uuid, SpriteAtlasResourceData* data);
 		static void SerializeResourceCache();
 		static bool DeserializeResourceCache();
-		static void DeleteCachedResource(const std::filesystem::path& keyPath, ResourceType resourceType, bool deleteFile);
 
-		static std::unordered_map<std::filesystem::path, TextureResourceData*> TextureResourceDataCache;
+		static std::unordered_map<UUID, TextureResourceData*> TextureResourceDataCache;
+		static std::unordered_map<UUID, AnimationResourceData*> AnimationResourceDataCache;
+		static std::unordered_map<UUID, SpriteAtlasResourceData*> SpriteAtlasResourceDataCache;
+		static std::unordered_map<UUID, SubTextureResourceData*> SubTextureResourceDataCache;
+		static std::unordered_map<UUID, ResourceType> ResourceTypeInfo;
 	};
 }
