@@ -976,8 +976,13 @@ namespace eg {
 			DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
 			{
 				ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f);
-				ImGui::Text("Current Animation: %s", component.Animator2D->GetCurrentAnimation()->GetName().c_str());
-				ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetTexture()->GetRendererID(), {100.0f, 100.0f});
+				const Ref<std::vector<Ref<Animation>>> animations = component.Animator2D->GetAnimations();
+				if (component.Animator2D->GetCurrentAnimation() != nullptr && animations->size() > 0)
+				{
+					ImGui::Text("Current Animation: %s", component.Animator2D->GetCurrentAnimation()->GetName().c_str());
+					if(component.Animator2D->GetCurrentAnimation()->GetFrame())
+						ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f });
+				}
 
 				if (ImGui::Button("Add Empty Animation"))
 				{
@@ -986,7 +991,7 @@ namespace eg {
 					Commands::ExecuteVectorCommand<Ref<Animation>>(component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, CreateRef<Animation>());
 				}
 
-				const Ref<std::vector<Ref<Animation>>> animations = component.Animator2D->GetAnimations();
+				
 				ImGui::Text("Animations:");
 				if (animations->size() > 0)
 				{
@@ -1000,18 +1005,24 @@ namespace eg {
 							ImGui::DragFloat("Frame rate ", animation->GetFrameRatePtr(), 0.1f, 0.0f, 60.0f);
 							ImGui::Checkbox("Looped", animation->IsLoopedPtr());
 							ImGui::Checkbox("Playing", animation->IsPlayingPtr());
-							ImGui::TreeNode("Frames");
-							for (int j = 0; j < animation->GetFrames().size(); j++)
+							ImGui::PushID("Frames" + i);
+							if (ImGui::TreeNode("Frames")) 
 							{
-								ImGui::PushID(animations->size() + j);
-								ImGui::Text("Frame %d", j);
-								ImGui::PopID();
+								for (int j = 0; j < animation->GetFrames().size(); j++)
+								{
+									ImGui::PushID("Frame:" + j);
+									ImGui::Text("Frame %d", j);
+									
+									ImGui::PopID();
+								}
+								ImGui::TreePop();
 							}
+							ImGui::PopID();
 							//TODO: Playing the animation if the animation is looped play non-stop else play once and show button on top to play again
 							// 
 							//TODO: Display the animation properties if someone wants to change the animation properties show the popup window which will ask if the user wants to change the properties in the scene or in the prefab
 							//ImGui::PopID();
-							//ImGui::TreePop();
+							ImGui::TreePop();
 						}
 						if (ImGui::BeginDragDropTarget())
 						{
@@ -1039,19 +1050,19 @@ namespace eg {
 					}
 				}
 
-				std::vector<std::pair<size_t, size_t>> transitions = component.Animator2D->GetTransitions();
-				ImGui::Text("Transitions:");
-				if (transitions.size() > 0)
-				{
-					int i = 0;
-					for (const auto& transition : transitions)
-					{
-						ImGui::PushID(i);
-						ImGui::Text("Transition from %s to %s", animations->at(transition.first)->GetName().c_str(), animations->at(transition.second)->GetName().c_str());
-						ImGui::PopID();
-						i++;
-					}
-				}
+				//std::vector<std::pair<size_t, size_t>> transitions = component.Animator2D->GetTransitions();
+				//ImGui::Text("Transitions:");
+				//if (transitions.size() > 0)
+				//{
+				//	int i = 0;
+				//	for (const auto& transition : transitions)
+				//	{
+				//		ImGui::PushID(i);
+				//		ImGui::Text("Transition from %s to %s", animations->at(transition.first)->GetName().c_str(), animations->at(transition.second)->GetName().c_str());
+				//		ImGui::PopID();
+				//		i++;
+				//	}
+				//}
 			}, m_Context);
 	}
 

@@ -133,6 +133,7 @@ namespace eg {
 				SetFrames();
 			}
 			ImGui::Text("Image Preview:");
+			
 				for (int j = 0; j < (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight); j++)
 					for (int i = 0; i < (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth); i++)
 				{
@@ -141,9 +142,7 @@ namespace eg {
 					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
 					bool isSelected = i >= m_Column && i < m_Column + m_ColumnCount && j >= m_Row && j < m_Row + m_RowCount;
 					ImVec4 borderColor = isSelected ? ImVec4{0.0f, 1.0f, 0.0f, 1.0f} : ImVec4{1.0f, 0.0f, 0.0f, 1.0f};
-					ImGui::PushStyleColor(ImGuiCol_Border, borderColor);
-					ImGui::Image((void*)m_PreviewOriginImage->GetRendererID(), ImVec2(256/ (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth), 256/ (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight)), { i * (float)m_FrameWidth / (float)m_TextureData->Width, j * (float)m_FrameHeight / (float)m_TextureData->Height }, { (i + 1) * (float)m_FrameWidth / (float)m_TextureData->Width, (j + 1) * (float)m_FrameHeight / (float)m_TextureData->Height });
-					ImGui::PopStyleColor();
+					ImGui::Image((void*)m_PreviewOriginImage->GetRendererID(), ImVec2(256 / (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth), 256 / (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight)), { i * (float)m_FrameWidth / (float)m_TextureData->Width, j * (float)m_FrameHeight / (float)m_TextureData->Height }, { (i + 1) * (float)m_FrameWidth / (float)m_TextureData->Width, (j + 1) * (float)m_FrameHeight / (float)m_TextureData->Height });
 					ImGui::PopStyleVar();
 				}
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
@@ -157,7 +156,7 @@ namespace eg {
 				m_ResourceData->AnimationName = std::string(buffer);
 			ImGui::Text("Animation: %s", m_ResourceData->AnimationName.c_str());
 			if(m_PreviewData->GetFrameCount() > 0)
-				ImGui::Image((void*)m_PreviewData->GetFrame()->GetTexture()->GetRendererID(), ImVec2(128, 128), { m_PreviewData->GetFrame()->GetMin().x , m_PreviewData->GetFrame()->GetMin().y}, { m_PreviewData->GetFrame()->GetMax().x , m_PreviewData->GetFrame()->GetMax().y });
+				ImGui::Image((void*)m_PreviewData->GetFrame()->GetTexture()->GetRendererID(), ImVec2(128, 128), { m_PreviewData->GetFrame()->GetMin().x , m_PreviewData->GetFrame()->GetMax().y}, {m_PreviewData->GetFrame()->GetMax().x , m_PreviewData->GetFrame()->GetMin().y});
 
 			char buffer2[512];
 			memset(buffer2, 0, sizeof(buffer2));
@@ -167,7 +166,7 @@ namespace eg {
 			if (ImGui::Button("Save"))
 			{
 				SpriteAtlasResourceData* saData = new SpriteAtlasResourceData();
-				saData->ResourcePath = "Textures" / m_ResourceData->ResourcePath;
+				saData->ResourcePath = "SpriteAtlas" / m_ResourceData->ResourcePath;
 				saData->AtlasName = m_ResourceData->AnimationName;
 				saData->Extension = ResourceDatabase::GetResourceTypeExtension(ResourceType::SpriteAtlas);
 				saData->Width = m_TextureData->Width;

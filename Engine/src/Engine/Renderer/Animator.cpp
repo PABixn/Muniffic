@@ -6,6 +6,7 @@ namespace eg {
 	Animator::Animator()
 		: m_AnimationIndex(0), m_Speed(1.0f)
 	{
+		m_Animations = CreateRef<std::vector<Ref<Animation>>>();
 	}
 
 	Animator::Animator(Ref<std::vector<Ref<Animation>>> animations, float speed)
@@ -31,7 +32,8 @@ namespace eg {
 
 	void Animator::Update(float dt)
 	{
-		(*m_Animations)[m_AnimationIndex]->Update(dt, m_Speed);
+		if(m_Animations->size() > 0)
+			(*m_Animations)[m_AnimationIndex]->Update(dt, m_Speed);
 	}
 
 	void Animator::ChangeAnimation(size_t animationIndex)
@@ -99,6 +101,13 @@ namespace eg {
 	void Animator::RemoveLastAnimation()
 	{
 		m_Animations->pop_back();
+	}
+
+	Ref<Animation> Animator::GetCurrentAnimation() const
+	{
+		if(m_Animations->size() > 0)
+			return (*m_Animations)[m_AnimationIndex];
+		return nullptr;
 	}
 
 	void Animator::AddTransition(size_t fromIndex, size_t toIndex)

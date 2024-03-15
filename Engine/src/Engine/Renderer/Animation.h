@@ -37,8 +37,8 @@ namespace eg {
 		void AddFrames(const std::vector<Ref<SubTexture2D>>& frames);
 
 		inline const std::vector<Ref<SubTexture2D>>& GetFrames() const { return m_frames; }
-		inline const Ref<SubTexture2D>& GetFrame() const { return m_frames[(int)m_frame]; }
-		inline const Ref<SubTexture2D>& GetFrame(int frame) const { return m_frames[frame]; }
+		const Ref<SubTexture2D>& GetFrame() const;
+		const Ref<SubTexture2D>& GetFrame(int frame) const;
 		inline int GetFrameCount() const { return m_frameCount; }
 		inline float GetCurrentFrame() const { return m_frame; }
 		inline float* GetCurrentFramePtr() { return &m_frame; }
@@ -55,11 +55,11 @@ namespace eg {
 		float m_frameRate;
 		int m_frameCount;
 		float m_frame = 0;
-		bool m_loop;
-		bool m_playing;
+		bool m_loop = false;
+		bool m_playing = false;
 		UUID m_AnimationID;
 		std::vector<Ref<SubTexture2D>> m_frames;
 
-		std::string m_name;
+		std::string m_name = "";
 	};
 }

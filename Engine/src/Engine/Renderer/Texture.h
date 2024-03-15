@@ -30,6 +30,8 @@ namespace eg {
 
 		virtual const std::string& GetPath() const = 0;
 
+		virtual const UUID& GetID() const = 0;
+
 		virtual void SetData(void* data, uint32_t size) = 0;
 
 		virtual void Bind(uint32_t slot = 0) const = 0;
@@ -44,6 +46,5 @@ namespace eg {
 		static Ref<Texture2D> Create(const TextureSpecification& specification);
 		static Ref<Texture2D> Create(const std::string& path);
 		static Ref<Texture2D> Create(const UUID& id);
-		//TODO:: Add Create function for creating texture from UUID
 	};
 }

@@ -261,9 +261,7 @@ namespace eg {
 			out << YAML::Key << "Animations" << YAML::BeginSeq;
 			for (auto& animation : *animatorComponent.Animator2D->GetAnimations())
 			{
-				//TODO: if animation uses prefab
-				//out << ResourceDatabase::FindResourceByKeyPath(animation.);
-				//TODO: else serialize animation
+				out << animation->GetID();
 			}
 			out << YAML::EndMap; // Animations
 			out << YAML::EndMap; // AnimatorComponent
@@ -671,8 +669,8 @@ namespace eg {
 						for (auto animation : animations)
 						{
 							//TODO: if animation uses prefab
-							std::string name = animation.first.as<std::string>();
-							const Animation anim(name);
+							Ref<Animation> anim = Animation::Create(UUID(animation.as<uint64_t>()));
+							ac.Animator2D->AddAnimation(anim);
 							//TODO: else load all data for animation from scene file
 						}
 					}

@@ -73,7 +73,7 @@ namespace eg
 
 	void Animation::Update(float dt, float speed)
 	{
-		if (m_playing)
+		if (m_playing && m_frames.size() > 0)
 		{
 			m_frame += m_frameRate * speed * dt;
 			if (m_frame >= m_frameCount)
@@ -161,5 +161,17 @@ namespace eg
 		m_frames.insert(m_frames.end(), frames.begin(), frames.end());
 		m_frameCount += frames.size();
 	}
+	const Ref<SubTexture2D>& Animation::GetFrame(int frame) const
+	{
+		if (m_frames.size() > 0 && frame < m_frames.size() && frame >= 0)
+			return m_frames[frame];
+		return nullptr;
+	}
+	const Ref<SubTexture2D>& Animation::GetFrame() const
+	{
+		return GetFrame((int)m_frame);
+	}
+
+	
 
 }
