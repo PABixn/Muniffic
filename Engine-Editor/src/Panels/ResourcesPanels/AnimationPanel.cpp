@@ -185,6 +185,7 @@ namespace eg {
 					saData->Sprites.push_back(uuid);
 					delete data;
 				}
+				m_ResourceData->ResourcePath = "Animations" / m_ResourceData->ResourcePath;
 				m_ResourceData->FrameRate = m_PreviewData->GetFrameRate();
 				m_ResourceData->FrameCount = m_PreviewData->GetFrameCount();
 				m_ResourceData->Loop = m_PreviewData->IsLooped();
