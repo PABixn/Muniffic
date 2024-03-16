@@ -454,10 +454,11 @@ namespace eg
 		}
 	}
 
-	void AddTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, TextureResourceData* data)
+	void AddTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, void* data)
 	{
 		TextureResourceData* resourceData = new TextureResourceData();
 		memcpy(resourceData, data, sizeof(TextureResourceData));
+
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->ImageName + resourceData->Extension);
 
 		if (finalPath != originalResourcePath)
@@ -472,11 +473,12 @@ namespace eg
 		ResourceSerializer::CacheTexture(uuid, resourceData);
 	}
 
-	void AddSubTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, SubTextureResourceData* data)
+	void AddSubTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, void* data)
 	{
 		SubTextureResourceData* resourceData = new SubTextureResourceData();
 		memcpy(resourceData, data, sizeof(SubTextureResourceData));
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->SubTextureName + "subtexture");
+
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->SubTextureName + resourceData->Extension);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -484,25 +486,31 @@ namespace eg
 			{
 				std::filesystem::create_directories(finalPath.parent_path());
 			}
-			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
 		}
 
 		ResourceSerializer::CacheSubTexture(uuid, resourceData);
 	}
 
-	void AddAnimationResource(UUID uuid, const std::filesystem::path& originalResourcePath, AnimationResourceData* data)
+	void AddAnimationResource(UUID uuid, const std::filesystem::path& originalResourcePath, void* data)
 	{
 		AnimationResourceData* resourceData = new AnimationResourceData();
 		memcpy(resourceData, data, sizeof(AnimationResourceData));
+
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->AnimationName + resourceData->Extension);
+
+		if (!std::filesystem::exists(finalPath.parent_path()))
+		{
+			std::filesystem::create_directories(finalPath.parent_path());
+		}
 
 		ResourceSerializer::CacheAnimation(uuid, resourceData);
 	}
 
-	void AddSpriteAtlasResource(UUID uuid, const std::filesystem::path& originalResourcePath, SpriteAtlasResourceData* data)
+	void AddSpriteAtlasResource(UUID uuid, const std::filesystem::path& originalResourcePath, void* data)
 	{
 		SpriteAtlasResourceData* resourceData = new SpriteAtlasResourceData();
 		memcpy(resourceData, data, sizeof(SpriteAtlasResourceData));
+
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->AtlasName + resourceData->Extension);
 
 		if (finalPath != originalResourcePath)
@@ -511,7 +519,6 @@ namespace eg
 			{
 				std::filesystem::create_directories(finalPath.parent_path());
 			}
-			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
 		}
 
 		ResourceSerializer::CacheSpriteAtlas(uuid, resourceData);
@@ -585,21 +592,19 @@ namespace eg
 	{
 		UUID uuid = UUID();
 
-		
-
 		switch (resourceType)
 		{
 		case ResourceType::Image:
-			AddTextureResource(uuid, originalResourcePath, (TextureResourceData*)data);
+			AddTextureResource(uuid, originalResourcePath, data);
 			break;
 		case ResourceType::SubTexture:
-			AddSubTextureResource(uuid, originalResourcePath, (SubTextureResourceData*)data);
+			AddSubTextureResource(uuid, originalResourcePath, data);
 			break;
 		case ResourceType::Animation:
-			AddAnimationResource(uuid, originalResourcePath, (AnimationResourceData*)data);
+			AddAnimationResource(uuid, originalResourcePath, data);
 			break;
 		case ResourceType::SpriteAtlas:
-			AddSpriteAtlasResource(uuid, originalResourcePath, (SpriteAtlasResourceData*)data);
+			AddSpriteAtlasResource(uuid, originalResourcePath, data);
 			break;
 		}
 
