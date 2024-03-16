@@ -314,13 +314,6 @@ namespace eg
 
 	void ResourceSerializer::CacheSubTexture(UUID uuid, SubTextureResourceData* data)
 	{
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->SubTextureName + "subtexture");
-
-		if (!std::filesystem::exists(finalPath))
-		{
-			EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
-			return;
-		}
 
 		if (SubTextureResourceDataCache.find(uuid) != SubTextureResourceDataCache.end())
 		{
@@ -335,13 +328,6 @@ namespace eg
 
 	void ResourceSerializer::CacheAnimation(UUID uuid, AnimationResourceData* data)
 	{
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->AnimationName + data->Extension);
-
-		if (!std::filesystem::exists(finalPath))
-		{
-			EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
-			return;
-		}
 
 		if (AnimationResourceDataCache.find(uuid) != AnimationResourceDataCache.end())
 		{
@@ -356,13 +342,6 @@ namespace eg
 
 	void ResourceSerializer::CacheSpriteAtlas(UUID uuid, SpriteAtlasResourceData* data)
 	{
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->AtlasName + data->Extension);
-
-		if (!std::filesystem::exists(finalPath))
-		{
-			EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
-			return;
-		}
 
 		if (SpriteAtlasResourceDataCache.find(uuid) != SpriteAtlasResourceDataCache.end())
 		{
