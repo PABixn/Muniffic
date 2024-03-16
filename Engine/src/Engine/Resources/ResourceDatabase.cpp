@@ -519,7 +519,6 @@ namespace eg
 			{
 				std::filesystem::create_directories(finalPath.parent_path());
 			}
-			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
 		}
 
 		ResourceSerializer::CacheSpriteAtlas(uuid, resourceData);
