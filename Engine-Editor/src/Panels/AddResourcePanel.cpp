@@ -2,13 +2,13 @@
 #include "Engine.h"
 #include "AddResourcePanel.h"
 #include "Engine/Utils/PlatformUtils.h"
-#include <imgui/imgui.h>
-#include "ResourcesPanels/ImagePanel.h"
 #include "Engine/Resources/resourceTypes.h"
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Resources/ResourceSerializer.h"
 #include "Engine/Resources/resourceTypes.h"
+#include <imgui/imgui.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
+
 #include "../EditorLayer.h"
 
 namespace eg
@@ -16,6 +16,7 @@ namespace eg
 	AddResourcePanel::AddResourcePanel()
 	{
 		m_ImagePanel = CreateRef<ImagePanel>();
+		m_AnimationPanel = CreateRef<AnimationPanel>();
 	}
 	void AddResourcePanel::OnImGuiRender()
 	{
@@ -25,7 +26,13 @@ namespace eg
 
 				if (ImGui::Button("Animation"))
 				{
-					bool resourceChosen = ChooseNewResource("Animation (*.anim)\0*.anim\0");
+					bool resourceChosen = ChooseNewResource("Image (*.png)\0*.png\0");
+					if (resourceChosen)
+					{
+						bool initialized = m_AnimationPanel->InitAnimationPanel(m_ResourcePath);
+						if(initialized)
+							m_AnimationPanel->OpenAnimationPanel();
+					}
 				}
 				if (ImGui::Button("Shader"))
 				{
@@ -69,8 +76,15 @@ namespace eg
 				ImGui::End();
 
 		m_ImagePanel->OnImGuiRender();
-		
+		m_AnimationPanel->OnImGuiRender();
 	}
+
+	void AddResourcePanel::Update(float ts)
+	{
+		if(m_AnimationPanel->IsAnimationPanelOpen())
+			m_AnimationPanel->OnUpdate(ts);
+	}
+
 	bool AddResourcePanel::ChooseNewResource(const std::string filter)
 	{
 		std::filesystem::path path = FileDialogs::OpenFile(filter.c_str());

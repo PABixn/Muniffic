@@ -24,9 +24,10 @@ namespace eg {
 	private:
 		std::filesystem::path m_BaseDirectory;
 		std::filesystem::path m_CurrentDirectory;
-		
+		void DrawCenteredText(const std::string& text, const float& cellSize);
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
+		Ref<Texture2D> m_ImageIcon;
 		DeleteFilePanel* m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		RenameResourcePanel* m_RenameResourcePanel;

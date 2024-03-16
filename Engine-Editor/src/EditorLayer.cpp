@@ -113,7 +113,8 @@ namespace eg
 			if (m_ViewportFocused)
 				m_Camera.OnUpdate(ts);
 			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-
+			if(m_AddResourcePanel->IsResourcePanelOpen())
+				m_AddResourcePanel->Update(ts);
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
 			// m_ActiveScene->OnRenderEditor(m_EditorCamera);

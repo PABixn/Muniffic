@@ -10,16 +10,6 @@ namespace eg
 {
 	std::filesystem::path* ResourceDatabase::m_CurrentDirectory;
 
-	void ResourceDatabase::SetCurrentPath(std::filesystem::path* directory)
-	{
-		m_CurrentDirectory = directory;
-	}
-
-	std::filesystem::path* ResourceDatabase::GetCurrentPath()
-	{
-		return m_CurrentDirectory;
-	}
-
 	std::vector<std::filesystem::path> ResourceDatabase::GetResourcesInDirectory(const std::filesystem::path& directory)
 	{
 		return std::vector<std::filesystem::path>();
@@ -40,11 +30,27 @@ namespace eg
 					return uuid;
 			}
 		}
+		else if(type == ResourceType::SubTexture)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SubTextureResourceDataCache)
+			{
+				if (data->ResourcePath / std::filesystem::path(data->SubTextureName + data->Extension) == keyPath)
+					return uuid;
+			}
+		}
 		else if (type == ResourceType::Animation)
 		{
 			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
 			{
 				if (data->ResourcePath / std::filesystem::path(data->AnimationName + data->Extension) == keyPath)
+					return uuid;
+			}
+		}
+		else if (type == ResourceType::SpriteAtlas)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SpriteAtlasResourceDataCache)
+			{
+				if (data->ResourcePath / std::filesystem::path(data->AtlasName + data->Extension) == keyPath)
 					return uuid;
 			}
 		}
@@ -62,12 +68,43 @@ namespace eg
 
 		if (type == ResourceType::Image)
 			return ResourceSerializer::TextureResourceDataCache[uuid]->ImageName;
+		else if(type == ResourceType::SubTexture)
+			return ResourceSerializer::SubTextureResourceDataCache[uuid]->SubTextureName;
 		else if (type == ResourceType::Animation)
 			return ResourceSerializer::AnimationResourceDataCache[uuid]->AnimationName;
+		else if(type == ResourceType::SpriteAtlas)
+			return ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->AtlasName;
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
 			return std::string();
+		}
+	}
+
+	std::string ResourceDatabase::GetResourceTypeExtension(ResourceType type)
+	{
+		switch (type)
+		{
+			case ResourceType::Image:
+				return ".png";
+			case ResourceType::SubTexture:
+				return ".png";
+			case ResourceType::Animation:
+				return ".anim";
+			case ResourceType::SpriteAtlas:
+				return ".atlas";
+			case ResourceType::Shader:
+				return ".shader";
+			case ResourceType::Font:
+				return ".font";
+			case ResourceType::NativeScript:
+				return ".cpp";
+			case ResourceType::Script:
+				return ".cs";
+			case ResourceType::Custom:
+				return ".custom";
+			default:
+				return ".unknown";
 		}
 	}
 
@@ -77,14 +114,18 @@ namespace eg
 
 		if (type == ResourceType::Image)
 			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath / std::string(ResourceSerializer::TextureResourceDataCache[uuid]->ImageName + ResourceSerializer::TextureResourceDataCache[uuid]->Extension);
+		else if (type == ResourceType::SubTexture)
+			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceSerializer::SubTextureResourceDataCache[uuid]->ResourcePath / std::string(ResourceSerializer::SubTextureResourceDataCache[uuid]->SubTextureName + ResourceSerializer::SubTextureResourceDataCache[uuid]->Extension);
 		else if (type == ResourceType::Animation)
 			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceSerializer::AnimationResourceDataCache[uuid]->ResourcePath / std::string(ResourceSerializer::AnimationResourceDataCache[uuid]->AnimationName + ResourceSerializer::AnimationResourceDataCache[uuid]->Extension);
+		else if (type == ResourceType::SpriteAtlas)
+			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->ResourcePath / std::string(ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->AtlasName + ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->Extension);
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
 			return std::filesystem::path();
 		}
-	
+
 	}
 
 	std::filesystem::path ResourceDatabase::GetResourcePath(UUID uuid)
@@ -93,8 +134,12 @@ namespace eg
 
 		if (type == ResourceType::Image)
 			return ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath;
+		else if(type == ResourceType::SubTexture)
+			return ResourceSerializer::SubTextureResourceDataCache[uuid]->ResourcePath;
 		else if (type == ResourceType::Animation)
 			return ResourceSerializer::AnimationResourceDataCache[uuid]->ResourcePath;
+		else if (type == ResourceType::SpriteAtlas)
+			return ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->ResourcePath;
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
@@ -115,11 +160,27 @@ namespace eg
 					return uuid;
 			}
 		}
+		else if (type == ResourceType::SubTexture)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SubTextureResourceDataCache)
+			{
+				if (data->ResourcePath == ResourceUtils::GetResourcePath(fullKeyPath) && data->SubTextureName + data->Extension == fullKeyPath.filename().string())
+					return uuid;
+			}
+		}
 		else if (type == ResourceType::Animation)
 		{
 			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
 			{
 				if (data->ResourcePath == ResourceUtils::GetResourcePath(fullKeyPath) && data->AnimationName + data->Extension == fullKeyPath.filename().string())
+					return uuid;
+			}
+		}
+		else if (type == ResourceType::SpriteAtlas)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SpriteAtlasResourceDataCache)
+			{
+				if (data->ResourcePath == ResourceUtils::GetResourcePath(fullKeyPath) && data->AtlasName + data->Extension == fullKeyPath.filename().string())
 					return uuid;
 			}
 		}
@@ -142,11 +203,27 @@ namespace eg
 					return uuid;
 			}
 		}
-		else if(type == ResourceType::Animation)
+		else if(type == ResourceType::SubTexture)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SubTextureResourceDataCache)
+			{
+				if (data->ResourcePath == ResourceUtils::GetResourcePath(path) && data->SubTextureName + data->Extension == path.filename().string())
+					return uuid;
+			}
+		}
+		else if (type == ResourceType::Animation)
 		{
 			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
 			{
 				if (data->ResourcePath == ResourceUtils::GetResourcePath(path) && data->AnimationName + data->Extension == path.filename().string())
+					return uuid;
+			}
+		}
+		else if (type == ResourceType::SpriteAtlas)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SpriteAtlasResourceDataCache)
+			{
+				if (data->ResourcePath == ResourceUtils::GetResourcePath(path) && data->AtlasName + data->Extension == path.filename().string())
 					return uuid;
 			}
 		}
@@ -176,6 +253,20 @@ namespace eg
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
+		else if(type == ResourceType::SubTexture)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SubTextureResourceDataCache)
+			{
+				if (data->ResourcePath == resourcePath)
+					resourcesToDelete.push_back(uuid);
+			}
+
+			for (auto& uuid : resourcesToDelete)
+			{
+				ResourceSerializer::SubTextureResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+			}
+		}
 		else if (type == ResourceType::Animation)
 		{
 			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
@@ -187,6 +278,20 @@ namespace eg
 			for (auto& uuid : resourcesToDelete)
 			{
 				ResourceSerializer::AnimationResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+			}
+		}
+		else if (type == ResourceType::SpriteAtlas)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SpriteAtlasResourceDataCache)
+			{
+				if (data->ResourcePath == resourcePath)
+					resourcesToDelete.push_back(uuid);
+			}
+
+			for (auto& uuid : resourcesToDelete)
+			{
+				ResourceSerializer::SpriteAtlasResourceDataCache.erase(uuid);
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
@@ -226,11 +331,33 @@ namespace eg
 				}
 			}
 		}
+		else if(resourceType == ResourceType::SubTexture)
+		{
+			if (ResourceSerializer::SubTextureResourceDataCache.find(uuid) != ResourceSerializer::SubTextureResourceDataCache.end())
+			{
+				SubTextureResourceData* data = ResourceSerializer::SubTextureResourceDataCache[uuid];
+				ResourceSerializer::SubTextureResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+				if (deleteFile)
+				{
+					std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ((TextureResourceData*)data)->ResourcePath / std::string(((TextureResourceData*)data)->ImageName + ((TextureResourceData*)data)->Extension);
+					std::remove(finalPath.string().c_str());
+				}
+			}
+		}
 		else if(resourceType == ResourceType::Animation)
 		{
 			if (ResourceSerializer::AnimationResourceDataCache.find(uuid) != ResourceSerializer::AnimationResourceDataCache.end())
 			{
 				ResourceSerializer::AnimationResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+			}
+		}
+		else if (resourceType == ResourceType::SpriteAtlas)
+		{
+			if (ResourceSerializer::SpriteAtlasResourceDataCache.find(uuid) != ResourceSerializer::SpriteAtlasResourceDataCache.end())
+			{
+				ResourceSerializer::SpriteAtlasResourceDataCache.erase(uuid);
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
@@ -252,10 +379,20 @@ namespace eg
 			ResourceSerializer::TextureResourceDataCache.at(uuid)->ImageName = name;
 			newPath = newPath.string() + ResourceSerializer::TextureResourceDataCache.at(uuid)->Extension;
 		}
+		else if(type == ResourceType::SubTexture)
+		{
+			ResourceSerializer::SubTextureResourceDataCache.at(uuid)->SubTextureName = name;
+			newPath = newPath.string() + ResourceSerializer::SubTextureResourceDataCache.at(uuid)->Extension;
+		}
 		else if (type == ResourceType::Animation)
 		{
 			ResourceSerializer::AnimationResourceDataCache.at(uuid)->AnimationName = name;
 			newPath = newPath.string() + ResourceSerializer::AnimationResourceDataCache.at(uuid)->Extension;
+		}
+		else if (type == ResourceType::SpriteAtlas)
+		{
+			ResourceSerializer::SpriteAtlasResourceDataCache.at(uuid)->AtlasName = name;
+			newPath = newPath.string() + ResourceSerializer::SpriteAtlasResourceDataCache.at(uuid)->Extension;
 		}
 		else
 			EG_CORE_ERROR("Resource type not supported for renaming: {0}", oldPath.string());
@@ -281,6 +418,16 @@ namespace eg
 					data->ResourcePath = newResourcePath;
 			}
 		}
+		else if (type == ResourceType::SubTexture)
+		{
+			std::filesystem::path newResourcePath = ResourceUtils::GetResourcePath(newPath);
+
+			for (auto& [uuid, data] : ResourceSerializer::SubTextureResourceDataCache)
+			{
+				if (data->ResourcePath == ResourceUtils::GetResourcePath(oldPath))
+					data->ResourcePath = newResourcePath;
+			}
+		}
 		else if (type == ResourceType::Animation)
 		{
 			std::filesystem::path newResourcePath = ResourceUtils::GetResourcePath(newPath);
@@ -289,6 +436,16 @@ namespace eg
 			{
 				if (data->ResourcePath == ResourceUtils::GetResourcePath(oldPath))
 					data->ResourcePath = newResourcePath;
+			}
+		}
+		else if (type == ResourceType::SpriteAtlas)
+		{
+			std::filesystem::path newResourcePath = ResourceUtils::GetResourcePath(newPath);
+
+			for (auto& [uuid, data] : ResourceSerializer::SpriteAtlasResourceDataCache)
+			{
+			if (data->ResourcePath == ResourceUtils::GetResourcePath(oldPath))
+				data->ResourcePath = newResourcePath;
 			}
 		}
 		else
@@ -302,19 +459,54 @@ namespace eg
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->ImageName + data->Extension);
 
 		if (finalPath != originalResourcePath)
+		{
+			if (!std::filesystem::exists(finalPath.parent_path()))
+			{
+				std::filesystem::create_directories(finalPath.parent_path());
+			}
 			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
+		}
 
 		ResourceSerializer::CacheTexture(uuid, data);
+	}
+
+	void AddSubTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, SubTextureResourceData* data)
+	{
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->SubTextureName + "subtexture");
+
+		if (finalPath != originalResourcePath)
+		{
+			if (!std::filesystem::exists(finalPath.parent_path()))
+			{
+				std::filesystem::create_directories(finalPath.parent_path());
+			}
+			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
+		}
+
+		ResourceSerializer::CacheSubTexture(uuid, data);
 	}
 
 	void AddAnimationResource(UUID uuid, const std::filesystem::path& originalResourcePath, AnimationResourceData* data)
 	{
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->AnimationName + data->Extension);
 
-		if (finalPath != originalResourcePath)
-			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
-
 		ResourceSerializer::CacheAnimation(uuid, data);
+	}
+
+	void AddSpriteAtlasResource(UUID uuid, const std::filesystem::path& originalResourcePath, SpriteAtlasResourceData* data)
+	{
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->AtlasName + data->Extension);
+
+		if (finalPath != originalResourcePath)
+		{
+			if (!std::filesystem::exists(finalPath.parent_path()))
+			{
+				std::filesystem::create_directories(finalPath.parent_path());
+			}
+			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
+		}
+
+		ResourceSerializer::CacheSpriteAtlas(uuid, data);
 	}
 
 	void ResourceDatabase::LoadResource(const std::filesystem::path& filePath)
@@ -363,6 +555,12 @@ namespace eg
 			{
 				if (type == ResourceType::Image)
 					ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath = ResourceUtils::GetResourcePath(path);
+				else if (type == ResourceType::Animation)
+					ResourceSerializer::AnimationResourceDataCache[uuid]->ResourcePath = ResourceUtils::GetResourcePath(path);
+				else if (type == ResourceType::SpriteAtlas)
+					ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->ResourcePath = ResourceUtils::GetResourcePath(path);
+				else
+					EG_CORE_ERROR("Resource type not supported for moving");
 			}
 			else
 			{
@@ -387,8 +585,14 @@ namespace eg
 		case ResourceType::Image:
 			AddTextureResource(uuid, originalResourcePath, (TextureResourceData*)resourceData);
 			break;
+		case ResourceType::SubTexture:
+			AddSubTextureResource(uuid, originalResourcePath, (SubTextureResourceData*)data);
+			break;
 		case ResourceType::Animation:
 			AddAnimationResource(uuid, originalResourcePath, (AnimationResourceData*)resourceData);
+			break;
+		case ResourceType::SpriteAtlas:
+			AddSpriteAtlasResource(uuid, originalResourcePath, (SpriteAtlasResourceData*)data);
 			break;
 		}
 

@@ -14,10 +14,14 @@ namespace eg
 		{
 			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".tga" || extension == ".gif" || extension == ".psd" || extension == ".hdr" || extension == ".pic" || extension == ".pnm")
 				return ResourceType::Image;
+			else if (extension == ".subtex")
+				return ResourceType::SubTexture;
 			else if (extension == ".shader")
 				return ResourceType::Shader;
 			else if (extension == ".ttf" || extension == ".otf")
 				return ResourceType::Font;
+			else if (extension == ".spratl")
+				return ResourceType::SpriteAtlas;
 			else if (extension == ".txt")
 				return ResourceType::Text;
 			else if (extension == ".anim")
@@ -88,8 +92,12 @@ namespace eg
 
 			if (type == ResourceType::Image)
 				return ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::TextureResourceDataCache[uuid]->ImageName + ResourceSerializer::TextureResourceDataCache[uuid]->Extension);
+			else if(type == ResourceType::SubTexture)
+				return ResourceSerializer::SubTextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::SubTextureResourceDataCache[uuid]->SubTextureName + ResourceSerializer::SubTextureResourceDataCache[uuid]->Extension);
 			else if(type == ResourceType::Animation)
 				return ResourceSerializer::AnimationResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::AnimationResourceDataCache[uuid]->AnimationName + ResourceSerializer::AnimationResourceDataCache[uuid]->Extension);
+			else if(type == ResourceType::SpriteAtlas)
+				return ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->AtlasName + ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->Extension);
 			else
 				return std::filesystem::path();
 		}
@@ -100,8 +108,12 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return ResourceSerializer::TextureResourceDataCache[uuid];
+			case ResourceType::SubTexture:
+				return ResourceSerializer::SubTextureResourceDataCache[uuid];
 			case ResourceType::Animation:
 				return ResourceSerializer::AnimationResourceDataCache[uuid];
+			case ResourceType::SpriteAtlas:
+				return ResourceSerializer::SpriteAtlasResourceDataCache[uuid];
 			default:
 				return nullptr;
 			}
@@ -109,22 +121,28 @@ namespace eg
 
 		static std::filesystem::path GetMetadataPath(ResourceType type)
 		{
+			std::filesystem::path baseDirectory = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata";
+
 			switch (type)
 			{
 			case ResourceType::Image:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Textures.mnmeta";
+				return baseDirectory / "Textures.mnmeta";
+			case ResourceType::SubTexture:
+				return baseDirectory / "SubTextures.mnmeta";
+			case ResourceType::SpriteAtlas:
+				return baseDirectory / "SpriteAtlases.mnmeta";
 			case ResourceType::Shader:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Shaders.mnmeta";
+				return baseDirectory / "Shaders.mnmeta";
 			case ResourceType::Font:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Fonts.mnmeta";
+				return baseDirectory / "Fonts.mnmeta";
 			case ResourceType::Text:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Texts.mnmeta";
+				return baseDirectory / "Texts.mnmeta";
 			case ResourceType::Animation:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Animations.mnmeta";
+				return baseDirectory / "Animations.mnmeta";
 			case ResourceType::Script:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Scripts.mnmeta";
+				return baseDirectory / "Scripts.mnmeta";
 			case ResourceType::NativeScript:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "NativeScripts.mnmeta";
+				return baseDirectory / "NativeScripts.mnmeta";
 			default:
 				return std::filesystem::path();
 			}
@@ -134,6 +152,10 @@ namespace eg
 		{
 			if (type == "Textures")
 				return ResourceType::Image;
+			else if (type == "SubTextures")
+				return ResourceType::SubTexture;
+			else if(type == "SpriteAtlases")
+				return ResourceType::SpriteAtlas;
 			else if (type == "Shaders")
 				return ResourceType::Shader;
 			else if (type == "Fonts")
@@ -156,6 +178,10 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return "Textures";
+			case ResourceType::SubTexture:
+				return "SubTextures";
+			case ResourceType::SpriteAtlas:
+				return "SpriteAtlases";
 			case ResourceType::Shader:
 				return "Shaders";
 			case ResourceType::Font:
