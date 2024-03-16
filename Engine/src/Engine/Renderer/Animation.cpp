@@ -43,9 +43,9 @@ namespace eg
 
 	Ref<Animation> Animation::Create(const UUID& id)
 	{
-		AnimationResourceData* animData = ResourceSerializer::AnimationResourceDataCache.at(id);
-		if (!animData)
+		if (ResourceSerializer::AnimationResourceDataCache.find(id) == ResourceSerializer::AnimationResourceDataCache.end())
 			return nullptr;
+		AnimationResourceData* animData = ResourceSerializer::AnimationResourceDataCache.at(id);
 		Ref<Animation> anim = CreateRef<Animation>();
 		anim->m_AnimationID = id;
 		anim->m_name = animData->AnimationName;

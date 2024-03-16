@@ -1012,7 +1012,6 @@ namespace eg {
 								{
 									ImGui::PushID("Frame:" + j);
 									ImGui::Text("Frame %d", j);
-									
 									ImGui::PopID();
 								}
 								ImGui::TreePop();

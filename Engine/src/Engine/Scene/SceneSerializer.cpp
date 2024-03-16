@@ -670,7 +670,8 @@ namespace eg {
 						{
 							//TODO: if animation uses prefab
 							Ref<Animation> anim = Animation::Create(UUID(animation.as<uint64_t>()));
-							ac.Animator2D->AddAnimation(anim);
+							if(anim)
+								ac.Animator2D->AddAnimation(anim);
 							//TODO: else load all data for animation from scene file
 						}
 					}

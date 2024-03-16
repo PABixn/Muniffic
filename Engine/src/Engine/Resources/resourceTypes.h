@@ -67,7 +67,7 @@ namespace eg
 		std::filesystem::path ResourcePath = "";
 		std::string SubTextureName = "";
 		std::string Extension = "";
-		UUID m_Texture;
+		UUID Texture;
 	};
 
 	struct TextureResourceData

@@ -142,7 +142,7 @@ namespace eg {
 					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
 					bool isSelected = i >= m_Column && i < m_Column + m_ColumnCount && j >= m_Row && j < m_Row + m_RowCount;
 					ImVec4 borderColor = isSelected ? ImVec4{0.0f, 1.0f, 0.0f, 1.0f} : ImVec4{1.0f, 0.0f, 0.0f, 1.0f};
-					ImGui::Image((void*)m_PreviewOriginImage->GetRendererID(), ImVec2(256 / (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth), 256 / (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight)), { i * (float)m_FrameWidth / (float)m_TextureData->Width, j * (float)m_FrameHeight / (float)m_TextureData->Height }, { (i + 1) * (float)m_FrameWidth / (float)m_TextureData->Width, (j + 1) * (float)m_FrameHeight / (float)m_TextureData->Height });
+					ImGui::Image((void*)m_PreviewOriginImage->GetRendererID(), ImVec2(256 / (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth), 256 / (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight)), { i * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f- j * (float)m_FrameHeight / (float)m_TextureData->Height }, { (i + 1) * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f- (j + 1) * (float)m_FrameHeight / (float)m_TextureData->Height });
 					ImGui::PopStyleVar();
 				}
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
