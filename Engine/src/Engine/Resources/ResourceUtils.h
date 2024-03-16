@@ -1,9 +1,9 @@
 #pragma once
 
 #include "egpch.h"
-#include "ResourceSerializer.h"
 #include "resourceTypes.h"
 #include "Engine/Project/Project.h"	
+#include "ResourceDatabase.h"
 
 namespace eg
 {
@@ -88,16 +88,28 @@ namespace eg
 
 		static std::filesystem::path GetKeyPath(UUID uuid)
 		{
-			ResourceType& type = ResourceSerializer::ResourceTypeInfo[uuid];
+			ResourceType type = ResourceDatabase::GetResourceType(uuid);
 
 			if (type == ResourceType::Image)
-				return ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::TextureResourceDataCache[uuid]->ImageName + ResourceSerializer::TextureResourceDataCache[uuid]->Extension);
-			else if(type == ResourceType::SubTexture)
-				return ResourceSerializer::SubTextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::SubTextureResourceDataCache[uuid]->SubTextureName + ResourceSerializer::SubTextureResourceDataCache[uuid]->Extension);
-			else if(type == ResourceType::Animation)
-				return ResourceSerializer::AnimationResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::AnimationResourceDataCache[uuid]->AnimationName + ResourceSerializer::AnimationResourceDataCache[uuid]->Extension);
-			else if(type == ResourceType::SpriteAtlas)
-				return ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->AtlasName + ResourceSerializer::SpriteAtlasResourceDataCache[uuid]->Extension);
+			{
+				TextureResourceData* data = (TextureResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::Image);
+				return data->ResourcePath / std::filesystem::path(data->ImageName + data->Extension);
+			}
+			else if (type == ResourceType::SubTexture)
+			{
+				SubTextureResourceData* data = (SubTextureResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::SubTexture);
+				return data->ResourcePath / std::filesystem::path(data->SubTextureName + data->Extension);
+			}
+			else if (type == ResourceType::Animation)
+			{
+				AnimationResourceData* data = (AnimationResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::Animation);
+				return data->ResourcePath / std::filesystem::path(data->AnimationName + data->Extension);
+			}
+			else if (type == ResourceType::SpriteAtlas)
+			{
+				SpriteAtlasResourceData* data = (SpriteAtlasResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::SpriteAtlas);
+				return data->ResourcePath / std::filesystem::path(data->AtlasName + data->Extension);
+			}
 			else
 				return std::filesystem::path();
 		}
@@ -107,13 +119,13 @@ namespace eg
 			switch (type)
 			{
 			case ResourceType::Image:
-				return ResourceSerializer::TextureResourceDataCache[uuid];
+				return ResourceDatabase::GetResourceData(uuid, ResourceType::Image);
 			case ResourceType::SubTexture:
-				return ResourceSerializer::SubTextureResourceDataCache[uuid];
-			case ResourceType::Animation:
-				return ResourceSerializer::AnimationResourceDataCache[uuid];
+				return ResourceDatabase::GetResourceData(uuid, ResourceType::SubTexture);
 			case ResourceType::SpriteAtlas:
-				return ResourceSerializer::SpriteAtlasResourceDataCache[uuid];
+				return ResourceDatabase::GetResourceData(uuid, ResourceType::SpriteAtlas);
+			case ResourceType::Animation:
+				return ResourceDatabase::GetResourceData(uuid, ResourceType::Animation);
 			default:
 				return nullptr;
 			}

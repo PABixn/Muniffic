@@ -1,6 +1,6 @@
 #include "egpch.h"
 #include "SubTexture2D.h"
-#include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/ResourceDatabase.h"
 
 namespace eg {
 	SubTexture2D::SubTexture2D(const Ref<Texture2D>& texture, const glm::vec2& min, const glm::vec2& max)
@@ -19,7 +19,7 @@ namespace eg {
 
 	Ref<SubTexture2D> SubTexture2D::Create(UUID id)
 	{
-		SubTextureResourceData* subTexData = ResourceSerializer::SubTextureResourceDataCache.at(id);
+		SubTextureResourceData* subTexData = (SubTextureResourceData*)ResourceDatabase::GetResourceData(id, ResourceType::SubTexture);
 		if (!subTexData)
 			return nullptr;
 		Ref<SubTexture2D> subTex = CreateRef<SubTexture2D>();

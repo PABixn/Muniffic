@@ -595,9 +595,10 @@ namespace eg {
 					if (spriteRendererComponent["TextureUUID"])
 					{
 						uint64_t textureUUID = spriteRendererComponent["TextureUUID"].as<uint64_t>();
-						if (ResourceSerializer::TextureResourceDataCache.find(textureUUID) != ResourceSerializer::TextureResourceDataCache.end())
+						if (ResourceDatabase::FindResourceData(uuid, ResourceType::Image))
 						{
-							std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceSerializer::TextureResourceDataCache[textureUUID]->ResourcePath / std::string(ResourceSerializer::TextureResourceDataCache[textureUUID]->ImageName + ResourceSerializer::TextureResourceDataCache[textureUUID]->Extension);
+							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::Image);
+							std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
 							src.Texture = Texture2D::Create(finalPath.string());
 						}
 						else
@@ -624,9 +625,10 @@ namespace eg {
 						uint64_t textureUUID = spriteRendererComponentST["TextureUUID"].as<uint64_t>();
 
 
-						if (ResourceSerializer::TextureResourceDataCache.find(textureUUID) != ResourceSerializer::TextureResourceDataCache.end())
+						if (ResourceDatabase::FindResourceData(uuid, ResourceType::Image))
 						{
-							std::filesystem::path texturePath = ResourceSerializer::TextureResourceDataCache[textureUUID]->ResourcePath / std::string(ResourceSerializer::TextureResourceDataCache[textureUUID]->ImageName + ResourceSerializer::TextureResourceDataCache[textureUUID]->Extension);
+							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::Image);
+							std::filesystem::path texturePath = texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
 							auto path = Project::GetAssetFileSystemPath(texturePath);
 							auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
 							auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();

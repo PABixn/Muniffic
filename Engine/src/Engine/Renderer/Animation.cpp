@@ -1,6 +1,6 @@
 #include "egpch.h"
 #include "Animation.h"
-#include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/ResourceDatabase.h"
 #include "Engine/Resources/Systems/ResourceSystem.h"
 namespace eg
 {
@@ -43,9 +43,9 @@ namespace eg
 
 	Ref<Animation> Animation::Create(const UUID& id)
 	{
-		if (ResourceSerializer::AnimationResourceDataCache.find(id) == ResourceSerializer::AnimationResourceDataCache.end())
+		if (!ResourceDatabase::FindResourceData(id, ResourceType::Animation))
 			return nullptr;
-		AnimationResourceData* animData = ResourceSerializer::AnimationResourceDataCache.at(id);
+		AnimationResourceData* animData = (AnimationResourceData*)ResourceDatabase::GetResourceData(id, ResourceType::Animation);
 		Ref<Animation> anim = CreateRef<Animation>();
 		anim->m_AnimationID = id;
 		anim->m_name = animData->AnimationName;
@@ -58,10 +58,10 @@ namespace eg
 		{
 			anim->AddFrame(SubTexture2D::Create(frame));
 		}
-		SubTextureResourceData* subTexData = ResourceSerializer::SubTextureResourceDataCache.at(animData->Frames.at(0));
+		SubTextureResourceData* subTexData = (SubTextureResourceData*)ResourceDatabase::GetResourceData(animData->Frames.at(0), ResourceType::SubTexture);
 		if(!subTexData)
 			return nullptr;
-		TextureResourceData* texData = ResourceSerializer::TextureResourceDataCache.at(subTexData->Texture);
+		TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData((subTexData->Texture), ResourceType::Image);
 		if(!texData)
 			return nullptr;
 		Resource* res = new Resource();
