@@ -109,13 +109,13 @@ namespace eg
 				data->ResourcePath = resource["ResourcePath"].as<std::string>();
 				data->SubTextureName = resource["SubTextureName"].as<std::string>();
 				data->Extension = resource["Extension"].as<std::string>();
-				data->Texture = resource["Texture"].as<uint64_t>();
+				data->m_Texture = resource["Texture"].as<uint64_t>();
 
 				auto texCoords = resource["TexCoords"];
 				for (int i = 0; i < 4; i++)
 				{
-					data->TexCoords[i].x = texCoords[i]["x"].as<float>();
-					data->TexCoords[i].y = texCoords[i]["y"].as<float>();
+					data->m_TexCoords[i].x = texCoords[i]["x"].as<float>();
+					data->m_TexCoords[i].y = texCoords[i]["y"].as<float>();
 				}
 
 				CacheSubTexture(uuid, data);
@@ -132,15 +132,15 @@ namespace eg
 				data->ResourcePath = resource["ResourcePath"].as<std::string>();
 				data->AnimationName = resource["AnimationName"].as<std::string>();
 				data->Extension = resource["Extension"].as<std::string>();
-				data->FrameRate = resource["FrameRate"].as<float>();
-				data->FrameCount = resource["FrameCount"].as<int>();
-				data->Loop = resource["Loop"].as<bool>();
+				data->m_frameRate = resource["FrameRate"].as<float>();
+				data->m_frameCount = resource["FrameCount"].as<int>();
+				data->m_loop = resource["Loop"].as<bool>();
 				data->AnimationName = resource["Name"].as<std::string>();
 
 				auto frames = resource["Frames"];
 				for (auto frame : frames)
 				{
-					data->Frames.push_back(frame.as<uint64_t>());
+					data->m_frames.push_back(frame.as<uint64_t>());
 				}
 
 				CacheAnimation(uuid, data);
@@ -210,12 +210,12 @@ namespace eg
 			subtextureOut << YAML::Key << "ResourcePath" << YAML::Value << value->ResourcePath.string();
 			subtextureOut << YAML::Key << "SubTextureName" << YAML::Value << value->SubTextureName;
 			subtextureOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
-			subtextureOut << YAML::Key << "Texture" << YAML::Value << value->Texture;
+			subtextureOut << YAML::Key << "Texture" << YAML::Value << value->m_Texture;
 			subtextureOut << YAML::Key << "TexCoords" << YAML::Value << YAML::BeginSeq;
 			for (int i = 0; i < 4; i++)
 			{
 				subtextureOut << YAML::BeginMap;
-				subtextureOut << value->TexCoords[i];
+				subtextureOut << value->m_TexCoords[i];
 				subtextureOut << YAML::EndMap;
 			}
 			subtextureOut << YAML::EndSeq;
@@ -235,12 +235,12 @@ namespace eg
 			animationOut << YAML::Key << "ResourcePath" << YAML::Value << value->ResourcePath.string();
 			animationOut << YAML::Key << "AnimationName" << YAML::Value << value->AnimationName;
 			animationOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
-			animationOut << YAML::Key << "FrameRate" << YAML::Value << value->FrameRate;
-			animationOut << YAML::Key << "FrameCount" << YAML::Value << value->FrameCount;
-			animationOut << YAML::Key << "Loop" << YAML::Value << value->Loop;
+			animationOut << YAML::Key << "FrameRate" << YAML::Value << value->m_frameRate;
+			animationOut << YAML::Key << "FrameCount" << YAML::Value << value->m_frameCount;
+			animationOut << YAML::Key << "Loop" << YAML::Value << value->m_loop;
 			animationOut << YAML::Key << "Name" << YAML::Value << value->AnimationName;
 			animationOut << YAML::Key << "Frames" << YAML::Value << YAML::BeginSeq;
-			for (auto& frame : value->Frames)
+			for (auto& frame : value->m_frames)
 			{
 				animationOut << frame;
 			}
@@ -314,7 +314,6 @@ namespace eg
 
 	void ResourceSerializer::CacheSubTexture(UUID uuid, SubTextureResourceData* data)
 	{
-
 		if (SubTextureResourceDataCache.find(uuid) != SubTextureResourceDataCache.end())
 		{
 			if (SubTextureResourceDataCache[uuid] != nullptr)
@@ -328,7 +327,6 @@ namespace eg
 
 	void ResourceSerializer::CacheAnimation(UUID uuid, AnimationResourceData* data)
 	{
-
 		if (AnimationResourceDataCache.find(uuid) != AnimationResourceDataCache.end())
 		{
 			if (AnimationResourceDataCache[uuid] != nullptr)
@@ -342,7 +340,6 @@ namespace eg
 
 	void ResourceSerializer::CacheSpriteAtlas(UUID uuid, SpriteAtlasResourceData* data)
 	{
-
 		if (SpriteAtlasResourceDataCache.find(uuid) != SpriteAtlasResourceDataCache.end())
 		{
 			if (SpriteAtlasResourceDataCache[uuid] != nullptr)
