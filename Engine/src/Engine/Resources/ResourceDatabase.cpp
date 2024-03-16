@@ -458,7 +458,7 @@ namespace eg
 	{
 		TextureResourceData* resourceData = new TextureResourceData();
 		memcpy(resourceData, data, sizeof(TextureResourceData));
-		resourceData->ResourcePath = ((TextureResourceData*)data)->ResourcePath;
+		resourceData->ResourcePath = std::filesystem::path(((TextureResourceData*)data)->ResourcePath);
 
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->ImageName + resourceData->Extension);
 
@@ -478,7 +478,7 @@ namespace eg
 	{
 		SubTextureResourceData* resourceData = new SubTextureResourceData();
 		memcpy(resourceData, data, sizeof(SubTextureResourceData));
-		resourceData->ResourcePath = ((SubTextureResourceData*)data)->ResourcePath;
+		resourceData->ResourcePath = std::filesystem::path(((SubTextureResourceData*)data)->ResourcePath);
 
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->SubTextureName + resourceData->Extension);
 
@@ -497,7 +497,7 @@ namespace eg
 	{
 		AnimationResourceData* resourceData = new AnimationResourceData();
 		memcpy(resourceData, data, sizeof(AnimationResourceData));
-		resourceData->ResourcePath = ((AnimationResourceData*)data)->ResourcePath;
+		resourceData->ResourcePath = std::filesystem::path(((AnimationResourceData*)data)->ResourcePath);
 
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->AnimationName + resourceData->Extension);
 
@@ -513,7 +513,7 @@ namespace eg
 	{
 		SpriteAtlasResourceData* resourceData = new SpriteAtlasResourceData();
 		memcpy(resourceData, data, sizeof(SpriteAtlasResourceData));
-		resourceData->ResourcePath = ((SpriteAtlasResourceData*)data)->ResourcePath;
+		resourceData->ResourcePath = std::filesystem::path(((SpriteAtlasResourceData*)data)->ResourcePath);
 
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->AtlasName + resourceData->Extension);
 
