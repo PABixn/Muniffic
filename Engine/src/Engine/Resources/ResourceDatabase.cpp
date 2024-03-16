@@ -577,16 +577,19 @@ namespace eg
 	{
 		UUID uuid = UUID();
 
+		void* resourceData;
+		memcpy(resourceData, data, sizeof(data));
+
 		switch (resourceType)
 		{
 		case ResourceType::Image:
-			AddTextureResource(uuid, originalResourcePath, (TextureResourceData*)data);
+			AddTextureResource(uuid, originalResourcePath, (TextureResourceData*)resourceData);
 			break;
 		case ResourceType::SubTexture:
 			AddSubTextureResource(uuid, originalResourcePath, (SubTextureResourceData*)data);
 			break;
 		case ResourceType::Animation:
-			AddAnimationResource(uuid, originalResourcePath, (AnimationResourceData*)data);
+			AddAnimationResource(uuid, originalResourcePath, (AnimationResourceData*)resourceData);
 			break;
 		case ResourceType::SpriteAtlas:
 			AddSpriteAtlasResource(uuid, originalResourcePath, (SpriteAtlasResourceData*)data);
