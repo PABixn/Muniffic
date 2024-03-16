@@ -454,13 +454,10 @@ namespace eg
 		}
 	}
 
-	void AddTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, void* data)
+	void AddTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, TextureResourceData* data)
 	{
-		TextureResourceData* resourceData = new TextureResourceData();
-		memcpy(resourceData, data, sizeof(TextureResourceData));
-		resourceData->ResourcePath = std::filesystem::path(((TextureResourceData*)data)->ResourcePath);
 
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->ImageName + resourceData->Extension);
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->ImageName + data->Extension);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -471,16 +468,13 @@ namespace eg
 			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
 		}
 
-		ResourceSerializer::CacheTexture(uuid, resourceData);
+		ResourceSerializer::CacheTexture(uuid, data);
 	}
 
-	void AddSubTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, void* data)
+	void AddSubTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, SubTextureResourceData* data)
 	{
-		SubTextureResourceData* resourceData = new SubTextureResourceData();
-		memcpy(resourceData, data, sizeof(SubTextureResourceData));
-		resourceData->ResourcePath = std::filesystem::path(((SubTextureResourceData*)data)->ResourcePath);
 
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->SubTextureName + resourceData->Extension);
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->SubTextureName + data->Extension);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -490,32 +484,29 @@ namespace eg
 			}
 		}
 
-		ResourceSerializer::CacheSubTexture(uuid, resourceData);
+		ResourceSerializer::CacheSubTexture(uuid, data);
 	}
 
-	void AddAnimationResource(UUID uuid, const std::filesystem::path& originalResourcePath, void* data)
+	void AddAnimationResource(UUID uuid, const std::filesystem::path& originalResourcePath, AnimationResourceData* data)
 	{
 		AnimationResourceData* resourceData = new AnimationResourceData();
 		memcpy(resourceData, data, sizeof(AnimationResourceData));
-		resourceData->ResourcePath = std::filesystem::path(((AnimationResourceData*)data)->ResourcePath);
+		std::filesystem::path resourcePath = ((AnimationResourceData*)data)->ResourcePath.string().c_str();
+		resourceData->ResourcePath = resourcePath;
 
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->AnimationName + resourceData->Extension);
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->AnimationName + data->Extension);
 
 		if (!std::filesystem::exists(finalPath.parent_path()))
 		{
 			std::filesystem::create_directories(finalPath.parent_path());
 		}
 
-		ResourceSerializer::CacheAnimation(uuid, resourceData);
+		ResourceSerializer::CacheAnimation(uuid, data);
 	}
 
-	void AddSpriteAtlasResource(UUID uuid, const std::filesystem::path& originalResourcePath, void* data)
+	void AddSpriteAtlasResource(UUID uuid, const std::filesystem::path& originalResourcePath, SpriteAtlasResourceData* data)
 	{
-		SpriteAtlasResourceData* resourceData = new SpriteAtlasResourceData();
-		memcpy(resourceData, data, sizeof(SpriteAtlasResourceData));
-		resourceData->ResourcePath = std::filesystem::path(((SpriteAtlasResourceData*)data)->ResourcePath);
-
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / resourceData->ResourcePath / std::string(resourceData->AtlasName + resourceData->Extension);
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->AtlasName + data->Extension);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -525,7 +516,7 @@ namespace eg
 			}
 		}
 
-		ResourceSerializer::CacheSpriteAtlas(uuid, resourceData);
+		ResourceSerializer::CacheSpriteAtlas(uuid, data);
 	}
 
 	void ResourceDatabase::LoadResource(const std::filesystem::path& filePath)
@@ -599,16 +590,16 @@ namespace eg
 		switch (resourceType)
 		{
 		case ResourceType::Image:
-			AddTextureResource(uuid, originalResourcePath, data);
+			AddTextureResource(uuid, originalResourcePath, (TextureResourceData*)data);
 			break;
 		case ResourceType::SubTexture:
-			AddSubTextureResource(uuid, originalResourcePath, data);
+			AddSubTextureResource(uuid, originalResourcePath, (SubTextureResourceData*)data);
 			break;
 		case ResourceType::Animation:
-			AddAnimationResource(uuid, originalResourcePath, data);
+			AddAnimationResource(uuid, originalResourcePath, (AnimationResourceData*)data);
 			break;
 		case ResourceType::SpriteAtlas:
-			AddSpriteAtlasResource(uuid, originalResourcePath, data);
+			AddSpriteAtlasResource(uuid, originalResourcePath, (SpriteAtlasResourceData*)data);
 			break;
 		}
 

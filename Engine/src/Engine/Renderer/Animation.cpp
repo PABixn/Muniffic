@@ -115,8 +115,8 @@ namespace eg
 	void Animation::SetFrame(int frame)
 	{
 		m_frame = frame;
-		if (m_frame >= m_frameCount)
-			m_frame = m_frameCount - 1;
+		if (m_frame >= m_frames.size())
+			m_frame = m_frames.size() - 1;
 		if (m_frame < 0)
 			m_frame = 0;
 	}
