@@ -20,9 +20,9 @@ namespace eg
 
 	Ref<SubTexture2D> SubTexture2D::Create(UUID id)
 	{
-		if (ResourceSerializer::SubTextureResourceDataCache.find(id) == ResourceSerializer::SubTextureResourceDataCache.end())
+		if (!ResourceDatabase::FindResourceData(id, ResourceType::SubTexture))
 			return nullptr;
-		SubTextureResourceData *subTexData = ResourceSerializer::SubTextureResourceDataCache.at(id);
+		SubTextureResourceData *subTexData = (SubTextureResourceData*)ResourceDatabase::GetResourceData(id, ResourceType::SubTexture);
 
 		Ref<SubTexture2D> subTex = CreateRef<SubTexture2D>();
 		Ref<Texture2D> texture = Texture2D::Create(subTexData->Texture);
