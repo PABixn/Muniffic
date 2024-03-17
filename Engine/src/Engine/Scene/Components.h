@@ -225,7 +225,7 @@ namespace eg {
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
-	struct TextComponent: Component
+	struct TextComponent : Component
 	{
 		std::string TextString;
 		Ref<Font> FontAsset = Font::GetDefaultFont();

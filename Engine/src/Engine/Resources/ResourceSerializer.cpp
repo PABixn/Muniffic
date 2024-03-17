@@ -180,6 +180,18 @@ namespace eg
 		std::filesystem::path subTextureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SubTexture);
 		YAML::Emitter textureOut, animationOut, spriteAtlasOut, subtextureOut;
 
+		if(!std::filesystem::exists(textureMetadataPath.parent_path()))
+			std::filesystem::create_directories(textureMetadataPath.parent_path());
+
+		if (!std::filesystem::exists(animationMetadataPath.parent_path()))
+			std::filesystem::create_directories(animationMetadataPath.parent_path());
+
+		if (!std::filesystem::exists(spriteAtlasMetadataPath.parent_path()))
+			std::filesystem::create_directories(spriteAtlasMetadataPath.parent_path());
+
+		if (!std::filesystem::exists(subTextureMetadataPath.parent_path()))
+			std::filesystem::create_directories(subTextureMetadataPath.parent_path());
+
 		textureOut << YAML::BeginMap;
 		textureOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
 

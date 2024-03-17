@@ -263,8 +263,9 @@ namespace eg {
 			{
 				out << animation->GetID();
 			}
+
+			out << YAML::EndSeq; // Animations
 			out << YAML::EndMap; // Animations
-			out << YAML::EndMap; // AnimatorComponent
 		}
 
 		if (entity.HasComponent<CameraComponent>())
@@ -416,6 +417,7 @@ namespace eg {
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+
 		m_Scene->m_Registry.each([&](auto entityID)
 		{
 			Entity entity = { entityID, m_Scene.get() };
@@ -424,11 +426,13 @@ namespace eg {
 
 			SerializeEntity(out, entity);
 		});
+
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
+		fout.close();
 
 		ResourceSerializer::SerializeResourceCache();
 	}
@@ -592,12 +596,14 @@ namespace eg {
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 					if(spriteRendererComponent["TilingFactor"])
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
+
 					if (spriteRendererComponent["TextureUUID"])
 					{
 						uint64_t textureUUID = spriteRendererComponent["TextureUUID"].as<uint64_t>();
-						if (ResourceDatabase::FindResourceData(uuid, ResourceType::Image))
+
+						if (ResourceDatabase::FindResourceData(textureUUID, ResourceType::Image))
 						{
-							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::Image);
+							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(textureUUID, ResourceType::Image);
 							std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
 							src.Texture = Texture2D::Create(finalPath.string());
 						}
@@ -623,7 +629,6 @@ namespace eg {
 					if (spriteRendererComponentST["TextureUUID"])
 					{
 						uint64_t textureUUID = spriteRendererComponentST["TextureUUID"].as<uint64_t>();
-
 
 						if (ResourceDatabase::FindResourceData(uuid, ResourceType::Image))
 						{
