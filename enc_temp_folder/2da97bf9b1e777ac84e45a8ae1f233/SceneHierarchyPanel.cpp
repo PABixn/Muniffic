@@ -501,6 +501,8 @@ namespace eg {
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 				{
 					component.Name = std::string(buffer);
+					//if(!scriptExists)
+						//ImGui::PopStyleColor();
 					return;
 				}
 				//Fields
@@ -754,6 +756,8 @@ namespace eg {
 					}
 				}
 
+				//if (!scriptExists)
+					//ImGui::PopStyleColor();
 
 			}, m_Context);
 
