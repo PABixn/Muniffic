@@ -70,6 +70,13 @@ namespace eg
 		UUID Texture;
 	};
 
+	struct FontResourceData
+	{
+		std::filesystem::path ResourcePath = "";
+		std::string FontName = "";
+		std::string Extension = "";
+	};
+
 	struct TextureResourceData
 	{
 		int Width = 0, Height = 0;

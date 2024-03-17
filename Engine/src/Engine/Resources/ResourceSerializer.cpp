@@ -15,6 +15,7 @@ namespace eg
 	std::unordered_map<UUID, AnimationResourceData*> ResourceSerializer::AnimationResourceDataCache;
 	std::unordered_map<UUID, SpriteAtlasResourceData*> ResourceSerializer::SpriteAtlasResourceDataCache;
 	std::unordered_map<UUID, SubTextureResourceData*> ResourceSerializer::SubTextureResourceDataCache;
+	std::unordered_map<UUID, FontResourceData*> ResourceSerializer::FontResourceDataCache;
 	std::unordered_map<UUID, ResourceType> ResourceSerializer::ResourceTypeInfo;
 
 	bool ResourceSerializer::DeserializeResourceCache()
@@ -23,8 +24,9 @@ namespace eg
 		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
 		std::filesystem::path subTextureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SubTexture);
+		std::filesystem::path fontMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Font);
 
-		YAML::Node textureNode, animationNode, spriteAtlasNode, subTextureNode;
+		YAML::Node textureNode, animationNode, spriteAtlasNode, subTextureNode, fontNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
 			return false;
@@ -36,6 +38,9 @@ namespace eg
 			return false;
 
 		if (!std::filesystem::exists(subTextureMetadataPath))
+			return false;
+
+		if (!std::filesystem::exists(fontMetadataPath))
 			return false;
 
 		try
@@ -78,10 +83,21 @@ namespace eg
 			return false;
 		}
 
+		try
+		{
+			fontNode = YAML::LoadFile(fontMetadataPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", fontMetadataPath, e.what());
+			return false;
+		}
+
 		auto textureResources = textureNode["Resources"];
 		auto animationResources = animationNode["Resources"];
 		auto spriteAtlasResources = spriteAtlasNode["Resources"];
 		auto subtextureResource = subTextureNode["Resources"];
+		auto fontResources = fontNode["Resources"];
 
 		if (textureResources)
 		{
@@ -172,6 +188,21 @@ namespace eg
 					CacheSpriteAtlas(uuid, data);
 				}
 			}
+
+			if (fontResources)
+			{
+				for (auto resource : fontResources)
+				{
+					UUID uuid = resource["UUID"].as<uint64_t>();
+
+					FontResourceData* data = new FontResourceData();
+					data->ResourcePath = resource["ResourcePath"].as<std::string>();
+					data->FontName = resource["FontName"].as<std::string>();
+					data->Extension = resource["Extension"].as<std::string>();
+
+					CacheFont(uuid, data);
+				}
+			}
 		}
 	}
 
@@ -181,7 +212,10 @@ namespace eg
 		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
 		std::filesystem::path subTextureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SubTexture);
-		YAML::Emitter textureOut, animationOut, spriteAtlasOut, subtextureOut;
+		std::filesystem::path fontMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Font);
+
+
+		YAML::Emitter textureOut, animationOut, spriteAtlasOut, subtextureOut, fontOut;
 
 		if(!std::filesystem::exists(textureMetadataPath.parent_path()))
 			std::filesystem::create_directories(textureMetadataPath.parent_path());
@@ -194,6 +228,9 @@ namespace eg
 
 		if (!std::filesystem::exists(subTextureMetadataPath.parent_path()))
 			std::filesystem::create_directories(subTextureMetadataPath.parent_path());
+
+		if (!std::filesystem::exists(fontMetadataPath.parent_path()))
+			std::filesystem::create_directories(fontMetadataPath.parent_path());
 
 		textureOut << YAML::BeginMap;
 		textureOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
@@ -291,25 +328,45 @@ namespace eg
 		spriteAtlasOut << YAML::EndSeq;
 		spriteAtlasOut << YAML::EndMap;
 
+		fontOut << YAML::BeginMap;
+		fontOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
+
+		for (auto& [key, value] : FontResourceDataCache)
+		{
+			fontOut << YAML::BeginMap;
+			fontOut << YAML::Key << "UUID" << YAML::Value << key;
+			fontOut << YAML::Key << "ResourcePath" << YAML::Value << value->ResourcePath.string();
+			fontOut << YAML::Key << "FontName" << YAML::Value << value->FontName;
+			fontOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
+			fontOut << YAML::EndMap;
+		}
+
+		fontOut << YAML::EndSeq;
+		fontOut << YAML::EndMap;
+
 		std::ofstream textureFile(textureMetadataPath, std::ios::trunc);
 		std::ofstream animationFile(animationMetadataPath, std::ios::trunc);
 		std::ofstream spriteAtlasFile(spriteAtlasMetadataPath, std::ios::trunc);
 		std::ofstream subTextureFile(subTextureMetadataPath, std::ios::trunc);
+		std::ofstream fontFile(fontMetadataPath, std::ios::trunc);
 
 		textureFile << textureOut.c_str();
 		animationFile << animationOut.c_str();
 		spriteAtlasFile << spriteAtlasOut.c_str();
 		subTextureFile << subtextureOut.c_str();
+		fontFile << fontOut.c_str();
 
 		textureFile.close();
 		animationFile.close();
 		spriteAtlasFile.close();
 		subTextureFile.close();
+		fontFile.close();
 	}
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
 	{
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->ImageName + data->Extension);
+
 		if (!std::filesystem::exists(finalPath))
 		{
 			EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
@@ -338,6 +395,27 @@ namespace eg
 
 		SubTextureResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::SubTexture;
+	}
+
+	void ResourceSerializer::CacheFont(UUID uuid, FontResourceData* data)
+	{
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->FontName + data->Extension);
+
+		if (!std::filesystem::exists(finalPath))
+		{
+			EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
+			return;
+		}
+
+		if (FontResourceDataCache.find(uuid) != FontResourceDataCache.end())
+		{
+			if (FontResourceDataCache[uuid] != nullptr)
+				delete FontResourceDataCache[uuid];
+			FontResourceDataCache.erase(uuid);
+		}
+
+		FontResourceDataCache[uuid] = data;
+		ResourceTypeInfo[uuid] = ResourceType::Font;
 	}
 
 	void ResourceSerializer::CacheAnimation(UUID uuid, AnimationResourceData* data)

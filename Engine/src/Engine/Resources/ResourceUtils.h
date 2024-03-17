@@ -110,6 +110,11 @@ namespace eg
 				SpriteAtlasResourceData* data = (SpriteAtlasResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::SpriteAtlas);
 				return data->ResourcePath / std::filesystem::path(data->AtlasName + data->Extension);
 			}
+			else if (type == ResourceType::Font)
+			{
+				FontResourceData* data = (FontResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::Font);
+				return data->ResourcePath / std::filesystem::path(data->FontName + data->Extension);
+			}
 			else
 				return std::filesystem::path();
 		}
@@ -126,6 +131,8 @@ namespace eg
 				return ResourceDatabase::GetResourceData(uuid, ResourceType::SpriteAtlas);
 			case ResourceType::Animation:
 				return ResourceDatabase::GetResourceData(uuid, ResourceType::Animation);
+			case ResourceType::Font:
+				return ResourceDatabase::GetResourceData(uuid, ResourceType::Font);
 			default:
 				return nullptr;
 			}
