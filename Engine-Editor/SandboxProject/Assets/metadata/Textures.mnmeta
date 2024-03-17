@@ -1,8 +1,0 @@
-Resources:
-  - UUID: 8309147615479000126
-    ResourcePath: Textures
-    ImageName: Dune
-    Extension: .png
-    Width: 1000
-    Height: 1542
-    Channels: 4
