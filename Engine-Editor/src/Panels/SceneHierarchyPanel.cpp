@@ -91,7 +91,7 @@ namespace eg {
 		if (m_PreviewAbsoluteImagePath != "" ) {
 			ImGui::Begin("Preview");
 			GLuint my_opengl_texture; 
-			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceSerializer::TextureResourceDataCache) {
+			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceDatabase::GetTextureResourceDataCache()) {
 				auto CacheImageData = (pairOfUUIDAndData.second);
 				if (CacheImageData->GetAbsolutePath() == m_PreviewAbsoluteImagePath){
 					stbi_set_flip_vertically_on_load(false);

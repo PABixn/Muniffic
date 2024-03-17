@@ -128,7 +128,7 @@ namespace eg
 
 		if (type == ResourceType::Image)
 		{
-			for (auto& [key, value] : ResourceSerializer::TextureResourceDataCache)
+			for (auto& [key, value] : ResourceDatabase::GetTextureResourceDataCache())
 			{
 				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
 					continue;
@@ -143,7 +143,7 @@ namespace eg
 		}
 		else if (type == ResourceType::Animation)
 		{
-			for (auto& [key, value] : ResourceSerializer::AnimationResourceDataCache)
+			for (auto& [key, value] : ResourceDatabase::GetAnimationResourceDataCache())
 			{
 				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
 					continue;

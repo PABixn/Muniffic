@@ -1,6 +1,8 @@
-#include "egpch.h"
 #include "ResourceDatabase.h"
-#include "ResourceSerializer.h"
+#include <filesystem>
+#include <string>
+#include <vector>
+#include "egpch.h"
 #include "Engine/Project/Project.h"	
 #include <yaml-cpp/yaml.h>
 #include "ResourceUtils.h"
@@ -10,14 +12,57 @@ namespace eg
 {
 	std::filesystem::path* ResourceDatabase::m_CurrentDirectory;
 
-	std::vector<std::filesystem::path> ResourceDatabase::GetResourcesInDirectory(const std::filesystem::path& directory)
+	void ResourceDatabase::SetResourceData(UUID uuid, ResourceType resourceType, void* data)
 	{
-		return std::vector<std::filesystem::path>();
+		if (resourceType == ResourceType::Image)
+			ResourceSerializer::TextureResourceDataCache[uuid] = (TextureResourceData*)data;
+		else if(resourceType == ResourceType::SubTexture)
+			ResourceSerializer::SubTextureResourceDataCache[uuid] = (SubTextureResourceData*)data;
+		else if (resourceType == ResourceType::Animation)
+			ResourceSerializer::AnimationResourceDataCache[uuid] = (AnimationResourceData*)data;
+		else if(resourceType == ResourceType::SpriteAtlas)
+			ResourceSerializer::SpriteAtlasResourceDataCache[uuid] = (SpriteAtlasResourceData*)data;
+		else
+			EG_CORE_ERROR("Resource type not supported");
 	}
 
-	std::vector<std::filesystem::path> ResourceDatabase::FindResourcesByName(const std::string& name)
+	ResourceType ResourceDatabase::GetResourceType(UUID uuid)
 	{
-		return std::vector<std::filesystem::path>();
+		return ResourceSerializer::ResourceTypeInfo.at(uuid);
+	}
+
+	bool ResourceDatabase::FindResourceData(UUID uuid, ResourceType resourceType)
+	{
+		if (resourceType == ResourceType::Image)
+			return ResourceSerializer::TextureResourceDataCache.find(uuid) != ResourceSerializer::TextureResourceDataCache.end();
+		else if(resourceType == ResourceType::SubTexture)
+			return ResourceSerializer::SubTextureResourceDataCache.find(uuid) != ResourceSerializer::SubTextureResourceDataCache.end();
+		else if (resourceType == ResourceType::Animation)
+			return ResourceSerializer::AnimationResourceDataCache.find(uuid) != ResourceSerializer::AnimationResourceDataCache.end();
+		else if(resourceType == ResourceType::SpriteAtlas)
+			return ResourceSerializer::SpriteAtlasResourceDataCache.find(uuid) != ResourceSerializer::SpriteAtlasResourceDataCache.end();
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported");
+			return false;
+		}
+	}
+
+	void* ResourceDatabase::GetResourceData(UUID uuid, ResourceType resourceType)
+	{
+		if (resourceType == ResourceType::Image)
+			return ResourceSerializer::TextureResourceDataCache.at(uuid);
+		else if(resourceType == ResourceType::SubTexture)
+			return ResourceSerializer::SubTextureResourceDataCache.at(uuid);
+		else if (resourceType == ResourceType::Animation)
+			return ResourceSerializer::AnimationResourceDataCache.at(uuid);
+		else if(resourceType == ResourceType::SpriteAtlas)
+			return ResourceSerializer::SpriteAtlasResourceDataCache.at(uuid);
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported");
+			return nullptr;
+		}
 	}
 
 	UUID ResourceDatabase::FindResourceByKeyPath(const std::filesystem::path& keyPath, ResourceType type)
@@ -147,48 +192,11 @@ namespace eg
 		}
 	}
 
-	UUID ResourceDatabase::GetResourceByKeyPath(const std::filesystem::path& keyPath, ResourceType type)
+	UUID ResourceDatabase::GetResourceByKeyPathWithoutCategory(const std::filesystem::path& keyPath, ResourceType type)
 	{
 		std::filesystem::path fullKeyPath = std::filesystem::path(ResourceUtils::GetResourceTypeText(type)) / keyPath;
 
-		if (type == ResourceType::Image)
-		{
-			for (auto& [uuid, data] : ResourceSerializer::TextureResourceDataCache)
-			{
-				std::filesystem::path d = ResourceUtils::GetResourcePath(fullKeyPath);
-				if (data->ResourcePath == ResourceUtils::GetResourcePath(fullKeyPath) && data->ImageName + data->Extension == fullKeyPath.filename().string())
-					return uuid;
-			}
-		}
-		else if (type == ResourceType::SubTexture)
-		{
-			for (auto& [uuid, data] : ResourceSerializer::SubTextureResourceDataCache)
-			{
-				if (data->ResourcePath == ResourceUtils::GetResourcePath(fullKeyPath) && data->SubTextureName + data->Extension == fullKeyPath.filename().string())
-					return uuid;
-			}
-		}
-		else if (type == ResourceType::Animation)
-		{
-			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
-			{
-				if (data->ResourcePath == ResourceUtils::GetResourcePath(fullKeyPath) && data->AnimationName + data->Extension == fullKeyPath.filename().string())
-					return uuid;
-			}
-		}
-		else if (type == ResourceType::SpriteAtlas)
-		{
-			for (auto& [uuid, data] : ResourceSerializer::SpriteAtlasResourceDataCache)
-			{
-				if (data->ResourcePath == ResourceUtils::GetResourcePath(fullKeyPath) && data->AtlasName + data->Extension == fullKeyPath.filename().string())
-					return uuid;
-			}
-		}
-		else
-		{
-			EG_CORE_ERROR("Resource type not supported");
-			return 0;
-		}
+		return ResourceDatabase::FindResourceByKeyPath(fullKeyPath, type);
 	}
 
 	UUID ResourceDatabase::GetResourceByPath(const std::filesystem::path& path)
@@ -305,7 +313,7 @@ namespace eg
 
 	void ResourceDatabase::RemoveResource(std::filesystem::path path, bool deleteFile)
 	{
-		UUID uuid = ResourceDatabase::GetResourceByKeyPath(path, ResourceUtils::GetCurrentResourceDirectoryType(path.parent_path()));
+		UUID uuid = ResourceDatabase::GetResourceByKeyPathWithoutCategory(path, ResourceUtils::GetCurrentResourceDirectoryType(path.parent_path()));
 		ResourceType type = ResourceSerializer::ResourceTypeInfo.at(uuid);
 		ResourceDatabase::RemoveResource(uuid, type, deleteFile);
 	}

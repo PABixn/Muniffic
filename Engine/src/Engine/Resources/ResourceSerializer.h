@@ -10,6 +10,8 @@ namespace eg {
 	class ResourceSerializer
 	{
 	public:
+		friend class ResourceDatabase;
+
 		ResourceSerializer() = default;
 		~ResourceSerializer() = default;
 
@@ -20,6 +22,7 @@ namespace eg {
 		static void SerializeResourceCache();
 		static bool DeserializeResourceCache();
 
+	private:
 		static std::unordered_map<UUID, TextureResourceData*> TextureResourceDataCache;
 		static std::unordered_map<UUID, AnimationResourceData*> AnimationResourceDataCache;
 		static std::unordered_map<UUID, SpriteAtlasResourceData*> SpriteAtlasResourceDataCache;

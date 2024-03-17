@@ -1,22 +1,23 @@
 #pragma once
+
 #include "resourceTypes.h"
-#include <filesystem>
-#include <string>
-#include <vector>
+#include "ResourceSerializer.h"
+
 
 namespace eg {
 	class ResourceDatabase
 	{
 	public:
-		std::vector<std::filesystem::path> GetResourcesInDirectory(const std::filesystem::path& directory);
-		std::vector<std::filesystem::path> FindResourcesByName(const std::string& name);
+		static void* GetResourceData(UUID uuid, ResourceType resourceType);
+		static bool FindResourceData(UUID uuid, ResourceType resourceType);
+		static void SetResourceData(UUID uuid, ResourceType resourceType, void* data);
+		static ResourceType GetResourceType(UUID uuid);
 		static UUID FindResourceByKeyPath(const std::filesystem::path& keyPath, ResourceType type);
 		static std::filesystem::path GetResourcePath(UUID uuid);
 		static std::filesystem::path GetFullPath(UUID uuid);
 		static std::string GetResourceName(UUID uuid);
 		static std::string GetResourceTypeExtension(ResourceType type);
-
-		static UUID GetResourceByKeyPath(const std::filesystem::path& keyPath, ResourceType resourceType);
+		static UUID GetResourceByKeyPathWithoutCategory(const std::filesystem::path& keyPath, ResourceType resourceType);
 		static UUID GetResourceByPath(const std::filesystem::path& keyPath);
 
 		static void RemoveResource(std::filesystem::path path, bool deleteFile = false);
@@ -31,6 +32,12 @@ namespace eg {
 
 		static void SetCurrentPath(std::filesystem::path* directory) { m_CurrentDirectory = directory; }
 		static std::filesystem::path* GetCurrentPath() { return m_CurrentDirectory; }
+
+		static std::unordered_map<UUID, TextureResourceData*>& GetTextureResourceDataCache() { return ResourceSerializer::TextureResourceDataCache; }
+		static std::unordered_map<UUID, AnimationResourceData*>& GetAnimationResourceDataCache() { return ResourceSerializer::AnimationResourceDataCache; }
+		static std::unordered_map<UUID, SubTextureResourceData*>& GetSubTextureResourceDataCache() { return ResourceSerializer::SubTextureResourceDataCache; }
+		static std::unordered_map < UUID, SpriteAtlasResourceData*>& GetSpriteAtlasResourceDataCache() { return ResourceSerializer::SpriteAtlasResourceDataCache; }
+
 	private:
 		static std::filesystem::path* m_CurrentDirectory;
 	};
