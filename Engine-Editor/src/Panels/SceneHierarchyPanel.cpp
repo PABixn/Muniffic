@@ -9,11 +9,12 @@
 #include <cstring>
 #include "../Commands/Commands.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Engine/Resources/ResourceSerializer.h"
 #include "iostream"
 #include "shellapi.h"
-
+#include "functional"
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
  */
@@ -84,9 +85,24 @@ namespace eg {
 				{
 					Entity entity{ entityID, m_Context.get() };
 					std::string s = entity.GetName();
-					auto r = search;
-					if (s.find(r)!=std::string::npos)
-						DrawEntityNode(entity);
+					if (s.find(search)!=std::string::npos)
+						DrawEntityNode(entity);/*
+					else
+					{
+						//kys6
+						std::function<void(Entity)> checkIfAnyChildOfEntityHasSearchedValue;
+						checkIfAnyChildOfEntityHasSearchedValue = [&checkIfAnyChildOfEntityHasSearchedValue](Entity x) {
+							for (Entity child : en.GetChildren()) {
+								if (child.GetName().find(search) != std::string::npos) {
+									checkIfAnyChildOfEntityHasSearchedValue(child, checkIfAnyChildOfEntityHasSearchedValue);
+									DrawEntityNode(entity);
+								}
+							}
+						};
+
+						checkIfAnyChildOfEntityHasSearchedValue(entity);
+						
+					}*/
 				});
 			}
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
@@ -156,10 +172,10 @@ namespace eg {
 		
 		bool opened = false;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
-		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_FramePadding/* = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0)| ImGuiTreeNodeFlags_OpenOnArrow*/;
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Entity | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth/* = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0)| ImGuiTreeNodeFlags_OpenOnArrow*/;
 		//flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f));
-		opened = ImGui::TreeNodeEx((void*)(uint64_t)entity.GetUUID(), flags, tag.c_str());
+		opened = ImGui::HierarchyEntityTreeNodeEx((void*)(uint64_t)entity.GetUUID(), flags, tag.c_str());
 		ImGui::PopStyleVar();
 		if (ImGui::BeginDragDropSource())
 		{

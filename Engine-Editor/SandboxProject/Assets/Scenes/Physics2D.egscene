@@ -1,13 +1,101 @@
 Scene: Untitled
 Entities:
+  - Entity: 6076450444442908519
+    Name: Cube
+    Parent: 11043396562809341943
+    TagComponent:
+      Tag: Empty Child Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 485542148180641552
+    Name: Cube
+    Parent: 11043396562809341943
+    TagComponent:
+      Tag: Empty Child Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 11043396562809341943
+    Name: Cube
+    Parent: 780870301131358863
+    Children:
+      - 485542148180641552
+      - 6076450444442908519
+    TagComponent:
+      Tag: Empty Child Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 3614097797690189154
+    Name: Cube
+    Parent: 6885890671374481297
+    TagComponent:
+      Tag: Empty Child Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 780870301131358863
+    Name: Cube
+    Parent: 6885890671374481297
+    Children:
+      - 11043396562809341943
+    TagComponent:
+      Tag: Empty Child Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 6885890671374481297
+    Name: Cube
+    Parent: 4402459793689510281
+    Children:
+      - 780870301131358863
+      - 3614097797690189154
+    TagComponent:
+      Tag: Empty Child Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 4402459793689510281
+    Name: Cube
+    Children:
+      - 6885890671374481297
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
   - Entity: 10642011015283237485
     Name: Cube
+    Children:
+      - 12969811092850663520
     TagComponent:
       Tag: Text
     TransformComponent:
-      Translation: [1.89999998, 1.60000002, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Translation: [-3.9000001, -0.400000006, 0]
+      Rotation: [0, -1, 0]
+      Scale: [7.30000019, 1.70000005, 1]
       IsInherited: true
       IsInheritedInChildren: true
     TextComponent:
@@ -17,222 +105,64 @@ Entities:
       LineSpacing: 0
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 16442485196201648565
+  - Entity: 12969811092850663520
     Name: Cube
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [0, -2.9000001, 0]
-      Rotation: [0, -0, -0.786272645]
-      Scale: [12.6000042, 0.999999881, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [1, 0.568627477, 0.31764707, 1]
-      TilingFactor: 1
-      IsInherited: false
-      IsInheritedInChildren: false
-    RigidBody2DComponent:
-      Body Type: Static
-      FixedRotation: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 9681069167797108457
-    Name: Cube
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [-1.60074186, -10.7968616, 0]
-      Rotation: [0, -0, -0.786272645]
-      Scale: [12.6000042, 0.999999881, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [1, 0.568627477, 0.31764707, 1]
-      TilingFactor: 1
-      IsInherited: false
-      IsInheritedInChildren: false
-    RigidBody2DComponent:
-      Body Type: Static
-      FixedRotation: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 12466326309952554741
-    Name: Cube
-    Parent: 16108228054420389651
-    TagComponent:
-      Tag: Circle
-    TransformComponent:
-      Translation: [4.30000019, 2.98023224e-08, 0]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    CircleRendererComponent:
-      Color: [1, 1, 1, 1]
-      Thickness: 1
-      Fade: 0.00499999989
-      IsInherited: false
-      IsInheritedInChildren: false
-    CircleCollider2DComponent:
-      Offset: [0, 0]
-      Radius: 0.5
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 16108228054420389651
-    Name: Cube
+    Parent: 10642011015283237485
     Children:
-      - 12466326309952554741
+      - 13009317835704582148
+      - 17902418845089939345
     TagComponent:
-      Tag: Empty Entity
+      Tag: Empty Child Entity
     TransformComponent:
-      Translation: [5.06258726, -0.334269524, -3.81469999e-06]
-      Rotation: [0, -0, -2.26661325]
-      Scale: [12.6000099, 0.999999583, 1]
+      Translation: [-3.9000001, -0.400000006, 0]
+      Rotation: [0, -1, 0]
+      Scale: [7.30000019, 1.70000005, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [1, 0.568627477, 0.31764707, 1]
-      TilingFactor: 1
-      IsInherited: false
-      IsInheritedInChildren: false
-    RigidBody2DComponent:
-      Body Type: Static
-      FixedRotation: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 1567858812585259299
+  - Entity: 13009317835704582148
     Name: Cube
+    Parent: 12969811092850663520
+    Children:
+      - 11442716450201163726
+      - 7139696648794262329
     TagComponent:
-      Tag: Camera
+      Tag: Empty Child Entity
     TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Translation: [-3.9000001, -0.400000006, 0]
+      Rotation: [0, -1, 0]
+      Scale: [7.30000019, 1.70000005, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    ScriptComponent:
-      Name: Sandbox.Camera
-      ScriptFields:
-        - Name: DistanceFromPlayer
-          Type: float
-          Value: 0
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 3898880785194007479
+  - Entity: 17902418845089939345
     Name: Cube
+    Parent: 12969811092850663520
     TagComponent:
-      Tag: Player
+      Tag: Empty Child Entity
     TransformComponent:
-      Translation: [3.79999995, 4.5999999, 0]
-      Rotation: [0, 0, 0.649262488]
-      Scale: [1, 1, 1]
+      Translation: [-3.9000001, -0.400000006, 0]
+      Rotation: [0, -1, 0]
+      Scale: [7.30000019, 1.70000005, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TilingFactor: 1
-      IsInherited: false
-      IsInheritedInChildren: false
-    ScriptComponent:
-      Name: Sandbox.Player
-      ScriptFields:
-        - Name: Speed
-          Type: float
-          Value: 0
-        - Name: Time
-          Type: float
-          Value: 0
-        - Name: Velocity
-          Type: vector2
-          Value: [0, 0]
-      IsInherited: false
-      IsInheritedInChildren: false
-    RigidBody2DComponent:
-      Body Type: Dynamic
-      FixedRotation: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 1597444277314487850
+  - Entity: 11442716450201163726
     Name: Cube
+    Parent: 13009317835704582148
     TagComponent:
-      Tag: Circle
+      Tag: Empty Child Entity
     TransformComponent:
-      Translation: [0.200000003, 0.699999988, 0]
-      Rotation: [6.19999981, 0, 0]
-      Scale: [5.0999999, 3.5999999, 1.29999995]
+      Translation: [-3.9000001, -0.400000006, 0]
+      Rotation: [0, -1, 0]
+      Scale: [7.30000019, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TilingFactor: 1
-      TextureUUID: 0
-      IsInherited: false
-      IsInheritedInChildren: false
-    RigidBody2DComponent:
-      Body Type: Dynamic
-      FixedRotation: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    CircleCollider2DComponent:
-      Offset: [0, 0]
-      Radius: 0.5
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
+  - Entity: 7139696648794262329
+    Name: Cube
+    Parent: 13009317835704582148
+    TagComponent:
+      Tag: Empty Child Entity
+    TransformComponent:
+      Translation: [-3.9000001, -0.400000006, 0]
+      Rotation: [0, -1, 0]
+      Scale: [7.30000019, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true

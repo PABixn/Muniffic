@@ -1,3 +1,4 @@
+include "../../../Dependencies.lua"
 project "ImGui"
 	kind "StaticLib"
 	language "C++"
@@ -22,6 +23,18 @@ project "ImGui"
 		"imgui_demo.cpp",
 		"misc/cpp/imgui_stdlib.h",
 		"misc/cpp/imgui_stdlib.cpp"
+	}
+
+	links
+	{
+		"GLFW",
+		"Glad"
+	}
+
+	includedirs
+	{
+		"%{wks.location}/Engine/vendor/GLFW/include",
+		"%{wks.location}/Engine/vendor/Glad/include",
 	}
 
 	filter "system:windows"
