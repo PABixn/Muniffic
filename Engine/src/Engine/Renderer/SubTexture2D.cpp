@@ -19,15 +19,19 @@ namespace eg {
 
 	Ref<SubTexture2D> SubTexture2D::Create(UUID id)
 	{
-		SubTextureResourceData* subTexData = ResourceSerializer::SubTextureResourceDataCache.at(id);
-		if (!subTexData)
+		if (ResourceSerializer::SubTextureResourceDataCache.find(id) == ResourceSerializer::SubTextureResourceDataCache.end())
 			return nullptr;
+		SubTextureResourceData* subTexData = ResourceSerializer::SubTextureResourceDataCache.at(id);
+
 		Ref<SubTexture2D> subTex = CreateRef<SubTexture2D>();
+		Ref<Texture2D> texture = Texture2D::Create(subTexData->Texture);
+		if(!texture)
+			return nullptr;
 		subTex->m_TexCoords[0] = subTexData->TexCoords[0];
 		subTex->m_TexCoords[1] = subTexData->TexCoords[1];
 		subTex->m_TexCoords[2] = subTexData->TexCoords[2];
 		subTex->m_TexCoords[3] = subTexData->TexCoords[3];
-		subTex->m_Texture = Texture2D::Create(subTexData->Texture);
+		subTex->m_Texture = texture;
 		return subTex;
 	}
 

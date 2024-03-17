@@ -76,13 +76,32 @@ namespace eg {
 		glDeleteTextures(1, &m_RendererID);
 	}
 
-	void OpenGLTexture2D::Load(const std::string& path)
+	Ref<Texture2D> OpenGLTexture2D::Create(const std::string& path)
+	{
+		Ref<OpenGLTexture2D> texture = CreateRef<OpenGLTexture2D>();
+		if(texture->Load(path))
+			return texture;
+		return nullptr;
+	}
+
+	Ref<Texture2D> OpenGLTexture2D::Create(const UUID& id)
+	{
+		std::filesystem::path path = ResourceDatabase::GetFullPath(id);
+		return Create(path.string());
+	}
+
+	Ref<Texture2D> OpenGLTexture2D::Create(const TextureSpecification& specification)
+	{
+		return CreateRef<OpenGLTexture2D>(specification);
+	}
+
+	bool OpenGLTexture2D::Load(const std::string& path)
 	{
 		EG_PROFILE_FUNCTION();
 		Resource imgResource;
 		if (!resourceSystemLoad(path, ResourceType::Image, &imgResource)) {
 			EG_ERROR("Failed to load image resource for texture {}", path.c_str());
-			return;
+			return false;
 		}
 
 		if (imgResource.Data)
@@ -125,7 +144,9 @@ namespace eg {
 			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, (void*)(((ImageResourceData*)imgResource.Data)->pixels));
 
 			stbi_image_free(((ImageResourceData*)imgResource.Data)->pixels);
+			return true;
 		}
+		return false;
 	}
 
 	static uint32_t TextureFormatTobpp(GLenum format) {

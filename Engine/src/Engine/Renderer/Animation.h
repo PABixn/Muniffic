@@ -33,7 +33,7 @@ namespace eg {
 
 		void RemoveFrame(int index);
 		void ClearFrames();
-		void AddFrame(const Ref<SubTexture2D>& frame);
+		Ref<SubTexture2D> AddFrame(const Ref<SubTexture2D>& frame);
 		void AddFrames(const std::vector<Ref<SubTexture2D>>& frames);
 
 		inline const std::vector<Ref<SubTexture2D>>& GetFrames() const { return m_frames; }

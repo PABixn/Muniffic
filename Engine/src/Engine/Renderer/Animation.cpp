@@ -56,19 +56,10 @@ namespace eg
 
 		for (auto& frame : animData->Frames)
 		{
-			anim->AddFrame(SubTexture2D::Create(frame));
+			if (!anim->AddFrame(SubTexture2D::Create(frame)))
+				return nullptr;
 		}
-		SubTextureResourceData* subTexData = ResourceSerializer::SubTextureResourceDataCache.at(animData->Frames.at(0));
-		if(!subTexData)
-			return nullptr;
-		TextureResourceData* texData = ResourceSerializer::TextureResourceDataCache.at(subTexData->Texture);
-		if(!texData)
-			return nullptr;
-		Resource* res = new Resource();
-		resourceSystemLoad((texData->ResourcePath / (texData->ImageName + texData->Extension)).string(), ResourceType::Image, res);
-		if(!res)
-			return nullptr;
-		
+		return anim;
 	}
 
 	void Animation::Update(float dt, float speed)
@@ -76,7 +67,7 @@ namespace eg
 		if (m_playing && m_frames.size() > 0)
 		{
 			m_frame += m_frameRate * speed * dt;
-			if (m_frame >= m_frameCount)
+			if ((int)m_frame >= m_frames.size())
 			{
 				if (m_loop)
 				{
@@ -150,10 +141,13 @@ namespace eg
 		}
 	}
 
-	void Animation::AddFrame(const Ref<SubTexture2D>& frame)
+	Ref<SubTexture2D> Animation::AddFrame(const Ref<SubTexture2D>& frame)
 	{
+		if(!frame)
+			return nullptr;
 		m_frames.push_back(frame);
 		m_frameCount++;
+		return frame;
 	}
 
 	void Animation::AddFrames(const std::vector<Ref<SubTexture2D>>& frames)

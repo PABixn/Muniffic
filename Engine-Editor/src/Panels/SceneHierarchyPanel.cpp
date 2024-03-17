@@ -980,8 +980,13 @@ namespace eg {
 				if (component.Animator2D->GetCurrentAnimation() != nullptr && animations->size() > 0)
 				{
 					ImGui::Text("Current Animation: %s", component.Animator2D->GetCurrentAnimation()->GetName().c_str());
-					if(component.Animator2D->GetCurrentAnimation()->GetFrame())
-						ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f });
+					if (component.Animator2D->GetCurrentAnimation()->GetFrame())
+					{
+						Ref<SubTexture2D> subtexture = component.Animator2D->GetCurrentAnimation()->GetFrame();
+						ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
+						ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
+						ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
+					}
 				}
 
 				if (ImGui::Button("Add Empty Animation"))
