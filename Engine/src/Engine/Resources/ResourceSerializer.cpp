@@ -1,11 +1,13 @@
 #include "egpch.h"
 #include "Engine/Core/Core.h"
 #include "ResourceSerializer.h"
+#include "Engine/Utils/YAMLConversion.h"
+#include "ResourceUtils.h"
 #include <yaml-cpp/yaml.h>
 #include <fstream>
 #include <optional>
 #include <iostream>
-#include "ResourceUtils.h"
+
 
 namespace eg
 {
@@ -79,7 +81,7 @@ namespace eg
 		auto textureResources = textureNode["Resources"];
 		auto animationResources = animationNode["Resources"];
 		auto spriteAtlasResources = spriteAtlasNode["Resources"];
-		auto subtextureResource = subTextureNode["SubTextures"];
+		auto subtextureResource = subTextureNode["Resources"];
 
 		if (textureResources)
 		{
@@ -112,10 +114,11 @@ namespace eg
 				data->Texture = resource["Texture"].as<uint64_t>();
 
 				auto texCoords = resource["TexCoords"];
-				for (int i = 0; i < 4; i++)
+				int i = 0;
+				for (auto texCoord : texCoords)
 				{
-					data->TexCoords[i].x = texCoords[i]["x"].as<float>();
-					data->TexCoords[i].y = texCoords[i]["y"].as<float>();
+					data->TexCoords[i] = texCoord.as<glm::vec2>();
+					i++;
 				}
 
 				CacheSubTexture(uuid, data);
