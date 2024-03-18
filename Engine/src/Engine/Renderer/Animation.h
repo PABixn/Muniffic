@@ -23,6 +23,7 @@ namespace eg {
 		void Update(float dt, float speed);
 		void Play();
 		void Pause();
+		void Start();
 		void Stop();
 		void SetLoop(bool loop);
 		void SetFrame(int frame);
@@ -39,9 +40,9 @@ namespace eg {
 		inline const std::vector<Ref<SubTexture2D>>& GetFrames() const { return m_frames; }
 		const Ref<SubTexture2D>& GetFrame() const;
 		const Ref<SubTexture2D>& GetFrame(int frame) const;
-		inline int GetFrameCount() const { return m_frameCount; }
 		inline float GetCurrentFrame() const { return m_frame; }
 		inline float* GetCurrentFramePtr() { return &m_frame; }
+		inline const float GetFrameCount() const { return m_frames.size(); }
 		inline bool IsPlaying() const { return m_playing; }
 		inline bool* IsPlayingPtr() { return &m_playing; }
 		inline bool IsLooped() const { return m_loop; }
@@ -53,7 +54,6 @@ namespace eg {
 
 	private:
 		float m_frameRate;
-		int m_frameCount;
 		float m_frame = 0;
 		bool m_loop = false;
 		bool m_playing = false;

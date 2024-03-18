@@ -662,17 +662,52 @@ namespace eg
 			ADD,
 			REMOVE_LAST,
 			ADD_AT,
-			REMOVE_AT
+			REMOVE_AT,
+			DELETE_FIRST_ENTRY_BY_VALUE,
+			DELETE_ALL_ENTRIES_BY_VALUE,
+			REPLACE
+		};
+
+		template<typename T>
+		struct VectorCommandArgs
+		{
+			Ref<std::vector<T>> Vector;
+			VectorCommandType RevertCommand;
+			VectorCommandType ForwardCommand;
+			T OldValue;
+			T NewValue;
+			size_t Index = 0;
+			T RevertValueToReplaceOrDelete;
+			T ForwardValueToReplaceOrDelete;
+
+			VectorCommandArgs(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue, size_t index, T revertReplaceValue, T forwardReplaceValue)
+				: Vector(vector), RevertCommand(revertCommand), ForwardCommand(forwardCommand), OldValue(oldValue), NewValue(newValue), Index(index), RevertValueToReplaceOrDelete(revertReplaceValue), ForwardValueToReplaceOrDelete(forwardReplaceValue) {  }
+
+			VectorCommandArgs(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue, size_t index)
+				: Vector(vector), RevertCommand(revertCommand), ForwardCommand(forwardCommand), OldValue(oldValue), NewValue(newValue), Index(index) {  }
+
+			VectorCommandArgs(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue)
+				: Vector(vector), RevertCommand(revertCommand), ForwardCommand(forwardCommand), OldValue(oldValue), NewValue(newValue) {  }
+
+			VectorCommandArgs() = default;
 		};
 
 		template<typename T>
 		class VectorCommand : public Command
 		{
+			
 
 			public:
-				VectorCommand(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue, size_t index = 0)
-					: m_Vector(vector), m_RevertCommand(revertCommand), m_ForwardCommand(forwardCommand), m_OldValue(oldValue), m_NewValue(newValue), m_Index(index)
-				{
+			VectorCommand(VectorCommandArgs<T> args)
+					: m_Vector(args.Vector), 
+				m_RevertCommand(args.RevertCommand), 
+				m_ForwardCommand(args.ForwardCommand), 
+				m_OldValue(args.OldValue), 
+				m_NewValue(args.NewValue), 
+				m_Index(args.Index), 
+				m_RevertReplaceValue(args.RevertValueToReplaceOrDelete), 
+				m_ForwardReplaceValue(args.RevertValueToReplaceOrDelete)
+			{
 				Commands::AddCommand(this);
 			}
 
@@ -686,6 +721,26 @@ namespace eg
 				case VectorCommandType::REMOVE_LAST: m_Vector->pop_back(); break;
 				case VectorCommandType::ADD_AT: m_Vector->insert(m_Vector->begin() + m_Index, m_OldValue); break;
 				case VectorCommandType::REMOVE_AT: m_Vector->erase(m_Vector->begin() + m_Index); break;
+				case VectorCommandType::REPLACE: 
+				{
+					auto it = std::find(m_Vector->begin(), m_Vector->end(), m_RevertReplaceValue);
+					if (it != m_Vector->end())
+						*it = m_OldValue;
+					break;
+				}
+				case VectorCommandType::DELETE_ALL_ENTRIES_BY_VALUE:
+				{
+					m_Vector->erase(std::remove(m_Vector->begin(), m_Vector->end(), m_OldValue), m_Vector->end());
+					break;
+				}
+				case VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE:
+				{
+					auto it = std::find(m_Vector->begin(), m_Vector->end(), m_OldValue);
+					if (it != m_Vector->end())
+						m_Vector->erase(it);
+					break;
+				}
+
 				}
 
 				SetCurrentCommand(true);
@@ -699,6 +754,25 @@ namespace eg
 					case VectorCommandType::REMOVE_LAST: m_Vector->pop_back(); break;
 					case VectorCommandType::ADD_AT: m_Vector->insert(m_Vector->begin() + m_Index, m_NewValue); break;
 					case VectorCommandType::REMOVE_AT: m_Vector->erase(m_Vector->begin() + m_Index); break;
+					case VectorCommandType::REPLACE:
+					{
+					auto it = std::find(m_Vector->begin(), m_Vector->end(), m_ForwardReplaceValue);
+					if (it != m_Vector->end())
+						*it = m_NewValue;
+					break;
+					}
+					case VectorCommandType::DELETE_ALL_ENTRIES_BY_VALUE:
+					{
+						m_Vector->erase(std::remove(m_Vector->begin(), m_Vector->end(), m_NewValue), m_Vector->end());
+						break;
+					}
+					case VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE:
+					{
+						auto it = std::find(m_Vector->begin(), m_Vector->end(), m_NewValue);
+						if (it != m_Vector->end())
+							m_Vector->erase(it);
+						break;
+					}
 				}
 
 				SetCurrentCommand(false);
@@ -711,6 +785,8 @@ namespace eg
 				T m_OldValue;
 				T m_NewValue;
 				int m_Index;
+				T m_RevertReplaceValue;
+				T m_ForwardReplaceValue;
 		};
 
 		static void SetCurrentCommand(bool isUndo);
@@ -863,9 +939,9 @@ namespace eg
 		}
 
 		template<typename T>
-		static Command* ExecuteVectorCommand(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue)
+		static Command* ExecuteVectorCommand(VectorCommandArgs<T> args)
 		{
-			Command* command = new VectorCommand<T>(vector, revertCommand, forwardCommand, oldValue, newValue);
+			Command* command = new VectorCommand<T>(args);
 			return command;
 		}
 

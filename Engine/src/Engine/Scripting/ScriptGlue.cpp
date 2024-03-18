@@ -642,6 +642,20 @@ namespace eg
 		entity.GetComponent<AnimatorComponent>().Animator2D->RemoveLastAnimation();
 	}
 
+	static void AnimatorComponent_TransitionByIndex(UUID uuid, int toIndex)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->Transition(toIndex);
+	}
+
+	static void AnimatorComponent_Transition(UUID uuid, MonoString* toName)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->Transition(Utils::MonoStringToString(toName));
+	}
+
 	static void AnimatorComponent_AddTransition(UUID uuid, MonoString* fromName, MonoString* toName)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -1244,6 +1258,8 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_AddAnimation);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveAnimation);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveLastAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_TransitionByIndex);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_Transition);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_AddTransition);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_AddTransitionByIndex);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveTransition);

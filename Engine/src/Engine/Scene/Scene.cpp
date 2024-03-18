@@ -374,15 +374,15 @@ namespace eg {
 			}
 		}
 
-		//Set Animations
-		{
-			auto group = m_Registry.group<SpriteRendererSTComponent, AnimatorComponent>();
-			for (auto entity : group)
-			{
-				auto [sprite, animator] = group.get<SpriteRendererSTComponent, AnimatorComponent>(entity);
-				sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame();
-			}
-		}
+		////Set Animations
+		//{
+		//	auto group = m_Registry.group<SpriteRendererSTComponent, AnimatorComponent>();
+		//	for (auto entity : group)
+		//	{
+		//		auto [sprite, animator] = group.get<SpriteRendererSTComponent, AnimatorComponent>(entity);
+		//		sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame();
+		//	}
+		//}
 
 		// Draw Subtexture sprites
 		{

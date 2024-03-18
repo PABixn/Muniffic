@@ -164,6 +164,10 @@ namespace eg
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_RemoveLastAnimation(ulong UUID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_Transition(ulong UUID, string to);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_TransitionByIndex(ulong UUID, int to);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_AddTransition(ulong UUID, string from, string to);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_AddTransitionByIndex(ulong UUID, int from, int to);

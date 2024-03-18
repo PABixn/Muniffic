@@ -12,7 +12,6 @@ namespace eg {
 	Animator::Animator(Ref<std::vector<Ref<Animation>>> animations, float speed)
 		:m_AnimationIndex(0), m_Animations(animations), m_Speed(speed)
 	{
-		m_Transitions.resize(animations->size());
 	}
 
 	void Animator::Play()
@@ -70,8 +69,8 @@ namespace eg {
 
 	void Animator::ResizeAnimations(size_t size)
 	{
-		m_Animations->resize(size);
-		m_Transitions.resize(size);
+		if(size > m_Animations->size())
+			m_Animations->resize(size);
 	}
 
 	void Animator::AddEmptyAnimation()
@@ -110,10 +109,26 @@ namespace eg {
 		return nullptr;
 	}
 
+	void Animator::Transition(size_t toIndex)
+	{
+		if (!CanTransition(m_AnimationIndex, toIndex))
+			return;
+		(*m_Animations)[m_AnimationIndex]->Stop();
+		m_AnimationIndex = toIndex;
+		(*m_Animations)[m_AnimationIndex]->Start();
+	}
+
+	void Animator::Transition(const std::string& toName)
+	{
+		int index = GetAnimationIndex(toName);
+		if (index >= 0)
+			Transition(index);
+	}
+
 	void Animator::AddTransition(size_t fromIndex, size_t toIndex)
 	{
-		if (fromIndex < m_Transitions.size() && toIndex != fromIndex && !CanTransition(fromIndex, toIndex))
-			m_Transitions.push_back(std::make_pair(fromIndex, toIndex));
+		if (fromIndex < m_Transitions->size() && toIndex != fromIndex && !CanTransition(fromIndex, toIndex))
+			m_Transitions->push_back(std::make_pair(fromIndex, toIndex));
 	}
 
 	void Animator::AddTransition(const std::string& fromName, const std::string& toName)
@@ -129,11 +144,11 @@ namespace eg {
 
 	void Animator::RemoveTransition(size_t fromIndex, size_t toIndex)
 	{
-		if (fromIndex < m_Transitions.size() &&  toIndex < m_Transitions.size())
+		if (fromIndex < m_Transitions->size() &&  toIndex < m_Transitions->size())
 		{
-			for(int i = 0; i < m_Transitions.size(); i++)
-				if (m_Transitions[i].first == fromIndex && m_Transitions[i].second == toIndex)
-					m_Transitions.erase(m_Transitions.begin() + i);
+			for(int i = 0; i < m_Transitions->size(); i++)
+				if ((*m_Transitions)[i].first == fromIndex && (*m_Transitions)[i].second == toIndex)
+					m_Transitions->erase(m_Transitions->begin() + i);
 		}
 	}
 
@@ -150,8 +165,8 @@ namespace eg {
 
 	bool Animator::CanTransition(size_t fromIndex, size_t toIndex)
 	{
-		for (int i = 0; i < m_Transitions.size(); i++)
-			if (m_Transitions[i].first == fromIndex && m_Transitions[i].second == toIndex)
+		for (int i = 0; i < m_Transitions->size(); i++)
+			if ((*m_Transitions)[i].first == fromIndex && (*m_Transitions)[i].second == toIndex)
 				return true;
 		return false;
 	}

@@ -170,7 +170,7 @@ namespace eg
 
     public class Animator : Component
     {
-        
+
     }
 
     public class CameraComponent : Component
