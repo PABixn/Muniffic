@@ -88,13 +88,14 @@ namespace eg
 
 		m_ImagePanel->OnImGuiRender();
 		m_AnimationPanel->OnImGuiRender();
+		m_SpriteSheetPanel->OnImGuiRender();
 	}
 
 	void AddResourcePanel::Update(float ts)
 	{
 		if(m_AnimationPanel->IsAnimationPanelOpen())
 			m_AnimationPanel->OnUpdate(ts);
-		m_SpriteSheetPanel->OnImGuiRender();
+		
 		
 	}
 

@@ -12,13 +12,12 @@ namespace eg
 
 	SpriteSheetPanel::SpriteSheetPanel(const std::filesystem::path& path)
 	{
-		m_TextureData.ResourcePath = path;
-		m_Sprites = {};
+		m_SpriteAtlasData.ResourcePath = path;
 	}
 
 	bool SpriteSheetPanel::InitSpriteSheetPanel(const std::filesystem::path& path)
 	{
-		m_TextureData.ResourcePath = path;
+		m_SpriteAtlasData.ResourcePath = path;
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		bool resourceLoad = false;
 		m_LoadedResource = new Resource();
@@ -29,14 +28,17 @@ namespace eg
 		}
 		else {
 			m_OriginalResourcePath = path;
-			m_ResourceData = new TextureResourceData();
-			((TextureResourceData*)m_ResourceData)->ResourcePath = "Textures";
-			((TextureResourceData*)m_ResourceData)->ImageName = m_TextureData.ResourcePath.stem().string();
-			((TextureResourceData*)m_ResourceData)->Extension = m_TextureData.ResourcePath.extension().string();
-			((TextureResourceData*)m_ResourceData)->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
-			((TextureResourceData*)m_ResourceData)->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
-			((TextureResourceData*)m_ResourceData)->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
+			m_ResourceData = new SpriteAtlasResourceData();
+			((SpriteAtlasResourceData*)m_ResourceData)->ResourcePath = "SpriteAtlases";
+			((SpriteAtlasResourceData*)m_ResourceData)->AtlasName = m_SpriteAtlasData.ResourcePath.stem().string();
+			((SpriteAtlasResourceData*)m_ResourceData)->Extension = m_SpriteAtlasData.ResourcePath.extension().string();
+			((SpriteAtlasResourceData*)m_ResourceData)->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
+			((SpriteAtlasResourceData*)m_ResourceData)->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
+			((SpriteAtlasResourceData*)m_ResourceData)->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
+			((SpriteAtlasResourceData*)m_ResourceData)->Sprites = {};
 			m_PreviewData = Texture2D::Create(path.string());
+
+			m_TextureUUID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_ResourceData, ResourceType::SpriteAtlas);
 		}
 	}
 
@@ -53,14 +55,12 @@ namespace eg
 		}
 		else
 		{
-			//ImGui::Image((void*)(intptr_t)m_PreviewData->GetRendererID(), ImVec2(200, 200));
 			for (int j = 0; j < (int)(m_PreviewData->GetHeight() / m_SpriteSize[1]); j++) {
 				for (int i = 0; i < (int)(m_PreviewData->GetWidth() / m_SpriteSize[0]); i++)
 				{
 					if (i != 0)
 						ImGui::SameLine();
 					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
-					//bool isSelected = i >= m_Column && i < m_Column + m_ColumnCount && j >= m_Row && j < m_Row + m_RowCount;
 					ImVec4 borderColor = ImVec4{ 0.1f, 0.1f, 0.1f, 0.1f };
 					ImGui::PushStyleColor(ImGuiCol_Border, borderColor);
 					ImGui::Image(
@@ -94,18 +94,22 @@ namespace eg
 				for (int x = 0; x < ((TextureResourceData*)m_ResourceData)->Width; x += m_SpriteSize[0])
 				{
 					for (int y = 0; y < ((TextureResourceData*)m_ResourceData)->Height; y += m_SpriteSize[1])
-					{
-						SubTexture2D sprite = *SubTexture2D::CreateFromCoords(m_PreviewData, { x, y }, { m_SpriteSize[0], m_SpriteSize[1] });
-						
-						TextureResourceData* spriteResourceData = new TextureResourceData();
-						((TextureResourceData*)spriteResourceData)->ResourcePath = "Textures";
-						((TextureResourceData*)spriteResourceData)->ImageName = m_TextureData.ResourcePath.stem().string() + "sprite" + std::to_string(spriteIndex++);
-						((TextureResourceData*)spriteResourceData)->Extension = m_TextureData.ResourcePath.extension().string();
-						((TextureResourceData*)spriteResourceData)->Height = m_SpriteSize[0];
-						((TextureResourceData*)spriteResourceData)->Width = m_SpriteSize[1];
-						((TextureResourceData*)spriteResourceData)->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
-						
-						ResourceDatabase::AddResource(sprite.GetPath(), spriteResourceData, ResourceType::Image);
+					{	
+						SubTextureResourceData* spriteResourceData = new SubTextureResourceData();
+						((SubTextureResourceData*)spriteResourceData)->ResourcePath = "SubTextures";
+						((SubTextureResourceData*)spriteResourceData)->SubTextureName = m_SpriteAtlasData.ResourcePath.stem().string() + "sprite" + std::to_string(spriteIndex++);
+						//((SubTextureResourceData*)spriteResourceData)->Extension = m_SpriteAtlasData.ResourcePath.extension().string();
+						((SubTextureResourceData*)spriteResourceData)->m_Texture = m_TextureUUID;
+						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[0] = glm::vec2(x, y);
+						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[1] = glm::vec2(x + m_SpriteSize[0], y);
+						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[2] = glm::vec2(x + m_SpriteSize[0], y + m_SpriteSize[1]);
+						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[3] = glm::vec2(x, y + m_SpriteSize[1]); 
+						/*std::cout << x << ", " << y << std::endl;
+						std::cout << x + m_SpriteSize[0] << ", " << y << std::endl;
+						std::cout << x + m_SpriteSize[0] << ", " << y + m_SpriteSize[1] << std::endl;
+						std::cout << x << ", " << y + m_SpriteSize[1] << std::endl;*/
+						((SpriteAtlasResourceData*)m_ResourceData)->Sprites.push_back(ResourceDatabase::AddResource(m_OriginalResourcePath, spriteResourceData, ResourceType::SubTexture));
+						delete spriteResourceData;
 					}
 				}
 				m_ShowSpriteSheetPanel = false;
@@ -120,13 +124,13 @@ namespace eg
 	}
 	void SpriteSheetPanel::ResetData()
 	{
-		m_TextureData = TextureResourceData();
-		m_TextureData.ResourcePath = "";
-		m_TextureData.ImageName = "";
-		m_TextureData.Height = 0;
-		m_TextureData.Width = 0;
-		m_TextureData.Channels = 0;
-		m_TextureData.Extension = "png";
+		m_SpriteAtlasData = SpriteAtlasResourceData();
+		m_SpriteAtlasData.ResourcePath = "";
+		m_SpriteAtlasData.AtlasName = "";
+		m_SpriteAtlasData.Height = 0;
+		m_SpriteAtlasData.Width = 0;
+		m_SpriteAtlasData.Channels = 0;
+		m_SpriteAtlasData.Extension = "png";
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		m_OriginalResourcePath = "";
 		m_PreviewData = nullptr;

@@ -20,13 +20,13 @@ namespace eg {
 		void ResetData();
 	private:
 		int m_SpriteSize[2] = {10,10};
-		std::vector<SubTexture2D*> m_Sprites;
 		void* m_ResourceData = nullptr;
 		Resource* m_LoadedResource = nullptr;
-		TextureResourceData m_TextureData;
+		SpriteAtlasResourceData m_SpriteAtlasData;
 		std::filesystem::path m_OriginalResourcePath = "";
 		Ref<Texture2D> m_PreviewData = nullptr;
 		bool m_ShowSpriteSheetPanel = false;
+		UUID m_TextureUUID;
 		std::filesystem::path m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 	};
 }
