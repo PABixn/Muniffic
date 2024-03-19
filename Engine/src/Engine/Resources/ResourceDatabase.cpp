@@ -12,6 +12,28 @@ namespace eg
 {
 	std::filesystem::path* ResourceDatabase::m_CurrentDirectory;
 
+	std::unordered_map<UUID, Font*> ResourceDatabase::RuntimeFontResourceCache;
+
+	void ResourceDatabase::AddRuntimeResource(UUID uuid, void* data, ResourceType type)
+	{
+		if (data == nullptr)
+			return;
+
+		if (type == ResourceType::Font)
+			RuntimeFontResourceCache[uuid] = (Font*)data;
+		else
+		{
+			EG_CORE_WARN("Resource type not suitable for adding to runtime");
+			return;
+		}
+	}
+
+	void* ResourceDatabase::GetRuntimeResource(UUID uuid, ResourceType type)
+	{
+		if (type == ResourceType::Font)
+			return RuntimeFontResourceCache.at(uuid);
+	}
+
 	void ResourceDatabase::SetResourceData(UUID uuid, ResourceType resourceType, void* data)
 	{
 		if (resourceType == ResourceType::Image)
@@ -562,7 +584,7 @@ namespace eg
 		ResourceSerializer::CacheSubTexture(uuid, data);
 	}
 
-	void AddFontResource(UUID uuid, const std::filesystem::path& originalResourcePath, FontResourceData* data)
+	void AddFontResourceData(UUID uuid, const std::filesystem::path& originalResourcePath, FontResourceData* data)
 	{
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->FontName + data->Extension);
 
@@ -625,6 +647,13 @@ namespace eg
 		{
 			Resource* loadedResource = new Resource();
 			bool resourceLoad = resourceSystemLoad(filePath.string(), ResourceType::Image, loadedResource);
+
+			if(!resourceLoad)
+			{
+				EG_CORE_ERROR("Failed to load resource: {0}", filePath.string());
+				return;
+			}
+
 			TextureResourceData* data = new TextureResourceData();
 			data->ResourcePath = ResourceUtils::GetResourcePath(m_CurrentDirectory->string());
 			data->ImageName = filePath.stem().string();
@@ -633,6 +662,14 @@ namespace eg
 			data->Width = ((ImageResourceData*)loadedResource->Data)->width;
 			data->Channels = ((ImageResourceData*)loadedResource->Data)->channelCount;
 			AddTextureResource(UUID(), filePath, data);
+		}
+		else if (type == ResourceType::Font)
+		{
+			FontResourceData* data = new FontResourceData();
+			data->ResourcePath = ResourceUtils::GetResourcePath(m_CurrentDirectory->string());
+			data->FontName = filePath.stem().string();
+			data->Extension = filePath.extension().string();
+			AddFontResourceData(UUID(), filePath, data);
 		}
 		else
 		{
@@ -698,7 +735,7 @@ namespace eg
 			AddSpriteAtlasResource(uuid, originalResourcePath, (SpriteAtlasResourceData*)data);
 			break;
 		case ResourceType::Font:
-			AddFontResource(uuid, originalResourcePath, (FontResourceData*)data);
+			AddFontResourceData(uuid, originalResourcePath, (FontResourceData*)data);
 			break;
 		}
 

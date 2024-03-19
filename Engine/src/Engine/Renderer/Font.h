@@ -11,7 +11,7 @@ namespace eg
 	class Font
 	{
 	public:
-		Font(const std::filesystem::path& font);
+		Font(MSDFData* data, Ref<Texture2D> atlasTexture);
 		~Font();
 
 		MSDFData* GetData() const { return m_Data; }

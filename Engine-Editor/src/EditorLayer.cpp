@@ -23,13 +23,13 @@ namespace eg
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
-		s_Font = Font::GetDefaultFont();
+		
 	}
 
 	void EditorLayer::OnAttach()
 	{
 		ResourceSystemConfig resourceSystemConfig;
-		resourceSystemConfig.MaxLoaderCount = 3;
+		resourceSystemConfig.MaxLoaderCount = 4;
 		resourceSystemConfig.ResourceDirectory = "../resources";
 
 		if (!resourceSystemInit(resourceSystemConfig))
@@ -37,6 +37,8 @@ namespace eg
 			EG_ERROR("Failed to initialize resource system.");
 			return;
 		}
+
+		s_Font = Font::GetDefaultFont();
 
 		EG_PROFILE_FUNCTION();
 		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");

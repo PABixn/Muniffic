@@ -2,12 +2,16 @@
 
 #include "resourceTypes.h"
 #include "ResourceSerializer.h"
+#include "Engine/Renderer/Font.h"
 
-
-namespace eg {
+namespace eg
+{
 	class ResourceDatabase
 	{
 	public:
+		static void* GetRuntimeResource(UUID uuid, ResourceType type);
+		static void AddRuntimeResource(UUID uuid, void* data, ResourceType type);
+
 		static void* GetResourceData(UUID uuid, ResourceType resourceType);
 		static bool FindResourceData(UUID uuid, ResourceType resourceType);
 		static void SetResourceData(UUID uuid, ResourceType resourceType, void* data);
@@ -41,5 +45,7 @@ namespace eg {
 
 	private:
 		static std::filesystem::path* m_CurrentDirectory;
+
+		static std::unordered_map<UUID, Font*> RuntimeFontResourceCache;
 	};
 }
