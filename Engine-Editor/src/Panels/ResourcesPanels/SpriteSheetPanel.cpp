@@ -22,6 +22,8 @@ namespace eg
 		bool resourceLoad = false;
 		m_LoadedResource = new Resource();
 		resourceLoad = resourceSystemLoad(path.string(), ResourceType::Image, m_LoadedResource);
+		m_SpriteSize[0] = 10;
+		m_SpriteSize[1] = 10;
 
 		if (!resourceLoad) {
 			return false;
@@ -98,16 +100,11 @@ namespace eg
 						SubTextureResourceData* spriteResourceData = new SubTextureResourceData();
 						((SubTextureResourceData*)spriteResourceData)->ResourcePath = "SubTextures";
 						((SubTextureResourceData*)spriteResourceData)->SubTextureName = m_SpriteAtlasData.ResourcePath.stem().string() + "sprite" + std::to_string(spriteIndex++);
-						//((SubTextureResourceData*)spriteResourceData)->Extension = m_SpriteAtlasData.ResourcePath.extension().string();
 						((SubTextureResourceData*)spriteResourceData)->m_Texture = m_TextureUUID;
 						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[0] = glm::vec2(x, y);
 						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[1] = glm::vec2(x + m_SpriteSize[0], y);
 						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[2] = glm::vec2(x + m_SpriteSize[0], y + m_SpriteSize[1]);
 						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[3] = glm::vec2(x, y + m_SpriteSize[1]); 
-						/*std::cout << x << ", " << y << std::endl;
-						std::cout << x + m_SpriteSize[0] << ", " << y << std::endl;
-						std::cout << x + m_SpriteSize[0] << ", " << y + m_SpriteSize[1] << std::endl;
-						std::cout << x << ", " << y + m_SpriteSize[1] << std::endl;*/
 						((SpriteAtlasResourceData*)m_ResourceData)->Sprites.push_back(ResourceDatabase::AddResource(m_OriginalResourcePath, spriteResourceData, ResourceType::SubTexture));
 						delete spriteResourceData;
 					}
@@ -134,5 +131,7 @@ namespace eg
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		m_OriginalResourcePath = "";
 		m_PreviewData = nullptr;
+		m_SpriteSize[0] = 10;
+		m_SpriteSize[1] = 10;
 	}
 }

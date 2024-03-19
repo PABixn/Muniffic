@@ -19,7 +19,7 @@ namespace eg {
 	private:
 		void ResetData();
 	private:
-		int m_SpriteSize[2] = {10,10};
+		int m_SpriteSize[2];
 		void* m_ResourceData = nullptr;
 		Resource* m_LoadedResource = nullptr;
 		SpriteAtlasResourceData m_SpriteAtlasData;
