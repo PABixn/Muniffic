@@ -1,5 +1,6 @@
 #pragma once
 #include "Texture.h"
+#include "Engine/Core/UUID.h"
 #include <glm/glm.hpp>
 
 namespace eg {
@@ -17,6 +18,7 @@ namespace eg {
 
 		SubTexture2D(const Ref<Texture2D>& texture, const glm::vec2& min, const glm::vec2& max);
 		static Ref<SubTexture2D> Create(const Ref<Texture2D>& texture, const glm::vec2& min, const glm::vec2& max);
+		static Ref<SubTexture2D> Create(UUID id);
 
 		const Ref<Texture2D> GetTexture() const { return m_Texture; }
 		Ref<Texture2D> GetTexture() { return m_Texture; }
@@ -27,6 +29,8 @@ namespace eg {
 		glm::vec2* GetTexCoords() { return m_TexCoords; }
 		const glm::vec2& GetMin() const { return m_TexCoords[0]; }
 		const glm::vec2& GetMax() const { return m_TexCoords[2]; }
+		const glm::vec2& GetMinImGuiCoords() const { return { m_TexCoords[0].x, m_TexCoords[2].y }; }
+		const glm::vec2& GetMaxImGuiCoords() const { return { m_TexCoords[2].x, m_TexCoords[0].y }; }
 
 		inline void SetTexCoords(int index, glm::vec2 coords) { if(index < 4) m_TexCoords[index] = coords; };
 		inline void SetTexture(const Ref<Texture2D>& texture) { m_Texture = texture; };
@@ -36,5 +40,6 @@ namespace eg {
 			Ref<Texture2D> m_Texture;
 			glm::vec2 m_TexCoords[4];
 			std::filesystem::path m_FilePath;
+			UUID m_Id;
 	};
 }

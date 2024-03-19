@@ -167,6 +167,7 @@ namespace eg
         internal extern static void AnimatorComponent_AddTransition(ulong UUID, string from, string to);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_AddTransitionByIndex(ulong UUID, int from, int to);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_RemoveTransition(ulong UUID, string from, string to);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_RemoveTransitionByIndex(ulong UUID, int from, int to);

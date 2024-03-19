@@ -169,8 +169,7 @@ namespace eg
 
 	void Commands::DeleteResourceCommand::Undo()
 	{
-		if(m_ResourceType == ResourceType::Image)
-			ResourceSerializer::TextureResourceDataCache[m_UUID] = (TextureResourceData*)m_Resource;
+		ResourceDatabase::SetResourceData(m_UUID, m_ResourceType, m_Resource);
 
 		SetCurrentCommand(true);
 	}

@@ -36,7 +36,7 @@ namespace eg
 			return false;
 		}
 
-		ImageResourceData *imageResourceData = new ImageResourceData;
+		ImageResourceData* imageResourceData = new ImageResourceData;
 
 		imageResourceData->pixels = data;
 		imageResourceData->width = width;

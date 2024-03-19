@@ -29,12 +29,19 @@ namespace eg
 		Resource* m_LoadedResource = nullptr;
 		int m_FrameWidth = 0, m_FrameHeight = 0;
 		int m_Column = 0, m_Row = 0;
-		int m_ColumnCount = 0, m_RowCount = 0;
+		int m_ColumnCount = 1, m_RowCount = 1;
+		
+		float m_ImageAspectRatio = 1;
+		int m_BasePreviewWidthImage = 1, m_BasePreviewHeightImage = 1;
+
+		float m_PreviewAspectRatio = 1;
+		int m_BasePreviewWidth = 1, m_BasePreviewHeight = 1;
 
 		//TextureResourceData m_TextureData;
 		std::filesystem::path m_OriginalResourcePath = "";
 
 		UUID m_TextureUUID;
+
 
 		Ref<Texture2D> m_PreviewOriginImage = nullptr;
 		Ref<Animation> m_PreviewData = nullptr;

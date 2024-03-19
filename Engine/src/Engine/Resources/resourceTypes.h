@@ -5,7 +5,8 @@
 #include "Engine/Project/Project.h"
 #include "Engine/Core/UUID.h"
 
-namespace eg {
+namespace eg
+{
 	enum class ResourceType
 	{
 		Animation,
@@ -28,7 +29,7 @@ namespace eg {
 		std::string Name;
 		std::filesystem::path Path;
 		uint64_t DataSize;
-		void* Data;
+		void *Data;
 	};
 
 	struct ImageResourceData
@@ -36,7 +37,7 @@ namespace eg {
 		uint8_t channelCount;
 		uint32_t width;
 		uint32_t height;
-		unsigned char* pixels;
+		unsigned char *pixels;
 	};
 
 	struct SpriteAtlasResourceData
@@ -51,10 +52,10 @@ namespace eg {
 
 	struct AnimationResourceData
 	{
-		float m_frameRate;
-		int m_frameCount;
-		bool m_loop;
-		std::vector<UUID> m_frames;
+		float FrameRate;
+		int FrameCount;
+		bool Loop;
+		std::vector<UUID> Frames;
 		std::filesystem::path ResourcePath = "";
 		std::string AnimationName = "";
 		std::string Extension = "";
@@ -62,11 +63,18 @@ namespace eg {
 
 	struct SubTextureResourceData
 	{
-		glm::vec2 m_TexCoords[4];
+		glm::vec2 TexCoords[4];
 		std::filesystem::path ResourcePath = "";
 		std::string SubTextureName = "";
 		std::string Extension = "";
-		UUID m_Texture;
+		UUID Texture;
+	};
+
+	struct FontResourceData
+	{
+		std::filesystem::path ResourcePath = "";
+		std::string FontName = "";
+		std::string Extension = "";
 	};
 
 	struct TextureResourceData
@@ -94,4 +102,3 @@ namespace eg {
 	};
 
 }
-

@@ -3,6 +3,7 @@
 #include "Engine/Resources/loaders/BinaryLoader.h"
 #include "Engine/Resources/loaders/ImageLoader.h"
 #include "Engine/Resources/loaders/TextLoader.h"
+#include "Engine/Resources/loaders/FontLoader.h"
 
 //Todo: switch to Ref instead of raw pointers
 namespace eg {
@@ -46,6 +47,7 @@ namespace eg {
 		resourceSystemRegisterLoader(StatePtr, textResourceLoaderCreate());
 		resourceSystemRegisterLoader(StatePtr, binaryResourceLoaderCreate());
 		resourceSystemRegisterLoader(StatePtr, imageResourceLoaderCreate());
+		resourceSystemRegisterLoader(StatePtr, fontResourceLoaderCreate());
 	}
 
 	void resourceSystemShutdown()

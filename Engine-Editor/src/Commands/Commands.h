@@ -340,6 +340,42 @@ namespace eg
 			const std::string m_Label;
 		};
 
+		template<typename T>
+		class ChangeRefValueCommand : public Command
+		{
+		public:
+			ChangeRefValueCommand(Ref<T> value_ptr, Ref<T> previousValuePtr, const std::string label)
+				: m_ValuePtr(value_ptr), m_PreviousValuePtr(previousValuePtr), m_Label(label), m_Value(value_ptr)
+			{
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs args) override {};
+
+			void Undo() override
+			{
+				m_Value = m_ValuePtr;
+				m_ValuePtr = m_PreviousValuePtr;
+
+				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				m_ValuePtr = m_Value;
+
+				SetCurrentCommand(false);
+			}
+
+			const std::string GetLabel() const { return m_Label; }
+
+		protected:
+			Ref<T> m_ValuePtr;
+			Ref<T> m_Value;
+			Ref<T> m_PreviousValuePtr;
+			const std::string m_Label;
+		};
+
 		class ComponentCommand : public Command
 		{
 		public:
@@ -788,6 +824,21 @@ namespace eg
 
 			entity.ApplyValueToChildren<T, Component>(value_ptr);
 
+			return command;
+		}
+
+		template<typename T>
+		static Command* ExecuteRefValueCommand(Ref<T> value_ptr, Ref<T> previous_value_ptr, const std::string label, bool bypass = false)
+		{
+			Command* command = nullptr;
+			ChangeRawValueCommand<Ref<T>>* previousCommand = dynamic_cast<ChangeRawValueCommand<Ref<T>>*>(GetCurrentCommand());
+			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
+				Command* command = new ChangeRefValueCommand<T>(value_ptr, previous_value_ptr, label);
+			else {
+				if (GetIsSaved()) {
+					SetIsSaved(false);
+				}
+			}
 			return command;
 		}
 

@@ -1,8 +1,7 @@
 #include "egpch.h"
 #include "Engine/Core/Core.h"
 #include "SceneSerializer.h"
-#include <yaml-cpp/yaml.h>
-#include <fstream>
+#include "Engine/Utils/YAMLConversion.h"
 #include "Entity.h"
 #include "Components.h"
 #include <optional>
@@ -10,102 +9,10 @@
 #include "Engine/Project/Project.h"
 #include "Engine/Resources/ResourceSerializer.h"
 #include "Engine/Resources/ResourceDatabase.h"
+#include <yaml-cpp/yaml.h>
+#include <fstream>
 
-namespace YAML
-{
 
-	template<>
-	struct convert<glm::vec2>
-	{
-		static Node encode(const glm::vec2& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			//node.SetStyle(EmitterStyle::Flow);
-			return node;
-		}
-
-		static bool decode(const Node& node, glm::vec2& rhs)
-		{
-			if (!node.IsSequence() || node.size() != 2)
-				return false;
-
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			return true;
-		}
-	};
-
-	template<>
-	struct convert<glm::vec3>
-	{
-		static Node encode(const glm::vec3& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
-			//node.SetStyle(EmitterStyle::Flow);
-			return node;
-		}
-
-		static bool decode(const Node& node, glm::vec3& rhs)
-		{
-			if (!node.IsSequence() || node.size() != 3)
-				return false;
-
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			return true;
-		}
-	};
-
-	template<>
-	struct convert<glm::vec4>
-	{
-		static Node encode(const glm::vec4& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
-			node.push_back(rhs.w);
-			//node.SetStyle(EmitterStyle::Flow);
-			return node;
-		}
-
-		static bool decode(const Node& node, glm::vec4& rhs)
-		{
-			if (!node.IsSequence() || node.size() != 4)
-				return false;
-
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			rhs.w = node[3].as<float>();
-			return true;
-		}
-	};
-
-	template<>
-	struct convert<eg::UUID>
-	{
-		static Node encode(const eg::UUID& uuid)
-		{
-			Node node;
-			node.push_back((uint64_t)uuid);
-			return node;
-		}
-
-		static bool decode(const Node& node, eg::UUID& uuid)
-		{
-			uuid = node.as<uint64_t>();
-			return true;
-		}
-	};
-}
 
 namespace eg {
 
@@ -117,26 +24,7 @@ namespace eg {
 		break;                                         \
 	}
 
-	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
-	{
-		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
-		return out;
-	}
-
-	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
-	{
-		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
-		return out;
-	}
-
-	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
-	{
-		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
-		return out;
-	}
+	
 
 	static std::string RigidBody2dBodyTypeToString(RigidBody2DComponent::BodyType bodyType)
 	{
@@ -261,12 +149,11 @@ namespace eg {
 			out << YAML::Key << "Animations" << YAML::BeginSeq;
 			for (auto& animation : *animatorComponent.Animator2D->GetAnimations())
 			{
-				//TODO: if animation uses prefab
-				//out << ResourceDatabase::FindResourceByKeyPath(animation.);
-				//TODO: else serialize animation
+				out << animation->GetID();
 			}
+
+			out << YAML::EndSeq; // Animations
 			out << YAML::EndMap; // Animations
-			out << YAML::EndMap; // AnimatorComponent
 		}
 
 		if (entity.HasComponent<CameraComponent>())
@@ -418,6 +305,7 @@ namespace eg {
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+
 		m_Scene->m_Registry.each([&](auto entityID)
 		{
 			Entity entity = { entityID, m_Scene.get() };
@@ -426,11 +314,13 @@ namespace eg {
 
 			SerializeEntity(out, entity);
 		});
+
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
+		fout.close();
 
 		ResourceSerializer::SerializeResourceCache();
 	}
@@ -594,12 +484,15 @@ namespace eg {
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 					if(spriteRendererComponent["TilingFactor"])
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
+
 					if (spriteRendererComponent["TextureUUID"])
 					{
 						uint64_t textureUUID = spriteRendererComponent["TextureUUID"].as<uint64_t>();
-						if (ResourceSerializer::TextureResourceDataCache.find(textureUUID) != ResourceSerializer::TextureResourceDataCache.end())
+
+						if (ResourceDatabase::FindResourceData(textureUUID, ResourceType::Image))
 						{
-							std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceSerializer::TextureResourceDataCache[textureUUID]->ResourcePath / std::string(ResourceSerializer::TextureResourceDataCache[textureUUID]->ImageName + ResourceSerializer::TextureResourceDataCache[textureUUID]->Extension);
+							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(textureUUID, ResourceType::Image);
+							std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
 							src.Texture = Texture2D::Create(finalPath.string());
 						}
 						else
@@ -625,10 +518,10 @@ namespace eg {
 					{
 						uint64_t textureUUID = spriteRendererComponentST["TextureUUID"].as<uint64_t>();
 
-
-						if (ResourceSerializer::TextureResourceDataCache.find(textureUUID) != ResourceSerializer::TextureResourceDataCache.end())
+						if (ResourceDatabase::FindResourceData(uuid, ResourceType::Image))
 						{
-							std::filesystem::path texturePath = ResourceSerializer::TextureResourceDataCache[textureUUID]->ResourcePath / std::string(ResourceSerializer::TextureResourceDataCache[textureUUID]->ImageName + ResourceSerializer::TextureResourceDataCache[textureUUID]->Extension);
+							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::Image);
+							std::filesystem::path texturePath = texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
 							auto path = Project::GetAssetFileSystemPath(texturePath);
 							auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
 							auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();
@@ -671,8 +564,9 @@ namespace eg {
 						for (auto animation : animations)
 						{
 							//TODO: if animation uses prefab
-							std::string name = animation.first.as<std::string>();
-							const Animation anim(name);
+							Ref<Animation> anim = Animation::Create(UUID(animation.as<uint64_t>()));
+							if(anim)
+								ac.Animator2D->AddAnimation(anim);
 							//TODO: else load all data for animation from scene file
 						}
 					}

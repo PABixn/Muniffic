@@ -614,7 +614,7 @@ namespace eg
 		return entity.GetComponent<AnimatorComponent>().Animator2D->GetSpeed();
 	}
 
-	static const Animation& AnimatorComponent_GetCurrentAnimation(UUID uuid)
+	static const Ref<Animation> AnimatorComponent_GetCurrentAnimation(UUID uuid)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
