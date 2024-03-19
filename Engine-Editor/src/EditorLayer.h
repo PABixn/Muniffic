@@ -7,6 +7,7 @@
 #include "Panels/ConsolePanel.h"
 #include "Panels/LayersPanel.h"
 #include "Panels/LayerDeletingPanel.h"
+#include "Panels/LayoutManagementPanel.h"
 
 
 namespace eg {
@@ -54,6 +55,7 @@ namespace eg {
 		friend class ConsolePanel;
 		friend class LayersPanel;
 		friend class LayerDeletingPanel;
+		friend class LayoutManagementPanel;
 		OrthographicCameraController m_Camera;
 		//Temp
 		Ref<Shader> m_Shader;
@@ -100,6 +102,7 @@ namespace eg {
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 		Scope<ConsolePanel> m_ConsolePanel;
 		Scope<LayersPanel> m_LayersPanel;
+		Scope<LayoutManagementPanel> m_LayoutManagementPanel;
 		LayerDeletingPanel* m_LayerDeletingPanel;
 
 		enum class SceneState

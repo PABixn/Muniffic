@@ -5,6 +5,7 @@
 #include "Engine/Renderer/RenderCommand.h"
 #include "Engine/Renderer/MSDFData.h"
 #include "UniformBuffer.h"
+#include "../Engine-Editor/src/Panels/LayersPanel.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

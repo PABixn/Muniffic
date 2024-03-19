@@ -239,6 +239,7 @@ namespace eg
 
 		m_LayersPanel->SetLayerDeletingPanel(m_LayerDeletingPanel);
 		m_LayersPanel->OnImGuiRender();
+		m_LayoutManagementPanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
@@ -643,6 +644,7 @@ namespace eg
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		m_LayersPanel->SetContext(m_ActiveScene);
+		m_LayoutManagementPanel->SetContext(m_ActiveScene);
 
 		m_ActiveScenePath = std::filesystem::path();
 		ConsolePanel::Log("File: EditorLayer.cpp - New Scene Created", ConsolePanel::LogType::Info);
@@ -680,6 +682,7 @@ namespace eg
 			m_ActiveScene = newScene;
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 			m_LayersPanel->SetContext(m_ActiveScene);
+			m_LayoutManagementPanel->SetContext(m_ActiveScene);
 			m_ActiveScenePath = path;
 		}
 	}
@@ -742,6 +745,7 @@ namespace eg
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 			m_ConsolePanel = CreateScope<ConsolePanel>();
 			m_LayersPanel = CreateScope<LayersPanel>();
+			m_LayoutManagementPanel = CreateScope<LayoutManagementPanel>();
 			m_LayerDeletingPanel = new LayerDeletingPanel();
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		}
@@ -782,6 +786,7 @@ namespace eg
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		m_LayersPanel->SetContext(m_ActiveScene);
+		m_LayoutManagementPanel->SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnSceneSimulate()
@@ -796,6 +801,7 @@ namespace eg
 		ConsolePanel::Log("File: EditorLayer.cpp - Simulation started", ConsolePanel::LogType::Info);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		m_LayersPanel->SetContext(m_ActiveScene);
+		m_LayoutManagementPanel->SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnScenePause()
