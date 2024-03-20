@@ -12,7 +12,18 @@ namespace eg
 {
 	std::filesystem::path* ResourceDatabase::m_CurrentDirectory;
 
-	std::unordered_map<UUID, Font*> ResourceDatabase::RuntimeFontResourceCache;
+	std::unordered_map<UUID, Ref<Font>> ResourceDatabase::RuntimeFontResourceCache;
+
+	bool ResourceDatabase::FindRuntimeResource(UUID uuid, ResourceType type)
+	{
+		if (type == ResourceType::Font)
+			return RuntimeFontResourceCache.find(uuid) != RuntimeFontResourceCache.end();
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported");
+			return false;
+		}
+	}
 
 	void ResourceDatabase::AddRuntimeResource(UUID uuid, void* data, ResourceType type)
 	{
@@ -713,6 +724,35 @@ namespace eg
 		else
 		{
 			EG_CORE_ERROR("File does not exist");
+		}
+	}
+
+	void ResourceDatabase::LoadRuntimeResource(UUID uuid, ResourceType type)
+	{
+		if (!FindResourceData(uuid, type) || !FindRuntimeResource(uuid, type))
+		{
+			EG_CORE_ERROR("Resource not found in cache");
+			return;
+		}
+
+		if (type == ResourceType::Font)
+		{
+			Resource* loadedResource = new Resource();
+			bool resourceLoad = resourceSystemLoad(GetFullPath(uuid).string(), ResourceType::Font, loadedResource);
+
+			if (!resourceLoad)
+			{
+				EG_CORE_ERROR("Failed to load resource: {0}", GetFullPath(uuid).string());
+				return;
+			}
+
+			Font* font = (Font*)loadedResource->Data;
+			AddRuntimeResource(uuid, font, type);
+		}
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported for runtime loading");
+			return;
 		}
 	}
 

@@ -11,6 +11,8 @@ namespace eg
 	public:
 		static void* GetRuntimeResource(UUID uuid, ResourceType type);
 		static void AddRuntimeResource(UUID uuid, void* data, ResourceType type);
+		static bool FindRuntimeResource(UUID uuid, ResourceType type);
+		static void LoadRuntimeResource(UUID uuid, ResourceType type);
 
 		static void* GetResourceData(UUID uuid, ResourceType resourceType);
 		static bool FindResourceData(UUID uuid, ResourceType resourceType);
@@ -46,6 +48,6 @@ namespace eg
 	private:
 		static std::filesystem::path* m_CurrentDirectory;
 
-		static std::unordered_map<UUID, Font*> RuntimeFontResourceCache;
+		static std::unordered_map<UUID, Ref<Font>> RuntimeFontResourceCache;
 	};
 }
