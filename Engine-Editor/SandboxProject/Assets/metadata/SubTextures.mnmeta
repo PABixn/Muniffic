@@ -19,16 +19,6 @@ Resources:
       - [0.578000009, 0.684824944]
       - [0.578000009, 1]
       - [0.289000005, 1]
-  - UUID: 14619977974021854251
-    ResourcePath: SubTextures\
-    SubTextureName: Dune7
-    Extension: ""
-    Texture: 9849798687603657340
-    TexCoords:
-      - [0.289000005, 0.0544747114]
-      - [0.578000009, 0.0544747114]
-      - [0.578000009, 0.369649827]
-      - [0.289000005, 0.369649827]
   - UUID: 4165010258377046411
     ResourcePath: SubTextures\
     SubTextureName: Dune2
@@ -39,16 +29,16 @@ Resources:
       - [0.866999984, 0.684824944]
       - [0.866999984, 1]
       - [0.578000009, 1]
-  - UUID: 14282412054322120025
+  - UUID: 14619977974021854251
     ResourcePath: SubTextures\
-    SubTextureName: Dune6
+    SubTextureName: Dune7
     Extension: ""
     Texture: 9849798687603657340
     TexCoords:
-      - [0, 0.0544747114]
       - [0.289000005, 0.0544747114]
+      - [0.578000009, 0.0544747114]
+      - [0.578000009, 0.369649827]
       - [0.289000005, 0.369649827]
-      - [0, 0.369649827]
   - UUID: 11087870749396203833
     ResourcePath: SubTextures\
     SubTextureName: Dune3
@@ -59,6 +49,16 @@ Resources:
       - [0.289000005, 0.369649827]
       - [0.289000005, 0.684824944]
       - [0, 0.684824944]
+  - UUID: 14282412054322120025
+    ResourcePath: SubTextures\
+    SubTextureName: Dune6
+    Extension: ""
+    Texture: 9849798687603657340
+    TexCoords:
+      - [0, 0.0544747114]
+      - [0.289000005, 0.0544747114]
+      - [0.289000005, 0.369649827]
+      - [0, 0.369649827]
   - UUID: 2538553471241823160
     ResourcePath: SubTextures\
     SubTextureName: Dune4

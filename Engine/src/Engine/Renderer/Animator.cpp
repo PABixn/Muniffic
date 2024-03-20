@@ -7,6 +7,7 @@ namespace eg {
 		: m_AnimationIndex(0), m_Speed(1.0f)
 	{
 		m_Animations = CreateRef<std::vector<Ref<Animation>>>();
+		m_Transitions = CreateRef<std::vector<std::pair<size_t, size_t>>>();
 	}
 
 	Animator::Animator(Ref<std::vector<Ref<Animation>>> animations, float speed)
@@ -127,8 +128,14 @@ namespace eg {
 
 	void Animator::AddTransition(size_t fromIndex, size_t toIndex)
 	{
-		if (fromIndex < m_Transitions->size() && toIndex != fromIndex && !CanTransition(fromIndex, toIndex))
+		if (toIndex != fromIndex && !CanTransition(fromIndex, toIndex))
 			m_Transitions->push_back(std::make_pair(fromIndex, toIndex));
+	}
+
+	void Animator::AddTransition(const std::pair<size_t, size_t>& transition)
+	{
+		if (transition.second != transition.first && !CanTransition(transition.first, transition.second))
+			m_Transitions->push_back(transition);
 	}
 
 	void Animator::AddTransition(const std::string& fromName, const std::string& toName)

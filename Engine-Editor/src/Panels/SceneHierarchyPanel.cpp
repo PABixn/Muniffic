@@ -1057,32 +1057,39 @@ namespace eg {
 				}
 
 				Ref<std::vector<std::pair<size_t, size_t>>> transitions = component.Animator2D->GetTransitions();
-				if (ImGui::TreeNode("Transitions:"))
+				if (ImGui::Button("Add Transition"))
 				{
-					if (ImGui::Button("Add Transition"))
+					ImGui::OpenPopup("AddTransition");
+				}
+				if (ImGui::BeginPopup("AddTransition"))
+				{
+					for (size_t i = 0; i < animations->size(); i++)
 					{
-						ImGui::OpenPopup("AddTransition");
-					}
-					if (ImGui::BeginPopup("AddTransition"))
-					{
-						for (size_t i = 0; i < animations->size(); i++)
+						for (size_t j = 0; j < animations->size(); j++)
 						{
-							for (size_t j = 0; j < animations->size(); j++)
+							std::pair<size_t, size_t> transition = std::make_pair(i, j);
+							auto hasTransition = std::find(transitions->begin(), transitions->end(), transition);
+							if (i != j && hasTransition == transitions->end())
 							{
-								if (i != j)
+								std::string name = animations->at(i)->GetName() + " to " + animations->at(j)->GetName();
+								if (ImGui::Button(name.c_str()))
 								{
-									std::string name = animations->at(i)->GetName() + " to " + animations->at(j)->GetName();
-									if (ImGui::Button(name.c_str()))
-									{
-										component.Animator2D->AddTransition(i, j);
-										Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, std::make_pair(i, j), std::make_pair(i, j) });
-										ImGui::CloseCurrentPopup();
-									}
+									component.Animator2D->AddTransition(transition);
+									Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, transition, transition });
+									ImGui::CloseCurrentPopup();
 								}
 							}
 						}
-						ImGui::EndPopup();
 					}
+					if (ImGui::Button("Cancel"))
+					{
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+				if (ImGui::TreeNode("Transitions:"))
+				{
+					
 					if (transitions->size() > 0)
 					{
 						int i = 0;
@@ -1093,14 +1100,15 @@ namespace eg {
 							ImGui::SameLine();
 							if (ImGui::Button("+"))
 							{
-								ImGui::BeginPopup("##Transition Popup");
-								if (ImGui::Button("Remove Transition"))
-								{
-									component.Animator2D->RemoveTransition(transition.first, transition.second);
-									Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::ADD, Commands::VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE, transition, transition, 0, transition, transition });
-									ImGui::EndPopup();
-								}
+								ImGui::OpenPopup("##Transition Popup");
+								
 								ImGui::EndPopup();
+							}
+							ImGui::BeginPopup("##Transition Popup");
+							if (ImGui::Button("Remove Transition"))
+							{
+								component.Animator2D->RemoveTransition(transition.first, transition.second);
+								Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::ADD, Commands::VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE, transition, transition, 0, transition, transition });
 							}
 							ImGui::PopID();
 							i++;

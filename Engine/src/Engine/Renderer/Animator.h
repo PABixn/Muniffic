@@ -40,6 +40,7 @@ namespace eg {
 		void Transition(size_t toIndex);
 		void Transition(const std::string& toName);
 		void AddTransition(size_t fromIndex, size_t toIndex);
+		void AddTransition(const std::pair<size_t, size_t>& transition);
 		void AddTransition(const std::string& fromName, const std::string& toName);
 		void RemoveTransition(size_t fromIndex, size_t toIndex);
 		void RemoveTransition(const std::string& fromName, const std::string& toName);
