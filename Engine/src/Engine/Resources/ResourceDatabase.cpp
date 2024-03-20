@@ -31,7 +31,7 @@ namespace eg
 			return;
 
 		if (type == ResourceType::Font)
-			RuntimeFontResourceCache[uuid] = (Font*)data;
+			RuntimeFontResourceCache[uuid] = CreateRef<Font>(((Font*)data)->GetData(), ((Font*)data)->GetAtlasTexture());
 		else
 		{
 			EG_CORE_WARN("Resource type not suitable for adding to runtime");
@@ -42,7 +42,7 @@ namespace eg
 	void* ResourceDatabase::GetRuntimeResource(UUID uuid, ResourceType type)
 	{
 		if (type == ResourceType::Font)
-			return RuntimeFontResourceCache.at(uuid);
+			return RuntimeFontResourceCache.at(uuid).get();
 	}
 
 	void ResourceDatabase::SetResourceData(UUID uuid, ResourceType resourceType, void* data)
