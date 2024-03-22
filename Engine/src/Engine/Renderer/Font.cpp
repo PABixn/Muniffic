@@ -9,6 +9,7 @@
 #include "msdf-atlas-gen.h"
 #include "msdfgen.h"
 #include "Engine/Resources/Systems/ResourceSystem.h"
+#include "Engine/Resources/ResourceDatabase.h"
 
 namespace eg
 {
@@ -20,19 +21,17 @@ namespace eg
 		delete m_Data;
 	}
 
-	Ref<Font> Font::GetDefaultFont()
+	Ref<Font> Font::s_DefaultFont;
+
+	void Font::LoadDefaultFont(const std::filesystem::path& path)
 	{
-		Resource* loadedResource = new Resource();
-		bool resourceLoad = resourceSystemLoad("assets/fonts/opensans/OpenSans-Regular.ttf", ResourceType::Font, loadedResource);
+		FontResourceData* data = new FontResourceData();
+		data->ResourcePath = "Fonts";
+		data->FontName = path.stem().string();
+		data->Extension = path.extension().string();
 
-		if (!resourceLoad)
-		{
-			EG_CORE_ERROR("Failed to load default font");
-			return nullptr;
-		}
-
-		Font* font = (Font*)loadedResource->Data;
-
-		return CreateRef<Font>(font->m_Data, font->m_AtlasTexture);
+		UUID font = ResourceDatabase::AddResource(path.string(), data, ResourceType::Font);
+		Font* loaded = (Font*)ResourceDatabase::LoadRuntimeResource(font, ResourceType::Font);
+		Font::s_DefaultFont = CreateRef<Font>(loaded->GetData(), loaded->GetAtlasTexture());
 	}
 }

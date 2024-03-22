@@ -38,8 +38,6 @@ namespace eg
 			return;
 		}
 
-		s_Font = Font::GetDefaultFont();
-
 		EG_PROFILE_FUNCTION();
 		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");
 		m_IconPause = Texture2D::Create("resources/icons/PauseButton.png");
@@ -72,6 +70,7 @@ namespace eg
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		Renderer2D::SetLineThickness(3.0f);
+		s_Font = Font::GetDefaultFont();
 	}
 
 	void EditorLayer::OnDetach()
@@ -758,6 +757,7 @@ namespace eg
 	{
 		if (Project::Load(path))
 		{
+			Font::LoadDefaultFont("assets/fonts/opensans/OpenSans-Regular.ttf");
 			ScriptEngine::Init();
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);

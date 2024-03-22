@@ -10,12 +10,13 @@ namespace eg
 	{
 	public:
 		static void* GetRuntimeResource(UUID uuid, ResourceType type);
-		static void AddRuntimeResource(UUID uuid, void* data, ResourceType type);
+		static void* AddRuntimeResource(UUID uuid, void* data, ResourceType type);
 		static bool FindRuntimeResource(UUID uuid, ResourceType type);
-		static void LoadRuntimeResource(UUID uuid, ResourceType type);
+		static void* LoadRuntimeResource(UUID uuid, ResourceType type);
 
 		static void* GetResourceData(UUID uuid, ResourceType resourceType);
 		static bool FindResourceData(UUID uuid, ResourceType resourceType);
+		static UUID GetResourceByName(const std::string& name, ResourceType type);
 		static void SetResourceData(UUID uuid, ResourceType resourceType, void* data);
 		static ResourceType GetResourceType(UUID uuid);
 		static UUID FindResourceByKeyPath(const std::filesystem::path& keyPath, ResourceType type);
@@ -25,6 +26,7 @@ namespace eg
 		static std::string GetResourceTypeExtension(ResourceType type);
 		static UUID GetResourceByKeyPathWithoutCategory(const std::filesystem::path& keyPath, ResourceType resourceType);
 		static UUID GetResourceByPath(const std::filesystem::path& keyPath);
+		static UUID GetResourceByData(void* data, ResourceType resourceType);
 
 		static void RemoveResource(std::filesystem::path path, bool deleteFile = false);
 		static void RemoveResource(UUID uuid, bool deleteFile = false);

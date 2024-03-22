@@ -17,9 +17,12 @@ namespace eg
 		MSDFData* GetData() const { return m_Data; }
 		Ref<Texture2D> GetAtlasTexture() const { return m_AtlasTexture; }
 
-		static Ref<Font> GetDefaultFont();
+		static Ref<Font> GetDefaultFont() { return s_DefaultFont; }
+		static void LoadDefaultFont(const std::filesystem::path& path);
+
 	private:
 		MSDFData* m_Data = nullptr;
 		Ref<Texture2D> m_AtlasTexture;
+		static Ref<Font> s_DefaultFont;
 	};
 }
