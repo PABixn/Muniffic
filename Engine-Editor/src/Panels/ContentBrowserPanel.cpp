@@ -155,7 +155,54 @@ namespace eg
 				
 				RenderFile(key, name, type);
 			}
+
 		}
+		else if (type == ResourceType::SubTexture)
+		{
+			for (auto& [key, value] : ResourceDatabase::GetSubTextureResourceDataCache())
+			{
+				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
+					continue;
+
+				if(value->SubTextureName.find(buffer) == std::string::npos)
+					continue;
+
+				auto name = value->SubTextureName + value->Extension;
+				
+				RenderFile(key, name, type);
+			}
+		}
+		else if (type == ResourceType::SpriteAtlas)
+		{
+			for (auto& [key, value] : ResourceDatabase::GetSpriteAtlasResourceDataCache())
+			{
+				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
+					continue;
+
+				if(value->AtlasName.find(buffer) == std::string::npos)
+					continue;
+
+				auto name = value->AtlasName + value->Extension;
+				
+				RenderFile(key, name, type);
+			}
+		}
+		else if (type == ResourceType::Font)
+		{
+			for (auto& [key, value] : ResourceDatabase::GetFontResourceDataCache())
+			{
+				if (value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
+					continue;
+
+				if (value->FontName.find(buffer) == std::string::npos)
+					continue;
+
+				auto name = value->FontName + value->Extension;
+
+				RenderFile(key, name, type);
+			}
+		}
+
 
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{

@@ -80,7 +80,7 @@ namespace eg
 			data->FontGeometry = msdf_atlas::FontGeometry(&data->Glyphs);
 			int glyphsLoaded = data->FontGeometry.loadCharset(fontHandle, fontScale, charset);
 
-			EG_CORE_INFO("Loaded {} glyphs from font (out of{})", glyphsLoaded, charset.size());
+			//EG_CORE_INFO("Loaded {} glyphs from font (out of{})", glyphsLoaded, charset.size());
 
 			double emSize = 40.0;
 
@@ -133,6 +133,7 @@ namespace eg
 		outResource->Name = font.filename().string();
 		outResource->Path = font.parent_path().string();
 
+		EG_CORE_INFO("Loaded font: {0}", outResource->Name);
 		return true;
 	}
 

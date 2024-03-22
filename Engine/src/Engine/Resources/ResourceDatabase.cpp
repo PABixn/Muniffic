@@ -12,26 +12,87 @@ namespace eg
 {
 	std::filesystem::path* ResourceDatabase::m_CurrentDirectory;
 
-	std::unordered_map<UUID, Font*> ResourceDatabase::RuntimeFontResourceCache;
+	std::unordered_map<UUID, Ref<Font>> ResourceDatabase::RuntimeFontResourceCache;
 
-	void ResourceDatabase::AddRuntimeResource(UUID uuid, void* data, ResourceType type)
+	UUID ResourceDatabase::GetResourceByData(void* data, ResourceType type)
+	{
+		if(data == nullptr)
+		{
+			EG_CORE_ERROR("Data is null");
+			return 0;
+		}
+
+		std::filesystem::path keyPath;
+
+		if (type == ResourceType::Image)
+		{
+			TextureResourceData* textureData = (TextureResourceData*)data;
+			keyPath = textureData->ResourcePath / std::string(textureData->ImageName + textureData->Extension);
+		}
+		else if (type == ResourceType::SubTexture)
+		{
+			SubTextureResourceData* subTextureData = (SubTextureResourceData*)data;
+			keyPath = subTextureData->ResourcePath / std::string(subTextureData->SubTextureName + subTextureData->Extension);
+		}
+		else if (type == ResourceType::Animation)
+		{
+			AnimationResourceData* animationData = (AnimationResourceData*)data;
+			keyPath = animationData->ResourcePath / std::string(animationData->AnimationName + animationData->Extension);
+		}
+		else if (type == ResourceType::SpriteAtlas)
+		{
+			SpriteAtlasResourceData* spriteAtlasData = (SpriteAtlasResourceData*)data;
+			keyPath = spriteAtlasData->ResourcePath / std::string(spriteAtlasData->AtlasName + spriteAtlasData->Extension);
+		}
+		else if (type == ResourceType::Font)
+		{
+			FontResourceData* fontData = (FontResourceData*)data;
+			keyPath = fontData->ResourcePath / std::string(fontData->FontName + fontData->Extension);
+		}
+		else
+			EG_CORE_ERROR("Resource type not supported");
+
+		return ResourceDatabase::FindResourceByKeyPath(keyPath, type);
+	}
+
+	bool ResourceDatabase::FindRuntimeResource(UUID uuid, ResourceType type)
+	{
+		if (type == ResourceType::Font)
+			return RuntimeFontResourceCache.find(uuid) != RuntimeFontResourceCache.end();
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported");
+			return false;
+		}
+	}
+
+	void* ResourceDatabase::AddRuntimeResource(UUID uuid, void* data, ResourceType type)
 	{
 		if (data == nullptr)
-			return;
+			return nullptr;
 
 		if (type == ResourceType::Font)
-			RuntimeFontResourceCache[uuid] = (Font*)data;
+		{
+			Ref<Font> font = CreateRef<Font>(((Font*)data)->GetData(), ((Font*)data)->GetAtlasTexture());
+			RuntimeFontResourceCache[uuid] = font;
+			return font.get();
+		}
 		else
 		{
 			EG_CORE_WARN("Resource type not suitable for adding to runtime");
-			return;
+			return nullptr;
 		}
 	}
 
 	void* ResourceDatabase::GetRuntimeResource(UUID uuid, ResourceType type)
 	{
 		if (type == ResourceType::Font)
-			return RuntimeFontResourceCache.at(uuid);
+				return LoadRuntimeResource(uuid, type);
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported");
+			return nullptr;
+		}
 	}
 
 	void ResourceDatabase::SetResourceData(UUID uuid, ResourceType resourceType, void* data)
@@ -132,6 +193,56 @@ namespace eg
 			for (auto& [uuid, data] : ResourceSerializer::FontResourceDataCache)
 			{
 				if (data->ResourcePath / std::filesystem::path(data->FontName + data->Extension) == keyPath)
+					return uuid;
+			}
+		}
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported");
+		}
+
+		return 0;
+	}
+
+	UUID ResourceDatabase::GetResourceByName(const std::string& name, ResourceType type)
+	{
+		if (type == ResourceType::Image)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::TextureResourceDataCache)
+			{
+				if (data->ImageName == name)
+					return uuid;
+			}
+		}
+		else if(type == ResourceType::SubTexture)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SubTextureResourceDataCache)
+			{
+				if (data->SubTextureName == name)
+					return uuid;
+			}
+		}
+		else if (type == ResourceType::Animation)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::AnimationResourceDataCache)
+			{
+				if (data->AnimationName == name)
+					return uuid;
+			}
+		}
+		else if (type == ResourceType::SpriteAtlas)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SpriteAtlasResourceDataCache)
+			{
+				if (data->AtlasName == name)
+					return uuid;
+			}
+		}
+		else if (type == ResourceType::Font)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::FontResourceDataCache)
+			{
+				if (data->FontName == name)
 					return uuid;
 			}
 		}
@@ -570,7 +681,6 @@ namespace eg
 
 	void AddSubTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, SubTextureResourceData* data)
 	{
-
 		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->SubTextureName + data->Extension);
 
 		if (finalPath != originalResourcePath)
@@ -716,9 +826,46 @@ namespace eg
 		}
 	}
 
+	void* ResourceDatabase::LoadRuntimeResource(UUID uuid, ResourceType type)
+	{
+		if (!FindResourceData(uuid, type))
+		{
+			EG_CORE_ERROR("Resource not found in cache");
+			return nullptr;
+		}
+
+		if(FindRuntimeResource(uuid, type))
+			return GetRuntimeResource(uuid, type);
+
+		Resource* loadedResource = new Resource();
+		bool resourceLoad = resourceSystemLoad(GetFullPath(uuid).string(), ResourceType::Font, loadedResource);
+
+		if (!resourceLoad)
+		{
+			EG_CORE_ERROR("Failed to load resource: {0}", GetFullPath(uuid).string());
+			return nullptr;
+		}
+
+		if (type == ResourceType::Font)
+		{
+			Font* font = (Font*)loadedResource->Data;
+			return AddRuntimeResource(uuid, font, type);
+		}
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported for runtime loading");
+			return nullptr;
+		}
+	}
+
 	UUID ResourceDatabase::AddResource(const std::filesystem::path& originalResourcePath, void* data, ResourceType resourceType)
 	{
-		UUID uuid = UUID();
+		UUID uuid = GetResourceByData(data, resourceType);
+
+		if (uuid != 0)
+			return uuid;
+
+		uuid = UUID();
 
 		switch (resourceType)
 		{
