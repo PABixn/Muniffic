@@ -144,7 +144,7 @@ namespace eg
 
         #region Animator
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_PlayAnimation(ulong UUID, ref string animationName);
+        internal extern static void AnimatorComponent_PlayAnimation(ulong UUID, string animationName);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_StopAnimation(ulong UUID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -183,7 +183,7 @@ namespace eg
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static string AnimatorComponent_GetCurrentAnimation(ulong UUID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_SetCurrentAnimation(ulong UUID, ref string animationName);
+        internal extern static void AnimatorComponent_SetCurrentAnimation(ulong UUID, string animationName);
 
         #endregion
 

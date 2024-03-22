@@ -1102,14 +1102,18 @@ namespace eg {
 							{
 								ImGui::OpenPopup("##Transition Popup");
 								
+							}
+							if (ImGui::BeginPopup("##Transition Popup"))
+							{
+								if (ImGui::Button("Remove Transition"))
+								{
+									component.Animator2D->RemoveTransition(transition);
+									Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::ADD, Commands::VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE, transition, transition, 0, transition, transition });
+									ImGui::CloseCurrentPopup();
+								}
 								ImGui::EndPopup();
 							}
-							ImGui::BeginPopup("##Transition Popup");
-							if (ImGui::Button("Remove Transition"))
-							{
-								component.Animator2D->RemoveTransition(transition.first, transition.second);
-								Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::ADD, Commands::VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE, transition, transition, 0, transition, transition });
-							}
+							
 							ImGui::PopID();
 							i++;
 						}

@@ -153,7 +153,17 @@ namespace eg {
 			}
 
 			out << YAML::EndSeq; // Animations
-			out << YAML::EndMap; // Animations
+			out << YAML::Key << "Transitions" << YAML::BeginSeq;
+			for (auto& transition : *animatorComponent.Animator2D->GetTransitions())
+			{
+				out << YAML::BeginMap;
+				out << YAML::Key << "From" << YAML::Value << transition.first;
+				out << YAML::Key << "To" << YAML::Value << transition.second;
+				out << YAML::EndMap;
+			}
+
+			out << YAML::EndSeq; // Transitions
+			out << YAML::EndMap; // AnimatorComponent
 		}
 
 		if (entity.HasComponent<CameraComponent>())
@@ -568,6 +578,15 @@ namespace eg {
 							if(anim)
 								ac.Animator2D->AddAnimation(anim);
 							//TODO: else load all data for animation from scene file
+						}
+					}
+
+					auto transitions = animatorComponent["Transitions"];
+					if (transitions)
+					{
+						for (auto transition : transitions)
+						{
+							ac.Animator2D->AddTransition(transition["From"].as<uint64_t>(), transition["To"].as<uint64_t>());
 						}
 					}
 				}

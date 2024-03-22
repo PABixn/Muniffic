@@ -151,11 +151,14 @@ namespace eg {
 
 	void Animator::RemoveTransition(size_t fromIndex, size_t toIndex)
 	{
-		if (fromIndex < m_Transitions->size() &&  toIndex < m_Transitions->size())
+		if (fromIndex >= 0 && fromIndex < m_Animations->size() && toIndex < m_Animations->size() && toIndex >= 0)
 		{
-			for(int i = 0; i < m_Transitions->size(); i++)
-				if ((*m_Transitions)[i].first == fromIndex && (*m_Transitions)[i].second == toIndex)
+			for (int i = 0; i < m_Transitions->size(); i++)
+			{
+				const std::pair<size_t, size_t>& transition = (*m_Transitions)[i];
+				if (transition.first == fromIndex && transition.second == toIndex)
 					m_Transitions->erase(m_Transitions->begin() + i);
+			}
 		}
 	}
 
@@ -168,6 +171,11 @@ namespace eg {
 		if (toAnimIndex < 0)
 			return;
 		RemoveTransition(fromAnimIndex, toAnimIndex);
+	}
+
+	void Animator::RemoveTransition(const std::pair<size_t, size_t>& transition)
+	{
+		RemoveTransition(transition.first, transition.second);
 	}
 
 	bool Animator::CanTransition(size_t fromIndex, size_t toIndex)
