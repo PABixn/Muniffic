@@ -100,11 +100,11 @@ namespace eg
 						SubTextureResourceData* spriteResourceData = new SubTextureResourceData();
 						((SubTextureResourceData*)spriteResourceData)->ResourcePath = "SubTextures";
 						((SubTextureResourceData*)spriteResourceData)->SubTextureName = m_SpriteAtlasData.ResourcePath.stem().string() + "sprite" + std::to_string(spriteIndex++);
-						((SubTextureResourceData*)spriteResourceData)->m_Texture = m_TextureUUID;
-						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[0] = glm::vec2(x, y);
-						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[1] = glm::vec2(x + m_SpriteSize[0], y);
-						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[2] = glm::vec2(x + m_SpriteSize[0], y + m_SpriteSize[1]);
-						((SubTextureResourceData*)spriteResourceData)->m_TexCoords[3] = glm::vec2(x, y + m_SpriteSize[1]); 
+						((SubTextureResourceData*)spriteResourceData)->Texture = m_TextureUUID;
+						((SubTextureResourceData*)spriteResourceData)->TexCoords[0] = glm::vec2(x, y);
+						((SubTextureResourceData*)spriteResourceData)->TexCoords[1] = glm::vec2(x + m_SpriteSize[0], y);
+						((SubTextureResourceData*)spriteResourceData)->TexCoords[2] = glm::vec2(x + m_SpriteSize[0], y + m_SpriteSize[1]);
+						((SubTextureResourceData*)spriteResourceData)->TexCoords[3] = glm::vec2(x, y + m_SpriteSize[1]); 
 						((SpriteAtlasResourceData*)m_ResourceData)->Sprites.push_back(ResourceDatabase::AddResource(m_OriginalResourcePath, spriteResourceData, ResourceType::SubTexture));
 						delete spriteResourceData;
 					}
