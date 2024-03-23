@@ -7,3 +7,19 @@ Resources:
     Height: 569
     Channels: 3
     IsSubTexture: false
+  - UUID: 15193311898266730598
+    ResourcePath: Textures
+    ImageName: cb0
+    Extension: .png
+    Width: 800
+    Height: 600
+    Channels: 4
+    IsSubTexture: false
+  - UUID: 8785395291164305874
+    ResourcePath: Textures
+    ImageName: cb1
+    Extension: .png
+    Width: 800
+    Height: 600
+    Channels: 4
+    IsSubTexture: false

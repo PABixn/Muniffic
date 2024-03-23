@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine.h"
+#include "ResourcesPanels/ImagePanel.h"
 
 namespace eg {
 
@@ -9,7 +10,6 @@ namespace eg {
 		SceneHierarchyPanel(const Ref<Scene>& scene);
 
 		void SetContext(const Ref<Scene>& scene);
-
 		void OnImGuiRender();
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
@@ -22,6 +22,7 @@ namespace eg {
 		void DrawEntityNode(Entity entity, bool forceDraw = false);
 		void DrawComponents(Entity entity);
 	private:
+		Ref<ImagePanel> m_ImagePanel;
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
 		std::filesystem::path m_PreviewAbsoluteImagePath;

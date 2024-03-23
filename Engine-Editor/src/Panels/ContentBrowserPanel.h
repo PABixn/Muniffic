@@ -21,6 +21,7 @@ namespace eg {
 		std::filesystem::path GetCurrentPath() { return m_CurrentDirectory; }
 
 	private:
+		void drawDirectoryTreeNode(const std::filesystem::path& path);
 		std::filesystem::path m_BaseDirectory;
 		std::filesystem::path m_CurrentDirectory;
 		void DrawCenteredText(const std::string& text, const float& cellSize);

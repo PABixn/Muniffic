@@ -42,24 +42,48 @@ namespace eg {
 	{
 		m_Context = scene;
 		m_SelectionContext = {};
+		m_ImagePanel = CreateRef<ImagePanel>();
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
-		//kys1
 		ImGui::Begin("Scene Hierarchy");
 		ImGui::PopStyleVar();
-		static std::string search;
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(15.f, 10.f));
+
+		float paddingTop = 10.f;
+		float paddingLeft = 15.f;
+		float rightAndLeftFreeSpace = 110.f;
+		//add button
+		//kys3
+		Ref<Texture2D> plusIcon = Texture2D::Create("resources/icons/hierarchyPanel/plusIcon.png");
+		ImGui::SetCursorPosX(rightAndLeftFreeSpace / 4 - paddingLeft +3.f);
+		ImGui::SetCursorPosY(45.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingLeft/2 +3.f, paddingTop/2));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 30.f);
-		ImGui::PushItemWidth(ImGui::GetWindowWidth()-50.f);
-		ImGui::SetCursorPosX(25.f);
+		if (ImGui::Button("+")) {
+			Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Entity", {}, m_Context, m_SelectionContext));
+		}
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		//search bar
+		//FIXME: searching each frame. should just store the data
+		static std::string search;
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingLeft, paddingTop));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 30.f);
+		ImGui::PushItemWidth(ImGui::GetWindowWidth()-rightAndLeftFreeSpace);
+		ImGui::SetCursorPosX(rightAndLeftFreeSpace/2);
 		ImGui::SetCursorPosY(40.f);
 		ImGui::InputText("##entitySearch", &search);
 		ImGui::PopItemWidth();
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
+		if (search == "") {
+			ImGui::SetCursorPosX((rightAndLeftFreeSpace/2)+paddingLeft);
+			ImGui::SetCursorPosY(40.f+paddingTop);
+			ImGui::Text("search");
+			ImGui::NewLine();
+		}
 		if (m_Context)
 		{
 			if (ImGui::BeginDragDropTarget())
@@ -86,23 +110,11 @@ namespace eg {
 					Entity entity{ entityID, m_Context.get() };
 					std::string s = entity.GetName();
 					if (s.find(search)!=std::string::npos)
-						DrawEntityNode(entity);/*
+						DrawEntityNode(entity);
 					else
 					{
-						//kys6
-						std::function<void(Entity)> checkIfAnyChildOfEntityHasSearchedValue;
-						checkIfAnyChildOfEntityHasSearchedValue = [&checkIfAnyChildOfEntityHasSearchedValue](Entity x) {
-							for (Entity child : en.GetChildren()) {
-								if (child.GetName().find(search) != std::string::npos) {
-									checkIfAnyChildOfEntityHasSearchedValue(child, checkIfAnyChildOfEntityHasSearchedValue);
-									DrawEntityNode(entity);
-								}
-							}
-						};
-
-						checkIfAnyChildOfEntityHasSearchedValue(entity);
-						
-					}*/
+						//kys1
+					}
 				});
 			}
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
@@ -151,14 +163,29 @@ namespace eg {
 						ImGui::TextWrapped(add("scale of preview: ", (std::to_string(std::round(s / CacheImageData->Width * 100.0) / 100.0)).substr(0, 4).c_str(), ""));
 						ImGui::Image((void*)(intptr_t)my_opengl_texture, ImVec2((int)s, (int)((s * (CacheImageData->Height)) / (CacheImageData->Width))));
 						stbi_image_free(image);
+						ImGui::End();
+						ImGui::End();
+						return;
 					}
 					else
 					{
 						std::string absImgPath = m_PreviewAbsoluteImagePath.string();
 						ImGui::TextWrapped(add("file: ", absImgPath.c_str(), " not found"));
+						ImGui::End();
+						ImGui::End();
+						return;
 					}
 				}
 			}
+			//kys2
+			ImGui::TextWrapped("The file you are trying to access is not inside the project cache");
+			if (ImGui::Button("add this resource to project cache"))
+			{
+				bool initialized = m_ImagePanel->InitImagePanel(m_PreviewAbsoluteImagePath);
+				if (initialized)
+					m_ImagePanel->ShowImagePanel(true);
+			}
+			m_ImagePanel->OnImGuiRender();
 			ImGui::End();
 		}
 		ImGui::End();
@@ -166,16 +193,18 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
-		//kys2
 		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false))
 			return;
 		
 		bool opened = false;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Entity | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth/* = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0)| ImGuiTreeNodeFlags_OpenOnArrow*/;
+		if (entity.GetChildren().size() != 0) {
+			flags |= ImGuiTreeNodeFlags_EntityWithChildren;
+		}
 		//flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f));
-		opened = ImGui::HierarchyEntityTreeNodeEx((void*)(uint64_t)entity.GetUUID(), flags, tag.c_str());
+		opened = ImGui::CustomTreeNodeEx((void*)(uint64_t)entity.GetUUID(), flags, tag.c_str());
 		ImGui::PopStyleVar();
 		if (ImGui::BeginDragDropSource())
 		{

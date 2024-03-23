@@ -7,6 +7,8 @@
 #include "Engine/Resources/ResourceSerializer.h"
 #include "Engine/Resources/ResourceDatabase.h"
 #include "../EditorLayer.h"
+#include <cstring>
+#include <sys/stat.h>
 
 namespace eg
 {
@@ -58,7 +60,69 @@ namespace eg
 		}
 
 	}
+
+	uint64_t getPathID(const std::string path) {
+		static std::map<std::string, uint64_t> paths;
+		try
+		{
+			return paths.at(path);
+		}
+		catch (const std::exception&)
+		{
+			uint64_t id = paths.size() + 69;
+			paths.insert({ path, id});
+			return id;
+		}
+	}
+
+	void ContentBrowserPanel::drawDirectoryTreeNode(const std::filesystem::path& path) {
+		std::string tag = path.filename().string();
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_EntityWithChildren;
+		if (std::filesystem::is_directory(path)) {
+			flags |= ImGuiTreeNodeFlags_DirectoryEntity;
+		}
+		else if (std::filesystem::is_regular_file(path)) {
+			flags |= ImGuiTreeNodeFlags_FileEntity;
+		}
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f));
+		bool is_open = ImGui::CustomTreeNodeEx((void*)(getPathID(path.string())), flags, tag.c_str());
+		ImGui::PopStyleVar();
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+			if (std::filesystem::is_directory(path)) {
+				//kys5
+				std::filesystem::path oldPath = m_CurrentDirectory;
+				m_CurrentDirectory = path;
+				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
+			}
+		}
+		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+			ResourceType type = ResourceUtils::GetResourceTypeByExtension(path.extension().string()); 
+			if (type == ResourceType::Image) {
+				auto* s = (*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).GetSceneHierarchyPanel(); 
+				(*s).SetPreviewAbsoluteImagePath(std::filesystem::path(path));
+			}
+		}
+		//draw subfolders
+		if (is_open)
+		{
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+			if (std::filesystem::is_directory(path))
+			{
+				for (auto& directoryEntry : std::filesystem::directory_iterator(path)) {
+					drawDirectoryTreeNode(directoryEntry.path());
+				}
+			}
+			ImGui::TreePop();
+		}
+	}
 	void ContentBrowserPanel::OnImGuiRender() {
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+		ImGui::Begin("Project Directory");
+		ImGui::PopStyleVar();
+		auto s = Project::GetProjectDirectory();
+		drawDirectoryTreeNode(s);
+		ImGui::End();
 		ImGui::Begin("Content Browser", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse);
 
 		if (m_CurrentDirectory != std::filesystem::path(Project::GetAssetDirectory())) {
@@ -159,7 +223,7 @@ namespace eg
 			columnCount = 1;
 
 		ImGui::Columns(columnCount, 0, false);
-
+		//kys1
 		ResourceType type = ResourceUtils::GetResourceTypeFromText(m_CurrentDirectory.filename().string());
 
 		if (type == ResourceType::Image)
@@ -275,6 +339,7 @@ namespace eg
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 				std::filesystem::path oldPath = m_CurrentDirectory;
+				//kys6
 				m_CurrentDirectory /= path.filename();
 				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
