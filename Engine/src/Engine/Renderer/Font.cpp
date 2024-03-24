@@ -16,11 +16,15 @@ namespace eg
 	Font::Font(MSDFData* data, Ref<Texture2D> atlasTexture)
 		: m_Data(data), m_AtlasTexture(atlasTexture) {}
 
+	Font::Font(Font* font)
+		: m_Data(font->m_Data), m_AtlasTexture(font->m_AtlasTexture) {}
+
 	Font::~Font()
 	{
-		delete m_Data;
+		//delete m_Data;
 	}
 
+	UUID Font::s_DefaultFontUUID;
 	Ref<Font> Font::s_DefaultFont;
 
 	void Font::LoadDefaultFont(const std::filesystem::path& path)
@@ -32,6 +36,7 @@ namespace eg
 
 		UUID font = ResourceDatabase::AddResource(path.string(), data, ResourceType::Font);
 		Font* loaded = (Font*)ResourceDatabase::LoadRuntimeResource(font, ResourceType::Font);
-		Font::s_DefaultFont = CreateRef<Font>(loaded->GetData(), loaded->GetAtlasTexture());
+		Font::s_DefaultFontUUID = font;
+		Font::s_DefaultFont = CreateRef<Font>(loaded);
 	}
 }

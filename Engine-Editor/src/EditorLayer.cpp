@@ -19,7 +19,7 @@
 
 namespace eg
 {
-	static Ref<Font> s_Font;
+	static UUID s_Font;
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
@@ -70,7 +70,7 @@ namespace eg
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		Renderer2D::SetLineThickness(3.0f);
-		s_Font = Font::GetDefaultFont();
+		s_Font = Font::GetDefaultFontUUID();
 	}
 
 	void EditorLayer::OnDetach()
@@ -299,7 +299,7 @@ namespace eg
 
 		if(ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
 			Commands::ExecuteRawValueCommand(&m_ShowPhysicsColliders, !m_ShowPhysicsColliders, "Show Physics Colliders");
-		ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
+		//ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
@@ -757,7 +757,7 @@ namespace eg
 	{
 		if (Project::Load(path))
 		{
-			Font::LoadDefaultFont("assets/fonts/opensans/OpenSans-Regular.ttf");
+			Font::LoadDefaultFont("Assets/Fonts/OpenSans-Regular.ttf");
 			ScriptEngine::Init();
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);

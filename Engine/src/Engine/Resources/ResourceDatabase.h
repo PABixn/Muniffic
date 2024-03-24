@@ -9,6 +9,8 @@ namespace eg
 	class ResourceDatabase
 	{
 	public:
+		static Ref<Font> GetFontRuntimeResource(UUID uuid);
+
 		static void* GetRuntimeResource(UUID uuid, ResourceType type);
 		static void* AddRuntimeResource(UUID uuid, void* data, ResourceType type);
 		static bool FindRuntimeResource(UUID uuid, ResourceType type);

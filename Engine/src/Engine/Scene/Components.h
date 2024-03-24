@@ -228,8 +228,9 @@ namespace eg {
 	struct TextComponent : Component
 	{
 		std::string TextString;
-		Ref<Font> FontAsset = Font::GetDefaultFont();
-		glm::vec4 Color{ 1.0f };
+		UUID FontAsset = Font::GetDefaultFontUUID();
+		Ref<Font> RuntimeFont = Font::GetDefaultFont();
+		glm::vec4 Color { 1.0f };
 		float Kerning = 0.0f;
 		float LineSpacing = 0.0f;
 	};

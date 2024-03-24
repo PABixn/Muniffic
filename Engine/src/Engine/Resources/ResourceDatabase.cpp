@@ -73,7 +73,7 @@ namespace eg
 
 		if (type == ResourceType::Font)
 		{
-			Ref<Font> font = CreateRef<Font>(((Font*)data)->GetData(), ((Font*)data)->GetAtlasTexture());
+			Ref<Font> font = CreateRef<Font>((Font*)data);
 			RuntimeFontResourceCache[uuid] = font;
 			return font.get();
 		}
@@ -84,10 +84,32 @@ namespace eg
 		}
 	}
 
+	Ref<Font> ResourceDatabase::GetFontRuntimeResource(UUID uuid)
+	{
+		if(RuntimeFontResourceCache.find(uuid) != RuntimeFontResourceCache.end())
+			return RuntimeFontResourceCache.at(uuid);
+		else
+		{
+ 			void* ptr = LoadRuntimeResource(uuid, ResourceType::Font);
+			if(ptr != nullptr)
+				return RuntimeFontResourceCache.at(uuid);
+			else
+			{
+				EG_CORE_ERROR("Failed to load font resource");
+				return nullptr;
+			}
+		}
+	}
+
 	void* ResourceDatabase::GetRuntimeResource(UUID uuid, ResourceType type)
 	{
 		if (type == ResourceType::Font)
+		{
+			if (FindRuntimeResource(uuid, type))
+				return RuntimeFontResourceCache.at(uuid).get();
+			else
 				return LoadRuntimeResource(uuid, type);
+		}
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
@@ -192,6 +214,9 @@ namespace eg
 		{
 			for (auto& [uuid, data] : ResourceSerializer::FontResourceDataCache)
 			{
+				std::filesystem::path d = data->ResourcePath / std::filesystem::path(data->FontName + data->Extension);
+				std::cout<< d << std::endl;
+				std::cout<<keyPath<<std::endl;
 				if (data->ResourcePath / std::filesystem::path(data->FontName + data->Extension) == keyPath)
 					return uuid;
 			}
@@ -696,9 +721,12 @@ namespace eg
 
 	void AddFontResourceData(UUID uuid, const std::filesystem::path& originalResourcePath, FontResourceData* data)
 	{
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->FontName + data->Extension);
+		std::filesystem::path finalKeyPath = Project::GetAssetDirectory() / data->ResourcePath / std::string(data->FontName + data->Extension);
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / finalKeyPath;
 
-		if (finalPath != originalResourcePath)
+		std::filesystem::path d = "Assets" / ResourceUtils::GetKeyPath(originalResourcePath);
+
+		if (finalKeyPath != d)
 		{
 			if (!std::filesystem::exists(finalPath.parent_path()))
 			{

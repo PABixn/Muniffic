@@ -399,7 +399,8 @@ namespace eg
 
 	void ResourceSerializer::CacheFont(UUID uuid, FontResourceData* data)
 	{
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->FontName + data->Extension);
+		std::filesystem::path finalKeyPath = data->ResourcePath / std::string(data->FontName + data->Extension);
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / finalKeyPath;
 
 		if (!std::filesystem::exists(finalPath))
 		{
@@ -409,9 +410,18 @@ namespace eg
 
 		if (FontResourceDataCache.find(uuid) != FontResourceDataCache.end())
 		{
-			if (FontResourceDataCache[uuid] != nullptr)
-				delete FontResourceDataCache[uuid];
+			if (FontResourceDataCache.at(uuid) != nullptr)
+				delete FontResourceDataCache.at(uuid);
 			FontResourceDataCache.erase(uuid);
+		}
+
+		UUID foundUUID = ResourceDatabase::FindResourceByKeyPath(finalKeyPath, ResourceType::Font);
+
+		if (foundUUID != 0)
+		{
+			if (FontResourceDataCache.at(foundUUID) != nullptr)
+				delete FontResourceDataCache.at(foundUUID);
+			FontResourceDataCache.erase(foundUUID);
 		}
 
 		FontResourceDataCache[uuid] = data;

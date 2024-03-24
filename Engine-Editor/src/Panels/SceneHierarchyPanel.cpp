@@ -962,6 +962,33 @@ namespace eg {
 
 				if(ImGui::InputTextMultiline("Text String", &component.TextString))
 					Commands::ExecuteRawValueCommand<std::string, TextComponent>(&component.TextString, component.TextString, entity, "TextComponent-Text String");
+
+				std::string selectedFontName = "OpenSans-Regular";
+
+				if(ResourceDatabase::FindResourceData(component.FontAsset, ResourceType::Font))
+					selectedFontName = ResourceDatabase::GetResourceName(component.FontAsset);
+
+				if (ImGui::BeginCombo("Font", selectedFontName.c_str(), ImGuiComboFlags_None))
+				{
+					for (const auto& [uuid, font] : ResourceDatabase::GetFontResourceDataCache())
+					{
+						std::string name = ResourceDatabase::GetResourceName(uuid);
+						bool isSelected = component.FontAsset == uuid;
+						if (ImGui::Selectable(name.c_str(), isSelected))
+						{
+							UUID oldFont = component.FontAsset;
+							component.FontAsset = uuid;
+							component.RuntimeFont = ResourceDatabase::GetFontRuntimeResource(uuid);
+							Commands::ExecuteRawValueCommand<UUID, TextComponent>(&component.FontAsset, oldFont, entity, "TextComponent-Font", true);
+						}
+
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+
+					ImGui::EndCombo();
+				}
+
 				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand<glm::vec4, TextComponent>(&component.Color, color, entity, "TextComponent-Color");
 				if(ImGui::DragFloat("Kerning", &component.Kerning, 0.025f))

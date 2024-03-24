@@ -57,6 +57,7 @@ Entities:
       LineSpacing: 0
       IsInherited: false
       IsInheritedInChildren: false
+      Font: 14516787109209251842
   - Entity: 16442485196201648565
     Name: Cube
     TagComponent:
@@ -220,13 +221,6 @@ Entities:
       Speed: 1
       Animations:
         []
-    TextComponent:
-      TextString: Hello Worldfasdfasdfads!
-      Color: [0, 0, 1, 1]
-      Kerning: 0
-      LineSpacing: 0
-      IsInherited: false
-      IsInheritedInChildren: false
   - Entity: 882254563876239753
     Name: Cube
     TagComponent:

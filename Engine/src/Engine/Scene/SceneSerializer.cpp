@@ -293,6 +293,7 @@ namespace eg {
 			out << YAML::Key << "LineSpacing" << YAML::Value << textComponent.LineSpacing;
 			out << YAML::Key << "IsInherited" << YAML::Value << textComponent.isInherited;
 			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << textComponent.isInheritedInChildren;
+			out << YAML::Key << "Font" << YAML::Value << textComponent.FontAsset;
 			out << YAML::EndMap; // TextComponent
 		}
 
@@ -628,6 +629,9 @@ namespace eg {
 					tc.Color = textComponent["Color"].as<glm::vec4>();
 					tc.Kerning = textComponent["Kerning"].as<float>();
 					tc.LineSpacing = textComponent["LineSpacing"].as<float>();
+
+					if(textComponent["Font"])
+						tc.FontAsset = textComponent["Font"].as<UUID>();
 
 					if(textComponent["IsInherited"])
 						tc.isInherited = textComponent["IsInherited"].as<bool>();
