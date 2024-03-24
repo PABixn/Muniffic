@@ -65,9 +65,11 @@ namespace eg
 	{
 		if (m_playing && m_frames.size() > 0)
 		{
+			m_AnimationEnded = false;
 			m_frame += m_frameRate * speed * dt;
 			if ((int)m_frame >= m_frames.size())
 			{
+				m_AnimationEnded = true;
 				if (m_loop)
 				{
 					m_frame = 0;

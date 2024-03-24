@@ -47,6 +47,7 @@ namespace eg {
 		inline bool* IsPlayingPtr() { return &m_playing; }
 		inline bool IsLooped() const { return m_loop; }
 		inline bool* IsLoopedPtr() { return &m_loop; }
+		inline bool DidAnimationEnd() const { return m_AnimationEnded; }
 		inline float GetFrameRate() const { return m_frameRate; }
 		inline float* GetFrameRatePtr() { return &m_frameRate; }
 		inline const std::string& GetName() const { return m_name; }
@@ -57,6 +58,7 @@ namespace eg {
 		float m_frame = 0;
 		bool m_loop = false;
 		bool m_playing = false;
+		bool m_AnimationEnded = false;
 		UUID m_AnimationID;
 		std::vector<Ref<SubTexture2D>> m_frames;
 

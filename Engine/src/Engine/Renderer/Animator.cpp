@@ -32,8 +32,17 @@ namespace eg {
 
 	void Animator::Update(float dt)
 	{
-		if(m_Animations->size() > 0)
+		if (m_Animations->size() > 0)
+		{
 			(*m_Animations)[m_AnimationIndex]->Update(dt, m_Speed);
+			if (m_NextAnimationIndex >= 0 && (*m_Animations)[m_AnimationIndex]->DidAnimationEnd())
+			{
+				(*m_Animations)[m_AnimationIndex]->Stop();
+				m_AnimationIndex = m_NextAnimationIndex;
+				m_NextAnimationIndex = -1;
+				(*m_Animations)[m_AnimationIndex]->Start();
+			}
+		}
 	}
 
 	void Animator::ChangeAnimation(size_t animationIndex)
@@ -114,9 +123,7 @@ namespace eg {
 	{
 		if (!CanTransition(m_AnimationIndex, toIndex))
 			return;
-		(*m_Animations)[m_AnimationIndex]->Stop();
-		m_AnimationIndex = toIndex;
-		(*m_Animations)[m_AnimationIndex]->Start();
+		m_NextAnimationIndex = toIndex;
 	}
 
 	void Animator::Transition(const std::string& toName)
