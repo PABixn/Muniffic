@@ -6,3 +6,17 @@ Resources:
     Width: 1000
     Height: 1542
     Channels: 4
+  - UUID: 7835399540365495283
+    ResourcePath: Textures
+    ImageName: Textures
+    Extension: ""
+    Width: 800
+    Height: 600
+    Channels: 4
+  - UUID: 13022406342272434770
+    ResourcePath: Textures
+    ImageName: Textures
+    Extension: ""
+    Width: 1000
+    Height: 1542
+    Channels: 4

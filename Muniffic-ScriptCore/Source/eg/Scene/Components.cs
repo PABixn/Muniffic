@@ -168,7 +168,7 @@ namespace eg
         }
     }
 
-    public class Animator : Component
+    public class AnimatorComponent : Component
     {
         public float Speed
         {

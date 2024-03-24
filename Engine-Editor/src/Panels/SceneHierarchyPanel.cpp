@@ -1005,12 +1005,12 @@ namespace eg {
 					for (auto animation : *animations)
 					{
 						
-						ImGui::PushID(i);
+						ImGui::PushID("Anim" + i);
 						if (ImGui::TreeNode(animation->GetName().c_str()))
 						{
-							ImGui::Text("Frame rate: %s", animation->GetFrameRate());
-							ImGui::Checkbox("Looped: %s", animation->IsLoopedPtr());
-							ImGui::Checkbox("Playing: %s", animation->IsPlayingPtr());
+							ImGui::Text("Frame rate: %d", animation->GetFrameRate());
+							ImGui::Checkbox("Looped", animation->IsLoopedPtr());
+							ImGui::Checkbox("Playing", animation->IsPlayingPtr());
 							ImGui::PushID("Frames" + i);
 							if (ImGui::TreeNode("Frames")) 
 							{
