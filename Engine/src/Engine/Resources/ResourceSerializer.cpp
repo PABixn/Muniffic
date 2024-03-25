@@ -370,7 +370,8 @@ namespace eg
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
 	{
-		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / data->ResourcePath / std::string(data->ImageName + data->Extension);
+		std::filesystem::path finalKeyPath = data->ResourcePath / std::string(data->ImageName + data->Extension);
+		std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / finalKeyPath;
 
 		if (!std::filesystem::exists(finalPath))
 		{
@@ -383,6 +384,15 @@ namespace eg
 			if (TextureResourceDataCache[uuid] != nullptr)
 				delete TextureResourceDataCache[uuid];
 			TextureResourceDataCache.erase(uuid);
+		}
+
+		UUID foundUUID = ResourceDatabase::FindResourceByKeyPath(finalKeyPath, ResourceType::Image);
+
+		if (foundUUID != 0)
+		{
+			if (TextureResourceDataCache.at(foundUUID) != nullptr)
+				delete TextureResourceDataCache.at(foundUUID);
+			TextureResourceDataCache.erase(foundUUID);
 		}
 
 		TextureResourceDataCache[uuid] = data;

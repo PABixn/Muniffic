@@ -10,6 +10,7 @@ namespace eg
 	{
 	public:
 		static Ref<Font> GetFontRuntimeResource(UUID uuid);
+		static Ref<Texture2D> GetTextureRuntimeResource(UUID uuid);
 
 		static void* GetRuntimeResource(UUID uuid, ResourceType type);
 		static void* AddRuntimeResource(UUID uuid, void* data, ResourceType type);
@@ -53,5 +54,6 @@ namespace eg
 		static std::filesystem::path* m_CurrentDirectory;
 
 		static std::unordered_map<UUID, Ref<Font>> RuntimeFontResourceCache;
+		static std::unordered_map<UUID, Ref<Texture2D>> RuntimeTextureResourceCache;
 	};
 }

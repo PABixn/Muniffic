@@ -492,9 +492,8 @@ namespace eg {
 
 						if (ResourceDatabase::FindResourceData(textureUUID, ResourceType::Image))
 						{
-							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(textureUUID, ResourceType::Image);
-							std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
-							src.Texture = Texture2D::Create(finalPath.string());
+							src.TextureUUID = textureUUID;
+							src.Texture = ResourceDatabase::GetTextureRuntimeResource(textureUUID);
 						}
 						else
 						{

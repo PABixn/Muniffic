@@ -13,6 +13,7 @@ namespace eg
 	std::filesystem::path* ResourceDatabase::m_CurrentDirectory;
 
 	std::unordered_map<UUID, Ref<Font>> ResourceDatabase::RuntimeFontResourceCache;
+	std::unordered_map<UUID, Ref<Texture2D>> ResourceDatabase::RuntimeTextureResourceCache;
 
 	UUID ResourceDatabase::GetResourceByData(void* data, ResourceType type)
 	{
@@ -59,6 +60,8 @@ namespace eg
 	{
 		if (type == ResourceType::Font)
 			return RuntimeFontResourceCache.find(uuid) != RuntimeFontResourceCache.end();
+		else if(type == ResourceType::Image)
+			return RuntimeTextureResourceCache.find(uuid) != RuntimeTextureResourceCache.end();
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
@@ -76,6 +79,12 @@ namespace eg
 			Ref<Font> font = CreateRef<Font>((Font*)data);
 			RuntimeFontResourceCache[uuid] = font;
 			return font.get();
+		}
+		else if (type == ResourceType::Image)
+		{
+			Ref<Texture2D> texture = Texture2D::Create((const char*)data);
+			RuntimeTextureResourceCache[uuid] = texture;
+			return texture.get();
 		}
 		else
 		{
@@ -101,12 +110,36 @@ namespace eg
 		}
 	}
 
+	Ref<Texture2D> ResourceDatabase::GetTextureRuntimeResource(UUID uuid)
+	{
+		if (RuntimeTextureResourceCache.find(uuid) != RuntimeTextureResourceCache.end())
+			return RuntimeTextureResourceCache.at(uuid);
+		else
+		{
+			void* ptr = LoadRuntimeResource(uuid, ResourceType::Image);
+			if (ptr != nullptr)
+				return RuntimeTextureResourceCache.at(uuid);
+			else
+			{
+				EG_CORE_ERROR("Failed to load texture resource");
+				return nullptr;
+			}
+		}
+	}
+
 	void* ResourceDatabase::GetRuntimeResource(UUID uuid, ResourceType type)
 	{
 		if (type == ResourceType::Font)
 		{
 			if (FindRuntimeResource(uuid, type))
 				return RuntimeFontResourceCache.at(uuid).get();
+			else
+				return LoadRuntimeResource(uuid, type);
+		}
+		else if (type == ResourceType::Image)
+		{
+			if (FindRuntimeResource(uuid, type))
+				return RuntimeTextureResourceCache.at(uuid).get();
 			else
 				return LoadRuntimeResource(uuid, type);
 		}
@@ -862,6 +895,9 @@ namespace eg
 
 		if(FindRuntimeResource(uuid, type))
 			return GetRuntimeResource(uuid, type);
+
+		if (type == ResourceType::Image)
+			return AddRuntimeResource(uuid, (void*)GetFullPath(uuid).string().c_str(), type);
 
 		Resource* loadedResource = new Resource();
 		bool resourceLoad = resourceSystemLoad(GetFullPath(uuid).string(), ResourceType::Font, loadedResource);
