@@ -57,7 +57,7 @@ Entities:
       LineSpacing: 0
       IsInherited: false
       IsInheritedInChildren: false
-      Font: 14516787109209251842
+      Font: 7999517453004432376
   - Entity: 16442485196201648565
     Name: Cube
     TagComponent:

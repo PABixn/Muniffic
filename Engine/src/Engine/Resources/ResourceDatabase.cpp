@@ -215,8 +215,6 @@ namespace eg
 			for (auto& [uuid, data] : ResourceSerializer::FontResourceDataCache)
 			{
 				std::filesystem::path d = data->ResourcePath / std::filesystem::path(data->FontName + data->Extension);
-				std::cout<< d << std::endl;
-				std::cout<<keyPath<<std::endl;
 				if (data->ResourcePath / std::filesystem::path(data->FontName + data->Extension) == keyPath)
 					return uuid;
 			}

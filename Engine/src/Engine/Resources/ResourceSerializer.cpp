@@ -203,6 +203,11 @@ namespace eg
 					CacheFont(uuid, data);
 				}
 			}
+
+			if (ResourceDatabase::GetFontResourceDataCache().size() > 0)
+				Font::SetDefaultFont(ResourceDatabase::GetFontResourceDataCache().begin()->first);
+			else
+				Font::LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
 		}
 	}
 

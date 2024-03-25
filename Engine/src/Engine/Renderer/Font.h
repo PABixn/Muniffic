@@ -19,14 +19,12 @@ namespace eg
 		Ref<Texture2D> GetAtlasTexture() const { return m_AtlasTexture; }
 
 		static UUID GetDefaultFontUUID() { return s_DefaultFontUUID; }
-		static Ref<Font> GetDefaultFont() { return s_DefaultFont; }
-		static void LoadDefaultFont(const std::filesystem::path& path);
-		static void SetDefaultFont(UUID fontUUID, Ref<Font> font) { s_DefaultFontUUID = fontUUID, s_DefaultFont = font; }
+		static void LoadFont(const std::filesystem::path& path);
+		static void SetDefaultFont(UUID fontUUID) { s_DefaultFontUUID = fontUUID; }
 
 	private:
 		MSDFData* m_Data = nullptr;
 		Ref<Texture2D> m_AtlasTexture;
 		static UUID s_DefaultFontUUID;
-		static Ref<Font> s_DefaultFont;
 	};
 }

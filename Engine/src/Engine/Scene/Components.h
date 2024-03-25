@@ -14,6 +14,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
+#include "Engine/Resources/ResourceDatabase.h"
 
 
 
@@ -229,7 +230,7 @@ namespace eg {
 	{
 		std::string TextString;
 		UUID FontAsset = Font::GetDefaultFontUUID();
-		Ref<Font> RuntimeFont = Font::GetDefaultFont();
+		Ref<Font> RuntimeFont = ResourceDatabase::GetFontRuntimeResource(Font::GetDefaultFontUUID());
 		glm::vec4 Color { 1.0f };
 		float Kerning = 0.0f;
 		float LineSpacing = 0.0f;

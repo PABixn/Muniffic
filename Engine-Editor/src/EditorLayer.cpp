@@ -757,7 +757,6 @@ namespace eg
 	{
 		if (Project::Load(path))
 		{
-			Font::LoadDefaultFont("Assets/Fonts/OpenSans-Regular.ttf");
 			ScriptEngine::Init();
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);

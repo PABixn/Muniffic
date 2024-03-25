@@ -633,6 +633,8 @@ namespace eg {
 					if(textComponent["Font"])
 						tc.FontAsset = textComponent["Font"].as<UUID>();
 
+					tc.RuntimeFont = ResourceDatabase::GetFontRuntimeResource(tc.FontAsset);
+
 					if(textComponent["IsInherited"])
 						tc.isInherited = textComponent["IsInherited"].as<bool>();
 					if(textComponent["IsInheritedInChildren"])

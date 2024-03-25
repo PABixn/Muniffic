@@ -1,17 +1,13 @@
 Resources:
-  - UUID: 2459963555869610565
-    ResourcePath: Fonts
-    FontName: trebuc
-    Extension: .ttf
-  - UUID: 10763986377775643858
+  - UUID: 9517913723255716994
     ResourcePath: Fonts
     FontName: OpenSans-Regular
     Extension: .ttf
-  - UUID: 11187093738269427266
+  - UUID: 10208755247301595572
     ResourcePath: Fonts
-    FontName: Trebuchet-MS-Italic
+    FontName: trebuc
     Extension: .ttf
-  - UUID: 14516787109209251842
+  - UUID: 7999517453004432376
     ResourcePath: Fonts
     FontName: Ldfcomicsansbold-zgma
     Extension: .ttf

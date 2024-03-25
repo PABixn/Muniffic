@@ -25,9 +25,8 @@ namespace eg
 	}
 
 	UUID Font::s_DefaultFontUUID;
-	Ref<Font> Font::s_DefaultFont;
 
-	void Font::LoadDefaultFont(const std::filesystem::path& path)
+	void Font::LoadFont(const std::filesystem::path& path)
 	{
 		FontResourceData* data = new FontResourceData();
 		data->ResourcePath = "Fonts";
@@ -37,6 +36,5 @@ namespace eg
 		UUID font = ResourceDatabase::AddResource(path.string(), data, ResourceType::Font);
 		Font* loaded = (Font*)ResourceDatabase::LoadRuntimeResource(font, ResourceType::Font);
 		Font::s_DefaultFontUUID = font;
-		Font::s_DefaultFont = CreateRef<Font>(loaded);
 	}
 }
