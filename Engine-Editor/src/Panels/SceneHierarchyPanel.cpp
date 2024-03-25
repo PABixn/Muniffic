@@ -13,6 +13,7 @@
 #include "Engine/Resources/ResourceSerializer.h"
 #include "iostream"
 #include "shellapi.h"
+#include "ConsolePanel.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -142,9 +143,9 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
-		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false))
+		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false)) {
 			return;
-		
+		}
 		bool opened = false;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -783,8 +784,8 @@ namespace eg {
 							component.Texture = texture;
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
 						}
-						else
-							EG_WARN("Could not load texture {0}", texturePath.filename().string());
+						//else
+							//ConsolePanel::Log("Could not load texture " + texturePath.filename().string(), ConsolePanel::LogType::Error);
 					}
 					ImGui::EndDragDropTarget();
 				}

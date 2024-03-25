@@ -11,6 +11,11 @@ namespace eg
 {
     public static class InternalCalls
     {
+        #region Console
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Console_Log(string msg, DebugConsole.LogType type);
+        #endregion
+
         #region Entity
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Entity_IsInheritedFromParent(ulong ID, Type componentType);

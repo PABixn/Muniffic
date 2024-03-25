@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Core.h"
 
+
 namespace eg {
 
 	enum class FrameBufferTextureFormat {
@@ -47,7 +48,7 @@ namespace eg {
 
 	class FrameBuffer {
 	public:
-		static Ref<FrameBuffer> Create (const FrameBufferSpecification& spec);
+		static Ref<FrameBuffer> Create(const FrameBufferSpecification& spec);
 		virtual ~FrameBuffer() = default;
 
 		virtual void Bind() = 0;

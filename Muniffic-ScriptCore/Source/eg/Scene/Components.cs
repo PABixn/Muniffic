@@ -6,6 +6,18 @@ using System.Threading.Tasks;
 
 namespace eg
 {
+    public class DebugConsole
+    {
+        public enum LogType
+        {
+            Info = 0, Warning = 1, Error = 2
+        }
+        public static void Log(string message, LogType logType)
+        {
+            InternalCalls.Console_Log(message, logType);
+        }
+    }
+
     /// <summary>
     /// Base class for all components.
     /// </summary>

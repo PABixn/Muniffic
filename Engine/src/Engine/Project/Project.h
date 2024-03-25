@@ -82,6 +82,10 @@ namespace eg {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_ProjectDirectory.parent_path();
 		}
+		
+		std::string GetProjectName() {
+			return "Untitled";
+		}
 
 	private:
 		ProjectConfig m_Config;
