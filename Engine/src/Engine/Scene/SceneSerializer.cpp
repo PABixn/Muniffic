@@ -1,110 +1,19 @@
 #include "egpch.h"
 #include "Engine/Core/Core.h"
 #include "SceneSerializer.h"
-#include <yaml-cpp/yaml.h>
-#include <fstream>
+#include "Engine/Utils/YAMLConversion.h"
 #include "Entity.h"
 #include "Components.h"
 #include <optional>
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Project/Project.h"
+#include "Engine/Resources/ResourceSerializer.h"
+#include "Engine/Resources/ResourceDatabase.h"
+#include <yaml-cpp/yaml.h>
+#include <fstream>
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
-namespace YAML
-{
 
-	template<>
-	struct convert<glm::vec2>
-	{
-		static Node encode(const glm::vec2& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			//node.SetStyle(EmitterStyle::Flow);
-			return node;
-		}
-
-		static bool decode(const Node& node, glm::vec2& rhs)
-		{
-			if (!node.IsSequence() || node.size() != 2)
-				return false;
-
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			return true;
-		}
-	};
-
-	template<>
-	struct convert<glm::vec3>
-	{
-		static Node encode(const glm::vec3& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
-			//node.SetStyle(EmitterStyle::Flow);
-			return node;
-		}
-
-		static bool decode(const Node& node, glm::vec3& rhs)
-		{
-			if (!node.IsSequence() || node.size() != 3)
-				return false;
-
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			return true;
-		}
-	};
-
-	template<>
-	struct convert<glm::vec4>
-	{
-		static Node encode(const glm::vec4& rhs)
-		{
-			Node node;
-			node.push_back(rhs.x);
-			node.push_back(rhs.y);
-			node.push_back(rhs.z);
-			node.push_back(rhs.w);
-			//node.SetStyle(EmitterStyle::Flow);
-			return node;
-		}
-
-		static bool decode(const Node& node, glm::vec4& rhs)
-		{
-			if (!node.IsSequence() || node.size() != 4)
-				return false;
-
-			rhs.x = node[0].as<float>();
-			rhs.y = node[1].as<float>();
-			rhs.z = node[2].as<float>();
-			rhs.w = node[3].as<float>();
-			return true;
-		}
-	};
-
-	template<>
-	struct convert<eg::UUID>
-	{
-		static Node encode(const eg::UUID& uuid)
-		{
-			Node node;
-			node.push_back((uint64_t)uuid);
-			return node;
-		}
-
-		static bool decode(const Node& node, eg::UUID& uuid)
-		{
-			uuid = node.as<uint64_t>();
-			return true;
-		}
-	};
-}
 
 namespace eg {
 	ConsolePanel consolePanel;
@@ -116,26 +25,7 @@ namespace eg {
 		break;                                         \
 	}
 
-	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
-	{
-		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
-		return out;
-	}
-
-	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
-	{
-		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
-		return out;
-	}
-
-	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
-	{
-		out << YAML::Flow;
-		out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
-		return out;
-	}
+	
 
 	static std::string RigidBody2dBodyTypeToString(RigidBody2DComponent::BodyType bodyType)
 	{
@@ -218,7 +108,7 @@ namespace eg {
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 			if(spriteRendererComponent.Texture)
-				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.Texture->GetPath();
+				out << YAML::Key << "TextureUUID" << YAML::Value << spriteRendererComponent.TextureUUID;
 			out << YAML::Key << "IsInherited" << YAML::Value << spriteRendererComponent.isInherited;
 			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << spriteRendererComponent.isInheritedInChildren;
 			out << YAML::EndMap; // SpriteRendererComponent
@@ -233,7 +123,7 @@ namespace eg {
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 			if (spriteRendererComponent.SubTexture->GetTexture())
 			{
-				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.SubTexture->GetTexture()->GetPath();
+				out << YAML::Key << "TextureUUID" << YAML::Value << spriteRendererComponent.SubTextureUUID;
 				out << YAML::Key << "MinCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(0);
 				out << YAML::Key << "MaxCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(2);
 			}
@@ -251,6 +141,32 @@ namespace eg {
 			out << YAML::Key << "IsInherited" << YAML::Value << circleRendererComponent.isInherited;
 			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << circleRendererComponent.isInheritedInChildren;
 			out << YAML::EndMap; // CircleRendererComponent
+		}
+
+		if (entity.HasComponent<AnimatorComponent>())
+		{
+			auto& animatorComponent = entity.GetComponent<AnimatorComponent>();
+			out << YAML::Key << "AnimatorComponent";
+			out << YAML::BeginMap; // AnimatorComponent
+			out << YAML::Key << "Speed" << YAML::Value << animatorComponent.Animator2D->GetSpeed();
+			out << YAML::Key << "Animations" << YAML::BeginSeq;
+			for (auto& animation : *animatorComponent.Animator2D->GetAnimations())
+			{
+				out << animation->GetID();
+			}
+
+			out << YAML::EndSeq; // Animations
+			out << YAML::Key << "Transitions" << YAML::BeginSeq;
+			for (auto& transition : *animatorComponent.Animator2D->GetTransitions())
+			{
+				out << YAML::BeginMap;
+				out << YAML::Key << "From" << YAML::Value << transition.first;
+				out << YAML::Key << "To" << YAML::Value << transition.second;
+				out << YAML::EndMap;
+			}
+
+			out << YAML::EndSeq; // Transitions
+			out << YAML::EndMap; // AnimatorComponent
 		}
 
 		if (entity.HasComponent<CameraComponent>())
@@ -402,6 +318,7 @@ namespace eg {
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+
 		m_Scene->m_Registry.each([&](auto entityID)
 		{
 			Entity entity = { entityID, m_Scene.get() };
@@ -410,12 +327,15 @@ namespace eg {
 
 			SerializeEntity(out, entity);
 		});
+
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
-		//ConsolePanel::Log("File: SceneSerializer.cpp - Scene serialized", ConsolePanel::LogType::Info);
+		fout.close();
+
+		ResourceSerializer::SerializeResourceCache();
 	}
 
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
@@ -432,16 +352,18 @@ namespace eg {
 		}
 		catch (YAML::ParserException e)
 		{
-			EG_CORE_ERROR("Failed to load .hazel file '{0}'\n     {1}", filepath, e.what());
-			ConsolePanel::Log("File: SceneSerializer.cpp - Deserialize: .hazel file loaded unsuccessfully!", ConsolePanel::LogType::Error);
+			EG_CORE_ERROR("Failed to load .mnproj file '{0}'\n     {1}", filepath, e.what());
 			return false;
 		}
+
 		if(!data["Scene"])
 			return false;
 
 		std::string sceneName = data["Scene"].as<std::string>();
 		EG_CORE_TRACE("Deserializing scene '{0}'", sceneName);
 		ConsolePanel::Log("File: SceneSerializer.cpp - Deserializing scene " + sceneName, ConsolePanel::LogType::Info);
+
+		ResourceSerializer::DeserializeResourceCache();
 
 		auto entities = data["Entities"];
 		if (entities)
@@ -578,12 +500,22 @@ namespace eg {
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 					if(spriteRendererComponent["TilingFactor"])
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
-					if (spriteRendererComponent["TexturePath"])
+
+					if (spriteRendererComponent["TextureUUID"])
 					{
-						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
-						//TODO: Later should be handled by the asset manager
-						auto path = Project::GetAssetFileSystemPath(texturePath);
-						src.Texture = Texture2D::Create(path.string());
+						uint64_t textureUUID = spriteRendererComponent["TextureUUID"].as<uint64_t>();
+
+						if (ResourceDatabase::FindResourceData(textureUUID, ResourceType::Image))
+						{
+							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(textureUUID, ResourceType::Image);
+							std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
+							src.Texture = Texture2D::Create(finalPath.string());
+						}
+						else
+						{
+							src.Texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							EG_CORE_WARN("Texture not found: {0}", textureUUID);
+						}
 					}
 
 					if(spriteRendererComponent["IsInherited"])
@@ -598,14 +530,25 @@ namespace eg {
 					auto& src = deserializedEntity.AddComponent<SpriteRendererSTComponent>();
 					src.Color = spriteRendererComponentST["Color"].as<glm::vec4>();
 					src.TilingFactor = spriteRendererComponentST["TilingFactor"].as<float>();
-					if (spriteRendererComponentST["TexturePath"])
+					if (spriteRendererComponentST["TextureUUID"])
 					{
-						std::string texturePath = spriteRendererComponentST["TexturePath"].as<std::string>();
-						auto path = Project::GetAssetFileSystemPath(texturePath);
-						auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
-						auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();
-						Ref<Texture2D> texture = Texture2D::Create(path.string());
-						src.SubTexture = CreateRef<SubTexture2D>(texture, minCoords, maxCoords);
+						uint64_t textureUUID = spriteRendererComponentST["TextureUUID"].as<uint64_t>();
+
+						if (ResourceDatabase::FindResourceData(uuid, ResourceType::Image))
+						{
+							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::Image);
+							std::filesystem::path texturePath = texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
+							auto path = Project::GetAssetFileSystemPath(texturePath);
+							auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
+							auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();
+							Ref<Texture2D> texture = Texture2D::Create(path.string());
+							src.SubTexture = CreateRef<SubTexture2D>(texture, minCoords, maxCoords);
+						}
+						else
+						{
+							Ref<Texture2D> texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							src.SubTexture = CreateRef<SubTexture2D>(texture, glm::vec2(0,0), glm::vec2(1000, 1000));
+						}
 					}
 
 				}
@@ -622,6 +565,36 @@ namespace eg {
 						crc.isInherited = circleRendererComponent["IsInherited"].as<bool>();
 					if(circleRendererComponent["IsInheritedInChildren"])
 						crc.isInheritedInChildren = circleRendererComponent["IsInheritedInChildren"].as<bool>();
+				}
+
+				auto animatorComponent = entity["AnimatorComponent"];
+				if (animatorComponent)
+				{
+					auto& ac = deserializedEntity.AddComponent<AnimatorComponent>();
+					ac.Animator2D = CreateRef<Animator>();
+					ac.Animator2D->SetSpeed(animatorComponent["Speed"].as<float>());
+
+					auto animations = animatorComponent["Animations"];
+					if (animations)
+					{
+						for (auto animation : animations)
+						{
+							//TODO: if animation uses prefab
+							Ref<Animation> anim = Animation::Create(UUID(animation.as<uint64_t>()));
+							if(anim)
+								ac.Animator2D->AddAnimation(anim);
+							//TODO: else load all data for animation from scene file
+						}
+					}
+
+					auto transitions = animatorComponent["Transitions"];
+					if (transitions)
+					{
+						for (auto transition : transitions)
+						{
+							ac.Animator2D->AddTransition(transition["From"].as<uint64_t>(), transition["To"].as<uint64_t>());
+						}
+					}
 				}
 
 				auto rigidBody2DComponent = entity["RigidBody2DComponent"];
@@ -688,6 +661,7 @@ namespace eg {
 				}
 			}
 		}
+
 		return true;
 	}
 

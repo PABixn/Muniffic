@@ -1,5 +1,5 @@
 Project:
-  Name: "silli"
+  Name: "SandboxProject"
   StartScene: "Physics2D.egscene"
   AssetDirectory: "Assets"
   SceneDirectory: "Scenes"

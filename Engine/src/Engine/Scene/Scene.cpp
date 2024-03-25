@@ -235,15 +235,46 @@ namespace eg {
 			}
 		}
 
+		// Update Animation
+		{
+			auto t = m_Registry.view<AnimatorComponent>();
+			for (auto entity : t)
+			{
+				auto animator = t.get<AnimatorComponent>(entity);
+				animator.Animator2D->Update(ts);
+			}
+		}
+
 		if (mainCamera)
 		{
 			Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
 			// Draw sprites
 			{
-				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+				auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 				for (auto entity : group)
 				{
 					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				}
+			}
+			 
+			//Set Animations
+			{
+				auto group = m_Registry.view<SpriteRendererSTComponent, AnimatorComponent>();
+				for (auto entity : group)
+				{
+					auto [sprite, animator] = group.get<SpriteRendererSTComponent, AnimatorComponent>(entity);
+					sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame();
+				}
+			}
+
+			// Draw Subtexture sprites
+			{
+				auto group = m_Registry.view<TransformComponent, SpriteRendererSTComponent>();
+				for (auto entity : group)
+				{
+					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererSTComponent>(entity);
 
 					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
@@ -330,6 +361,8 @@ namespace eg {
 	{
 		Renderer2D::BeginScene(camera);
 
+		
+
 		// Draw sprites
 		{
 			auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
@@ -340,6 +373,16 @@ namespace eg {
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 			}
 		}
+
+		////Set Animations
+		//{
+		//	auto group = m_Registry.group<SpriteRendererSTComponent, AnimatorComponent>();
+		//	for (auto entity : group)
+		//	{
+		//		auto [sprite, animator] = group.get<SpriteRendererSTComponent, AnimatorComponent>(entity);
+		//		sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame();
+		//	}
+		//}
 
 		// Draw Subtexture sprites
 		{
@@ -555,6 +598,11 @@ namespace eg {
 
 	template<>
 	void Scene::OnComponentAdded<SpriteRendererSTComponent>(Entity entity, SpriteRendererSTComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<AnimatorComponent>(Entity entity, AnimatorComponent& component)
 	{
 	}
 

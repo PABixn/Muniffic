@@ -180,6 +180,105 @@ namespace eg
         }
     }
 
+    public class AnimatorComponent : Component
+    {
+        public float Speed
+        {
+            get => InternalCalls.AnimatorComponent_GetSpeed(Entity.ID);
+            set => InternalCalls.AnimatorComponent_SetSpeed(Entity.ID, value);
+        }
+
+        public void Play(string animationName)
+        {
+            InternalCalls.AnimatorComponent_PlayAnimation(Entity.ID, animationName);
+        }
+
+        public void Stop()
+        {
+            InternalCalls.AnimatorComponent_StopAnimation(Entity.ID);
+        }
+
+        public void Pause()
+        {
+            InternalCalls.AnimatorComponent_PauseAnimation(Entity.ID);
+        }
+
+        public void Update(float deltaTime)
+        {
+            InternalCalls.AnimatorComponent_UpdateAnimation(Entity.ID, deltaTime);
+        }
+
+        public void ChangeAnimation(string animationName)
+        {
+            InternalCalls.AnimatorComponent_ChangeAnimation(Entity.ID, animationName);
+        }
+
+        public void AddAnimation(string animationName)
+        {
+            InternalCalls.AnimatorComponent_AddAnimation(Entity.ID, animationName);
+        }
+
+        public void RemoveAnimation(string animationName)
+        {
+            InternalCalls.AnimatorComponent_RemoveAnimation(Entity.ID, animationName);
+        }
+
+        public void RemoveLastAnimation()
+        {
+            InternalCalls.AnimatorComponent_RemoveLastAnimation(Entity.ID);
+        }
+
+        public void Transition(string to)
+        {
+            InternalCalls.AnimatorComponent_Transition(Entity.ID, to);
+        }
+
+        public void TransitionByIndex(int index)
+        {
+            InternalCalls.AnimatorComponent_TransitionByIndex(Entity.ID, index);
+        }
+
+        public void AddTransition(string from, string to)
+        {
+            InternalCalls.AnimatorComponent_AddTransition(Entity.ID, from, to);
+        }
+
+        public void RemoveTransition(string from, string to)
+        {
+            InternalCalls.AnimatorComponent_RemoveTransition(Entity.ID, from, to);
+        }
+
+        public void AddTransitionByIndex(int from, int to)
+        {
+            InternalCalls.AnimatorComponent_AddTransitionByIndex(Entity.ID, from, to);
+        }
+
+        public void RemoveTransitionByIndex(int from, int to)
+        {
+            InternalCalls.AnimatorComponent_RemoveTransitionByIndex(Entity.ID, from, to);
+        }
+
+        public void CanTransition(string from, string to)
+        {
+            InternalCalls.AnimatorComponent_CanTransition(Entity.ID, from, to);
+        }
+
+        public void CanTransitionByIndex(int from, int to)
+        {
+            InternalCalls.AnimatorComponent_CanTransitionByIndex(Entity.ID, from, to);
+        }
+
+        public string GetCurrentAnimation()
+        {
+            return InternalCalls.AnimatorComponent_GetCurrentAnimation(Entity.ID);
+        }
+        public void SetCurrentAnimation(string animationName)
+        {
+            InternalCalls.AnimatorComponent_SetCurrentAnimation(Entity.ID, animationName);
+        }
+
+    }
+
     public class CameraComponent : Component
     {
         /// <summary>

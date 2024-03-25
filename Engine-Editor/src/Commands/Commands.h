@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include <variant>
 #include <cstddef>
+#include "Engine/Resources/ResourceDatabase.h"
+#include "Engine/Resources/ResourceUtils.h"
 
 namespace eg
 {
@@ -96,6 +98,136 @@ namespace eg
 			virtual void Undo() = 0;
 			virtual void Execute(CommandArgs) = 0;
 			virtual void Redo() = 0;
+		};
+
+		class RenameDirectoryCommand : public Command
+		{
+		public:
+			RenameDirectoryCommand(const std::filesystem::path& path, const std::string& newName)
+				: m_NewName(newName), m_Path(path)
+			{
+				Commands::AddCommand(this);
+
+				m_OldName = path.filename().string();
+
+				ResourceDatabase::RenameDirectory(path, newName);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::filesystem::path m_Path;
+			std::string m_OldName;
+			std::string m_NewName;
+		};
+
+		class RenameResourceCommand : public Command
+		{
+		public:
+			RenameResourceCommand(UUID uuid, const std::string& newName)
+				: m_UUID(uuid), m_NewName(newName)
+			{
+				Commands::AddCommand(this);
+
+				m_OldName = ResourceDatabase::GetResourceName(uuid);
+
+				ResourceDatabase::RenameResource(uuid, newName);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_UUID;
+			std::string m_NewName;
+			std::string m_OldName;
+		};
+
+		class MoveResourceCommand : public Command
+		{
+		public:
+			MoveResourceCommand(UUID uuid, const std::filesystem::path& path)
+				: m_UUID(uuid), m_Path(path)
+			{
+				Commands::AddCommand(this);
+
+				m_OldPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceDatabase::GetResourcePath(uuid);
+
+				ResourceDatabase::MoveResource(uuid, path);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_UUID;
+			std::filesystem::path m_Path;
+			std::filesystem::path m_OldPath;
+		};
+
+		class LoadResourceCommand : public Command
+		{
+		public:
+			LoadResourceCommand(const std::filesystem::path& path)
+				: m_Path(path)
+			{
+				Commands::AddCommand(this);
+
+				ResourceDatabase::LoadResource(path);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::filesystem::path m_Path;
+		};
+
+		class DeleteDirectoryCommand : public Command
+		{
+		public:
+			DeleteDirectoryCommand(const std::filesystem::path& directory)
+				: m_Directory(directory)
+			{
+				Commands::AddCommand(this);
+
+				ResourceDatabase::DeleteDirectory(directory);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::filesystem::path m_Directory;
+		};
+
+		class DeleteResourceCommand : public Command
+		{
+		public:
+			DeleteResourceCommand(UUID uuid, ResourceType resourceType, bool deleteFile = false)
+				: m_UUID(uuid), m_ResourceType(resourceType), m_DeleteFile(deleteFile), m_Resource(ResourceUtils::GetResourcePointer(uuid, resourceType))
+			{
+				if(m_DeleteFile == false)
+					Commands::AddCommand(this);
+
+				ResourceDatabase::RemoveResource(m_UUID, resourceType, deleteFile);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_UUID;
+			ResourceType m_ResourceType;
+			bool m_DeleteFile;
+			void* m_Resource;
 		};
 
 		template<typename T>
@@ -205,6 +337,42 @@ namespace eg
 			T m_Value;
 			T m_PreviousValue;
 			Entity m_Entity;
+			const std::string m_Label;
+		};
+
+		template<typename T>
+		class ChangeRefValueCommand : public Command
+		{
+		public:
+			ChangeRefValueCommand(Ref<T> value_ptr, Ref<T> previousValuePtr, const std::string label)
+				: m_ValuePtr(value_ptr), m_PreviousValuePtr(previousValuePtr), m_Label(label), m_Value(value_ptr)
+			{
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs args) override {};
+
+			void Undo() override
+			{
+				m_Value = m_ValuePtr;
+				m_ValuePtr = m_PreviousValuePtr;
+
+				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				m_ValuePtr = m_Value;
+
+				SetCurrentCommand(false);
+			}
+
+			const std::string GetLabel() const { return m_Label; }
+
+		protected:
+			Ref<T> m_ValuePtr;
+			Ref<T> m_Value;
+			Ref<T> m_PreviousValuePtr;
 			const std::string m_Label;
 		};
 
@@ -489,6 +657,138 @@ namespace eg
 			std::unordered_map<UUID, T> m_PreviousValues;
 		};
 
+		enum class VectorCommandType
+		{
+			ADD,
+			REMOVE_LAST,
+			ADD_AT,
+			REMOVE_AT,
+			DELETE_FIRST_ENTRY_BY_VALUE,
+			DELETE_ALL_ENTRIES_BY_VALUE,
+			REPLACE
+		};
+
+		template<typename T>
+		struct VectorCommandArgs
+		{
+			Ref<std::vector<T>> Vector;
+			VectorCommandType RevertCommand;
+			VectorCommandType ForwardCommand;
+			T OldValue;
+			T NewValue;
+			size_t Index = 0;
+			T RevertValueToReplaceOrDelete;
+			T ForwardValueToReplaceOrDelete;
+
+			VectorCommandArgs(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue, size_t index, T revertReplaceValue, T forwardReplaceValue)
+				: Vector(vector), RevertCommand(revertCommand), ForwardCommand(forwardCommand), OldValue(oldValue), NewValue(newValue), Index(index), RevertValueToReplaceOrDelete(revertReplaceValue), ForwardValueToReplaceOrDelete(forwardReplaceValue) {  }
+
+			VectorCommandArgs(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue, size_t index)
+				: Vector(vector), RevertCommand(revertCommand), ForwardCommand(forwardCommand), OldValue(oldValue), NewValue(newValue), Index(index) {  }
+
+			VectorCommandArgs(Ref<std::vector<T>> vector, VectorCommandType revertCommand, VectorCommandType forwardCommand, T oldValue, T newValue)
+				: Vector(vector), RevertCommand(revertCommand), ForwardCommand(forwardCommand), OldValue(oldValue), NewValue(newValue) {  }
+
+			VectorCommandArgs() = default;
+		};
+
+		template<typename T>
+		class VectorCommand : public Command
+		{
+			
+
+			public:
+			VectorCommand(VectorCommandArgs<T> args)
+					: m_Vector(args.Vector), 
+				m_RevertCommand(args.RevertCommand), 
+				m_ForwardCommand(args.ForwardCommand), 
+				m_OldValue(args.OldValue), 
+				m_NewValue(args.NewValue), 
+				m_Index(args.Index), 
+				m_RevertReplaceValue(args.RevertValueToReplaceOrDelete), 
+				m_ForwardReplaceValue(args.RevertValueToReplaceOrDelete)
+			{
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs arg) override {};
+
+			void Undo() override
+			{
+				switch (m_RevertCommand)
+				{
+				case VectorCommandType::ADD: m_Vector->push_back(m_OldValue); break;
+				case VectorCommandType::REMOVE_LAST: m_Vector->pop_back(); break;
+				case VectorCommandType::ADD_AT: m_Vector->insert(m_Vector->begin() + m_Index, m_OldValue); break;
+				case VectorCommandType::REMOVE_AT: m_Vector->erase(m_Vector->begin() + m_Index); break;
+				case VectorCommandType::REPLACE: 
+				{
+					auto it = std::find(m_Vector->begin(), m_Vector->end(), m_RevertReplaceValue);
+					if (it != m_Vector->end())
+						*it = m_OldValue;
+					break;
+				}
+				case VectorCommandType::DELETE_ALL_ENTRIES_BY_VALUE:
+				{
+					m_Vector->erase(std::remove(m_Vector->begin(), m_Vector->end(), m_OldValue), m_Vector->end());
+					break;
+				}
+				case VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE:
+				{
+					auto it = std::find(m_Vector->begin(), m_Vector->end(), m_OldValue);
+					if (it != m_Vector->end())
+						m_Vector->erase(it);
+					break;
+				}
+
+				}
+
+				SetCurrentCommand(true);
+			}
+
+			void Redo() override
+			{
+				switch (m_ForwardCommand)
+				{
+					case VectorCommandType::ADD: m_Vector->push_back(m_NewValue); break;
+					case VectorCommandType::REMOVE_LAST: m_Vector->pop_back(); break;
+					case VectorCommandType::ADD_AT: m_Vector->insert(m_Vector->begin() + m_Index, m_NewValue); break;
+					case VectorCommandType::REMOVE_AT: m_Vector->erase(m_Vector->begin() + m_Index); break;
+					case VectorCommandType::REPLACE:
+					{
+					auto it = std::find(m_Vector->begin(), m_Vector->end(), m_ForwardReplaceValue);
+					if (it != m_Vector->end())
+						*it = m_NewValue;
+					break;
+					}
+					case VectorCommandType::DELETE_ALL_ENTRIES_BY_VALUE:
+					{
+						m_Vector->erase(std::remove(m_Vector->begin(), m_Vector->end(), m_NewValue), m_Vector->end());
+						break;
+					}
+					case VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE:
+					{
+						auto it = std::find(m_Vector->begin(), m_Vector->end(), m_NewValue);
+						if (it != m_Vector->end())
+							m_Vector->erase(it);
+						break;
+					}
+				}
+
+				SetCurrentCommand(false);
+			}
+
+			protected:
+				Ref<std::vector<T>> m_Vector;
+				VectorCommandType m_RevertCommand;
+				VectorCommandType m_ForwardCommand;
+				T m_OldValue;
+				T m_NewValue;
+				int m_Index;
+				T m_RevertReplaceValue;
+				T m_ForwardReplaceValue;
+		};
+
 		static void SetCurrentCommand(bool isUndo);
 		static void AddCommand(Command* command);
 		static bool CanRevert(bool isUndo);
@@ -519,6 +819,42 @@ namespace eg
 				if(entity.HasComponent<Component>())
 					entity.GetInheritableComponent<Component>()->isInherited = false;
 			}
+		}
+
+		static Command* ExecuteRenameDirectoryCommand(const std::filesystem::path& path, const std::string& newName)
+		{
+			Command* command = new RenameDirectoryCommand(path, newName);
+			return command;
+		}
+
+		static Command* ExecuteRenameResourceCommand(UUID uuid, const std::string& newName)
+		{
+			Command* command = new RenameResourceCommand(uuid, newName);
+			return command;
+		}
+
+		static Command* ExecuteMoveResourceCommand(UUID uuid, const std::filesystem::path& path)
+		{
+			Command* command = new MoveResourceCommand(uuid, path);
+			return command;
+		}
+
+		static Command* ExecuteLoadResourceCommand(const std::filesystem::path& path)
+		{
+			Command* command = new LoadResourceCommand(path);
+			return command;
+		}
+
+		static Command* ExecuteDeleteResourceCommand(UUID uuid, ResourceType resourceType, bool deleteFile = false)
+		{
+			Command* command = new DeleteResourceCommand(uuid, resourceType, deleteFile);
+			return command;
+		}
+
+		static Command* ExecuteDeleteDirectoryCommand(const std::filesystem::path& directory)
+		{
+			Command* command = new DeleteDirectoryCommand(directory);
+			return command;
 		}
 
 		template<typename T>
@@ -567,6 +903,21 @@ namespace eg
 			return command;
 		}
 
+		template<typename T>
+		static Command* ExecuteRefValueCommand(Ref<T> value_ptr, Ref<T> previous_value_ptr, const std::string label, bool bypass = false)
+		{
+			Command* command = nullptr;
+			ChangeRawValueCommand<Ref<T>>* previousCommand = dynamic_cast<ChangeRawValueCommand<Ref<T>>*>(GetCurrentCommand());
+			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
+				Command* command = new ChangeRefValueCommand<T>(value_ptr, previous_value_ptr, label);
+			else {
+				if (GetIsSaved()) {
+					SetIsSaved(false);
+				}
+			}
+			return command;
+		}
+
 		static Command* ExecuteChangeParentCommand(Entity& entity, std::optional<Entity> parent, Ref<Scene>& context)
 		{
 			Command* command = new ChangeParentCommand(entity, parent, context);
@@ -584,6 +935,13 @@ namespace eg
 		static Command* ExecuteManageComponentInheritanceCommand(Entity& entity, Ref<Scene>& context, InheritanceCommandType commandType, bool isUndo = false)
 		{
 			Command* command = new ManageComponentInheritanceCommand<Component>(entity, context, commandType, isUndo);
+			return command;
+		}
+
+		template<typename T>
+		static Command* ExecuteVectorCommand(VectorCommandArgs<T> args)
+		{
+			Command* command = new VectorCommand<T>(args);
 			return command;
 		}
 

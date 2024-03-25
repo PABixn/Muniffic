@@ -9,7 +9,8 @@ namespace eg {
 		return UnsavedChangesPanelRender;
 	}
 	UnsavedChangesPanel::UnsavedChangesPanel() {};
-	void UnsavedChangesPanel::OnImGuiRender() {
+	void UnsavedChangesPanel::OnImGuiRender()
+	{
 		ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth()/2, Application::Get().GetWindow().GetHeight() / 2));
 		/*
 		ImGui::SetNextWindowSize(ImVec2(350, 350));*/

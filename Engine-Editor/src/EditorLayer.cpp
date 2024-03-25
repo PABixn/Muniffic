@@ -1,19 +1,20 @@
 #include "egpch.h"
 #include "EditorLayer.h"
 #include "Imgui/imgui.h"
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include "Engine/Core/Core.h"
 #include "Engine/Scene/SceneSerializer.h"
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Events/KeyEvent.h"
-#include <optional>
-#include "ImGuizmo.h"
 #include "Engine/Scene/Components.h"
 #include "Engine/Math/Math.h"
 #include "Commands/Commands.h"
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Renderer/Font.h"
+#include <optional>
+#include "ImGuizmo.h"
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 
 namespace eg
@@ -27,8 +28,17 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
+		ResourceSystemConfig resourceSystemConfig;
+		resourceSystemConfig.MaxLoaderCount = 3;
+		resourceSystemConfig.ResourceDirectory = "../resources";
+
+		if (!resourceSystemInit(resourceSystemConfig))
+		{
+			EG_ERROR("Failed to initialize resource system.");
+			return;
+		}
+
 		EG_PROFILE_FUNCTION();
-		m_Texture = Texture2D::Create("assets/textures/cubes.png");
 		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");
 		m_IconPause = Texture2D::Create("resources/icons/PauseButton.png");
 		m_IconSimulate = Texture2D::Create("resources/icons/SimulateButton.png");
@@ -65,6 +75,7 @@ namespace eg
 	void EditorLayer::OnDetach()
 	{
 		EG_PROFILE_FUNCTION();
+		resourceSystemShutdown();
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
@@ -85,6 +96,7 @@ namespace eg
 			m_Camera.OnUpdate(ts);
 
 		m_EditorCamera.OnUpdate(ts);
+		m_SceneHierarchyPanel.Update(ts);
 
 		Renderer2D::ResetStats();
 		m_FrameBuffer->Bind();
@@ -101,7 +113,8 @@ namespace eg
 			if (m_ViewportFocused)
 				m_Camera.OnUpdate(ts);
 			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-
+			if(m_AddResourcePanel->IsResourcePanelOpen())
+				m_AddResourcePanel->Update(ts);
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
 			// m_ActiveScene->OnRenderEditor(m_EditorCamera);
@@ -229,12 +242,36 @@ namespace eg
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Resources"))
+			{
+				if (ImGui::MenuItem("Add Resource", "Ctrl+A"))
+					m_AddResourcePanel->showResourcePanel(true);
+
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		
+		m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
+		m_ContentBrowserPanel->SetRenameFolderPanel(m_RenameFolderPanel);
+		m_ContentBrowserPanel->SetDeleteDirectoryPanel(m_DeleteDirectoryPanel);
+		m_ContentBrowserPanel->SetRenameResourcePanel(m_RenameResourcePanel);
 		m_ContentBrowserPanel->OnImGuiRender();
+
+		if(m_DeleteFilePanel->IsShown())
+			m_DeleteFilePanel->OnImGuiRender();
+
+		if(m_RenameFolderPanel->IsShown())
+			m_RenameFolderPanel->OnImGuiRender();
+		
+		if (m_DeleteDirectoryPanel->IsShown())
+			m_DeleteDirectoryPanel->OnImGuiRender();
+
+		if (m_RenameResourcePanel->IsShown())
+			m_RenameResourcePanel->OnImGuiRender();
 		m_ConsolePanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
@@ -287,7 +324,7 @@ namespace eg
 			{
 				const wchar_t *path = (const wchar_t *)payload->Data;
 
-				OpenScene(path);
+				OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -349,6 +386,8 @@ namespace eg
 		UI_Toolbar();
 
 		ImGui::End();
+		if (m_AddResourcePanel)
+			m_AddResourcePanel->OnImGuiRender();
 	}
 
 	void EditorLayer::UI_Toolbar()
@@ -485,6 +524,11 @@ namespace eg
 				else
 					Save();
 			break;
+		}
+		case Key::A:
+		{
+			if(controlPressed)
+				m_AddResourcePanel->showResourcePanel(true);
 		}
 		case Key::N:
 		{
@@ -731,6 +775,11 @@ namespace eg
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+			m_AddResourcePanel = CreateScope<AddResourcePanel>();
+			m_DeleteFilePanel = new DeleteFilePanel();
+			m_RenameFolderPanel = new RenameFolderPanel();
+			m_DeleteDirectoryPanel = new DeleteDirectoryPanel();
+			m_RenameResourcePanel = new RenameResourcePanel();
 			m_ConsolePanel = CreateScope<ConsolePanel>();
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		}
@@ -824,6 +873,11 @@ namespace eg
 		else {
 			ConsolePanel::Log("File: EditorLayer.cpp - No entity selected for duplication", ConsolePanel::LogType::Warning);
 		}
+	}
+
+	void EditorLayer::CloseAddResourcePanel()
+	{
+		m_AddResourcePanel = nullptr;
 	}
 
 }

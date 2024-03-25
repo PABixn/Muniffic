@@ -9,6 +9,10 @@
 #include <cstring>
 #include "../Commands/Commands.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include "stb_image.h"
+#include "Engine/Resources/ResourceSerializer.h"
+#include "iostream"
+#include "shellapi.h"
 #include "ConsolePanel.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
@@ -19,6 +23,16 @@
 #endif
 
 namespace eg {
+
+	const char* add(const char* begining, const char* middle, const char* ending) {
+		size_t resultLength = strlen(middle) + strlen(begining) + strlen(ending);
+		char* resultMsg = new char[resultLength];
+		strcpy(resultMsg, begining);
+		strcat(resultMsg, middle);
+		strcat(resultMsg, ending);
+		return resultMsg;
+	}
+
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
 		SetContext(scene);
@@ -75,8 +89,56 @@ namespace eg {
 			DrawComponents(m_SelectionContext);
 		}
 		ImGui::End();
-
+		if (m_PreviewAbsoluteImagePath != "" ) {
+			ImGui::Begin("Preview");
+			GLuint my_opengl_texture; 
+			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceDatabase::GetTextureResourceDataCache()) {
+				auto CacheImageData = (pairOfUUIDAndData.second);
+				if (CacheImageData->GetAbsolutePath() == m_PreviewAbsoluteImagePath){
+					stbi_set_flip_vertically_on_load(false);
+					unsigned char* image = stbi_load(m_PreviewAbsoluteImagePath.string().c_str(), &(CacheImageData->Width), &(CacheImageData->Height), &(CacheImageData->Channels), STBI_rgb_alpha);
+					if (image) {
+						glGenTextures(1, &my_opengl_texture);
+						glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (CacheImageData->Width), (CacheImageData->Height), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+						glGenerateMipmap(GL_TEXTURE_2D); 
+						auto s = ImGui::GetWindowWidth();
+						std::string absImgName = m_PreviewAbsoluteImagePath.filename().string();
+						ImGui::TextWrapped(add("file: ",absImgName.c_str(), ""));
+						if (ImGui::Button("open")) {
+							std::string path = m_PreviewAbsoluteImagePath.string();
+							ShellExecuteA(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+						}
+						ImGui::TextWrapped(add("size: ", std::to_string(CacheImageData->Width).c_str(), add(" x ", std::to_string(CacheImageData->Height).c_str(),"")));
+						ImGui::TextWrapped(add("scale of preview: ", (std::to_string(std::round(s / CacheImageData->Width * 100.0) / 100.0)).substr(0, 4).c_str(), ""));
+						ImGui::Image((void*)(intptr_t)my_opengl_texture, ImVec2((int)s, (int)((s * (CacheImageData->Height)) / (CacheImageData->Width))));
+						stbi_image_free(image);
+					}
+					else
+					{
+						std::string absImgPath = m_PreviewAbsoluteImagePath.string();
+						ImGui::TextWrapped(add("file: ", absImgPath.c_str(), " not found"));
+					}
+				}
+			}
+			ImGui::End();
+		}
 		ImGui::End();
+	}
+
+	void SceneHierarchyPanel::Update(float dt)
+	{
+		if (m_SelectionContext)
+		{
+			if (m_SelectionContext.HasComponent<AnimatorComponent>())
+			{
+				auto& animator = m_SelectionContext.GetComponent<AnimatorComponent>().Animator2D;
+				if (animator)
+				{
+					animator->Update(dt);
+				}
+			}
+		}
 	}
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
@@ -109,7 +171,7 @@ namespace eg {
 		}
 
 		if (ImGui::IsItemClicked())
-			m_SelectionContext = entity;
+			SetSelectedEntity(entity);
 
 		if (ImGui::BeginPopupContextItem())
 		{
@@ -229,11 +291,11 @@ namespace eg {
 			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
 			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+
 			if (ImGui::Button("+", ImVec2{ lineHeight,lineHeight }))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
-
 			
 			if (ImGui::BeginPopup("ComponentSettings"))
 			{
@@ -309,7 +371,6 @@ namespace eg {
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
-				std::cout<<tag<<std::endl;
 			}
 		}
 
@@ -330,6 +391,7 @@ namespace eg {
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
 			DisplayAddComponentEntry<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D");
+			DisplayAddComponentEntry<AnimatorComponent>("Animator");
 
 			ImGui::EndPopup();
 		}
@@ -436,7 +498,6 @@ namespace eg {
 				strcpy_s(buffer, sizeof(buffer), component.Name.c_str());
 
 				UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
-
 
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 				{
@@ -694,8 +755,6 @@ namespace eg {
 					}
 				}
 
-				if(!scriptExists)
-					ImGui::PopStyleColor();
 
 			}, m_Context);
 
@@ -713,11 +772,14 @@ namespace eg {
 				{
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 					{
-						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath = std::filesystem::path(path);
+						uint64_t* uuid = (uint64_t*)payload->Data;
+						std::filesystem::path texturePath = ResourceUtils::GetKeyPath(*uuid);
+						texturePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texturePath;
+
 						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 						if (texture->IsLoaded())
 						{
+							component.TextureUUID = *uuid;
 							Ref<Texture2D> oldTexture = component.Texture;
 							component.Texture = texture;
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
@@ -752,14 +814,18 @@ namespace eg {
 				{
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 					{
-						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath = std::filesystem::path(path);
+						uint64_t* uuid = (uint64_t*)payload->Data;
+
+						std::filesystem::path texturePath = ResourceUtils::GetKeyPath(*uuid);
+						texturePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texturePath;
+
 						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 						if (texture->IsLoaded())
 						{
 							Ref<Texture2D> oldTexture = component.SubTexture->GetTexture();
 							component.SubTexture->SetTexture(texture);
 							Ref<Texture2D> newTexture = component.SubTexture->GetTexture();
+							component.SubTextureUUID = *uuid;
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
 						}
 						else
@@ -904,7 +970,162 @@ namespace eg {
 				if(ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f))
 					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing");
 			}, m_Context);
+
+			DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
+			{
+				float speed = component.Animator2D->GetSpeed();
+				if (ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f))
+				{
+					Commands::ExecuteRawValueCommand<float>(component.Animator2D->GetSpeedPtr(), speed, "AnimatorComponent-Speed");
+				}
+				const Ref<std::vector<Ref<Animation>>> animations = component.Animator2D->GetAnimations();
+				if (component.Animator2D->GetCurrentAnimation() != nullptr && animations->size() > 0)
+				{
+					ImGui::Text("Current Animation: %s", component.Animator2D->GetCurrentAnimation()->GetName().c_str());
+					if (component.Animator2D->GetCurrentAnimation()->GetFrame())
+					{
+						Ref<SubTexture2D> subtexture = component.Animator2D->GetCurrentAnimation()->GetFrame();
+						ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
+						ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
+						ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
+					}
+				}
+
+				if (ImGui::Button("Add Empty Animation"))
+				{
+					std::string name = "Animation" + std::to_string(component.Animator2D->GetAnimations()->size());
+					component.Animator2D->AddAnimationWithName(name);
+					Commands::ExecuteVectorCommand<Ref<Animation>>({ component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, CreateRef<Animation>() });
+				}
+
+				
+				ImGui::Text("Animations:");
+				if (animations->size() > 0)
+				{
+					int i = 0;
+					for (auto animation : *animations)
+					{
+						
+						ImGui::PushID("Anim" + i);
+						if (ImGui::TreeNode(animation->GetName().c_str()))
+						{
+							ImGui::Text("Frame rate: %d", animation->GetFrameRate());
+							ImGui::Checkbox("Looped", animation->IsLoopedPtr());
+							ImGui::Checkbox("Playing", animation->IsPlayingPtr());
+							ImGui::PushID("Frames" + i);
+							if (ImGui::TreeNode("Frames")) 
+							{
+								for (int j = 0; j < animation->GetFrames().size(); j++)
+								{
+									ImGui::PushID("Frame:" + j);
+									//TODO: Display the name of the frame and the texture of the frame
+									ImGui::Text("Frame: %d", j);
+									ImGui::PopID();
+								}
+								ImGui::TreePop();
+							}
+							ImGui::PopID();
+							//TODO: Playing the animation if the animation is looped play non-stop else play once and show button on top to play again
+							// 
+							//TODO: Display the animation properties if someone wants to change the animation properties show the popup window which will ask if the user wants to change the properties in the scene or in the prefab
+							//ImGui::PopID();
+							ImGui::TreePop();
+						}
+						if (ImGui::BeginDragDropTarget())
+						{
+							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+							{
+								uint64_t* uuid = (uint64_t*)payload->Data;
+
+								std::filesystem::path animationPath = ResourceUtils::GetKeyPath(*uuid);
+
+								Ref<Animation> animation = Animation::Create(*uuid);
+								if (animation)
+								{
+									Ref<Animation> oldAnim = component.Animator2D->GetAnimation(i);
+									component.Animator2D->SetAnimation(i, animation);
+									Ref<Animation> newAnim = component.Animator2D->GetAnimation(i);
+									Commands::ExecuteRefValueCommand<Animation>(newAnim, oldAnim, "AnimatorComponent-ChangeAnimation", true);
+								}
+								else
+									EG_WARN("Could not load animation from {0}", animationPath);
+							}
+							ImGui::EndDragDropTarget();
+						}
+						ImGui::PopID();
+						i++;
+					}
+				}
+
+				Ref<std::vector<std::pair<size_t, size_t>>> transitions = component.Animator2D->GetTransitions();
+				if (ImGui::Button("Add Transition"))
+				{
+					ImGui::OpenPopup("AddTransition");
+				}
+				if (ImGui::BeginPopup("AddTransition"))
+				{
+					for (size_t i = 0; i < animations->size(); i++)
+					{
+						for (size_t j = 0; j < animations->size(); j++)
+						{
+							std::pair<size_t, size_t> transition = std::make_pair(i, j);
+							auto hasTransition = std::find(transitions->begin(), transitions->end(), transition);
+							if (i != j && hasTransition == transitions->end())
+							{
+								std::string name = animations->at(i)->GetName() + " to " + animations->at(j)->GetName();
+								if (ImGui::Button(name.c_str()))
+								{
+									component.Animator2D->AddTransition(transition);
+									Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, transition, transition });
+									ImGui::CloseCurrentPopup();
+								}
+							}
+						}
+					}
+					if (ImGui::Button("Cancel"))
+					{
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+				if (ImGui::TreeNode("Transitions:"))
+				{
+					
+					if (transitions->size() > 0)
+					{
+						int i = 0;
+						for (const auto& transition : *transitions)
+						{
+							ImGui::PushID(i);
+							ImGui::Text("Transition from %s to %s", animations->at(transition.first)->GetName().c_str(), animations->at(transition.second)->GetName().c_str()); 
+							ImGui::SameLine();
+							if (ImGui::Button("+"))
+							{
+								ImGui::OpenPopup("##Transition Popup");
+								
+							}
+							if (ImGui::BeginPopup("##Transition Popup"))
+							{
+								if (ImGui::Button("Remove Transition"))
+								{
+									component.Animator2D->RemoveTransition(transition);
+									Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::ADD, Commands::VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE, transition, transition, 0, transition, transition });
+									ImGui::CloseCurrentPopup();
+								}
+								ImGui::EndPopup();
+							}
+							
+							ImGui::PopID();
+							i++;
+						}
+					}
+					ImGui::TreePop();
+				}
+			}, m_Context);
 	}
+
+	//void AddAnimation
+
 
 
 }

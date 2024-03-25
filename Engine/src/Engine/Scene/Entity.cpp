@@ -194,4 +194,17 @@ namespace eg {
 		textComponent.isInheritedInChildren = component->isInheritedInChildren;
 		ConsolePanel::Log("File: Entity.cpp - Text component set successfully", ConsolePanel::LogType::Info);
 	}
+
+	template<>
+	void Entity::SetComponent<AnimatorComponent>(Entity& entity, AnimatorComponent* component)
+	{
+		if (!entity.HasComponent<AnimatorComponent>())
+			entity.AddComponent<AnimatorComponent>();
+
+		auto& animatorComponent = entity.GetComponent<AnimatorComponent>();
+
+		animatorComponent.Animator2D = component->Animator2D;
+		animatorComponent.isInherited = component->isInherited;
+		animatorComponent.isInheritedInChildren = component->isInheritedInChildren;
+	}
 }

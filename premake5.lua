@@ -42,7 +42,3 @@ group ""
 group "Tools"
 	include "Engine-Editor"
 group ""
-
-group "Misc"
-	include "Sandbox"
-group ""

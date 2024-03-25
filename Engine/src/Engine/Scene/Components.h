@@ -6,6 +6,7 @@
 #include "Engine/Core/UUID.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/SubTexture2D.h"
+#include "Engine/Renderer/Animator.h"
 #include "Engine/Renderer/Font.h"
 
 #include "glm/gtc/matrix_transform.hpp"
@@ -69,6 +70,7 @@ namespace eg {
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<Texture2D> Texture;
+		UUID TextureUUID = 0;
 		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;
@@ -81,6 +83,7 @@ namespace eg {
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<SubTexture2D> SubTexture;
+		UUID SubTextureUUID = 0;
 		float TilingFactor = 1.0f;
 
 		SpriteRendererSTComponent()
@@ -90,6 +93,19 @@ namespace eg {
 		SpriteRendererSTComponent(const SpriteRendererSTComponent&) = default;
 		SpriteRendererSTComponent(const glm::vec4& color)
 			: Color(color) {}
+	};
+
+	struct AnimatorComponent : Component
+	{
+		Ref<Animator> Animator2D;
+
+		AnimatorComponent()
+		{
+			Animator2D = CreateRef<Animator>();
+		};
+		AnimatorComponent(const AnimatorComponent&) = default;
+		AnimatorComponent(const Ref<Animator>& animator)
+			: Animator2D(animator) {}
 	};
 
 	struct CircleRendererComponent: Component
@@ -209,7 +225,7 @@ namespace eg {
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
-	struct TextComponent: Component
+	struct TextComponent : Component
 	{
 		std::string TextString;
 		Ref<Font> FontAsset = Font::GetDefaultFont();
@@ -233,5 +249,6 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
-		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent>;
+		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent,
+		AnimatorComponent>;
 }

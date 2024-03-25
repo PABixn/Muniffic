@@ -137,6 +137,11 @@ namespace eg
 			KeyTypedEvent event((KeyCode)keycode);
 			data.EventCallback(event);
 			});
+
+		glfwSetDropCallback(m_Window, [](GLFWwindow* window, int count, const char** paths) {
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			data.DropFile(count, paths);
+			});
 		
 	}
 
