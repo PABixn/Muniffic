@@ -823,7 +823,7 @@ namespace eg {
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
 						}
 						else
-							EG_WARN("Could not load texture {0}", texturePath.filename().string());
+							EG_WARN("Could not load texture {0}", ResourceDatabase::GetFullPath(*uuid));
 					}
 					ImGui::EndDragDropTarget();
 				}

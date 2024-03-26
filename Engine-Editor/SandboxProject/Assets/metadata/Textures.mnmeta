@@ -1,2 +1,15 @@
 Resources:
-  []
+  - UUID: 998801465463046789
+    ResourcePath: Textures
+    ImageName: Dune
+    Extension: .png
+    Width: 1000
+    Height: 1542
+    Channels: 4
+  - UUID: 6930668490678268954
+    ResourcePath: Textures
+    ImageName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
+    Extension: .png
+    Width: 604
+    Height: 569
+    Channels: 3

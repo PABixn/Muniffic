@@ -45,19 +45,19 @@ Entities:
     TagComponent:
       Tag: Text
     TransformComponent:
-      Translation: [1.89999998, 1.60000002, 0]
+      Translation: [-0.300000012, 1.10000002, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     TextComponent:
-      TextString: Hello
+      TextString: natalka
       Color: [1, 1, 1, 1]
       Kerning: 0
       LineSpacing: 0
       IsInherited: false
       IsInheritedInChildren: false
-      Font: 7999517453004432376
+      Font: 7767335170006567341
   - Entity: 16442485196201648565
     Name: Cube
     TagComponent:
@@ -226,15 +226,15 @@ Entities:
     TagComponent:
       Tag: Empty Entity
     TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Translation: [0, -2.20000005, 0]
+      Rotation: [-0.100000001, 1.10000002, 0]
+      Scale: [8.39999962, 8.69999981, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TilingFactor: 1
-      TextureUUID: 0
+      TextureUUID: 6930668490678268954
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:
