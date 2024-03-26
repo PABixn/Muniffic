@@ -775,7 +775,7 @@ namespace eg {
 						std::filesystem::path texturePath = ResourceUtils::GetKeyPath(*uuid);
 						texturePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texturePath;
 
-						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+						Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*uuid);
 						if (texture->IsLoaded())
 						{
 							component.TextureUUID = *uuid;

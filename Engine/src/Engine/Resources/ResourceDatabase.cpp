@@ -598,6 +598,12 @@ namespace eg
 		}
 		else if (resourceType == ResourceType::Font)
 		{
+			if (uuid == Font::GetDefaultFontUUID())
+			{
+				EG_CORE_ERROR("Cannot delete default font");
+				return;
+			}
+
 			if (ResourceSerializer::FontResourceDataCache.find(uuid) != ResourceSerializer::FontResourceDataCache.end())
 			{
 				ResourceSerializer::FontResourceDataCache.erase(uuid);
