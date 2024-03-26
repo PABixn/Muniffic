@@ -804,10 +804,7 @@ namespace eg {
 				if (ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
 
-
 				ImGui::Button("Texture", { 100.0f, 0.0f });
-
-
 
 				if (ImGui::BeginDragDropTarget())
 				{
@@ -815,10 +812,8 @@ namespace eg {
 					{
 						uint64_t* uuid = (uint64_t*)payload->Data;
 
-						std::filesystem::path texturePath = ResourceUtils::GetKeyPath(*uuid);
-						texturePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texturePath;
+						Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*uuid);
 
-						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 						if (texture->IsLoaded())
 						{
 							Ref<Texture2D> oldTexture = component.SubTexture->GetTexture();

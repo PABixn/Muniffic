@@ -11,3 +11,7 @@ Resources:
     ResourcePath: Fonts
     FontName: Ldfcomicsansbold-zgma
     Extension: .ttf
+  - UUID: 7767335170006567341
+    ResourcePath: Fonts
+    FontName: OldLondon
+    Extension: .ttf
