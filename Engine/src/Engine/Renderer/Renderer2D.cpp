@@ -675,6 +675,8 @@ namespace eg {
 
 	void Renderer2D::DrawLine(const glm::vec3& start, const glm::vec3& end, const glm::vec4& color, int entityID)
 	{
+		if(s_Data.LineVertexCount >= Renderer2DData::MaxVertices)
+			FlushAndReset();
 		s_Data.LineVertexBufferPtr->Position = start;
 		s_Data.LineVertexBufferPtr->Color = color;
 		s_Data.LineVertexBufferPtr->EntityID = entityID;

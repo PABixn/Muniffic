@@ -41,6 +41,7 @@ namespace eg {
 
 		static const std::string GetProjectName()
 		{
+			return "Hello";
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_Config.Name; 
 		}

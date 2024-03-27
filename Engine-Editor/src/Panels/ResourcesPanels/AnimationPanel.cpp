@@ -14,6 +14,7 @@ namespace eg {
 
 	bool AnimationPanel::InitAnimationPanel(const std::filesystem::path& path)
 	{
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path textureBasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		bool resourceLoad = false;
 		m_LoadedResource = new Resource();
@@ -70,6 +71,7 @@ namespace eg {
 
 	void AnimationPanel::SetFrames()
 	{
+		EG_PROFILE_FUNCTION();
 		m_PreviewData->ClearFrames();
 		for (int i = m_Row; i < m_Row + m_RowCount; i++)
 			for (int j = m_Column; j < m_Column + m_ColumnCount; j++)
@@ -95,6 +97,7 @@ namespace eg {
 
 	void AnimationPanel::DeleteData()
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_LoadedResource)
 		{
 			if (m_LoadedResource->Data)
@@ -112,6 +115,7 @@ namespace eg {
 
 	void AnimationPanel::OnImGuiRender()
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_ShowAnimationPanel)
 		{
 			int maxColumns = (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth);
@@ -276,6 +280,7 @@ namespace eg {
 
 	void AnimationPanel::CloseAnimationPanel()
 	{
+		EG_PROFILE_FUNCTION();
 		DeleteData();
 		ResetData();
 		ShowAnimationPanel(false);
@@ -283,6 +288,7 @@ namespace eg {
 
 	void AnimationPanel::ResetData()
 	{
+		EG_PROFILE_FUNCTION();
 		m_FrameWidth = 0;
 		m_FrameHeight = 0;
 		m_Column = 0;

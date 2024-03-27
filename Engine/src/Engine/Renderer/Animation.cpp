@@ -43,6 +43,7 @@ namespace eg
 
 	Ref<Animation> Animation::Create(const UUID &id)
 	{
+		EG_PROFILE_FUNCTION();
 		if (!ResourceDatabase::FindResourceData(id, ResourceType::Animation))
 			return nullptr;
 		AnimationResourceData *animData = (AnimationResourceData *)ResourceDatabase::GetResourceData(id, ResourceType::Animation);
@@ -131,6 +132,7 @@ namespace eg
 
 	void Animation::SetID(const UUID &id)
 	{
+		m_AnimationID = id;
 	}
 
 	void Animation::ClearFrames()
@@ -140,6 +142,7 @@ namespace eg
 
 	void Animation::RemoveFrame(int index)
 	{
+		EG_PROFILE_FUNCTION();
 		if (index < m_frames.size())
 		{
 			m_frames.erase(m_frames.begin() + index);
@@ -148,6 +151,7 @@ namespace eg
 
 	Ref<SubTexture2D> Animation::AddFrame(const Ref<SubTexture2D> &frame)
 	{
+		EG_PROFILE_FUNCTION();
 		if (!frame)
 			return nullptr;
 		m_frames.push_back(frame);
@@ -156,16 +160,19 @@ namespace eg
 
 	void Animation::AddFrames(const std::vector<Ref<SubTexture2D>> &frames)
 	{
+		EG_PROFILE_FUNCTION();
 		m_frames.insert(m_frames.end(), frames.begin(), frames.end());
 	}
 	const Ref<SubTexture2D> &Animation::GetFrame(int frame) const
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_frames.size() > 0 && frame < m_frames.size() && frame >= 0)
 			return m_frames[frame];
 		return nullptr;
 	}
 	const Ref<SubTexture2D> &Animation::GetFrame() const
 	{
+		EG_PROFILE_FUNCTION();
 		return GetFrame((int)m_frame);
 	}
 

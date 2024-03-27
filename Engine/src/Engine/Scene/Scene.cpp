@@ -26,6 +26,8 @@ namespace eg {
 	Scene::~Scene()
 	{
 	}
+	
+	
 
 	template<typename... Component>
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
@@ -360,8 +362,7 @@ namespace eg {
 	void Scene::RenderScene(EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
-
-		
+		RenderAxis();
 
 		// Draw sprites
 		{
@@ -418,6 +419,14 @@ namespace eg {
 		}
 
 		Renderer2D::EndScene();
+	}
+
+	void Scene::RenderAxis()
+	{
+		//X: red
+		//y: green
+		//z: blue
+		
 	}
 
 	Entity Scene::DuplicateEntity(Entity entity)

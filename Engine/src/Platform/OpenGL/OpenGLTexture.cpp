@@ -86,6 +86,7 @@ namespace eg {
 
 	Ref<Texture2D> OpenGLTexture2D::Create(const UUID& id)
 	{
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path path = ResourceDatabase::GetFullPath(id);
 		return Create(path.string());
 	}
