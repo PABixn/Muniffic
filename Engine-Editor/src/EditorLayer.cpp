@@ -26,6 +26,8 @@ namespace eg
 		s_Font = Font::GetDefaultFont();
 	}
 
+	constexpr float AxisLength = 100000000.0f;
+
 	void EditorLayer::OnAttach()
 	{
 		ResourceSystemConfig resourceSystemConfig;
@@ -297,6 +299,10 @@ namespace eg
 
 		if(ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
 			Commands::ExecuteRawValueCommand(&m_ShowPhysicsColliders, !m_ShowPhysicsColliders, "Show Physics Colliders");
+		if(ImGui::Checkbox("Show Axis", &m_ShowAxis))
+			Commands::ExecuteRawValueCommand(&m_ShowAxis, !m_ShowAxis, "Show Axis");
+		if(ImGui::Checkbox("Show Grid", &m_ShowGrid))
+			Commands::ExecuteRawValueCommand(&m_ShowGrid, !m_ShowGrid, "Show Grid");
 		ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
 		ImGui::End();
 
@@ -620,6 +626,29 @@ namespace eg
 		else
 		{
 			Renderer2D::BeginScene(m_EditorCamera);
+		}
+
+		if(m_ShowAxis)
+		{
+			glm::vec3 start = { 0,0,0 };
+			Renderer2D::DrawLine(start, { AxisLength, 0,0 }, { 1.0f, 0.0f, 0.0f, 1.0f });
+			Renderer2D::DrawLine(start, { 0, AxisLength,0 }, { 0.0f, 1.0f, 0.0f, 1.0f });
+			Renderer2D::DrawLine(start, { 0, 0, AxisLength }, { 1.0f, 0.0f, 1.0f, 1.0f });
+		}
+		if(m_ShowGrid)
+		{
+			int linesAmount = 10000;
+			for (int i = -linesAmount; i <= linesAmount; i++)
+			{
+				if (i == 0)
+					continue;
+				Renderer2D::DrawLine({ -linesAmount ,i , 0 }, { linesAmount , i, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({ i ,-linesAmount , 0 }, { i , linesAmount, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({ -linesAmount ,0 , i }, { linesAmount , 0, i }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({ 0 ,-linesAmount , i }, { 0 , linesAmount, i }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({ i ,0 , -linesAmount }, { i , 0, linesAmount }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({ 0 ,i , -linesAmount }, { 0 , i, linesAmount }, { 0.2f, 0.2f, 0.2f, 1.0f });
+			}
 		}
 
 		if (m_ShowPhysicsColliders)
