@@ -823,7 +823,7 @@ namespace eg {
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
 						}
 						else
-							EG_WARN("Could not load texture {0}", ResourceDatabase::GetFullPath(*uuid));
+							EG_WARN("Could not load texture {0}", ResourceUtils::GetFullPath(*uuid));
 					}
 					ImGui::EndDragDropTarget();
 				}
@@ -961,13 +961,13 @@ namespace eg {
 				std::string selectedFontName = "OpenSans-Regular";
 
 				if(ResourceDatabase::FindResourceData(component.FontAsset, ResourceType::Font))
-					selectedFontName = ResourceDatabase::GetResourceName(component.FontAsset);
+					selectedFontName = ResourceUtils::GetResourceName(component.FontAsset);
 
 				if (ImGui::BeginCombo("Font", selectedFontName.c_str(), ImGuiComboFlags_None))
 				{
 					for (const auto& [uuid, font] : ResourceDatabase::GetFontResourceDataCache())
 					{
-						std::string name = ResourceDatabase::GetResourceName(uuid);
+						std::string name = ResourceUtils::GetResourceName(uuid);
 						bool isSelected = component.FontAsset == uuid;
 						if (ImGui::Selectable(name.c_str(), isSelected))
 						{

@@ -131,7 +131,7 @@ namespace eg
 			{
 				Commands::AddCommand(this);
 
-				m_OldName = ResourceDatabase::GetResourceName(uuid);
+				m_OldName = ResourceUtils::GetResourceName(uuid);
 
 				ResourceDatabase::RenameResource(uuid, newName);
 			}
@@ -154,7 +154,7 @@ namespace eg
 			{
 				Commands::AddCommand(this);
 
-				m_OldPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceDatabase::GetResourcePath(uuid);
+				m_OldPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceUtils::GetResourcePath(uuid);
 
 				ResourceDatabase::MoveResource(uuid, path);
 			}

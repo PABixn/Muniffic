@@ -23,10 +23,6 @@ namespace eg
 		static void SetResourceData(UUID uuid, ResourceType resourceType, void* data);
 		static ResourceType GetResourceType(UUID uuid);
 		static UUID FindResourceByKeyPath(const std::filesystem::path& keyPath, ResourceType type);
-		static std::filesystem::path GetResourcePath(UUID uuid);
-		static std::filesystem::path GetFullPath(UUID uuid);
-		static std::string GetResourceName(UUID uuid);
-		static std::string GetResourceTypeExtension(ResourceType type);
 		static UUID GetResourceByKeyPathWithoutCategory(const std::filesystem::path& keyPath, ResourceType resourceType);
 		static UUID GetResourceByPath(const std::filesystem::path& keyPath);
 		static UUID GetResourceByData(void* data, ResourceType resourceType);

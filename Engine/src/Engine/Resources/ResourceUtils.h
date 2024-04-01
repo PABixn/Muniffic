@@ -10,6 +10,59 @@ namespace eg
 	class ResourceUtils
 	{
 	public:
+		static std::filesystem::path GetFullPath(UUID uuid)
+		{
+			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / GetKeyPath(uuid);
+		}
+
+		static std::string GetResourceTypeExtension(ResourceType type)
+		{
+			switch (type)
+			{
+			case ResourceType::Image:
+				return ".png";
+			case ResourceType::SubTexture:
+				return ".png";
+			case ResourceType::Animation:
+				return ".anim";
+			case ResourceType::SpriteAtlas:
+				return ".atlas";
+			case ResourceType::Shader:
+				return ".shader";
+			case ResourceType::Font:
+				return ".ttf";
+			case ResourceType::NativeScript:
+				return ".cpp";
+			case ResourceType::Script:
+				return ".cs";
+			case ResourceType::Custom:
+				return ".custom";
+			default:
+				return ".unknown";
+			}
+		}
+
+		static std::string GetResourceName(UUID uuid)
+		{
+			ResourceType type = ResourceDatabase::GetResourceType(uuid);
+
+			if (type == ResourceType::Image)
+				return ((TextureResourceData*)ResourceDatabase::GetResourceData(uuid, type))->ImageName;
+			else if (type == ResourceType::SubTexture)
+				return ((SubTextureResourceData*)ResourceDatabase::GetResourceData(uuid, type))->SubTextureName;
+			else if (type == ResourceType::Animation)
+				return ((AnimationResourceData*)ResourceDatabase::GetResourceData(uuid, type))->AnimationName;
+			else if (type == ResourceType::SpriteAtlas)
+				return ((SpriteAtlasResourceData*)ResourceDatabase::GetResourceData(uuid, type))->AtlasName;
+			else if (type == ResourceType::Font)
+				return ((FontResourceData*)ResourceDatabase::GetResourceData(uuid, type))->FontName;
+			else
+			{
+				EG_CORE_ERROR("Resource type not supported");
+				return std::string();
+			}
+		}
+
 		static ResourceType GetResourceTypeByExtension(const std::string& extension)
 		{
 			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".tga" || extension == ".gif" || extension == ".psd" || extension == ".hdr" || extension == ".pic" || extension == ".pnm")
@@ -45,6 +98,27 @@ namespace eg
 					std::string type = resourcePath.substr(0, resourcePath.find('\\'));
 					return GetResourceTypeFromText(type);
 				}
+			}
+		}
+
+		static std::filesystem::path GetResourcePath(UUID uuid)
+		{
+			ResourceType type = ResourceDatabase::GetResourceType(uuid);
+
+			if (type == ResourceType::Image)
+				return ((TextureResourceData*)ResourceDatabase::GetResourceData(uuid, type))->ResourcePath;
+			else if (type == ResourceType::SubTexture)
+				return ((SubTextureResourceData*)ResourceDatabase::GetResourceData(uuid, type))->ResourcePath;
+			else if (type == ResourceType::Animation)
+				return ((AnimationResourceData*)ResourceDatabase::GetResourceData(uuid, type))->ResourcePath;
+			else if (type == ResourceType::SpriteAtlas)
+				return ((SpriteAtlasResourceData*)ResourceDatabase::GetResourceData(uuid, type))->ResourcePath;
+			else if (type == ResourceType::Font)
+				return ((FontResourceData*)ResourceDatabase::GetResourceData(uuid, type))->ResourcePath;
+			else
+			{
+				EG_CORE_ERROR("Resource type not supported");
+				return std::filesystem::path();
 			}
 		}
 

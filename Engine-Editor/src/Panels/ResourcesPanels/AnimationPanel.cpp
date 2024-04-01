@@ -3,6 +3,7 @@
 
 #include "Engine/Resources/ResourceSerializer.h"
 #include "Engine/Resources/ResourceDatabase.h"
+#include "Engine/Resources/ResourceUtils.h"
 #include "Imgui/imgui.h"
 
 
@@ -238,7 +239,7 @@ namespace eg {
 				SpriteAtlasResourceData* saData = new SpriteAtlasResourceData();
 				saData->ResourcePath = "SpriteAtlas" / m_ResourceData->ResourcePath;
 				saData->AtlasName = m_ResourceData->AnimationName;
-				saData->Extension = ResourceDatabase::GetResourceTypeExtension(ResourceType::SpriteAtlas);
+				saData->Extension = ResourceUtils::GetResourceTypeExtension(ResourceType::SpriteAtlas);
 				saData->Width = m_TextureData->Width;
 				saData->Height = m_TextureData->Height;
 				saData->Channels = m_TextureData->Channels;
