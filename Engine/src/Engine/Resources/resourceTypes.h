@@ -40,65 +40,43 @@ namespace eg
 		unsigned char *pixels;
 	};
 
-	struct SpriteAtlasResourceData
+	struct ResourceData
+	{
+		std::string ResourceName = "";
+		std::string Extension = "";
+		UUID ParentDirectory = 0;
+		ResourceType Type;
+	};
+
+	struct SpriteAtlasResourceData : public ResourceData
 	{
 		int Width = 0, Height = 0;
 		int Channels = 0;
-		std::filesystem::path ResourcePath = "";
-		std::string AtlasName = "";
-		std::string Extension = "";
 		std::vector<UUID> Sprites;
 	};
 
-	struct AnimationResourceData
+	struct AnimationResourceData : public ResourceData
 	{
 		float FrameRate;
 		int FrameCount;
 		bool Loop;
 		std::vector<UUID> Frames;
-		std::filesystem::path ResourcePath = "";
-		std::string AnimationName = "";
-		std::string Extension = "";
 	};
 
-	struct SubTextureResourceData
+	struct SubTextureResourceData : public ResourceData
 	{
 		glm::vec2 TexCoords[4];
-		std::filesystem::path ResourcePath = "";
-		std::string SubTextureName = "";
-		std::string Extension = "";
 		UUID Texture;
 	};
 
-	struct FontResourceData
+	struct FontResourceData : public ResourceData
 	{
-		std::filesystem::path ResourcePath = "";
-		std::string FontName = "";
-		std::string Extension = "";
 	};
 
-	struct TextureResourceData
+	struct TextureResourceData : public ResourceData
 	{
 		int Width = 0, Height = 0;
 		int Channels = 0;
-		std::filesystem::path ResourcePath = "";
-		std::string ImageName = "";
-		std::string Extension = "";
-
-		std::filesystem::path GetKeyPath()
-		{
-			return ResourcePath / std::filesystem::path(ImageName + Extension);
-		}
-
-		std::filesystem::path GetRelativePath()
-		{
-			return std::filesystem::path(Project::GetProjectName()) / Project::GetAssetDirectory() / ResourcePath / std::filesystem::path(ImageName + Extension);
-		}
-
-		std::filesystem::path GetAbsolutePath()
-		{
-			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / GetRelativePath();
-		}
 	};
 
 }
