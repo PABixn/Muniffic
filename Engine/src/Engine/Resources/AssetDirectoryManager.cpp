@@ -23,7 +23,8 @@ namespace eg
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", uuid);
-			return;
+			std::vector<UUID> empty;
+			return empty;
 		}
 
 		AssetDirectory* assetDirectory = assetDirectories.at(uuid);
@@ -35,7 +36,8 @@ namespace eg
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", uuid);
-			return;
+			std::vector<UUID> empty;
+			return empty;
 		}
 
 		AssetDirectory* assetDirectory = assetDirectories.at(uuid);
@@ -115,7 +117,7 @@ namespace eg
 	bool AssetDirectoryManager::moveAsset(UUID assetUUID, UUID newAssetDirectoryUUID)
 	{
 		ResourceData* data = (ResourceData*)ResourceDatabase::GetResourceData(assetUUID);
-		moveAsset(assetUUID, data->ParentDirectory, newAssetDirectoryUUID);
+		return moveAsset(assetUUID, data->ParentDirectory, newAssetDirectoryUUID);
 	}
 
 	bool AssetDirectoryManager::moveAsset(UUID assetUUID, UUID oldAssetDirectoryUUID, UUID newAssetDirectoryUUID)

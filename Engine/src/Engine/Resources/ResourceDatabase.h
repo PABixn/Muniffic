@@ -29,10 +29,11 @@ namespace eg
 		static void SetResourceData(UUID uuid, ResourceType resourceType, void* data);
 		static ResourceType GetResourceType(UUID uuid);
 		static std::string GetResourceName(UUID uuid);
+		static UUID GetResourceParentDirectory(UUID uuid);
 
 		static void RemoveResource(UUID uuid, bool deleteFile = false);
 		static void RemoveResource(UUID uuid, ResourceType resourceType, bool deleteFile = false);
-		static void LoadResource(const std::filesystem::path& filePath);
+		static UUID LoadResource(const std::filesystem::path& filePath);
 		static UUID AddResource(const std::filesystem::path& originalResourcePath, void* data, ResourceType resourceType);
 
 		static void SetCurrentDirectoryUUID(UUID* directory) { m_CurrentDirectory = directory; }

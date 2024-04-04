@@ -11,6 +11,30 @@ namespace eg
 	class ResourceUtils
 	{
 	public:
+		static ResourceType GetResourceTypeByExtension(std::string extension)
+		{
+			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg")
+				return ResourceType::Image;
+			else if (extension == ".subtexture")
+				return ResourceType::SubTexture;
+			else if (extension == ".spriteatlas")
+				return ResourceType::SpriteAtlas;
+			else if (extension == ".shader")
+				return ResourceType::Shader;
+			else if (extension == ".ttf")
+				return ResourceType::Font;
+			else if (extension == ".txt")
+				return ResourceType::Text;
+			else if (extension == ".anim")
+				return ResourceType::Animation;
+			else if (extension == ".script")
+				return ResourceType::Script;
+			else if (extension == ".nativescript")
+				return ResourceType::NativeScript;
+			else
+				return ResourceType::None;
+		}
+
 		static std::filesystem::path GetMetadataPath(ResourceType type)
 		{
 			std::filesystem::path baseDirectory = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata";

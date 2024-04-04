@@ -183,21 +183,21 @@ namespace eg
 
 	void Commands::DeleteDirectoryCommand::Undo()
 	{
-		std::filesystem::create_directory(m_Directory);
+		AssetDirectoryManager::addAssetDirectory(m_Directory, m_DirectoryData);
 
 		SetCurrentCommand(true);
 	}
 
 	void Commands::DeleteDirectoryCommand::Redo()
 	{
-		ResourceDatabase::DeleteDirectory(m_Directory);
+		AssetDirectoryManager::removeAssetDirectory(m_Directory);
 
 		SetCurrentCommand(false);
 	}
 
 	void Commands::LoadResourceCommand::Undo()
 	{
-		ResourceDatabase::RemoveResource(m_Path);
+		ResourceDatabase::RemoveResource(m_UUID);
 
 		SetCurrentCommand(true);
 	}
@@ -211,14 +211,14 @@ namespace eg
 
 	void Commands::MoveResourceCommand::Undo()
 	{
-		ResourceDatabase::MoveResource(m_UUID, m_OldPath);
+		ResourceDatabase::MoveResource(m_UUID, m_OldParentDirectory);
 
 		SetCurrentCommand(true);
 	}
 
 	void Commands::MoveResourceCommand::Redo()
 	{
-		ResourceDatabase::MoveResource(m_UUID, m_Path);
+		ResourceDatabase::MoveResource(m_UUID, m_ParentDirectory);
 
 		SetCurrentCommand(false);
 	}
@@ -239,15 +239,14 @@ namespace eg
 
 	void Commands::RenameDirectoryCommand::Undo()
 	{
-		std::filesystem::path newPath = m_Path.parent_path() / m_NewName;
-		ResourceDatabase::RenameDirectory(newPath, m_OldName);
+		AssetDirectoryManager::changeAssetDirectoryName(m_DirectoryUUID, m_OldName);
 
 		SetCurrentCommand(true);
 	}
 
 	void Commands::RenameDirectoryCommand::Redo()
 	{
-		ResourceDatabase::RenameDirectory(m_Path, m_NewName);
+		AssetDirectoryManager::changeAssetDirectoryName(m_DirectoryUUID, m_NewName);
 
 		SetCurrentCommand(false);
 	}

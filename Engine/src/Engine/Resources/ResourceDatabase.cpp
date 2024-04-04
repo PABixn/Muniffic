@@ -451,7 +451,14 @@ namespace eg
 		ResourceSerializer::CacheSpriteAtlas(uuid, data);
 	}
 
-	void ResourceDatabase::LoadResource(const std::filesystem::path& filePath)
+	UUID ResourceDatabase::GetResourceParentDirectory(UUID uuid)
+	{
+		ResourceData* data = (ResourceData*)ResourceDatabase::GetResourceData(uuid);
+
+		return data->ParentDirectory;
+	}
+
+	UUID ResourceDatabase::LoadResource(const std::filesystem::path& filePath)
 	{
 		ResourceType type = ResourceUtils::GetResourceTypeByExtension(filePath.extension().string());
 
@@ -461,6 +468,8 @@ namespace eg
 			return;
 		}*/
 
+		UUID uuid = UUID();
+
 		if (type == ResourceType::Image)
 		{
 			Resource* loadedResource = new Resource();
@@ -469,29 +478,34 @@ namespace eg
 			if(!resourceLoad)
 			{
 				EG_CORE_ERROR("Failed to load resource: {0}", filePath.string());
-				return;
+				return 0;
 			}
 
 			TextureResourceData* data = new TextureResourceData();
-			data->ParentDirectory = m_CurrentDirectory;
+			data->ParentDirectory = *m_CurrentDirectory;
 			data->ResourceName = filePath.stem().string();
 			data->Extension = filePath.extension().string();
 			data->Height = ((ImageResourceData*)loadedResource->Data)->height;
 			data->Width = ((ImageResourceData*)loadedResource->Data)->width;
 			data->Channels = ((ImageResourceData*)loadedResource->Data)->channelCount;
-			AddTextureResource(UUID(), filePath, data);
+			AddTextureResource(uuid, filePath, data);
+
+			return uuid;
 		}
 		else if (type == ResourceType::Font)
 		{
 			FontResourceData* data = new FontResourceData();
-			data->ParentDirectory = m_CurrentDirectory;
+			data->ParentDirectory = *m_CurrentDirectory;
 			data->ResourceName = filePath.stem().string();
 			data->Extension = filePath.extension().string();
-			AddFontResourceData(UUID(), filePath, data);
+			AddFontResourceData(uuid, filePath, data);
+
+			return uuid;
 		}
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
+			return 0;
 		}
 	}
 
@@ -503,18 +517,20 @@ namespace eg
 			return nullptr;
 		}
 
+		std::string fullPath = GetResourcePath(uuid).string();
+
 		if(FindRuntimeResource(uuid, type))
 			return GetRuntimeResource(uuid, type);
 
 		if (type == ResourceType::Image)
-			return AddRuntimeResource(uuid, (void*)ResourceUtils::GetFullPath(uuid).string().c_str(), type);
+			return AddRuntimeResource(uuid, (void*)fullPath.c_str(), type);
 
 		Resource* loadedResource = new Resource();
-		bool resourceLoad = resourceSystemLoad(ResourceUtils::GetFullPath(uuid).string(), ResourceType::Font, loadedResource);
+		bool resourceLoad = resourceSystemLoad(fullPath, ResourceType::Font, loadedResource);
 
 		if (!resourceLoad)
 		{
-			EG_CORE_ERROR("Failed to load resource: {0}", ResourceUtils::GetFullPath(uuid).string());
+			EG_CORE_ERROR("Failed to load resource: {0}", fullPath);
 			return nullptr;
 		}
 
