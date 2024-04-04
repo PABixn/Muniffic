@@ -1,6 +1,9 @@
 #pragma once
-//#include "SoLoud/include/soloud_wav.h"
-//#include "SoLoud/include/soloud.h"
+#include "egpch.h"
+#include <SDL.h>
+
+#pragma comment(lib, "winmm.lib")
+
 namespace eg {
 	class BasicAudio {
 		//SoLoud::Wav m_Wav;

@@ -1,10 +1,5 @@
-#include "egpch.h"
-//#include "soloud_wav.h"
-//#include "soloud.h"
-#include "Engine/Audio/BasicAudio.h"
-#include <thread>
-#include "SFML/Audio.hpp"
-#pragma comment(lib, "Winmm.lib")
+#include "BasicAudio.h"
+
 namespace eg {
 	BasicAudio::BasicAudio(std::string& path)  {
 		m_Path = std::filesystem::path(path);
@@ -22,7 +17,7 @@ namespace eg {
 		LoadCurrentAudio();
 	}
 	bool BasicAudio::Play() {
-		sf::SoundBuffer buffer;
+		//sf::SoundBuffer buffer;
 		/*
 		LoadCurrentAudio(); 
 		Ref<SoLoud::Soloud> SoLoudInstance = CreateRef<SoLoud::Soloud>(SoLoud::Soloud()); 
