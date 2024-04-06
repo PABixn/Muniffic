@@ -1,5 +1,7 @@
 #include "egpch.h"
 #include "OpenGLTexture.h"
+#include "Engine/Resources/Systems/ResourceSystem.h"
+#include "Engine/Resources/ResourceDatabase.h"
 #include "stb_image.h"
 
 namespace eg {
@@ -44,7 +46,7 @@ namespace eg {
 
 		switch (m_Specification.Format)
 
-			m_InternalFormat = Utils::MunifficFormatToGLInternalFormat(m_Specification.Format);
+		m_InternalFormat = Utils::MunifficFormatToGLInternalFormat(m_Specification.Format);
 		m_DataFormat = Utils::MunifficFormatToGLDataFormat(m_Specification.Format);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
@@ -59,38 +61,72 @@ namespace eg {
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 		: m_Path(path)
 	{
-		EG_PROFILE_FUNCTION();
-		int width, height, channels;
-		stbi_set_flip_vertically_on_load(1);
-		stbi_uc* data = nullptr;
+		Load(path);
+	}
 
-		{
-			EG_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
-			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+	OpenGLTexture2D::OpenGLTexture2D(const UUID& id)
+	{
+		std::filesystem::path path = ResourceDatabase::GetFullPath(id);
+		Load(path.string());
+	}
+
+	OpenGLTexture2D::~OpenGLTexture2D()
+	{
+		EG_PROFILE_FUNCTION();
+		glDeleteTextures(1, &m_RendererID);
+	}
+
+	Ref<Texture2D> OpenGLTexture2D::Create(const std::string& path)
+	{
+		Ref<OpenGLTexture2D> texture = CreateRef<OpenGLTexture2D>();
+		if(texture->Load(path))
+			return texture;
+		return nullptr;
+	}
+
+	Ref<Texture2D> OpenGLTexture2D::Create(const UUID& id)
+	{
+		EG_PROFILE_FUNCTION();
+		std::filesystem::path path = ResourceDatabase::GetFullPath(id);
+		return Create(path.string());
+	}
+
+	Ref<Texture2D> OpenGLTexture2D::Create(const TextureSpecification& specification)
+	{
+		return CreateRef<OpenGLTexture2D>(specification);
+	}
+
+	bool OpenGLTexture2D::Load(const std::string& path)
+	{
+		EG_PROFILE_FUNCTION();
+		Resource imgResource;
+		if (!resourceSystemLoad(path, ResourceType::Image, &imgResource)) {
+			EG_ERROR("Failed to load image resource for texture {}", path.c_str());
+			return false;
 		}
 
-		if (data)
+		if (imgResource.Data)
 		{
 			m_IsLoaded = true;
 
-			m_Width = width;
-			m_Height = height;
+			m_Width = ((ImageResourceData*)imgResource.Data)->width;
+			m_Height = ((ImageResourceData*)imgResource.Data)->height;
 
 
 			GLenum internalFormat = 0, dataFormat = 0;
-			if (channels == 4) {
+			if (((ImageResourceData*)imgResource.Data)->channelCount == 4) {
 				internalFormat = GL_RGBA8;
 				dataFormat = GL_RGBA;
 			}
-			else if (channels == 3) {
+			else if (((ImageResourceData*)imgResource.Data)->channelCount == 3) {
 				internalFormat = GL_RGB8;
 				dataFormat = GL_RGB;
 			}
-			else if (channels == 2) {
+			else if (((ImageResourceData*)imgResource.Data)->channelCount == 2) {
 				internalFormat = GL_RG8;
 				dataFormat = GL_RG;
 			}
-			else if (channels == 1) {
+			else if (((ImageResourceData*)imgResource.Data)->channelCount == 1) {
 				internalFormat = GL_R8;
 				dataFormat = GL_RED;
 			}
@@ -106,17 +142,12 @@ namespace eg {
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, (void*)(((ImageResourceData*)imgResource.Data)->pixels));
 
-			stbi_image_free(data);
+			stbi_image_free(((ImageResourceData*)imgResource.Data)->pixels);
+			return true;
 		}
-
-	}
-
-	OpenGLTexture2D::~OpenGLTexture2D()
-	{
-		EG_PROFILE_FUNCTION();
-		glDeleteTextures(1, &m_RendererID);
+		return false;
 	}
 
 	static uint32_t TextureFormatTobpp(GLenum format) {

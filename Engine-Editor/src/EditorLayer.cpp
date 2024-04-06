@@ -1,19 +1,20 @@
 #include "egpch.h"
 #include "EditorLayer.h"
 #include "Imgui/imgui.h"
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include "Engine/Core/Core.h"
 #include "Engine/Scene/SceneSerializer.h"
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Events/KeyEvent.h"
-#include <optional>
-#include "ImGuizmo.h"
 #include "Engine/Scene/Components.h"
 #include "Engine/Math/Math.h"
 #include "Commands/Commands.h"
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Renderer/Font.h"
+#include <optional>
+#include "ImGuizmo.h"
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 
 namespace eg
@@ -25,10 +26,21 @@ namespace eg
 		s_Font = Font::GetDefaultFont();
 	}
 
+	constexpr float AxisLength = 100000000.0f;
+
 	void EditorLayer::OnAttach()
 	{
+		ResourceSystemConfig resourceSystemConfig;
+		resourceSystemConfig.MaxLoaderCount = 3;
+		resourceSystemConfig.ResourceDirectory = "../resources";
+
+		if (!resourceSystemInit(resourceSystemConfig))
+		{
+			EG_ERROR("Failed to initialize resource system.");
+			return;
+		}
+
 		EG_PROFILE_FUNCTION();
-		m_Texture = Texture2D::Create("assets/textures/cubes.png");
 		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");
 		m_IconPause = Texture2D::Create("resources/icons/PauseButton.png");
 		m_IconSimulate = Texture2D::Create("resources/icons/SimulateButton.png");
@@ -65,13 +77,13 @@ namespace eg
 	void EditorLayer::OnDetach()
 	{
 		EG_PROFILE_FUNCTION();
+		resourceSystemShutdown();
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
 
 		EG_PROFILE_FUNCTION();
-
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
@@ -86,6 +98,7 @@ namespace eg
 			m_Camera.OnUpdate(ts);
 
 		m_EditorCamera.OnUpdate(ts);
+		m_SceneHierarchyPanel.Update(ts);
 
 		Renderer2D::ResetStats();
 		m_FrameBuffer->Bind();
@@ -102,7 +115,8 @@ namespace eg
 			if (m_ViewportFocused)
 				m_Camera.OnUpdate(ts);
 			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-
+			if(m_AddResourcePanel->IsResourcePanelOpen())
+				m_AddResourcePanel->Update(ts);
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
 			// m_ActiveScene->OnRenderEditor(m_EditorCamera);
@@ -145,7 +159,6 @@ namespace eg
 		}
 
 		OnOverlayRender();
-
 		m_FrameBuffer->Unbind();
 	}
 
@@ -231,11 +244,37 @@ namespace eg
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Resources"))
+			{
+				if (ImGui::MenuItem("Add Resource", "Ctrl+A"))
+					m_AddResourcePanel->showResourcePanel(true);
+
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
+		
+		m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
+		m_ContentBrowserPanel->SetRenameFolderPanel(m_RenameFolderPanel);
+		m_ContentBrowserPanel->SetDeleteDirectoryPanel(m_DeleteDirectoryPanel);
+		m_ContentBrowserPanel->SetRenameResourcePanel(m_RenameResourcePanel);
 		m_ContentBrowserPanel->OnImGuiRender();
+
+		if(m_DeleteFilePanel->IsShown())
+			m_DeleteFilePanel->OnImGuiRender();
+
+		if(m_RenameFolderPanel->IsShown())
+			m_RenameFolderPanel->OnImGuiRender();
+		
+		if (m_DeleteDirectoryPanel->IsShown())
+			m_DeleteDirectoryPanel->OnImGuiRender();
+
+		if (m_RenameResourcePanel->IsShown())
+			m_RenameResourcePanel->OnImGuiRender();
+		m_ConsolePanel->OnImGuiRender();
 		
 		if ((*(this->m_UnsavedChangesPanel)).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
@@ -260,6 +299,10 @@ namespace eg
 
 		if(ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
 			Commands::ExecuteRawValueCommand(&m_ShowPhysicsColliders, !m_ShowPhysicsColliders, "Show Physics Colliders");
+		if(ImGui::Checkbox("Show Axis", &m_ShowAxis))
+			Commands::ExecuteRawValueCommand(&m_ShowAxis, !m_ShowAxis, "Show Axis");
+		if(ImGui::Checkbox("Show Grid", &m_ShowGrid))
+			Commands::ExecuteRawValueCommand(&m_ShowGrid, !m_ShowGrid, "Show Grid");
 		ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
 		ImGui::End();
 
@@ -287,7 +330,7 @@ namespace eg
 			{
 				const wchar_t *path = (const wchar_t *)payload->Data;
 
-				OpenScene(path);
+				OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -349,6 +392,8 @@ namespace eg
 		UI_Toolbar();
 
 		ImGui::End();
+		if (m_AddResourcePanel)
+			m_AddResourcePanel->OnImGuiRender();
 	}
 
 	void EditorLayer::UI_Toolbar()
@@ -486,6 +531,11 @@ namespace eg
 					Save();
 			break;
 		}
+		case Key::A:
+		{
+			if(controlPressed)
+				m_AddResourcePanel->showResourcePanel(true);
+		}
 		case Key::N:
 		{
 			if (controlPressed)
@@ -544,7 +594,7 @@ namespace eg
 				if (selectedEntity)
 				{
 					m_SceneHierarchyPanel.SetSelectedEntity({});
-					m_ActiveScene->DestroyEntity(selectedEntity);
+					Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", selectedEntity, m_ActiveScene, selectedEntity));
 				}
 			}
 			break;
@@ -576,6 +626,29 @@ namespace eg
 		else
 		{
 			Renderer2D::BeginScene(m_EditorCamera);
+		}
+
+		if(m_ShowAxis)
+		{
+			glm::vec3 start = { 0,0,0 };
+			Renderer2D::DrawLine(start, { AxisLength, 0,0 }, { 1.0f, 0.0f, 0.0f, 1.0f });
+			Renderer2D::DrawLine(start, { 0, AxisLength,0 }, { 0.0f, 1.0f, 0.0f, 1.0f });
+			Renderer2D::DrawLine(start, { 0, 0, AxisLength }, { 1.0f, 0.0f, 1.0f, 1.0f });
+		}
+		if(m_ShowGrid)
+		{
+			int linesAmount = 10000;
+			for (int i = -linesAmount; i <= linesAmount; i++)
+			{
+				if (i == 0)
+					continue;
+				Renderer2D::DrawLine({ -linesAmount ,i , 0 }, { linesAmount , i, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({ i ,-linesAmount , 0 }, { i , linesAmount, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({ -linesAmount ,0 , i }, { linesAmount , 0, i }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({ 0 ,-linesAmount , i }, { 0 , linesAmount, i }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({ i ,0 , -linesAmount }, { i , 0, linesAmount }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({ 0 ,i , -linesAmount }, { 0 , i, linesAmount }, { 0.2f, 0.2f, 0.2f, 1.0f });
+			}
 		}
 
 		if (m_ShowPhysicsColliders)
@@ -616,8 +689,11 @@ namespace eg
 		// Draw selected entity outline
 		if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
 		{
-			const TransformComponent &transform = selectedEntity.GetComponent<TransformComponent>();
-			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
+			if(selectedEntity.HasComponent<TransformComponent>())
+			{
+				const TransformComponent &transform = selectedEntity.GetComponent<TransformComponent>();
+				Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
+			}
 		}
 
 		Renderer2D::EndScene();
@@ -634,6 +710,7 @@ namespace eg
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
 		m_ActiveScenePath = std::filesystem::path();
+		ConsolePanel::Log("File: EditorLayer.cpp - New Scene Created", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::OpenScene()
@@ -642,6 +719,10 @@ namespace eg
 		if (!filepath.empty())
 		{
 			OpenScene(filepath);
+		}
+		else {
+			ConsolePanel::Log("File: EditorLayer.cpp - Empty file path", ConsolePanel::LogType::Error);
+			return;
 		}
 	}
 
@@ -652,7 +733,7 @@ namespace eg
 
 		if (path.extension().string() != ".egscene")
 		{
-			EG_WARN("Could not load {0} - not a scene file", path.filename().string());
+			ConsolePanel::Log("File: EditorLayer.cpp - Could not load " + path.filename().string() + " - not a scene file", ConsolePanel::LogType::Error);
 			return;
 		}
 
@@ -676,6 +757,11 @@ namespace eg
 
 			m_ActiveScenePath = filepath;
 		}
+		else {
+			ConsolePanel::Log("File: EditorLayer.cpp - Empty file path", ConsolePanel::LogType::Error);
+			return;
+		}
+		ConsolePanel::Log("File: EditorLayer.cpp - Scene saved", ConsolePanel::LogType::Info);
 		SetIsSaved(true);
 	}
 
@@ -687,20 +773,26 @@ namespace eg
 		{
 			SerializeScene(m_ActiveScene, m_ActiveScenePath);
 		}
+		ConsolePanel::Log("File: EditorLayer.cpp - Scene saved", ConsolePanel::LogType::Info);
 		SetIsSaved(true);
 	}
 
 	void EditorLayer::NewProject()
 	{
 		Project::New();
+		ConsolePanel::Log("File: EditorLayer.cpp - New project created", ConsolePanel::LogType::Info);
 	}
 
 	bool EditorLayer::OpenProject()
 	{
 		std::string filepath = FileDialogs::OpenFile("Muniffic Project (*.mnproj)\0*.mnproj\0");
 		if (filepath.empty())
+		{
+			ConsolePanel::Log("File: EditorLayer.cpp - Empty file path", ConsolePanel::LogType::Error);
 			return false;
+		}
 		OpenProject(filepath);
+		ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		return true;
 	}
 
@@ -712,21 +804,35 @@ namespace eg
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+			m_AddResourcePanel = CreateScope<AddResourcePanel>();
+			m_DeleteFilePanel = new DeleteFilePanel();
+			m_RenameFolderPanel = new RenameFolderPanel();
+			m_DeleteDirectoryPanel = new DeleteDirectoryPanel();
+			m_RenameResourcePanel = new RenameResourcePanel();
+			m_ConsolePanel = CreateScope<ConsolePanel>();
+			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
+		}
+		else
+		{
+			ConsolePanel::Log("File: EditorLayer.cpp - Failed to open project", ConsolePanel::LogType::Error);
 		}
 	}
 
 	void EditorLayer::SaveProjectAs()
 	{
+		ConsolePanel::Log("File: EditorLayer.cpp - Project saved", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::SaveProject()
 	{
+		ConsolePanel::Log("File: EditorLayer.cpp - Project saved", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path &path)
 	{
 		SceneSerializer serializer(scene);
 		serializer.Serialize(path.string());
+		ConsolePanel::Log("File: EditorLayer.cpp - Scene serialized", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::OnScenePlay()
@@ -736,7 +842,8 @@ namespace eg
 		if (m_SceneState == SceneState::Simulate)
 			OnSceneStop();
 		m_SceneState = SceneState::Play;
-
+		ConsolePanel::ClearLogs();
+		ConsolePanel::Log("File: EditorLayer.cpp - Scene started", ConsolePanel::LogType::Info);
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart();
 
@@ -752,7 +859,7 @@ namespace eg
 
 		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnSimulationStart();
-
+		ConsolePanel::Log("File: EditorLayer.cpp - Simulation started", ConsolePanel::LogType::Info);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		
 
@@ -762,7 +869,7 @@ namespace eg
 	{
 		if (m_SceneState == SceneState::Edit)
 			return;
-
+		ConsolePanel::Log("File: EditorLayer.cpp - Scene paused", ConsolePanel::LogType::Info);
 		m_ActiveScene->SetPaused(true);
 	}
 
@@ -778,19 +885,30 @@ namespace eg
 		m_SceneState = SceneState::Edit;
 		m_ActiveScene->OnRuntimeStop();
 		m_ActiveScene = m_EditorScene;
+		ConsolePanel::Log("File: EditorLayer.cpp - Scene stopped", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::OnDuplicateEntity()
 	{
-		if (m_SceneState == SceneState::Play)
+		if (m_SceneState == SceneState::Play){
+			ConsolePanel::Log("File: EditorLayer.cpp - Cannot duplicate entities while playing", ConsolePanel::LogType::Warning);
 			return;
-
+		}	
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity)
 		{
 			Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
 			m_SceneHierarchyPanel.SetSelectedEntity(newEntity);
+			ConsolePanel::Log("File: EditorLayer.cpp - Entity duplicated", ConsolePanel::LogType::Info);
 		}
+		else {
+			ConsolePanel::Log("File: EditorLayer.cpp - No entity selected for duplication", ConsolePanel::LogType::Warning);
+		}
+	}
+
+	void EditorLayer::CloseAddResourcePanel()
+	{
+		m_AddResourcePanel = nullptr;
 	}
 
 }

@@ -19,14 +19,19 @@ namespace eg
 
 	void Commands::CreateEntityCommand::Execute(CommandArgs arg)
 	{
-		UUID e = m_Context->CreateEntity(arg.name).GetUUID();
-		m_CreatedEntity = SavedEntity(arg.name, e);
+		Entity e = m_Context->CreateEntity(arg.m_Name);
+
+		if (arg.m_Parent.has_value())
+			ChangeParent(e, arg.m_Parent);
+
+		m_CreatedEntity = SaveEntity(e);
 	}
 
 	void Commands::CreateEntityCommand::Undo()
 	{
-		Entity e = m_Context->GetEntityByUUID(m_CreatedEntity.uuid);
-		if (e.HasComponent<TagComponent>())
+		Entity e = m_Context->GetEntityByUUID(m_CreatedEntity.m_UUID);
+
+		if (e.Exists())
 		{
 			if (m_SelectionContext == e)
 				m_SelectionContext = {};
@@ -40,42 +45,209 @@ namespace eg
 
 	void Commands::CreateEntityCommand::Redo()
 	{
-		m_Context->CreateEntityWithID(m_CreatedEntity.uuid, m_CreatedEntity.name);
+		m_Context->CreateEntityWithID(m_CreatedEntity.m_UUID, m_CreatedEntity.m_Name);
 
 		SetCurrentCommand(false);
 	}
 
 	void Commands::DeleteEntityCommand::Execute(CommandArgs arg)
 	{
-		if (arg.entity.HasComponent<TagComponent>())
+		if (arg.m_Entity.Exists())
 		{
-			if (m_SelectionContext == arg.entity)
+			if (m_SelectionContext == arg.m_Entity)
 				m_SelectionContext = {};
-			m_DeletedEntity = SavedEntity(arg.entity.GetName(), arg.entity.GetUUID());
-			m_EntitySave = SaveEntity(arg.entity);
-			m_Context->DestroyEntity(arg.entity);
+
+			m_DeletedEntity = SaveEntity(arg.m_Entity);
+
+			for (auto& child : arg.m_Entity.GetAnyChildren())
+			{
+				EntitySave saved = SaveEntity(child);
+				m_Children.push_back(saved);
+			}
+
+			arg.m_Entity.RemoveAnyChildren();
+
+			m_Context->DestroyEntity(arg.m_Entity);
 		}
 	}
 
 	void Commands::DeleteEntityCommand::Undo()
 	{
-		Entity e = m_Context->CreateEntityWithID(m_DeletedEntity.uuid, m_DeletedEntity.name);
-		RestoreEntity(e, m_EntitySave);
+		Entity e = m_Context->CreateEntityWithID(m_DeletedEntity.m_UUID, m_DeletedEntity.m_Name);
+		RestoreEntity(e, m_DeletedEntity);
+		
+		if (m_DeletedEntity.m_Parent != NULL)
+		{
+			Entity parent = m_Context->GetEntityByUUID(m_DeletedEntity.m_Parent);
+			ChangeParent(e, parent);
+		}
+		else
+			ChangeParent(e, std::nullopt);
+
+		for (auto& child : m_Children)
+		{
+			Entity childrenEntity = m_Context->CreateEntityWithID(child.m_UUID, child.m_Name);
+			RestoreEntity(childrenEntity, child);
+			if (child.m_Parent != NULL)
+			{
+				Entity parent = m_Context->GetEntityByUUID(child.m_Parent);
+				ChangeParent(childrenEntity, parent);
+			}
+			else
+				ChangeParent(childrenEntity, std::nullopt);
+		}
+
 		SetCurrentCommand(true);
 	}
 
 	void Commands::DeleteEntityCommand::Redo()
 	{
-		Entity entity = m_Context->GetEntityByUUID(m_DeletedEntity.uuid);
+		Entity entity = m_Context->GetEntityByUUID(m_DeletedEntity.m_UUID);
 
-		if (entity.HasComponent<TagComponent>())
+		if (entity.Exists())
 		{
 			if (m_SelectionContext == entity)
 				m_SelectionContext = {};
-			m_DeletedEntity = { entity.GetName(), entity.GetUUID() };
-			m_EntitySave = SaveEntity(entity);
+
+			m_DeletedEntity = SaveEntity(entity);
+
+			for (auto& child : entity.GetAnyChildren())
+			{
+				EntitySave saved = SaveEntity(child);
+				m_Children.push_back(saved);
+				m_Context->DestroyEntity(child);
+			}
+
 			m_Context->DestroyEntity(entity);
 		}
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::ChangeParent(Entity& entity, std::optional<Entity> parent)
+	{
+		if (parent.has_value())
+		{
+			Entity parentEntity = parent.value();
+			if (entity != parentEntity && !parentEntity.IsChild(entity) && !entity.IsChildOfAny(parentEntity))
+			{
+				parentEntity.AddChild(entity);
+				if (entity.GetParent().has_value())
+					entity.GetParent().value().RemoveChild(entity);
+				entity.SetParent(parentEntity);
+			}
+		}
+		else
+		{
+			if (entity.GetParent().has_value())
+				entity.GetParent().value().RemoveChild(entity);
+			entity.SetParent(std::nullopt);
+		}
+
+		Commands::SetInheritedComponents(InheritableComponents{}, entity, parent);
+	}
+
+	void Commands::ChangeParentCommand::Undo()
+	{
+		Entity entity = m_Context->GetEntityByUUID(m_Entity);
+        std::optional<Entity> previousParent = m_PreviousParent.has_value() ? std::optional<Entity>(m_Context->GetEntityByUUID(m_PreviousParent.value())) : std::nullopt;
+
+		ChangeParent(entity, previousParent);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::ChangeParentCommand::Redo()
+	{
+		Entity entity = m_Context->GetEntityByUUID(m_Entity);
+		std::optional<Entity> parent = m_Parent.has_value() ? std::optional<Entity>(m_Context->GetEntityByUUID(m_Parent.value())) : std::nullopt;
+
+		ChangeParent(entity, parent);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::DeleteResourceCommand::Undo()
+	{
+		ResourceDatabase::SetResourceData(m_UUID, m_ResourceType, m_Resource);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::DeleteResourceCommand::Redo()
+	{
+		ResourceDatabase::RemoveResource(m_UUID, m_ResourceType, m_DeleteFile);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::DeleteDirectoryCommand::Undo()
+	{
+		std::filesystem::create_directory(m_Directory);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::DeleteDirectoryCommand::Redo()
+	{
+		ResourceDatabase::DeleteDirectory(m_Directory);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::LoadResourceCommand::Undo()
+	{
+		ResourceDatabase::RemoveResource(m_Path);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::LoadResourceCommand::Redo()
+	{
+		ResourceDatabase::LoadResource(m_Path);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::MoveResourceCommand::Undo()
+	{
+		ResourceDatabase::MoveResource(m_UUID, m_OldPath);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::MoveResourceCommand::Redo()
+	{
+		ResourceDatabase::MoveResource(m_UUID, m_Path);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::RenameResourceCommand::Undo()
+	{
+		ResourceDatabase::RenameResource(m_UUID, m_OldName);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::RenameResourceCommand::Redo()
+	{
+		ResourceDatabase::RenameResource(m_UUID, m_NewName);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::RenameDirectoryCommand::Undo()
+	{
+		std::filesystem::path newPath = m_Path.parent_path() / m_NewName;
+		ResourceDatabase::RenameDirectory(newPath, m_OldName);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::RenameDirectoryCommand::Redo()
+	{
+		ResourceDatabase::RenameDirectory(m_Path, m_NewName);
 
 		SetCurrentCommand(false);
 	}
@@ -86,6 +258,11 @@ namespace eg
 			commandHistory.clear();
 		else if (commandHistory.size() > 0 && currentCommandIndex != commandHistory.size() - 1)
 			commandHistory.erase(commandHistory.begin() + currentCommandIndex + 1, commandHistory.end());
+
+		if (commandHistory.size() >= Commands::MAX_COMMANDS)
+		{
+			commandHistory.erase(commandHistory.begin());
+		}
 
 		commandHistory.push_back(command);
 		currentCommandIndex = commandHistory.size() - 1;
@@ -115,122 +292,6 @@ namespace eg
 	}
 
 	template<>
-	void Commands::SetComponent<TagComponent>(Entity& entity, TagComponent* component)
-	{
-		if (!entity.HasComponent<TagComponent>())
-			entity.AddComponent<TagComponent>();
-
-		entity.GetComponent<TagComponent>().Tag = component->Tag;
-	}
-
-	template<>
-	void Commands::SetComponent<TransformComponent>(Entity& entity, TransformComponent* component)
-	{
-		if (!entity.HasComponent<TransformComponent>())
-			entity.AddComponent<TransformComponent>();
-
-		entity.GetComponent<TransformComponent>().Translation = component->Translation;
-		entity.GetComponent<TransformComponent>().Rotation = component->Rotation;
-		entity.GetComponent<TransformComponent>().Scale = component->Scale;
-	}
-
-	template<>
-	void Commands::SetComponent<SpriteRendererComponent>(Entity& entity, SpriteRendererComponent* component)
-	{
-		if (!entity.HasComponent<SpriteRendererComponent>())
-			entity.AddComponent<SpriteRendererComponent>();
-
-		entity.GetComponent<SpriteRendererComponent>().Color = component->Color;
-		entity.GetComponent<SpriteRendererComponent>().Texture = component->Texture;
-		entity.GetComponent<SpriteRendererComponent>().TilingFactor = component->TilingFactor;
-	}
-
-	template<>
-	void Commands::SetComponent<CameraComponent>(Entity& entity, CameraComponent* component)
-	{
-		if (!entity.HasComponent<CameraComponent>())
-			entity.AddComponent<CameraComponent>();
-
-		entity.GetComponent<CameraComponent>().Primary = component->Primary;
-		entity.GetComponent<CameraComponent>().FixedAspectRatio = component->FixedAspectRatio;
-		entity.GetComponent<CameraComponent>().Camera.SetProjectionType(component->Camera.GetProjectionType());
-		entity.GetComponent<CameraComponent>().Camera.SetPerspective(component->Camera.GetPerspectiveVerticalFOV(), component->Camera.GetPerspectiveNearClip(), component->Camera.GetPerspectiveFarClip());
-		entity.GetComponent<CameraComponent>().Camera.SetOrthographic(component->Camera.GetOrthographicSize(), component->Camera.GetOrthographicNearClip(), component->Camera.GetOrthographicFarClip());
-	}
-
-	template<>
-	void Commands::SetComponent<ScriptComponent>(Entity& entity, ScriptComponent* component)
-	{
-		if (!entity.HasComponent<ScriptComponent>())
-			entity.AddComponent<ScriptComponent>();
-
-		entity.GetComponent<ScriptComponent>().Name = component->Name;
-	}
-
-	template<>
-	void Commands::SetComponent<CircleRendererComponent>(Entity& entity, CircleRendererComponent* component)
-	{
-		if (!entity.HasComponent<CircleRendererComponent>())
-			entity.AddComponent<CircleRendererComponent>();
-
-		entity.GetComponent<CircleRendererComponent>().Color = component->Color;
-		entity.GetComponent<CircleRendererComponent>().Fade = component->Fade;
-		entity.GetComponent<CircleRendererComponent>().Thickness = component->Thickness;
-	}
-
-	template<>
-	void Commands::SetComponent<BoxCollider2DComponent>(Entity& entity, BoxCollider2DComponent* component)
-	{
-		if (!entity.HasComponent<BoxCollider2DComponent>())
-			entity.AddComponent<BoxCollider2DComponent>();
-
-		entity.GetComponent<BoxCollider2DComponent>().Offset = component->Offset;
-		entity.GetComponent<BoxCollider2DComponent>().Size = component->Size;
-		entity.GetComponent<BoxCollider2DComponent>().Density = component->Density;
-		entity.GetComponent<BoxCollider2DComponent>().Friction = component->Friction;
-		entity.GetComponent<BoxCollider2DComponent>().Restitution = component->Restitution;
-		entity.GetComponent<BoxCollider2DComponent>().RestitutionThreshold = component->RestitutionThreshold;
-	}
-
-	template<>
-	void Commands::SetComponent<CircleCollider2DComponent>(Entity& entity, CircleCollider2DComponent* component)
-	{
-		if (!entity.HasComponent<CircleCollider2DComponent>())
-			entity.AddComponent<CircleCollider2DComponent>();
-
-		entity.GetComponent<CircleCollider2DComponent>().Offset = component->Offset;
-		entity.GetComponent<CircleCollider2DComponent>().Radius = component->Radius;
-		entity.GetComponent<CircleCollider2DComponent>().Density = component->Density;
-		entity.GetComponent<CircleCollider2DComponent>().Friction = component->Friction;
-		entity.GetComponent<CircleCollider2DComponent>().Restitution = component->Restitution;
-		entity.GetComponent<CircleCollider2DComponent>().RestitutionThreshold = component->RestitutionThreshold;
-	}
-
-	template<>
-	void Commands::SetComponent<RigidBody2DComponent>(Entity& entity, RigidBody2DComponent* component)
-	{
-		if (!entity.HasComponent<RigidBody2DComponent>())
-			entity.AddComponent<RigidBody2DComponent>();
-
-		entity.GetComponent<RigidBody2DComponent>().Type = component->Type;
-		entity.GetComponent<RigidBody2DComponent>().FixedRotation = component->FixedRotation;
-	}
-
-	template<>
-	void Commands::SetComponent<TextComponent>(Entity& entity, TextComponent* component)
-	{
-		if (!entity.HasComponent<TextComponent>())
-			entity.AddComponent<TextComponent>();
-
-		entity.GetComponent<TextComponent>().Color = component->Color;
-		entity.GetComponent<TextComponent>().FontAsset = component->FontAsset;
-		entity.GetComponent<TextComponent>().Kerning = component->Kerning;
-		entity.GetComponent<TextComponent>().LineSpacing = component->LineSpacing;
-		entity.GetComponent<TextComponent>().TextString = component->TextString;
-	
-	}
-
-	template<>
 	void Commands::SetComponent<AudioListenerComponent>(Entity& entity, AudioListenerComponent* component)
 	{
 		if (!entity.HasComponent<AudioListenerComponent>())
@@ -248,7 +309,7 @@ namespace eg
 	void TrySetComponent(Entity& entity, std::optional<T>* component)
 	{
 		if (component->has_value())
-			Commands::SetComponent(entity, &component->value());
+			Entity::SetComponent(entity, &component->value());
 	}
 
 	template<typename T>
@@ -262,6 +323,10 @@ namespace eg
 	Commands::EntitySave Commands::SaveEntity(Entity& entity)
 	{
 		EntitySave entitySave;
+
+		entitySave.m_UUID = entity.GetUUID();
+		entitySave.m_Name = entity.GetName();
+		entitySave.m_Parent = entity.GetParentUUID();
 
 		Commands::AllSavedComponents components = entitySave.GetAllComponents();
 

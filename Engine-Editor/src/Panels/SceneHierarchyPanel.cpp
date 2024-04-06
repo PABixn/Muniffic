@@ -9,6 +9,11 @@
 #include <cstring>
 #include "../Commands/Commands.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include "stb_image.h"
+#include "Engine/Resources/ResourceSerializer.h"
+#include "iostream"
+#include "shellapi.h"
+#include "ConsolePanel.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -18,6 +23,15 @@
 #endif
 
 namespace eg {
+
+	const char* add(const char* begining, const char* middle, const char* ending) {
+		size_t resultLength = strlen(middle) + strlen(begining) + strlen(ending);
+		char* resultMsg = new char[resultLength];
+		strcpy(resultMsg, begining);
+		strcat(resultMsg, middle);
+		strcat(resultMsg, ending);
+		return resultMsg;
+	}
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
 	{
@@ -33,7 +47,20 @@ namespace eg {
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
-		if (m_Context) {
+
+		if (m_Context)
+		{
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+				{
+					Entity draggedEntity = *(Entity*)payload->Data;
+					Commands::ExecuteChangeParentCommand(draggedEntity, std::nullopt, m_Context);
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
 			m_Context->m_Registry.each([&](auto entityID)
 				{
 					Entity entity{ entityID, m_Context.get() };
@@ -41,7 +68,9 @@ namespace eg {
 				});
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+			{
 				m_SelectionContext = {};
+			}
 
 			// Right click on blank space
 			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
@@ -51,7 +80,7 @@ namespace eg {
 					Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Entity", {}, m_Context, m_SelectionContext));
 				}
 				ImGui::EndPopup();
-			}	
+			}
 		}
 
 		ImGui::Begin("Properties");
@@ -60,40 +89,118 @@ namespace eg {
 			DrawComponents(m_SelectionContext);
 		}
 		ImGui::End();
-
+		if (m_PreviewAbsoluteImagePath != "" ) {
+			ImGui::Begin("Preview");
+			GLuint my_opengl_texture; 
+			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceDatabase::GetTextureResourceDataCache()) {
+				auto CacheImageData = (pairOfUUIDAndData.second);
+				if (CacheImageData->GetAbsolutePath() == m_PreviewAbsoluteImagePath){
+					stbi_set_flip_vertically_on_load(false);
+					unsigned char* image = stbi_load(m_PreviewAbsoluteImagePath.string().c_str(), &(CacheImageData->Width), &(CacheImageData->Height), &(CacheImageData->Channels), STBI_rgb_alpha);
+					if (image) {
+						glGenTextures(1, &my_opengl_texture);
+						glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (CacheImageData->Width), (CacheImageData->Height), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+						glGenerateMipmap(GL_TEXTURE_2D); 
+						auto s = ImGui::GetWindowWidth();
+						std::string absImgName = m_PreviewAbsoluteImagePath.filename().string();
+						ImGui::TextWrapped(add("file: ",absImgName.c_str(), ""));
+						if (ImGui::Button("open")) {
+							std::string path = m_PreviewAbsoluteImagePath.string();
+							ShellExecuteA(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+						}
+						ImGui::TextWrapped(add("size: ", std::to_string(CacheImageData->Width).c_str(), add(" x ", std::to_string(CacheImageData->Height).c_str(),"")));
+						ImGui::TextWrapped(add("scale of preview: ", (std::to_string(std::round(s / CacheImageData->Width * 100.0) / 100.0)).substr(0, 4).c_str(), ""));
+						ImGui::Image((void*)(intptr_t)my_opengl_texture, ImVec2((int)s, (int)((s * (CacheImageData->Height)) / (CacheImageData->Width))));
+						stbi_image_free(image);
+					}
+					else
+					{
+						std::string absImgPath = m_PreviewAbsoluteImagePath.string();
+						ImGui::TextWrapped(add("file: ", absImgPath.c_str(), " not found"));
+					}
+				}
+			}
+			ImGui::End();
+		}
 		ImGui::End();
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+	void SceneHierarchyPanel::Update(float dt)
 	{
+		if (m_SelectionContext)
+		{
+			if (m_SelectionContext.HasComponent<AnimatorComponent>())
+			{
+				auto& animator = m_SelectionContext.GetComponent<AnimatorComponent>().Animator2D;
+				if (animator)
+				{
+					animator->Update(dt);
+				}
+			}
+		}
+	}
+
+	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
+	{
+		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false)) {
+			return;
+		}
+		bool opened = false;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
+		opened = ImGui::TreeNodeEx((void*)(uint64_t)entity.GetUUID(), flags, tag.c_str());
+
+		if (ImGui::BeginDragDropSource())
+		{
+			ImGui::SetDragDropPayload("Entity", &entity, sizeof(Entity));
+			ImGui::Text(tag.c_str());
+			ImGui::EndDragDropSource();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
+			{
+				Entity draggedEntity = *(Entity*)payload->Data;
+				Commands::ExecuteChangeParentCommand(draggedEntity, entity, m_Context);
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
 		if (ImGui::IsItemClicked())
-			m_SelectionContext = entity;
+			SetSelectedEntity(entity);
 
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
 				Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Context, m_SelectionContext));
+
+			if(ImGui::MenuItem("Create Child Entity"))
+				Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Child Entity", {}, m_Context, m_SelectionContext, entity));
+
 			ImGui::EndPopup();
 		}
 
 		if (opened)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-			bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
-			if (opened)
-				ImGui::TreePop();
+
+			if (entity.Exists())
+			{
+				for (Entity& child : entity.GetChildren())
+					DrawEntityNode(child, true);
+			}
+
 			ImGui::TreePop();
 		}
 	}
 
-	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
+	static void DrawVec3Control(Entity entity, const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
 	{
 		float x = values.x, y = values.y, z = values.z;
-
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
 
@@ -115,15 +222,16 @@ namespace eg {
 		ImGui::PushFont(boldFont);
 		if (ImGui::Button("X", buttonSize))
 		{
+			float check = values.x;
 			values.x = resetValue;
-			Commands::ExecuteRawValueCommand<float>(&values.x, x, label + std::string("##X"), true);
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"), check != 0 ? true : false);
 		}
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 	
 		if (ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f"))
-			Commands::ExecuteRawValueCommand<float>(&values.x, x, label + std::string("##X"));
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
@@ -133,14 +241,15 @@ namespace eg {
 		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Y", buttonSize))
 		{
+			float check = values.y;
 			values.y = resetValue;
-			Commands::ExecuteRawValueCommand<float>(&values.y, y, label + std::string("##Y"), true);
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"), check != 0 ? true : false);
 		}
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		if(ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f"))
-			Commands::ExecuteRawValueCommand<float>(&values.y, y, label + std::string("##Y"));
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
@@ -150,14 +259,15 @@ namespace eg {
 		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Z", buttonSize))
 		{
+			float check = values.z;
 			values.z = resetValue;
-			Commands::ExecuteRawValueCommand<float>(&values.z, z, label + std::string("##Z"), true);
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"), check != 0 ? true : false);
 		}
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		if(ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f"))
-			Commands::ExecuteRawValueCommand<float>(&values.z, z, label + std::string("##Z"));
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
@@ -181,18 +291,55 @@ namespace eg {
 			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
 			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+
 			if (ImGui::Button("+", ImVec2{ lineHeight,lineHeight }))
 			{
 				ImGui::OpenPopup("ComponentSettings");
 			}
-
-			if (name != std::string("Transform"))
-				if (ImGui::BeginPopup("ComponentSettings"))
+			
+			if (ImGui::BeginPopup("ComponentSettings"))
+			{
+				if (name != std::string("Transform"))
 				{
 					if (ImGui::MenuItem("Remove Component"))
 						Commands::ExecuteCommand<Commands::RemoveComponentCommand<T>>(Commands::CommandArgs("", entity, context, entity));
-					ImGui::EndPopup();
 				}
+
+				if (entity.HasComponent<T>())
+				{
+					if (entity.GetChildren().size() > 0)
+					{
+						if (ImGui::MenuItem(entity.GetInheritableComponent<T>()->isInheritedInChildren == false ?
+							"Inherit component in children" :
+							"Stop inheriting component in children"))
+							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInheritedInChildren);
+
+						if(ImGui::MenuItem("Copy to children"))
+							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT);
+
+						if(ImGui::MenuItem("Remove from children"))
+							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT, true);
+
+						if(ImGui::MenuItem("Copy values to children"))
+							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT_VALUES);
+
+						if(ImGui::MenuItem("Copy component with values to children"))
+							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT_AND_VALUES);
+					}
+
+					if (entity.GetParent().has_value())
+					{
+						if (ImGui::MenuItem(entity.GetInheritableComponent<T>()->isInherited == false ?
+							"Inherit from parent" :
+							"Stop inheriting from parent"))
+							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInherited, true);
+					}
+				}
+					
+				ImGui::EndPopup();
+			}
+			
+
 			if (open)
 			{
 				uiFunction(component);
@@ -224,7 +371,6 @@ namespace eg {
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
-				std::cout<<tag<<std::endl;
 			}
 		}
 
@@ -246,22 +392,24 @@ namespace eg {
 			DisplayAddComponentEntry<TextComponent>("Text Component");
 			DisplayAddComponentEntry<AudioListenerComponent>("Audio Listener");
 			DisplayAddComponentEntry<AudioSourceComponent>("Audio Source");
+			DisplayAddComponentEntry<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D");
+			DisplayAddComponentEntry<AnimatorComponent>("Animator");
 
 			ImGui::EndPopup();
 		}
 
 		ImGui::PopItemWidth();
 		
-		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
+		DrawComponent<TransformComponent>("Transform", entity, [entity](auto& component)
 			{
-				DrawVec3Control("Translation", component.Translation);
+				DrawVec3Control(entity, "Translation", component.Translation);
 				//glm::vec3 rotation = glm::degrees(component.Rotation);
-				DrawVec3Control("Rotation", component.Rotation);
+				DrawVec3Control(entity, "Rotation", component.Rotation);
 				//component.Rotation = glm::radians(rotation);
-				DrawVec3Control("Scale", component.Scale, 1.0f);
+				DrawVec3Control(entity, "Scale", component.Scale, 1.0f);
 			}, m_Context);
 
-		DrawComponent<CameraComponent>("Camera", entity, [](auto& component) {
+		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component) {
 			auto& camera = component.Camera;
 
 			if(ImGui::Checkbox("Primary", &component.Primary))
@@ -352,7 +500,6 @@ namespace eg {
 				strcpy_s(buffer, sizeof(buffer), component.Name.c_str());
 
 				UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
-
 
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 				{
@@ -610,17 +757,15 @@ namespace eg {
 					}
 				}
 
-				if(!scriptExists)
-					ImGui::PopStyleColor();
 
 			}, m_Context);
 
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)
 			{
 				glm::vec4 color = component.Color;
 
 				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
-					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
+					Commands::ExecuteRawValueCommand<glm::vec4, SpriteRendererComponent>(&component.Color, color, entity, "SpriteRendererComponent-Color");
 
 				
 				ImGui::Button("Texture", {100.0f, 0.0f});
@@ -629,14 +774,61 @@ namespace eg {
 				{
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 					{
-						const wchar_t* path = (const wchar_t*)payload->Data;
-						std::filesystem::path texturePath = std::filesystem::path(path);
+						uint64_t* uuid = (uint64_t*)payload->Data;
+						std::filesystem::path texturePath = ResourceUtils::GetKeyPath(*uuid);
+						texturePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texturePath;
+
 						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 						if (texture->IsLoaded())
 						{
+							component.TextureUUID = *uuid;
 							Ref<Texture2D> oldTexture = component.Texture;
 							component.Texture = texture;
-							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&component.Texture, oldTexture, "SpriteRendererComponent-Texture", true);
+							Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
+						}
+						//else
+							//ConsolePanel::Log("Could not load texture " + texturePath.filename().string(), ConsolePanel::LogType::Error);
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				float factor = component.TilingFactor;
+				if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
+					Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
+				
+			}, m_Context);
+
+
+		//
+		DrawComponent<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D", entity, [](auto& component)
+			{
+				glm::vec4 color = component.Color;
+
+				if (ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
+
+
+				ImGui::Button("Texture", { 100.0f, 0.0f });
+
+
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+					{
+						uint64_t* uuid = (uint64_t*)payload->Data;
+
+						std::filesystem::path texturePath = ResourceUtils::GetKeyPath(*uuid);
+						texturePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texturePath;
+
+						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+						if (texture->IsLoaded())
+						{
+							Ref<Texture2D> oldTexture = component.SubTexture->GetTexture();
+							component.SubTexture->SetTexture(texture);
+							Ref<Texture2D> newTexture = component.SubTexture->GetTexture();
+							component.SubTextureUUID = *uuid;
+							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
 						}
 						else
 							EG_WARN("Could not load texture {0}", texturePath.filename().string());
@@ -644,26 +836,66 @@ namespace eg {
 					ImGui::EndDragDropTarget();
 				}
 
-				float factor = component.TilingFactor;
-				if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
-					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
-				
-			}, m_Context);
+				ImGui::Text("Min Coords:");
+				ImGui::SameLine();
+				ImGui::PushID(0);
+				glm::vec2 minCoords = component.SubTexture->GetCoords(0);
+				if (ImGui::DragFloat2("##UV", (float*)component.SubTexture->GetCoordsPtr(0), 0.01f, 0.0f, 1.0f))
+				{
+					glm::vec2 newCoords = component.SubTexture->GetCoords(0);
+					std::vector<glm::vec2> oldCoords = { minCoords, component.SubTexture->GetCoords(1),component.SubTexture->GetCoords(3) };
+					std::vector<glm::vec2> newCoordsVec = { newCoords, { component.SubTexture->GetCoords(2).x, newCoords.y }, { newCoords.x, component.SubTexture->GetCoords(2).y } };
+					component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
+					component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
+					Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+						{
+							component.SubTexture->SetTexCoords(0, coords[0]);
+							component.SubTexture->SetTexCoords(1, coords[1]);
+							component.SubTexture->SetTexCoords(3, coords[2]);
+						}, newCoordsVec, oldCoords, "SpriteRendererComponent-MinTexCoords", true);
+				}
+				ImGui::PopID();
+				ImGui::Text("Max Coords:");
+				ImGui::SameLine();
+				ImGui::PushID(2);
+				glm::vec2 maxCoords = component.SubTexture->GetCoords(2);
+				if (ImGui::DragFloat2("##UV", (float*)component.SubTexture->GetCoordsPtr(2), 0.01f, 0.0f, 1.0f))
+				{
+					glm::vec2 newCoords = component.SubTexture->GetCoords(2);
+					std::vector<glm::vec2> oldCoords = { component.SubTexture->GetCoords(1), maxCoords, component.SubTexture->GetCoords(3) };
+					std::vector<glm::vec2> newCoordsVec = { { newCoords.x, component.SubTexture->GetCoords(0).x }, newCoords, { component.SubTexture->GetCoords(0).x ,newCoords.y } };
+					component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
+					component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
+					Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+						{
+							component.SubTexture->SetTexCoords(1, coords[0]);
+							component.SubTexture->SetTexCoords(2, coords[1]);
+							component.SubTexture->SetTexCoords(3, coords[2]);
+						}, newCoordsVec, oldCoords, "SpriteRendererComponent-MaxTexCoords", true);
+				}
+				ImGui::PopID();
 
-		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
+				float factor = component.TilingFactor;
+				if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
+					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
+
+			}, m_Context);
+		//
+
+		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [entity](auto& component)
 			{
 				float thickness = component.Thickness, fade = component.Fade;
 				glm::vec4 color = component.Color;
 				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
-					Commands::ExecuteRawValueCommand(&component.Color, color, "CircleRendererComponent-Color");
+					Commands::ExecuteRawValueCommand<glm::vec4, CircleRendererComponent>(&component.Color, color, entity, "CircleRendererComponent-Color");
 
 				if(ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
-					Commands::ExecuteRawValueCommand(&component.Thickness, thickness, "CircleRendererComponent-Thickness");
+					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Thickness, thickness, entity, "CircleRendererComponent-Thickness");
 				if(ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
-					Commands::ExecuteRawValueCommand(&component.Fade, fade, "CircleRendererComponent-Fade");
+					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Fade, fade, entity, "CircleRendererComponent-Fade");
 			}, m_Context);
 
-		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [](auto& component) {
+		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [entity](auto& component) {
 			const char* bodyTypeString[] = { "Static", "Dynamic", "Kinematic"};
 			const char* currentBodyTypeString = bodyTypeString[(int)component.Type];
 			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
@@ -676,7 +908,7 @@ namespace eg {
 						currentBodyTypeString = bodyTypeString[i];
 						RigidBody2DComponent::BodyType type = component.Type;
 						component.Type = (RigidBody2DComponent::BodyType)i;
-						Commands::ExecuteRawValueCommand(&component.Type, type, "RigidBody2DComponent-Body Type", true);
+						Commands::ExecuteRawValueCommand<RigidBody2DComponent::BodyType, RigidBody2DComponent>(&component.Type, type, entity, "RigidBody2DComponent-Body Type", true);
 					}
 
 					if (isSelected)
@@ -687,57 +919,210 @@ namespace eg {
 			}
 
 			if(ImGui::Checkbox("Fixed Rotation", &component.FixedRotation))
-				Commands::ExecuteRawValueCommand<bool>(&component.FixedRotation, !component.FixedRotation, "RigidBody2DComponent-Fixed Rotation");
+				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");
 		}, m_Context);
 
-		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component) {
+		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [entity](auto& component) {
 			float density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset, size = component.Size;
 
 			if(ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
-				Commands::ExecuteRawValueCommand(&component.Offset, offset, "BoxCollider2DComponent-Offset");
+				Commands::ExecuteRawValueCommand<glm::vec2, BoxCollider2DComponent>(&component.Offset, offset, entity, "BoxCollider2DComponent-Offset");
 			if(ImGui::DragFloat2("Size", glm::value_ptr(component.Size), 0.1f))
-				Commands::ExecuteRawValueCommand(&component.Size, size, "BoxCollider2DComponent-Size");
+				Commands::ExecuteRawValueCommand<glm::vec2, BoxCollider2DComponent>(&component.Size, size, entity, "BoxCollider2DComponent-Size");
 			if(ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Density, density, "BoxCollider2DComponent-Density");
+				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Density, density, entity, "BoxCollider2DComponent-Density");
 			if(ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Friction, friction, "BoxCollider2DComponent-Friction");
+				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Friction, friction, entity, "BoxCollider2DComponent-Friction");
 			if(ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Restitution, restitution, "BoxCollider2DComponent-Restitution");
+				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Restitution, restitution, entity, "BoxCollider2DComponent-Restitution");
 			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
-				Commands::ExecuteRawValueCommand(&component.RestitutionThreshold, restitutionThreshold, "BoxCollider2DComponent-Restitution Threshold");
+				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
 		}, m_Context);
 
-		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component) {
+		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [entity](auto& component) {
 			float radius = component.Radius, density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset;
 
 			if(ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
-				Commands::ExecuteRawValueCommand(&component.Offset, offset, "CircleCollider2DComponent-Offset");
+				Commands::ExecuteRawValueCommand<glm::vec2, CircleCollider2DComponent>(&component.Offset, offset, entity, "CircleCollider2DComponent-Offset");
 			if(ImGui::DragFloat("Radius", &component.Radius, 0.1f))
-				Commands::ExecuteRawValueCommand(&component.Radius, radius, "CircleCollider2DComponent-Radius");
+				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Radius, radius, entity, "CircleCollider2DComponent-Radius");
 			if(ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Density, density, "CircleCollider2DComponent-Density");
+				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Density, density, entity, "CircleCollider2DComponent-Density");
 			if(ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Friction, friction, "CircleCollider2DComponent-Friction");
+				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Friction, friction, entity, "CircleCollider2DComponent-Friction");
 			if(ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand(&component.Restitution, restitution, "CircleCollider2DComponent-Restitution");
+				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Restitution, restitution, entity, "CircleCollider2DComponent-Restitution");
 			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
-				Commands::ExecuteRawValueCommand(&component.RestitutionThreshold, restitutionThreshold, "CircleCollider2DComponent-Restitution Threshold");
+				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
 			}, m_Context);
 
-		DrawComponent<TextComponent>("Text Renderer", entity, [](auto& component)
+		DrawComponent<TextComponent>("Text Renderer", entity, [entity](auto& component)
 			{
 				float kerning = component.Kerning, lineSpacing = component.LineSpacing;
 				glm::vec4 color = component.Color;
 
-				ImGui::InputTextMultiline("Text String", &component.TextString);
+				if(ImGui::InputTextMultiline("Text String", &component.TextString))
+					Commands::ExecuteRawValueCommand<std::string, TextComponent>(&component.TextString, component.TextString, entity, "TextComponent-Text String");
 				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
-					Commands::ExecuteRawValueCommand(&component.Color, color, "TextComponent-Color");
+					Commands::ExecuteRawValueCommand<glm::vec4, TextComponent>(&component.Color, color, entity, "TextComponent-Color");
 				if(ImGui::DragFloat("Kerning", &component.Kerning, 0.025f))
-					Commands::ExecuteRawValueCommand(&component.Kerning, kerning, "TextComponent-Kerning");
+					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.Kerning, kerning, entity, "TextComponent-Kerning");
 				if(ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f))
-					Commands::ExecuteRawValueCommand(&component.LineSpacing, lineSpacing, "TextComponent-Line Spacing");
+					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing");
+			}, m_Context);
+
+			DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
+			{
+				float speed = component.Animator2D->GetSpeed();
+				if (ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f))
+				{
+					Commands::ExecuteRawValueCommand<float>(component.Animator2D->GetSpeedPtr(), speed, "AnimatorComponent-Speed");
+				}
+				const Ref<std::vector<Ref<Animation>>> animations = component.Animator2D->GetAnimations();
+				if (component.Animator2D->GetCurrentAnimation() != nullptr && animations->size() > 0)
+				{
+					ImGui::Text("Current Animation: %s", component.Animator2D->GetCurrentAnimation()->GetName().c_str());
+					if (component.Animator2D->GetCurrentAnimation()->GetFrame())
+					{
+						Ref<SubTexture2D> subtexture = component.Animator2D->GetCurrentAnimation()->GetFrame();
+						ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
+						ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
+						ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
+					}
+				}
+
+				if (ImGui::Button("Add Empty Animation"))
+				{
+					std::string name = "Animation" + std::to_string(component.Animator2D->GetAnimations()->size());
+					component.Animator2D->AddAnimationWithName(name);
+					Commands::ExecuteVectorCommand<Ref<Animation>>({ component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, CreateRef<Animation>() });
+				}
+
+				
+				ImGui::Text("Animations:");
+				if (animations->size() > 0)
+				{
+					int i = 0;
+					for (auto animation : *animations)
+					{
+						
+						ImGui::PushID("Anim" + i);
+						if (ImGui::TreeNode(animation->GetName().c_str()))
+						{
+							ImGui::Text("Frame rate: %d", animation->GetFrameRate());
+							ImGui::Checkbox("Looped", animation->IsLoopedPtr());
+							ImGui::Checkbox("Playing", animation->IsPlayingPtr());
+							ImGui::PushID("Frames" + i);
+							if (ImGui::TreeNode("Frames")) 
+							{
+								for (int j = 0; j < animation->GetFrames().size(); j++)
+								{
+									ImGui::PushID("Frame:" + j);
+									//TODO: Display the name of the frame and the texture of the frame
+									ImGui::Text("Frame: %d", j);
+									ImGui::PopID();
+								}
+								ImGui::TreePop();
+							}
+							ImGui::PopID();
+							//TODO: Playing the animation if the animation is looped play non-stop else play once and show button on top to play again
+							// 
+							//TODO: Display the animation properties if someone wants to change the animation properties show the popup window which will ask if the user wants to change the properties in the scene or in the prefab
+							//ImGui::PopID();
+							ImGui::TreePop();
+						}
+						if (ImGui::BeginDragDropTarget())
+						{
+							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+							{
+								uint64_t* uuid = (uint64_t*)payload->Data;
+
+								std::filesystem::path animationPath = ResourceUtils::GetKeyPath(*uuid);
+
+								Ref<Animation> animation = Animation::Create(*uuid);
+								if (animation)
+								{
+									Ref<Animation> oldAnim = component.Animator2D->GetAnimation(i);
+									component.Animator2D->SetAnimation(i, animation);
+									Ref<Animation> newAnim = component.Animator2D->GetAnimation(i);
+									Commands::ExecuteRefValueCommand<Animation>(newAnim, oldAnim, "AnimatorComponent-ChangeAnimation", true);
+								}
+								else
+									EG_WARN("Could not load animation from {0}", animationPath);
+							}
+							ImGui::EndDragDropTarget();
+						}
+						ImGui::PopID();
+						i++;
+					}
+				}
+
+				Ref<std::vector<std::pair<size_t, size_t>>> transitions = component.Animator2D->GetTransitions();
+				if (ImGui::Button("Add Transition"))
+				{
+					ImGui::OpenPopup("AddTransition");
+				}
+				if (ImGui::BeginPopup("AddTransition"))
+				{
+					for (size_t i = 0; i < animations->size(); i++)
+					{
+						for (size_t j = 0; j < animations->size(); j++)
+						{
+							std::pair<size_t, size_t> transition = std::make_pair(i, j);
+							auto hasTransition = std::find(transitions->begin(), transitions->end(), transition);
+							if (i != j && hasTransition == transitions->end())
+							{
+								std::string name = animations->at(i)->GetName() + " to " + animations->at(j)->GetName();
+								if (ImGui::Button(name.c_str()))
+								{
+									component.Animator2D->AddTransition(transition);
+									Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, transition, transition });
+									ImGui::CloseCurrentPopup();
+								}
+							}
+						}
+					}
+					if (ImGui::Button("Cancel"))
+					{
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+				if (ImGui::TreeNode("Transitions:"))
+				{
+					
+					if (transitions->size() > 0)
+					{
+						int i = 0;
+						for (const auto& transition : *transitions)
+						{
+							ImGui::PushID(i);
+							ImGui::Text("Transition from %s to %s", animations->at(transition.first)->GetName().c_str(), animations->at(transition.second)->GetName().c_str()); 
+							ImGui::SameLine();
+							if (ImGui::Button("+"))
+							{
+								ImGui::OpenPopup("##Transition Popup");
+								
+							}
+							if (ImGui::BeginPopup("##Transition Popup"))
+							{
+								if (ImGui::Button("Remove Transition"))
+								{
+									component.Animator2D->RemoveTransition(transition);
+									Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::ADD, Commands::VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE, transition, transition, 0, transition, transition });
+									ImGui::CloseCurrentPopup();
+								}
+								ImGui::EndPopup();
+							}
+							
+							ImGui::PopID();
+							i++;
+						}
+					}
+					ImGui::TreePop();
+				}
 			}, m_Context);
 
 		DrawComponent<AudioSourceComponent>("Audio Source", entity, [](auto& component)

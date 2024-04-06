@@ -6,6 +6,9 @@
 #include "Engine/Utils/PlatformUtils.h"
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Project/Project.h"
+
+
+
 namespace eg
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)

@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "Buffer.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 
 namespace eg {
@@ -12,8 +13,10 @@ namespace eg {
 		{
 		case RendererAPI::API::None:
 			EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+			ConsolePanel::Log("File: Buffer.cpp - RendererAPI::None is currently not supported!", ConsolePanel::LogType::Error);
 			return nullptr;
 		case RendererAPI::API::OpenGL:
+			ConsolePanel::Log("File: Buffer.cpp - IndexBuffer created", ConsolePanel::LogType::Info);
 			return CreateRef<OpenGLIndexBuffer>(indices, count);
 		default:
 			break;
@@ -27,8 +30,10 @@ namespace eg {
 		{
 		case RendererAPI::API::None:
 			EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+			ConsolePanel::Log("File: Buffer.cpp - RendererAPI::None is currently not supported!", ConsolePanel::LogType::Error);
 			return nullptr;
 		case RendererAPI::API::OpenGL:
+			ConsolePanel::Log("File: Buffer.cpp - VertexBuffer created", ConsolePanel::LogType::Info);
 			return CreateRef<OpenGLVertexBuffer>(size);
 		default:
 			break;
@@ -42,8 +47,10 @@ namespace eg {
 		{
 		case RendererAPI::API::None:
 			EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
+			ConsolePanel::Log("File: Buffer.cpp - RendererAPI::None is currently not supported!", ConsolePanel::LogType::Error);
 			return nullptr;
 		case RendererAPI::API::OpenGL:
+			ConsolePanel::Log("File: Buffer.cpp - VertexBuffer created", ConsolePanel::LogType::Info);
 			return CreateRef<OpenGLVertexBuffer>(vertices, size);
 		default:
 			break;

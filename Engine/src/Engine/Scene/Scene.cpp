@@ -1,5 +1,4 @@
 #include "egpch.h"
-#include "Scene.h"
 
 #include "Components.h"
 #include "ScriptableEntity.h"
@@ -8,7 +7,7 @@
 #include "Engine/Physics/Physics2D.h"
 
 #include <glm/glm.hpp>
-
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 #include "Entity.h"
 
 // Box2D
@@ -32,6 +31,8 @@ namespace eg {
 	Scene::~Scene()
 	{
 	}
+	
+	
 
 	template<typename... Component>
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
@@ -90,11 +91,12 @@ namespace eg {
 			const auto& tag = srcSceneRegistry.get<TagComponent>(entity).Tag;
 			Entity newEntity = scene->CreateEntityWithID(uuid, tag);
 			enttMap[uuid] = (entt::entity)newEntity;
+			scene->m_EntityInfoMap[uuid] = other->m_EntityInfoMap[uuid];
 		}
 
 		// Copy components (except IDComponent and TagComponent)
 		CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
-
+		ConsolePanel::Log("File: Scene.cpp - Scene copied", ConsolePanel::LogType::Info);
 		return scene;
 	}
 
@@ -112,14 +114,19 @@ namespace eg {
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityMap[uuid] = (entt::entity)entity;
-
+		m_EntityInfoMap[uuid] = new EntityInfo(NULL);
+		ConsolePanel::Log("File: Scene.cpp - Entity created: " + tag.Tag, ConsolePanel::LogType::Info);
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		if (entity.GetParent().has_value())
+			entity.GetParent().value().RemoveChild(entity);
 		m_EntityMap.erase(entity.GetUUID());
+		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
+		ConsolePanel::Log("File: Scene.cpp - Entity destroyed", ConsolePanel::LogType::Info);
 	}
 
 	void Scene::OnRuntimeStart()
@@ -242,15 +249,46 @@ namespace eg {
 			}
 		}
 
+		// Update Animation
+		{
+			auto t = m_Registry.view<AnimatorComponent>();
+			for (auto entity : t)
+			{
+				auto animator = t.get<AnimatorComponent>(entity);
+				animator.Animator2D->Update(ts);
+			}
+		}
+
 		if (mainCamera)
 		{
 			Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
 			// Draw sprites
 			{
-				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+				auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 				for (auto entity : group)
 				{
 					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				}
+			}
+			 
+			//Set Animations
+			{
+				auto group = m_Registry.view<SpriteRendererSTComponent, AnimatorComponent>();
+				for (auto entity : group)
+				{
+					auto [sprite, animator] = group.get<SpriteRendererSTComponent, AnimatorComponent>(entity);
+					sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame();
+				}
+			}
+
+			// Draw Subtexture sprites
+			{
+				auto group = m_Registry.view<TransformComponent, SpriteRendererSTComponent>();
+				for (auto entity : group)
+				{
+					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererSTComponent>(entity);
 
 					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
@@ -336,13 +374,35 @@ namespace eg {
 	void Scene::RenderScene(EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
+		RenderAxis();
 
 		// Draw sprites
 		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+			}
+		}
+
+		////Set Animations
+		//{
+		//	auto group = m_Registry.group<SpriteRendererSTComponent, AnimatorComponent>();
+		//	for (auto entity : group)
+		//	{
+		//		auto [sprite, animator] = group.get<SpriteRendererSTComponent, AnimatorComponent>(entity);
+		//		sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame();
+		//	}
+		//}
+
+		// Draw Subtexture sprites
+		{
+			auto group = m_Registry.view<TransformComponent, SpriteRendererSTComponent>();
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererSTComponent>(entity);
 
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 			}
@@ -371,6 +431,14 @@ namespace eg {
 		}
 
 		Renderer2D::EndScene();
+	}
+
+	void Scene::RenderAxis()
+	{
+		//X: red
+		//y: green
+		//z: blue
+		
 	}
 
 	Entity Scene::DuplicateEntity(Entity entity)
@@ -485,6 +553,8 @@ namespace eg {
 		static_assert(sizeof(T) == 0);
 	}
 
+	
+
 	template<>
 	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
 	{
@@ -552,6 +622,16 @@ namespace eg {
 	}
 	template<>
 	void Scene::OnComponentAdded<AudioSourceComponent>(Entity entity, AudioSourceComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteRendererSTComponent>(Entity entity, SpriteRendererSTComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<AnimatorComponent>(Entity entity, AnimatorComponent& component)
 	{
 	}
 
