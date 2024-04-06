@@ -106,8 +106,14 @@ namespace eg
 				UUID uuid = resource["UUID"].as<uint64_t>();
 
 				TextureResourceData* data = new TextureResourceData();
-				data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
-				data->ResourceName = resource["ResourceName"].as<std::string>();
+				if(resource["ParentDirectory"])
+					data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+				else 
+					data->ParentDirectory = 0;
+				if(resource["ResourceName"])
+					data->ResourceName = resource["ResourceName"].as<std::string>();
+				else
+					data->ResourceName = resource["ImageName"].as<std::string>();
 				data->Extension = resource["Extension"].as<std::string>();
 				data->Width = resource["Width"].as<int>();
 				data->Height = resource["Height"].as<int>();

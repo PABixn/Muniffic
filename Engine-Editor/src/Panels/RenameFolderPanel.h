@@ -10,11 +10,11 @@ namespace eg
 	public:
 		RenameFolderPanel();
 		void OnImGuiRender();
-		void ShowWindow(std::filesystem::path path);
+		void ShowWindow(UUID directoryUUID);
 		bool IsShown() { return m_Show; }
 
 	protected:
 		bool m_Show;
-		std::filesystem::path m_Path;
+		UUID m_DirectoryUUID;
 	};
 }

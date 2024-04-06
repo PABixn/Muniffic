@@ -10,6 +10,7 @@
 #include "msdfgen.h"
 #include "Engine/Resources/Systems/ResourceSystem.h"
 #include "Engine/Resources/ResourceDatabase.h"
+#include "Engine/Resources/AssetDirectoryManager.h"
 
 namespace eg
 {
@@ -29,8 +30,8 @@ namespace eg
 	void Font::LoadFont(const std::filesystem::path& path)
 	{
 		FontResourceData* data = new FontResourceData();
-		data->ResourcePath = "Fonts";
-		data->FontName = path.stem().string();
+		data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Font);
+		data->ResourceName = path.stem().string();
 		data->Extension = path.extension().string();
 
 		UUID font = ResourceDatabase::AddResource(path.string(), data, ResourceType::Font);

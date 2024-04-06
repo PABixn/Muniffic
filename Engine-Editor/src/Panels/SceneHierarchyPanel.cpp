@@ -93,7 +93,7 @@ namespace eg {
 			GLuint my_opengl_texture; 
 			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceDatabase::GetTextureResourceDataCache()) {
 				auto CacheImageData = (pairOfUUIDAndData.second);
-				if (CacheImageData->GetAbsolutePath() == m_PreviewAbsoluteImagePath){
+				if (ResourceDatabase::GetResourcePath(pairOfUUIDAndData.first) == m_PreviewAbsoluteImagePath) {
 					stbi_set_flip_vertically_on_load(false);
 					unsigned char* image = stbi_load(m_PreviewAbsoluteImagePath.string().c_str(), &(CacheImageData->Width), &(CacheImageData->Height), &(CacheImageData->Channels), STBI_rgb_alpha);
 					if (image) {
@@ -769,11 +769,11 @@ namespace eg {
 
 				if (ImGui::BeginDragDropTarget())
 				{
+					uint64_t* uuid;
+
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 					{
-						uint64_t* uuid = (uint64_t*)payload->Data;
-						std::filesystem::path texturePath = ResourceUtils::GetKeyPath(*uuid);
-						texturePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texturePath;
+						uuid = (uint64_t*)payload->Data;
 
 						Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*uuid);
 						if (texture->IsLoaded())
@@ -784,7 +784,7 @@ namespace eg {
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
 						}
 						else
-							EG_WARN("Could not load texture {0}", texturePath.filename().string());
+							EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*uuid));
 					}
 					ImGui::EndDragDropTarget();
 				}
@@ -823,7 +823,7 @@ namespace eg {
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
 						}
 						else
-							EG_WARN("Could not load texture {0}", ResourceUtils::GetFullPath(*uuid));
+							EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*uuid));
 					}
 					ImGui::EndDragDropTarget();
 				}
@@ -961,13 +961,13 @@ namespace eg {
 				std::string selectedFontName = "OpenSans-Regular";
 
 				if(ResourceDatabase::FindResourceData(component.FontAsset, ResourceType::Font))
-					selectedFontName = ResourceUtils::GetResourceName(component.FontAsset);
+					selectedFontName = ResourceDatabase::GetResourceName(component.FontAsset);
 
 				if (ImGui::BeginCombo("Font", selectedFontName.c_str(), ImGuiComboFlags_None))
 				{
 					for (const auto& [uuid, font] : ResourceDatabase::GetFontResourceDataCache())
 					{
-						std::string name = ResourceUtils::GetResourceName(uuid);
+						std::string name = ResourceDatabase::GetResourceName(uuid);
 						bool isSelected = component.FontAsset == uuid;
 						if (ImGui::Selectable(name.c_str(), isSelected))
 						{
@@ -1049,11 +1049,11 @@ namespace eg {
 						}
 						if (ImGui::BeginDragDropTarget())
 						{
+							uint64_t* uuid;
+
 							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 							{
-								uint64_t* uuid = (uint64_t*)payload->Data;
-
-								std::filesystem::path animationPath = ResourceUtils::GetKeyPath(*uuid);
+								uuid = (uint64_t*)payload->Data;
 
 								Ref<Animation> animation = Animation::Create(*uuid);
 								if (animation)
@@ -1064,7 +1064,7 @@ namespace eg {
 									Commands::ExecuteRefValueCommand<Animation>(newAnim, oldAnim, "AnimatorComponent-ChangeAnimation", true);
 								}
 								else
-									EG_WARN("Could not load animation from {0}", animationPath);
+									EG_WARN("Could not load animation from {0}", ResourceDatabase::GetResourcePath(*uuid));
 							}
 							ImGui::EndDragDropTarget();
 						}

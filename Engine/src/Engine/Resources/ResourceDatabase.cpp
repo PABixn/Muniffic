@@ -285,6 +285,18 @@ namespace eg
 
 	void* ResourceDatabase::GetResourceData(UUID uuid)
 	{
+		if (ResourceSerializer::ResourceTypeInfo.find(uuid) == ResourceSerializer::ResourceTypeInfo.end())
+		{
+			EG_CORE_ERROR("Resource not found in cache");
+			return nullptr;
+		}
+
+		if (!FindResourceData(uuid))
+		{
+			EG_CORE_ERROR("Resource not found in cache");
+			return nullptr;
+		}
+
 		ResourceType type = ResourceSerializer::ResourceTypeInfo.at(uuid);
 
 		if (type == ResourceType::Image)

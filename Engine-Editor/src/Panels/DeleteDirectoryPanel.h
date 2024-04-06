@@ -12,11 +12,11 @@ namespace eg
 	public:
 		DeleteDirectoryPanel();
 		void OnImGuiRender();
-		void ShowWindow(std::filesystem::path directoryPath);
+		void ShowWindow(UUID directoryUUID);
 		bool IsShown() { return m_Show; }
 
 	protected:
 		bool m_Show;
-		std::filesystem::path m_DirectoryPath;
+		UUID m_DirectoryUUID;
 	};
 }

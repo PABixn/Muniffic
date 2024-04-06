@@ -45,10 +45,10 @@ namespace eg
 	{
 		if (!ResourceDatabase::FindResourceData(id, ResourceType::Animation))
 			return nullptr;
-		AnimationResourceData *animData = (AnimationResourceData *)ResourceDatabase::GetResourceData(id, ResourceType::Animation);
+		AnimationResourceData *animData = (AnimationResourceData *)ResourceDatabase::GetResourceData(id);
 		Ref<Animation> anim = CreateRef<Animation>();
 		anim->m_AnimationID = id;
-		anim->m_name = animData->AnimationName;
+		anim->m_name = animData->ResourceName;
 		anim->m_frameRate = animData->FrameRate;
 		anim->m_loop = animData->Loop;
 		anim->m_frameCount = animData->Frames.size();

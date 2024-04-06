@@ -28,6 +28,7 @@ namespace eg
 		static bool moveAsset(UUID assetUUID, UUID oldAssetDirectoryUUID, UUID newAssetDirectoryUUID);
 		static bool moveAsset(UUID assetUUID, UUID newAssetDirectoryUUID);
 		static bool moveAssetDirectory(UUID assetDirectoryUUID, UUID newParentUUID);
+		static UUID GetRootAssetTypeDirectory(ResourceType type);
 		static void initDefault();
 
 		static std::string getDirectoryName(UUID uuid);

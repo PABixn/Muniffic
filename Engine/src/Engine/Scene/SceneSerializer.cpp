@@ -520,12 +520,10 @@ namespace eg {
 
 						if (ResourceDatabase::FindResourceData(uuid, ResourceType::Image))
 						{
-							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::Image);
-							std::filesystem::path texturePath = texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
-							auto path = Project::GetAssetFileSystemPath(texturePath);
+							std::filesystem::path texturePath = ResourceDatabase::GetResourcePath(uuid);
 							auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
 							auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();
-							Ref<Texture2D> texture = Texture2D::Create(path.string());
+							Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 							src.SubTexture = CreateRef<SubTexture2D>(texture, minCoords, maxCoords);
 						}
 						else

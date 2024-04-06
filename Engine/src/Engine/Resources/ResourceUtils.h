@@ -11,6 +11,33 @@ namespace eg
 	class ResourceUtils
 	{
 	public:
+		static std::string GetResourceTypeExtension(ResourceType type)
+		{
+			switch (type)
+			{
+			case ResourceType::Image:
+				return ".png";
+			case ResourceType::SubTexture:
+				return ".subtexture";
+			case ResourceType::SpriteAtlas:
+				return ".spriteatlas";
+			case ResourceType::Shader:
+				return ".shader";
+			case ResourceType::Font:
+				return ".ttf";
+			case ResourceType::Text:
+				return ".txt";
+			case ResourceType::Animation:
+				return ".anim";
+			case ResourceType::Script:
+				return ".script";
+			case ResourceType::NativeScript:
+				return ".nativescript";
+			default:
+				return "";
+			}
+		}
+
 		static ResourceType GetResourceTypeByExtension(std::string extension)
 		{
 			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg")

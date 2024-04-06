@@ -66,7 +66,7 @@ namespace eg {
 
 	OpenGLTexture2D::OpenGLTexture2D(const UUID& id)
 	{
-		std::filesystem::path path = ResourceUtils::GetFullPath(id);
+		std::filesystem::path path = ResourceDatabase::GetResourcePath(id);
 		Load(path.string());
 	}
 
@@ -86,7 +86,7 @@ namespace eg {
 
 	Ref<Texture2D> OpenGLTexture2D::Create(const UUID& id)
 	{
-		std::filesystem::path path = ResourceUtils::GetFullPath(id);
+		std::filesystem::path path = ResourceDatabase::GetResourcePath(id);
 		return Create(path.string());
 	}
 
