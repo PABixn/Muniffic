@@ -70,6 +70,7 @@ namespace eg
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		Renderer2D::SetLineThickness(3.0f);
+
 	}
 
 	void EditorLayer::OnDetach()
@@ -255,11 +256,8 @@ namespace eg
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		
-		m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
-		m_ContentBrowserPanel->SetRenameFolderPanel(m_RenameFolderPanel);
-		m_ContentBrowserPanel->SetDeleteDirectoryPanel(m_DeleteDirectoryPanel);
-		m_ContentBrowserPanel->SetRenameResourcePanel(m_RenameResourcePanel);
 		m_ContentBrowserPanel->OnImGuiRender();
+		m_ProjectDirectoryPanel->OnImGuiRender();
 
 		if(m_DeleteFilePanel->IsShown())
 			m_DeleteFilePanel->OnImGuiRender();
@@ -757,12 +755,18 @@ namespace eg
 			ScriptEngine::Init();
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
-			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+			m_ContentBrowserPanel = CreateRef<ContentBrowserPanel>();
+			m_ProjectDirectoryPanel = CreateRef<ProjectDirectoryPanel>();
+			m_ProjectDirectoryPanel->SetContentBrowserPanel(m_ContentBrowserPanel);
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
 			m_DeleteFilePanel = new DeleteFilePanel();
 			m_RenameFolderPanel = new RenameFolderPanel();
 			m_DeleteDirectoryPanel = new DeleteDirectoryPanel();
 			m_RenameResourcePanel = new RenameResourcePanel();
+			m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
+			m_ContentBrowserPanel->SetRenameFolderPanel(m_RenameFolderPanel);
+			m_ContentBrowserPanel->SetDeleteDirectoryPanel(m_DeleteDirectoryPanel);
+			m_ContentBrowserPanel->SetRenameResourcePanel(m_RenameResourcePanel);
 		}
 	}
 

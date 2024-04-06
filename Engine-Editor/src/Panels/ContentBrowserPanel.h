@@ -19,9 +19,9 @@ namespace eg {
 		void SetDeleteDirectoryPanel(DeleteDirectoryPanel* deleteDirectoryPanel) { m_DeleteDirectoryPanel = deleteDirectoryPanel; }
 		void SetRenameResourcePanel(RenameResourcePanel* renameResourcePanel) { m_RenameResourcePanel = renameResourcePanel; }
 		std::filesystem::path GetCurrentPath() { return m_CurrentDirectory; }
+		friend class ProjectDirectoryPanel;
 
 	private:
-		void drawDirectoryTreeNode(const std::filesystem::path& path);
 		std::filesystem::path m_BaseDirectory;
 		std::filesystem::path m_CurrentDirectory;
 		void DrawCenteredText(const std::string& text, const float& cellSize);

@@ -4,6 +4,33 @@
 
 namespace eg {
 
+	enum searchRes
+	{
+		ChildSearched, 
+		thisSearched, 
+		parentSearched,
+		bothSearched
+	};
+	struct EntityDisplayInfo
+	{
+		EntityDisplayInfo() {
+			childInfo = std::vector<EntityDisplayInfo>();
+		};
+		EntityDisplayInfo(Entity e) :entity(e) {
+			res = searchRes::parentSearched;
+			childInfo = std::vector<EntityDisplayInfo>();
+		};
+		EntityDisplayInfo(Entity ent, bool Searched, bool childSearched) : entity(ent), res((Searched&& childSearched) ? searchRes::bothSearched : ((Searched) ? searchRes::thisSearched : searchRes::ChildSearched))
+		{
+			childInfo = std::vector<EntityDisplayInfo>();
+		};
+		EntityDisplayInfo(Entity ent, searchRes resa) : entity(ent), res(resa) {
+			childInfo = std::vector<EntityDisplayInfo>();
+		};
+		Entity entity;
+		searchRes res;
+		std::vector<EntityDisplayInfo> childInfo;
+	};
 	class SceneHierarchyPanel {
 	public:
 		SceneHierarchyPanel() = default;
@@ -19,13 +46,19 @@ namespace eg {
 	private:
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
-		void DrawEntityNode(Entity entity, bool forceDraw = false);
+		void DrawEntityNode(EntityDisplayInfo entityDisplayInfo);
 		void DrawComponents(Entity entity);
+		void Search();
+		std::optional<EntityDisplayInfo> SearchEntity(Entity entity);
 	private:
+		std::string m_Search;
 		Ref<ImagePanel> m_ImagePanel;
 		Ref<Scene> m_Context;
+		Ref<Texture2D> m_PuzzleIcon;
 		Entity m_SelectionContext;
 		std::filesystem::path m_PreviewAbsoluteImagePath;
 		std::filesystem::path m_PreviewRelativeImagePath;
+		std::vector<EntityDisplayInfo> m_ListOfEntityDisplayed;
+		bool m_FirstDrawAfterSearch;
 	};
 }

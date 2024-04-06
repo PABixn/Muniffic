@@ -32,9 +32,6 @@ Index of this file:
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 #include "sstream"
-#include "GLFW/glfw3.h"
-//#include "glad/glad.h"
-//#include "stb_image.h"
 #include "imgui.h"
 #ifndef IMGUI_DISABLE
 
@@ -5885,7 +5882,16 @@ bool ImGui::TreeNodeEx(const void* ptr_id, ImGuiTreeNodeFlags flags, const char*
     return is_open;
 }
 
-//custom tree node Ex for scene hierarchy panel's entities
+//custom tree node Ex 
+bool ImGui::CustomTreeNodeWithPicEx(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ImTextureID textureID, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    bool is_open = ImGui::CustomTreeNodeWithPicExV(ptr_id, flags, fmt,textureID, args);
+    va_end(args);
+    return is_open;
+}
+//custom tree node Ex for scene hierarchy panels' and content browsers' entities
 bool ImGui::CustomTreeNodeEx(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
 {
     va_list args;
@@ -5894,8 +5900,19 @@ bool ImGui::CustomTreeNodeEx(const void* ptr_id, ImGuiTreeNodeFlags flags, const
     va_end(args);
     return is_open;
 }
-//custom tree node ExV for scene hierarchy panel's entities
+//custom tree node ExV for scene hierarchy panels' and content browsers' entities
 bool ImGui::CustomTreeNodeExV(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, va_list args)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+    const char* label, * label_end;
+    ImFormatStringToTempBufferV(&label, &label_end, fmt, args);
+    return CustomTreeNodeBehavior(window->GetID(ptr_id), flags, label, label_end);
+}
+
+//
+bool ImGui::CustomTreeNodeWithPicExV(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ImTextureID textureID, va_list args)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -5903,9 +5920,8 @@ bool ImGui::CustomTreeNodeExV(const void* ptr_id, ImGuiTreeNodeFlags flags, cons
 
     const char* label, * label_end;
     ImFormatStringToTempBufferV(&label, &label_end, fmt, args);
-    return CustomTreeNodeBehavior(window->GetID(ptr_id), flags, label, label_end);
+    return CustomTreeNodeWithPicBehavior(textureID,window->GetID(ptr_id), flags, label, label_end);
 }
-
 
 bool ImGui::TreeNodeExV(const char* str_id, ImGuiTreeNodeFlags flags, const char* fmt, va_list args)
 {
@@ -6168,7 +6184,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
     return is_open;
 }
-
+//small functions
 int ImGui::IndexOfCharWhereTheTextShouldBeCutToFit(const char* text, const char* textend, float size) {
     if (CalcTextSize(text, textend).x <= size) {
         return static_cast<int>(textend - text);
@@ -6188,7 +6204,8 @@ int ImGui::IndexOfCharWhereTheTextShouldBeCutToFit(const char* text, const char*
         return static_cast<int>(start - text) - 1;
     }
 }
-//tree nodes for hierarchy panel's entities
+//tree nodes for hierarchy panels' and content browsers' entities
+//drawing icons ar const char* SVGs
 bool ImGui::CustomTreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* labelArg, const char* label_endArg)
 {
     ImGuiWindow* window = GetCurrentWindow();
@@ -6274,6 +6291,16 @@ bool ImGui::CustomTreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const c
     // This is currently only support 32 level deep and we are fine with (1 << Depth) overflowing into a zero.
     const bool is_leaf = (flags & ImGuiTreeNodeFlags_Leaf) != 0;
     bool is_open = TreeNodeUpdateNextOpen(id, flags);
+    if (flags & ImGuiTreeNodeFlags_ForceOpen)
+    {
+        is_open = true;
+        TreeNodeSetOpen(id, true);
+    }
+    else if (flags & ImGuiTreeNodeFlags_ForceClose && !is_open)
+    {
+        is_open = false;
+        TreeNodeSetOpen(id, false);
+    }
     if (is_open && !g.NavIdIsAlive && (flags & ImGuiTreeNodeFlags_NavLeftJumpsBackHere) && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
         window->DC.TreeJumpToParentOnPopMask |= (1 << window->DC.TreeDepth);
 
@@ -6439,14 +6466,24 @@ bool ImGui::CustomTreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const c
 
         }
         else if (flags & ImGuiTreeNodeFlags_DirectoryEntity) {
-            scale = ImVec2(0,0);
+            scale = ImVec2((end_x - start_x) / 512, (end_y - start_y) / 512);
+            scale *= ImVec2(0.13, -0.13);
+            translation += {-5,0};
+            path_data = "M 0 0 c -32 -14 -77 -37 -100 -53 c -54 -37 -122 -125 -150 -193 l -22 -55 l 0 -1380 l 0 -1380 l 34 -72 c 60 -128 181 -221 318 -243 c 79 -13 3468 -13 3547 0 c 135 22 252 110 317 237 l 34 67 l 0 1181 l 0 1180 l -32 66 c -60 120 -174 211 -301 238 c -37 8 -317 11 -925 11 l -872 0 l -210 210 l -210 210 l -685 0 l -685 0 l -58 -24 Z";
+            //path_data = "M 0 0 V 372 c 0 0 -1.9 45 40.8 45 s 305.5 -0.8 305.5 -0.8 s 42.7 -1.6 42.7 -38.6 s 0 -158.4 0 -158.4 s 3.8 -44.2 -59.8 -44.2 s -328.2 0 -328.2 0 L 77 213.6 z M 0 0 c 0 0 0 - 38.8 52 - 38.8 s 95 0 95 0 s 38 0.9 38 33.6 c 0 8.6 0 6 0 6 L 75 163.8 z";
         }
-        else
-        {
+        else if (flags & ImGuiTreeNodeFlags_FileEntity) {
+            scale = ImVec2((end_x - start_x) / 100, (end_y - start_y) / 100);
+            //scale *= ImVec2(0.1, -0.1);
+            //path_data = "M 0 0 c -194 -41 -352 -179 -417 -368 l -23 -67 l 0 -2115 l 0 -2115 l 23 -66 c 57 -166 185 -294 350 -351 l 67 -23 l 505 0 l 1505 0 l 67 23 c 165 57 293 185 350 351 l 23 66 l 0 1660 l 0 1660 l -26 71 c -14 39 -43 96 -63 127 c -46 69 -1028 1002 -1119 1064 c -34 22 -91 52 -127 65 l -65 23 l -1005 2 c -553 0 -1023 -3 -1045 -7 Z M 0 0 l 3 -467 l 33 -67 c 38 -77 92 -130 171 -167 l 56 -26 l 498 -3 l 497 -3 l 0 -1553 c 0 -1744 6 -1611 -75 -1691 c -80 -81 39 -75 -1575 -75 c -1614 0 -1495 -6 -1575 75 c -82 81 -75 -112 -75 2185 c 0 2298 -7 2104 75 2185 c 77 77 20 73 1047 74 l 917 1 l 3 -468 Z";
+            path_data = "M 0 0 v 150.56 c 0,29.16 -23.64 52.79 -52.79 52.79 H 52.79 c -29.16 0 -52.79 -23.64 -52.79 -52.79 V 52.79 C 0 23.64 23.64 0 52.79 0 h 66.76 l 125.14 120.11 Z";
+        }
+        else {
             scale = ImVec2((end_x - start_x) / 512, (end_y - start_y) / 512);
             scale *= ImVec2(0.1, -0.1);
             path_data = "M 0 0 c -206 -47 -385 -213 -451 -420 c -19 -62 -22 -98 -27 -307 l -4 -238 l -528 0 c -489 0 -531 -1 -581 -19 c -91 -31 -140 -61 -199 -120 c -69 -70 -106 -134 -131 -230 c -17 -68 -19 -114 -19 -558 l 0 -483 l 218 0 c 254 0 315 -10 440 -71 c 67 -32 102 -58 167 -122 c 69 -69 90 -97 128 -177 c 25 -52 51 -123 58 -158 c 16 -86 7 -250 -20 -332 c -50 -158 -175 -304 -322 -378 c -131 -66 -173 -73 -437 -79 l -232 -6 l 0 -486 c 0 -399 3 -497 15 -544 c 47 -182 180 -315 362 -362 c 47 -12 145 -15 544 -15 l 486 0 l 6 233 c 6 263 13 305 79 436 c 74 147 220 272 378 322 c 82 27 246 36 332 20 c 35 -7 106 -33 158 -58 c 178 -85 315 -259 355 -449 c 10 -48 15 -135 15 -286 l 0 -218 l 488 0 c 445 0 495 2 560 19 c 167 44 296 169 347 338 c 12 39 15 143 15 574 l 0 527 l 238 4 c 209 5 245 8 307 27 c 212 68 376 247 421 461 c 63 299 -121 611 -416 706 c -44 14 -105 19 -300 23 l -245 6 l -5 545 c -5 482 -7 550 -22 587 c -57 142 -159 244 -301 301 c -37 15 -105 17 -587 22 l -545 5 l -6 245 c -4 195 -9 256 -23 300 c -60 187 -205 332 -403 401 c -77 27 -226 34 -313 14 Z";
         }
+
         std::istringstream svgStringSteam = std::istringstream(path_data);
         char command;
         ImVec2 lastDraw;
@@ -6507,6 +6544,27 @@ bool ImGui::CustomTreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const c
                     lastDraw = rr;
                     break;
                 }
+                case 'v':
+                case 'V': {
+                    double x = 0, y;
+                    iss >> y;
+                    ImVec2 s(x, y);
+                    ImVec2 rr(((s * scale) + lastDraw));
+                    draw_list->PathLineTo(rr);
+                    lastDraw = rr;
+                    break;
+                }
+                case 'h':
+                case 'H': {
+                    double x, y=0;
+                    iss >> x;
+                    ImVec2 s(x, y);
+                    ImVec2 rr(((s * scale) + lastDraw));
+                    draw_list->PathLineTo(rr);
+                    lastDraw = rr;
+                    break;
+                }
+                case 'z':
                 case 'Z': {
                     draw_list->PathFillConvex(text_col);
                     break;
@@ -6528,7 +6586,6 @@ bool ImGui::CustomTreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const c
     {
         free(mutable_str);
     }
-    //kys2
     //drawing an arrow if the entity has children
     if (flags & ImGuiTreeNodeFlags_EntityWithChildren) {
         RenderArrow(window->DrawList, ImVec2(window->WorkRect.Max.x - 30, text_pos.y), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Left, 1.0f);
@@ -6538,6 +6595,275 @@ bool ImGui::CustomTreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const c
 
     if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
         HierarchyPanelTreePushOverrideID(id);
+    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
+    return is_open;
+}
+
+//tree nodes for hierarchy panel's entities
+//drawing icons as images
+bool ImGui::CustomTreeNodeWithPicBehavior(ImTextureID textureID, ImGuiID id, ImGuiTreeNodeFlags flags, const char* labelArg, const char* label_endArg)
+{
+    //Image(textureID, { 50,50 });
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+    const char* label;
+    char* mutable_str = nullptr;
+    const char* label_end;
+    float labelMaxWidth = GetWindowWidth() - 30 - (window->DC.TreeDepth * 20) - 70;
+//first call of editor rendering gives silly numbers
+    if (labelMaxWidth > 100)
+    {
+        //if label is too long, we shorten it and give '...' at the end
+        if (CalcTextSize(labelArg).x >= labelMaxWidth)
+        {
+            int n = IndexOfCharWhereTheTextShouldBeCutToFit(labelArg, label_endArg, labelMaxWidth);
+            mutable_str = strdup(labelArg);
+
+            if (mutable_str != nullptr && n >= 0 && n < strlen(mutable_str)) {
+                mutable_str[n] = '\0';
+                mutable_str[n - 1] = '.';
+                mutable_str[n - 2] = '.';
+                mutable_str[n - 3] = '.';
+                //free(&mutable_str[n + 1]);
+                label_end = &mutable_str[n];
+                label = mutable_str;
+            }
+            else
+            {
+                label = labelArg;
+                label_end = label_endArg;
+            }
+
+        }
+        else
+        {
+            label = labelArg;
+            label_end = label_endArg;
+        }
+    }
+    else
+    {
+        label = labelArg;
+        label_end = label_endArg;
+    }
+
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+    const bool display_frame = (flags & ImGuiTreeNodeFlags_Framed) != 0;
+    const ImVec2 padding = (display_frame || (flags & ImGuiTreeNodeFlags_FramePadding)) ? style.FramePadding : ImVec2(style.FramePadding.x, ImMin(window->DC.CurrLineTextBaseOffset, style.FramePadding.y));
+
+    if (!label_end)
+        label_end = FindRenderedTextEnd(label);
+    const ImVec2 label_size = CalcTextSize(label, label_end, false);
+
+    // We vertically grow up to current line height up the typical widget height.
+    const float frame_height = ImMax(ImMin(window->DC.CurrLineSize.y, g.FontSize + style.FramePadding.y * 2), label_size.y + padding.y * 2);
+    ImRect frame_bb;
+    frame_bb.Min.x = (flags & ImGuiTreeNodeFlags_SpanFullWidth) ? window->WorkRect.Min.x : window->DC.CursorPos.x;
+    frame_bb.Min.y = window->DC.CursorPos.y;
+    frame_bb.Max.x = window->WorkRect.Max.x;
+    frame_bb.Max.y = window->DC.CursorPos.y + frame_height;
+    if (display_frame)
+    {
+        // Framed header expand a little outside the default padding, to the edge of InnerClipRect
+        // (FIXME: May remove this at some point and make InnerClipRect align with WindowPadding.x instead of WindowPadding.x*0.5f)
+        frame_bb.Min.x -= IM_FLOOR(window->WindowPadding.x * 0.5f - 1.0f);
+        frame_bb.Max.x += IM_FLOOR(window->WindowPadding.x * 0.5f);
+    }
+
+    const float text_offset_x = g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2);           // Collapser arrow width + Spacing
+    const float text_offset_y = ImMax(padding.y, window->DC.CurrLineTextBaseOffset);                    // Latch before ItemSize changes it
+    const float text_width = g.FontSize + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f);  // Include collapser
+    ImVec2 text_pos(window->DC.CursorPos.x + text_offset_x + 20, window->DC.CursorPos.y + text_offset_y);
+    ItemSize(ImVec2(text_width, frame_height), padding.y);
+
+    // For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
+    ImRect interact_bb = frame_bb;
+    if (!display_frame && (flags & (ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth)) == 0)
+        interact_bb.Max.x = frame_bb.Min.x + text_width + style.ItemSpacing.x * 2.0f;
+
+    // Store a flag for the current depth to tell if we will allow closing this node when navigating one of its child.
+    // For this purpose we essentially compare if g.NavIdIsAlive went from 0 to 1 between TreeNode() and TreePop().
+    // This is currently only support 32 level deep and we are fine with (1 << Depth) overflowing into a zero.
+    const bool is_leaf = (flags & ImGuiTreeNodeFlags_Leaf) != 0;
+    bool is_open = TreeNodeUpdateNextOpen(id, flags);
+    if (is_open && !g.NavIdIsAlive && (flags & ImGuiTreeNodeFlags_NavLeftJumpsBackHere) && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+        window->DC.TreeJumpToParentOnPopMask |= (1 << window->DC.TreeDepth);
+
+    bool item_add = ItemAdd(interact_bb, id);
+    g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_HasDisplayRect;
+    g.LastItemData.DisplayRect = frame_bb;
+
+    if (!item_add)
+    {
+        if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+            TreePushOverrideID(id);
+        IMGUI_TEST_ENGINE_ITEM_INFO(g.LastItemData.ID, label, g.LastItemData.StatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
+        return is_open;
+    }
+
+    ImGuiButtonFlags button_flags = ImGuiTreeNodeFlags_None;
+    if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
+        button_flags |= ImGuiButtonFlags_AllowItemOverlap;
+    if (!is_leaf)
+        button_flags |= ImGuiButtonFlags_PressedOnDragDropHold;
+
+    // We allow clicking on the arrow section with keyboard modifiers held, in order to easily
+    // allow browsing a tree while preserving selection with code implementing multi-selection patterns.
+    // When clicking on the rest of the tree node we always disallow keyboard modifiers.
+    const float arrow_hit_x1 = (text_pos.x - text_offset_x) - style.TouchExtraPadding.x;
+    const float arrow_hit_x2 = (text_pos.x - text_offset_x) + (g.FontSize + padding.x * 2.0f) + style.TouchExtraPadding.x;
+    const bool is_mouse_x_over_arrow = (g.IO.MousePos.x >= arrow_hit_x1 && g.IO.MousePos.x < arrow_hit_x2);
+    if (window != g.HoveredWindow || !is_mouse_x_over_arrow)
+        button_flags |= ImGuiButtonFlags_NoKeyModifiers;
+
+    // Open behaviors can be altered with the _OpenOnArrow and _OnOnDoubleClick flags.
+    // Some alteration have subtle effects (e.g. toggle on MouseUp vs MouseDown events) due to requirements for multi-selection and drag and drop support.
+    // - Single-click on label = Toggle on MouseUp (default, when _OpenOnArrow=0)
+    // - Single-click on arrow = Toggle on MouseDown (when _OpenOnArrow=0)
+    // - Single-click on arrow = Toggle on MouseDown (when _OpenOnArrow=1)
+    // - Double-click on label = Toggle on MouseDoubleClick (when _OpenOnDoubleClick=1)
+    // - Double-click on arrow = Toggle on MouseDoubleClick (when _OpenOnDoubleClick=1 and _OpenOnArrow=0)
+    // It is rather standard that arrow click react on Down rather than Up.
+    // We set ImGuiButtonFlags_PressedOnClickRelease on OpenOnDoubleClick because we want the item to be active on the initial MouseDown in order for drag and drop to work.
+    if (is_mouse_x_over_arrow)
+        button_flags |= ImGuiButtonFlags_PressedOnClick;
+    else if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
+        button_flags |= ImGuiButtonFlags_PressedOnClickRelease | ImGuiButtonFlags_PressedOnDoubleClick;
+    else
+        button_flags |= ImGuiButtonFlags_PressedOnClickRelease;
+
+    bool selected = (flags & ImGuiTreeNodeFlags_Selected) != 0;
+    const bool was_selected = selected;
+
+    bool hovered, held;
+    bool pressed = ButtonBehavior(interact_bb, id, &hovered, &held, button_flags);
+    if (pressed)
+    {
+        int s;
+        s = 0;
+    }
+    bool toggled = false;
+    if (!is_leaf)
+    {
+        if (pressed && g.DragDropHoldJustPressedId != id)
+        {
+            if ((flags & (ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) == 0 || (g.NavActivateId == id))
+                toggled = true;
+            if (flags & ImGuiTreeNodeFlags_OpenOnArrow)
+                toggled |= is_mouse_x_over_arrow && !g.NavDisableMouseHover; // Lightweight equivalent of IsMouseHoveringRect() since ButtonBehavior() already did the job
+            if ((flags & ImGuiTreeNodeFlags_OpenOnDoubleClick) && g.IO.MouseClickedCount[0] == 2)
+                toggled = true;
+        }
+        else if (pressed && g.DragDropHoldJustPressedId == id)
+        {
+            IM_ASSERT(button_flags & ImGuiButtonFlags_PressedOnDragDropHold);
+            if (!is_open) // When using Drag and Drop "hold to open" we keep the node highlighted after opening, but never close it again.
+                toggled = true;
+        }
+
+        if (g.NavId == id && g.NavMoveDir == ImGuiDir_Left && is_open)
+        {
+            toggled = true;
+            NavMoveRequestCancel();
+        }
+        if (g.NavId == id && g.NavMoveDir == ImGuiDir_Right && !is_open) // If there's something upcoming on the line we may want to give it the priority?
+        {
+            toggled = true;
+            NavMoveRequestCancel();
+        }
+
+        if (toggled)
+        {
+            is_open = !is_open;
+            window->DC.StateStorage->SetInt(id, is_open);
+            g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_ToggledOpen;
+        }
+    }
+    if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
+        SetItemAllowOverlap();
+    // Render
+    const ImU32 text_col = GetColorU32(ImGuiCol_Text);
+    ImGuiNavHighlightFlags nav_highlight_flags = ImGuiNavHighlightFlags_TypeThin;
+    if (hovered || selected)
+    {
+        const ImU32 bg_col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+        RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, false);
+    }
+    RenderNavHighlight(frame_bb, id, nav_highlight_flags);
+//drawing hierarchy lines
+    static int childnumber;
+    static int lastTreeDepth;
+    static int lastFrame;
+    if (!lastFrame) {
+        lastFrame = ImGui::GetFrameCount();
+        lastTreeDepth = 0;
+    }
+    if (ImGui::GetFrameCount() != lastFrame) {
+        childnumber = 0;
+        lastFrame = ImGui::GetFrameCount();
+        lastTreeDepth = 0;
+    }
+    if (window->DC.TreeDepth > 0) {
+        if (lastTreeDepth > window->DC.TreeDepth) {
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (lastTreeDepth + 1)) - (2 * (lastTreeDepth - 1)), text_pos.y + g.FontSize * 0.5f - 40));
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (lastTreeDepth + 1)) - (2 * (lastTreeDepth - 1)), text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathStroke(text_col, false, 2.0f);
+            lastTreeDepth = window->DC.TreeDepth;
+            childnumber = 0;
+        }
+        if (lastTreeDepth != window->DC.TreeDepth) {
+            lastTreeDepth = window->DC.TreeDepth;
+            childnumber = 0;
+        }
+        else
+        {
+            childnumber += 1;
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 40));
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 10));
+            window->DrawList->PathStroke(text_col, false, 2.0f);
+        }
+        window->DrawList->AddCircleFilled(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f), 3, text_col);
+        window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f));
+        window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 11, text_pos.y + g.FontSize * 0.5f));
+        window->DrawList->PathStroke(text_col, false, 2.0f);
+        window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 10));
+        window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f));
+        window->DrawList->PathStroke(text_col, false, 2.0f);
+        for (int i = 1; i < window->DC.TreeDepth; i++) {
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (i + 1)) - (2 * (i - 1)), text_pos.y + g.FontSize * 0.5f - 40));
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (i + 1)) - (2 * (i - 1)), text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathStroke(text_col, false, 2.0f);
+        }
+    }
+    else
+    {
+        lastTreeDepth = 0;
+    }
+//drawing icons
+        
+    ImRect bb(window->DC.CursorPos + ImVec2(15, -27), window->DC.CursorPos + ImVec2(35, -7));
+    window->DrawList->AddImage(textureID, bb.Min, bb.Max);
+
+    //TODO: drawing an eye
+
+    if (g.LogEnabled)
+        LogSetNextTextDecoration(">", NULL);
+    RenderText(text_pos, label, label_end, false);
+    if (mutable_str != nullptr)
+    {
+        free(mutable_str);
+    }
+    //drawing an arrow if the entity has children
+    if (flags & ImGuiTreeNodeFlags_EntityWithChildren) {
+        RenderArrow(window->DrawList, ImVec2(window->WorkRect.Max.x - 30, text_pos.y), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Left, 1.0f);
+    }
+
+
+
+    if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+        TreePushOverrideID(id);
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
     return is_open;
 }

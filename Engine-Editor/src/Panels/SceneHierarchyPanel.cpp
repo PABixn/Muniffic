@@ -9,7 +9,9 @@
 #include <cstring>
 #include "../Commands/Commands.h"
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif
 #include "stb_image.h"
 #include "Engine/Resources/ResourceSerializer.h"
 #include "iostream"
@@ -43,6 +45,74 @@ namespace eg {
 		m_Context = scene;
 		m_SelectionContext = {};
 		m_ImagePanel = CreateRef<ImagePanel>();
+		m_ListOfEntityDisplayed = std::vector<EntityDisplayInfo>();
+		Search();
+		m_PuzzleIcon = Texture2D::Create("resources/icons/hierarchyPanel/puzzle.png");
+	}
+	/* (kind of an backup)
+	bool SceneHierarchyPanel::SearchEntity(Entity entity) {
+		bool searched = false, childsearched = false;
+		std::string silli = entity.GetName();
+		for (Entity e : entity.GetChildren()) {
+			if (SearchEntity(e)) {
+				childsearched = true;
+			}
+		}
+		if (entity.GetName().contains(m_Search)) {
+			searched = true;
+		}
+		if (searched)
+		{
+			m_ListOfEntityDisplayed.push_back(EntityDisplayInfo(entity, searched, childsearched));
+		}
+		return (childsearched || searched);
+	}*/
+
+	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity) {
+		bool searched = false, childsearched = false;
+		std::string silli = entity.GetName();
+		EntityDisplayInfo currentEntityDisplayInfo = EntityDisplayInfo();
+		for (Entity e : entity.GetChildren()) {
+			std::optional<EntityDisplayInfo> s = SearchEntity(e);
+			if (s.has_value()) {
+				childsearched = true;
+				currentEntityDisplayInfo.entity = entity;
+				currentEntityDisplayInfo.childInfo.push_back(s.value());
+			}
+		}
+		if (entity.GetName().contains(m_Search)) {
+			currentEntityDisplayInfo.entity = entity;
+			searched = true;
+		}
+		if (childsearched || searched) {
+			currentEntityDisplayInfo.res = (searched && childsearched) ? searchRes::bothSearched : ((searched) ? searchRes::thisSearched : searchRes::ChildSearched);
+			return currentEntityDisplayInfo;
+		}
+		return {};
+	}
+
+	void SceneHierarchyPanel::Search()
+	{
+		m_ListOfEntityDisplayed.clear();
+		m_Context->m_Registry.each([&](auto entityID)
+		{
+			Entity entity{ entityID, m_Context.get() };
+			if (entity.GetParent() == std::nullopt) {
+				std::string silli = entity.GetName();
+				if (m_Search != "")
+				{
+					std::optional<EntityDisplayInfo> found = SearchEntity(entity);
+					if (found.has_value()) {
+						m_ListOfEntityDisplayed.push_back(found.value());
+					}
+				}
+				else
+				{
+					m_ListOfEntityDisplayed.push_back(EntityDisplayInfo(entity, searchRes::thisSearched));
+				}
+			}
+		});
+		m_FirstDrawAfterSearch = true;
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()
@@ -54,31 +124,35 @@ namespace eg {
 		float paddingTop = 10.f;
 		float paddingLeft = 15.f;
 		float rightAndLeftFreeSpace = 110.f;
-		//add button
-		//kys3
-		Ref<Texture2D> plusIcon = Texture2D::Create("resources/icons/hierarchyPanel/plusIcon.png");
 		ImGui::SetCursorPosX(rightAndLeftFreeSpace / 4 - paddingLeft +3.f);
 		ImGui::SetCursorPosY(45.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingLeft/2 +3.f, paddingTop/2));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 30.f);
 		if (ImGui::Button("+")) {
 			Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Entity", {}, m_Context, m_SelectionContext));
+			Search();
 		}
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
 		//search bar
-		//FIXME: searching each frame. should just store the data
-		static std::string search;
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingLeft, paddingTop));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 30.f);
 		ImGui::PushItemWidth(ImGui::GetWindowWidth()-rightAndLeftFreeSpace);
 		ImGui::SetCursorPosX(rightAndLeftFreeSpace/2);
 		ImGui::SetCursorPosY(40.f);
-		ImGui::InputText("##entitySearch", &search);
+		//zna2
+		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount()==2) {
+			Search();
+		}
+		for (EntityDisplayInfo e : m_ListOfEntityDisplayed) {
+			DrawEntityNode(e);
+		}
+		if (m_FirstDrawAfterSearch)
+			m_FirstDrawAfterSearch = false;
 		ImGui::PopItemWidth();
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
-		if (search == "") {
+		if (m_Search == "") {
 			ImGui::SetCursorPosX((rightAndLeftFreeSpace/2)+paddingLeft);
 			ImGui::SetCursorPosY(40.f+paddingTop);
 			ImGui::Text("search");
@@ -97,26 +171,7 @@ namespace eg {
 				ImGui::EndDragDropTarget();
 			}
 
-			if (search.empty()) {
-				m_Context->m_Registry.each([&](auto entityID)
-				{
-					Entity entity{ entityID, m_Context.get() };
-					DrawEntityNode(entity);
-				});
-			}
-			else {
-				m_Context->m_Registry.each([&](auto entityID)
-				{
-					Entity entity{ entityID, m_Context.get() };
-					std::string s = entity.GetName();
-					if (s.find(search)!=std::string::npos)
-						DrawEntityNode(entity);
-					else
-					{
-						//kys1
-					}
-				});
-			}
+			
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			{
 				m_SelectionContext = {};
@@ -128,6 +183,7 @@ namespace eg {
 				if (ImGui::MenuItem("Create Empty Entity"))
 				{
 					Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Entity", {}, m_Context, m_SelectionContext));
+					Search();
 				}
 				ImGui::EndPopup();
 			}
@@ -177,7 +233,6 @@ namespace eg {
 					}
 				}
 			}
-			//kys2
 			ImGui::TextWrapped("The file you are trying to access is not inside the project cache");
 			if (ImGui::Button("add this resource to project cache"))
 			{
@@ -191,16 +246,28 @@ namespace eg {
 		ImGui::End();
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
+	void SceneHierarchyPanel::DrawEntityNode(EntityDisplayInfo entityDisplayInfo)
 	{
-		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false))
+		Entity entity = entityDisplayInfo.entity;
+
+		if (!entity.IsDrawable()) {
+			Search();
 			return;
-		
-		bool opened = false;
+		}
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
+		bool opened = false;
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Entity | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth/* = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0)| ImGuiTreeNodeFlags_OpenOnArrow*/;
 		if (entity.GetChildren().size() != 0) {
 			flags |= ImGuiTreeNodeFlags_EntityWithChildren;
+		}
+		if (m_FirstDrawAfterSearch && (entityDisplayInfo.res == searchRes::ChildSearched || entityDisplayInfo.res == searchRes::bothSearched)) {
+			flags |= ImGuiTreeNodeFlags_ForceOpen;
+		}
+		if (m_FirstDrawAfterSearch && entityDisplayInfo.res == searchRes::thisSearched) {
+			flags |= ImGuiTreeNodeFlags_ForceClose;
+		}
+		if (entityDisplayInfo.entity == this->GetSelectedEntity()) {
+			flags |= ImGuiTreeNodeFlags_Selected;
 		}
 		//flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f));
@@ -241,14 +308,28 @@ namespace eg {
 		if (opened)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-
+			if (entityDisplayInfo.res>=searchRes::thisSearched)
+			{
+				if (entity.Exists())
+				{
+					for (Entity& child : entity.GetChildren()) {
+						DrawEntityNode(child);
+					}
+				}
+			}
+			else {
+				for (EntityDisplayInfo edi : entityDisplayInfo.childInfo) {
+					DrawEntityNode(edi);
+				}
+			}
+			/*
 			if (entity.Exists())
 			{
 				for (Entity& child : entity.GetChildren()) {
-					DrawEntityNode(child, true);
+					DrawEntityNode(child);
 				}
 			}
-
+			*/
 			ImGui::TreePop();
 		}
 	}
@@ -417,24 +498,49 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
+		//zna1
 		if (entity.HasComponent<TagComponent>())
 		{
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10,7));
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+			ImGui::SetCursorPos({ImGui::GetCursorPosX() + 40, ImGui::GetCursorPosY()+20});
+			ImGui::Image((ImTextureID)m_PuzzleIcon->GetRendererID(), {30,30});
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 120);
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX()+10);
 			auto& tag = entity.GetComponent<TagComponent>().Tag;
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
-			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
+			std::strncpy(buffer, tag.c_str(), sizeof(buffer)); 
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
 			}
+			ImGui::PopItemWidth();
+			ImGui::PopStyleVar();
+			ImGui::PopStyleVar();
+
 		}
 
-		ImGui::SameLine();
 		ImGui::PushItemWidth(-1);
+		ImGuiStyle& style = ImGui::GetStyle();
+		
+		float size = ImGui::CalcTextSize("Add Component").x + style.FramePadding.x * 2.0f + 20;
+		float avail = ImGui::GetContentRegionAvail().x;
 
-		if (ImGui::Button("Add Component"))
+		float off = (avail - size) * 0.5f;
+		if (off > 0.0f)
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(15, 7));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+		bool OpenPopup = ImGui::Button("Add Component");
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
+		if (OpenPopup)
 			ImGui::OpenPopup("AddComponent");
-
 		if (ImGui::BeginPopup("AddComponent"))
 		{
 			DisplayAddComponentEntry<CameraComponent>("Camera");
@@ -810,10 +916,10 @@ namespace eg {
 						}
 					}
 				}
-
+				/*
 				if(!scriptExists)
 					ImGui::PopStyleColor();
-
+					*/
 			}, m_Context);
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)

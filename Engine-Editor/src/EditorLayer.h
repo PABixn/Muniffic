@@ -5,6 +5,7 @@
 #include "Engine/Renderer/EditorCamera.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/AddResourcePanel.h"
+#include "Panels/ProjectDirectoryPanel.h"
 
 namespace eg {
 	class EditorLayer : public Layer
@@ -21,6 +22,7 @@ namespace eg {
 
 		DeleteFilePanel* GetDeleteFilePanel() { return m_DeleteFilePanel; }
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
+		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		std::filesystem::path GetCurrentPath() { m_ContentBrowserPanel->GetCurrentPath(); }
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
@@ -99,7 +101,8 @@ namespace eg {
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
-		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
+		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
+		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
 		DeleteFilePanel* m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
