@@ -22,7 +22,8 @@ project "Engine-Editor"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.SFML}"
+		"%{IncludeDir.SFML}",
+		"${IncludeDir.SDL}"
 	}
 	
 	links

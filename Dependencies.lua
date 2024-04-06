@@ -26,7 +26,7 @@ LibraryDir = {}
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
 LibraryDir["mono"] = "%{wks.location}/Engine/vendor/mono/lib/%{cfg.buildcfg}"
 LibraryDir["SFML"] = "%{wks.location}/Engine/vendor/SFML/lib"
-LibraryDir["SDL"] = "%{wks.location}/Engine/vendor/SDL/lib"
+LibraryDir["SDL"] = "%{wks.location}/Engine/vendor/SDL/lib/x86"
 LibraryDir["SFMLdyn"] = "%{wks.location}/Engine/vendor/SFML/bin"
 
 Library = {}

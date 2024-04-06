@@ -1,6 +1,7 @@
 #pragma once
 #include "egpch.h"
-#include <SDL.h>
+#include "Windows.h"
+#include "mmsystem.h"
 
 #pragma comment(lib, "winmm.lib")
 
@@ -19,6 +20,7 @@ namespace eg {
 		std::string GetFileName();
 		void LoadCurrentAudio();
 		void OpenAudio(std::string path);
+		LPCWSTR sound_path;
 	};
 
 }
