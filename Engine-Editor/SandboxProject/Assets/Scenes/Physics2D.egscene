@@ -1,19 +1,63 @@
 Scene: Untitled
 Entities:
+  - Entity: 15269315332449014100
+    Name: Cube
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [5.17944193, -3, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [0.961389959, 0.315514058, 0.315514058, 0.827450991]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 14056476828486798838
+    Name: Cube
+    TagComponent:
+      Tag: wall
+    TransformComponent:
+      Translation: [3, -11, -4.76837158e-07]
+      Rotation: [0, -0, 0]
+      Scale: [1, 20, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [0.0621934682, 0.248413697, 0.575289607, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
   - Entity: 1567858812585259299
     Name: Cube
     TagComponent:
       Tag: Camera
     TransformComponent:
-      Translation: [-22, 0, 0]
-      Rotation: [0, 0, 0]
+      Translation: [1.83795142, -8.98500443, 5]
+      Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     CameraComponent:
       Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 0.785398185
+        ProjectionType: 0
+        PerspectiveFOV: 1.74532926
         PerspectiveNear: 0.00999999978
         PerspectiveFar: 1000
         OrthographicSize: -9
@@ -23,18 +67,24 @@ Entities:
       FixedAspectRatio: false
       IsInherited: false
       IsInheritedInChildren: false
+    ScriptComponent:
+      Name: Sandbox.Camera
+      ScriptFields:
+        []
+      IsInherited: false
+      IsInheritedInChildren: false
   - Entity: 3898880785194007479
     Name: Cube
     TagComponent:
       Tag: Player
     TransformComponent:
-      Translation: [-17.3365135, -1.9829731, 7.27595718e-12]
-      Rotation: [0, -0, 7.93900625e-08]
+      Translation: [-17.0400543, -1.92623627, 7.27595761e-12]
+      Rotation: [0, -0, 5.6145376e-07]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
-      Color: [0.926640928, 0, 0, 1]
+      Color: [0.135955155, 0.926640928, 0, 1]
       TilingFactor: 1
       IsInherited: false
       IsInheritedInChildren: false
@@ -43,7 +93,7 @@ Entities:
       ScriptFields:
         - Name: Speed
           Type: float
-          Value: 20
+          Value: 0
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:
@@ -92,15 +142,15 @@ Entities:
   - Entity: 3995495375065833883
     Name: Cube
     TagComponent:
-      Tag: Floor2
+      Tag: bottomfloor
     TransformComponent:
-      Translation: [-10, -3, 0]
+      Translation: [7.63334513, -20.6907768, 0]
       Rotation: [0, -0, 0]
-      Scale: [2, 1, 1]
+      Scale: [10, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
-      Color: [0.0642357767, 0.213812858, 0.536679506, 1]
+      Color: [0.0627451017, 0.247058824, 0.576470613, 1]
       TilingFactor: 1
       IsInherited: false
       IsInheritedInChildren: false
@@ -123,13 +173,13 @@ Entities:
     TagComponent:
       Tag: Floor3
     TransformComponent:
-      Translation: [-6, -2, 0]
+      Translation: [12.2440424, -11.0475569, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [1, 20, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
-      Color: [0.0627451017, 0.215686277, 0.53725493, 1]
+      Color: [0.0627451017, 0.247058824, 0.576470613, 1]
       TilingFactor: 1
       IsInherited: false
       IsInheritedInChildren: false
@@ -147,43 +197,24 @@ Entities:
       RestitutionThreshold: 0.5
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 9426860712915741738
+  - Entity: 6333897174418785004
     Name: Cube
     TagComponent:
-      Tag: Floor4
+      Tag: Empty Entity
     TransformComponent:
-      Translation: [-3, -1, 2.38418579e-07]
-      Rotation: [0, -0, 0]
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [0.0627451017, 0.215686277, 0.53725493, 1]
-      TilingFactor: 1
-      IsInherited: false
-      IsInheritedInChildren: false
-    RigidBody2DComponent:
-      Body Type: Static
-      FixedRotation: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
   - Entity: 15232392219580806145
     Name: Cube
     TagComponent:
       Tag: Floor5
     TransformComponent:
-      Translation: [3, -3.7252903e-09, 0]
+      Translation: [-2, -0.613473535, 0]
       Rotation: [0, -0, 0]
-      Scale: [5, 1, 1]
+      Scale: [9.10000038, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
@@ -210,7 +241,7 @@ Entities:
     TagComponent:
       Tag: text
     TransformComponent:
-      Translation: [1.07818317, 2.69545913, 0]
+      Translation: [6.56915283, -18.9501038, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
