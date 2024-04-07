@@ -701,9 +701,6 @@ namespace eg
 
 	void EditorLayer::NewScene()
 	{
-		m_EditorScene = CreateRef<Scene>();
-		m_ActiveScene = m_EditorScene;
-
 		if (m_SceneState != SceneState::Edit)
 			OnSceneStop();
 
@@ -741,7 +738,6 @@ namespace eg
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
-			m_EditorScene = newScene;
 			m_ActiveScene = newScene;
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 			m_ActiveScenePath = path;
@@ -890,7 +886,7 @@ namespace eg
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity)
 		{
-			Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
+			Entity newEntity = m_ActiveScene->DuplicateEntity(selectedEntity);
 			m_SceneHierarchyPanel.SetSelectedEntity(newEntity);
 			ConsolePanel::Log("File: EditorLayer.cpp - Entity duplicated", ConsolePanel::LogType::Info);
 		}
