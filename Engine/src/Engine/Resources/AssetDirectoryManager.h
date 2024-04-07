@@ -15,6 +15,7 @@ namespace eg
 	{
 	public:
 		static std::filesystem::path getDirectoryPath(UUID uuid);
+		static std::filesystem::path getDirectoryPath(UUID uuid, std::filesystem::path& path);
 		static AssetDirectory* getAssetDirectory(UUID uuid);
 		static bool validateAssetDirectory(UUID uuid);
 		static void addAssetDirectory(UUID uuid, AssetDirectory* assetDirectory);
@@ -29,7 +30,7 @@ namespace eg
 		static bool moveAsset(UUID assetUUID, UUID newAssetDirectoryUUID);
 		static bool moveAssetDirectory(UUID assetDirectoryUUID, UUID newParentUUID);
 		static UUID GetRootAssetTypeDirectory(ResourceType type);
-		static void initDefault();
+		static void initDefault(UUID rootUUID);
 
 		static std::string getDirectoryName(UUID uuid);
 		static UUID getParentDirectoryUUID(UUID uuid);

@@ -77,10 +77,8 @@ namespace eg
 		return assetDirectory->getParentDirectory();
 	}
 
-	void AssetDirectoryManager::initDefault()
+	void AssetDirectoryManager::initDefault(UUID rootUUID)
 	{
-		UUID rootUUID = UUID();
-		AssetDirectory* root = new AssetDirectory(rootUUID, "Assets");
 		rootDirectoryUUID = rootUUID;
 
 		AssetDirectory* textures = new AssetDirectory(UUID(), "Textures", rootUUID);
@@ -386,8 +384,21 @@ namespace eg
 		AssetDirectory* assetDirectory = assetDirectories.at(uuid);
 
 		if(assetDirectory->getParentDirectory() != 0)
-			return assetDirectory->getName() / getDirectoryPath(assetDirectory->getParentDirectory());
+			return Project::GetProjectDirectory() / getDirectoryPath(assetDirectory->getParentDirectory()) / assetDirectory->getName();
 		else
-			return assetDirectory->getName();
+			return Project::GetProjectDirectory() / assetDirectory->getName();
+	}
+
+	std::filesystem::path AssetDirectoryManager::getDirectoryPath(UUID uuid, std::filesystem::path& path)
+	{
+		if (assetDirectories.find(uuid) == assetDirectories.end())
+			return std::filesystem::path();
+
+		AssetDirectory* assetDirectory = assetDirectories.at(uuid);
+
+		if(assetDirectory->getParentDirectory() != 0)
+			return path / getDirectoryPath(assetDirectory->getParentDirectory()) / assetDirectory->getName();
+		else
+			return path / assetDirectory->getName();
 	}
 }

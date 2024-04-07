@@ -425,6 +425,7 @@ namespace eg
 			TextureResourceDataCache.erase(foundUUID);
 		}*/
 
+		data->Type = ResourceType::Image;
 		TextureResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Image;
 	}
@@ -438,6 +439,7 @@ namespace eg
 			SubTextureResourceDataCache.erase(uuid);
 		}
 
+		data->Type = ResourceType::SubTexture;
 		SubTextureResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::SubTexture;
 	}
@@ -468,6 +470,7 @@ namespace eg
 			FontResourceDataCache.erase(foundUUID);
 		}*/
 
+		data->Type = ResourceType::Font;
 		FontResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Font;
 	}
@@ -481,6 +484,7 @@ namespace eg
 			AnimationResourceDataCache.erase(uuid);
 		}
 
+		data->Type = ResourceType::Animation;
 		AnimationResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Animation;
 	}
@@ -494,6 +498,7 @@ namespace eg
 			SpriteAtlasResourceDataCache.erase(uuid);
 		}
 
+		data->Type = ResourceType::SpriteAtlas;
 		SpriteAtlasResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::SpriteAtlas;
 	}

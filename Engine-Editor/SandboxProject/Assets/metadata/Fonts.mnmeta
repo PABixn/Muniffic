@@ -1,17 +1,2 @@
 Resources:
-  - UUID: 9517913723255716994
-    ParentDirectory: 0
-    ResourceName: OpenSans-Regular
-    Extension: .ttf
-  - UUID: 10208755247301595572
-    ParentDirectory: 0
-    ResourceName: trebuc
-    Extension: .ttf
-  - UUID: 7999517453004432376
-    ParentDirectory: 0
-    ResourceName: Ldfcomicsansbold-zgma
-    Extension: .ttf
-  - UUID: 7767335170006567341
-    ParentDirectory: 0
-    ResourceName: OldLondon
-    Extension: .ttf
+  []

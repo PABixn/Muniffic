@@ -15,8 +15,13 @@ namespace eg
 		if (!std::filesystem::exists(metadata))
 		{
 			EG_CORE_WARN("Asset Directory Cache does not exist, creating new one");
-			AssetDirectoryManager::initDefault();
+
+			UUID rootUUID = UUID();
+			AssetDirectory* root = new AssetDirectory(rootUUID, "Assets", 0);
+
+			AssetDirectoryManager::initDefault(rootUUID);
 			SerializeAssetDirectoryCache();
+
 			return true;
 		}
 
@@ -29,6 +34,10 @@ namespace eg
 			EG_CORE_ERROR("Failed to parse Asset Directory Cache: {0}", e.what());
 			return false;
 		}
+
+		UUID rootUUID = node["Root"].as<UUID>();
+		AssetDirectory* root = new AssetDirectory(rootUUID, "Assets", 0);
+		ResourceDatabase::SetCurrentDirectoryUUID(&rootUUID);
 
 		auto directories = node["Directories"];
 
@@ -57,7 +66,7 @@ namespace eg
 			}
 		}
 		else
-			AssetDirectoryManager::initDefault();
+			AssetDirectoryManager::initDefault(rootUUID);
 	}
 
 	void AssetDirectorySerializer::SerializeAssetDirectoryCache()
@@ -72,10 +81,16 @@ namespace eg
 			std::filesystem::create_directories(metadataPath.parent_path());
 
 		out << YAML::BeginMap;
+
+		out<< YAML::Key << "Root" << YAML::Value << AssetDirectoryManager::getRootDirectoryUUID();
+
 		out << YAML::Key << "Directories" << YAML::Value << YAML::BeginSeq;
 
 		for (auto& [key, value] : AssetDirectoryManager::getAssetDirectories())
 		{
+			if(value->getParentDirectory() == 0)
+				continue;
+
 			out << YAML::BeginMap;
 			out << YAML::Key << "UUID" << YAML::Value << key;
 			out << YAML::Key << "Name" << YAML::Value << value->getName();

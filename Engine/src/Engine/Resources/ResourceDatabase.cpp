@@ -339,6 +339,11 @@ namespace eg
 		return AssetDirectoryManager::getDirectoryPath(data->ParentDirectory) / std::string(data->ResourceName + data->Extension);
 	}
 
+	std::filesystem::path ResourceDatabase::GetResourcePath(std::filesystem::path path)
+	{
+		return AssetDirectoryManager::getDirectoryPath(*m_CurrentDirectory) / path.filename();
+	}
+
 	bool ResourceDatabase::MoveResource(UUID uuid, UUID parentDirectory)
 	{
 		if (!FindResourceData(uuid))
@@ -383,7 +388,7 @@ namespace eg
 
 	void AddTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, TextureResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -400,7 +405,7 @@ namespace eg
 
 	void AddSubTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, SubTextureResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -415,7 +420,7 @@ namespace eg
 
 	void AddFontResourceData(UUID uuid, const std::filesystem::path& originalResourcePath, FontResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -432,7 +437,7 @@ namespace eg
 
 	void AddAnimationResource(UUID uuid, const std::filesystem::path& originalResourcePath, AnimationResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath);
 
 		if (!std::filesystem::exists(finalPath.parent_path()))
 		{
@@ -444,7 +449,7 @@ namespace eg
 
 	void AddSpriteAtlasResource(UUID uuid, const std::filesystem::path& originalResourcePath, SpriteAtlasResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -494,6 +499,7 @@ namespace eg
 			data->Height = ((ImageResourceData*)loadedResource->Data)->height;
 			data->Width = ((ImageResourceData*)loadedResource->Data)->width;
 			data->Channels = ((ImageResourceData*)loadedResource->Data)->channelCount;
+			AssetDirectoryManager::addAsset(*m_CurrentDirectory, uuid);
 			AddTextureResource(uuid, filePath, data);
 
 			return uuid;
@@ -504,6 +510,7 @@ namespace eg
 			data->ParentDirectory = *m_CurrentDirectory;
 			data->ResourceName = filePath.stem().string();
 			data->Extension = filePath.extension().string();
+			AssetDirectoryManager::addAsset(*m_CurrentDirectory, uuid);
 			AddFontResourceData(uuid, filePath, data);
 
 			return uuid;

@@ -18,6 +18,7 @@ namespace eg
 		static void* LoadRuntimeResource(UUID uuid, ResourceType type);
 
 		static std::filesystem::path GetResourcePath(UUID uuid);
+		static std::filesystem::path GetResourcePath(std::filesystem::path path);
 		static bool RenameResource(UUID uuid, const std::string& name);
 		static bool MoveResource(UUID uuid, UUID parentDirectory);
 		static bool FindResourceData(UUID uuid);

@@ -1,15 +1,8 @@
 Resources:
-  - UUID: 998801465463046789
-    ParentDirectory: 0
+  - UUID: 12316147676668861133
+    ParentDirectory: 12626429651825487681
     ResourceName: Dune
     Extension: .png
     Width: 1000
     Height: 1542
     Channels: 4
-  - UUID: 6930668490678268954
-    ParentDirectory: 0
-    ResourceName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
-    Extension: .png
-    Width: 604
-    Height: 569
-    Channels: 3
