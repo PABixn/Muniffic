@@ -837,14 +837,11 @@ namespace eg
 
 	void EditorLayer::OnScenePlay()
 	{
-		if (!m_EditorScene)
-			return;
 		if (m_SceneState == SceneState::Simulate)
 			OnSceneStop();
 		m_SceneState = SceneState::Play;
 		ConsolePanel::ClearLogs();
 		ConsolePanel::Log("File: EditorLayer.cpp - Scene started", ConsolePanel::LogType::Info);
-		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart();
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
@@ -857,7 +854,6 @@ namespace eg
 
 		m_SceneState = SceneState::Simulate;
 
-		m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnSimulationStart();
 		ConsolePanel::Log("File: EditorLayer.cpp - Simulation started", ConsolePanel::LogType::Info);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
@@ -882,7 +878,6 @@ namespace eg
 
 		m_SceneState = SceneState::Edit;
 		m_ActiveScene->OnRuntimeStop();
-		m_ActiveScene = m_EditorScene;
 		ConsolePanel::Log("File: EditorLayer.cpp - Scene stopped", ConsolePanel::LogType::Info);
 	}
 

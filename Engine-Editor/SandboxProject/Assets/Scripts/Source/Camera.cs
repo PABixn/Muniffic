@@ -21,9 +21,12 @@ namespace Sandbox
         {
             m_Transform = GetComponent<TransformComponent>();
             m_Player = Entity.FindEntityByName("Player");
-            m_Player.AddComponent<TextComponent>();
-            m_Player.GetComponent<TextComponent>().text = "Hello Worldfasdfasdfads!";
-            m_Player.GetComponent<TextComponent>().color = Color.blue;
+            if (m_Player.HasComponent<TextComponent>())
+            {
+                m_Player.AddComponent<TextComponent>();
+                m_Player.GetComponent<TextComponent>().text = "Hello Worldfasdfasdfads!";
+                m_Player.GetComponent<TextComponent>().color = Color.blue;
+            }
         }
 
         void OnUpdate(float ts)

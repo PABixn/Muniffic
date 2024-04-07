@@ -28,10 +28,10 @@ namespace Sandbox
             {
                 m_Animator = GetComponent<AnimatorComponent>();
                 m_HasAnimator = true;
+                m_Animator.Play("Dune");
             }
             bool hasTransform = HasComponent<TransformComponent>();
             Console.WriteLine("HasComponent {0}", hasTransform);
-            m_Animator.Play("Dune");
         }
 
         void OnUpdate(float ts)
