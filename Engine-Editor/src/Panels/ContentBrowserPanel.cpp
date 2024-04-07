@@ -99,8 +99,7 @@ namespace eg
 		{
 			if (ImGui::MenuItem("Create Folder"))
 			{
-				AssetDirectory* newDirectory = new AssetDirectory("New Folder", m_CurrentDirectory);
-				AssetDirectoryManager::addAssetDirectory(UUID(), newDirectory);
+				AssetDirectory* newDirectory = new AssetDirectory(UUID(), "New Folder", m_CurrentDirectory);
 			}
 			ImGui::EndPopup();
 		}

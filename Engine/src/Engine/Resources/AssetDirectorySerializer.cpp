@@ -13,7 +13,12 @@ namespace eg
 		YAML::Node node;
 
 		if (!std::filesystem::exists(metadata))
-			return false;
+		{
+			EG_CORE_WARN("Asset Directory Cache does not exist, creating new one");
+			AssetDirectoryManager::initDefault();
+			SerializeAssetDirectoryCache();
+			return true;
+		}
 
 		try
 		{
@@ -31,9 +36,8 @@ namespace eg
 		{
 			for (auto directory : directories)
 			{
-				AssetDirectory* data = new AssetDirectory();
-				data->setName(directory["Name"].as<std::string>());
-				data->setParentDirectory(directory["Parent"].as<UUID>());
+				AssetDirectory* data = new AssetDirectory(directory["UUID"].as<UUID>(), directory["Name"].as<std::string>(), directory["Parent"].as<UUID>());
+
 				auto subdirectories = directory["Subdirectories"];
 				if (subdirectories)
 				{
@@ -50,8 +54,6 @@ namespace eg
 						data->addAsset(asset.as<UUID>());
 					}
 				}
-
-				AssetDirectoryManager::addAssetDirectory(directory["UUID"].as<UUID>(), data);
 			}
 		}
 		else

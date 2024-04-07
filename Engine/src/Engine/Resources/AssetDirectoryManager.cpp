@@ -80,27 +80,20 @@ namespace eg
 	void AssetDirectoryManager::initDefault()
 	{
 		UUID rootUUID = UUID();
-		AssetDirectory* root = new AssetDirectory("Assets");
-		AssetDirectoryManager::addAssetDirectory(rootUUID, root);
+		AssetDirectory* root = new AssetDirectory(rootUUID, "Assets");
 		rootDirectoryUUID = rootUUID;
 
-		AssetDirectory* textures = new AssetDirectory("Textures", rootUUID);
-		AssetDirectoryManager::addAssetDirectory(UUID(), textures);
+		AssetDirectory* textures = new AssetDirectory(UUID(), "Textures", rootUUID);
 
-		AssetDirectory* subtextures = new AssetDirectory("SubTextures", rootUUID);
-		AssetDirectoryManager::addAssetDirectory(UUID(), subtextures);
+		AssetDirectory* subtextures = new AssetDirectory(UUID(), "SubTextures", rootUUID);
 
-		AssetDirectory* animations = new AssetDirectory("Animations", rootUUID);
-		AssetDirectoryManager::addAssetDirectory(UUID(), animations);
+		AssetDirectory* animations = new AssetDirectory(UUID(), "Animations", rootUUID);
 
-		AssetDirectory* fonts = new AssetDirectory("Fonts", rootUUID);
-		AssetDirectoryManager::addAssetDirectory(UUID(), fonts);
+		AssetDirectory* fonts = new AssetDirectory(UUID(), "Fonts", rootUUID);
 
-		AssetDirectory* spriteAtlas = new AssetDirectory("SpriteAtlas", rootUUID);
-		AssetDirectoryManager::addAssetDirectory(UUID(), spriteAtlas);
+		AssetDirectory* spriteAtlas = new AssetDirectory(UUID(), "SpriteAtlas", rootUUID);
 
-		AssetDirectory* shaders = new AssetDirectory("Shaders", rootUUID);
-		AssetDirectoryManager::addAssetDirectory(UUID(), shaders);
+		AssetDirectory* shaders = new AssetDirectory(UUID(), "Shaders", rootUUID);
 	}
 
 	bool AssetDirectoryManager::moveAssetDirectory(UUID assetDirectoryUUID, UUID newParentUUID)
@@ -271,8 +264,8 @@ namespace eg
 		else
 			EG_CORE_WARN("AssetDirectory with UUID {0} already exists", uuid);
 
-		if(assetDirectory->getParentDirectory() != 0)
-			AssetDirectoryManager::addSubDirectory(assetDirectory->getParentDirectory(), uuid);
+		/*if(assetDirectory->getParentDirectory() != 0)
+			AssetDirectoryManager::addSubDirectory(assetDirectory->getParentDirectory(), uuid);*/
 
 		if(rootDirectoryUUID == 0)
 			rootDirectoryUUID = uuid;
@@ -344,7 +337,7 @@ namespace eg
 
 		std::vector<UUID>& subDirectories = parentDirectory->getSubdirectories();
 
-		if(parentDirectory->getParentDirectory() == parentUUID)
+		if(std::find(parentDirectory->getSubdirectories().begin(), parentDirectory->getSubdirectories().end(), subdirectoryUUID) != parentDirectory->getSubdirectories().end())
 		{
 			EG_CORE_WARN("Parent AssetDirectory with UUID {0} already has subdirectory with UUID {1} as a subdirectory", parentUUID, subdirectoryUUID);
 			return false;

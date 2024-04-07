@@ -291,12 +291,6 @@ namespace eg
 			return nullptr;
 		}
 
-		if (!FindResourceData(uuid))
-		{
-			EG_CORE_ERROR("Resource not found in cache");
-			return nullptr;
-		}
-
 		ResourceType type = ResourceSerializer::ResourceTypeInfo.at(uuid);
 
 		if (type == ResourceType::Image)

@@ -1,17 +1,17 @@
 Resources:
   - UUID: 9517913723255716994
-    ResourcePath: Fonts
-    FontName: OpenSans-Regular
+    ParentDirectory: 0
+    ResourceName: OpenSans-Regular
     Extension: .ttf
   - UUID: 10208755247301595572
-    ResourcePath: Fonts
-    FontName: trebuc
+    ParentDirectory: 0
+    ResourceName: trebuc
     Extension: .ttf
   - UUID: 7999517453004432376
-    ResourcePath: Fonts
-    FontName: Ldfcomicsansbold-zgma
+    ParentDirectory: 0
+    ResourceName: Ldfcomicsansbold-zgma
     Extension: .ttf
   - UUID: 7767335170006567341
-    ResourcePath: Fonts
-    FontName: OldLondon
+    ParentDirectory: 0
+    ResourceName: OldLondon
     Extension: .ttf

@@ -2,6 +2,7 @@
 #include "Engine/Core/Core.h"
 #include "ResourceSerializer.h"
 #include "Engine/Utils/YAMLConversion.h"
+#include "AssetDirectorySerializer.h"
 #include "ResourceUtils.h"
 #include <yaml-cpp/yaml.h>
 #include <fstream>
@@ -20,6 +21,8 @@ namespace eg
 
 	bool ResourceSerializer::DeserializeResourceCache()
 	{
+		AssetDirectorySerializer::DeserializeAssetDirectoryCache();
+
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
 		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
@@ -130,8 +133,14 @@ namespace eg
 				UUID uuid = resource["UUID"].as<uint64_t>();
 
 				SubTextureResourceData* data = new SubTextureResourceData();
-				data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
-				data->ResourceName = resource["ResourceName"].as<std::string>();
+				if (resource["ParentDirectory"])
+					data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+				else
+					data->ParentDirectory = 0;
+				if (resource["ResourceName"])
+					data->ResourceName = resource["ResourceName"].as<std::string>();
+				else
+					data->ResourceName = resource["SubtextureName"].as<std::string>();
 				data->Extension = resource["Extension"].as<std::string>();
 				data->Texture = resource["Texture"].as<uint64_t>();
 
@@ -154,8 +163,14 @@ namespace eg
 				UUID uuid = resource["UUID"].as<uint64_t>();
 
 				AnimationResourceData* data = new AnimationResourceData();
-				data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
-				data->ResourceName = resource["ResourceName"].as<std::string>();
+				if (resource["ParentDirectory"])
+					data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+				else
+					data->ParentDirectory = 0;
+				if (resource["ResourceName"])
+					data->ResourceName = resource["AnimationName"].as<std::string>();
+				else
+					data->ResourceName = resource["ImageName"].as<std::string>();
 				data->Extension = resource["Extension"].as<std::string>();
 				data->FrameRate = resource["FrameRate"].as<float>();
 				data->FrameCount = resource["FrameCount"].as<int>();
@@ -177,8 +192,14 @@ namespace eg
 					UUID uuid = resource["UUID"].as<uint64_t>();
 
 					SpriteAtlasResourceData* data = new SpriteAtlasResourceData();
-					data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
-					data->ResourceName = resource["ResourceName"].as<std::string>();
+					if (resource["ParentDirectory"])
+						data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+					else
+						data->ParentDirectory = 0;
+					if (resource["ResourceName"])
+						data->ResourceName = resource["ResourceName"].as<std::string>();
+					else
+						data->ResourceName = resource["SpriteAtlas"].as<std::string>();
 					data->Extension = resource["Extension"].as<std::string>();
 					data->Width = resource["Width"].as<int>();
 					data->Height = resource["Height"].as<int>();
@@ -201,8 +222,14 @@ namespace eg
 					UUID uuid = resource["UUID"].as<uint64_t>();
 
 					FontResourceData* data = new FontResourceData();
-					data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
-					data->ResourceName = resource["ResourceName"].as<std::string>();
+					if (resource["ParentDirectory"])
+						data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+					else
+						data->ParentDirectory = 0;
+					if (resource["ResourceName"])
+						data->ResourceName = resource["ResourceName"].as<std::string>();
+					else
+						data->ResourceName = resource["FontName"].as<std::string>();
 					data->Extension = resource["Extension"].as<std::string>();
 
 					CacheFont(uuid, data);
@@ -374,13 +401,13 @@ namespace eg
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
+		//std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
 
-		if (!std::filesystem::exists(finalPath))
-		{
-			EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
-			return;
-		}
+		//if (!std::filesystem::exists(finalPath))
+		//{
+		//	EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
+		//	return;
+		//}
 
 		if (TextureResourceDataCache.find(uuid) != TextureResourceDataCache.end())
 		{
@@ -417,13 +444,13 @@ namespace eg
 
 	void ResourceSerializer::CacheFont(UUID uuid, FontResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
+		/*std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
 
 		if (!std::filesystem::exists(finalPath))
 		{
 			EG_CORE_ERROR("File '{0}' has not been found on disk.", finalPath.string());
 			return;
-		}
+		}*/
 
 		if (FontResourceDataCache.find(uuid) != FontResourceDataCache.end())
 		{

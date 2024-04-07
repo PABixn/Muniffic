@@ -11,7 +11,7 @@ namespace eg
 	{
 	public:
 		AssetDirectory() = default;
-		AssetDirectory(const std::string& name, const UUID& parentDirectory = 0);
+		AssetDirectory(UUID uuid, const std::string& name, const UUID& parentDirectory = 0);
 
 		std::string& getName() { return m_Name; }
 		std::vector<UUID>& getSubdirectories() { return m_Subdirectories; }
