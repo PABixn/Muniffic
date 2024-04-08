@@ -1,22 +1,4 @@
 Resources:
-  - UUID: 6192902384253656787
-    ResourcePath: Animations
-    AnimationName: Dune
-    Extension: .anim
-    FrameRate: 1
-    FrameCount: 9
-    Loop: true
-    Name: Dune
-    Frames:
-      - 17828005175203792394
-      - 2166026324055669733
-      - 4165010258377046411
-      - 11087870749396203833
-      - 2538553471241823160
-      - 6464203215183509527
-      - 14282412054322120025
-      - 14619977974021854251
-      - 10097282245339190271
   - UUID: 1686588336940728186
     ResourcePath: Animations
     AnimationName: sdfav
@@ -136,3 +118,76 @@ Resources:
       - 17884528959794652941
       - 4600931861670208766
       - 4893108244308355314
+  - UUID: 233249327502835231
+    ResourcePath: Animations
+    AnimationName: jumpDoneBetter
+    Extension: .anim
+    FrameRate: 22
+    FrameCount: 20
+    Loop: true
+    Name: jumpDoneBetter
+    Frames:
+      - 21991060127600104
+      - 5418498283137357474
+      - 16431014160569999656
+      - 4363276539851250159
+      - 6089072610347164890
+      - 9018209873339158583
+      - 10565297699315576940
+      - 4801989704734362156
+      - 11661444427489457881
+      - 1508418057936572299
+      - 11970761000531724033
+      - 17743644484870196748
+      - 13926720877882480668
+      - 9472924804324659239
+      - 2868600298457465386
+      - 17545371120493752436
+      - 13912886204581083081
+      - 5716357083096718945
+      - 7379039451383737475
+      - 13616798785868926198
+  - UUID: 11077941037229700120
+    ResourcePath: Animations
+    AnimationName: walk
+    Extension: .anim
+    FrameRate: 1
+    FrameCount: 1
+    Loop: true
+    Name: walk
+    Frames:
+      - 10505579173071348777
+  - UUID: 1929321603766720864
+    ResourcePath: Animations
+    AnimationName: deathDone
+    Extension: .anim
+    FrameRate: 5
+    FrameCount: 8
+    Loop: true
+    Name: deathDone
+    Frames:
+      - 17166723789453031013
+      - 5558647854037385930
+      - 1262880410274171916
+      - 14478627654742308750
+      - 992424466030110999
+      - 3080361670610859457
+      - 17077458597792066640
+      - 5087964094837200996
+  - UUID: 17146195768097324905
+    ResourcePath: Animations
+    AnimationName: flight
+    Extension: .anim
+    FrameRate: 16
+    FrameCount: 8
+    Loop: true
+    Name: flight
+    Frames:
+      - 14312194431471662146
+      - 12732958733099072321
+      - 798727517358213780
+      - 2368493318556177235
+      - 16194913969537813394
+      - 13622726553616057736
+      - 17527039832132535156
+      - 2983475082628541015

@@ -1,24 +1,4 @@
 Resources:
-  - UUID: 15960707669966408778
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav72
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0, -0.00499999523]
-      - [0.108750001, -0.00499999523]
-      - [0.108750001, 0.106666684]
-      - [0, 0.106666684]
-  - UUID: 14207923521437547082
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav57
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0.326249987, 0.218333304]
-      - [0.435000002, 0.218333304]
-      - [0.435000002, 0.329999983]
-      - [0.326249987, 0.329999983]
   - UUID: 15223350883713132106
     ResourcePath: SubTextures\
     SubTextureName: sdfav28
@@ -29,6 +9,26 @@ Resources:
       - [0.217500001, 0.553333342]
       - [0.217500001, 0.664999962]
       - [0.108750001, 0.664999962]
+  - UUID: 14207923521437547082
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav57
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.326249987, 0.218333304]
+      - [0.435000002, 0.218333304]
+      - [0.435000002, 0.329999983]
+      - [0.326249987, 0.329999983]
+  - UUID: 15960707669966408778
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav72
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0, -0.00499999523]
+      - [0.108750001, -0.00499999523]
+      - [0.108750001, 0.106666684]
+      - [0, 0.106666684]
   - UUID: 17828005175203792394
     ResourcePath: SubTextures\
     SubTextureName: Dune0
@@ -49,26 +49,6 @@ Resources:
       - [0.578000009, 0.684824944]
       - [0.578000009, 1]
       - [0.289000005, 1]
-  - UUID: 9511528700678310763
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav24
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0.652499974, 0.664999962]
-      - [0.761250019, 0.664999962]
-      - [0.761250019, 0.776666641]
-      - [0.652499974, 0.776666641]
-  - UUID: 14619977974021854251
-    ResourcePath: SubTextures\
-    SubTextureName: Dune7
-    Extension: ""
-    Texture: 9849798687603657340
-    TexCoords:
-      - [0.289000005, 0.0544747114]
-      - [0.578000009, 0.0544747114]
-      - [0.578000009, 0.369649827]
-      - [0.289000005, 0.369649827]
   - UUID: 16835090989505570923
     ResourcePath: SubTextures\
     SubTextureName: sdfav14
@@ -89,6 +69,36 @@ Resources:
       - [0.870000005, 0.106666684]
       - [0.870000005, 0.218333304]
       - [0.761250019, 0.218333304]
+  - UUID: 9511528700678310763
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav24
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.652499974, 0.664999962]
+      - [0.761250019, 0.664999962]
+      - [0.761250019, 0.776666641]
+      - [0.652499974, 0.776666641]
+  - UUID: 14619977974021854251
+    ResourcePath: SubTextures\
+    SubTextureName: Dune7
+    Extension: ""
+    Texture: 9849798687603657340
+    TexCoords:
+      - [0.289000005, 0.0544747114]
+      - [0.578000009, 0.0544747114]
+      - [0.578000009, 0.369649827]
+      - [0.289000005, 0.369649827]
+  - UUID: 1508418057936572299
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter9
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.800000012, 0.600000024]
+      - [1, 0.600000024]
+      - [1, 0.800000012]
+      - [0.800000012, 0.800000012]
   - UUID: 4165010258377046411
     ResourcePath: SubTextures\
     SubTextureName: Dune2
@@ -99,6 +109,16 @@ Resources:
       - [0.866999984, 0.684824944]
       - [0.866999984, 1]
       - [0.578000009, 1]
+  - UUID: 11087870749396203833
+    ResourcePath: SubTextures\
+    SubTextureName: Dune3
+    Extension: ""
+    Texture: 9849798687603657340
+    TexCoords:
+      - [0, 0.369649827]
+      - [0.289000005, 0.369649827]
+      - [0.289000005, 0.684824944]
+      - [0, 0.684824944]
   - UUID: 6257093666443475385
     ResourcePath: SubTextures\Hello
     SubTextureName: Dune9
@@ -119,46 +139,36 @@ Resources:
       - [0.326249987, 0.776666641]
       - [0.326249987, 0.888333321]
       - [0.217500001, 0.888333321]
-  - UUID: 11087870749396203833
+  - UUID: 14282412054322120025
     ResourcePath: SubTextures\
-    SubTextureName: Dune3
+    SubTextureName: Dune6
     Extension: ""
     Texture: 9849798687603657340
     TexCoords:
-      - [0, 0.369649827]
+      - [0, 0.0544747114]
+      - [0.289000005, 0.0544747114]
       - [0.289000005, 0.369649827]
-      - [0.289000005, 0.684824944]
-      - [0, 0.684824944]
-  - UUID: 5035743988099719577
+      - [0, 0.369649827]
+  - UUID: 1548700752551298009
     ResourcePath: SubTextures\
-    SubTextureName: sdfav79
+    SubTextureName: sdfav17
     Extension: ""
     Texture: 7835399540365495283
     TexCoords:
-      - [0.761250019, -0.00499999523]
-      - [0.870000005, -0.00499999523]
-      - [0.870000005, 0.106666684]
-      - [0.761250019, 0.106666684]
-  - UUID: 16634934858494891417
+      - [0.870000005, 0.776666641]
+      - [0.97874999, 0.776666641]
+      - [0.97874999, 0.888333321]
+      - [0.870000005, 0.888333321]
+  - UUID: 11661444427489457881
     ResourcePath: SubTextures\
-    SubTextureName: sdfav54
+    SubTextureName: jumpDoneBetter8
     Extension: ""
-    Texture: 7835399540365495283
+    Texture: 11972953418932319972
     TexCoords:
-      - [0, 0.218333304]
-      - [0.108750001, 0.218333304]
-      - [0.108750001, 0.329999983]
-      - [0, 0.329999983]
-  - UUID: 15691033323875216409
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav36
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0, 0.441666663]
-      - [0.108750001, 0.441666663]
-      - [0.108750001, 0.553333342]
-      - [0, 0.553333342]
+      - [0.600000024, 0.600000024]
+      - [0.800000012, 0.600000024]
+      - [0.800000012, 0.800000012]
+      - [0.600000024, 0.800000012]
   - UUID: 11825966145332121305
     ResourcePath: SubTextures\Hello
     SubTextureName: Dune8
@@ -179,36 +189,36 @@ Resources:
       - [0.108750001, 0.553333342]
       - [0.108750001, 0.664999962]
       - [0, 0.664999962]
-  - UUID: 1548700752551298009
+  - UUID: 15691033323875216409
     ResourcePath: SubTextures\
-    SubTextureName: sdfav17
+    SubTextureName: sdfav36
     Extension: ""
     Texture: 7835399540365495283
     TexCoords:
-      - [0.870000005, 0.776666641]
-      - [0.97874999, 0.776666641]
-      - [0.97874999, 0.888333321]
-      - [0.870000005, 0.888333321]
-  - UUID: 14282412054322120025
+      - [0, 0.441666663]
+      - [0.108750001, 0.441666663]
+      - [0.108750001, 0.553333342]
+      - [0, 0.553333342]
+  - UUID: 5035743988099719577
     ResourcePath: SubTextures\
-    SubTextureName: Dune6
-    Extension: ""
-    Texture: 9849798687603657340
-    TexCoords:
-      - [0, 0.0544747114]
-      - [0.289000005, 0.0544747114]
-      - [0.289000005, 0.369649827]
-      - [0, 0.369649827]
-  - UUID: 7469057008406692920
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav41
+    SubTextureName: sdfav79
     Extension: ""
     Texture: 7835399540365495283
     TexCoords:
-      - [0.543749988, 0.441666663]
-      - [0.652499974, 0.441666663]
-      - [0.652499974, 0.553333342]
-      - [0.543749988, 0.553333342]
+      - [0.761250019, -0.00499999523]
+      - [0.870000005, -0.00499999523]
+      - [0.870000005, 0.106666684]
+      - [0.761250019, 0.106666684]
+  - UUID: 16634934858494891417
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav54
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0, 0.218333304]
+      - [0.108750001, 0.218333304]
+      - [0.108750001, 0.329999983]
+      - [0, 0.329999983]
   - UUID: 2538553471241823160
     ResourcePath: SubTextures\
     SubTextureName: Dune4
@@ -219,16 +229,16 @@ Resources:
       - [0.578000009, 0.369649827]
       - [0.578000009, 0.684824944]
       - [0.289000005, 0.684824944]
-  - UUID: 6219452298815214935
+  - UUID: 7469057008406692920
     ResourcePath: SubTextures\
-    SubTextureName: sdfav37
+    SubTextureName: sdfav41
     Extension: ""
     Texture: 7835399540365495283
     TexCoords:
-      - [0.108750001, 0.441666663]
-      - [0.217500001, 0.441666663]
-      - [0.217500001, 0.553333342]
-      - [0.108750001, 0.553333342]
+      - [0.543749988, 0.441666663]
+      - [0.652499974, 0.441666663]
+      - [0.652499974, 0.553333342]
+      - [0.543749988, 0.553333342]
   - UUID: 6464203215183509527
     ResourcePath: SubTextures\
     SubTextureName: Dune5
@@ -239,16 +249,16 @@ Resources:
       - [0.866999984, 0.369649827]
       - [0.866999984, 0.684824944]
       - [0.578000009, 0.684824944]
-  - UUID: 5794045269247261567
+  - UUID: 6219452298815214935
     ResourcePath: SubTextures\
-    SubTextureName: sdfav12
+    SubTextureName: sdfav37
     Extension: ""
     Texture: 7835399540365495283
     TexCoords:
-      - [0.326249987, 0.776666641]
-      - [0.435000002, 0.776666641]
-      - [0.435000002, 0.888333321]
-      - [0.326249987, 0.888333321]
+      - [0.108750001, 0.441666663]
+      - [0.217500001, 0.441666663]
+      - [0.217500001, 0.553333342]
+      - [0.108750001, 0.553333342]
   - UUID: 10097282245339190271
     ResourcePath: SubTextures\
     SubTextureName: Dune8
@@ -259,6 +269,16 @@ Resources:
       - [0.866999984, 0.0544747114]
       - [0.866999984, 0.369649827]
       - [0.578000009, 0.369649827]
+  - UUID: 5794045269247261567
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav12
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.326249987, 0.776666641]
+      - [0.435000002, 0.776666641]
+      - [0.435000002, 0.888333321]
+      - [0.326249987, 0.888333321]
   - UUID: 14118776347518272179
     ResourcePath: SubTextures\
     SubTextureName: sdfav0
@@ -269,6 +289,16 @@ Resources:
       - [0.108750001, 0.888333321]
       - [0.108750001, 1]
       - [0, 1]
+  - UUID: 1901233186377542559
+    ResourcePath: SubTextures\
+    SubTextureName: Dune3
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.600000024, 0.805447459]
+      - [0.800000012, 0.805447459]
+      - [0.800000012, 1]
+      - [0.600000024, 1]
   - UUID: 16018682924836457887
     ResourcePath: SubTextures\
     SubTextureName: sdfav1
@@ -279,26 +309,6 @@ Resources:
       - [0.217500001, 0.888333321]
       - [0.217500001, 1]
       - [0.108750001, 1]
-  - UUID: 16163183540575419592
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav31
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0.435000002, 0.553333342]
-      - [0.543749988, 0.553333342]
-      - [0.543749988, 0.664999962]
-      - [0.435000002, 0.664999962]
-  - UUID: 6703948458697932360
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav21
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0.326249987, 0.664999962]
-      - [0.435000002, 0.664999962]
-      - [0.435000002, 0.776666641]
-      - [0.326249987, 0.776666641]
   - UUID: 13872880265738313160
     ResourcePath: SubTextures\
     SubTextureName: sdfav2
@@ -309,6 +319,36 @@ Resources:
       - [0.326249987, 0.888333321]
       - [0.326249987, 1]
       - [0.217500001, 1]
+  - UUID: 928266077263112264
+    ResourcePath: SubTextures\
+    SubTextureName: Dune15
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0, 0.221789896]
+      - [0.200000003, 0.221789896]
+      - [0.200000003, 0.416342437]
+      - [0, 0.416342437]
+  - UUID: 6703948458697932360
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav21
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.326249987, 0.664999962]
+      - [0.435000002, 0.664999962]
+      - [0.435000002, 0.776666641]
+      - [0.326249987, 0.776666641]
+  - UUID: 16163183540575419592
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav31
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.435000002, 0.553333342]
+      - [0.543749988, 0.553333342]
+      - [0.543749988, 0.664999962]
+      - [0.435000002, 0.664999962]
   - UUID: 2097911666845989272
     ResourcePath: SubTextures\
     SubTextureName: sdfav3
@@ -319,26 +359,26 @@ Resources:
       - [0.435000002, 0.888333321]
       - [0.435000002, 1]
       - [0.326249987, 1]
-  - UUID: 2874258300462724323
+  - UUID: 8897728431399501859
     ResourcePath: SubTextures\
-    SubTextureName: sdfav29
+    SubTextureName: Dune13
     Extension: ""
-    Texture: 7835399540365495283
+    Texture: 15773015180421854755
     TexCoords:
-      - [0.217500001, 0.553333342]
-      - [0.326249987, 0.553333342]
-      - [0.326249987, 0.664999962]
-      - [0.217500001, 0.664999962]
-  - UUID: 11310642061863340323
+      - [0.600000024, 0.416342437]
+      - [0.800000012, 0.416342437]
+      - [0.800000012, 0.610894918]
+      - [0.600000024, 0.610894918]
+  - UUID: 15946947582786786851
     ResourcePath: SubTextures\
-    SubTextureName: sdfav25
+    SubTextureName: Dune7
     Extension: ""
-    Texture: 7835399540365495283
+    Texture: 16678388914473827797
     TexCoords:
-      - [0.761250019, 0.664999962]
-      - [0.870000005, 0.664999962]
-      - [0.870000005, 0.776666641]
-      - [0.761250019, 0.776666641]
+      - [0.400000006, 0.610894918]
+      - [0.600000024, 0.610894918]
+      - [0.600000024, 0.805447459]
+      - [0.400000006, 0.805447459]
   - UUID: 6621538082509480995
     ResourcePath: SubTextures\
     SubTextureName: sdfav4
@@ -349,6 +389,26 @@ Resources:
       - [0.543749988, 0.888333321]
       - [0.543749988, 1]
       - [0.435000002, 1]
+  - UUID: 11310642061863340323
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav25
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.761250019, 0.664999962]
+      - [0.870000005, 0.664999962]
+      - [0.870000005, 0.776666641]
+      - [0.761250019, 0.776666641]
+  - UUID: 2874258300462724323
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav29
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.217500001, 0.553333342]
+      - [0.326249987, 0.553333342]
+      - [0.326249987, 0.664999962]
+      - [0.217500001, 0.664999962]
   - UUID: 7734793268738319171
     ResourcePath: SubTextures\
     SubTextureName: sdfav5
@@ -359,26 +419,6 @@ Resources:
       - [0.652499974, 0.888333321]
       - [0.652499974, 1]
       - [0.543749988, 1]
-  - UUID: 14153515001247483472
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav19
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0.108750001, 0.664999962]
-      - [0.217500001, 0.664999962]
-      - [0.217500001, 0.776666641]
-      - [0.108750001, 0.776666641]
-  - UUID: 4638084151011123664
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav18
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0, 0.664999962]
-      - [0.108750001, 0.664999962]
-      - [0.108750001, 0.776666641]
-      - [0, 0.776666641]
   - UUID: 160357033015967760
     ResourcePath: SubTextures\
     SubTextureName: sdfav60
@@ -399,6 +439,46 @@ Resources:
       - [0.761250019, 0.888333321]
       - [0.761250019, 1]
       - [0.652499974, 1]
+  - UUID: 4638084151011123664
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav18
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0, 0.664999962]
+      - [0.108750001, 0.664999962]
+      - [0.108750001, 0.776666641]
+      - [0, 0.776666641]
+  - UUID: 17077458597792066640
+    ResourcePath: SubTextures\
+    SubTextureName: deathDone6
+    Extension: ""
+    Texture: 7919315068120643892
+    TexCoords:
+      - [0.5, 0]
+      - [0.75, 0]
+      - [0.75, 0.5]
+      - [0.5, 0.5]
+  - UUID: 14153515001247483472
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav19
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.108750001, 0.664999962]
+      - [0.217500001, 0.664999962]
+      - [0.217500001, 0.776666641]
+      - [0.108750001, 0.776666641]
+  - UUID: 1551271781892185182
+    ResourcePath: SubTextures\
+    SubTextureName: Dune4
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.800000012, 0.805447459]
+      - [1, 0.805447459]
+      - [1, 1]
+      - [0.800000012, 1]
   - UUID: 12314557910302539870
     ResourcePath: SubTextures\
     SubTextureName: sdfav7
@@ -419,6 +499,16 @@ Resources:
       - [0.97874999, 0.329999983]
       - [0.97874999, 0.441666663]
       - [0.870000005, 0.441666663]
+  - UUID: 9105304932737379580
+    ResourcePath: SubTextures\
+    SubTextureName: Dune23
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.600000024, 0.0272373557]
+      - [0.800000012, 0.0272373557]
+      - [0.800000012, 0.221789896]
+      - [0.600000024, 0.221789896]
   - UUID: 5745407707435450620
     ResourcePath: SubTextures\
     SubTextureName: sdfav8
@@ -429,6 +519,16 @@ Resources:
       - [0.97874999, 0.888333321]
       - [0.97874999, 1]
       - [0.870000005, 1]
+  - UUID: 5561456676463670223
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav9
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0, 0.776666641]
+      - [0.108750001, 0.776666641]
+      - [0.108750001, 0.888333321]
+      - [0, 0.888333321]
   - UUID: 10907269893017376527
     ResourcePath: SubTextures\
     SubTextureName: sdfav74
@@ -449,16 +549,6 @@ Resources:
       - [0.761250019, 0.329999983]
       - [0.761250019, 0.441666663]
       - [0.652499974, 0.441666663]
-  - UUID: 5561456676463670223
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav9
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0, 0.776666641]
-      - [0.108750001, 0.776666641]
-      - [0.108750001, 0.888333321]
-      - [0, 0.888333321]
   - UUID: 11308715918416439724
     ResourcePath: SubTextures\
     SubTextureName: sdfav10
@@ -469,6 +559,16 @@ Resources:
       - [0.217500001, 0.776666641]
       - [0.217500001, 0.888333321]
       - [0.108750001, 0.888333321]
+  - UUID: 15622262216296831514
+    ResourcePath: SubTextures\
+    SubTextureName: Dune14
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.800000012, 0.416342437]
+      - [1, 0.416342437]
+      - [1, 0.610894918]
+      - [0.800000012, 0.610894918]
   - UUID: 14814639199770229786
     ResourcePath: SubTextures\
     SubTextureName: sdfav13
@@ -489,6 +589,16 @@ Resources:
       - [0.435000002, 0.441666663]
       - [0.435000002, 0.553333342]
       - [0.326249987, 0.553333342]
+  - UUID: 17342063748055340797
+    ResourcePath: SubTextures\
+    SubTextureName: Dune6
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.200000003, 0.610894918]
+      - [0.400000006, 0.610894918]
+      - [0.400000006, 0.805447459]
+      - [0.200000003, 0.805447459]
   - UUID: 14283461161530523901
     ResourcePath: SubTextures\
     SubTextureName: sdfav15
@@ -499,16 +609,6 @@ Resources:
       - [0.761250019, 0.776666641]
       - [0.761250019, 0.888333321]
       - [0.652499974, 0.888333321]
-  - UUID: 9375743532458273709
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav49
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0.435000002, 0.329999983]
-      - [0.543749988, 0.329999983]
-      - [0.543749988, 0.441666663]
-      - [0.435000002, 0.441666663]
   - UUID: 3692796843856751917
     ResourcePath: SubTextures\
     SubTextureName: sdfav16
@@ -519,6 +619,26 @@ Resources:
       - [0.870000005, 0.776666641]
       - [0.870000005, 0.888333321]
       - [0.761250019, 0.888333321]
+  - UUID: 5038155837452169645
+    ResourcePath: SubTextures\
+    SubTextureName: Dune24
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.800000012, 0.0272373557]
+      - [1, 0.0272373557]
+      - [1, 0.221789896]
+      - [0.800000012, 0.221789896]
+  - UUID: 9375743532458273709
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav49
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.435000002, 0.329999983]
+      - [0.543749988, 0.329999983]
+      - [0.543749988, 0.441666663]
+      - [0.435000002, 0.441666663]
   - UUID: 835689464034240497
     ResourcePath: SubTextures\
     SubTextureName: sdfav20
@@ -529,6 +649,16 @@ Resources:
       - [0.326249987, 0.664999962]
       - [0.326249987, 0.776666641]
       - [0.217500001, 0.776666641]
+  - UUID: 8929321005820908017
+    ResourcePath: SubTextures\
+    SubTextureName: Dune10
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0, 0.416342437]
+      - [0.200000003, 0.416342437]
+      - [0.200000003, 0.610894918]
+      - [0, 0.610894918]
   - UUID: 16162265871750354294
     ResourcePath: SubTextures\
     SubTextureName: sdfav22
@@ -559,16 +689,6 @@ Resources:
       - [0.97874999, 0.664999962]
       - [0.97874999, 0.776666641]
       - [0.870000005, 0.776666641]
-  - UUID: 16946019618857824610
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav45
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0, 0.329999983]
-      - [0.108750001, 0.329999983]
-      - [0.108750001, 0.441666663]
-      - [0, 0.441666663]
   - UUID: 16591985396627372770
     ResourcePath: SubTextures\
     SubTextureName: sdfav30
@@ -579,6 +699,16 @@ Resources:
       - [0.435000002, 0.553333342]
       - [0.435000002, 0.664999962]
       - [0.326249987, 0.664999962]
+  - UUID: 16946019618857824610
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav45
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0, 0.329999983]
+      - [0.108750001, 0.329999983]
+      - [0.108750001, 0.441666663]
+      - [0, 0.441666663]
   - UUID: 14490963281452242452
     ResourcePath: SubTextures\
     SubTextureName: sdfav32
@@ -589,6 +719,16 @@ Resources:
       - [0.652499974, 0.553333342]
       - [0.652499974, 0.664999962]
       - [0.543749988, 0.664999962]
+  - UUID: 17527039832132535156
+    ResourcePath: SubTextures\
+    SubTextureName: flight6
+    Extension: ""
+    Texture: 13524754026329341671
+    TexCoords:
+      - [0.5, 0.5]
+      - [0.75, 0.5]
+      - [0.75, 0.75]
+      - [0.5, 0.75]
   - UUID: 7935286750825802612
     ResourcePath: SubTextures\
     SubTextureName: sdfav33
@@ -699,6 +839,16 @@ Resources:
       - [0.326249987, 0.329999983]
       - [0.326249987, 0.441666663]
       - [0.217500001, 0.441666663]
+  - UUID: 17756513257296083469
+    ResourcePath: SubTextures\
+    SubTextureName: Dune19
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.800000012, 0.221789896]
+      - [1, 0.221789896]
+      - [1, 0.416342437]
+      - [0.800000012, 0.416342437]
   - UUID: 10177338800665682053
     ResourcePath: SubTextures\
     SubTextureName: sdfav48
@@ -739,6 +889,16 @@ Resources:
       - [0.326249987, 0.218333304]
       - [0.326249987, 0.329999983]
       - [0.217500001, 0.329999983]
+  - UUID: 5418498283137357474
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter1
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.200000003, 0.800000012]
+      - [0.400000006, 0.800000012]
+      - [0.400000006, 1]
+      - [0.200000003, 1]
   - UUID: 776644264306883015
     ResourcePath: SubTextures\
     SubTextureName: sdfav58
@@ -749,6 +909,16 @@ Resources:
       - [0.543749988, 0.218333304]
       - [0.543749988, 0.329999983]
       - [0.435000002, 0.329999983]
+  - UUID: 15710647437937676231
+    ResourcePath: SubTextures\
+    SubTextureName: Dune20
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0, 0.0272373557]
+      - [0.200000003, 0.0272373557]
+      - [0.200000003, 0.221789896]
+      - [0, 0.221789896]
   - UUID: 14373574914685070721
     ResourcePath: SubTextures\
     SubTextureName: sdfav59
@@ -769,16 +939,6 @@ Resources:
       - [0.870000005, 0.218333304]
       - [0.870000005, 0.329999983]
       - [0.761250019, 0.329999983]
-  - UUID: 15158764559746370709
-    ResourcePath: SubTextures\Hello
-    SubTextureName: Dune2
-    Extension: ""
-    Texture: 13022406342272434770
-    TexCoords:
-      - [0.398000002, 0.797016859]
-      - [0.597000003, 0.797016859]
-      - [0.597000003, 1]
-      - [0.398000002, 1]
   - UUID: 15572763335647274133
     ResourcePath: SubTextures\
     SubTextureName: sdfav62
@@ -789,6 +949,26 @@ Resources:
       - [0.97874999, 0.218333304]
       - [0.97874999, 0.329999983]
       - [0.870000005, 0.329999983]
+  - UUID: 15158764559746370709
+    ResourcePath: SubTextures\Hello
+    SubTextureName: Dune2
+    Extension: ""
+    Texture: 13022406342272434770
+    TexCoords:
+      - [0.398000002, 0.797016859]
+      - [0.597000003, 0.797016859]
+      - [0.597000003, 1]
+      - [0.398000002, 1]
+  - UUID: 3978234746193230485
+    ResourcePath: SubTextures\
+    SubTextureName: Dune11
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.200000003, 0.416342437]
+      - [0.400000006, 0.416342437]
+      - [0.400000006, 0.610894918]
+      - [0.200000003, 0.610894918]
   - UUID: 14793727900497411305
     ResourcePath: SubTextures\
     SubTextureName: sdfav63
@@ -809,6 +989,16 @@ Resources:
       - [0.217500001, 0.106666684]
       - [0.217500001, 0.218333304]
       - [0.108750001, 0.218333304]
+  - UUID: 992424466030110999
+    ResourcePath: SubTextures\
+    SubTextureName: deathDone4
+    Extension: ""
+    Texture: 7919315068120643892
+    TexCoords:
+      - [0, 0]
+      - [0.25, 0]
+      - [0.25, 0.5]
+      - [0, 0.5]
   - UUID: 11446397217305632023
     ResourcePath: SubTextures\
     SubTextureName: sdfav65
@@ -899,6 +1089,16 @@ Resources:
       - [0.543749988, -0.00499999523]
       - [0.543749988, 0.106666684]
       - [0.435000002, 0.106666684]
+  - UUID: 5805459470431313788
+    ResourcePath: SubTextures\
+    SubTextureName: Dune23
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.600000024, 0.0272373557]
+      - [0.800000012, 0.0272373557]
+      - [0.800000012, 0.221789896]
+      - [0.600000024, 0.221789896]
   - UUID: 13776338271768611534
     ResourcePath: SubTextures\
     SubTextureName: sdfav77
@@ -939,6 +1139,16 @@ Resources:
       - [0.199000001, 0.797016859]
       - [0.199000001, 1]
       - [0, 1]
+  - UUID: 6987873803867389705
+    ResourcePath: SubTextures\
+    SubTextureName: Dune22
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.400000006, 0.0272373557]
+      - [0.600000024, 0.0272373557]
+      - [0.600000024, 0.221789896]
+      - [0.400000006, 0.221789896]
   - UUID: 5200075363272319729
     ResourcePath: SubTextures\Hello
     SubTextureName: Dune1
@@ -1069,6 +1279,16 @@ Resources:
       - [0.398000002, 0.188067436]
       - [0.398000002, 0.391050577]
       - [0.199000001, 0.391050577]
+  - UUID: 3116922345090045374
+    ResourcePath: SubTextures\
+    SubTextureName: Dune11
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.200000003, 0.416342437]
+      - [0.400000006, 0.416342437]
+      - [0.400000006, 0.610894918]
+      - [0.200000003, 0.610894918]
   - UUID: 17884528959794652941
     ResourcePath: SubTextures\Hello
     SubTextureName: Dune17
@@ -1089,6 +1309,16 @@ Resources:
       - [0.796000004, 0.188067436]
       - [0.796000004, 0.391050577]
       - [0.597000003, 0.391050577]
+  - UUID: 6083064600513134322
+    ResourcePath: SubTextures\
+    SubTextureName: Dune24
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.800000012, 0.0272373557]
+      - [1, 0.0272373557]
+      - [1, 0.221789896]
+      - [0.800000012, 0.221789896]
   - UUID: 4893108244308355314
     ResourcePath: SubTextures\Hello
     SubTextureName: Dune19
@@ -1099,3 +1329,893 @@ Resources:
       - [0.995000005, 0.188067436]
       - [0.995000005, 0.391050577]
       - [0.796000004, 0.391050577]
+  - UUID: 5818951937155602502
+    ResourcePath: SubTextures\
+    SubTextureName: Dune0
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0, 0.805447459]
+      - [0.200000003, 0.805447459]
+      - [0.200000003, 1]
+      - [0, 1]
+  - UUID: 17666594147079944849
+    ResourcePath: SubTextures\
+    SubTextureName: Dune1
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.200000003, 0.805447459]
+      - [0.400000006, 0.805447459]
+      - [0.400000006, 1]
+      - [0.200000003, 1]
+  - UUID: 9906067346899080337
+    ResourcePath: SubTextures\
+    SubTextureName: Dune8
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.600000024, 0.610894918]
+      - [0.800000012, 0.610894918]
+      - [0.800000012, 0.805447459]
+      - [0.600000024, 0.805447459]
+  - UUID: 2324204659187994369
+    ResourcePath: SubTextures\
+    SubTextureName: Dune2
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.400000006, 0.805447459]
+      - [0.600000024, 0.805447459]
+      - [0.600000024, 1]
+      - [0.400000006, 1]
+  - UUID: 11970761000531724033
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter10
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0, 0.399999976]
+      - [0.200000003, 0.399999976]
+      - [0.200000003, 0.600000024]
+      - [0, 0.600000024]
+  - UUID: 11509916135456458185
+    ResourcePath: SubTextures\
+    SubTextureName: Dune3
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.600000024, 0.805447459]
+      - [0.800000012, 0.805447459]
+      - [0.800000012, 1]
+      - [0.600000024, 1]
+  - UUID: 13025701202579893705
+    ResourcePath: SubTextures\
+    SubTextureName: Dune7
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.400000006, 0.610894918]
+      - [0.600000024, 0.610894918]
+      - [0.600000024, 0.805447459]
+      - [0.400000006, 0.805447459]
+  - UUID: 13912886204581083081
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter16
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.200000003, 0.199999988]
+      - [0.400000006, 0.199999988]
+      - [0.400000006, 0.399999976]
+      - [0.200000003, 0.399999976]
+  - UUID: 12265542727487810346
+    ResourcePath: SubTextures\
+    SubTextureName: Dune7
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.400000006, 0.610894918]
+      - [0.600000024, 0.610894918]
+      - [0.600000024, 0.805447459]
+      - [0.400000006, 0.805447459]
+  - UUID: 8226573288089697578
+    ResourcePath: SubTextures\
+    SubTextureName: Dune5
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0, 0.610894918]
+      - [0.200000003, 0.610894918]
+      - [0.200000003, 0.805447459]
+      - [0, 0.805447459]
+  - UUID: 16048044448015086130
+    ResourcePath: SubTextures\
+    SubTextureName: Dune1
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.200000003, 0.805447459]
+      - [0.400000006, 0.805447459]
+      - [0.400000006, 1]
+      - [0.200000003, 1]
+  - UUID: 16692511793537988658
+    ResourcePath: SubTextures\
+    SubTextureName: Dune6
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.200000003, 0.610894918]
+      - [0.400000006, 0.610894918]
+      - [0.400000006, 0.805447459]
+      - [0.200000003, 0.805447459]
+  - UUID: 6124962727192223282
+    ResourcePath: SubTextures\
+    SubTextureName: Dune10
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0, 0.416342437]
+      - [0.200000003, 0.416342437]
+      - [0.200000003, 0.610894918]
+      - [0, 0.610894918]
+  - UUID: 1184065481105405562
+    ResourcePath: SubTextures\
+    SubTextureName: Dune8
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.600000024, 0.610894918]
+      - [0.800000012, 0.610894918]
+      - [0.800000012, 0.805447459]
+      - [0.600000024, 0.805447459]
+  - UUID: 2458465456014744342
+    ResourcePath: SubTextures\
+    SubTextureName: Dune9
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.800000012, 0.610894918]
+      - [1, 0.610894918]
+      - [1, 0.805447459]
+      - [0.800000012, 0.805447459]
+  - UUID: 8149271495953927910
+    ResourcePath: SubTextures\
+    SubTextureName: Dune12
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.400000006, 0.416342437]
+      - [0.600000024, 0.416342437]
+      - [0.600000024, 0.610894918]
+      - [0.400000006, 0.610894918]
+  - UUID: 2983475082628541015
+    ResourcePath: SubTextures\
+    SubTextureName: flight7
+    Extension: ""
+    Texture: 13524754026329341671
+    TexCoords:
+      - [0.75, 0.5]
+      - [1, 0.5]
+      - [1, 0.75]
+      - [0.75, 0.75]
+  - UUID: 7324164203987549271
+    ResourcePath: SubTextures\
+    SubTextureName: Dune13
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.600000024, 0.416342437]
+      - [0.800000012, 0.416342437]
+      - [0.800000012, 0.610894918]
+      - [0.600000024, 0.610894918]
+  - UUID: 15201297029275505751
+    ResourcePath: SubTextures\
+    SubTextureName: Dune9
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.800000012, 0.610894918]
+      - [1, 0.610894918]
+      - [1, 0.805447459]
+      - [0.800000012, 0.805447459]
+  - UUID: 5770744577524973358
+    ResourcePath: SubTextures\
+    SubTextureName: Dune15
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0, 0.221789896]
+      - [0.200000003, 0.221789896]
+      - [0.200000003, 0.416342437]
+      - [0, 0.416342437]
+  - UUID: 987965457245413023
+    ResourcePath: SubTextures\
+    SubTextureName: Dune16
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.200000003, 0.221789896]
+      - [0.400000006, 0.221789896]
+      - [0.400000006, 0.416342437]
+      - [0.200000003, 0.416342437]
+  - UUID: 10589925789681105567
+    ResourcePath: SubTextures\
+    SubTextureName: Dune20
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0, 0.0272373557]
+      - [0.200000003, 0.0272373557]
+      - [0.200000003, 0.221789896]
+      - [0, 0.221789896]
+  - UUID: 18121196970915493651
+    ResourcePath: SubTextures\
+    SubTextureName: Dune17
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.400000006, 0.221789896]
+      - [0.600000024, 0.221789896]
+      - [0.600000024, 0.416342437]
+      - [0.400000006, 0.416342437]
+  - UUID: 17188823603800536851
+    ResourcePath: SubTextures\
+    SubTextureName: Dune17
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.400000006, 0.221789896]
+      - [0.600000024, 0.221789896]
+      - [0.600000024, 0.416342437]
+      - [0.400000006, 0.416342437]
+  - UUID: 921961452625032877
+    ResourcePath: SubTextures\
+    SubTextureName: Dune18
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.600000024, 0.221789896]
+      - [0.800000012, 0.221789896]
+      - [0.800000012, 0.416342437]
+      - [0.600000024, 0.416342437]
+  - UUID: 7203223853618784871
+    ResourcePath: SubTextures\
+    SubTextureName: Dune21
+    Extension: ""
+    Texture: 2053001365971351831
+    TexCoords:
+      - [0.200000003, 0.0272373557]
+      - [0.400000006, 0.0272373557]
+      - [0.400000006, 0.221789896]
+      - [0.200000003, 0.221789896]
+  - UUID: 4981783070127337895
+    ResourcePath: SubTextures\
+    SubTextureName: Dune0
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0, 0.805447459]
+      - [0.200000003, 0.805447459]
+      - [0.200000003, 1]
+      - [0, 1]
+  - UUID: 13471751006954175028
+    ResourcePath: SubTextures\
+    SubTextureName: Dune1
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.200000003, 0.805447459]
+      - [0.400000006, 0.805447459]
+      - [0.400000006, 1]
+      - [0.200000003, 1]
+  - UUID: 13980439932793206813
+    ResourcePath: SubTextures\
+    SubTextureName: Dune2
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.400000006, 0.805447459]
+      - [0.600000024, 0.805447459]
+      - [0.600000024, 1]
+      - [0.400000006, 1]
+  - UUID: 11592206703236286278
+    ResourcePath: SubTextures\
+    SubTextureName: Dune3
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.600000024, 0.805447459]
+      - [0.800000012, 0.805447459]
+      - [0.800000012, 1]
+      - [0.600000024, 1]
+  - UUID: 13649179401907462645
+    ResourcePath: SubTextures\
+    SubTextureName: Dune4
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.800000012, 0.805447459]
+      - [1, 0.805447459]
+      - [1, 1]
+      - [0.800000012, 1]
+  - UUID: 17291761565440673875
+    ResourcePath: SubTextures\
+    SubTextureName: Dune5
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0, 0.610894918]
+      - [0.200000003, 0.610894918]
+      - [0.200000003, 0.805447459]
+      - [0, 0.805447459]
+  - UUID: 4817587571654309309
+    ResourcePath: SubTextures\
+    SubTextureName: Dune6
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.200000003, 0.610894918]
+      - [0.400000006, 0.610894918]
+      - [0.400000006, 0.805447459]
+      - [0.200000003, 0.805447459]
+  - UUID: 9711128505822313322
+    ResourcePath: SubTextures\
+    SubTextureName: Dune10
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0, 0.416342437]
+      - [0.200000003, 0.416342437]
+      - [0.200000003, 0.610894918]
+      - [0, 0.610894918]
+  - UUID: 17495209597279453546
+    ResourcePath: SubTextures\
+    SubTextureName: Dune18
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.600000024, 0.221789896]
+      - [0.800000012, 0.221789896]
+      - [0.800000012, 0.416342437]
+      - [0.600000024, 0.416342437]
+  - UUID: 14286919361882041625
+    ResourcePath: SubTextures\
+    SubTextureName: Dune12
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.400000006, 0.416342437]
+      - [0.600000024, 0.416342437]
+      - [0.600000024, 0.610894918]
+      - [0.400000006, 0.610894918]
+  - UUID: 6609885544984721066
+    ResourcePath: SubTextures\
+    SubTextureName: Dune13
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.600000024, 0.416342437]
+      - [0.800000012, 0.416342437]
+      - [0.800000012, 0.610894918]
+      - [0.600000024, 0.610894918]
+  - UUID: 15650317542750194796
+    ResourcePath: SubTextures\
+    SubTextureName: Dune14
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.800000012, 0.416342437]
+      - [1, 0.416342437]
+      - [1, 0.610894918]
+      - [0.800000012, 0.610894918]
+  - UUID: 10565297699315576940
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter6
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.200000003, 0.600000024]
+      - [0.400000006, 0.600000024]
+      - [0.400000006, 0.800000012]
+      - [0.200000003, 0.800000012]
+  - UUID: 7416015919298093147
+    ResourcePath: SubTextures\
+    SubTextureName: Dune16
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.200000003, 0.221789896]
+      - [0.400000006, 0.221789896]
+      - [0.400000006, 0.416342437]
+      - [0.200000003, 0.416342437]
+  - UUID: 13225023382189232635
+    ResourcePath: SubTextures\
+    SubTextureName: Dune19
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.800000012, 0.221789896]
+      - [1, 0.221789896]
+      - [1, 0.416342437]
+      - [0.800000012, 0.416342437]
+  - UUID: 9687393992642149652
+    ResourcePath: SubTextures\
+    SubTextureName: Dune21
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.200000003, 0.0272373557]
+      - [0.400000006, 0.0272373557]
+      - [0.400000006, 0.221789896]
+      - [0.200000003, 0.221789896]
+  - UUID: 12716910964003698085
+    ResourcePath: SubTextures\
+    SubTextureName: Dune22
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.400000006, 0.0272373557]
+      - [0.600000024, 0.0272373557]
+      - [0.600000024, 0.221789896]
+      - [0.400000006, 0.221789896]
+  - UUID: 4793293305186712380
+    ResourcePath: SubTextures\
+    SubTextureName: Dune24
+    Extension: ""
+    Texture: 16678388914473827797
+    TexCoords:
+      - [0.800000012, 0.0272373557]
+      - [1, 0.0272373557]
+      - [1, 0.221789896]
+      - [0.800000012, 0.221789896]
+  - UUID: 13194854724706440562
+    ResourcePath: SubTextures\
+    SubTextureName: Dune0
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0, 0.805447459]
+      - [0.200000003, 0.805447459]
+      - [0.200000003, 1]
+      - [0, 1]
+  - UUID: 1112820239787354693
+    ResourcePath: SubTextures\
+    SubTextureName: Dune2
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.400000006, 0.805447459]
+      - [0.600000024, 0.805447459]
+      - [0.600000024, 1]
+      - [0.400000006, 1]
+  - UUID: 1246558870285269512
+    ResourcePath: SubTextures\
+    SubTextureName: Dune4
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.800000012, 0.805447459]
+      - [1, 0.805447459]
+      - [1, 1]
+      - [0.800000012, 1]
+  - UUID: 839634361326199206
+    ResourcePath: SubTextures\
+    SubTextureName: Dune5
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0, 0.610894918]
+      - [0.200000003, 0.610894918]
+      - [0.200000003, 0.805447459]
+      - [0, 0.805447459]
+  - UUID: 5114854948278142494
+    ResourcePath: SubTextures\
+    SubTextureName: Dune8
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.600000024, 0.610894918]
+      - [0.800000012, 0.610894918]
+      - [0.800000012, 0.805447459]
+      - [0.600000024, 0.805447459]
+  - UUID: 8269465471594706164
+    ResourcePath: SubTextures\
+    SubTextureName: Dune9
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.800000012, 0.610894918]
+      - [1, 0.610894918]
+      - [1, 0.805447459]
+      - [0.800000012, 0.805447459]
+  - UUID: 5820394039440889558
+    ResourcePath: SubTextures\
+    SubTextureName: Dune19
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.800000012, 0.221789896]
+      - [1, 0.221789896]
+      - [1, 0.416342437]
+      - [0.800000012, 0.416342437]
+  - UUID: 3648416263951063766
+    ResourcePath: SubTextures\
+    SubTextureName: Dune11
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.200000003, 0.416342437]
+      - [0.400000006, 0.416342437]
+      - [0.400000006, 0.610894918]
+      - [0.200000003, 0.610894918]
+  - UUID: 9159523363260553609
+    ResourcePath: SubTextures\
+    SubTextureName: Dune12
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.400000006, 0.416342437]
+      - [0.600000024, 0.416342437]
+      - [0.600000024, 0.610894918]
+      - [0.400000006, 0.610894918]
+  - UUID: 9209798378996345717
+    ResourcePath: SubTextures\
+    SubTextureName: Dune14
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.800000012, 0.416342437]
+      - [1, 0.416342437]
+      - [1, 0.610894918]
+      - [0.800000012, 0.610894918]
+  - UUID: 11667086394855168707
+    ResourcePath: SubTextures\
+    SubTextureName: Dune15
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0, 0.221789896]
+      - [0.200000003, 0.221789896]
+      - [0.200000003, 0.416342437]
+      - [0, 0.416342437]
+  - UUID: 1002647216820244961
+    ResourcePath: SubTextures\
+    SubTextureName: Dune16
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.200000003, 0.221789896]
+      - [0.400000006, 0.221789896]
+      - [0.400000006, 0.416342437]
+      - [0.200000003, 0.416342437]
+  - UUID: 2751789996948735626
+    ResourcePath: SubTextures\
+    SubTextureName: Dune17
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.400000006, 0.221789896]
+      - [0.600000024, 0.221789896]
+      - [0.600000024, 0.416342437]
+      - [0.400000006, 0.416342437]
+  - UUID: 10901438948034416190
+    ResourcePath: SubTextures\
+    SubTextureName: Dune18
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.600000024, 0.221789896]
+      - [0.800000012, 0.221789896]
+      - [0.800000012, 0.416342437]
+      - [0.600000024, 0.416342437]
+  - UUID: 17692229372022947457
+    ResourcePath: SubTextures\
+    SubTextureName: Dune20
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0, 0.0272373557]
+      - [0.200000003, 0.0272373557]
+      - [0.200000003, 0.221789896]
+      - [0, 0.221789896]
+  - UUID: 4986334586872611325
+    ResourcePath: SubTextures\
+    SubTextureName: Dune21
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.200000003, 0.0272373557]
+      - [0.400000006, 0.0272373557]
+      - [0.400000006, 0.221789896]
+      - [0.200000003, 0.221789896]
+  - UUID: 4977411514044994225
+    ResourcePath: SubTextures\
+    SubTextureName: Dune22
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.400000006, 0.0272373557]
+      - [0.600000024, 0.0272373557]
+      - [0.600000024, 0.221789896]
+      - [0.400000006, 0.221789896]
+  - UUID: 7556920974267257610
+    ResourcePath: SubTextures\
+    SubTextureName: Dune23
+    Extension: ""
+    Texture: 15773015180421854755
+    TexCoords:
+      - [0.600000024, 0.0272373557]
+      - [0.800000012, 0.0272373557]
+      - [0.800000012, 0.221789896]
+      - [0.600000024, 0.221789896]
+  - UUID: 17166723789453031013
+    ResourcePath: SubTextures\
+    SubTextureName: deathDone0
+    Extension: ""
+    Texture: 7919315068120643892
+    TexCoords:
+      - [0, 0.5]
+      - [0.25, 0.5]
+      - [0.25, 1]
+      - [0, 1]
+  - UUID: 5558647854037385930
+    ResourcePath: SubTextures\
+    SubTextureName: deathDone1
+    Extension: ""
+    Texture: 7919315068120643892
+    TexCoords:
+      - [0.25, 0.5]
+      - [0.5, 0.5]
+      - [0.5, 1]
+      - [0.25, 1]
+  - UUID: 1262880410274171916
+    ResourcePath: SubTextures\
+    SubTextureName: deathDone2
+    Extension: ""
+    Texture: 7919315068120643892
+    TexCoords:
+      - [0.5, 0.5]
+      - [0.75, 0.5]
+      - [0.75, 1]
+      - [0.5, 1]
+  - UUID: 17743644484870196748
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter11
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.200000003, 0.399999976]
+      - [0.400000006, 0.399999976]
+      - [0.400000006, 0.600000024]
+      - [0.200000003, 0.600000024]
+  - UUID: 14478627654742308750
+    ResourcePath: SubTextures\
+    SubTextureName: deathDone3
+    Extension: ""
+    Texture: 7919315068120643892
+    TexCoords:
+      - [0.75, 0.5]
+      - [1, 0.5]
+      - [1, 1]
+      - [0.75, 1]
+  - UUID: 3080361670610859457
+    ResourcePath: SubTextures\
+    SubTextureName: deathDone5
+    Extension: ""
+    Texture: 7919315068120643892
+    TexCoords:
+      - [0.25, 0]
+      - [0.5, 0]
+      - [0.5, 0.5]
+      - [0.25, 0.5]
+  - UUID: 5087964094837200996
+    ResourcePath: SubTextures\
+    SubTextureName: deathDone7
+    Extension: ""
+    Texture: 7919315068120643892
+    TexCoords:
+      - [0.75, 0]
+      - [1, 0]
+      - [1, 0.5]
+      - [0.75, 0.5]
+  - UUID: 21991060127600104
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter0
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0, 0.800000012]
+      - [0.200000003, 0.800000012]
+      - [0.200000003, 1]
+      - [0, 1]
+  - UUID: 16431014160569999656
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter2
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.400000006, 0.800000012]
+      - [0.600000024, 0.800000012]
+      - [0.600000024, 1]
+      - [0.400000006, 1]
+  - UUID: 4363276539851250159
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter3
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.600000024, 0.800000012]
+      - [0.800000012, 0.800000012]
+      - [0.800000012, 1]
+      - [0.600000024, 1]
+  - UUID: 6089072610347164890
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter4
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.800000012, 0.800000012]
+      - [1, 0.800000012]
+      - [1, 1]
+      - [0.800000012, 1]
+  - UUID: 9018209873339158583
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter5
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0, 0.600000024]
+      - [0.200000003, 0.600000024]
+      - [0.200000003, 0.800000012]
+      - [0, 0.800000012]
+  - UUID: 4801989704734362156
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter7
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.400000006, 0.600000024]
+      - [0.600000024, 0.600000024]
+      - [0.600000024, 0.800000012]
+      - [0.400000006, 0.800000012]
+  - UUID: 13926720877882480668
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter12
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.400000006, 0.399999976]
+      - [0.600000024, 0.399999976]
+      - [0.600000024, 0.600000024]
+      - [0.400000006, 0.600000024]
+  - UUID: 9472924804324659239
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter13
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.600000024, 0.399999976]
+      - [0.800000012, 0.399999976]
+      - [0.800000012, 0.600000024]
+      - [0.600000024, 0.600000024]
+  - UUID: 2868600298457465386
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter14
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.800000012, 0.399999976]
+      - [1, 0.399999976]
+      - [1, 0.600000024]
+      - [0.800000012, 0.600000024]
+  - UUID: 17545371120493752436
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter15
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0, 0.199999988]
+      - [0.200000003, 0.199999988]
+      - [0.200000003, 0.399999976]
+      - [0, 0.399999976]
+  - UUID: 5716357083096718945
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter17
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.400000006, 0.199999988]
+      - [0.600000024, 0.199999988]
+      - [0.600000024, 0.399999976]
+      - [0.400000006, 0.399999976]
+  - UUID: 7379039451383737475
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter18
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.600000024, 0.199999988]
+      - [0.800000012, 0.199999988]
+      - [0.800000012, 0.399999976]
+      - [0.600000024, 0.399999976]
+  - UUID: 13616798785868926198
+    ResourcePath: SubTextures\
+    SubTextureName: jumpDoneBetter19
+    Extension: ""
+    Texture: 11972953418932319972
+    TexCoords:
+      - [0.800000012, 0.199999988]
+      - [1, 0.199999988]
+      - [1, 0.399999976]
+      - [0.800000012, 0.399999976]
+  - UUID: 10505579173071348777
+    ResourcePath: SubTextures\
+    SubTextureName: walk0
+    Extension: ""
+    Texture: 6877546669795247989
+    TexCoords:
+      - [0, 0.800000012]
+      - [0.200000003, 0.800000012]
+      - [0.200000003, 1]
+      - [0, 1]
+  - UUID: 14312194431471662146
+    ResourcePath: SubTextures\
+    SubTextureName: flight0
+    Extension: ""
+    Texture: 13524754026329341671
+    TexCoords:
+      - [0, 0.75]
+      - [0.25, 0.75]
+      - [0.25, 1]
+      - [0, 1]
+  - UUID: 12732958733099072321
+    ResourcePath: SubTextures\
+    SubTextureName: flight1
+    Extension: ""
+    Texture: 13524754026329341671
+    TexCoords:
+      - [0.25, 0.75]
+      - [0.5, 0.75]
+      - [0.5, 1]
+      - [0.25, 1]
+  - UUID: 798727517358213780
+    ResourcePath: SubTextures\
+    SubTextureName: flight2
+    Extension: ""
+    Texture: 13524754026329341671
+    TexCoords:
+      - [0.5, 0.75]
+      - [0.75, 0.75]
+      - [0.75, 1]
+      - [0.5, 1]
+  - UUID: 2368493318556177235
+    ResourcePath: SubTextures\
+    SubTextureName: flight3
+    Extension: ""
+    Texture: 13524754026329341671
+    TexCoords:
+      - [0.75, 0.75]
+      - [1, 0.75]
+      - [1, 1]
+      - [0.75, 1]
+  - UUID: 16194913969537813394
+    ResourcePath: SubTextures\
+    SubTextureName: flight4
+    Extension: ""
+    Texture: 13524754026329341671
+    TexCoords:
+      - [0, 0.5]
+      - [0.25, 0.5]
+      - [0.25, 0.75]
+      - [0, 0.75]
+  - UUID: 13622726553616057736
+    ResourcePath: SubTextures\
+    SubTextureName: flight5
+    Extension: ""
+    Texture: 13524754026329341671
+    TexCoords:
+      - [0.25, 0.5]
+      - [0.5, 0.5]
+      - [0.5, 0.75]
+      - [0.25, 0.75]

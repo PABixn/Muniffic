@@ -1,124 +1,152 @@
 Scene: Untitled
 Entities:
-  - Entity: 10835675562497198316
+  - Entity: 14056476828486798838
     Name: Cube
     TagComponent:
-      Tag: redbox7
+      Tag: wall
     TransformComponent:
-      Translation: [5, -15, 0]
+      Translation: [3, 0, -4.76837158e-07]
+      Rotation: [0, -0, 0]
+      Scale: [1, 41, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [0.0621934682, 0.248413697, 0.575289607, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 1567858812585259299
+    Name: Cube
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [14.7204752, 21.0149899, 2]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [0.833976865, 0.0643997639, 0.0643997639, 1]
-      TilingFactor: 1
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 2.09439516
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: -9
+        OrthographicNear: -4
+        OrthographicFar: 3
+      Primary: true
+      FixedAspectRatio: false
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 7291896435948266706
+    ScriptComponent:
+      Name: Sandbox.Camera
+      ScriptFields:
+        []
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 3898880785194007479
     Name: Cube
     TagComponent:
-      Tag: redbox6
+      Tag: Player
     TransformComponent:
-      Translation: [10, -9, 0]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Translation: [14.7204752, 21.0149899, 7.27594504e-12]
+      Rotation: [0, 0, 3.14159441]
+      Scale: [0.999998689, 0.999998689, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [0.849420846, 0.144303128, 0.144303128, 1]
+    SpriteRendererSTComponent:
+      Color: [1, 1, 1, 1]
       TilingFactor: 1
+      TextureUUID: 0
+      MinCoords: [0, 0.75]
+      MaxCoords: [0.25, 1]
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        - 1929321603766720864
+        - 233249327502835231
+        - 11077941037229700120
+        - 17146195768097324905
+      Transitions:
+        - From: 1
+          To: 0
+        - From: 2
+          To: 1
+        - From: 0
+          To: 2
+        - From: 1
+          To: 2
+        - From: 3
+          To: 0
+        - From: 1
+          To: 3
+        - From: 3
+          To: 2
+    ScriptComponent:
+      Name: Sandbox.Player
+      ScriptFields:
+        - Name: Speed
+          Type: float
+          Value: 0
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 16846266286324010957
-    Name: Cube
-    TagComponent:
-      Tag: redbox5
-    TransformComponent:
-      Translation: [6, -3, 0]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [0.864864886, 0.11019516, 0.11019516, 1]
-      TilingFactor: 1
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: false
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 2960825583523883164
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 7883344374051729908
     Name: Cube
     TagComponent:
-      Tag: title text
+      Tag: text
     TransformComponent:
-      Translation: [-6.50620365, 23.7336693, 0]
+      Translation: [6.56915283, -18.9501038, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     TextComponent:
-      TextString: "Drop to the bottom.\nDon't fall n the red boxes"
+      TextString: "The end\n"
       Color: [1, 1, 1, 1]
       Kerning: 0
       LineSpacing: 0
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 4359603283263474022
+  - Entity: 3995495375065833883
     Name: Cube
     TagComponent:
-      Tag: redbox1
+      Tag: bottomfloor
     TransformComponent:
-      Translation: [5, 5, 0]
+      Translation: [7.63334513, -20.6907768, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [10, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
-      Color: [0.772200763, 0.21466583, 0.21466583, 1]
-      TilingFactor: 1
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 7267198245358362971
-    Name: Cube
-    TagComponent:
-      Tag: redbox2
-    TransformComponent:
-      Translation: [10, 4, 0]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [0.803088784, 0.127129897, 0.127129897, 1]
-      TilingFactor: 1
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 2995662055770756261
-    Name: Cube
-    TagComponent:
-      Tag: redbox3
-    TransformComponent:
-      Translation: [6, 14, 0]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [0.733590722, 0.0509831347, 0.0509831347, 1]
-      TilingFactor: 1
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 15232392219580806145
-    Name: Cube
-    TagComponent:
-      Tag: Floor5
-    TransformComponent:
-      Translation: [-2, 20, 0]
-      Rotation: [0, -0, 0]
-      Scale: [9.10000038, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [0.99613899, 0.946139693, 0, 1]
+      Color: [0.0627451017, 0.247058824, 0.576470613, 1]
       TilingFactor: 1
       IsInherited: false
       IsInheritedInChildren: false
@@ -165,18 +193,18 @@ Entities:
       RestitutionThreshold: 0.5
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 3995495375065833883
+  - Entity: 15232392219580806145
     Name: Cube
     TagComponent:
-      Tag: bottomfloor
+      Tag: Floor5
     TransformComponent:
-      Translation: [7.63334513, -20.6907768, 0]
+      Translation: [17.2999992, 20, 0]
       Rotation: [0, -0, 0]
-      Scale: [10, 1, 1]
+      Scale: [9.10000038, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
-      Color: [0.0627451017, 0.247058824, 0.576470613, 1]
+      Color: [0.99613899, 0.946139693, 0, 1]
       TilingFactor: 1
       IsInherited: false
       IsInheritedInChildren: false
@@ -194,48 +222,23 @@ Entities:
       RestitutionThreshold: 0.5
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 7883344374051729908
+  - Entity: 2995662055770756261
     Name: Cube
     TagComponent:
-      Tag: text
+      Tag: redbox3
     TransformComponent:
-      Translation: [6.56915283, -18.9501038, 0]
+      Translation: [6, 14, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    TextComponent:
-      TextString: "The end\n"
-      Color: [1, 1, 1, 1]
-      Kerning: 0
-      LineSpacing: 0
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 3898880785194007479
-    Name: Cube
-    TagComponent:
-      Tag: Player
-    TransformComponent:
-      Translation: [0, 24, 7.27595675e-12]
-      Rotation: [0, -0, -65.9734421]
-      Scale: [0.999998689, 0.999998689, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
     SpriteRendererComponent:
-      Color: [0.135955155, 0.926640928, 0, 1]
+      Color: [0.733590722, 0.0509831347, 0.0509831347, 1]
       TilingFactor: 1
       IsInherited: false
       IsInheritedInChildren: false
-    ScriptComponent:
-      Name: Sandbox.Player
-      ScriptFields:
-        - Name: Speed
-          Type: float
-          Value: 0
-      IsInherited: false
-      IsInheritedInChildren: false
     RigidBody2DComponent:
-      Body Type: Dynamic
+      Body Type: Static
       FixedRotation: false
       IsInherited: false
       IsInheritedInChildren: false
@@ -248,47 +251,47 @@ Entities:
       RestitutionThreshold: 0.5
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 1567858812585259299
+  - Entity: 7267198245358362971
     Name: Cube
     TagComponent:
-      Tag: Camera
+      Tag: redbox2
     TransformComponent:
-      Translation: [8.42348957, -19.6757851, 5]
+      Translation: [10, 4, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 2.09439516
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: -9
-        OrthographicNear: -4
-        OrthographicFar: 3
-      Primary: true
-      FixedAspectRatio: false
+    SpriteRendererComponent:
+      Color: [0.803088784, 0.127129897, 0.127129897, 1]
+      TilingFactor: 1
       IsInherited: false
       IsInheritedInChildren: false
-    ScriptComponent:
-      Name: Sandbox.Camera
-      ScriptFields:
-        []
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 14056476828486798838
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 4359603283263474022
     Name: Cube
     TagComponent:
-      Tag: wall
+      Tag: redbox1
     TransformComponent:
-      Translation: [3, 0, -4.76837158e-07]
+      Translation: [5, 5, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 41, 1]
+      Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
-      Color: [0.0621934682, 0.248413697, 0.575289607, 1]
+      Color: [0.772200763, 0.21466583, 0.21466583, 1]
       TilingFactor: 1
       IsInherited: false
       IsInheritedInChildren: false
@@ -319,5 +322,106 @@ Entities:
     SpriteRendererComponent:
       Color: [0.961389959, 0.315514058, 0.315514058, 0.827450991]
       TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 16846266286324010957
+    Name: Cube
+    TagComponent:
+      Tag: redbox5
+    TransformComponent:
+      Translation: [6, -3, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [0.864864886, 0.11019516, 0.11019516, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 7291896435948266706
+    Name: Cube
+    TagComponent:
+      Tag: redbox6
+    TransformComponent:
+      Translation: [10, -9, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [0.849420846, 0.144303128, 0.144303128, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 10835675562497198316
+    Name: Cube
+    TagComponent:
+      Tag: redbox7
+    TransformComponent:
+      Translation: [5, -15, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [0.833976865, 0.0643997639, 0.0643997639, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
       IsInherited: false
       IsInheritedInChildren: false

@@ -28,7 +28,8 @@ namespace Sandbox
             {
                 m_Animator = GetComponent<AnimatorComponent>();
                 m_HasAnimator = true;
-                m_Animator.Play("Dune");
+                m_Animator.Play("walk");
+
             }
             bool hasTransform = HasComponent<TransformComponent>();
             Console.WriteLine("HasComponent {0}", hasTransform);
@@ -50,7 +51,9 @@ namespace Sandbox
             Vector3 velocity = new Vector3(0);
             if (Input.IsKeyDown(KeyCode.W))
             {
+                m_Animator.ChangeAnimation("jumpDoneBetter");
                 velocity.Y = Speed;
+
             }
             else if (Input.IsKeyDown(KeyCode.S))
             {
@@ -62,11 +65,13 @@ namespace Sandbox
             }
             if (Input.IsKeyDown(KeyCode.A))
             {
+                m_Animator.ChangeAnimation("walk");
                 velocity.X = -Speed;
             }
             else if (Input.IsKeyDown(KeyCode.D))
             {
                 velocity.X = Speed;
+                
             }
             else
             {
@@ -74,7 +79,7 @@ namespace Sandbox
             }
             if (Input.IsKeyDown(KeyCode.Z) && m_HasAnimator)
             {
-                m_Animator.TransitionByIndex(1);
+                m_Animator.ChangeAnimation("deathDone");
             }
 
             if (Input.IsKeyDown(KeyCode.Q))
@@ -85,12 +90,26 @@ namespace Sandbox
             {
                 camera.DistanceFromPlayer -= 1f * ts;
             }
+            m_Animator.ChangeAnimation("flight");
+
+
+
+
+
+
+
+            Vector3 translation = m_Transform.translation;
+
+           
+            translation += velocity * ts;
 
             m_RigidBody2D.ApplyLinearImpulse(velocity.XY, true);
 
-            Vector3 translation = m_Transform.translation;
-            translation += velocity * ts;
+
             m_Transform.translation = translation;
+
+            
+            
         }
 
     }
