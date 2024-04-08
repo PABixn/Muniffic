@@ -151,7 +151,16 @@ namespace eg {
 	{
 		OnPhysics2DStop();
 		m_IsRunning = false;
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
 
+
+				ASourceView.get<AudioSourceComponent>(f).Audio.Stop();
+
+			}
+		}
 		ScriptEngine::OnRuntimeStop();
 	}
 
@@ -163,7 +172,10 @@ namespace eg {
 				auto ASourceView = m_Registry.view<AudioSourceComponent>();
 				for (auto f : ASourceView)
 				{
-					ASourceView.get<AudioSourceComponent>(f).Audio.Play();	
+					if (ASourceView.get<AudioSourceComponent>(f).Audio.IsPlayingFromStart()) {
+						
+						ASourceView.get<AudioSourceComponent>(f).Audio.Play();
+					}
 				}
 		}
 	}
@@ -171,6 +183,16 @@ namespace eg {
 	void Scene::OnSimulationStop()
 	{
 		OnPhysics2DStop();
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
+				
+
+					ASourceView.get<AudioSourceComponent>(f).Audio.Stop();
+				
+			}
+		}
 	}
 
 
@@ -323,6 +345,7 @@ namespace eg {
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
+		
 		if (!m_IsPaused || m_StepFrames-- > 0)
 			// Physics
 		{

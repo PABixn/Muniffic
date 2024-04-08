@@ -32,8 +32,6 @@ group "Dependencies"
 	include "Engine/vendor/imgui"
 	include "Engine/vendor/msdf-atlas-gen"
 	include "Engine/vendor/yaml-cpp"
-	--include "Engine/vendor/SoLoud"
-	--include "Engine/vendor/SFML"
 group ""
 
 group "Core"

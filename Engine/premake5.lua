@@ -56,9 +56,7 @@ project "Engine"
 		"Glad",
 		"Imgui",
 		"msdf-atlas-gen",
-		"%{Library.mono}",
-		"SDL2.lib",
-		"SDL2main.lib"
+		"%{Library.mono}"
 	}
 	libdirs
 	{

@@ -19,14 +19,14 @@ IncludeDir["msdfgen"] = "%{wks.location}/Engine/vendor/msdf-atlas-gen/msdfgen"
 IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Engine/vendor/msdf-atlas-gen/msdf-atlas-gen"
 --IncludeDir["SoLoud"] = "%{wks.location}/Engine/vendor/SoLoud/include"
 IncludeDir["SFML"] = "%{wks.location}/Engine/vendor/SFML/include"
-IncludeDir["SDL"] = "%{wks.location}/Engine/vendor/SDL/include"
+--IncludeDir["SDL"] = "%{wks.location}/Engine/vendor/SDL/include"
 
 LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
 LibraryDir["mono"] = "%{wks.location}/Engine/vendor/mono/lib/%{cfg.buildcfg}"
 LibraryDir["SFML"] = "%{wks.location}/Engine/vendor/SFML/lib"
-LibraryDir["SDL"] = "%{wks.location}/Engine/vendor/SDL/lib/x86"
+--LibraryDir["SDL"] = "%{wks.location}/Engine/vendor/SDL/lib/x86"
 LibraryDir["SFMLdyn"] = "%{wks.location}/Engine/vendor/SFML/bin"
 
 Library = {}

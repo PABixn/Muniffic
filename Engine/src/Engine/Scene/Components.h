@@ -234,13 +234,13 @@ namespace eg {
 		float LineSpacing = 0.0f;
 	};
 
-	struct AudioListenerComponent
+	struct AudioListenerComponent : Component
 	{
 		//SoLoud::Soloud soloudInstance;
 		int a;
 	};
 
-	struct AudioSourceComponent
+	struct AudioSourceComponent : Component
 	{
 		BasicAudio Audio;
 	};
@@ -254,12 +254,13 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		RigidBody2DComponent, BoxCollider2DComponent,
-		CircleCollider2DComponent, TextComponent>;
+		CircleCollider2DComponent, TextComponent, AnimatorComponent,
+		AudioListenerComponent, AudioSourceComponent>;
 
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
-		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
+		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent,
 		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent,
 		AnimatorComponent
 		, AudioListenerComponent, AudioSourceComponent>;

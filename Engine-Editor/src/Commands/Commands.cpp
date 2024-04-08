@@ -291,7 +291,7 @@ namespace eg
 		return isUndo ? currentCommandIndex >= 0 : currentCommandIndex < static_cast<int>(commandHistory.size()) - 1;
 	}
 
-	template<>
+	/*template<>
 	void Commands::SetComponent<AudioListenerComponent>(Entity& entity, AudioListenerComponent* component)
 	{
 		if (!entity.HasComponent<AudioListenerComponent>())
@@ -303,7 +303,7 @@ namespace eg
 		if (!entity.HasComponent<AudioSourceComponent>())
 			entity.AddComponent<AudioSourceComponent>();
 		entity.GetComponent<AudioSourceComponent>().Audio.SetPath((component->Audio.GetPath().string()));
-	}
+	}*/
 
 	template<typename T>
 	void TrySetComponent(Entity& entity, std::optional<T>* component)

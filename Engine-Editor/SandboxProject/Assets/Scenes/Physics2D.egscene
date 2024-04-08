@@ -46,7 +46,7 @@ Entities:
       Restitution: 0
       RestitutionThreshold: 0.5
     AudioListenerComponent:
-      {}
+      Audio: {}
       IsInherited: false
       IsInheritedInChildren: false
   - Entity: 9681069167797108457
@@ -105,11 +105,14 @@ Entities:
       IsInheritedInChildren: false
       Fade: 0
     AudioSourceComponent:
-      AudioFilePath: C:\Users\natsue\Documents\muniffic\Muniffic\Engine-Editor\SandboxProject\Assets\jump.mp3
+      AudioFilePath: C:\Users\mniedziolka\Downloads\arpeggiator-end-credits-wav-14644.wav
+      AudioPlayingFromStart: false
   - Entity: 16108228054420389651
     Name: Cube
     TagComponent:
       Tag: Empty Entity
+    AudioSourceComponent:
+      AudioFilePath: C:\Users\mniedziolka\Downloads\arpeggiator-end-credits-wav-14644.wav
     TransformComponent:
       Translation: [5.06258726, -0.334269524, -3.81469999e-06]
       Rotation: [0, -0, -2.26661325]

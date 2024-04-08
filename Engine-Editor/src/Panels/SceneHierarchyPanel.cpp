@@ -1127,10 +1127,14 @@ namespace eg {
 
 		DrawComponent<AudioSourceComponent>("Audio Source", entity, [](auto& component)
 		{
+			//BasicAudio audioSource = component.Audio;
 			if (component.Audio.GetPath() != "") {
-				ImGui::Button(component.Audio.GetFileName().c_str(), { 100.0f, 0.0f });
+				if(ImGui::Button(component.Audio.GetFileName().c_str(), { 100.0f, 0.0f })) component.Audio.Play();
 			}
 			else ImGui::Button("Audio", { 100.0f, 0.0f });
+			
+			ImGui::Checkbox("Loop", component.Audio.IsLoopedPtr());
+			ImGui::Checkbox("Playing from start", component.Audio.IsPlayingFromStartPtr());
 
 			if (ImGui::BeginDragDropTarget())
 			{
@@ -1146,9 +1150,9 @@ namespace eg {
 			}
 		}, m_Context);
 
-		DrawComponent<AudioListenerComponent>("Audio Listener", entity, [](auto& component)
+		/*DrawComponent<AudioListenerComponent>("Audio Listener", entity, [](auto& component)
 		{
 			ImGui::Text("i am an audio listener");
-		}, m_Context);
+		}, m_Context);*/
 	}
 }
