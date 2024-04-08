@@ -44,6 +44,8 @@ project "Engine"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.mono}",
+		"%{IncludeDir.SDL}",
+		--"%{IncludeDir.SDL_mixer}",
 		"vendor"
 	}
 	links

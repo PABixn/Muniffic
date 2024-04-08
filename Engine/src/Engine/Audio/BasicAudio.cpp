@@ -1,7 +1,5 @@
 #include "egpch.h"
 #include "BasicAudio.h"
-#include <thread>
-#include "atlstr.h"
 
 namespace eg {
 	BasicAudio::BasicAudio(std::string& path) {
@@ -36,11 +34,12 @@ namespace eg {
 		//t2.join();
 		//std::thread worker([=]() { PlaySound(m_Path.c_str(), 0, SND_APPLICATION | SND_SYNC); });
 		//worker.join();
-		std::cout << looped << playingFromStart << std::endl;
-		if(!looped) PlaySound(m_Path.c_str(), 0, SND_APPLICATION | SND_ASYNC);
+		//std::cout << looped << playingFromStart << std::endl;
+		if (!looped) PlaySound(m_Path.c_str(), 0, SND_APPLICATION | SND_ASYNC);
 		else PlaySound(m_Path.c_str(), 0, SND_APPLICATION | SND_ASYNC | SND_LOOP);
-		
+		//work.join();
 		//WaveMixInit()
+		//mciSendString(L"play C:/Users/mniedziolka/Downloads/arpeggiator-end-credits-wav-14644.wav", NULL, 0, NULL);
 		return true;
 	}
 

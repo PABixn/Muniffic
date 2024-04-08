@@ -2,6 +2,8 @@
 #include "egpch.h"
 #include "Windows.h"
 #include "mmsystem.h"
+#include <thread>
+#include <SDL.h>
 
 #pragma comment(lib, "winmm.lib")
 
@@ -25,7 +27,6 @@ namespace eg {
 		void LoadCurrentAudio();
 		void OpenAudio(std::string path);
 		void Stop();
-		TCHAR *audio;
 	};
 
 }
