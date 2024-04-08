@@ -34,7 +34,7 @@ Entities:
     TagComponent:
       Tag: Camera
     TransformComponent:
-      Translation: [14.7204752, 21.0149899, 2]
+      Translation: [13.3828192, 21.0149899, 5]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
@@ -63,8 +63,8 @@ Entities:
     TagComponent:
       Tag: Player
     TransformComponent:
-      Translation: [14.7204752, 21.0149899, 7.27594504e-12]
-      Rotation: [0, 0, 3.14159441]
+      Translation: [13.3828192, 21.0149899, 7.27594504e-12]
+      Rotation: [0, 0, 0]
       Scale: [0.999998689, 0.999998689, 1]
       IsInherited: true
       IsInheritedInChildren: true
@@ -72,20 +72,21 @@ Entities:
       Color: [1, 1, 1, 1]
       TilingFactor: 1
       TextureUUID: 0
-      MinCoords: [0, 0.75]
-      MaxCoords: [0.25, 1]
+      MinCoords: [0, 0.800000012]
+      MaxCoords: [0.200000003, 1]
     AnimatorComponent:
       Speed: 1
       Animations:
-        - 1929321603766720864
         - 233249327502835231
         - 11077941037229700120
         - 17146195768097324905
+        - 16276505146027116446
+        - 10088477093035063827
+        - 13352326200612177184
+        - 10647375652733881957
       Transitions:
         - From: 1
           To: 0
-        - From: 2
-          To: 1
         - From: 0
           To: 2
         - From: 1
@@ -96,6 +97,68 @@ Entities:
           To: 3
         - From: 3
           To: 2
+        - From: 2
+          To: 3
+        - From: 2
+          To: 0
+        - From: 0
+          To: 3
+        - From: 0
+          To: 4
+        - From: 3
+          To: 4
+        - From: 4
+          To: 0
+        - From: 2
+          To: 4
+        - From: 4
+          To: 2
+        - From: 4
+          To: 3
+        - From: 5
+          To: 2
+        - From: 0
+          To: 5
+        - From: 1
+          To: 5
+        - From: 2
+          To: 5
+        - From: 3
+          To: 5
+        - From: 4
+          To: 5
+        - From: 5
+          To: 0
+        - From: 5
+          To: 1
+        - From: 5
+          To: 3
+        - From: 5
+          To: 4
+        - From: 0
+          To: 6
+        - From: 1
+          To: 6
+        - From: 2
+          To: 6
+        - From: 3
+          To: 6
+        - From: 4
+          To: 6
+        - From: 5
+          To: 6
+        - From: 6
+          To: 0
+        - From: 6
+          To: 1
+        - From: 6
+          To: 2
+        - From: 6
+          To: 3
+        - From: 6
+          To: 4
+        - From: 6
+          To: 5
     ScriptComponent:
       Name: Sandbox.Player
       ScriptFields:
@@ -343,7 +406,7 @@ Entities:
     TagComponent:
       Tag: redbox5
     TransformComponent:
-      Translation: [6, -3, 0]
+      Translation: [5.99999952, -3, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true

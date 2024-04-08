@@ -157,23 +157,6 @@ Resources:
     Name: walk
     Frames:
       - 10505579173071348777
-  - UUID: 1929321603766720864
-    ResourcePath: Animations
-    AnimationName: deathDone
-    Extension: .anim
-    FrameRate: 5
-    FrameCount: 8
-    Loop: true
-    Name: deathDone
-    Frames:
-      - 17166723789453031013
-      - 5558647854037385930
-      - 1262880410274171916
-      - 14478627654742308750
-      - 992424466030110999
-      - 3080361670610859457
-      - 17077458597792066640
-      - 5087964094837200996
   - UUID: 17146195768097324905
     ResourcePath: Animations
     AnimationName: flight
@@ -191,3 +174,58 @@ Resources:
       - 13622726553616057736
       - 17527039832132535156
       - 2983475082628541015
+  - UUID: 16276505146027116446
+    ResourcePath: Animations
+    AnimationName: walking
+    Extension: .anim
+    FrameRate: 11
+    FrameCount: 2
+    Loop: true
+    Name: walking
+    Frames:
+      - 3355535280605685785
+      - 8990214680166043689
+  - UUID: 10088477093035063827
+    ResourcePath: Animations
+    AnimationName: death
+    Extension: .anim
+    FrameRate: 16
+    FrameCount: 2
+    Loop: true
+    Name: death
+    Frames:
+      - 18212415695475235013
+      - 4175942134467794094
+  - UUID: 8344249746171150795
+    ResourcePath: Animations
+    AnimationName: deathDone
+    Extension: .anim
+    FrameRate: 1
+    FrameCount: 1
+    Loop: true
+    Name: deathDone
+    Frames:
+      - 6450046763828224447
+  - UUID: 13352326200612177184
+    ResourcePath: Animations
+    AnimationName: realdeath
+    Extension: .anim
+    FrameRate: 1
+    FrameCount: 1
+    Loop: true
+    Name: realdeath
+    Frames:
+      - 8231346222653008825
+  - UUID: 10647375652733881957
+    ResourcePath: Animations
+    AnimationName: fly
+    Extension: .anim
+    FrameRate: 20
+    FrameCount: 4
+    Loop: true
+    Name: fly
+    Frames:
+      - 15614575468508440398
+      - 9614043991223027037
+      - 4207669756587828292
+      - 996301824672338865

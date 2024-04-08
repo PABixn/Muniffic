@@ -1,4 +1,13 @@
 Resources:
+  - UUID: 11656325780543404877
+    ResourcePath: SpriteAtlas\
+    AtlasName: realdeath
+    Extension: .atlas
+    Width: 7680
+    Height: 2160
+    Channels: 4
+    Sprites:
+      - 8231346222653008825
   - UUID: 15571840516985781709
     ResourcePath: SpriteAtlas\
     AtlasName: Dune
@@ -171,6 +180,15 @@ Resources:
       - 6987873803867389705
       - 5805459470431313788
       - 5038155837452169645
+  - UUID: 846795565320679066
+    ResourcePath: SpriteAtlas\
+    AtlasName: deathDone
+    Extension: .atlas
+    Width: 7680
+    Height: 2160
+    Channels: 4
+    Sprites:
+      - 6450046763828224447
   - UUID: 3910093455932522330
     ResourcePath: SpriteAtlas\Hello
     AtlasName: Dune
@@ -248,6 +266,18 @@ Resources:
       - 3080361670610859457
       - 17077458597792066640
       - 5087964094837200996
+  - UUID: 2476875911143640761
+    ResourcePath: SpriteAtlas\
+    AtlasName: fly
+    Extension: .atlas
+    Width: 7680
+    Height: 2160
+    Channels: 4
+    Sprites:
+      - 15614575468508440398
+      - 9614043991223027037
+      - 4207669756587828292
+      - 996301824672338865
   - UUID: 15234468395354531359
     ResourcePath: SpriteAtlas\
     AtlasName: jumpDoneBetter
@@ -301,3 +331,23 @@ Resources:
       - 13622726553616057736
       - 17527039832132535156
       - 2983475082628541015
+  - UUID: 17448873862663177140
+    ResourcePath: SpriteAtlas\
+    AtlasName: walking
+    Extension: .atlas
+    Width: 9600
+    Height: 5400
+    Channels: 4
+    Sprites:
+      - 3355535280605685785
+      - 8990214680166043689
+  - UUID: 9754458680161017979
+    ResourcePath: SpriteAtlas\
+    AtlasName: death
+    Extension: .atlas
+    Width: 7680
+    Height: 2160
+    Channels: 4
+    Sprites:
+      - 18212415695475235013
+      - 4175942134467794094

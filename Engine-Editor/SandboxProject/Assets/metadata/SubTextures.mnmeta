@@ -49,36 +49,6 @@ Resources:
       - [0.578000009, 0.684824944]
       - [0.578000009, 1]
       - [0.289000005, 1]
-  - UUID: 16835090989505570923
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav14
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0.543749988, 0.776666641]
-      - [0.652499974, 0.776666641]
-      - [0.652499974, 0.888333321]
-      - [0.543749988, 0.888333321]
-  - UUID: 26655673286774891
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav70
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0.761250019, 0.106666684]
-      - [0.870000005, 0.106666684]
-      - [0.870000005, 0.218333304]
-      - [0.761250019, 0.218333304]
-  - UUID: 9511528700678310763
-    ResourcePath: SubTextures\
-    SubTextureName: sdfav24
-    Extension: ""
-    Texture: 7835399540365495283
-    TexCoords:
-      - [0.652499974, 0.664999962]
-      - [0.761250019, 0.664999962]
-      - [0.761250019, 0.776666641]
-      - [0.652499974, 0.776666641]
   - UUID: 14619977974021854251
     ResourcePath: SubTextures\
     SubTextureName: Dune7
@@ -89,6 +59,36 @@ Resources:
       - [0.578000009, 0.0544747114]
       - [0.578000009, 0.369649827]
       - [0.289000005, 0.369649827]
+  - UUID: 26655673286774891
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav70
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.761250019, 0.106666684]
+      - [0.870000005, 0.106666684]
+      - [0.870000005, 0.218333304]
+      - [0.761250019, 0.218333304]
+  - UUID: 16835090989505570923
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav14
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.543749988, 0.776666641]
+      - [0.652499974, 0.776666641]
+      - [0.652499974, 0.888333321]
+      - [0.543749988, 0.888333321]
+  - UUID: 9511528700678310763
+    ResourcePath: SubTextures\
+    SubTextureName: sdfav24
+    Extension: ""
+    Texture: 7835399540365495283
+    TexCoords:
+      - [0.652499974, 0.664999962]
+      - [0.761250019, 0.664999962]
+      - [0.761250019, 0.776666641]
+      - [0.652499974, 0.776666641]
   - UUID: 1508418057936572299
     ResourcePath: SubTextures\
     SubTextureName: jumpDoneBetter9
@@ -119,6 +119,16 @@ Resources:
       - [0.289000005, 0.369649827]
       - [0.289000005, 0.684824944]
       - [0, 0.684824944]
+  - UUID: 8231346222653008825
+    ResourcePath: SubTextures\
+    SubTextureName: realdeath0
+    Extension: ""
+    Texture: 12722590593902305285
+    TexCoords:
+      - [0.75, 0]
+      - [1, 0]
+      - [1, 0.5]
+      - [0.75, 0.5]
   - UUID: 6257093666443475385
     ResourcePath: SubTextures\Hello
     SubTextureName: Dune9
@@ -189,6 +199,16 @@ Resources:
       - [0.108750001, 0.553333342]
       - [0.108750001, 0.664999962]
       - [0, 0.664999962]
+  - UUID: 3355535280605685785
+    ResourcePath: SubTextures\
+    SubTextureName: walking0
+    Extension: ""
+    Texture: 4273578605752137721
+    TexCoords:
+      - [0, 0.800000012]
+      - [0.200000003, 0.800000012]
+      - [0.200000003, 1]
+      - [0, 1]
   - UUID: 15691033323875216409
     ResourcePath: SubTextures\
     SubTextureName: sdfav36
@@ -829,6 +849,16 @@ Resources:
       - [0.217500001, 0.329999983]
       - [0.217500001, 0.441666663]
       - [0.108750001, 0.441666663]
+  - UUID: 4207669756587828292
+    ResourcePath: SubTextures\
+    SubTextureName: fly2
+    Extension: ""
+    Texture: 69844846120857539
+    TexCoords:
+      - [0.5, 0.5]
+      - [0.75, 0.5]
+      - [0.75, 1]
+      - [0.5, 1]
   - UUID: 1618400287468785677
     ResourcePath: SubTextures\
     SubTextureName: sdfav47
@@ -1019,6 +1049,16 @@ Resources:
       - [0.435000002, 0.106666684]
       - [0.435000002, 0.218333304]
       - [0.326249987, 0.218333304]
+  - UUID: 18212415695475235013
+    ResourcePath: SubTextures\
+    SubTextureName: death0
+    Extension: ""
+    Texture: 8316033668194998778
+    TexCoords:
+      - [0.5, 0]
+      - [0.75, 0]
+      - [0.75, 0.5]
+      - [0.5, 0.5]
   - UUID: 12110195476799703749
     ResourcePath: SubTextures\
     SubTextureName: sdfav67
@@ -2149,6 +2189,16 @@ Resources:
       - [1, 0.199999988]
       - [1, 0.399999976]
       - [0.800000012, 0.399999976]
+  - UUID: 8990214680166043689
+    ResourcePath: SubTextures\
+    SubTextureName: walking1
+    Extension: ""
+    Texture: 4273578605752137721
+    TexCoords:
+      - [0.200000003, 0.800000012]
+      - [0.400000006, 0.800000012]
+      - [0.400000006, 1]
+      - [0.200000003, 1]
   - UUID: 10505579173071348777
     ResourcePath: SubTextures\
     SubTextureName: walk0
@@ -2219,3 +2269,53 @@ Resources:
       - [0.5, 0.5]
       - [0.5, 0.75]
       - [0.25, 0.75]
+  - UUID: 4175942134467794094
+    ResourcePath: SubTextures\
+    SubTextureName: death1
+    Extension: ""
+    Texture: 8316033668194998778
+    TexCoords:
+      - [0.75, 0]
+      - [1, 0]
+      - [1, 0.5]
+      - [0.75, 0.5]
+  - UUID: 6450046763828224447
+    ResourcePath: SubTextures\
+    SubTextureName: deathDone0
+    Extension: ""
+    Texture: 14791135298173123863
+    TexCoords:
+      - [0.75, 0]
+      - [1, 0]
+      - [1, 0.5]
+      - [0.75, 0.5]
+  - UUID: 15614575468508440398
+    ResourcePath: SubTextures\
+    SubTextureName: fly0
+    Extension: ""
+    Texture: 69844846120857539
+    TexCoords:
+      - [0, 0.5]
+      - [0.25, 0.5]
+      - [0.25, 1]
+      - [0, 1]
+  - UUID: 9614043991223027037
+    ResourcePath: SubTextures\
+    SubTextureName: fly1
+    Extension: ""
+    Texture: 69844846120857539
+    TexCoords:
+      - [0.25, 0.5]
+      - [0.5, 0.5]
+      - [0.5, 1]
+      - [0.25, 1]
+  - UUID: 996301824672338865
+    ResourcePath: SubTextures\
+    SubTextureName: fly3
+    Extension: ""
+    Texture: 69844846120857539
+    TexCoords:
+      - [0.75, 0.5]
+      - [1, 0.5]
+      - [1, 1]
+      - [0.75, 1]

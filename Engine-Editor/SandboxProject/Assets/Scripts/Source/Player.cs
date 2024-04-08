@@ -28,7 +28,7 @@ namespace Sandbox
             {
                 m_Animator = GetComponent<AnimatorComponent>();
                 m_HasAnimator = true;
-                m_Animator.Play("walk");
+                m_Animator.Play("walking");
 
             }
             bool hasTransform = HasComponent<TransformComponent>();
@@ -51,7 +51,7 @@ namespace Sandbox
             Vector3 velocity = new Vector3(0);
             if (Input.IsKeyDown(KeyCode.W))
             {
-                m_Animator.ChangeAnimation("jumpDoneBetter");
+                m_Animator.ChangeAnimation("flight");
                 velocity.Y = Speed;
 
             }
@@ -65,7 +65,7 @@ namespace Sandbox
             }
             if (Input.IsKeyDown(KeyCode.A))
             {
-                m_Animator.ChangeAnimation("walk");
+                
                 velocity.X = -Speed;
             }
             else if (Input.IsKeyDown(KeyCode.D))
@@ -90,7 +90,12 @@ namespace Sandbox
             {
                 camera.DistanceFromPlayer -= 1f * ts;
             }
-            m_Animator.ChangeAnimation("flight");
+            if(Input.IsKeyDown(KeyCode.T)) 
+            {
+                m_Animator.ChangeAnimation("walking");
+            }
+            
+            
 
 
 
@@ -108,8 +113,48 @@ namespace Sandbox
 
             m_Transform.translation = translation;
 
-            
-            
+            /*if(translation.Y == -18)
+            {
+                m_Animator.ChangeAnimation("deathDone");
+            }
+            if(translation.Y < -19.5)
+            {
+                m_Animator.ChangeAnimation("realdeath");
+            }*/
+
+            if (translation.Y < -19.5)
+            {
+                m_Animator.ChangeAnimation("walking");
+            }
+            if (translation.Y <= 15.02 & translation.Y >14 & translation.X > 5 & translation.X < 7)
+            {
+                m_Animator.ChangeAnimation("realdeath");
+            }
+            if (translation.Y <= 6.02 & translation.Y > 5 & translation.X > 4 & translation.X < 6)
+            {
+                m_Animator.ChangeAnimation("realdeath");
+            }
+            if (translation.Y <= 5.02 & translation.Y > 4 & translation.X > 9 & translation.X < 11)
+            {
+                m_Animator.ChangeAnimation("realdeath");
+            }
+            if (translation.Y <= -1.98 & translation.Y > -3 & translation.X > 5 & translation.X < 7)
+            {
+                m_Animator.ChangeAnimation("realdeath");
+            }
+            if (translation.Y <= -7.98 & translation.Y > -9 & translation.X > 9 & translation.X < 11)
+            {
+                m_Animator.ChangeAnimation("realdeath");
+            }
+            if (translation.Y <= -13.98 & translation.Y > -15 & translation.X > 4 & translation.X < 6)
+            {
+                m_Animator.ChangeAnimation("realdeath");
+            }
+            if (translation.Y <= -5.98 & translation.Y > -7 & translation.X > 4 & translation.X < 6)
+            {
+                m_Animator.ChangeAnimation("realdeath");
+            }
+
         }
 
     }
