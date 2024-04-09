@@ -157,7 +157,7 @@ namespace eg {
 			{
 
 
-				ASourceView.get<AudioSourceComponent>(f).Audio.Stop();
+				ASourceView.get<AudioSourceComponent>(f).Audio->Stop();
 
 			}
 		}
@@ -172,9 +172,9 @@ namespace eg {
 				auto ASourceView = m_Registry.view<AudioSourceComponent>();
 				for (auto f : ASourceView)
 				{
-					if (ASourceView.get<AudioSourceComponent>(f).Audio.IsPlayingFromStart()) {
-						
-						ASourceView.get<AudioSourceComponent>(f).Audio.Play();
+					if (ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart()) {
+						std::cout << ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart() << "-playing-" << ASourceView.get<AudioSourceComponent>(f).Audio->GetFileName();
+						ASourceView.get<AudioSourceComponent>(f).Audio->Play();
 					}
 				}
 		}
@@ -189,7 +189,7 @@ namespace eg {
 			{
 				
 
-					ASourceView.get<AudioSourceComponent>(f).Audio.Stop();
+					ASourceView.get<AudioSourceComponent>(f).Audio->Stop();
 				
 			}
 		}

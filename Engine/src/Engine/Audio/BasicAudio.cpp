@@ -5,6 +5,7 @@ namespace eg {
 	BasicAudio::BasicAudio(std::string& path) {
 		m_Path = std::filesystem::path(path);
 		//LoadCurrentAudio();
+		//SDL_Init(SDL_INIT_AUDIO);
 	}
 
 	void BasicAudio::LoadCurrentAudio() {

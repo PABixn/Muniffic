@@ -4,6 +4,7 @@
 #include "mmsystem.h"
 #include <thread>
 #include <SDL.h>
+#include <SDL_mixer.h>
 
 #pragma comment(lib, "winmm.lib")
 

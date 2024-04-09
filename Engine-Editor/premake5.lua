@@ -23,7 +23,7 @@ project "Engine-Editor"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.SFML}",
-		"${IncludeDir.SDL}"
+		--"${IncludeDir.SDL}"
 	}
 	
 	links

@@ -326,7 +326,7 @@ namespace eg {
 			out << YAML::BeginMap;
 
 			auto& audioSourceComponent = entity.GetComponent<AudioSourceComponent>();
-			out << YAML::Key << "AudioFilePath" << YAML::Value << audioSourceComponent.Audio.GetPath().string();
+			out << YAML::Key << "AudioFilePath" << YAML::Value << audioSourceComponent.Audio->GetPath().string();
 
 			out << YAML::EndMap;
 		}
@@ -688,7 +688,7 @@ namespace eg {
 				{
 					auto& alc = deserializedEntity.AddComponent<AudioSourceComponent>();
 					auto s = (audioSourceComponent["AudioFilePath"].as<std::string>());
-					alc.Audio.SetPath(s);
+					alc.Audio->SetPath(s);
 				}
 				auto audioListenerComponent = entity["AudioListenerComponent"];
 				if (audioListenerComponent)

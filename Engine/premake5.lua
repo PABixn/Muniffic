@@ -45,7 +45,7 @@ project "Engine"
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.mono}",
 		"%{IncludeDir.SDL}",
-		--"%{IncludeDir.SDL_mixer}",
+		"%{IncludeDir.SDL_mixer}",
 		"vendor"
 	}
 	links

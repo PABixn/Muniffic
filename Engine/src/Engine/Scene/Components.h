@@ -242,7 +242,14 @@ namespace eg {
 
 	struct AudioSourceComponent : Component
 	{
-		BasicAudio Audio;
+		Ref<BasicAudio> Audio;
+		AudioSourceComponent()
+		{
+			Audio = CreateRef<BasicAudio>();
+		};
+		AudioSourceComponent(const AudioSourceComponent&) = default;
+		AudioSourceComponent(const Ref<BasicAudio>& audio)
+			: Audio(audio) {}
 	};
 
 	template<typename... Component>

@@ -1128,13 +1128,13 @@ namespace eg {
 		DrawComponent<AudioSourceComponent>("Audio Source", entity, [](auto& component)
 		{
 			//BasicAudio audioSource = component.Audio;
-			if (component.Audio.GetPath() != "") {
-				if(ImGui::Button(component.Audio.GetFileName().c_str(), { 100.0f, 0.0f })) component.Audio.Play();
+			if (component.Audio->GetPath() != "") {
+				if(ImGui::Button(component.Audio->GetFileName().c_str(), { 100.0f, 0.0f })) component.Audio->Play();
 			}
 			else ImGui::Button("Audio", { 100.0f, 0.0f });
 			
-			ImGui::Checkbox("Loop", component.Audio.IsLoopedPtr());
-			ImGui::Checkbox("Playing from start", component.Audio.IsPlayingFromStartPtr());
+			ImGui::Checkbox("Loop", component.Audio->IsLoopedPtr());
+			ImGui::Checkbox("Playing from start", component.Audio->IsPlayingFromStartPtr());
 
 			if (ImGui::BeginDragDropTarget())
 			{
@@ -1144,7 +1144,7 @@ namespace eg {
 					std::filesystem::path audioPath = std::filesystem::path(path);
 					std::string s = audioPath.string();
 					//component.Audio = BasicAudio();
-					component.Audio.SetPath(std::filesystem::path(s));
+					component.Audio->SetPath(std::filesystem::path(s));
 				}
 				ImGui::EndDragDropTarget();
 			}
