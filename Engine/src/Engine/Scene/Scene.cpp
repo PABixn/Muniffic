@@ -172,8 +172,8 @@ namespace eg {
 				auto ASourceView = m_Registry.view<AudioSourceComponent>();
 				for (auto f : ASourceView)
 				{
+					ASourceView.get<AudioSourceComponent>(f).Audio->LoadCurrentAudio();
 					if (ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart()) {
-						std::cout << ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart() << "-playing-" << ASourceView.get<AudioSourceComponent>(f).Audio->GetFileName();
 						ASourceView.get<AudioSourceComponent>(f).Audio->Play();
 					}
 				}
