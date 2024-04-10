@@ -16,7 +16,7 @@ namespace eg
 	{
 		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
-		ResourceDatabase::SetCurrentDirectoryUUID(&m_CurrentDirectory);
+		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
 	}
 
 	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)

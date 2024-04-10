@@ -20,6 +20,7 @@ namespace eg {
 		void SetDeleteDirectoryPanel(DeleteDirectoryPanel* deleteDirectoryPanel) { m_DeleteDirectoryPanel = deleteDirectoryPanel; }
 		void SetRenameResourcePanel(RenameResourcePanel* renameResourcePanel) { m_RenameResourcePanel = renameResourcePanel; }
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
+		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }
 
 	private:
 		UUID m_BaseDirectory;

@@ -11,7 +11,7 @@
 
 namespace eg
 {
-	UUID* ResourceDatabase::m_CurrentDirectory;
+	UUID ResourceDatabase::m_CurrentDirectory;
 
 	std::unordered_map<UUID, Ref<Font>> ResourceDatabase::RuntimeFontResourceCache;
 	std::unordered_map<UUID, Ref<Texture2D>> ResourceDatabase::RuntimeTextureResourceCache;
@@ -339,9 +339,14 @@ namespace eg
 		return AssetDirectoryManager::getDirectoryPath(data->ParentDirectory) / std::string(data->ResourceName + data->Extension);
 	}
 
+	std::filesystem::path ResourceDatabase::GetResourcePath(std::filesystem::path path, ResourceType type)
+	{
+		return AssetDirectoryManager::getDirectoryPath(AssetDirectoryManager::GetRootAssetTypeDirectory(type)) / path.filename();
+	}
+
 	std::filesystem::path ResourceDatabase::GetResourcePath(std::filesystem::path path)
 	{
-		return AssetDirectoryManager::getDirectoryPath(*m_CurrentDirectory) / path.filename();
+		return AssetDirectoryManager::getDirectoryPath(m_CurrentDirectory) / path.filename();
 	}
 
 	bool ResourceDatabase::MoveResource(UUID uuid, UUID parentDirectory)
@@ -381,6 +386,7 @@ namespace eg
 		std::filesystem::path path = GetResourcePath(uuid);
 		std::filesystem::path newPath = AssetDirectoryManager::getDirectoryPath(data->ParentDirectory) / std::string(name + data->Extension);
 
+		data->ResourceName = name;
 		std::filesystem::rename(path, newPath);
 
 		return true;
@@ -388,7 +394,7 @@ namespace eg
 
 	void AddTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, TextureResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath);
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Image);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -405,7 +411,7 @@ namespace eg
 
 	void AddSubTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, SubTextureResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath);
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::SubTexture);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -420,7 +426,7 @@ namespace eg
 
 	void AddFontResourceData(UUID uuid, const std::filesystem::path& originalResourcePath, FontResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath);
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Font);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -437,7 +443,7 @@ namespace eg
 
 	void AddAnimationResource(UUID uuid, const std::filesystem::path& originalResourcePath, AnimationResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath);
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Animation);
 
 		if (!std::filesystem::exists(finalPath.parent_path()))
 		{
@@ -449,7 +455,7 @@ namespace eg
 
 	void AddSpriteAtlasResource(UUID uuid, const std::filesystem::path& originalResourcePath, SpriteAtlasResourceData* data)
 	{
-		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath);
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::SpriteAtlas);
 
 		if (finalPath != originalResourcePath)
 		{
@@ -493,13 +499,12 @@ namespace eg
 			}
 
 			TextureResourceData* data = new TextureResourceData();
-			data->ParentDirectory = *m_CurrentDirectory;
+			data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(type);
 			data->ResourceName = filePath.stem().string();
 			data->Extension = filePath.extension().string();
 			data->Height = ((ImageResourceData*)loadedResource->Data)->height;
 			data->Width = ((ImageResourceData*)loadedResource->Data)->width;
 			data->Channels = ((ImageResourceData*)loadedResource->Data)->channelCount;
-			AssetDirectoryManager::addAsset(*m_CurrentDirectory, uuid);
 			AddTextureResource(uuid, filePath, data);
 
 			return uuid;
@@ -507,10 +512,9 @@ namespace eg
 		else if (type == ResourceType::Font)
 		{
 			FontResourceData* data = new FontResourceData();
-			data->ParentDirectory = *m_CurrentDirectory;
+			data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(type);
 			data->ResourceName = filePath.stem().string();
 			data->Extension = filePath.extension().string();
-			AssetDirectoryManager::addAsset(*m_CurrentDirectory, uuid);
 			AddFontResourceData(uuid, filePath, data);
 
 			return uuid;

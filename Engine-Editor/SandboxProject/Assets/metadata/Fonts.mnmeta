@@ -1,2 +1,9 @@
 Resources:
-  []
+  - UUID: 15229192421118644617
+    ParentDirectory: 13758687790206567560
+    ResourceName: OpenSans-Regular
+    Extension: .ttf
+  - UUID: 9395689231696494486
+    ParentDirectory: 13758687790206567560
+    ResourceName: Trebuchet italic
+    Extension: .ttf

@@ -428,6 +428,7 @@ namespace eg
 		data->Type = ResourceType::Image;
 		TextureResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Image;
+		AssetDirectoryManager::addAsset(AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Image), uuid);
 	}
 
 	void ResourceSerializer::CacheSubTexture(UUID uuid, SubTextureResourceData* data)
@@ -442,6 +443,7 @@ namespace eg
 		data->Type = ResourceType::SubTexture;
 		SubTextureResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::SubTexture;
+		AssetDirectoryManager::addAsset(AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SubTexture), uuid);
 	}
 
 	void ResourceSerializer::CacheFont(UUID uuid, FontResourceData* data)
@@ -473,6 +475,7 @@ namespace eg
 		data->Type = ResourceType::Font;
 		FontResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Font;
+		AssetDirectoryManager::addAsset(AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Font), uuid);
 	}
 
 	void ResourceSerializer::CacheAnimation(UUID uuid, AnimationResourceData* data)
@@ -487,6 +490,7 @@ namespace eg
 		data->Type = ResourceType::Animation;
 		AnimationResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Animation;
+		AssetDirectoryManager::addAsset(AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Animation), uuid);
 	}
 
 	void ResourceSerializer::CacheSpriteAtlas(UUID uuid, SpriteAtlasResourceData* data)
@@ -501,5 +505,6 @@ namespace eg
 		data->Type = ResourceType::SpriteAtlas;
 		SpriteAtlasResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::SpriteAtlas;
+		AssetDirectoryManager::addAsset(AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SpriteAtlas), uuid);
 	}
 }

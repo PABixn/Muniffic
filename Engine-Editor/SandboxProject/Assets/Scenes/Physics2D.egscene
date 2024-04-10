@@ -1,3 +1,20 @@
 Scene: Untitled
 Entities:
-  []
+  - Entity: 6694680745760091487
+    Name: Cube
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [-2.79999995, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    TextComponent:
+      TextString: Example text
+      Color: [1, 1, 1, 1]
+      Kerning: 0
+      LineSpacing: 0
+      IsInherited: false
+      IsInheritedInChildren: false
+      Font: 9395689231696494486

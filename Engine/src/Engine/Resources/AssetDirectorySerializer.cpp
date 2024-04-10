@@ -37,7 +37,7 @@ namespace eg
 
 		UUID rootUUID = node["Root"].as<UUID>();
 		AssetDirectory* root = new AssetDirectory(rootUUID, "Assets", 0);
-		ResourceDatabase::SetCurrentDirectoryUUID(&rootUUID);
+		ResourceDatabase::SetCurrentDirectoryUUID(rootUUID);
 
 		auto directories = node["Directories"];
 

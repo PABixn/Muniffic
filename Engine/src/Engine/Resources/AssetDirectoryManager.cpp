@@ -1,5 +1,6 @@
 #include "egpch.h"
 #include "AssetDirectoryManager.h"
+#include "ResourceUtils.h"
 
 namespace eg
 {
@@ -8,23 +9,17 @@ namespace eg
 
 	UUID AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType type)
 	{
-		if (type == ResourceType::Image)
-			return assetDirectories.at(rootDirectoryUUID)->getSubdirectories().at(0);
-		else if (type == ResourceType::SubTexture)
-			return assetDirectories.at(rootDirectoryUUID)->getSubdirectories().at(1);
-		else if (type == ResourceType::Animation)
-			return assetDirectories.at(rootDirectoryUUID)->getSubdirectories().at(2);
-		else if (type == ResourceType::Font)
-			return assetDirectories.at(rootDirectoryUUID)->getSubdirectories().at(3);
-		else if (type == ResourceType::SpriteAtlas)
-			return assetDirectories.at(rootDirectoryUUID)->getSubdirectories().at(4);
-		else if (type == ResourceType::Shader)
-			return assetDirectories.at(rootDirectoryUUID)->getSubdirectories().at(5);
-		else
+		for (auto& [uuid, assetDirectory] : assetDirectories)
 		{
-			EG_CORE_WARN("ResourceType {0} not found", (int)type);
-			return 0;
+			if (assetDirectory->getParentDirectory() == rootDirectoryUUID)
+			{
+				if(assetDirectory->getName() == ResourceUtils::GetAssetDirectoryResourceTypeString(type))
+					return uuid;
+			}
 		}
+
+		EG_CORE_WARN("ResourceType {0} not found", ResourceUtils::GetAssetDirectoryResourceTypeString(type));
+		return 0;
 	}
 
 	std::string AssetDirectoryManager::getDirectoryName(UUID uuid)

@@ -19,6 +19,7 @@ namespace eg
 
 		static std::filesystem::path GetResourcePath(UUID uuid);
 		static std::filesystem::path GetResourcePath(std::filesystem::path path);
+		static std::filesystem::path GetResourcePath(std::filesystem::path path, ResourceType type);
 		static bool RenameResource(UUID uuid, const std::string& name);
 		static bool MoveResource(UUID uuid, UUID parentDirectory);
 		static bool FindResourceData(UUID uuid);
@@ -37,8 +38,8 @@ namespace eg
 		static UUID LoadResource(const std::filesystem::path& filePath);
 		static UUID AddResource(const std::filesystem::path& originalResourcePath, void* data, ResourceType resourceType);
 
-		static void SetCurrentDirectoryUUID(UUID* directory) { m_CurrentDirectory = directory; }
-		static UUID* GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
+		static void SetCurrentDirectoryUUID(UUID directory) { m_CurrentDirectory = directory; }
+		static UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 
 		static std::unordered_map<UUID, TextureResourceData*>& GetTextureResourceDataCache() { return ResourceSerializer::TextureResourceDataCache; }
 		static std::unordered_map<UUID, AnimationResourceData*>& GetAnimationResourceDataCache() { return ResourceSerializer::AnimationResourceDataCache; }
@@ -47,7 +48,7 @@ namespace eg
 		static std::unordered_map<UUID, FontResourceData*>& GetFontResourceDataCache() { return ResourceSerializer::FontResourceDataCache; }
 
 	private:
-		static UUID* m_CurrentDirectory;
+		static UUID m_CurrentDirectory;
 
 		static std::unordered_map<UUID, Ref<Font>> RuntimeFontResourceCache;
 		static std::unordered_map<UUID, Ref<Texture2D>> RuntimeTextureResourceCache;

@@ -11,6 +11,29 @@ namespace eg
 	class ResourceUtils
 	{
 	public:
+		static std::string GetAssetDirectoryResourceTypeString(ResourceType type)
+		{
+			switch (type)
+			{
+			case ResourceType::Image:
+				return "Textures";
+			case ResourceType::SubTexture:
+				return "SubTextures";
+			case ResourceType::SpriteAtlas:
+				return "SpriteAtlas";
+			case ResourceType::Shader:
+				return "Shaders";
+			case ResourceType::Font:
+				return "Fonts";
+			case ResourceType::Animation:
+				return "Animations";
+			case ResourceType::Script:
+				return "Scripts";
+			default:
+				return "None";
+			}
+		}
+
 		static std::string GetResourceTypeExtension(ResourceType type)
 		{
 			switch (type)
