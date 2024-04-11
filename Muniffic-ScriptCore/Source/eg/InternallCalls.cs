@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -139,6 +140,47 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void CircleRendererComponent_SetFade(ulong UUID, ref float fade);
+        #endregion
+
+        #region Animator
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_PlayAnimation(ulong UUID, ref string animationName);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_StopAnimation(ulong UUID);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_UpdateAnimation(ulong UUID, float dt);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_ChangeAnimation(ulong UUID, string animation);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_PauseAnimation(ulong UUID);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_SetSpeed(ulong UUID, float speed);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float AnimatorComponent_GetSpeed(ulong UUID);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_AddAnimation(ulong UUID, string animationName);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_RemoveAnimation(ulong UUID, string animationName);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_RemoveLastAnimation(ulong UUID);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_AddTransition(ulong UUID, string from, string to);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_AddTransitionByIndex(ulong UUID, int from, int to);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_RemoveTransition(ulong UUID, string from, string to);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_RemoveTransitionByIndex(ulong UUID, int from, int to);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool AnimatorComponent_CanTransition(ulong UUID, string from, string to);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool AnimatorComponent_CanTransitionByIndex(ulong UUID, int from, int to);
+        
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string AnimatorComponent_GetCurrentAnimation(ulong UUID);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_SetCurrentAnimation(ulong UUID, ref string animationName);
+
         #endregion
 
         #region Camera

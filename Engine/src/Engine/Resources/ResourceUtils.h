@@ -1,28 +1,83 @@
 #pragma once
 
 #include "egpch.h"
-#include "ResourceSerializer.h"
 #include "resourceTypes.h"
 #include "Engine/Project/Project.h"	
+#include "ResourceDatabase.h"
+#include "AssetDirectoryManager.h"
 
 namespace eg
 {
 	class ResourceUtils
 	{
 	public:
-		static ResourceType GetResourceTypeByExtension(const std::string& extension)
+		static std::string GetAssetDirectoryResourceTypeString(ResourceType type)
 		{
-			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".bmp" || extension == ".tga" || extension == ".gif" || extension == ".psd" || extension == ".hdr" || extension == ".pic" || extension == ".pnm")
+			switch (type)
+			{
+			case ResourceType::Image:
+				return "Textures";
+			case ResourceType::SubTexture:
+				return "SubTextures";
+			case ResourceType::SpriteAtlas:
+				return "SpriteAtlas";
+			case ResourceType::Shader:
+				return "Shaders";
+			case ResourceType::Font:
+				return "Fonts";
+			case ResourceType::Animation:
+				return "Animations";
+			case ResourceType::Script:
+				return "Scripts";
+			default:
+				return "None";
+			}
+		}
+
+		static std::string GetResourceTypeExtension(ResourceType type)
+		{
+			switch (type)
+			{
+			case ResourceType::Image:
+				return ".png";
+			case ResourceType::SubTexture:
+				return ".subtexture";
+			case ResourceType::SpriteAtlas:
+				return ".spriteatlas";
+			case ResourceType::Shader:
+				return ".shader";
+			case ResourceType::Font:
+				return ".ttf";
+			case ResourceType::Text:
+				return ".txt";
+			case ResourceType::Animation:
+				return ".anim";
+			case ResourceType::Script:
+				return ".script";
+			case ResourceType::NativeScript:
+				return ".nativescript";
+			default:
+				return "";
+			}
+		}
+
+		static ResourceType GetResourceTypeByExtension(std::string extension)
+		{
+			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg")
 				return ResourceType::Image;
+			else if (extension == ".subtexture")
+				return ResourceType::SubTexture;
+			else if (extension == ".spriteatlas")
+				return ResourceType::SpriteAtlas;
 			else if (extension == ".shader")
 				return ResourceType::Shader;
-			else if (extension == ".ttf" || extension == ".otf")
+			else if (extension == ".ttf")
 				return ResourceType::Font;
 			else if (extension == ".txt")
 				return ResourceType::Text;
 			else if (extension == ".anim")
 				return ResourceType::Animation;
-			else if (extension == ".mnscript")
+			else if (extension == ".script")
 				return ResourceType::Script;
 			else if (extension == ".nativescript")
 				return ResourceType::NativeScript;
@@ -30,153 +85,44 @@ namespace eg
 				return ResourceType::None;
 		}
 
-		static ResourceType GetCurrentResourceDirectoryType(std::filesystem::path path)
-		{
-			if (path.string().rfind(Project::GetAssetDirectory().string()) != std::string::npos)
-			{
-				size_t pos = path.string().rfind(Project::GetAssetDirectory().string());
-				if (pos + Project::GetAssetDirectory().string().length() < path.string().length())
-				{
-					std::string resourcePath = path.string().substr(pos + Project::GetAssetDirectory().string().length() + 1);
-					std::string type = resourcePath.substr(0, resourcePath.find('\\'));
-					return GetResourceTypeFromText(type);
-				}
-			}
-		}
-
-		static std::filesystem::path GetResourcePath(std::filesystem::path path)
-		{
-			std::filesystem::path keyPath = GetKeyPath(path);
-
-			if (std::filesystem::is_directory(path))
-				return keyPath;
-
-			if (keyPath.string().rfind('\\') != std::string::npos)
-				return keyPath.string().substr(0, keyPath.string().rfind('\\'));
-			else
-				return path;
-		}
-
-		static std::filesystem::path GetKeyPath(std::filesystem::path path)
-		{
-			if(path.string().rfind(Project::GetAssetDirectory().string()) == std::string::npos)
-				return std::filesystem::path();
-
-			if (path.string().rfind(Project::GetAssetDirectory().string()) + Project::GetAssetDirectory().string().length() + 1 >= path.string().length())
-				return std::filesystem::path();
-
-			return path.string().substr(path.string().rfind(Project::GetAssetDirectory().string()) + Project::GetAssetDirectory().string().length() + 1);
-		}
-
-		static bool CanDrop(const std::filesystem::path& path)
-		{
-			if (!std::filesystem::is_directory(path))
-				return false;
-
-			if (path.string().rfind(Project::GetAssetDirectory().string()) == std::string::npos)
-				return false;
-
-			if (path.string().rfind(Project::GetAssetDirectory().string()) + Project::GetAssetDirectory().string().length() + 1 >= path.string().length())
-				return false;
-
-			return true;
-		}
-
-		static std::filesystem::path GetKeyPath(UUID uuid)
-		{
-			ResourceType& type = ResourceSerializer::ResourceTypeInfo[uuid];
-
-			if (type == ResourceType::Image)
-				return ResourceSerializer::TextureResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::TextureResourceDataCache[uuid]->ImageName + ResourceSerializer::TextureResourceDataCache[uuid]->Extension);
-			else if(type == ResourceType::Animation)
-				return ResourceSerializer::AnimationResourceDataCache[uuid]->ResourcePath / std::filesystem::path(ResourceSerializer::AnimationResourceDataCache[uuid]->AnimationName + ResourceSerializer::AnimationResourceDataCache[uuid]->Extension);
-			else
-				return std::filesystem::path();
-		}
-
-		static void* GetResourcePointer(UUID uuid, ResourceType type)
-		{
-			switch (type)
-			{
-			case ResourceType::Image:
-				return ResourceSerializer::TextureResourceDataCache[uuid];
-			case ResourceType::Animation:
-				return ResourceSerializer::AnimationResourceDataCache[uuid];
-			default:
-				return nullptr;
-			}
-		}
-
 		static std::filesystem::path GetMetadataPath(ResourceType type)
 		{
+			std::filesystem::path baseDirectory = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata";
+
 			switch (type)
 			{
 			case ResourceType::Image:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Textures.mnmeta";
+				return baseDirectory / "Textures.mnmeta";
+			case ResourceType::SubTexture:
+				return baseDirectory / "SubTextures.mnmeta";
+			case ResourceType::SpriteAtlas:
+				return baseDirectory / "SpriteAtlases.mnmeta";
 			case ResourceType::Shader:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Shaders.mnmeta";
+				return baseDirectory / "Shaders.mnmeta";
 			case ResourceType::Font:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Fonts.mnmeta";
+				return baseDirectory / "Fonts.mnmeta";
 			case ResourceType::Text:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Texts.mnmeta";
+				return baseDirectory / "Texts.mnmeta";
 			case ResourceType::Animation:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Animations.mnmeta";
+				return baseDirectory / "Animations.mnmeta";
 			case ResourceType::Script:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "Scripts.mnmeta";
+				return baseDirectory / "Scripts.mnmeta";
 			case ResourceType::NativeScript:
-				return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "NativeScripts.mnmeta";
+				return baseDirectory / "NativeScripts.mnmeta";
 			default:
 				return std::filesystem::path();
 			}
 		}
 
-		static ResourceType GetResourceTypeFromText(const std::string type)
+		static std::filesystem::path GetAssetDirectoryMetadataPath()
 		{
-			if (type == "Textures")
-				return ResourceType::Image;
-			else if (type == "Shaders")
-				return ResourceType::Shader;
-			else if (type == "Fonts")
-				return ResourceType::Font;
-			else if (type == "Texts")
-				return ResourceType::Text;
-			else if (type == "Animations")
-				return ResourceType::Animation;
-			else if (type == "Scripts")
-				return ResourceType::Script;
-			else if (type == "NativeScripts")
-				return ResourceType::NativeScript;
-			else
-				return ResourceType::None;
+			return Project::GetProjectDirectory() / Project::GetAssetDirectory() / "metadata" / "AssetDirectory.mnmeta";
 		}
 
-		static std::string GetResourceTypeText(ResourceType type)
+		static bool CanDrop(UUID assetDirectory)
 		{
-			switch (type)
-			{
-			case ResourceType::Image:
-				return "Textures";
-			case ResourceType::Shader:
-				return "Shaders";
-			case ResourceType::Font:
-				return "Fonts";
-			case ResourceType::Text:
-				return "Texts";
-			case ResourceType::Animation:
-				return "Animations";
-			case ResourceType::Script:
-				return "Scripts";
-			case ResourceType::NativeScript:
-				return "NativeScripts";
-			default:
-				return "";
-			}
-		}
-
-		static ResourceType GetResourceTypeByKeyPath(std::filesystem::path path)
-		{
-			std::string type = path.string().substr(0, path.string().find('\\'));
-			return GetResourceTypeFromText(type);
+			if(!AssetDirectoryManager::findAssetDirectory(assetDirectory))
+				return false;
 		}
 	};
 }

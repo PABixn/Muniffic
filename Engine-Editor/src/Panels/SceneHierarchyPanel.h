@@ -38,6 +38,7 @@ namespace eg {
 
 		void SetContext(const Ref<Scene>& scene);
 		void OnImGuiRender();
+		void Update(float dt);
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; SetPreviewAbsoluteImagePath(""); SetPreviewRelativeImagePath(""); }

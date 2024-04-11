@@ -14,6 +14,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
+#include "Engine/Resources/ResourceDatabase.h"
 
 
 
@@ -225,11 +226,12 @@ namespace eg {
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
-	struct TextComponent: Component
+	struct TextComponent : Component
 	{
 		std::string TextString;
-		Ref<Font> FontAsset = Font::GetDefaultFont();
-		glm::vec4 Color{ 1.0f };
+		UUID FontAsset = Font::GetDefaultFontUUID();
+		Ref<Font> RuntimeFont = ResourceDatabase::GetFontRuntimeResource(Font::GetDefaultFontUUID());
+		glm::vec4 Color { 1.0f };
 		float Kerning = 0.0f;
 		float LineSpacing = 0.0f;
 	};

@@ -23,7 +23,8 @@ namespace eg {
 		DeleteFilePanel* GetDeleteFilePanel() { return m_DeleteFilePanel; }
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
-		std::filesystem::path GetCurrentPath() { m_ContentBrowserPanel->GetCurrentPath(); }
+		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
+
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
@@ -108,6 +109,7 @@ namespace eg {
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
 		RenameResourcePanel* m_RenameResourcePanel;
+		CreateDirectoryPanel* m_CreateDirectoryPanel;
 
 		enum class SceneState
 		{

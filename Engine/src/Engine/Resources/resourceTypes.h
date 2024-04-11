@@ -5,10 +5,13 @@
 #include "Engine/Project/Project.h"
 #include "Engine/Core/UUID.h"
 
-namespace eg {
+namespace eg
+{
 	enum class ResourceType
 	{
 		Animation,
+		SpriteAtlas,
+		SubTexture,
 		Shader,
 		Font,
 		Text,
@@ -26,7 +29,7 @@ namespace eg {
 		std::string Name;
 		std::filesystem::path Path;
 		uint64_t DataSize;
-		void* Data;
+		void *Data;
 	};
 
 	struct ImageResourceData
@@ -34,45 +37,46 @@ namespace eg {
 		uint8_t channelCount;
 		uint32_t width;
 		uint32_t height;
-		unsigned char* pixels;
+		unsigned char *pixels;
 	};
 
-	struct AnimationResourceData
+	struct ResourceData
 	{
-		float m_frameRate;
-		int m_frameCount;
-		bool m_loop;
-		std::string name;
-		std::vector<UUID> m_frames;
-		std::filesystem::path ResourcePath = "";
-		std::string AnimationName = "";
+		std::string ResourceName = "";
 		std::string Extension = "";
+		UUID ParentDirectory = 0;
+		ResourceType Type;
 	};
 
-	struct TextureResourceData
+	struct SpriteAtlasResourceData : public ResourceData
 	{
 		int Width = 0, Height = 0;
-		glm::vec2 m_TexCoords[4];
-		bool IsSubTexture = false;
 		int Channels = 0;
-		std::filesystem::path ResourcePath = "";
-		std::string ImageName = "";
-		std::string Extension = "";
-
-		std::filesystem::path GetKeyPath()
-		{
-			return ResourcePath / std::filesystem::path(ImageName + Extension);
-		}
-
-		std::filesystem::path GetRelativePath()
-		{
-			return std::filesystem::path(Project::GetProjectName()) / Project::GetAssetDirectory() / ResourcePath / std::filesystem::path(ImageName + Extension);
-		}
-
-		std::filesystem::path GetAbsolutePath()
-		{
-			return Project::GetProjectDirectory().parent_path() / GetRelativePath();
-		}
+		std::vector<UUID> Sprites;
 	};
-}
 
+	struct AnimationResourceData : public ResourceData
+	{
+		float FrameRate;
+		int FrameCount;
+		bool Loop;
+		std::vector<UUID> Frames;
+	};
+
+	struct SubTextureResourceData : public ResourceData
+	{
+		glm::vec2 TexCoords[4];
+		UUID Texture;
+	};
+
+	struct FontResourceData : public ResourceData
+	{
+	};
+
+	struct TextureResourceData : public ResourceData
+	{
+		int Width = 0, Height = 0;
+		int Channels = 0;
+	};
+
+}

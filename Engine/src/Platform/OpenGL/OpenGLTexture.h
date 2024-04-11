@@ -7,14 +7,25 @@ namespace eg
 	class OpenGLTexture2D : public Texture2D
 	{
 	public:
+		OpenGLTexture2D() = default;
 		OpenGLTexture2D(const TextureSpecification& specification);
 		OpenGLTexture2D(const std::string& path);
+		OpenGLTexture2D(const UUID& id);
 		virtual ~OpenGLTexture2D();
+
+
+		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(const UUID& id);
+		static Ref<Texture2D> Create(const TextureSpecification& specification);
+
+		bool Load(const std::string& path);
 
 		virtual const TextureSpecification& GetSpecification() const override { return m_Specification; }
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
 		virtual uint32_t GetRendererID() const override { return m_RendererID; }
+
+		virtual const UUID& GetID() const override { return m_Id; }
 
 		virtual const std::string& GetPath() const override { return m_Path; }
 
@@ -28,6 +39,8 @@ namespace eg
 		{
 			return m_RendererID == other.GetRendererID();
 		}
+	private:
+		
 	private:TextureSpecification m_Specification;
 
 		std::string m_Path;
@@ -35,5 +48,6 @@ namespace eg
 		uint32_t m_Width, m_Height;	
 		uint32_t m_RendererID;
 		GLenum m_InternalFormat = GL_RGBA8, m_DataFormat = GL_RGBA;
+		UUID m_Id;
 	};
 }

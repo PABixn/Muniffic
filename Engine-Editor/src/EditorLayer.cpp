@@ -19,17 +19,17 @@
 
 namespace eg
 {
-	static Ref<Font> s_Font;
+	static UUID s_Font;
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
-		s_Font = Font::GetDefaultFont();
+		
 	}
 
 	void EditorLayer::OnAttach()
 	{
 		ResourceSystemConfig resourceSystemConfig;
-		resourceSystemConfig.MaxLoaderCount = 3;
+		resourceSystemConfig.MaxLoaderCount = 4;
 		resourceSystemConfig.ResourceDirectory = "../resources";
 
 		if (!resourceSystemInit(resourceSystemConfig))
@@ -70,7 +70,7 @@ namespace eg
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		Renderer2D::SetLineThickness(3.0f);
-
+		s_Font = Font::GetDefaultFontUUID();
 	}
 
 	void EditorLayer::OnDetach()
@@ -98,6 +98,7 @@ namespace eg
 			m_Camera.OnUpdate(ts);
 
 		m_EditorCamera.OnUpdate(ts);
+		m_SceneHierarchyPanel.Update(ts);
 
 		Renderer2D::ResetStats();
 		m_FrameBuffer->Bind();
@@ -114,7 +115,8 @@ namespace eg
 			if (m_ViewportFocused)
 				m_Camera.OnUpdate(ts);
 			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-
+			if(m_AddResourcePanel->IsResourcePanelOpen())
+				m_AddResourcePanel->Update(ts);
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
 			// m_ActiveScene->OnRenderEditor(m_EditorCamera);
@@ -256,6 +258,11 @@ namespace eg
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		
+		m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
+		m_ContentBrowserPanel->SetRenameFolderPanel(m_RenameFolderPanel);
+		m_ContentBrowserPanel->SetDeleteDirectoryPanel(m_DeleteDirectoryPanel);
+		m_ContentBrowserPanel->SetRenameResourcePanel(m_RenameResourcePanel);
+		m_ContentBrowserPanel->SetCreateDirectoryPanel(m_CreateDirectoryPanel);
 		m_ContentBrowserPanel->OnImGuiRender();
 		m_ProjectDirectoryPanel->OnImGuiRender();
 
@@ -270,6 +277,9 @@ namespace eg
 
 		if (m_RenameResourcePanel->IsShown())
 			m_RenameResourcePanel->OnImGuiRender();
+
+		if (m_CreateDirectoryPanel->IsShown())
+			m_CreateDirectoryPanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
@@ -294,7 +304,7 @@ namespace eg
 
 		if(ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
 			Commands::ExecuteRawValueCommand(&m_ShowPhysicsColliders, !m_ShowPhysicsColliders, "Show Physics Colliders");
-		ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
+		//ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
@@ -763,10 +773,12 @@ namespace eg
 			m_RenameFolderPanel = new RenameFolderPanel();
 			m_DeleteDirectoryPanel = new DeleteDirectoryPanel();
 			m_RenameResourcePanel = new RenameResourcePanel();
+			m_CreateDirectoryPanel = new CreateDirectoryPanel();
 			m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
 			m_ContentBrowserPanel->SetRenameFolderPanel(m_RenameFolderPanel);
 			m_ContentBrowserPanel->SetDeleteDirectoryPanel(m_DeleteDirectoryPanel);
 			m_ContentBrowserPanel->SetRenameResourcePanel(m_RenameResourcePanel);
+			m_ContentBrowserPanel->SetCreateDirectoryPanel(m_CreateDirectoryPanel);
 		}
 	}
 
@@ -792,7 +804,7 @@ namespace eg
 			OnSceneStop();
 		m_SceneState = SceneState::Play;
 
-		m_ActiveScene = Scene::Copy(m_EditorScene);
+		//m_ActiveScene = Scene::Copy(m_EditorScene);
 		m_ActiveScene->OnRuntimeStart();
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);

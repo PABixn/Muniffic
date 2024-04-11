@@ -5,6 +5,7 @@
 #include "Engine/Renderer/RenderCommand.h"
 #include "Engine/Renderer/MSDFData.h"
 #include "UniformBuffer.h"
+#include "Engine/Resources/ResourceDatabase.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -827,7 +828,7 @@ namespace eg {
 
 	void Renderer2D::DrawString(const std::string& string, const glm::mat4& transform, const TextComponent& component, int entityID)
 	{
-		DrawString(string, component.FontAsset, transform, { component.Color, component.Kerning, component.LineSpacing }, entityID);
+		DrawString(string, component.RuntimeFont, transform, { component.Color, component.Kerning, component.LineSpacing }, entityID);
 	}
 
 	float Renderer2D::GetLineThickness()

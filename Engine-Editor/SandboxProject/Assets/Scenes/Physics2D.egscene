@@ -1,79 +1,20 @@
 Scene: Untitled
 Entities:
-  - Entity: 12505550746475622789
+  - Entity: 6694680745760091487
     Name: Cube
-    Parent: 4402459793689510281
     TagComponent:
-      Tag: Silli
+      Tag: Empty Entity
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [-2.79999995, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
-  - Entity: 10642011015283237485
-    Name: Cube
-    TagComponent:
-      Tag: Text
-    TransformComponent:
-      Translation: [-2.0999999, 0, 0]
-      Rotation: [1.29999995, -0.600000024, 0]
-      Scale: [1.60000002, 0.5, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
     TextComponent:
-      TextString: yeepie
+      TextString: Example text
       Color: [1, 1, 1, 1]
       Kerning: 0
       LineSpacing: 0
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 6885890671374481297
-    Name: Cube
-    Parent: 4402459793689510281
-    Children:
-      - 780870301131358863
-      - 3614097797690189154
-    TagComponent:
-      Tag: Child
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-  - Entity: 780870301131358863
-    Name: Cube
-    Parent: 6885890671374481297
-    TagComponent:
-      Tag: Grandchild1
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-  - Entity: 3614097797690189154
-    Name: Cube
-    Parent: 6885890671374481297
-    TagComponent:
-      Tag: Grandchild2
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-  - Entity: 4402459793689510281
-    Name: Cube
-    Children:
-      - 6885890671374481297
-      - 12505550746475622789
-    TagComponent:
-      Tag: Parent
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
+      Font: 9395689231696494486

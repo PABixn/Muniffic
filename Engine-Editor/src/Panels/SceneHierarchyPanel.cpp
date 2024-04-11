@@ -165,7 +165,7 @@ namespace eg {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
 				{
 					Entity draggedEntity = *(Entity*)payload->Data;
-					Commands::ExecuteChangeParentCommand(draggedEntity, std::nullopt, m_Context);
+					Commands::ExecuteChangeParentCommand(draggedEntity std::nullopt, m_Context);
 				}
 
 				ImGui::EndDragDropTarget();
@@ -198,9 +198,9 @@ namespace eg {
 		if (m_PreviewAbsoluteImagePath != "" ) {
 			ImGui::Begin("Preview");
 			GLuint my_opengl_texture; 
-			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceSerializer::TextureResourceDataCache) {
+			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceDatabase::GetTextureResourceDataCache()) {
 				auto CacheImageData = (pairOfUUIDAndData.second);
-				if (CacheImageData->GetAbsolutePath() == m_PreviewAbsoluteImagePath){
+				if (ResourceDatabase::GetResourcePath(pairOfUUIDAndData.first) == m_PreviewAbsoluteImagePath) {
 					stbi_set_flip_vertically_on_load(false);
 					unsigned char* image = stbi_load(m_PreviewAbsoluteImagePath.string().c_str(), &(CacheImageData->Width), &(CacheImageData->Height), &(CacheImageData->Channels), STBI_rgb_alpha);
 					if (image) {
@@ -244,6 +244,21 @@ namespace eg {
 			ImGui::End();
 		}
 		ImGui::End();
+	}
+
+	void SceneHierarchyPanel::Update(float dt)
+	{
+		if (m_SelectionContext)
+		{
+			if (m_SelectionContext.HasComponent<AnimatorComponent>())
+			{
+				auto& animator = m_SelectionContext.GetComponent<AnimatorComponent>().Animator2D;
+				if (animator)
+				{
+					animator->Update(dt);
+				}
+			}
+		}
 	}
 
 	void SceneHierarchyPanel::DrawEntityNode(EntityDisplayInfo entityDisplayInfo)
@@ -667,7 +682,6 @@ namespace eg {
 
 				UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
 
-
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 				{
 					component.Name = std::string(buffer);
@@ -923,10 +937,8 @@ namespace eg {
 						}
 					}
 				}
-				/*
-				if(!scriptExists)
-					ImGui::PopStyleColor();
-					*/
+
+
 			}, m_Context);
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)
@@ -941,13 +953,13 @@ namespace eg {
 
 				if (ImGui::BeginDragDropTarget())
 				{
+					uint64_t* uuid;
+
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 					{
-						uint64_t* uuid = (uint64_t*)payload->Data;
-						std::filesystem::path texturePath = ResourceUtils::GetKeyPath(*uuid);
-						texturePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texturePath;
+						uuid = (uint64_t*)payload->Data;
 
-						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+						Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*uuid);
 						if (texture->IsLoaded())
 						{
 							component.TextureUUID = *uuid;
@@ -956,7 +968,7 @@ namespace eg {
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
 						}
 						else
-							EG_WARN("Could not load texture {0}", texturePath.filename().string());
+							EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*uuid));
 					}
 					ImGui::EndDragDropTarget();
 				}
@@ -976,10 +988,7 @@ namespace eg {
 				if (ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
 
-
 				ImGui::Button("Texture", { 100.0f, 0.0f });
-
-
 
 				if (ImGui::BeginDragDropTarget())
 				{
@@ -987,10 +996,8 @@ namespace eg {
 					{
 						uint64_t* uuid = (uint64_t*)payload->Data;
 
-						std::filesystem::path texturePath = ResourceUtils::GetKeyPath(*uuid);
-						texturePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texturePath;
+						Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*uuid);
 
-						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 						if (texture->IsLoaded())
 						{
 							Ref<Texture2D> oldTexture = component.SubTexture->GetTexture();
@@ -1000,7 +1007,7 @@ namespace eg {
 							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
 						}
 						else
-							EG_WARN("Could not load texture {0}", texturePath.filename().string());
+							EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*uuid));
 					}
 					ImGui::EndDragDropTarget();
 				}
@@ -1134,6 +1141,33 @@ namespace eg {
 
 				if(ImGui::InputTextMultiline("Text String", &component.TextString))
 					Commands::ExecuteRawValueCommand<std::string, TextComponent>(&component.TextString, component.TextString, entity, "TextComponent-Text String");
+
+				std::string selectedFontName = "OpenSans-Regular";
+
+				if(ResourceDatabase::FindResourceData(component.FontAsset, ResourceType::Font))
+					selectedFontName = ResourceDatabase::GetResourceName(component.FontAsset);
+
+				if (ImGui::BeginCombo("Font", selectedFontName.c_str(), ImGuiComboFlags_None))
+				{
+					for (const auto& [uuid, font] : ResourceDatabase::GetFontResourceDataCache())
+					{
+						std::string name = ResourceDatabase::GetResourceName(uuid);
+						bool isSelected = component.FontAsset == uuid;
+						if (ImGui::Selectable(name.c_str(), isSelected))
+						{
+							UUID oldFont = component.FontAsset;
+							component.FontAsset = uuid;
+							component.RuntimeFont = ResourceDatabase::GetFontRuntimeResource(uuid);
+							Commands::ExecuteRawValueCommand<UUID, TextComponent>(&component.FontAsset, oldFont, entity, "TextComponent-Font", true);
+						}
+
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+
+					ImGui::EndCombo();
+				}
+
 				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand<glm::vec4, TextComponent>(&component.Color, color, entity, "TextComponent-Color");
 				if(ImGui::DragFloat("Kerning", &component.Kerning, 0.025f))
@@ -1145,35 +1179,97 @@ namespace eg {
 			DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
 			{
 				ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f);
-				ImGui::DragInt("Current Animation", component.Animator2D->GetAnimationIndexPtr(), 1, 0, component.Animator2D->GetAnimations()->size() - 1);
+				const Ref<std::vector<Ref<Animation>>> animations = component.Animator2D->GetAnimations();
+				if (component.Animator2D->GetCurrentAnimation() != nullptr && animations->size() > 0)
+				{
+					ImGui::Text("Current Animation: %s", component.Animator2D->GetCurrentAnimation()->GetName().c_str());
+					if (component.Animator2D->GetCurrentAnimation()->GetFrame())
+					{
+						Ref<SubTexture2D> subtexture = component.Animator2D->GetCurrentAnimation()->GetFrame();
+						ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
+						ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
+						ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
+					}
+				}
 
 				if (ImGui::Button("Add Empty Animation"))
 				{
 					std::string name = "Animation" + std::to_string(component.Animator2D->GetAnimations()->size());
 					component.Animator2D->AddAnimationWithName(name);
-					Commands::ExecuteVectorCommand(component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, Animation(), Animation());
+					Commands::ExecuteVectorCommand<Ref<Animation>>(component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, CreateRef<Animation>());
 				}
 
-				const Ref<std::vector<Animation>> animations = component.Animator2D->GetAnimations();
+				
 				ImGui::Text("Animations:");
 				if (animations->size() > 0)
 				{
 					int i = 0;
-					for (const Animation& animation : *animations)
+					for (auto animation : *animations)
 					{
+						
 						ImGui::PushID(i);
-						if (ImGui::TreeNode(animation.GetName().c_str()))
+						if (ImGui::TreeNode(animation->GetName().c_str()))
 						{
+							ImGui::DragFloat("Frame rate ", animation->GetFrameRatePtr(), 0.1f, 0.0f, 60.0f);
+							ImGui::Checkbox("Looped", animation->IsLoopedPtr());
+							ImGui::Checkbox("Playing", animation->IsPlayingPtr());
+							ImGui::PushID("Frames" + i);
+							if (ImGui::TreeNode("Frames")) 
+							{
+								for (int j = 0; j < animation->GetFrames().size(); j++)
+								{
+									ImGui::PushID("Frame:" + j);
+									ImGui::Text("Frame %d", j);
+									ImGui::PopID();
+								}
+								ImGui::TreePop();
+							}
+							ImGui::PopID();
 							//TODO: Playing the animation if the animation is looped play non-stop else play once and show button on top to play again
 							// 
 							//TODO: Display the animation properties if someone wants to change the animation properties show the popup window which will ask if the user wants to change the properties in the scene or in the prefab
 							//ImGui::PopID();
-							//ImGui::TreePop();
+							ImGui::TreePop();
+						}
+						if (ImGui::BeginDragDropTarget())
+						{
+							uint64_t* uuid;
+
+							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+							{
+								uuid = (uint64_t*)payload->Data;
+
+								Ref<Animation> animation = Animation::Create(*uuid);
+								if (animation)
+								{
+									Ref<Animation> oldAnim = component.Animator2D->GetAnimation(i);
+									component.Animator2D->SetAnimation(i, animation);
+									Ref<Animation> newAnim = component.Animator2D->GetAnimation(i);
+									Commands::ExecuteRefValueCommand<Animation>(newAnim, oldAnim, "AnimatorComponent-ChangeAnimation", true);
+								}
+								else
+									EG_WARN("Could not load animation from {0}", ResourceDatabase::GetResourcePath(*uuid));
+							}
+							ImGui::EndDragDropTarget();
 						}
 						ImGui::PopID();
 						i++;
 					}
 				}
+
+				//std::vector<std::pair<size_t, size_t>> transitions = component.Animator2D->GetTransitions();
+				//ImGui::Text("Transitions:");
+				//if (transitions.size() > 0)
+				//{
+				//	int i = 0;
+				//	for (const auto& transition : transitions)
+				//	{
+				//		ImGui::PushID(i);
+				//		ImGui::Text("Transition from %s to %s", animations->at(transition.first)->GetName().c_str(), animations->at(transition.second)->GetName().c_str());
+				//		ImGui::PopID();
+				//		i++;
+				//	}
+				//}
 			}, m_Context);
 	}
 
