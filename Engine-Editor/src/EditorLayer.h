@@ -106,6 +106,7 @@ namespace eg {
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
 		RenameResourcePanel* m_RenameResourcePanel;
+		CreateDirectoryPanel* m_CreateDirectoryPanel;
 
 		enum class SceneState
 		{

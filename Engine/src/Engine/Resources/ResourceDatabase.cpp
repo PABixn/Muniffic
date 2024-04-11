@@ -312,24 +312,7 @@ namespace eg
 
 	bool ResourceDatabase::FindResourceData(UUID uuid)
 	{
-		ResourceData* data = (ResourceData*)GetResourceData(uuid);
-
-		switch (data->Type)
-		{
-			case ResourceType::Image:
-				return ResourceSerializer::TextureResourceDataCache.find(uuid) != ResourceSerializer::TextureResourceDataCache.end();
-			case ResourceType::SubTexture:
-				return ResourceSerializer::SubTextureResourceDataCache.find(uuid) != ResourceSerializer::SubTextureResourceDataCache.end();
-			case ResourceType::Animation:
-				return ResourceSerializer::AnimationResourceDataCache.find(uuid) != ResourceSerializer::AnimationResourceDataCache.end();
-			case ResourceType::SpriteAtlas:
-				return ResourceSerializer::SpriteAtlasResourceDataCache.find(uuid) != ResourceSerializer::SpriteAtlasResourceDataCache.end();
-			case ResourceType::Font:
-				return ResourceSerializer::FontResourceDataCache.find(uuid) != ResourceSerializer::FontResourceDataCache.end();
-			default:
-				EG_CORE_ERROR("Resource type not supported");
-				return false;
-		}
+		return ResourceSerializer::ResourceTypeInfo.find(uuid) != ResourceSerializer::ResourceTypeInfo.end();
 	}
 
 	std::filesystem::path ResourceDatabase::GetResourcePath(UUID uuid)
@@ -362,6 +345,7 @@ namespace eg
 		std::filesystem::path path = GetResourcePath(uuid);
 
 		AssetDirectoryManager::moveAsset(uuid, data->ParentDirectory, parentDirectory);
+		data->ParentDirectory = parentDirectory;
 
 		std::filesystem::path newPath = GetResourcePath(uuid);
 

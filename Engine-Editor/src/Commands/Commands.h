@@ -212,6 +212,30 @@ namespace eg
 			UUID m_UUID;
 		};
 
+		class CreateDirectoryCommand : public Command
+		{
+		public: 
+			CreateDirectoryCommand(std::string name, UUID parentDirectory)
+				: m_ParentDirectory(parentDirectory)
+			{
+				Commands::AddCommand(this);
+
+				m_DirectoryUUID = UUID();
+
+				m_DirectoryData = new AssetDirectory(m_DirectoryUUID, name, parentDirectory);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			std::string name;
+			UUID m_DirectoryUUID;
+			AssetDirectory* m_DirectoryData;
+			UUID m_ParentDirectory;
+		};
+
 		class DeleteDirectoryCommand : public Command
 		{
 		public:
@@ -770,6 +794,18 @@ namespace eg
 				if(entity.HasComponent<Component>())
 					entity.GetInheritableComponent<Component>()->isInherited = false;
 			}
+		}
+
+		static Command* ExecuteMoveDirectoryCommand(UUID directoryUUID, UUID newParent)
+		{
+			Command* command = new MoveDirectoryCommand(directoryUUID, newParent);
+			return command;
+		}
+
+		static Command* ExecuteCreateDirectoryCommand(std::string name, UUID parentDirectory)
+		{
+			Command* command = new CreateDirectoryCommand(name, parentDirectory);
+			return command;
 		}
 
 		static Command* ExecuteRenameDirectoryCommand(UUID directoryUUID, const std::string& newName)

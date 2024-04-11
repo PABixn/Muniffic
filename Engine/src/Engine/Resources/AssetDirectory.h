@@ -24,6 +24,10 @@ namespace eg
 		void addAsset(const UUID& asset) { m_Assets.push_back(asset); }
 		void addSubdirectory(const UUID& subdirectory) { m_Subdirectories.push_back(subdirectory); }
 
+		void removeAsset(const UUID& asset) { m_Assets.erase(std::find(m_Assets.begin(), m_Assets.end(), asset)); }
+
+		void removeSubdirectory(const UUID& subdirectory) { m_Subdirectories.erase(std::find(m_Subdirectories.begin(), m_Subdirectories.end(), subdirectory)); }
+
 	private:
 		std::string m_Name;
 		std::vector<UUID> m_Subdirectories;

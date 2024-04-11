@@ -6,6 +6,7 @@
 #include "RenameFolderPanel.h"
 #include "DeleteDirectoryPanel.h"
 #include "RenameResourcePanel.h"
+#include "CreateDirectoryPanel.h"
 
 namespace eg {
 	
@@ -21,6 +22,7 @@ namespace eg {
 		void SetRenameResourcePanel(RenameResourcePanel* renameResourcePanel) { m_RenameResourcePanel = renameResourcePanel; }
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }
+		void SetCreateDirectoryPanel(CreateDirectoryPanel* createDirectoryPanel) { m_CreateDirectoryPanel = createDirectoryPanel; }
 
 	private:
 		UUID m_BaseDirectory;
@@ -33,5 +35,6 @@ namespace eg {
 		RenameFolderPanel* m_RenameFolderPanel;
 		RenameResourcePanel* m_RenameResourcePanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
+		CreateDirectoryPanel* m_CreateDirectoryPanel;
 	};
 }

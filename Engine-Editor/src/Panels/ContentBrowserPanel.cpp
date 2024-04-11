@@ -80,8 +80,10 @@ namespace eg
 					if (ResourceUtils::CanDrop(AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory)))
 					{
 						uint64_t uuid = *(uint64_t*)payload->Data;
-
-						//Commands::ExecuteMoveResourceCommand(uuid, AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory));
+						if (ResourceDatabase::FindResourceData(uuid))
+							Commands::ExecuteMoveResourceCommand(uuid, AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory));
+						else
+							Commands::ExecuteMoveDirectoryCommand(uuid, AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory));
 					}
 				}
 				ImGui::EndDragDropTarget();
@@ -99,7 +101,8 @@ namespace eg
 		{
 			if (ImGui::MenuItem("Create Folder"))
 			{
-				AssetDirectory* newDirectory = new AssetDirectory(UUID(), "New Folder", m_CurrentDirectory);
+				m_CreateDirectoryPanel->ShowWindow(m_CurrentDirectory);
+				//AssetDirectory* newDirectory = new AssetDirectory(UUID(), "New Folder", m_CurrentDirectory);
 			}
 			ImGui::EndPopup();
 		}
@@ -153,7 +156,7 @@ namespace eg
 
 				if(ImGui::MenuItem("Rename"))
 				{
-					//m_RenameFolderPanel->ShowWindow(path);
+					m_RenameFolderPanel->ShowWindow(directory);
 				}
 
 				ImGui::EndPopup();
@@ -174,7 +177,10 @@ namespace eg
 					{
 						uint64_t uuid = *(uint64_t*)payload->Data;
 						
-						//Commands::ExecuteMoveResourceCommand(uuid, path);
+						if(ResourceDatabase::FindResourceData(uuid))
+							Commands::ExecuteMoveResourceCommand(uuid, directory);
+						else
+							Commands::ExecuteMoveDirectoryCommand(uuid, directory);
 					}
 				}
 				ImGui::EndDragDropTarget();

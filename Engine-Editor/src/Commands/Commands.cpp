@@ -181,6 +181,20 @@ namespace eg
 		SetCurrentCommand(false);
 	}
 
+	void Commands::CreateDirectoryCommand::Undo()
+	{
+		AssetDirectoryManager::removeAssetDirectory(m_DirectoryUUID);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::CreateDirectoryCommand::Redo()
+	{
+		AssetDirectoryManager::addAssetDirectory(m_DirectoryUUID, m_DirectoryData);
+
+		SetCurrentCommand(false);
+	}
+
 	void Commands::DeleteDirectoryCommand::Undo()
 	{
 		AssetDirectoryManager::addAssetDirectory(m_Directory, m_DirectoryData);
@@ -233,6 +247,20 @@ namespace eg
 	void Commands::RenameResourceCommand::Redo()
 	{
 		ResourceDatabase::RenameResource(m_UUID, m_NewName);
+
+		SetCurrentCommand(false);
+	}
+
+	void Commands::MoveDirectoryCommand::Undo()
+	{
+		AssetDirectoryManager::moveAssetDirectory(m_DirectoryUUID, m_OldParent);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::MoveDirectoryCommand::Redo()
+	{
+		AssetDirectoryManager::moveAssetDirectory(m_OldParent, m_DirectoryUUID);
 
 		SetCurrentCommand(false);
 	}

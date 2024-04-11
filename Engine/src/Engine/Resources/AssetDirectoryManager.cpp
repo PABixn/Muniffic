@@ -146,8 +146,8 @@ namespace eg
 			return false;
 		}
 
-		AssetDirectoryManager::removeAsset(oldAssetDirectoryUUID, assetUUID);
-		AssetDirectoryManager::addAsset(newAssetDirectoryUUID, assetUUID);
+		oldAssetDirectory->removeAsset(assetUUID);
+		newAssetDirectory->addAsset(assetUUID);
 
 		return true;
 	}
@@ -161,11 +161,11 @@ namespace eg
 		}
 
 		AssetDirectory* assetDirectory = assetDirectories.at(uuid);
-		assetDirectory->setName(newName);
 
 		std::filesystem::path path = AssetDirectoryManager::getDirectoryPath(uuid);
 		std::filesystem::path newPath = path.parent_path() / newName;
 		std::filesystem::rename(path, newPath);
+		assetDirectory->setName(newName);
 
 		return true;
 	}
