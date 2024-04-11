@@ -16,13 +16,13 @@ Entities:
     TagComponent:
       Tag: Text
     TransformComponent:
-      Translation: [-3.5999999, -0.699999988, 0]
-      Rotation: [0, -1.10000002, 0]
-      Scale: [7.69999981, 2.4000001, 1]
+      Translation: [-2.0999999, 0, 0]
+      Rotation: [1.29999995, -0.600000024, 0]
+      Scale: [1.60000002, 0.5, 1]
       IsInherited: true
       IsInheritedInChildren: true
     TextComponent:
-      TextString: Hello
+      TextString: yeepie
       Color: [1, 1, 1, 1]
       Kerning: 0
       LineSpacing: 0

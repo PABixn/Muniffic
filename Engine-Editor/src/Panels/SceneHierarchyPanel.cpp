@@ -341,22 +341,23 @@ namespace eg {
 		auto boldFont = io.Fonts->Fonts[0];
 
 		ImGui::PushID(label.c_str());
+			ImGui::PushStyleVar(ImGuiColumnsFlags_NoBorder, true);
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, columnWidth);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
-
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
 		
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f,0.1f,0.15f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f,0.2f,0.2f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f,0.1f,0.15f,1.0f });
+		ImVec2 buttonSize = { lineHeight - 1.f, lineHeight };
+		//zna3
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.65f,0.15f,0.15f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.76f,0.23f,0.23f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.42f,0.1f,0.1f,1.0f });
 		ImGui::PushFont(boldFont);
-		if (ImGui::Button("X", buttonSize))
+		if (ImGui::Vec3AxisButton("X", buttonSize))
 		{
 			float check = values.x;
 			values.x = resetValue;
@@ -366,16 +367,18 @@ namespace eg {
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 	
-		if (ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f"))
+		if (ImGui::Vec3AxisDragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f"))
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
+
+		//ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f,0.7f,0.2f,1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f,0.8f,0.3f,1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f,0.7f,0.2f,1.0f });
 		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Y", buttonSize))
+		if (ImGui::Vec3AxisButton("Y", buttonSize))
 		{
 			float check = values.y;
 			values.y = resetValue;
@@ -384,32 +387,35 @@ namespace eg {
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		if(ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f"))
+		if(ImGui::Vec3AxisDragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f"))
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
-
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f,0.15f,0.8f,1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f,0.25f,0.9f,1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f,0.15f,0.8f,1.0f });
 		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Z", buttonSize))
+		//ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+
+		if (ImGui::Vec3AxisButton("Z", buttonSize))
 		{
 			float check = values.z;
 			values.z = resetValue;
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"), check != 0 ? true : false);
 		}
+		
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		if(ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f"))
+		if(ImGui::Vec3AxisDragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f"))
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
-
-		ImGui::PopStyleVar();
 		
-		ImGui::Columns(1);
+				ImGui::PopStyleVar();
+			ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		ImGui::NextColumn();
 		ImGui::PopID();
 	}
 
@@ -512,7 +518,7 @@ namespace eg {
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			std::strncpy(buffer, tag.c_str(), sizeof(buffer)); 
-			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
+			if (ImGui::InputText("##Tag", buffer, sizeof(buffer), ImGuiInputTextFlags_Wrapped))
 			{
 				tag = std::string(buffer);
 			}
@@ -566,6 +572,7 @@ namespace eg {
 				DrawVec3Control(entity, "Rotation", component.Rotation);
 				//component.Rotation = glm::radians(rotation);
 				DrawVec3Control(entity, "Scale", component.Scale, 1.0f);
+				ImGui::EndColumns();
 			}, m_Context);
 
 		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component) {
