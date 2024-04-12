@@ -371,9 +371,34 @@ namespace eg
             Type componentType = typeof(T);
             InternalCalls.Entity_RemoveComponent(ID, componentType);
         }
+
         #endregion
 
         #region Static
+
+        /// <summary>
+        /// Checks if the entity with the specified ID exists.
+        /// </summary>
+        /// <param name="ID">The ID of the entity.</param>
+        /// <returns>true if the entity exists; otherwise, false.</returns>
+        public static bool Exists(ulong ID)
+        {
+            return InternalCalls.Entity_Exists(ID);
+        }
+
+        /// <summary>
+        /// Finds an entity by its ID.
+        /// </summary>
+        /// <param name="ID">The ID of the entity.</param>
+        /// <returns>The entity with the specified ID, or null if the entity does not exist.</returns>
+        public static Entity FindEntityByID(ulong ID)
+        {
+            if (!Exists(ID))
+                return null;
+
+            return new Entity(ID);
+        }
+
         /// <summary>
         /// Retrieves entity from scene by name.
         /// </summary>

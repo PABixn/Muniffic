@@ -44,6 +44,7 @@ namespace eg {
 
 		Entity FindEntityByName(const std::string_view& name);
 		Entity GetEntityByUUID(UUID uuid);
+		bool EntityExists(UUID uuid);
 
 		Entity GetPrimaryCameraEntity();
 

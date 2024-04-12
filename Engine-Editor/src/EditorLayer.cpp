@@ -126,7 +126,7 @@ namespace eg
 		case SceneState::Play:
 		{
 			// Update
-			m_ActiveScene->OnUpdateRuntime(ts);
+			m_RuntimeScene->OnUpdateRuntime(ts);
 
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
@@ -138,7 +138,7 @@ namespace eg
 		{
 			m_EditorCamera.OnUpdate(ts);
 
-			m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera);
+			m_RuntimeScene->OnUpdateSimulation(ts, m_EditorCamera);
 			break;
 		}
 		}
@@ -678,8 +678,8 @@ namespace eg
 
 	void EditorLayer::NewScene()
 	{
-		m_EditorScene = CreateRef<Scene>();
-		m_ActiveScene = m_EditorScene;
+		m_ActiveScene = CreateRef<Scene>();
+		m_RuntimeScene = m_ActiveScene;
 
 		if (m_SceneState != SceneState::Edit)
 			OnSceneStop();
@@ -713,8 +713,8 @@ namespace eg
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
-			m_EditorScene = newScene;
 			m_ActiveScene = newScene;
+			m_RuntimeScene = m_ActiveScene;
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 			m_ActiveScenePath = path;
 		}
@@ -790,16 +790,16 @@ namespace eg
 
 	void EditorLayer::OnScenePlay()
 	{
-		if (!m_EditorScene)
+		if (!m_RuntimeScene)
 			return;
 		if (m_SceneState == SceneState::Simulate)
 			OnSceneStop();
 		m_SceneState = SceneState::Play;
 
-		//m_ActiveScene = Scene::Copy(m_EditorScene);
-		m_ActiveScene->OnRuntimeStart();
+		m_RuntimeScene = Scene::Copy(m_ActiveScene);
+		m_RuntimeScene->OnRuntimeStart();
 
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_SceneHierarchyPanel.SetContext(m_RuntimeScene);
 	}
 
 	void EditorLayer::OnSceneSimulate()
@@ -809,10 +809,10 @@ namespace eg
 
 		m_SceneState = SceneState::Simulate;
 
-		m_ActiveScene = Scene::Copy(m_EditorScene);
-		m_ActiveScene->OnSimulationStart();
+		m_RuntimeScene = Scene::Copy(m_ActiveScene);
+		m_RuntimeScene->OnSimulationStart();
 
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_SceneHierarchyPanel.SetContext(m_RuntimeScene);
 	}
 
 	void EditorLayer::OnScenePause()
@@ -833,8 +833,8 @@ namespace eg
 			m_ActiveScene->OnSimulationStop();
 
 		m_SceneState = SceneState::Edit;
-		m_ActiveScene->OnRuntimeStop();
-		m_ActiveScene = m_EditorScene;
+		m_RuntimeScene->OnRuntimeStop();
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnDuplicateEntity()
@@ -845,7 +845,7 @@ namespace eg
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity)
 		{
-			Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
+			Entity newEntity = m_ActiveScene->DuplicateEntity(selectedEntity);
 			m_SceneHierarchyPanel.SetSelectedEntity(newEntity);
 		}
 	}
