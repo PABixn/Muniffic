@@ -1019,6 +1019,84 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<BoxCollider2DComponent>().RestitutionThreshold = restitutionThreshold;
 	}
+
+	static bool BoxCollider2DComponent_CollidesWith(UUID uuid, UUID other)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Entity otherEntity = scene->GetEntityByUUID(other);
+		return entity.GetComponent<BoxCollider2DComponent>().CollidesWith(otherEntity.GetComponent<BoxCollider2DComponent>());
+	}
+
+	static bool BoxCollider2DComponent_CollidesWithPoint(UUID uuid, glm::vec2* point)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<BoxCollider2DComponent>().CollidesWith(*point);
+	}
+
+	static bool BoxCollider2DComponent_CollidesWithBox(UUID uuid, glm::vec2* position, glm::vec2* size)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<BoxCollider2DComponent>().CollidesWith(*position, *size);
+	}
+
+	static bool BoxCollider2DComponent_CollidesWithCircle(UUID uuid, glm::vec2* position, float radius)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<BoxCollider2DComponent>().CollidesWith(*position, radius);
+	}
+
+	static bool BoxCollider2DComponent_CollidesWithPolygon(UUID uuid, MonoArray* points)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		std::vector<glm::vec2> polygon;
+		Utils::MonoArrayToVector(points, polygon);
+		return entity.GetComponent<BoxCollider2DComponent>().CollidesWith(polygon);
+	}
+
+	static bool BoxCollider2DComponent_CollidesWithEdge(UUID uuid, glm::vec2* v0, glm::vec2* v1)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<BoxCollider2DComponent>().CollidesWith(*v0, *v1);
+	}
+
+	static bool BoxCollider2DComponent_CollidesWithTopEdge(UUID uuid, UUID other)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Entity otherEntity = scene->GetEntityByUUID(other);
+		return entity.GetComponent<BoxCollider2DComponent>().CollidesWithTopEdge(otherEntity.GetComponent<BoxCollider2DComponent>());
+	}
+
+	static bool BoxCollider2DComponent_CollidesWithBottomEdge(UUID uuid, UUID other)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Entity otherEntity = scene->GetEntityByUUID(other);
+		return entity.GetComponent<BoxCollider2DComponent>().CollidesWithBottomEdge(otherEntity.GetComponent<BoxCollider2DComponent>());
+	}
+
+	static bool BoxCollider2DComponent_CollidesWithLeftEdge(UUID uuid, UUID other)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Entity otherEntity = scene->GetEntityByUUID(other);
+		return entity.GetComponent<BoxCollider2DComponent>().CollidesWithLeftEdge(otherEntity.GetComponent<BoxCollider2DComponent>());
+	}
+
+	static bool BoxCollider2DComponent_CollidesWithRightEdge(UUID uuid, UUID other)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		Entity otherEntity = scene->GetEntityByUUID(other);
+		return entity.GetComponent<BoxCollider2DComponent>().CollidesWithRightEdge(otherEntity.GetComponent<BoxCollider2DComponent>());
+	}
+	
 	#pragma endregion
 
 	#pragma region CircleCollider2D
