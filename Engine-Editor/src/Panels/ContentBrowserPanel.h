@@ -16,13 +16,10 @@ namespace eg {
 		~ContentBrowserPanel() = default;
 		void OnImGuiRender();
 		void RenderFile(UUID key, const std::string& name, ResourceType type);
-		void SetDeleteFilePanel(DeleteFilePanel* deleteFilePanel) { m_DeleteFilePanel = deleteFilePanel; }
-		void SetRenameFolderPanel(RenameFolderPanel* renameFolderPanel) { m_RenameFolderPanel = renameFolderPanel; }
-		void SetDeleteDirectoryPanel(DeleteDirectoryPanel* deleteDirectoryPanel) { m_DeleteDirectoryPanel = deleteDirectoryPanel; }
-		void SetRenameResourcePanel(RenameResourcePanel* renameResourcePanel) { m_RenameResourcePanel = renameResourcePanel; }
+		void InitPanels();
+
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }
-		void SetCreateDirectoryPanel(CreateDirectoryPanel* createDirectoryPanel) { m_CreateDirectoryPanel = createDirectoryPanel; }
 
 	private:
 		UUID m_BaseDirectory;
@@ -31,10 +28,10 @@ namespace eg {
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_ImageIcon;
-		DeleteFilePanel* m_DeleteFilePanel;
-		RenameFolderPanel* m_RenameFolderPanel;
-		RenameResourcePanel* m_RenameResourcePanel;
-		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
-		CreateDirectoryPanel* m_CreateDirectoryPanel;
+		Ref<DeleteFilePanel> m_DeleteFilePanel;
+		Ref<RenameFolderPanel> m_RenameFolderPanel;
+		Ref<RenameResourcePanel> m_RenameResourcePanel;
+		Ref<DeleteDirectoryPanel> m_DeleteDirectoryPanel;
+		Ref<CreateDirectoryPanel> m_CreateDirectoryPanel;
 	};
 }

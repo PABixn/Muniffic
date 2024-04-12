@@ -21,7 +21,6 @@ namespace eg {
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& e) override;
 
-		DeleteFilePanel* GetDeleteFilePanel() { return m_DeleteFilePanel; }
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
 
@@ -107,11 +106,11 @@ namespace eg {
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
-		DeleteFilePanel* m_DeleteFilePanel;
+		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
 		RenameResourcePanel* m_RenameResourcePanel;
-		CreateDirectoryPanel* m_CreateDirectoryPanel;
+		CreateDirectoryPanel* m_CreateDirectoryPanel;*/
 		Scope<ConsolePanel> m_ConsolePanel;
 
 		enum class SceneState

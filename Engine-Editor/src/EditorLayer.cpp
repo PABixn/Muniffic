@@ -30,6 +30,8 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
+		
+
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
 		resourceSystemConfig.ResourceDirectory = "../resources";
@@ -257,28 +259,7 @@ namespace eg
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
-		
-		m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
-		m_ContentBrowserPanel->SetRenameFolderPanel(m_RenameFolderPanel);
-		m_ContentBrowserPanel->SetDeleteDirectoryPanel(m_DeleteDirectoryPanel);
-		m_ContentBrowserPanel->SetRenameResourcePanel(m_RenameResourcePanel);
-		m_ContentBrowserPanel->SetCreateDirectoryPanel(m_CreateDirectoryPanel);
 		m_ContentBrowserPanel->OnImGuiRender();
-
-		if(m_DeleteFilePanel->IsShown())
-			m_DeleteFilePanel->OnImGuiRender();
-
-		if(m_RenameFolderPanel->IsShown())
-			m_RenameFolderPanel->OnImGuiRender();
-		
-		if (m_DeleteDirectoryPanel->IsShown())
-			m_DeleteDirectoryPanel->OnImGuiRender();
-
-		if (m_RenameResourcePanel->IsShown())
-			m_RenameResourcePanel->OnImGuiRender();
-
-		if (m_CreateDirectoryPanel->IsShown())
-			m_CreateDirectoryPanel->OnImGuiRender();
 		m_ConsolePanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
@@ -808,13 +789,9 @@ namespace eg
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+			m_ContentBrowserPanel->InitPanels();
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
-			m_DeleteFilePanel = new DeleteFilePanel();
-			m_RenameFolderPanel = new RenameFolderPanel();
-			m_DeleteDirectoryPanel = new DeleteDirectoryPanel();
-			m_RenameResourcePanel = new RenameResourcePanel();
-			m_CreateDirectoryPanel = new CreateDirectoryPanel();
-			m_ConsolePanel = CreateScope<ConsolePanel>();
+
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		}
 		else

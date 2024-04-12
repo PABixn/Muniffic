@@ -19,6 +19,15 @@ namespace eg
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
 	}
 
+	void ContentBrowserPanel::InitPanels()
+	{
+		m_DeleteFilePanel = CreateRef<DeleteFilePanel>();
+		m_RenameFolderPanel = CreateRef<RenameFolderPanel>();
+		m_DeleteDirectoryPanel = CreateRef<DeleteDirectoryPanel>();
+		m_RenameResourcePanel = CreateRef<RenameResourcePanel>();
+		m_CreateDirectoryPanel = CreateRef<CreateDirectoryPanel>();
+	}
+
 	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)
 	{
 		static float thumbnailSize = 128.0f;
@@ -63,6 +72,21 @@ namespace eg
 	}
 
 	void ContentBrowserPanel::OnImGuiRender() {
+		if (m_DeleteFilePanel->IsShown())
+			m_DeleteFilePanel->OnImGuiRender();
+
+		if (m_RenameFolderPanel->IsShown())
+			m_RenameFolderPanel->OnImGuiRender();
+
+		if (m_DeleteDirectoryPanel->IsShown())
+			m_DeleteDirectoryPanel->OnImGuiRender();
+
+		if (m_RenameResourcePanel->IsShown())
+			m_RenameResourcePanel->OnImGuiRender();
+
+		if (m_CreateDirectoryPanel->IsShown())
+			m_CreateDirectoryPanel->OnImGuiRender();
+
 		ImGui::Begin("Content Browser");
 
 		if (m_CurrentDirectory != AssetDirectoryManager::getRootDirectoryUUID()) {
@@ -146,7 +170,7 @@ namespace eg
 			{
 				if (ImGui::MenuItem("Delete"))
 				{
-					//m_DeleteDirectoryPanel->ShowWindow(path);
+					m_DeleteDirectoryPanel->ShowWindow(directory);
 					ImGui::PopStyleColor();
 					ImGui::NextColumn();
 					ImGui::EndPopup();
