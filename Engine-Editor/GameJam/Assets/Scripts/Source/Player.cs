@@ -76,5 +76,10 @@ namespace Game
             m_RigidBody2D.ApplyLinearImpulse(velocity.XY, true);
         }
 
+        void Attack(Player target)
+        {
+
+        }
+
     }
 }

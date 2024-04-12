@@ -54,5 +54,30 @@ namespace eg
         {
             return new Vector2(a.X * b, a.Y * b);
         }
+
+        public void NormalizeTo(float length)
+        {
+            float currentLength = Length();
+            if (currentLength == 0)
+            {
+                return;
+            }
+            float scale = length / currentLength;
+            X *= scale;
+            Y *= scale;
+        }
+
+        public void Normalize()
+        {
+            NormalizeTo(1.0f);
+        }
+
+        public static Vector2 FindVector(Vector2 from, Vector2 to)
+        {
+            Vector2 vector = new Vector2();
+            vector.X = to.X - from.X;
+            vector.Y = to.Y - from.Y;
+            return vector; 
+        }
     };
 }
