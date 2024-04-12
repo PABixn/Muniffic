@@ -20,6 +20,7 @@ namespace eg
 
 	Ref<SubTexture2D> SubTexture2D::Create(UUID id)
 	{
+		EG_PROFILE_FUNCTION();
 		if (!ResourceDatabase::FindResourceData(id, ResourceType::SubTexture))
 			return nullptr;
 		SubTextureResourceData *subTexData = (SubTextureResourceData*)ResourceDatabase::GetResourceData(id);

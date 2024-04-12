@@ -12,6 +12,8 @@ namespace Sandbox
     {
         private TransformComponent m_Transform;
         private RigidBody2DComponent m_RigidBody2D;
+        private AnimatorComponent m_Animator;
+        private bool m_HasAnimator;
         Camera camera;
 
         public float Speed;
@@ -22,6 +24,12 @@ namespace Sandbox
             Console.WriteLine("Player created! - " + entity.ID);
             m_Transform = GetComponent<TransformComponent>();
             m_RigidBody2D = GetComponent<RigidBody2DComponent>();
+            if(HasComponent<AnimatorComponent>())
+            {
+                m_Animator = GetComponent<AnimatorComponent>();
+                m_HasAnimator = true;
+                m_Animator.Play("Dune");
+            }
             bool hasTransform = HasComponent<TransformComponent>();
             Console.WriteLine("HasComponent {0}", hasTransform);
         }
@@ -63,6 +71,10 @@ namespace Sandbox
             else
             {
                 velocity.X = 0f;
+            }
+            if(Input.IsKeyDown(KeyCode.Z) && m_HasAnimator)
+            {
+                m_Animator.TransitionByIndex(1);
             }
 
             if(Input.IsKeyDown(KeyCode.Q))

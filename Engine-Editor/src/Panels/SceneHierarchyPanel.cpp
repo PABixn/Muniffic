@@ -13,6 +13,7 @@
 #include "Engine/Resources/ResourceSerializer.h"
 #include "iostream"
 #include "shellapi.h"
+#include "ConsolePanel.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -142,9 +143,9 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
-		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false))
+		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false)) {
 			return;
-		
+		}
 		bool opened = false;
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -994,7 +995,11 @@ namespace eg {
 
 			DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
 			{
-				ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f);
+				float speed = component.Animator2D->GetSpeed();
+				if (ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f))
+				{
+					Commands::ExecuteRawValueCommand<float>(component.Animator2D->GetSpeedPtr(), speed, "AnimatorComponent-Speed");
+				}
 				const Ref<std::vector<Ref<Animation>>> animations = component.Animator2D->GetAnimations();
 				if (component.Animator2D->GetCurrentAnimation() != nullptr && animations->size() > 0)
 				{
@@ -1012,7 +1017,7 @@ namespace eg {
 				{
 					std::string name = "Animation" + std::to_string(component.Animator2D->GetAnimations()->size());
 					component.Animator2D->AddAnimationWithName(name);
-					Commands::ExecuteVectorCommand<Ref<Animation>>(component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, CreateRef<Animation>());
+					Commands::ExecuteVectorCommand<Ref<Animation>>({ component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, CreateRef<Animation>() });
 				}
 
 				
@@ -1023,10 +1028,10 @@ namespace eg {
 					for (auto animation : *animations)
 					{
 						
-						ImGui::PushID(i);
+						ImGui::PushID("Anim" + i);
 						if (ImGui::TreeNode(animation->GetName().c_str()))
 						{
-							ImGui::DragFloat("Frame rate ", animation->GetFrameRatePtr(), 0.1f, 0.0f, 60.0f);
+							ImGui::Text("Frame rate: %d", animation->GetFrameRate());
 							ImGui::Checkbox("Looped", animation->IsLoopedPtr());
 							ImGui::Checkbox("Playing", animation->IsPlayingPtr());
 							ImGui::PushID("Frames" + i);
@@ -1035,7 +1040,8 @@ namespace eg {
 								for (int j = 0; j < animation->GetFrames().size(); j++)
 								{
 									ImGui::PushID("Frame:" + j);
-									ImGui::Text("Frame %d", j);
+									//TODO: Display the name of the frame and the texture of the frame
+									ImGui::Text("Frame: %d", j);
 									ImGui::PopID();
 								}
 								ImGui::TreePop();
@@ -1073,19 +1079,70 @@ namespace eg {
 					}
 				}
 
-				//std::vector<std::pair<size_t, size_t>> transitions = component.Animator2D->GetTransitions();
-				//ImGui::Text("Transitions:");
-				//if (transitions.size() > 0)
-				//{
-				//	int i = 0;
-				//	for (const auto& transition : transitions)
-				//	{
-				//		ImGui::PushID(i);
-				//		ImGui::Text("Transition from %s to %s", animations->at(transition.first)->GetName().c_str(), animations->at(transition.second)->GetName().c_str());
-				//		ImGui::PopID();
-				//		i++;
-				//	}
-				//}
+				Ref<std::vector<std::pair<size_t, size_t>>> transitions = component.Animator2D->GetTransitions();
+				if (ImGui::Button("Add Transition"))
+				{
+					ImGui::OpenPopup("AddTransition");
+				}
+				if (ImGui::BeginPopup("AddTransition"))
+				{
+					for (size_t i = 0; i < animations->size(); i++)
+					{
+						for (size_t j = 0; j < animations->size(); j++)
+						{
+							std::pair<size_t, size_t> transition = std::make_pair(i, j);
+							auto hasTransition = std::find(transitions->begin(), transitions->end(), transition);
+							if (i != j && hasTransition == transitions->end())
+							{
+								std::string name = animations->at(i)->GetName() + " to " + animations->at(j)->GetName();
+								if (ImGui::Button(name.c_str()))
+								{
+									component.Animator2D->AddTransition(transition);
+									Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, transition, transition });
+									ImGui::CloseCurrentPopup();
+								}
+							}
+						}
+					}
+					if (ImGui::Button("Cancel"))
+					{
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
+				if (ImGui::TreeNode("Transitions:"))
+				{
+					
+					if (transitions->size() > 0)
+					{
+						int i = 0;
+						for (const auto& transition : *transitions)
+						{
+							ImGui::PushID(i);
+							ImGui::Text("Transition from %s to %s", animations->at(transition.first)->GetName().c_str(), animations->at(transition.second)->GetName().c_str()); 
+							ImGui::SameLine();
+							if (ImGui::Button("+"))
+							{
+								ImGui::OpenPopup("##Transition Popup");
+								
+							}
+							if (ImGui::BeginPopup("##Transition Popup"))
+							{
+								if (ImGui::Button("Remove Transition"))
+								{
+									component.Animator2D->RemoveTransition(transition);
+									Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::ADD, Commands::VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE, transition, transition, 0, transition, transition });
+									ImGui::CloseCurrentPopup();
+								}
+								ImGui::EndPopup();
+							}
+							
+							ImGui::PopID();
+							i++;
+						}
+					}
+					ImGui::TreePop();
+				}
 			}, m_Context);
 	}
 

@@ -5,6 +5,8 @@
 #include "Engine/Renderer/EditorCamera.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/AddResourcePanel.h"
+#include "Panels/ConsolePanel.h"
+
 
 namespace eg {
 	class EditorLayer : public Layer
@@ -55,6 +57,7 @@ namespace eg {
 		void UI_Toolbar();
 	private:
 		friend class UnsavedChangesPanel;
+		friend class ConsolePanel;
 		OrthographicCameraController m_Camera;
 		//Temp
 		Ref<Shader> m_Shader;
@@ -97,6 +100,8 @@ namespace eg {
 		int m_GizmoType = -1;
 
 		bool m_ShowPhysicsColliders = false;
+		bool m_ShowAxis = true;
+		bool m_ShowGrid = true;
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
@@ -107,6 +112,7 @@ namespace eg {
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
 		RenameResourcePanel* m_RenameResourcePanel;
 		CreateDirectoryPanel* m_CreateDirectoryPanel;
+		Scope<ConsolePanel> m_ConsolePanel;
 
 		enum class SceneState
 		{
@@ -119,6 +125,7 @@ namespace eg {
 	public:
 		UnsavedChangesPanel* m_UnsavedChangesPanel;
 		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
+		
 
 	};
 

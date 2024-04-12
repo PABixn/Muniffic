@@ -38,6 +38,8 @@ namespace eg {
 
 		void RenderScene(EditorCamera& camera);
 
+		void RenderAxis();
+
 		Entity DuplicateEntity(Entity entity);
 
 		Entity FindEntityByName(const std::string_view& name);
