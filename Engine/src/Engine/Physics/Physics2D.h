@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Core/Core.h"
 #include "Engine/Scene/Components.h"
-
+#include "box2d/box2d.h"
 #include "box2d/b2_body.h"
 
 namespace eg {

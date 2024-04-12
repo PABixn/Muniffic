@@ -516,22 +516,22 @@ namespace eg
 
         public bool CollidesWithBottom(BoxCollider2DComponent other)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWithBottom(Entity.ID, other.Entity.ID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWithBottomEdge(Entity.ID, other.Entity.ID);
         }
 
         public bool CollidesWithTop(BoxCollider2DComponent other)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWithTop(Entity.ID, other.Entity.ID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWithTopEdge(Entity.ID, other.Entity.ID);
         }
         
         public bool CollidesWithLeft(BoxCollider2DComponent other)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWithLeft(Entity.ID, other.Entity.ID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWithLeftEdge(Entity.ID, other.Entity.ID);
         }
 
         public bool CollidesWithRight(BoxCollider2DComponent other)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWithRight(Entity.ID, other.Entity.ID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWithRightEdge(Entity.ID, other.Entity.ID);
         }
         
         bool CollidesWithEntity(Entity entity)
@@ -653,17 +653,6 @@ namespace eg
         return CollidesWithEntitiesSide(entity, Side.BOTTOM);
     }
 
-    bool CollidesWithEntitiesChildren(Entity parentEntity)
-    {
-        if (entity == null)
-        {
-            return false;
-        }
-
-        return InternalCalls.BoxCollider2DComponent_CollidesWithEntitiesChildren(parentEntity, Entity);
-
-    }
-
     }
 
     public class CircleCollider2DComponent : Component
@@ -736,28 +725,6 @@ namespace eg
             return CollidesWithEntity(entity);
         }
 
-        public bool CollidesWithEntitiesChildren(ulong entityID)
-        {
-            Entity parentEntity = Entity.FindEntityByID(entityID);
-            if (entity == null)
-            {
-                return false;
-            }
-
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntitiesChildren(parentEntity.ID, Entity.ID);
-        }
-
-        public bool CollidesWithEntitiesChildren(Entity parentEntity)
-        {
-            if (entity == null)
-            {
-                return false;
-            }
-
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntitiesChildren(parentEntity.ID, Entity.ID);
-
-        }
-
         public bool CollidesWithEntity(string entityName)
         {
             Entity entity = Entity.FindEntityByName(entityName);
@@ -777,7 +744,7 @@ namespace eg
                 return false;
             }
 
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
+            return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, entity.ID);
         }
 
         public bool CollidesWithEntityTop(ulong entityID)
@@ -788,7 +755,7 @@ namespace eg
                 return false;
             }
 
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
+            return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, entity.ID);
         }
 
         public bool CollidesWithEntityLeft(ulong entityID)
@@ -799,7 +766,7 @@ namespace eg
                 return false;
             }
 
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
+            return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, entity.ID);
         }
 
         public bool CollidesWithEntityRight(ulong entityID)
@@ -810,7 +777,7 @@ namespace eg
                 return false;
             }
 
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
+            return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, entity.ID);
         }
 
         public bool CollidesWithEntitySide(ulong entityID, Side side)
@@ -824,13 +791,13 @@ namespace eg
             switch (side)
             {
                 case Side.LEFT:
-                    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, entity.ID);
                 case Side.RIGHT:
-                    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, entity.ID);
                 case Side.TOP:
-                    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, entity.ID);
                 case Side.BOTTOM:
-                    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, entity.ID);
                 default:
                     return false;
             }
