@@ -32,19 +32,39 @@ namespace eg
 		YAML::Node textureNode, animationNode, spriteAtlasNode, subTextureNode, fontNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
-			return false;
+		{
+			std::filesystem::create_directories(textureMetadataPath.parent_path());
+			std::ofstream file(textureMetadataPath, std::ios::trunc);
+			file.close();
+		}
 
 		if (!std::filesystem::exists(animationMetadataPath))
-			return false;
+		{
+			std::filesystem::create_directories(animationMetadataPath.parent_path());
+			std::ofstream file(animationMetadataPath, std::ios::trunc);
+			file.close();
+		}
 
 		if (!std::filesystem::exists(spriteAtlasMetadataPath))
-			return false;
+		{
+			std::filesystem::create_directories(spriteAtlasMetadataPath.parent_path());
+			std::ofstream file(spriteAtlasMetadataPath, std::ios::trunc);
+			file.close();
+		}
 
 		if (!std::filesystem::exists(subTextureMetadataPath))
-			return false;
+		{
+			std::filesystem::create_directories(subTextureMetadataPath.parent_path());
+			std::ofstream file(subTextureMetadataPath, std::ios::trunc);
+			file.close();
+		}
 
 		if (!std::filesystem::exists(fontMetadataPath))
-			return false;
+		{
+			std::filesystem::create_directories(fontMetadataPath.parent_path());
+			std::ofstream file(fontMetadataPath, std::ios::trunc);
+			file.close();
+		}
 
 		try
 		{
@@ -101,6 +121,32 @@ namespace eg
 		auto spriteAtlasResources = spriteAtlasNode["Resources"];
 		auto subtextureResource = subTextureNode["Resources"];
 		auto fontResources = fontNode["Resources"];
+
+		if (fontResources)
+		{
+			for (auto resource : fontResources)
+			{
+				UUID uuid = resource["UUID"].as<uint64_t>();
+
+				FontResourceData* data = new FontResourceData();
+				if (resource["ParentDirectory"])
+					data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+				else
+					data->ParentDirectory = 0;
+				if (resource["ResourceName"])
+					data->ResourceName = resource["ResourceName"].as<std::string>();
+				else
+					data->ResourceName = resource["FontName"].as<std::string>();
+				data->Extension = resource["Extension"].as<std::string>();
+
+				CacheFont(uuid, data);
+			}
+		}
+
+		if (ResourceDatabase::GetFontResourceDataCache().size() > 0)
+			Font::SetDefaultFont(ResourceDatabase::GetFontResourceDataCache().begin()->first);
+		else
+			Font::LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
 
 		if (textureResources)
 		{
@@ -168,9 +214,10 @@ namespace eg
 				else
 					data->ParentDirectory = 0;
 				if (resource["ResourceName"])
-					data->ResourceName = resource["AnimationName"].as<std::string>();
+					data->ResourceName = resource["ResourceName"].as<std::string>();
 				else
-					data->ResourceName = resource["ImageName"].as<std::string>();
+					data->ResourceName = resource["AnimationName"].as<std::string>();
+
 				data->Extension = resource["Extension"].as<std::string>();
 				data->FrameRate = resource["FrameRate"].as<float>();
 				data->FrameCount = resource["FrameCount"].as<int>();
@@ -200,6 +247,7 @@ namespace eg
 						data->ResourceName = resource["ResourceName"].as<std::string>();
 					else
 						data->ResourceName = resource["SpriteAtlas"].as<std::string>();
+
 					data->Extension = resource["Extension"].as<std::string>();
 					data->Width = resource["Width"].as<int>();
 					data->Height = resource["Height"].as<int>();
@@ -214,32 +262,6 @@ namespace eg
 					CacheSpriteAtlas(uuid, data);
 				}
 			}
-
-			if (fontResources)
-			{
-				for (auto resource : fontResources)
-				{
-					UUID uuid = resource["UUID"].as<uint64_t>();
-
-					FontResourceData* data = new FontResourceData();
-					if (resource["ParentDirectory"])
-						data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
-					else
-						data->ParentDirectory = 0;
-					if (resource["ResourceName"])
-						data->ResourceName = resource["ResourceName"].as<std::string>();
-					else
-						data->ResourceName = resource["FontName"].as<std::string>();
-					data->Extension = resource["Extension"].as<std::string>();
-
-					CacheFont(uuid, data);
-				}
-			}
-
-			if (ResourceDatabase::GetFontResourceDataCache().size() > 0)
-				Font::SetDefaultFont(ResourceDatabase::GetFontResourceDataCache().begin()->first);
-			else
-				Font::LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
 		}
 	}
 

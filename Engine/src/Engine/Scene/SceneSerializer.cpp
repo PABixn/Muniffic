@@ -630,6 +630,10 @@ namespace eg {
 					if(textComponent["Font"])
 						tc.FontAsset = textComponent["Font"].as<UUID>();
 
+					if (!ResourceDatabase::FindResourceData(tc.FontAsset))
+						tc.FontAsset = Font::GetDefaultFontUUID();
+
+
 					tc.RuntimeFont = ResourceDatabase::GetFontRuntimeResource(tc.FontAsset);
 
 					if(textComponent["IsInherited"])

@@ -10,6 +10,10 @@ Entities:
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        - 6553224926623707225
     TextComponent:
       TextString: Example text
       Color: [1, 1, 1, 1]
@@ -17,4 +21,4 @@ Entities:
       LineSpacing: 0
       IsInherited: false
       IsInheritedInChildren: false
-      Font: 9395689231696494486
+      Font: 13190011819154449050

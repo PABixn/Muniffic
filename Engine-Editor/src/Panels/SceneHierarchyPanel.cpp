@@ -54,7 +54,7 @@ namespace eg {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity"))
 				{
 					Entity draggedEntity = *(Entity*)payload->Data;
-					Commands::ExecuteChangeParentCommand(draggedEntity std::nullopt, m_Context);
+					Commands::ExecuteChangeParentCommand(draggedEntity, std::nullopt, m_Context);
 				}
 
 				ImGui::EndDragDropTarget();
