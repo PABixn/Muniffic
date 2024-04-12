@@ -65,9 +65,9 @@ namespace Sandbox
                 velocity.X = 0f;
             }
 
-            //Vector3 translation = m_Transform.translation;
-            //translation += velocity * ts;
-            //m_Transform.translation = translation;
+            Vector3 translation = m_Transform.translation;
+            translation += velocity * ts;
+            m_Transform.translation = translation;
         }
 
     }

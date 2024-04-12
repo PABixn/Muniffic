@@ -655,12 +655,12 @@ namespace eg
 
     bool CollidesWithEntitiesChildren(Entity parentEntity)
     {
-        if (entity == null)
+        if (Entity == null)
         {
             return false;
         }
 
-        return InternalCalls.BoxCollider2DComponent_CollidesWithEntitiesChildren(parentEntity, Entity);
+        return InternalCalls.BoxCollider2DComponent_CollidesWithEntitiesChildren(parentEntity.ID, Entity.ID);
 
     }
 
@@ -739,7 +739,7 @@ namespace eg
         public bool CollidesWithEntitiesChildren(ulong entityID)
         {
             Entity parentEntity = Entity.FindEntityByID(entityID);
-            if (entity == null)
+            if (Entity == null)
             {
                 return false;
             }
@@ -749,7 +749,7 @@ namespace eg
 
         public bool CollidesWithEntitiesChildren(Entity parentEntity)
         {
-            if (entity == null)
+            if (Entity == null)
             {
                 return false;
             }
@@ -769,72 +769,72 @@ namespace eg
             return CollidesWithEntity(entity);
         }
 
-        public bool CollidesWithEntityBottom(ulong entityID)
-        {
-            Entity entity = Entity.FindEntityByID(entityID);
-            if (entity == null)
-            {
-                return false;
-            }
+        //public bool CollidesWithEntityBottom(ulong entityID)
+        //{
+        //    Entity entity = Entity.FindEntityByID(entityID);
+        //    if (entity == null)
+        //    {
+        //        return false;
+        //    }
 
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
-        }
+        //    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
+        //}
 
-        public bool CollidesWithEntityTop(ulong entityID)
-        {
-            Entity entity = Entity.FindEntityByID(entityID);
-            if (entity == null)
-            {
-                return false;
-            }
+        //public bool CollidesWithEntityTop(ulong entityID)
+        //{
+        //    Entity entity = Entity.FindEntityByID(entityID);
+        //    if (entity == null)
+        //    {
+        //        return false;
+        //    }
 
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
-        }
+        //    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
+        //}
 
-        public bool CollidesWithEntityLeft(ulong entityID)
-        {
-            Entity entity = Entity.FindEntityByID(entityID);
-            if (entity == null)
-            {
-                return false;
-            }
+        //public bool CollidesWithEntityLeft(ulong entityID)
+        //{
+        //    Entity entity = Entity.FindEntityByID(entityID);
+        //    if (entity == null)
+        //    {
+        //        return false;
+        //    }
 
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
-        }
+        //    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
+        //}
 
-        public bool CollidesWithEntityRight(ulong entityID)
-        {
-            Entity entity = Entity.FindEntityByID(entityID);
-            if (entity == null)
-            {
-                return false;
-            }
+        //public bool CollidesWithEntityRight(ulong entityID)
+        //{
+        //    Entity entity = Entity.FindEntityByID(entityID);
+        //    if (entity == null)
+        //    {
+        //        return false;
+        //    }
 
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
-        }
+        //    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
+        //}
 
-        public bool CollidesWithEntitySide(ulong entityID, Side side)
-        {
-            Entity entity = Entity.FindEntityByID(entityID);
-            if (entity == null)
-            {
-                return false;
-            }
+        //public bool CollidesWithEntitySide(ulong entityID, Side side)
+        //{
+        //    Entity entity = Entity.FindEntityByID(entityID);
+        //    if (entity == null)
+        //    {
+        //        return false;
+        //    }
 
-            switch (side)
-            {
-                case Side.LEFT:
-                    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
-                case Side.RIGHT:
-                    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
-                case Side.TOP:
-                    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
-                case Side.BOTTOM:
-                    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
-                default:
-                    return false;
-            }
-        }
+        //    switch (side)
+        //    {
+        //        case Side.LEFT:
+        //            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
+        //        case Side.RIGHT:
+        //            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
+        //        case Side.TOP:
+        //            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
+        //        case Side.BOTTOM:
+        //            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
+        //        default:
+        //            return false;
+        //    }
+        //}
 
     }
 

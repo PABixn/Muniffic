@@ -317,22 +317,22 @@ namespace eg
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void BoxCollider2DComponent_SetRestitutionThreshold(ulong entityID, ref float restitutionThreshold);
 
-        [MethodIMplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool BoxCollider2DComponent_CollidesWith(ulong entityID, ulong otherEntityID);
 
-        [MethodIMplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool BoxCollider2DComponent_CollidesWithTop(ulong entityID, ulong otherEntityID)
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_CollidesWithTop(ulong entityID, ulong otherEntityID);
 
-        [MethodIMplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool BoxCollider2DComponent_CollidesWithBottom(ulong entityID, ulong otherEntityID)
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_CollidesWithBottom(ulong entityID, ulong otherEntityID);
 
-        [MethodIMplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool BoxCollider2DComponent_CollidesWithLeft(ulong entityID, ulong otherEntityID)
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_CollidesWithLeft(ulong entityID, ulong otherEntityID);
 
-        [MethodIMplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool BoxCollider2DComponent_CollidesWithRight(ulong entityID, ulong otherEntityID)
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_CollidesWithRight(ulong entityID, ulong otherEntityID);
 
-        [MethodIMplAttribute(MethodImplOptions.InternalCall)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool BoxCollider2DComponent_CollidesWithEntitiesChildren(ulong entityID, ulong parentEntityID);
 
         #endregion

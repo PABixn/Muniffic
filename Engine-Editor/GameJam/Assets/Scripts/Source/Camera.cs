@@ -11,31 +11,36 @@ namespace Game
 {
     public class Camera : DefaultBehaviour
     {
-        private Entity m_Player;
-        private TransformComponent m_Transform;
-
-        public float DistanceFromPlayer = 5.0f;
-        public float Speed = 5.0f;
+        Entity player;
+        public float zoom = 5f;
+        TransformComponent transform;
+        TransformComponent playerTransform;
 
         void OnCreate()
         {
-            m_Transform = GetComponent<TransformComponent>();
-            m_Player = Entity.FindEntityByName("Player");
-            if (m_Player.HasComponent<TextComponent>())
+            player = Entity.FindEntityByName("Player");
+
+            if(player != null)
             {
-                m_Player.AddComponent<TextComponent>();
-                m_Player.GetComponent<TextComponent>().text = "Hello Worldfasdfasdfads!";
-                m_Player.GetComponent<TextComponent>().color = Color.blue;
+                DebugConsole.Log("Player found!", DebugConsole.LogType.Info);
             }
+            else
+            {
+                DebugConsole.Log("Player not found", DebugConsole.LogType.Error);
+            }
+
+            transform = GetComponent<TransformComponent>();
+            playerTransform = player.GetComponent<TransformComponent>();
         }
 
         void OnUpdate(float ts)
         {
-            if (m_Player != null)
-                m_Transform.translation = new Vector3(m_Player.GetComponent<TransformComponent>().translation.XY, DistanceFromPlayer);
+            if (Input.IsKeyDown(KeyCode.Q))
+                zoom -= 1f * ts;
+            else if(Input.IsKeyDown(KeyCode.E))
+                zoom += 1f * ts;
 
-            
+            transform.translation = new Vector3(playerTransform.translation.X, playerTransform.translation.Y, zoom);
         }
-
     }
 }
