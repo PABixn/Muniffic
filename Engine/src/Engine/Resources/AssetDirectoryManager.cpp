@@ -322,12 +322,6 @@ namespace eg
 			return false;
 		}
 
-		if (subDirectory->getParentDirectory() != 0)
-		{
-			EG_CORE_WARN("Subdirectory AssetDirectory with UUID {0} already has a parent", subdirectoryUUID);
-			return false;
-		}
-
 		std::vector<UUID>& subDirectories = parentDirectory->getSubdirectories();
 
 		if(std::find(parentDirectory->getSubdirectories().begin(), parentDirectory->getSubdirectories().end(), subdirectoryUUID) != parentDirectory->getSubdirectories().end())

@@ -28,10 +28,10 @@ namespace eg {
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_ImageIcon;
-		Ref<DeleteFilePanel> m_DeleteFilePanel;
-		Ref<RenameFolderPanel> m_RenameFolderPanel;
-		Ref<RenameResourcePanel> m_RenameResourcePanel;
-		Ref<DeleteDirectoryPanel> m_DeleteDirectoryPanel;
-		Ref<CreateDirectoryPanel> m_CreateDirectoryPanel;
+		Scope<DeleteFilePanel> m_DeleteFilePanel;
+		Scope<RenameFolderPanel> m_RenameFolderPanel;
+		Scope<RenameResourcePanel> m_RenameResourcePanel;
+		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel;
+		Scope<CreateDirectoryPanel> m_CreateDirectoryPanel;
 	};
 }

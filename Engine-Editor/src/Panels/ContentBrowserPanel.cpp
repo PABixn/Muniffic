@@ -21,11 +21,11 @@ namespace eg
 
 	void ContentBrowserPanel::InitPanels()
 	{
-		m_DeleteFilePanel = CreateRef<DeleteFilePanel>();
-		m_RenameFolderPanel = CreateRef<RenameFolderPanel>();
-		m_DeleteDirectoryPanel = CreateRef<DeleteDirectoryPanel>();
-		m_RenameResourcePanel = CreateRef<RenameResourcePanel>();
-		m_CreateDirectoryPanel = CreateRef<CreateDirectoryPanel>();
+		m_DeleteFilePanel = CreateScope<DeleteFilePanel>();
+		m_RenameFolderPanel = CreateScope<RenameFolderPanel>();
+		m_DeleteDirectoryPanel = CreateScope<DeleteDirectoryPanel>();
+		m_RenameResourcePanel = CreateScope<RenameResourcePanel>();
+		m_CreateDirectoryPanel = CreateScope<CreateDirectoryPanel>();
 	}
 
 	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)

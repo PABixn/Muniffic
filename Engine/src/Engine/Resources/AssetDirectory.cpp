@@ -11,8 +11,6 @@ namespace eg
 
 		AssetDirectoryManager::addAssetDirectory(uuid, this);
 
-		m_ParentDirectory = 0;
-
 		if(parentDirectory != 0)
 		{
 			AssetDirectoryManager::addSubDirectory(parentDirectory, uuid);
