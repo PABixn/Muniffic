@@ -4,13 +4,13 @@
 namespace eg
 {
 	DeleteDirectoryPanel::DeleteDirectoryPanel()
-	: m_Show(false), m_DirectoryPath(std::filesystem::path())
+	: m_Show(false), m_DirectoryUUID(0)
 	{ }
 
-	void DeleteDirectoryPanel::ShowWindow(std::filesystem::path directoryPath)
+	void DeleteDirectoryPanel::ShowWindow(UUID directoryUUID)
 	{
 		m_Show = true;
-		m_DirectoryPath = directoryPath;
+		m_DirectoryUUID = directoryUUID;
 	}
 
 	void DeleteDirectoryPanel::OnImGuiRender()
@@ -22,7 +22,7 @@ namespace eg
 
 		if (ImGui::Button("Delete directory AND ALL FILES from disk"))
 		{
-			Commands::ExecuteDeleteDirectoryCommand(m_DirectoryPath);
+			Commands::ExecuteDeleteDirectoryCommand(m_DirectoryUUID);
 			m_Show = false;
 		}
 		ImGui::SameLine();

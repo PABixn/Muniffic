@@ -1,7 +1,7 @@
 #include "egpch.h"
 #include "OpenGLTexture.h"
 #include "Engine/Resources/Systems/ResourceSystem.h"
-#include "Engine/Resources/ResourceDatabase.h"
+#include "Engine/Resources/ResourceUtils.h"
 #include "stb_image.h"
 
 namespace eg {
@@ -66,7 +66,7 @@ namespace eg {
 
 	OpenGLTexture2D::OpenGLTexture2D(const UUID& id)
 	{
-		std::filesystem::path path = ResourceDatabase::GetFullPath(id);
+		std::filesystem::path path = ResourceDatabase::GetResourcePath(id);
 		Load(path.string());
 	}
 
@@ -86,8 +86,8 @@ namespace eg {
 
 	Ref<Texture2D> OpenGLTexture2D::Create(const UUID& id)
 	{
+		std::filesystem::path path = ResourceDatabase::GetResourcePath(id);
 		EG_PROFILE_FUNCTION();
-		std::filesystem::path path = ResourceDatabase::GetFullPath(id);
 		return Create(path.string());
 	}
 

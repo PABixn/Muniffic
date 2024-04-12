@@ -5,12 +5,12 @@
 namespace eg
 {
 	RenameFolderPanel::RenameFolderPanel()
-		: m_Show(false), m_Path(std::filesystem::path())
+		: m_Show(false), m_DirectoryUUID(0)
 	{ }
 
-	void RenameFolderPanel::ShowWindow(std::filesystem::path path)
+	void RenameFolderPanel::ShowWindow(UUID directoryUUID)
 	{
-		m_Path = path;
+		m_DirectoryUUID = directoryUUID;
 		m_Show = true;
 	}
 
@@ -20,11 +20,11 @@ namespace eg
 
 		ImGui::Begin("Rename folder", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 		ImGui::Text("Enter new folder name");
-		char buffer[256];
+		static char buffer[256];
 		ImGui::InputText("##FolderName", buffer, 256);
 		if (ImGui::Button("Rename"))
 		{
-			Commands::ExecuteRenameDirectoryCommand(m_Path, buffer);
+			Commands::ExecuteRenameDirectoryCommand(m_DirectoryUUID, buffer);
 			//ResourceDatabase::RenameDirectory(m_Path, buffer);
 			m_Show = false;
 		}

@@ -6,6 +6,7 @@
 #include "RenameFolderPanel.h"
 #include "DeleteDirectoryPanel.h"
 #include "RenameResourcePanel.h"
+#include "CreateDirectoryPanel.h"
 
 namespace eg {
 	
@@ -15,22 +16,22 @@ namespace eg {
 		~ContentBrowserPanel() = default;
 		void OnImGuiRender();
 		void RenderFile(UUID key, const std::string& name, ResourceType type);
-		void SetDeleteFilePanel(DeleteFilePanel* deleteFilePanel) { m_DeleteFilePanel = deleteFilePanel; }
-		void SetRenameFolderPanel(RenameFolderPanel* renameFolderPanel) { m_RenameFolderPanel = renameFolderPanel; }
-		void SetDeleteDirectoryPanel(DeleteDirectoryPanel* deleteDirectoryPanel) { m_DeleteDirectoryPanel = deleteDirectoryPanel; }
-		void SetRenameResourcePanel(RenameResourcePanel* renameResourcePanel) { m_RenameResourcePanel = renameResourcePanel; }
-		std::filesystem::path GetCurrentPath() { return m_CurrentDirectory; }
+		void InitPanels();
+
+		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
+		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }
 
 	private:
-		std::filesystem::path m_BaseDirectory;
-		std::filesystem::path m_CurrentDirectory;
+		UUID m_BaseDirectory;
+		UUID m_CurrentDirectory;
 		void DrawCenteredText(const std::string& text, const float& cellSize);
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_ImageIcon;
-		DeleteFilePanel* m_DeleteFilePanel;
-		RenameFolderPanel* m_RenameFolderPanel;
-		RenameResourcePanel* m_RenameResourcePanel;
-		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
+		Scope<DeleteFilePanel> m_DeleteFilePanel;
+		Scope<RenameFolderPanel> m_RenameFolderPanel;
+		Scope<RenameResourcePanel> m_RenameResourcePanel;
+		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel;
+		Scope<CreateDirectoryPanel> m_CreateDirectoryPanel;
 	};
 }

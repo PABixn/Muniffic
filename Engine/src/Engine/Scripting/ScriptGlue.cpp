@@ -398,6 +398,13 @@ namespace eg
 		return e.GetUUID();
 	}
 
+	static bool Entity_Exists(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		return scene->EntityExists(uuid);
+	}
+
 	static uint64_t Entity_Create(MonoString* name)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -1207,6 +1214,7 @@ namespace eg
 
 	void ScriptGlue::RegisterFunctions()
 	{
+		EG_ADD_INTERNAL_CALL(Entity_Exists);
 		EG_ADD_INTERNAL_CALL(Console_Log);
 
 		EG_ADD_INTERNAL_CALL(Entity_HasComponent);

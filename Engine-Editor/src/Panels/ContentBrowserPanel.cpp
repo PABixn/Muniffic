@@ -7,15 +7,25 @@
 #include "Engine/Resources/ResourceSerializer.h"
 #include "Engine/Resources/ResourceDatabase.h"
 #include "../EditorLayer.h"
+#include "Engine/Resources/AssetDirectoryManager.h"
 
 namespace eg
 {
 	ContentBrowserPanel::ContentBrowserPanel()
-	: m_BaseDirectory(Project::GetProjectDirectory() / Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
+	: m_BaseDirectory(AssetDirectoryManager::getRootDirectoryUUID()), m_CurrentDirectory(m_BaseDirectory)
 	{
 		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
-		ResourceDatabase::SetCurrentPath(&m_CurrentDirectory);
+		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
+	}
+
+	void ContentBrowserPanel::InitPanels()
+	{
+		m_DeleteFilePanel = CreateScope<DeleteFilePanel>();
+		m_RenameFolderPanel = CreateScope<RenameFolderPanel>();
+		m_DeleteDirectoryPanel = CreateScope<DeleteDirectoryPanel>();
+		m_RenameResourcePanel = CreateScope<RenameResourcePanel>();
+		m_CreateDirectoryPanel = CreateScope<CreateDirectoryPanel>();
 	}
 
 	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)
@@ -62,29 +72,42 @@ namespace eg
 	}
 
 	void ContentBrowserPanel::OnImGuiRender() {
+		if (m_DeleteFilePanel->IsShown())
+			m_DeleteFilePanel->OnImGuiRender();
+
+		if (m_RenameFolderPanel->IsShown())
+			m_RenameFolderPanel->OnImGuiRender();
+
+		if (m_DeleteDirectoryPanel->IsShown())
+			m_DeleteDirectoryPanel->OnImGuiRender();
+
+		if (m_RenameResourcePanel->IsShown())
+			m_RenameResourcePanel->OnImGuiRender();
+
+		if (m_CreateDirectoryPanel->IsShown())
+			m_CreateDirectoryPanel->OnImGuiRender();
+
 		ImGui::Begin("Content Browser");
 
-		if (m_CurrentDirectory != std::filesystem::path(Project::GetAssetDirectory())) {
+		if (m_CurrentDirectory != AssetDirectoryManager::getRootDirectoryUUID()) {
 			if (ImGui::Button("<-"))
 			{
-				std::filesystem::path oldPath = m_CurrentDirectory;
-				m_CurrentDirectory = m_CurrentDirectory.parent_path();
+				UUID oldPath = m_CurrentDirectory;
+				m_CurrentDirectory = AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory);
 				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
-
-			//accept dragging files from windows
 
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
-					if (ResourceUtils::CanDrop(m_CurrentDirectory.parent_path()))
+					if (ResourceUtils::CanDrop(AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory)))
 					{
 						uint64_t uuid = *(uint64_t*)payload->Data;
-
-						Commands::ExecuteMoveResourceCommand(uuid, m_CurrentDirectory.parent_path());
-
-						//ResourceDatabase::MoveResource(uuid, m_CurrentDirectory.parent_path());
+						if (ResourceDatabase::FindResourceData(uuid))
+							Commands::ExecuteMoveResourceCommand(uuid, AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory));
+						else
+							Commands::ExecuteMoveDirectoryCommand(uuid, AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory));
 					}
 				}
 				ImGui::EndDragDropTarget();
@@ -102,8 +125,8 @@ namespace eg
 		{
 			if (ImGui::MenuItem("Create Folder"))
 			{
-				std::filesystem::path newDirectory = m_CurrentDirectory / "New Folder";
-				std::filesystem::create_directory(newDirectory);
+				m_CreateDirectoryPanel->ShowWindow(m_CurrentDirectory);
+				//AssetDirectory* newDirectory = new AssetDirectory(UUID(), "New Folder", m_CurrentDirectory);
 			}
 			ImGui::EndPopup();
 		}
@@ -124,47 +147,19 @@ namespace eg
 
 		ImGui::Columns(columnCount, 0, false);
 
-		ResourceType type = ResourceUtils::GetCurrentResourceDirectoryType(m_CurrentDirectory);
-
-		if (type == ResourceType::Image)
+		for (UUID asset : AssetDirectoryManager::getAssets(m_CurrentDirectory))
 		{
-			for (auto& [key, value] : ResourceDatabase::GetTextureResourceDataCache())
-			{
-				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
-					continue;
-
-				if(value->ImageName.find(buffer) == std::string::npos)
-					continue;
-
-				auto name = value->ImageName + value->Extension;
-				
-				RenderFile(key, name, type);
-			}
-		}
-		else if (type == ResourceType::Animation)
-		{
-			for (auto& [key, value] : ResourceDatabase::GetAnimationResourceDataCache())
-			{
-				if(value->ResourcePath != ResourceUtils::GetResourcePath(m_CurrentDirectory))
-					continue;
-
-				if(value->AnimationName.find(buffer) == std::string::npos)
-					continue;
-
-				auto name = value->AnimationName + value->Extension;
-				
-				RenderFile(key, name, type);
-			}
-		}
-
-		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
-		{
-			const auto& path = directoryEntry.path();
-			
-			if (!directoryEntry.is_directory())
+			ResourceType type = ResourceDatabase::GetResourceType(asset);
+			std::string name = ResourceDatabase::GetResourceName(asset);
+			if (name.find(buffer) == std::string::npos)
 				continue;
 
-			auto name = path.filename().string();
+			RenderFile(asset, name, type);
+		}
+
+		for (UUID directory : AssetDirectoryManager::getSubdirectories(m_CurrentDirectory))
+		{
+			std::string name = AssetDirectoryManager::getDirectoryName(directory);
 			ImGui::PushID(name.c_str());
 			
 			Ref<Texture2D> icon = m_DirectoryIcon;
@@ -175,7 +170,7 @@ namespace eg
 			{
 				if (ImGui::MenuItem("Delete"))
 				{
-					m_DeleteDirectoryPanel->ShowWindow(path);
+					m_DeleteDirectoryPanel->ShowWindow(directory);
 					ImGui::PopStyleColor();
 					ImGui::NextColumn();
 					ImGui::EndPopup();
@@ -185,7 +180,7 @@ namespace eg
 
 				if(ImGui::MenuItem("Rename"))
 				{
-					m_RenameFolderPanel->ShowWindow(path);
+					m_RenameFolderPanel->ShowWindow(directory);
 				}
 
 				ImGui::EndPopup();
@@ -193,9 +188,7 @@ namespace eg
 
 			if (ImGui::BeginDragDropSource())
 			{
-				std::filesystem::path relativePath(path);
-				const wchar_t* pathStr = relativePath.c_str();
-				ImGui::SetDragDropPayload("ContentBrowserPanel", pathStr, (wcslen(pathStr)+1) * sizeof(wchar_t));
+				ImGui::SetDragDropPayload("ContentBrowserPanel", &directory, sizeof(uint64_t));
 				ImGui::Text(name.c_str());
 				ImGui::EndDragDropSource();
 			}
@@ -204,11 +197,14 @@ namespace eg
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
-					if (ResourceUtils::CanDrop(path))
+					if (ResourceUtils::CanDrop(directory))
 					{
 						uint64_t uuid = *(uint64_t*)payload->Data;
 						
-						Commands::ExecuteMoveResourceCommand(uuid, path);
+						if(ResourceDatabase::FindResourceData(uuid))
+							Commands::ExecuteMoveResourceCommand(uuid, directory);
+						else
+							Commands::ExecuteMoveDirectoryCommand(uuid, directory);
 					}
 				}
 				ImGui::EndDragDropTarget();
@@ -217,8 +213,8 @@ namespace eg
 			ImGui::PopStyleColor();
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-				std::filesystem::path oldPath = m_CurrentDirectory;
-				m_CurrentDirectory /= path.filename();
+				UUID oldPath = m_CurrentDirectory;
+				m_CurrentDirectory = directory;
 				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
 

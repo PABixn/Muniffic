@@ -18,23 +18,34 @@ namespace eg
 		ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
 
 		ImGui::Begin("Delete file?", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
-		ImGui::Text("Warning: Choose delete method");
-		if(ImGui::Button("Delete file from project"))
+
+		if (m_Type == ResourceType::Font && m_UUID == Font::GetDefaultFontUUID())
 		{
-			Commands::ExecuteDeleteResourceCommand(m_UUID, m_Type, false);
+			ImGui::Text("Cannot delete default font");
+		}
+		else
+		{
+
+			ImGui::Text("Warning: Choose delete method");
+			if (ImGui::Button("Delete file from project"))
+			{
+				Commands::ExecuteDeleteResourceCommand(m_UUID, m_Type, false);
+				m_Show = false;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Delete file from disk"))
+			{
+				Commands::ExecuteDeleteResourceCommand(m_UUID, m_Type, true);
+				m_Show = false;
+			}
+			ImGui::SameLine();
+		}
+
+		if (ImGui::Button("Cancel"))
+		{
 			m_Show = false;
 		}
-		ImGui::SameLine();
-		if (ImGui::Button("Delete file from disk"))
-		{
-			Commands::ExecuteDeleteResourceCommand(m_UUID, m_Type, true);
-			m_Show = false;
-		}
-		ImGui::SameLine();
-		if(ImGui::Button("Cancel"))
-		{
-			m_Show = false;
-		}
+
 		ImGui::End();
 	}
 }

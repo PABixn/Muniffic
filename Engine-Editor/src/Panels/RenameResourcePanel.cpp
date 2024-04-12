@@ -20,7 +20,7 @@ namespace eg
 
 		ImGui::Begin("Rename resource", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 		ImGui::Text("Enter new resource name");
-		char buffer[256];
+		static char buffer[256];
 		ImGui::InputText("##ResourceName", buffer, 256);
 		if (ImGui::Button("Rename"))
 		{
