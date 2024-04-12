@@ -791,7 +791,7 @@ namespace eg
 	void EditorLayer::OnScenePlay()
 	{
 		if (!m_RuntimeScene)
-			return;
+			m_RuntimeScene = CreateRef<Scene>();
 		if (m_SceneState == SceneState::Simulate)
 			OnSceneStop();
 		m_SceneState = SceneState::Play;

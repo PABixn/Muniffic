@@ -28,8 +28,6 @@ namespace eg {
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		
-
 		void OnSimulationStart();
 		void OnSimulationStop();
 
