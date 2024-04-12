@@ -182,9 +182,9 @@ namespace eg
 
 #define EG_ADD_INTERNAL_CALL(Name) mono_add_internal_call("eg.InternalCalls::" #Name, Name)
 #pragma region Console
-	static void Console_Log(std::string message, ConsolePanel::LogType logType)
+	static void Console_Log(MonoString* message, ConsolePanel::LogType logType)
 	{
-		ConsolePanel::Log(message, logType);
+		ConsolePanel::Log(Utils::MonoStringToString(message), logType);
 	}
 #pragma endregion
 #pragma region Entity

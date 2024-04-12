@@ -512,8 +512,6 @@ namespace eg
             return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, other.Entity.ID);
         }
 
-        
-
         public bool CollidesWithBottom(BoxCollider2DComponent other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithBottomEdge(Entity.ID, other.Entity.ID);
@@ -652,18 +650,6 @@ namespace eg
 
         return CollidesWithEntitiesSide(entity, Side.BOTTOM);
     }
-
-    bool CollidesWithEntitiesChildren(Entity parentEntity)
-    {
-        if (Entity == null)
-        {
-            return false;
-        }
-
-        return InternalCalls.BoxCollider2DComponent_CollidesWithEntitiesChildren(parentEntity.ID, Entity.ID);
-
-    }
-
     }
 
     public class CircleCollider2DComponent : Component
@@ -736,28 +722,6 @@ namespace eg
             return CollidesWithEntity(entity);
         }
 
-        public bool CollidesWithEntitiesChildren(ulong entityID)
-        {
-            Entity parentEntity = Entity.FindEntityByID(entityID);
-            if (Entity == null)
-            {
-                return false;
-            }
-
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntitiesChildren(parentEntity.ID, Entity.ID);
-        }
-
-        public bool CollidesWithEntitiesChildren(Entity parentEntity)
-        {
-            if (Entity == null)
-            {
-                return false;
-            }
-
-            return InternalCalls.CircleCollider2DComponent_CollidesWithEntitiesChildren(parentEntity.ID, Entity.ID);
-
-        }
-
         public bool CollidesWithEntity(string entityName)
         {
             Entity entity = Entity.FindEntityByName(entityName);
@@ -777,7 +741,7 @@ namespace eg
                return false;
            }
 
-           return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
+           return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, entity.ID);
         }
 
         public bool CollidesWithEntityTop(ulong entityID)
@@ -788,7 +752,7 @@ namespace eg
                return false;
            }
 
-           return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
+           return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, entity.ID);
         }
 
         public bool CollidesWithEntityLeft(ulong entityID)
@@ -799,7 +763,7 @@ namespace eg
                return false;
            }
 
-           return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
+           return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, entity.ID);
         }
 
         public bool CollidesWithEntityRight(ulong entityID)
@@ -810,7 +774,7 @@ namespace eg
                return false;
            }
 
-           return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
+           return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, entity.ID);
         }
 
         public bool CollidesWithEntitySide(ulong entityID, Side side)
@@ -824,13 +788,13 @@ namespace eg
            switch (side)
            {
                case Side.LEFT:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
+                   return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, entity.ID);
                case Side.RIGHT:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
+                   return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, entity.ID);
                case Side.TOP:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
+                   return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, entity.ID);
                case Side.BOTTOM:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
+                   return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, entity.ID);
                default:
                    return false;
            }
