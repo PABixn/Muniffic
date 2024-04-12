@@ -207,22 +207,6 @@ namespace eg {
 		
 		BoxCollider2DComponent() = default;
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
-
-		#pragma region Functionality
-		public:
-			bool CollidesWith(const BoxCollider2DComponent& other);
-			bool CollidesWith(const CircleCollider2DComponent& other);
-			bool CollidesWith(glm::vec2* point);
-			bool CollidesWith(glm::vec2* position, glm::vec2* size);
-			bool CollidesWith(glm::vec2* position, float radius);
-			bool CollidesWith(const std::vector<glm::vec2>& vertices);
-			bool CollidesWithEdge(glm::vec2* v0, glm::vec2* v1);
-			bool CollidesWithTopEdge(const BoxCollider2DComponent& other);
-			bool CollidesWithBottomEdge(const BoxCollider2DComponent& other);
-			bool CollidesWithLeftEdge(const BoxCollider2DComponent& other);
-			bool CollidesWithRightEdge(const BoxCollider2DComponent& other);
-
-		#pragma endregion
 	};
 
 	struct CircleCollider2DComponent: Component

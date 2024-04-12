@@ -516,22 +516,22 @@ namespace eg
 
         public bool CollidesWithBottom(BoxCollider2DComponent other)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWithBottom(Entity.ID, other.Entity.ID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWithBottomEdge(Entity.ID, other.Entity.ID);
         }
 
         public bool CollidesWithTop(BoxCollider2DComponent other)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWithTop(Entity.ID, other.Entity.ID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWithTopEdge(Entity.ID, other.Entity.ID);
         }
         
         public bool CollidesWithLeft(BoxCollider2DComponent other)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWithLeft(Entity.ID, other.Entity.ID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWithLeftEdge(Entity.ID, other.Entity.ID);
         }
 
         public bool CollidesWithRight(BoxCollider2DComponent other)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWithRight(Entity.ID, other.Entity.ID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWithRightEdge(Entity.ID, other.Entity.ID);
         }
         
         bool CollidesWithEntity(Entity entity)
@@ -769,72 +769,72 @@ namespace eg
             return CollidesWithEntity(entity);
         }
 
-        //public bool CollidesWithEntityBottom(ulong entityID)
-        //{
-        //    Entity entity = Entity.FindEntityByID(entityID);
-        //    if (entity == null)
-        //    {
-        //        return false;
-        //    }
+        public bool CollidesWithEntityBottom(ulong entityID)
+        {
+           Entity entity = Entity.FindEntityByID(entityID);
+           if (entity == null)
+           {
+               return false;
+           }
 
-        //    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
-        //}
+           return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
+        }
 
-        //public bool CollidesWithEntityTop(ulong entityID)
-        //{
-        //    Entity entity = Entity.FindEntityByID(entityID);
-        //    if (entity == null)
-        //    {
-        //        return false;
-        //    }
+        public bool CollidesWithEntityTop(ulong entityID)
+        {
+           Entity entity = Entity.FindEntityByID(entityID);
+           if (entity == null)
+           {
+               return false;
+           }
 
-        //    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
-        //}
+           return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
+        }
 
-        //public bool CollidesWithEntityLeft(ulong entityID)
-        //{
-        //    Entity entity = Entity.FindEntityByID(entityID);
-        //    if (entity == null)
-        //    {
-        //        return false;
-        //    }
+        public bool CollidesWithEntityLeft(ulong entityID)
+        {
+           Entity entity = Entity.FindEntityByID(entityID);
+           if (entity == null)
+           {
+               return false;
+           }
 
-        //    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
-        //}
+           return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
+        }
 
-        //public bool CollidesWithEntityRight(ulong entityID)
-        //{
-        //    Entity entity = Entity.FindEntityByID(entityID);
-        //    if (entity == null)
-        //    {
-        //        return false;
-        //    }
+        public bool CollidesWithEntityRight(ulong entityID)
+        {
+           Entity entity = Entity.FindEntityByID(entityID);
+           if (entity == null)
+           {
+               return false;
+           }
 
-        //    return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
-        //}
+           return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
+        }
 
-        //public bool CollidesWithEntitySide(ulong entityID, Side side)
-        //{
-        //    Entity entity = Entity.FindEntityByID(entityID);
-        //    if (entity == null)
-        //    {
-        //        return false;
-        //    }
+        public bool CollidesWithEntitySide(ulong entityID, Side side)
+        {
+           Entity entity = Entity.FindEntityByID(entityID);
+           if (entity == null)
+           {
+               return false;
+           }
 
-        //    switch (side)
-        //    {
-        //        case Side.LEFT:
-        //            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
-        //        case Side.RIGHT:
-        //            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
-        //        case Side.TOP:
-        //            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
-        //        case Side.BOTTOM:
-        //            return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
-        //        default:
-        //            return false;
-        //    }
-        //}
+           switch (side)
+           {
+               case Side.LEFT:
+                   return InternalCalls.CircleCollider2DComponent_CollidesWithEntityLeft(Entity.ID, entity.ID);
+               case Side.RIGHT:
+                   return InternalCalls.CircleCollider2DComponent_CollidesWithEntityRight(Entity.ID, entity.ID);
+               case Side.TOP:
+                   return InternalCalls.CircleCollider2DComponent_CollidesWithEntityTop(Entity.ID, entity.ID);
+               case Side.BOTTOM:
+                   return InternalCalls.CircleCollider2DComponent_CollidesWithEntityBottom(Entity.ID, entity.ID);
+               default:
+                   return false;
+           }
+        }
 
     }
 
