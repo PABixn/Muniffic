@@ -10,8 +10,8 @@ namespace Game
 {
     class Square : Enemy
     {
-        float AttackCooldown = 2.0f;
-        float ProjectileSpeed = 0.5f;
+        public float AttackCooldown = 2.0f;
+        public float ProjectileSpeed = 0.5f;
         List<Projectile> projectiles = new List<Projectile>();
         void OnCreate()
         {
@@ -28,7 +28,7 @@ namespace Game
             Console.WriteLine("Square attacks!");
             Vector2 vector = Vector2.FindVector(Transform.translation.XY, playerTransform.translation.XY);
             vector.NormalizeTo(ProjectileSpeed);
-            projectiles.Add(new Projectile(vector, this.Damage));
+            projectiles.Add(new Projectile(vector, this.Damage, Projectile.ProjectileType.Normal));
         }
 
         void UpdateProjectilesPosition(float ts)

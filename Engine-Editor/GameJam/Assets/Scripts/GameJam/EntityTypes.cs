@@ -10,4 +10,23 @@ namespace Game
     {
         Human, Square, Circle, Triangle
     }
+
+    public enum ProjectileType
+    {
+        Normal,
+        Stun
+    }
+
+    public enum Stage
+    {
+        Square,
+        Triangle,
+        Circle
+    };
+
+    public enum AttackType
+    {
+        Melee,
+        Ranged
+    };
 }

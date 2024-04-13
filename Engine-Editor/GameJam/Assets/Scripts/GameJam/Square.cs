@@ -8,27 +8,27 @@ using eg;
 
 namespace Game
 {
-    class Circle : Enemy
+    public class Square : Enemy
     {
-        float AttackCooldown = 0.2f;
-        float ProjectileSpeed = 2.5f;
+        public float AttackCooldown = 2.0f;
+        public float ProjectileSpeed = 0.5f;
         List<Projectile> projectiles = new List<Projectile>();
         void OnCreate()
         {
-            Console.WriteLine("Circle created! - " + entity.ID);
-            Speed = 1.0f;
-            Health = 400;
-            Damage = 20;
-            JumpHeight = 2.0f;
+            Console.WriteLine("Square created! - " + entity.ID);
+            Speed = 0.5f;
+            Health = 800;
+            Damage = 100;
+            JumpHeight = 0.0f;
             attackType = AttackType.Ranged;
         }
 
         void Attack(Player target)
         {
-            Console.WriteLine("Circle attacks!");
+            Console.WriteLine("Square attacks!");
             Vector2 vector = Vector2.FindVector(Transform.translation.XY, playerTransform.translation.XY);
             vector.NormalizeTo(ProjectileSpeed);
-            projectiles.Add(new Projectile(vector, this.Damage, Projectile.ProjectileType.Normal));
+            projectiles.Add(new Projectile(vector, this.Damage, ProjectileType.Normal));
         }
 
         void UpdateProjectilesPosition(float ts)
@@ -37,12 +37,6 @@ namespace Game
             {
                 projectile.UpdatePosition(ts);
             }
-        }
-
-        protected void OnUpdate(float ts)
-        {
-            base.OnUpdate(ts);
-            UpdateProjectilesPosition(ts);
         }
     }
 }

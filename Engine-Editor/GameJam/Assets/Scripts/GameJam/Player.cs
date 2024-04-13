@@ -10,71 +10,66 @@ namespace Game
 {
     public class Player : DefaultBehaviour
     {
-        private TransformComponent m_Transform;
-        private RigidBody2DComponent m_RigidBody2D;
-        private AnimatorComponent m_Animator;
-        private bool m_HasAnimator;
-        Camera camera;
+        public float speed;
+        public Vector2 velocity;
+        RigidBody2DComponent rigidBody;
+        public bool isGrounded;
+        public float jumpForce;
+        public float friction;
+        EntityTypes entityTypes;
 
-        public float Speed;
-        public float Time = 0.0f;
-        public Vector2 Velocity = new Vector2(0);
         void OnCreate()
         {
-            Console.WriteLine("Player created! - " + entity.ID);
-            m_Transform = GetComponent<TransformComponent>();
-            m_RigidBody2D = GetComponent<RigidBody2DComponent>();
-            if(HasComponent<AnimatorComponent>())
+            speed = 10f;
+            velocity = Vector2.Zero;
+            isGrounded = true;
+            jumpForce = 0.5f;
+            friction = 0.1f;
+            entityTypes = EntityTypes.Human;
+
+            if (HasComponent<RigidBody2DComponent>())
             {
-                m_Animator = GetComponent<AnimatorComponent>();
-                m_HasAnimator = true;
-                m_Animator.Play("Dune");
+                rigidBody = GetComponent<RigidBody2DComponent>();
             }
-            bool hasTransform = HasComponent<TransformComponent>();
-            Console.WriteLine("HasComponent {0}", hasTransform);
+            else
+            {
+                DebugConsole.Log("RigidBody2DComponent not found", DebugConsole.LogType.Error);
+            }
         }
 
         void OnUpdate(float ts)
         {
-            Entity cameraEntity = Entity.FindEntityByName("Camera");
-            if (cameraEntity != null)
+            velocity = Vector2.Zero;
+
+            if (Input.IsKeyDown(KeyCode.Space) && isGrounded)
             {
-                
-                camera = cameraEntity.As<Camera>();
+                rigidBody.ApplyLinearImpulse(new Vector2(0, speed * jumpForce), true);
+                isGrounded = false;
             }
-            else
+            else if (Input.IsKeyDown(KeyCode.S) && Math.Abs(velocity.Y) <= 10f)
             {
-                Console.WriteLine("Camera is null");
+                velocity.Y -= speed;
             }
-            Time += ts;
-            Vector3 velocity = new Vector3(0);
-            if (Input.IsKeyDown(KeyCode.W))
+            else if (Input.IsKeyDown(KeyCode.A) && velocity.X >= -10f)
             {
-                velocity.Y = Speed;
+                velocity.X -= speed;
             }
-            else if (Input.IsKeyDown(KeyCode.S))
+            else if (Input.IsKeyDown(KeyCode.D) && velocity.X <= 10f)
             {
-                velocity.Y = -Speed;
-            }
-            else
-            {
-                velocity.Y = 0f;
-            }
-            if(Input.IsKeyDown(KeyCode.A))
-            {
-                velocity.X = -Speed;
-            }
-            else if(Input.IsKeyDown(KeyCode.D))
-            {
-                velocity.X = Speed;
-            }
-            else
-            {
-                velocity.X = 0f;
+                velocity.X += speed;
             }
 
-            m_RigidBody2D.ApplyLinearImpulse(velocity.XY, true);
+            if (rigidBody != null)
+            {
+                //DebugConsole.Log(Math.Sign((rigidBody.linearVelocity.X) * -1 * friction * ts).ToString(), DebugConsole.LogType.Info);
+                rigidBody.ApplyLinearImpulse(velocity * ts, true);
+                rigidBody.ApplyLinearImpulse(new Vector2(rigidBody.linearVelocity.X * -1 * friction * ts, 0), true);
+            }
         }
 
+        void ChangeType(EntityTypes type)
+        {
+            entityTypes = type;
+        }
     }
 }

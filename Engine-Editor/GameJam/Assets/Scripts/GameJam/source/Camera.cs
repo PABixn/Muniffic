@@ -24,7 +24,7 @@ namespace Game
 
             player = Entity.FindEntityByName("Player");
 
-            if(player != null)
+            if (player != null)
             {
                 DebugConsole.Log("Player found!", DebugConsole.LogType.Info);
             }
@@ -41,7 +41,7 @@ namespace Game
         {
             if (Input.IsKeyDown(KeyCode.Q))
                 zoom -= 1f * ts;
-            else if(Input.IsKeyDown(KeyCode.E))
+            else if (Input.IsKeyDown(KeyCode.E))
                 zoom += 1f * ts;
 
             transform.translation = new Vector3(playerTransform.translation.X, playerTransform.translation.Y, zoom);

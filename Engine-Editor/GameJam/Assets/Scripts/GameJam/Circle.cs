@@ -8,7 +8,7 @@ using eg;
 
 namespace Game
 {
-    class Circle : Enemy
+    public class Circle : Enemy
     {
         float AttackCooldown = 0.2f;
         float ProjectileSpeed = 2.5f;
@@ -28,7 +28,7 @@ namespace Game
             Console.WriteLine("Circle attacks!");
             Vector2 vector = Vector2.FindVector(Transform.translation.XY, playerTransform.translation.XY);
             vector.NormalizeTo(ProjectileSpeed);
-            projectiles.Add(new Projectile(vector, this.Damage, Projectile.ProjectileType.Normal));
+            projectiles.Add(new Projectile(vector, this.Damage, ProjectileType.Normal));
         }
 
         void UpdateProjectilesPosition(float ts)
@@ -39,7 +39,7 @@ namespace Game
             }
         }
 
-        protected void OnUpdate(float ts)
+        void OnUpdate(float ts)
         {
             base.OnUpdate(ts);
             UpdateProjectilesPosition(ts);
