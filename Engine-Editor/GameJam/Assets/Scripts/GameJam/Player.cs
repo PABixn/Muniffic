@@ -68,7 +68,7 @@ namespace Game
             collidePos.Y = transform.translation.Y;
 
 
-            if (isGrounded == false && lastJump >= jumpDelay && floorCollider.CollidesWithBox(collidePos - collideSize, collidePos + collideSize))
+            if (isGrounded == false && lastJump >= jumpDelay && floorCollider.CollidesWithBox(collidePos,  collideSize))
             {
                 DebugConsole.Log(collideSize.Y.ToString(), DebugConsole.LogType.Info);
                 isGrounded = true;

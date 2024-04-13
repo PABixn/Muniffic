@@ -1060,7 +1060,7 @@ namespace eg
 		const auto& transform = entity.GetComponent<TransformComponent>();
 
 		b2PolygonShape boxShape;
-		boxShape.SetAsBox(boxCollider.Size.x / 2.0f * transform.Scale.x, boxCollider.Size.y / 2.0f * transform.Scale.x, b2Vec2(boxCollider.Offset.x + transform.Translation.x, boxCollider.Offset.y + transform.Translation.y), transform.Rotation.z);
+		boxShape.SetAsBox(boxCollider.Size.x * transform.Scale.x, boxCollider.Size.y * transform.Scale.y, b2Vec2(boxCollider.Offset.x + transform.Translation.x, boxCollider.Offset.y + transform.Translation.y), transform.Rotation.z);
 		return boxShape;
 	}
 
@@ -1241,10 +1241,9 @@ namespace eg
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 
-		b2PolygonShape shape;
-		shape.SetAsBox(size->x, size->y, b2Vec2(center->x, center->y), 0.0f);
-		b2PolygonShape otherShape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
-		otherShape.SetAsBox((max->x- min->x), (max->y - min->y), b2Vec2(min->x, min->y), 0);
+		b2PolygonShape shape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
+		b2PolygonShape otherShape;
+		otherShape.SetAsBox(size->x, size->y, b2Vec2(center->x, center->y), 0);
 
 		return Collider2D_TestOverlap(&shape, &otherShape);
 	}
