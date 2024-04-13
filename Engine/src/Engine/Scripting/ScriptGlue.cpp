@@ -1057,26 +1057,60 @@ namespace eg
 	static const b2PolygonShape& BoxCollider2DComponent_Getb2PolygonShape(Entity& entity, Scene* scene)
 	{
 		const auto& boxCollider = entity.GetComponent<BoxCollider2DComponent>();
+		const auto& transform = entity.GetComponent<TransformComponent>();
 
 		b2PolygonShape boxShape;
-		boxShape.SetAsBox(boxCollider.Size.x / 2.0f, boxCollider.Size.y / 2.0f, b2Vec2(boxCollider.Offset.x, boxCollider.Offset.y), 0.0f);
+		boxShape.SetAsBox(boxCollider.Size.x / 2.0f * transform.Scale.x, boxCollider.Size.y / 2.0f * transform.Scale.x, b2Vec2(boxCollider.Offset.x + transform.Translation.x, boxCollider.Offset.y + transform.Translation.y), transform.Rotation.z);
 		return boxShape;
 	}
 
 	static const b2CircleShape& CircleCollider2DComponent_Getb2CircleShape(Entity& entity, Scene* scene)
 	{
 		const auto& circleCollider = entity.GetComponent<CircleCollider2DComponent>();
+		const auto& transform = entity.GetComponent<TransformComponent>();
 
 		b2CircleShape circleShape;
-		circleShape.m_p = b2Vec2(circleCollider.Offset.x, circleCollider.Offset.y);
+		circleShape.m_p = b2Vec2(circleCollider.Offset.x + transform.Translation.x, circleCollider.Offset.y + transform.Translation.y);
 		circleShape.m_radius = circleCollider.Radius;
 		return circleShape;
+	}
+
+	static const b2EdgeShape& Getb2EdgeShapeFromBox(const Entity& entity, const TransformComponent& transform, Scene* scene, Side side)
+	{
+		const auto& box = entity.GetComponent<BoxCollider2DComponent>();
+
+		b2EdgeShape edge;
+
+		switch (side)
+		{
+		case Side::TOP:
+			edge.SetTwoSided(b2Vec2(-otherBoxCollider.Size.x / 2.0f + transform.Translation.x, +otherBoxCollider.Size.y / 2.0f + transform.Translation.y), b2Vec2(+otherBoxCollider.Size.x / 2.0f + transform.Translation.x, +otherBoxCollider.Size.y / 2.0f + transform.Translation.y));
+			break;
+		case Side::BOTTOM:
+			edge.SetTwoSided(b2Vec2(-otherBoxCollider.Size.x / 2.0f + transform.Translation.x, -otherBoxCollider.Size.y / 2.0f + transform.Translation.y), b2Vec2(+otherBoxCollider.Size.x / 2.0 + transform.Translation.x, -otherBoxCollider.Size.y / 2.0f + transform.Translation.y));
+			break;
+		case Side::LEFT:
+			edge.SetTwoSided(b2Vec2(-otherBoxCollider.Size.x / 2.0f + transform.Translation.x, -otherBoxCollider.Size.y / 2.0f + transform.Translation.y), b2Vec2(-otherBoxCollider.Size.x / 2.0f + transform.Translation.x, +otherBoxCollider.Size.y / 2.0f + transform.Translation.y));
+			break;
+		case Side::RIGHT:
+			edge.SetTwoSided(b2Vec2(+otherBoxCollider.Size.x / 2.0f + transform.Translation.x, -otherBoxCollider.Size.y / 2.0f + transform.Translation.y), b2Vec2(+otherBoxCollider.Size.x / 2.0f + transform.Translation.x, +otherBoxCollider.Size.y / 2.0f + transform.Translation.y));
+			break;
+		}
+
+		return edge;
 	}
 
 	static bool Collider2D_TestOverlap(const b2Shape* shapeA, int32 indexA,
 		const b2Shape* shapeB, int32 indexB,
 		const TransformComponent& transformA, const TransformComponent& transformB) {
 		return b2TestOverlap(shapeA, indexA, shapeB, indexB, b2Transform(b2Vec2(transformA.Translation.x, transformA.Translation.y), b2Rot(transformA.Rotation.z)), b2Transform(b2Vec2(transformA.Translation.x, transformB.Translation.y), b2Rot(transformB.Rotation.z)));
+	}
+
+	static bool Collider2D_TestOverlap(const b2Shape* shapeA, const b2Shape* shapeB)
+	{
+		b2Transform transform;
+		transform.SetIdentity();
+		return b2TestOverlap(shapeA, 0, shapeB, 0, transform, transform);
 	}
 
 	static bool BoxCollider2DComponent_CollidesWith(UUID uuid, UUID other)
@@ -1094,15 +1128,13 @@ namespace eg
 
 		if(otherEntity.HasComponent<BoxCollider2DComponent>())
 		{
-			const auto& otherTransform = otherEntity.GetComponent<TransformComponent>();
 			b2PolygonShape otherBox = BoxCollider2DComponent_Getb2PolygonShape(otherEntity, scene);
-			return Collider2D_TestOverlap(&box, 0, &otherBox, 0, transform, otherTransform);
+			return Collider2D_TestOverlap(&box, &otherBox);
 		}
 		else if(otherEntity.HasComponent<CircleCollider2DComponent>())
 		{
-			const auto& otherTransform = otherEntity.GetComponent<TransformComponent>();
 			b2CircleShape circle = CircleCollider2DComponent_Getb2CircleShape(otherEntity, scene);
-			return Collider2D_TestOverlap(&box, 0, &circle, 0, transform, otherTransform);
+			return Collider2D_TestOverlap(&box, &circle);
 		}
 
 		return false;
@@ -1117,12 +1149,9 @@ namespace eg
 		if(!otherEntity)
 			return false;
 
-		const auto& transform = entity.GetComponent<TransformComponent>();
-		const auto &otherTransform = otherEntity.GetComponent<TransformComponent>();
-
 		const b2PolygonShape& boxShape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
 		b2PolygonShape otherBoxShape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
-		return Collider2D_TestOverlap(&boxShape, 0, &otherBoxShape, 0, transform, otherTransform);
+		return Collider2D_TestOverlap(&boxShape, &otherBoxShape);
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithPoint(UUID uuid, glm::vec2 *point)
@@ -1152,12 +1181,10 @@ namespace eg
 		if(!otherEntity)
 			return false;
 
-		const auto& transform = entity.GetComponent<TransformComponent>();
-		const auto& otherTransform = otherEntity.GetComponent<TransformComponent>();
 		b2PolygonShape boxShape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
 		b2CircleShape circleShape = CircleCollider2DComponent_Getb2CircleShape(otherEntity, scene);
 
-		return Collider2D_TestOverlap(&boxShape, 0, &circleShape, 0, transform, otherTransform);
+		return Collider2D_TestOverlap(&boxShape, &circleShape);
 	}
 
 	//static bool BoxCollider2DComponent_CollidesWithPolygon(UUID uuid, MonoArray *points)
@@ -1178,35 +1205,15 @@ namespace eg
 		if(!otherEntity)
 			return false;
 
-		const auto& otherBoxCollider = otherEntity.GetComponent<BoxCollider2DComponent>();
-		const auto& transform = entity.GetComponent<TransformComponent>();
 		const auto& otherTransform = otherEntity.GetComponent<TransformComponent>();
 
-		b2PolygonShape boxShape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
-		b2EdgeShape edge;
-		b2Transform edgeTransform;
-		edgeTransform.SetIdentity();
-		switch (side)
-		{
-		case Side::TOP:
-			edge.SetTwoSided(b2Vec2(-otherBoxCollider.Size.x / 2.0f, +otherBoxCollider.Size.y / 2.0f), b2Vec2(+otherBoxCollider.Size.x / 2.0f, +otherBoxCollider.Size.y / 2.0f));
-			edgeTransform = b2Transform(b2Vec2(otherTransform.Translation.x, otherTransform.Translation.y + otherBoxCollider.Size.y / 2.0f), b2Rot(0.0f));
-			break;
-		case Side::BOTTOM:
-			edge.SetTwoSided(b2Vec2(-otherBoxCollider.Size.x / 2.0f, -otherBoxCollider.Size.y / 2.0f), b2Vec2(+otherBoxCollider.Size.x / 2.0f, -otherBoxCollider.Size.y / 2.0f));
-			edgeTransform = b2Transform(b2Vec2(otherTransform.Translation.x, otherTransform.Translation.y - otherBoxCollider.Size.y / 2.0f), b2Rot(0.0f));
-			break;
-		case Side::LEFT:
-			edge.SetTwoSided(b2Vec2(-otherBoxCollider.Size.x / 2.0f, -otherBoxCollider.Size.y / 2.0f), b2Vec2(-otherBoxCollider.Size.x / 2.0f, +otherBoxCollider.Size.y / 2.0f));
-			edgeTransform = b2Transform(b2Vec2(otherTransform.Translation.x - otherBoxCollider.Size.x / 2.0f, otherTransform.Translation.y), b2Rot(0.0f));
-			break;
-		case Side::RIGHT:
-			edge.SetTwoSided(b2Vec2(+otherBoxCollider.Size.x / 2.0f, -otherBoxCollider.Size.y / 2.0f), b2Vec2(+otherBoxCollider.Size.x / 2.0f, +otherBoxCollider.Size.y / 2.0f));
-			edgeTransform = b2Transform(b2Vec2(otherTransform.Translation.x + otherBoxCollider.Size.x / 2.0f, otherTransform.Translation.y), b2Rot(0.0f));
-			break;
-		}
+		b2EdgeShape edge = Getb2EdgeShapeFromBox(entity, otherTransform, scene, side);
 
-		return b2TestOverlap(&boxShape, 0, &edge, 0, b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)), edgeTransform);
+		b2PolygonShape boxShape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
+		b2Transform edgeTransform = b2Transform((0,0), b2Rot(otherTransform.Rotation.z));
+		edgeTransform.SetIdentity();
+
+		return b2TestOverlap(&boxShape, 0, &edge, 0, b2Transform(b2Vec2(0.0), b2Rot(0.0f)), edgeTransform);
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithTopEdge(UUID uuid, UUID other)
@@ -1233,46 +1240,38 @@ namespace eg
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		const auto& boxCollider = entity.GetComponent<BoxCollider2DComponent>();
-		const auto& transform = entity.GetComponent<TransformComponent>();
+
 		b2PolygonShape shape;
 		shape.SetAsBox(boxCollider.Size.x / 2.0f, boxCollider.Size.y / 2.0f, b2Vec2(boxCollider.Offset.x + transform.Translation.x, boxCollider.Offset.y + transform.Translation.y), 0.0f);
-		b2PolygonShape otherShape;
+		b2PolygonShape otherShape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
 		otherShape.SetAsBox((max->x- min->x), (max->y - min->y), b2Vec2(min->x, min->y), 0);
-		b2Transform identity;
-		identity.SetIdentity();
-		return b2TestOverlap(&shape, 0,&otherShape,0, identity, identity);
+
+		return Collider2D_TestOverlap(&shape, &otherShape);
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithCircleCoords(UUID uuid, glm::vec2 *center, float radius)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		const auto& boxCollider = entity.GetComponent<BoxCollider2DComponent>();
-		const auto& transform = entity.GetComponent<TransformComponent>();
+
 		b2PolygonShape shape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
 		b2CircleShape otherShape;
 		otherShape.m_p = b2Vec2(center->x, center->y);
 		otherShape.m_radius = radius;
 
-		return b2TestOverlap(&shape, 0, &otherShape, 0, b2Transform(b2Vec2(center->x, center->y), b2Rot(0.0f)), b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)));
+		return Collider2D_TestOverlap(&shape, &otherShape);
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithEdgeCoords(UUID uuid, glm::vec2 *start, glm::vec2 *end)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		const auto& boxCollider = entity.GetComponent<BoxCollider2DComponent>();
-		const auto& transform = entity.GetComponent<TransformComponent>();
+
 		b2PolygonShape shape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
 		b2EdgeShape edge;
 		edge.SetTwoSided(b2Vec2(start->x, start->y), b2Vec2(end->x, end->y));
-		b2Transform edgeTransform;
-		edgeTransform.SetIdentity();
-		edgeTransform.p = b2Vec2(start->x + (end->x - start->x) / 2.0f, start->y + (end->y - start->y) / 2.0f);
 
-		return b2TestOverlap(&shape, 0, &edge, 0, b2Transform(b2Vec2(start->x, start->y), b2Rot(0.0f)), edgeTransform);
-	
+		return Collider2D_TestOverlap(&shape, &edge);
 	}
 
 #pragma endregion
@@ -1371,21 +1370,17 @@ namespace eg
 		if(!otherEntity)
 			return false;
 
-		const auto& transform = entity.GetComponent<TransformComponent>();
-
 		b2CircleShape circle = CircleCollider2DComponent_Getb2CircleShape(entity, scene);
 
 		if(otherEntity.HasComponent<BoxCollider2DComponent>())
 		{
-			const auto& otherTransform = otherEntity.GetComponent<TransformComponent>();
 			b2PolygonShape otherBox = BoxCollider2DComponent_Getb2PolygonShape(otherEntity, scene);
-			return Collider2D_TestOverlap(&circle, 0, &otherBox, 0, transform, otherTransform);
+			return Collider2D_TestOverlap(&circle, &otherBox);
 		}
 		else if(otherEntity.HasComponent<CircleCollider2DComponent>())
 		{
-			const auto& otherTransform = otherEntity.GetComponent<TransformComponent>();
 			b2CircleShape otherCircle = CircleCollider2DComponent_Getb2CircleShape(otherEntity, scene);
-			return Collider2D_TestOverlap(&circle, 0, &otherCircle, 0, transform, otherTransform);
+			return Collider2D_TestOverlap(&circle, &otherCircle);
 		}
 
 		return false;
@@ -1400,28 +1395,23 @@ namespace eg
 		if(!otherEntity)
 			return false;
 
-		const auto& transform = entity.GetComponent<TransformComponent>();
-		const auto &otherTransform = otherEntity.GetComponent<TransformComponent>();
-
 		b2CircleShape circleShape = CircleCollider2DComponent_Getb2CircleShape(entity, scene);
 		b2CircleShape otherCircleShape = CircleCollider2DComponent_Getb2CircleShape(otherEntity, scene);
 
-		return Collider2D_TestOverlap(&circleShape, 0, &otherCircleShape, 0, transform, otherTransform);//b2TestOverlap(&circleShape, 0, &otherCircleShape, 0, b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)), b2Transform(b2Vec2(otherTransform.Translation.x, otherTransform.Translation.y), b2Rot(0.0f)));
-	}
+		return Collider2D_TestOverlap(&circleShape, &otherCircleShape, );
+		}
 
 	static bool CircleCollider2DComponent_CollidesWithPoint(UUID uuid, glm::vec2* point)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 
-		const auto& transform = entity.GetComponent<TransformComponent>();
-
 		b2CircleShape circleShape = CircleCollider2DComponent_Getb2CircleShape(entity, scene);
 		
 		b2PolygonShape pointShape;
-		pointShape.SetAsBox(0.0f, 0.0f, b2Vec2(0.0f, 0.0f), 0.0f);
+		pointShape.SetAsBox(0.0f, 0.0f, b2Vec2(point.x, point.y), 0.0f);
 
-		return b2TestOverlap(&circleShape, 0, &pointShape, 0, b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)), b2Transform(b2Vec2(point->x, point->y), b2Rot(0.0f)));
+		return Collider2D_TestOverlap(&circleShape, &pointShape);
 	}
 
 	static bool CircleCollider2DComponent_CollidesWithBox(UUID uuid, UUID other)
@@ -1433,13 +1423,10 @@ namespace eg
 		if(!otherEntity)
 			return false;
 
-		const auto& transform = entity.GetComponent<TransformComponent>();
-		const auto& otherTransform = otherEntity.GetComponent<TransformComponent>();
-
 		b2CircleShape circleShape = CircleCollider2DComponent_Getb2CircleShape(entity, scene);
 		b2PolygonShape boxShape = BoxCollider2DComponent_Getb2PolygonShape(otherEntity, scene);
 
-		return Collider2D_TestOverlap(&circleShape, 0, &boxShape, 0, transform, otherTransform);
+		return Collider2D_TestOverlap(&circleShape, &boxShape);
 	}
 
 	//static bool CircleCollider2DComponent_CollidesWithPolygon(UUID uuid, MonoArray *points)
@@ -1455,35 +1442,16 @@ namespace eg
 		if(!otherEntity)
 			return false;
 
-		const auto& otherBoxCollider = otherEntity.GetComponent<BoxCollider2DComponent>();
-		const auto& transform = entity.GetComponent<TransformComponent>();
 		const auto& otherTransform = otherEntity.GetComponent<TransformComponent>();
 
 		b2CircleShape circleShape = CircleCollider2DComponent_Getb2CircleShape(entity, scene);
-		b2EdgeShape edge;
+		
+		b2EdgeShape edge = Getb2EdgeShapeFromBox(entity, otherTransform, scene, side);
 		b2Transform edgeTransform;
+		b2Transform edgeTransform = b2Transform((0,0), b2Rot(otherTransform.Rotation.z));
 		edgeTransform.SetIdentity();
-		switch (side)
-		{
-		case Side::TOP:
-			edge.SetTwoSided(b2Vec2(-otherBoxCollider.Size.x / 2.0f, +otherBoxCollider.Size.y / 2.0f), b2Vec2(+otherBoxCollider.Size.x / 2.0f, +otherBoxCollider.Size.y / 2.0f));
-			edgeTransform = b2Transform(b2Vec2(otherTransform.Translation.x, otherTransform.Translation.y + otherBoxCollider.Size.y / 2.0f), b2Rot(0.0f));
-			break;
-		case Side::BOTTOM:
-			edge.SetTwoSided(b2Vec2(-otherBoxCollider.Size.x / 2.0f, -otherBoxCollider.Size.y / 2.0f), b2Vec2(+otherBoxCollider.Size.x / 2.0f, -otherBoxCollider.Size.y / 2.0f));
-			edgeTransform = b2Transform(b2Vec2(otherTransform.Translation.x, otherTransform.Translation.y - otherBoxCollider.Size.y / 2.0f), b2Rot(0.0f));
-			break;
-		case Side::LEFT:
-			edge.SetTwoSided(b2Vec2(-otherBoxCollider.Size.x / 2.0f, -otherBoxCollider.Size.y / 2.0f), b2Vec2(-otherBoxCollider.Size.x / 2.0f, +otherBoxCollider.Size.y / 2.0f));
-			edgeTransform = b2Transform(b2Vec2(otherTransform.Translation.x - otherBoxCollider.Size.x / 2.0f, otherTransform.Translation.y), b2Rot(0.0f));
-			break;
-		case Side::RIGHT:
-			edge.SetTwoSided(b2Vec2(+otherBoxCollider.Size.x / 2.0f, -otherBoxCollider.Size.y / 2.0f), b2Vec2(+otherBoxCollider.Size.x / 2.0f, +otherBoxCollider.Size.y / 2.0f));
-			edgeTransform = b2Transform(b2Vec2(otherTransform.Translation.x + otherBoxCollider.Size.x / 2.0f, otherTransform.Translation.y), b2Rot(0.0f));
-			break;
-		}
 
-		return b2TestOverlap(&circleShape, 0, &edge, 0, b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)), edgeTransform);
+		return b2TestOverlap(&circleShape, 0, &edge, 0, b2Transform(b2Vec2(0.0f), b2Rot(0.0f)), edgeTransform);
 	}
 
 	static bool CircleCollider2DComponent_CollidesWithTopEdge(UUID uuid, UUID other)
@@ -1510,43 +1478,37 @@ namespace eg
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		const auto& circleCollider = entity.GetComponent<CircleCollider2DComponent>();
-		const auto& transform = entity.GetComponent<TransformComponent>();
+
 		b2CircleShape circleShape = CircleCollider2DComponent_Getb2CircleShape(entity, scene);
 		b2PolygonShape boxShape;
 		boxShape.SetAsBox((max->x - min->x) / 2.0f, (max->y - min->y) / 2.0f, b2Vec2(min->x + (max->x - min->x) / 2.0f, min->y + (max->y - min->y) / 2.0f), 0.0f);
 
-		return b2TestOverlap(&circleShape, 0, &boxShape, 0, b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)), b2Transform(b2Vec2(min->x, min->y), b2Rot(0.0f)));
+		return Collider2D_TestOverlap(&circleShape, &boxShape);
 	}
 
 	static bool CircleCollider2DComponent_CollidesWithCircleCoords(UUID uuid, glm::vec2 *center, float radius)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		const auto& circleCollider = entity.GetComponent<CircleCollider2DComponent>();
-		const auto& transform = entity.GetComponent<TransformComponent>();
+
 		b2CircleShape circleShape = CircleCollider2DComponent_Getb2CircleShape(entity, scene);
 		b2CircleShape otherShape;
 		otherShape.m_p = b2Vec2(center->x, center->y);
 		otherShape.m_radius = radius;
 
-		return b2TestOverlap(&circleShape, 0, &otherShape, 0, b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)), b2Transform(b2Vec2(center->x, center->y), b2Rot(0.0f)));
+		return Collider2D_TestOverlap(&circleShape, &otherShape);
 	}
 
 	static bool CircleCollider2DComponent_CollidesWithEdgeCoords(UUID uuid, glm::vec2 *start, glm::vec2 *end)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
-		const auto& circleCollider = entity.GetComponent<CircleCollider2DComponent>();
-		const auto& transform = entity.GetComponent<TransformComponent>();
+
 		b2CircleShape circleShape = CircleCollider2DComponent_Getb2CircleShape(entity, scene);
 		b2EdgeShape edge;
 		edge.SetTwoSided(b2Vec2(start->x, start->y), b2Vec2(end->x, end->y));
-		b2Transform edgeTransform;
-		edgeTransform.SetIdentity();
-		edgeTransform.p = b2Vec2(start->x + (end->x - start->x) / 2.0f, start->y + (end->y - start->y) / 2.0f);
 
-		return b2TestOverlap(&circleShape, 0, &edge, 0, b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)), edgeTransform);
+		return Collider2D_TestOverlap(&circleShape, &edge);
 	}
 
 	
