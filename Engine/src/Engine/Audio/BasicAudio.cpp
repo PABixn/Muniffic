@@ -4,8 +4,6 @@
 namespace eg {
 	BasicAudio::BasicAudio(std::string& path) {
 		m_Path = std::filesystem::path(path);
-		//LoadCurrentAudio();
-		//SDL_Init(SDL_INIT_AUDIO);
 	}
 
 	void BasicAudio::InitializeXAudio2() {
@@ -89,18 +87,6 @@ namespace eg {
 	}
 	void BasicAudio::LoadCurrentAudio() {
 		InitializeXAudio2();
-		//audio = TEXT("play C:/Users/mniedziolka/Downloads/arpeggiator-end-credits-wav-14644.wav");
-		//const char * command = "play " + path;
-		//audio = new TCHAR[path.size() + 1];
-		//audio[path.size()] = 0;
-		//std::copy(path.begin(), path.end(), audio);
-		//EG_CORE_TRACE(audio);
-		//std::wstring stemp = std::wstring(path.begin(), path.end());
-		//_tcscpy(audio, path);
-		//std::wstring stemp = std::wstring(m_Path.string().begin(), m_Path.string().end());
-		//sound_path = stemp.c_str();
-		//auto s = m_Wav.load(silli);
-		//EG_CORE_TRACE("file {0} loaded with code {1}", silli, s);
 	}
 	void BasicAudio::OpenAudio(std::string path) {
 		m_Path = std::filesystem::path(path);
@@ -118,7 +104,6 @@ namespace eg {
 		strFileName[audio_path.size()] = 0;
 		std::copy(audio_path.begin(), audio_path.end(), strFileName);
 #endif
-		// Open the file
 		HANDLE hFile = CreateFile(
 			strFileName,
 			GENERIC_READ,
@@ -149,34 +134,16 @@ namespace eg {
 		BYTE* pDataBuffer = new BYTE[dwChunkSize];
 		ReadChunkData(hFile, pDataBuffer, dwChunkSize, dwChunkPosition);
 
-		buffer.AudioBytes = dwChunkSize;  //size of the audio buffer in bytes
-		buffer.pAudioData = pDataBuffer;  //buffer containing audio data
+		buffer.AudioBytes = dwChunkSize;  
+		buffer.pAudioData = pDataBuffer;  
 		buffer.Flags = XAUDIO2_END_OF_STREAM;
 		if (looped) buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
-		//IXAudio2SourceVoice* pSourceVoice;
 		if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice, (WAVEFORMATEX*)&wfx))) EG_CORE_TRACE(hr);
-		pSourceVoice->SetVolume(1.0f);
+		pSourceVoice->SetVolume(volume);
 		if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer)))
 			EG_CORE_TRACE(hr);
 		if (FAILED(hr = pSourceVoice->Start(0))) EG_CORE_TRACE(hr);
 			
-
-		
-
-
-		//std::string music = "play C:/Users/mniedziolka/Downloads/arpeggiator-end-credits-wav-14644.wav";
-		//std::thread t1([=]() {mciSendString(L"play C:/Users/mniedziolka/Downloads/arpeggiator-end-credits-wav-14644.wav", NULL, 0, NULL); });
-		//std::thread t2([=]() {mciSendString(L"play C:/Users/mniedziolka/Desktop/Muniffic/Engine - Editor/SandboxProject/Assets/fail.wav", NULL, 0, NULL); });
-		//t1.join();
-		//t2.join();
-		//std::thread worker([=]() { PlaySound(m_Path.c_str(), 0, SND_APPLICATION | SND_SYNC); });
-		//worker.join();
-		//std::cout << looped << playingFromStart << std::endl;
-		//if (!looped) PlaySound(m_Path.c_str(), 0, SND_APPLICATION | SND_ASYNC);
-		//else PlaySound(m_Path.c_str(), 0, SND_APPLICATION | SND_ASYNC | SND_LOOP);
-		//work.join();
-		//WaveMixInit()
-		//mciSendString(L"play C:/Users/mniedziolka/Downloads/arpeggiator-end-credits-wav-14644.wav", NULL, 0, NULL);
 		return true;
 	}
 

@@ -1135,6 +1135,7 @@ namespace eg {
 			
 			ImGui::Checkbox("Loop", component.Audio->IsLoopedPtr());
 			ImGui::Checkbox("Playing from start", component.Audio->IsPlayingFromStartPtr());
+			ImGui::SliderFloat("Volume", component.Audio->GetVolumePtr(), 0, 10);
 
 			if (ImGui::BeginDragDropTarget())
 			{

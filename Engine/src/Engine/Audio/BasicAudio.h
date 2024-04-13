@@ -29,6 +29,11 @@ namespace eg {
 		std::filesystem::path m_Path; 
 		bool looped = true;
 		bool playingFromStart = true;
+		float volume = 1;
+		HRESULT hr;
+		IXAudio2* pXAudio2;
+		IXAudio2MasteringVoice* pMasterVoice;
+		IXAudio2SourceVoice* pSourceVoice;
 	public:
 		std::filesystem::path GetPath() { return m_Path; }
 		void SetPath(std::filesystem::path val) { m_Path = val; LoadCurrentAudio(); }
@@ -40,15 +45,17 @@ namespace eg {
 		bool* IsLoopedPtr() { return &looped; }
 		bool* IsPlayingFromStartPtr() { return &playingFromStart; }
 		bool IsPlayingFromStart() { return playingFromStart;  }
+		bool IsLooped() { return looped; }
+		void SetIsLooped(bool isLooped) { looped = isLooped; }
+		void SetIsPlayingFromStart(bool isPlayingFromStart) { playingFromStart = isPlayingFromStart; }
 		std::string GetFileName();
 		void LoadCurrentAudio();
 		void OpenAudio(std::string path);
 		void Stop();
+		float GetVolume() { return volume; };
+		float* GetVolumePtr() { return &volume; };
+		void SetVolume(float newVolume) { volume = newVolume; };
 		void InitializeXAudio2();
-		HRESULT hr;
-		IXAudio2* pXAudio2;
-		IXAudio2MasteringVoice* pMasterVoice;
-		IXAudio2SourceVoice* pSourceVoice;
 		HRESULT FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DWORD& dwChunkDataPosition);
 		HRESULT ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD bufferoffset);
 	};

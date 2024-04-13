@@ -145,6 +145,16 @@ namespace eg {
 				ScriptEngine::OnCreateEntity(e);
 			}
 		}
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
+				ASourceView.get<AudioSourceComponent>(f).Audio->LoadCurrentAudio();
+				if (ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart()) {
+					ASourceView.get<AudioSourceComponent>(f).Audio->Play();
+				}
+			}
+		}
 	}
 
 	void Scene::OnRuntimeStop()

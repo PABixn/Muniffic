@@ -105,7 +105,7 @@ Entities:
       IsInheritedInChildren: false
       Fade: 0
     AudioSourceComponent:
-      AudioFilePath: C:\Users\mniedziolka\Downloads\arpeggiator-end-credits-wav-14644.wav
+      AudioFilePath: C:\Users\mniedziolka\Desktop\Muniffic\Engine-Editor\SandboxProject\Assets\fail.wav
       AudioPlayingFromStart: false
   - Entity: 16108228054420389651
     Name: Cube
@@ -161,17 +161,6 @@ Entities:
       FixedAspectRatio: false
       IsInherited: false
       IsInheritedInChildren: false
-    ScriptComponent:
-      Name: Sandbox.Camera
-      ScriptFields:
-        - Name: DistanceFromPlayer
-          Type: float
-          Value: 0
-        - Name: Speed
-          Type: float
-          Value: 0
-      IsInherited: false
-      IsInheritedInChildren: false
   - Entity: 3898880785194007479
     Name: Cube
     TagComponent:
@@ -188,28 +177,6 @@ Entities:
       TextureUUID: 0
       MinCoords: [0, 0]
       MaxCoords: [1000, 1000]
-    AnimatorComponent:
-      Speed: 1
-      Animations:
-        - 3119650618188322103
-        - 1686588336940728186
-      Transitions:
-        - From: 0
-          To: 1
-    ScriptComponent:
-      Name: Sandbox.Player
-      ScriptFields:
-        - Name: Speed
-          Type: float
-          Value: 0
-        - Name: Time
-          Type: float
-          Value: 0
-        - Name: Velocity
-          Type: vector2
-          Value: [0, 0]
-      IsInherited: false
-      IsInheritedInChildren: false
     RigidBody2DComponent:
       Body Type: Dynamic
       FixedRotation: false

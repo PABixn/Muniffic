@@ -1198,6 +1198,121 @@ namespace eg
 		}
 	#pragma endregion
 
+	#pragma region Audio
+		static std::filesystem::path Audio_GetPath(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->GetPath();
+		}
+
+		static void Audio_SetPath(UUID entityID, std::filesystem::path val)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->SetPath(val);
+		}
+
+		static bool Audio_Play(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->Play();
+		}
+
+		static bool* Audio_IsLoopedPtr(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->IsLoopedPtr();
+		}
+
+		static bool Audio_IsLooped(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->IsLooped();
+		}
+
+		static bool* Audio_IsPlayingFromStartPtr(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->IsPlayingFromStartPtr();
+		}
+
+		static bool Audio_IsPlayingFromStart(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->IsPlayingFromStart();
+		}
+
+		static void Audio_SetIsLooped(UUID entityID, bool isLooped)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->SetIsLooped(isLooped);
+		}
+
+		static void Audio_SetIsPlayingFromStart(UUID entityID, bool isPlayingFromStart)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->SetIsPlayingFromStart(isPlayingFromStart);
+		}
+
+		static std::string Audio_GetFileName(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->GetFileName();
+		}
+
+		static void Audio_LoadCurrentAudio(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->LoadCurrentAudio();
+		}
+
+		static void Audio_OpenAudio(UUID entityID, std::string path)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->OpenAudio(path);
+		}
+
+		static void Audio_Stop(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->Stop();
+		}
+
+		static float Audio_GetVolume(UUID entityID) 
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->GetVolume();
+		}
+
+		static float* Audio_GetVolumePtr(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->GetVolumePtr();
+		}
+
+		static void Audio_SetVolume(UUID entityID, float newVolume)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->SetVolume(newVolume);
+		}
+
+	#pragma endregion
+
 	#pragma region Input
 	static bool Input_IsKeyDown(KeyCode keycode)
 	{
@@ -1338,6 +1453,23 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(TextComponent_SetKerning);
 		EG_ADD_INTERNAL_CALL(TextComponent_GetLineSpacing);
 		EG_ADD_INTERNAL_CALL(TextComponent_SetLineSpacing);
+
+		EG_ADD_INTERNAL_CALL(Audio_GetPath);
+		EG_ADD_INTERNAL_CALL(Audio_SetPath);
+		EG_ADD_INTERNAL_CALL(Audio_Play);
+		EG_ADD_INTERNAL_CALL(Audio_IsLoopedPtr);
+		EG_ADD_INTERNAL_CALL(Audio_IsLooped);
+		EG_ADD_INTERNAL_CALL(Audio_IsPlayingFromStartPtr);
+		EG_ADD_INTERNAL_CALL(Audio_IsPlayingFromStart);
+		EG_ADD_INTERNAL_CALL(Audio_SetIsLooped);
+		EG_ADD_INTERNAL_CALL(Audio_SetIsPlayingFromStart);
+		EG_ADD_INTERNAL_CALL(Audio_GetFileName);
+		EG_ADD_INTERNAL_CALL(Audio_LoadCurrentAudio);
+		EG_ADD_INTERNAL_CALL(Audio_OpenAudio);
+		EG_ADD_INTERNAL_CALL(Audio_Stop);
+		EG_ADD_INTERNAL_CALL(Audio_GetVolume);
+		EG_ADD_INTERNAL_CALL(Audio_GetVolumePtr);
+		EG_ADD_INTERNAL_CALL(Audio_SetVolume);
 
 		EG_ADD_INTERNAL_CALL(Input_IsKeyDown);
 	}
