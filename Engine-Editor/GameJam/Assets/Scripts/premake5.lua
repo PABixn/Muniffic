@@ -2,7 +2,7 @@ local MunifficRootDir = "../../../../"
 
 include (MunifficRootDir .. "vendor/premake/premake_customization/solution_items.lua")
 
-workspace "Game"
+workspace "GameJam"
 	architecture "x86_64"
 	startproject "Game"
 
@@ -29,8 +29,8 @@ project "Game"
 
 	files
 	{
-		"Source/**.cs",
-		"Properties/**.cs",
+		"GameJam/Source/**.cs",
+		"GameJam/Properties/**.cs",
 	}
 
 	links

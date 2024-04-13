@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using eg;
-
-namespace Game
+namespace Game.Source
 {
-    internal class hh : DefaultBehaviour
+    internal class SquarePlayer
     {
     }
 }

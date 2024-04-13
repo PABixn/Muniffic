@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game
+namespace Game.Source
 {
-    internal class h
+    internal class CirclePlayer
     {
     }
 }
