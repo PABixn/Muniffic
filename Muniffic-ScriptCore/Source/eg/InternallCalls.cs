@@ -347,7 +347,7 @@ namespace eg
         internal extern static bool BoxCollider2DComponent_CollidesWithRightEdge(ulong entityID, ulong otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool BoxCollider2DComponent_CollidesWithBoxCoords(ulong entityID, ref Vector2 min, ref Vector2 max);
+        internal extern static bool BoxCollider2DComponent_CollidesWithBoxCoords(ulong entityID, ref Vector2 center, ref Vector2 size);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool BoxCollider2DComponent_CollidesWithCircleCoords(ulong entityID, ref Vector2 center, float radius);
@@ -414,7 +414,7 @@ namespace eg
         internal extern static bool CircleCollider2DComponent_CollidesWithRightEdge(ulong entityID, ulong otherEntity);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool CircleCollider2DComponent_CollidesWithBoxCoords(ulong entityID, ref Vector2 min, ref Vector2 max);
+        internal extern static bool CircleCollider2DComponent_CollidesWithBoxCoords(ulong entityID, ref Vector2 center, ref Vector2 size);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool CircleCollider2DComponent_CollidesWithCircleCoords(ulong entityID, ref Vector2 center, float radius);
