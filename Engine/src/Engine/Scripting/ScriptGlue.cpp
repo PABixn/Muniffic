@@ -1210,11 +1210,13 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(uuid);
 		const auto& boxCollider = entity.GetComponent<BoxCollider2DComponent>();
 		const auto& transform = entity.GetComponent<TransformComponent>();
-		b2PolygonShape shape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
+		b2PolygonShape shape;
+		shape.SetAsBox(boxCollider.Size.x / 2.0f, boxCollider.Size.y / 2.0f, b2Vec2(boxCollider.Offset.x + transform.Translation.x, boxCollider.Offset.y + transform.Translation.y), 0.0f);
 		b2PolygonShape otherShape;
-		otherShape.boxShape.SetAsBox((max->x - min->x) / 2.0f, (max->y - min->y) / 2.0f, b2Vec2(min->x + (max->x - min->x) / 2.0f, min->y + (max->y - min->y) / 2.0f), 0.0f);
-
-		return b2TestOverlap(&shape, 0, &otherShape, 0, b2Transform(b2Vec2(min->x, min->y), b2Rot(0.0f)), b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)));
+		otherShape.SetAsBox((max->x- min->x), (max->y - min->y), b2Vec2(min->x, min->y), 0);
+		b2Transform identity;
+		identity.SetIdentity();
+		return b2TestOverlap(&shape, 0,&otherShape,0, identity, identity);
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithCircleCoords(UUID uuid, glm::vec2 *center, float radius)
@@ -1231,7 +1233,7 @@ namespace eg
 		return b2TestOverlap(&shape, 0, &otherShape, 0, b2Transform(b2Vec2(center->x, center->y), b2Rot(0.0f)), b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)));
 	}
 
-	static bool BoxCollider2DComponent_CollidesWithEdgeCoords(UUID, glm::vec2 *start, glm::vec2 *end)
+	static bool BoxCollider2DComponent_CollidesWithEdgeCoords(UUID uuid, glm::vec2 *start, glm::vec2 *end)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1506,7 +1508,7 @@ namespace eg
 		return b2TestOverlap(&circleShape, 0, &otherShape, 0, b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)), b2Transform(b2Vec2(center->x, center->y), b2Rot(0.0f)));
 	}
 
-	static bool CircleCollider2DComponent_CollidesWithEdgeCoords(UUID, glm::vec2 *start, glm::vec2 *end)
+	static bool CircleCollider2DComponent_CollidesWithEdgeCoords(UUID uuid, glm::vec2 *start, glm::vec2 *end)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1514,12 +1516,12 @@ namespace eg
 		const auto& transform = entity.GetComponent<TransformComponent>();
 		b2CircleShape circleShape = CircleCollider2DComponent_Getb2CircleShape(entity, scene);
 		b2EdgeShape edge;
-		edge.SetTwoSided(b2Vec2(start->x, mstartin->y), b2Vec2(end->x, end->y));
+		edge.SetTwoSided(b2Vec2(start->x, start->y), b2Vec2(end->x, end->y));
 		b2Transform edgeTransform;
 		edgeTransform.SetIdentity();
 		edgeTransform.p = b2Vec2(start->x + (end->x - start->x) / 2.0f, start->y + (end->y - start->y) / 2.0f);
 
-		return b2TestOverlap(&circleShape, 0, &edge, 0, b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y)), edgeTransform);
+		return b2TestOverlap(&circleShape, 0, &edge, 0, b2Transform(b2Vec2(transform.Translation.x, transform.Translation.y), b2Rot(0.0f)), edgeTransform);
 	}
 
 	

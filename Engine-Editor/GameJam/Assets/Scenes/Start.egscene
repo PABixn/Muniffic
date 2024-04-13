@@ -3,7 +3,7 @@ Entities:
   - Entity: 13762763288393374918
     Name: Cube
     TagComponent:
-      Tag: Empty Entity
+      Tag: floor
     TransformComponent:
       Translation: [0, -1.60000002, 0]
       Rotation: [0, 0, 0]

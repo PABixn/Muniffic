@@ -327,7 +327,7 @@ namespace eg
         internal extern static bool BoxCollider2DComponent_CollidesWithBox(ulong entityID, ulong otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static static bool BoxCollider2DComponent_CollidesWithPoint(ulong entityID, ref Vector2 point);
+        internal extern static bool BoxCollider2DComponent_CollidesWithPoint(ulong entityID, ref Vector2 point);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool BoxCollider2DComponent_CollidesWithTopEdge(ulong entityID, ulong otherEntityID);

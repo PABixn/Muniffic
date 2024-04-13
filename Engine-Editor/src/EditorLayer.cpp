@@ -726,8 +726,9 @@ namespace eg
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
-			m_ActiveScene = newScene;
-			m_RuntimeScene = m_ActiveScene;
+			m_RuntimeScene = CreateRef<Scene>();
+			m_EditorScene = newScene;
+			m_ActiveScene = m_EditorScene;
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 			m_ActiveScenePath = path;
 		}
@@ -827,8 +828,9 @@ namespace eg
 
 		m_RuntimeScene = Scene::Copy(m_ActiveScene);
 		m_RuntimeScene->OnRuntimeStart();
+		m_ActiveScene = m_RuntimeScene;
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		ConsolePanel::Log("File: EditorLayer.cpp - Scene started", ConsolePanel::LogType::Info);
-		m_SceneHierarchyPanel.SetContext(m_RuntimeScene);
 	}
 
 	void EditorLayer::OnSceneSimulate()
@@ -840,8 +842,9 @@ namespace eg
 
 		m_RuntimeScene = Scene::Copy(m_ActiveScene);
 		m_RuntimeScene->OnSimulationStart();
+		m_ActiveScene = m_RuntimeScene;
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		ConsolePanel::Log("File: EditorLayer.cpp - Simulation started", ConsolePanel::LogType::Info);
-		m_SceneHierarchyPanel.SetContext(m_RuntimeScene);
 	}
 
 	void EditorLayer::OnScenePause()
@@ -863,8 +866,10 @@ namespace eg
 
 		m_SceneState = SceneState::Edit;
 		m_RuntimeScene->OnRuntimeStop();
-		ConsolePanel::Log("File: EditorLayer.cpp - Scene stopped", ConsolePanel::LogType::Info);
+		m_ActiveScene = m_EditorScene;
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_RuntimeScene = nullptr;
+		ConsolePanel::Log("File: EditorLayer.cpp - Scene stopped", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::OnDuplicateEntity()

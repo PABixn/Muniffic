@@ -547,15 +547,20 @@ namespace eg
             return InternalCalls.BoxCollider2DComponent_CollidesWithLeftEdge(Entity.ID, other.ID);
         }
 
-        public bool CollidesWithRighEdge(Entity other)
+        public bool CollidesWithRightEdge(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithRightEdge(Entity.ID, other.ID);
         }
+
+        public bool CollidesWithBox(Vector2 low, Vector2 high)
+        {
+            return InternalCalls.BoxCollider2DComponent_CollidesWithBoxCoords(Entity.ID, ref low, ref high);
+        }
         
         
-    bool CollidesWith(ulong entityID)
+    public bool CollidesWith(ulong entityID)
     {
-        return InternalCalls.BoxCollider2DComponent_CollidesWith(EntityID, entityID);
+        return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
     }
 
     bool CollidesWithEntitiesSide(Entity entity, Side side)
@@ -568,13 +573,13 @@ namespace eg
             switch (side)
             {
                 case Side.LEFT:
-                    return this.CollidesWithLeft(boxCollider);
+                    return this.CollidesWithLeftEdge(entity);
                 case Side.RIGHT:
-                    return this.CollidesWithRight(boxCollider);
+                    return this.CollidesWithRightEdge(entity);
                 case Side.TOP:
-                    return this.CollidesWithTop(boxCollider);
+                    return this.CollidesWithTopEdge(entity);
                 case Side.BOTTOM:
-                    return this.CollidesWithBottom(boxCollider);
+                    return this.CollidesWithBottomEdge(entity);
             }
 
         return false;

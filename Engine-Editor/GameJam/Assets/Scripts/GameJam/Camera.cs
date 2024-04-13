@@ -12,7 +12,7 @@ namespace Game
     public class Camera : DefaultBehaviour
     {
         Entity player;
-        public float zoom = 3f;
+        public float zoom = 2f;
         public float zoomSpeed = 3f;
         TransformComponent transform;
         TransformComponent playerTransform;
@@ -41,11 +41,11 @@ namespace Game
         void OnUpdate(float ts)
         {
             if (Input.IsKeyDown(KeyCode.Q))
-                zoom -= zoomSpeed * ts;
+                zoom -= 1 / zoomSpeed * ts;
             else if (Input.IsKeyDown(KeyCode.E))
-                zoom += zoomSpeed * ts;
+                zoom += 1 / zoomSpeed * ts;
 
-            transform.translation = new Vector3(playerTransform.translation.X, playerTransform.translation.Y, zoom);
+            transform.translation = new Vector3(playerTransform.translation.X, playerTransform.translation.Y, 10 / zoom);
         }
     }
 }

@@ -45,14 +45,29 @@ namespace eg
             return new Vector2(a.X + b.X, a.Y + b.Y);
         }
 
+        static public Vector2 operator +(Vector2 a, float b)
+        {
+            return new Vector2(a.X + b, a.Y + b);
+        }
+
         static public Vector2 operator -(Vector2 a, Vector2 b)
         {
             return new Vector2(a.X - b.X, a.Y - b.Y);
         }
 
+        static public Vector2 operator -(Vector2 a, float b)
+        {
+            return new Vector2(a.X - b, a.Y - b);
+        }
+
         static public Vector2 operator *(Vector2 a, float b)
         {
             return new Vector2(a.X * b, a.Y * b);
+        }
+
+        static public Vector2 operator / (Vector2 a, float b)
+        {
+            return new Vector2(a.X / b, a.Y / b);
         }
 
         public void NormalizeTo(float length)

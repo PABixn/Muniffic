@@ -16,7 +16,13 @@ namespace Game
         public bool isGrounded;
         public float jumpForce;
         public float friction;
+        public float lastJump;
         EntityTypes entityTypes;
+        Vector2 collidePos;
+        Vector2 collideSize;
+        BoxCollider2DComponent floorCollider;
+        BoxCollider2DComponent playerCollider;
+        TransformComponent transform;
 
         void OnCreate()
         {
@@ -26,7 +32,12 @@ namespace Game
             jumpForce = 0.5f;
             friction = 0.1f;
             entityTypes = EntityTypes.Human;
+            playerCollider = GetComponent<BoxCollider2DComponent>();
+            transform = GetComponent<TransformComponent>();
+            collideSize = new Vector2(playerCollider.size.X, playerCollider.size.Y);
+            lastJump = 0f;
 
+            floorCollider = Entity.FindEntityByName("floor").GetComponent<BoxCollider2DComponent>();
             if (HasComponent<RigidBody2DComponent>())
             {
                 rigidBody = GetComponent<RigidBody2DComponent>();
@@ -39,12 +50,26 @@ namespace Game
 
         void OnUpdate(float ts)
         {
+            collidePos.X = transform.translation.X;
+            collidePos.Y = transform.translation.Y;
+     
+
+            if (isGrounded == false && floorCollider.CollidesWithBox((collidePos - collideSize), collidePos + collideSize))
+            {
+                isGrounded = true;
+            }
+
             velocity = Vector2.Zero;
 
             if (Input.IsKeyDown(KeyCode.Space) && isGrounded)
             {
                 rigidBody.ApplyLinearImpulse(new Vector2(0, speed * jumpForce), true);
                 isGrounded = false;
+                DebugConsole.Log("Collider position: " + collidePos.Y, DebugConsole.LogType.Info);
+                DebugConsole.Log("Collider size: " + collideSize.Y, DebugConsole.LogType.Info);
+                DebugConsole.Log("Collider posx:" + collidePos.X, DebugConsole.LogType.Info);
+                DebugConsole.Log("Collider low: " + (collidePos - collideSize).Y, DebugConsole.LogType.Info);
+                DebugConsole.Log("Collider high: " + (collidePos + collideSize).Y, DebugConsole.LogType.Info);
             }
             else if (Input.IsKeyDown(KeyCode.S) && Math.Abs(velocity.Y) <= 10f)
             {
