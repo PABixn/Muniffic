@@ -12,8 +12,8 @@ namespace Game
     public class Camera : DefaultBehaviour
     {
         Entity player;
-        public float zoom = 2f;
-        public float zoomSpeed = 3f;
+        public float zoom = 1f;
+        public float zoomSpeed = 5f;
         TransformComponent transform;
         TransformComponent playerTransform;
 
