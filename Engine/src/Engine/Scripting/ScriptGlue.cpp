@@ -1161,7 +1161,12 @@ namespace eg
 
 		const auto& collider = entity.GetComponent<BoxCollider2DComponent>();
 		const auto& otherCollider = otherEntity.GetComponent<BoxCollider2DComponent>();
-		return Collider2D_TestOverlap(GetShapeFromBoxCollider2DComponent(collider), GetShapeFromBoxCollider2DComponent(otherCollider));
+		const auto& rigidBody = entity.GetComponent<RigidBody2DComponent>();
+		const auto& otherRigidBody = otherEntity.GetComponent<RigidBody2DComponent>();
+
+		b2Body* body = (b2Body*)rigidBody.RuntimeBody;
+		b2Body* otherBody = (b2Body*)otherRigidBody.RuntimeBody;
+		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(collider), 0, GetShapeFromBoxCollider2DComponent(otherCollider), 0, body->GetTransform(), otherBody->GetTransform());
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithPoint(UUID uuid, glm::vec2 *point)
@@ -1250,7 +1255,6 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(uuid);
 
 		const auto& collider = entity.GetComponent<BoxCollider2DComponent>();
-		b2PolygonShape shape = BoxCollider2DComponent_Getb2PolygonShape(entity, scene);
 		b2PolygonShape otherShape;
 		otherShape.SetAsBox(size->x, size->y, b2Vec2(center->x, center->y), 0);
 
@@ -1489,6 +1493,8 @@ namespace eg
 		const auto& collider = entity.GetComponent<CircleCollider2DComponent>();
 		b2PolygonShape boxShape;
 		boxShape.SetAsBox(size->x, size->y, b2Vec2(center->x, center->y), 0.0f);
+
+		b2CircleShape* shape = GetShapeFromCircleCollider2DComponent(collider);
 
 		return Collider2D_TestOverlap(GetShapeFromCircleCollider2DComponent(collider), &boxShape);
 	}
