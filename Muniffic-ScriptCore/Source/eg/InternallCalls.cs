@@ -321,6 +321,15 @@ namespace eg
         internal extern static bool BoxCollider2DComponent_CollidesWith(ulong entityID, ulong otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_CollidesWithCircle(ulong entityID, ulong otherEntityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_CollidesWithBox(ulong entityID, ulong otherEntityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static static bool BoxCollider2DComponent_CollidesWithPoint(ulong entityID, ref Vector2 point);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool BoxCollider2DComponent_CollidesWithTopEdge(ulong entityID, ulong otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -331,6 +340,15 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool BoxCollider2DComponent_CollidesWithRightEdge(ulong entityID, ulong otherEntityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_CollidesWithBoxCoords(ulong entityID, ref Vector2 min, ref Vector2 max);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_CollidesWithCircleCoords(ulong entityID, ref Vector2 center, float radius);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_CollidesWithEdgeCoords(ulong entityID, ref Vector2 start, ref Vector2 end);
 
         #endregion
 
@@ -370,6 +388,15 @@ namespace eg
         internal extern static bool CircleCollider2DComponent_CollidesWith(ulong entityID, ulong otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool CircleCollider2DComponent_CollidesWithBox(ulong entityID, ulong otherEntity);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool CircleCollider2DComponent_CollidesWithCircle(ulong entityID, ulong otherEntity);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool CircleCollider2DComponent_CollidesWithPoint(ulong entityID, ref Vector2 point);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool CircleCollider2DComponent_CollidesWithTopEdge(ulong entityID, ulong otherEntity);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -380,6 +407,15 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool CircleCollider2DComponent_CollidesWithRightEdge(ulong entityID, ulong otherEntity);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool CircleCollider2DComponent_CollidesWithBoxCoords(ulong entityID, ref Vector2 min, ref Vector2 max);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool CircleCollider2DComponent_CollidesWithCircleCoords(ulong entityID, ref Vector2 center, float radius);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool CircleCollider2DComponent_CollidesWithEdgeCoords(ulong entityID, ref Vector2 start, ref Vector2 end);
 
         #endregion
 
