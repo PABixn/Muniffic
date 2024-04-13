@@ -68,8 +68,9 @@ namespace Game
             collidePos.Y = transform.translation.Y;
 
 
-            if (isGrounded == false && lastJump >= jumpDelay && floorCollider.CollidesWithBox(collidePos - collideSize / 2, collidePos + collideSize / 2))
+            if (isGrounded == false && lastJump >= jumpDelay && floorCollider.CollidesWithBox(collidePos - collideSize, collidePos + collideSize))
             {
+                DebugConsole.Log(collideSize.Y.ToString(), DebugConsole.LogType.Info);
                 isGrounded = true;
                 lastJump = 0f;
             }
@@ -99,7 +100,7 @@ namespace Game
             else if(lastShot >= shotDelay && Input.IsKeyDown(KeyCode.Space))
             {
                 direction.NormalizeTo(shotSpeed);
-                projectiles.Add(new Projectile(new Vector2(transform.translation.X + collideSize.X * direction.X / 2 + 0.5f * direction.X, transform.translation.Y), direction, 10, ProjectileType.Normal));
+                projectiles.Add(new Projectile(new Vector2(transform.translation.X + collideSize.X * direction.X + 0.5f * direction.X, transform.translation.Y), direction, 10, ProjectileType.Normal));
                 lastShot = 0f;
             }
 
