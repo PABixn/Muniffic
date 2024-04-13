@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public enum EntityTypes
+    internal class h
     {
-        Human, Square, Circle, Triangle
     }
 }
