@@ -719,6 +719,7 @@ namespace eg
 		return entity.GetComponent<AnimatorComponent>().Animator2D->CanTransition(fromIndex, toIndex);
 	}
 #pragma endregion
+
 #pragma region Camera
 	static bool CameraComponent_IsPrimary(UUID uuid)
 	{
@@ -889,7 +890,7 @@ namespace eg
 		body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
 	}
 
-	static void Rigidbody2DComponent_GetLinearVelocity(UUID entityID, glm::vec2 *outLinearVelocity)
+	static void RigidBody2DComponent_GetLinearVelocity(UUID entityID, glm::vec2 *outLinearVelocity)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
@@ -902,7 +903,7 @@ namespace eg
 		*outLinearVelocity = glm::vec2(linearVelocity.x, linearVelocity.y);
 	}
 
-	static RigidBody2DComponent::BodyType Rigidbody2DComponent_GetType(UUID entityID)
+	static RigidBody2DComponent::BodyType RigidBody2DComponent_GetType(UUID entityID)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
@@ -912,7 +913,7 @@ namespace eg
 		return entity.GetComponent<RigidBody2DComponent>().Type;
 	}
 
-	static void Rigidbody2DComponent_SetType(UUID entityID, RigidBody2DComponent::BodyType bodyType)
+	static void RigidBody2DComponent_SetType(UUID entityID, RigidBody2DComponent::BodyType bodyType)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
@@ -922,7 +923,7 @@ namespace eg
 		entity.GetComponent<RigidBody2DComponent>().Type = bodyType;
 	}
 
-	static bool Rigidbody2DComponent_IsFixedRotation(UUID entityID)
+	static bool RigidBody2DComponent_IsFixedRotation(UUID entityID)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
@@ -932,7 +933,7 @@ namespace eg
 		return entity.GetComponent<RigidBody2DComponent>().FixedRotation;
 	}
 
-	static void Rigidbody2DComponent_SetFixedRotation(UUID entityID, bool fixedRotation)
+	static void RigidBody2DComponent_SetFixedRotation(UUID entityID, bool fixedRotation)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
@@ -1564,11 +1565,11 @@ namespace eg
 
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
-		EG_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetLinearVelocity);
-		EG_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetType);
-		EG_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetType);
-		EG_ADD_INTERNAL_CALL(Rigidbody2DComponent_IsFixedRotation);
-		EG_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetFixedRotation);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetLinearVelocity);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetType);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetType);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_IsFixedRotation);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetFixedRotation);
 
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetOffset);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetOffset);

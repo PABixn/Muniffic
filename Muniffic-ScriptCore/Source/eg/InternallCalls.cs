@@ -219,7 +219,7 @@ namespace eg
         internal extern static CameraComponent.ProjectionType CameraComponent_GetProjectionType(ulong UUID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetProjectionType(ulong UUID, ref CameraComponent.ProjectionType type);
+        internal extern static void CameraComponent_SetProjectionType(ulong UUID, CameraComponent.ProjectionType type);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static float CameraComponent_GetOrthographicSize(ulong UUID);

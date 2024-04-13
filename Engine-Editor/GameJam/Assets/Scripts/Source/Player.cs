@@ -20,14 +20,14 @@ namespace Game
 
         void OnCreate()
         {
-            speed = 1f;
+            speed = 10f;
             velocity = Vector2.Zero;
             isGrounded = true;
-            jumpForce = 5f;
-            friction = 0.5f;
+            jumpForce = 1.5f;
+            friction = 0.1f;
             entityTypes = EntityTypes.Human;
 
-            if(HasComponent<RigidBody2DComponent>())
+            if (HasComponent<RigidBody2DComponent>())
             {
                 rigidBody = GetComponent<RigidBody2DComponent>();
             }
@@ -39,26 +39,32 @@ namespace Game
 
         void OnUpdate(float ts)
         {
-            if(Input.IsKeyDown(KeyCode.Space) && isGrounded)
+            velocity = Vector2.Zero;
+
+            if (Input.IsKeyDown(KeyCode.Space) && isGrounded)
             {
                 rigidBody.ApplyLinearImpulse(new Vector2(0, speed * jumpForce), true);
                 isGrounded = false;
             }
-            else if(Input.IsKeyDown(KeyCode.S) && Math.Abs(velocity.Y) <= 10f)
+            else if (Input.IsKeyDown(KeyCode.S) && Math.Abs(velocity.Y) <= 10f)
             {
                 velocity.Y -= speed;
             }
-            else if(Input.IsKeyDown(KeyCode.A) && Math.Abs(velocity.X) <= 10f)
+            else if (Input.IsKeyDown(KeyCode.A) && velocity.X >= -10f)
             {
                 velocity.X -= speed;
             }
-            else if(Input.IsKeyDown(KeyCode.D) && Math.Abs(velocity.X) <= 10f)
+            else if (Input.IsKeyDown(KeyCode.D) && velocity.X <= 10f)
             {
                 velocity.X += speed;
             }
 
-            rigidBody.ApplyLinearImpulse(velocity * ts, true);
-            rigidBody.ApplyLinearImpulse(new Vector2(Math.Sign(rigidBody.linearVelocity.X) * friction * ts, 0), true);
+            if (rigidBody != null)
+            {
+                //DebugConsole.Log(Math.Sign((rigidBody.linearVelocity.X) * -1 * friction * ts).ToString(), DebugConsole.LogType.Info);
+                rigidBody.ApplyLinearImpulse(velocity * ts, true);
+                rigidBody.ApplyLinearImpulse(new Vector2(Math.Sign(rigidBody.linearVelocity.X) * -1 * friction * ts, 0), true);
+            }
         }
 
         void ChangeType(EntityTypes type)

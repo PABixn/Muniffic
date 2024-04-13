@@ -310,7 +310,7 @@ namespace eg
         public ProjectionType type
         {
             get => InternalCalls.CameraComponent_GetProjectionType(Entity.ID);
-            set => InternalCalls.CameraComponent_SetProjectionType(Entity.ID, ref value);
+            set => InternalCalls.CameraComponent_SetProjectionType(Entity.ID, value);
         }
 
         /// <summary>
@@ -320,7 +320,7 @@ namespace eg
         {
             InternalCalls.CameraComponent_SetPerspective(Entity.ID, ref verticalFov, ref nearClip, ref farClip);
             ProjectionType type = ProjectionType.Perspective;
-            InternalCalls.CameraComponent_SetProjectionType(Entity.ID, ref type);
+            InternalCalls.CameraComponent_SetProjectionType(Entity.ID, type);
         }
 
         /// <summary>
@@ -330,7 +330,7 @@ namespace eg
         {
             InternalCalls.CameraComponent_SetOrthographic(Entity.ID, ref size, ref nearClip, ref farClip);
             ProjectionType type = ProjectionType.Ortographic;
-            InternalCalls.CameraComponent_SetProjectionType(Entity.ID, ref type);
+            InternalCalls.CameraComponent_SetProjectionType(Entity.ID, type);
         }
 
         /// <summary>

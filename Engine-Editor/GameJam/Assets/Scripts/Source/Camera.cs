@@ -18,6 +18,10 @@ namespace Game
 
         void OnCreate()
         {
+            CameraComponent.ProjectionType type = CameraComponent.ProjectionType.Perspective;
+            if (HasComponent<CameraComponent>())
+                GetComponent<CameraComponent>().type = type;
+
             player = Entity.FindEntityByName("Player");
 
             if(player != null)
