@@ -406,6 +406,7 @@ namespace eg
                 InternalCalls.RigidBody2DComponent_GetLinearVelocity(Entity.ID, out Vector2 velocity);
                 return velocity;
             }
+            set => InternalCalls.RigidBody2DComponent_SetLinearVelocity(Entity.ID, ref value);
         }
 
         /// <summary>
@@ -416,6 +417,14 @@ namespace eg
         {
             get => InternalCalls.RigidBody2DComponent_GetType(Entity.ID);
             set => InternalCalls.RigidBody2DComponent_SetType(Entity.ID, value);
+        }
+
+        /// <summary>
+        /// Initializes the runtime body of the RigidBody2D component.
+        /// </summary>
+        public void AwakeRuntimeBody()
+        {
+            InternalCalls.RigidBody2DComponent_AwakeRuntimeBody(Entity.ID);
         }
 
         /// <summary>

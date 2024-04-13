@@ -35,7 +35,7 @@ namespace Game
             {
                 Vector2 vector = Vector2.FindVector(Transform.translation.XY, playerTransform.translation.XY);
                 vector.NormalizeTo(ProjectileSpeed);
-                projectiles.Add(new Projectile(vector, this.Damage, ProjectileType.Normal));
+                projectiles.Add(new Projectile(Transform.translation.XY, vector, this.Damage, ProjectileType.Normal));
             }
         }
 
@@ -46,7 +46,7 @@ namespace Game
             {
                 Vector2 vector = Vector2.FindVector(Transform.translation.XY, playerTransform.translation.XY);
                 vector.NormalizeTo(ProjectileSpeed);
-                projectiles.Add(new Projectile(vector, this.Damage, ProjectileType.Stun));
+                projectiles.Add(new Projectile(Transform.translation.XY, vector, this.Damage, ProjectileType.Stun));
             }
             else if (stage == Stage.Circle)
             {

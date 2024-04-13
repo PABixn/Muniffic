@@ -261,9 +261,14 @@ namespace eg
 
         #region RigidBody2D
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool RigidBody2DComponent_ApplyLinearImpulse(ulong iD, ref Vector2 impulse, ref Vector2 point, bool wake);
+        internal extern static void RigidBody2DComponent_AwakeRuntimeBody(ulong ID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool RigidBody2DComponent_ApplyLinearImpulse(ulong ID, ref Vector2 impulse, ref Vector2 point, bool wake);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_GetLinearVelocity(ulong entityID, out Vector2 linearVelocity);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetLinearVelocity(ulong entityID, ref Vector2 linearVelocity);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static RigidBody2DComponent.BodyType RigidBody2DComponent_GetType(ulong entityID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

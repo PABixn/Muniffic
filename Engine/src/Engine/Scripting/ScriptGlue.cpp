@@ -866,6 +866,15 @@ namespace eg
 #pragma endregion
 
 #pragma region RigidBody2D
+	static void RigidBody2DComponent_AwakeRuntimeBody(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		if(entity.HasComponent<RigidBody2DComponent>())
+			scene->AwakeRuntimeBody(entity);
+	}
+
 	static void RigidBody2DComponent_ApplyLinearImpulse(UUID uuid, glm::vec2 *impulse, glm::vec2 *point, bool wake)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
@@ -885,9 +894,25 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(uuid);
 		EG_CORE_ASSERT(entity, "Entity does not exist!");
 
+		if(entity.GetName() == "projectile")
+			ConsolePanel::Log(std::to_string(impulse->x), ConsolePanel::LogType::Info);
+
 		auto &rb2d = entity.GetComponent<RigidBody2DComponent>();
 		b2Body *body = (b2Body *)rb2d.RuntimeBody;
 		body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
+	}
+
+	static void RigidBody2DComponent_SetLinearVelocity(UUID uuid, glm::vec2* linearVelocity)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		b2Vec2 velocity = b2Vec2(linearVelocity->x, linearVelocity->y);
+		body->SetLinearVelocity(velocity);
 	}
 
 	static void RigidBody2DComponent_GetLinearVelocity(UUID entityID, glm::vec2 *outLinearVelocity)
@@ -898,7 +923,7 @@ namespace eg
 		EG_CORE_ASSERT(entity);
 
 		auto &rb2d = entity.GetComponent<RigidBody2DComponent>();
-		b2Body *body = (b2Body *)rb2d.RuntimeBody;
+		b2Body *body = (b2Body*)rb2d.RuntimeBody;
 		const b2Vec2 &linearVelocity = body->GetLinearVelocity();
 		*outLinearVelocity = glm::vec2(linearVelocity.x, linearVelocity.y);
 	}
@@ -1724,9 +1749,11 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(CameraComponent_GetPerspectiveFarClip);
 		EG_ADD_INTERNAL_CALL(CameraComponent_SetPerspectiveFarClip);
 
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_AwakeRuntimeBody);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulse);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyLinearImpulseToCenter);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetLinearVelocity);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetLinearVelocity);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetType);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetType);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_IsFixedRotation);

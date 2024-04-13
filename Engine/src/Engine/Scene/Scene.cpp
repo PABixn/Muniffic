@@ -1,5 +1,6 @@
 #include "egpch.h"
 
+#include "Scene.h"
 #include "Components.h"
 #include "ScriptableEntity.h"
 #include "Engine/Renderer/Renderer2D.h"
@@ -479,6 +480,71 @@ namespace eg {
 		m_StepFrames = frames;
 	}
 
+	void Scene::AwakeRuntimeBody(Entity entity)
+	{
+		auto& transform = entity.GetComponent<TransformComponent>();
+		auto& rb = entity.GetComponent<RigidBody2DComponent>();
+
+		b2BodyDef bodyDef;
+		bodyDef.type = Utils::RigidBody2DTypeToBox2DBody(rb.Type);
+		bodyDef.position.Set(transform.Translation.x, transform.Translation.y);
+		bodyDef.angle = transform.Rotation.z;
+
+		b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
+		body->SetFixedRotation(rb.FixedRotation);
+		rb.RuntimeBody = body;
+
+		if (entity.HasComponent<BoxCollider2DComponent>())
+		{
+			auto& bc = entity.GetComponent<BoxCollider2DComponent>();
+			b2PolygonShape shape;
+			shape.SetAsBox(bc.Size.x * transform.Scale.x, bc.Size.y * transform.Scale.y, { bc.Offset.x, bc.Offset.y }, 0.0f);
+
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &shape;
+			fixtureDef.density = bc.Density;
+			fixtureDef.friction = bc.Friction;
+			fixtureDef.restitution = bc.Restitution;
+			fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
+
+			body->CreateFixture(&fixtureDef);
+		}
+
+		if (entity.HasComponent<CircleCollider2DComponent>())
+		{
+			auto& cc = entity.GetComponent<CircleCollider2DComponent>();
+			b2CircleShape shape;
+			shape.m_p.Set(cc.Offset.x, cc.Offset.y);
+
+			shape.m_radius = (transform.Scale.x) * cc.Radius;
+
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &shape;
+			fixtureDef.density = cc.Density;
+			fixtureDef.friction = cc.Friction;
+			fixtureDef.restitution = cc.Restitution;
+			fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
+			body->CreateFixture(&fixtureDef);
+		}
+	}
+
+	void* Scene::StartRuntimeBody(Entity entity)
+	{
+		auto& transform = entity.GetComponent<TransformComponent>();
+		auto& rb = entity.GetComponent<RigidBody2DComponent>();
+
+		b2BodyDef bodyDef;
+		bodyDef.type = Utils::RigidBody2DTypeToBox2DBody(rb.Type);
+		bodyDef.position.Set(transform.Translation.x, transform.Translation.y);
+		bodyDef.angle = transform.Rotation.z;
+
+		b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
+		body->SetFixedRotation(rb.FixedRotation);
+		rb.RuntimeBody = body;
+
+		return body;
+	}
+
 	void Scene::OnPhysics2DStart()
 	{
 		m_PhysicsWorld = new b2World({ 0.0f, -9.81f });
@@ -486,18 +552,9 @@ namespace eg {
 		for (auto entity : view)
 		{
 			Entity e{ entity, this };
-
 			auto& transform = e.GetComponent<TransformComponent>();
-			auto& rb = e.GetComponent<RigidBody2DComponent>();
 
-			b2BodyDef bodyDef;
-			bodyDef.type = Utils::RigidBody2DTypeToBox2DBody(rb.Type);
-			bodyDef.position.Set(transform.Translation.x, transform.Translation.y);
-			bodyDef.angle = transform.Rotation.z;
-
-			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
-			body->SetFixedRotation(rb.FixedRotation);
-			rb.RuntimeBody = body;
+			b2Body* body = (b2Body*)StartRuntimeBody(e);
 
 			if (e.HasComponent<BoxCollider2DComponent>())
 			{

@@ -16,22 +16,28 @@ namespace Game
         Entity Entity;
         public Entity playerEntity;
         ProjectileType projectileType;
+        RigidBody2DComponent rigidBody;
 
-        public Projectile(Vector2 Velocity, int Damage, ProjectileType type)
+        public Projectile(Vector2 position, Vector2 Velocity, int Damage, ProjectileType type)
         {
             this.Velocity = Velocity;
             this.Damage = Damage;
             projectileType = type;
             Entity = Entity.Create("projectile");
+            Transform = Entity.GetComponent<TransformComponent>();
+            Transform.scale = new Vector3(0.2f, 0.1f, 1f);
+            Transform.translation = new Vector3(position.X, position.Y, 0);
             Entity.AddComponent<SpriteRendererComponent>();
             Entity.AddComponent<BoxCollider2DComponent>();
-            Entity.AddComponent<RigidBody2DComponent>();
-            Transform = Entity.GetComponent<TransformComponent>();
+            rigidBody = Entity.AddComponent<RigidBody2DComponent>();
+            rigidBody.type = RigidBody2DComponent.BodyType.Kinematic;
+            rigidBody.AwakeRuntimeBody();
         }
 
         public void UpdatePosition(float ts)
         {
-            Transform.translation += new Vector3(Velocity * ts, 0);
+            DebugConsole.Log(rigidBody.linearVelocity.X.ToString(), DebugConsole.LogType.Info);
+            rigidBody.linearVelocity = Velocity;
         }
     }
 }

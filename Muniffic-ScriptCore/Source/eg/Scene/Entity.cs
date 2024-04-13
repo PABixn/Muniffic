@@ -57,7 +57,7 @@ namespace eg
     }
 
     public class Entity
-    {
+    { 
         /// <summary>
         /// UUID of the entity, given by the engine at creation.
         /// </summary>

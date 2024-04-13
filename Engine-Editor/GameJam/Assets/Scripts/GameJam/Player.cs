@@ -17,10 +17,15 @@ namespace Game
         public float jumpForce;
         public float friction;
         public float lastJump;
-        public float jumpDelay = 1f;
+        public float jumpDelay;
+        public float lastShot;
+        public float shotDelay;
+        public float shotSpeed;
+        List<Projectile> projectiles;
         EntityTypes entityTypes;
         Vector2 collidePos;
         Vector2 collideSize;
+        Vector2 direction;
         BoxCollider2DComponent floorCollider;
         BoxCollider2DComponent playerCollider;
         TransformComponent transform;
@@ -37,6 +42,12 @@ namespace Game
             transform = GetComponent<TransformComponent>();
             collideSize = new Vector2(playerCollider.size.X, playerCollider.size.Y);
             lastJump = 0f;
+            jumpDelay = 1f;
+            lastShot = 0f;
+            shotDelay = 2f;
+            shotSpeed = 1f;
+
+            projectiles = new List<Projectile>();
 
             floorCollider = Entity.FindEntityByName("floor").GetComponent<BoxCollider2DComponent>();
             if (HasComponent<RigidBody2DComponent>())
@@ -52,6 +63,7 @@ namespace Game
         void OnUpdate(float ts)
         {
             lastJump += ts;
+            lastShot += ts;
             collidePos.X = transform.translation.X;
             collidePos.Y = transform.translation.Y;
 
@@ -64,27 +76,31 @@ namespace Game
 
             velocity = Vector2.Zero;
 
-            if (Input.IsKeyDown(KeyCode.Space) && isGrounded)
+            if (Input.IsKeyDown(KeyCode.W) && isGrounded)
             {
                 rigidBody.ApplyLinearImpulse(new Vector2(0, speed * jumpForce), true);
                 isGrounded = false;
-                DebugConsole.Log("Collider position: " + collidePos.Y, DebugConsole.LogType.Info);
-                DebugConsole.Log("Collider size: " + collideSize.Y, DebugConsole.LogType.Info);
-                DebugConsole.Log("Collider posx:" + collidePos.X, DebugConsole.LogType.Info);
-                DebugConsole.Log("Collider low: " + (collidePos - collideSize).Y, DebugConsole.LogType.Info);
-                DebugConsole.Log("Collider high: " + (collidePos + collideSize).Y, DebugConsole.LogType.Info);
             }
             else if (Input.IsKeyDown(KeyCode.S) && Math.Abs(velocity.Y) <= 10f)
             {
+                direction = new Vector2(0, -1);
                 velocity.Y -= speed;
             }
             else if (Input.IsKeyDown(KeyCode.A) && velocity.X >= -10f)
             {
+                direction = new Vector2(-1, 0);
                 velocity.X -= speed;
             }
             else if (Input.IsKeyDown(KeyCode.D) && velocity.X <= 10f)
             {
+                direction = new Vector2(1, 0);
                 velocity.X += speed;
+            }
+            else if(lastShot >= shotDelay && Input.IsKeyDown(KeyCode.Space))
+            {
+                direction.NormalizeTo(shotSpeed);
+                projectiles.Add(new Projectile(new Vector2(transform.translation.X + collideSize.X * direction.X / 2 + 0.5f * direction.X, transform.translation.Y), direction, 10, ProjectileType.Normal));
+                lastShot = 0f;
             }
 
             if (rigidBody != null)
@@ -92,6 +108,16 @@ namespace Game
                 //DebugConsole.Log(Math.Sign((rigidBody.linearVelocity.X) * -1 * friction * ts).ToString(), DebugConsole.LogType.Info);
                 rigidBody.ApplyLinearImpulse(velocity * ts, true);
                 rigidBody.ApplyLinearImpulse(new Vector2(rigidBody.linearVelocity.X * -1 * friction * ts, 0), true);
+            }
+
+            UpdateProjectiles(ts);
+        }
+
+        private void UpdateProjectiles(float ts)
+        {
+            foreach(Projectile p in projectiles)
+            {
+                p.UpdatePosition(ts);
             }
         }
 
