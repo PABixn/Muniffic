@@ -1257,8 +1257,14 @@ namespace eg
 		const auto& collider = entity.GetComponent<BoxCollider2DComponent>();
 		b2PolygonShape otherShape;
 		otherShape.SetAsBox(size->x, size->y, b2Vec2(center->x, center->y), 0);
+		const auto& rigidBody = entity.GetComponent<RigidBody2DComponent>();
 
-		return Collider2D_TestOverlap(GetShapeFromBoxCollider2DComponent(collider), &otherShape);
+		b2Body* body = (b2Body*)rigidBody.RuntimeBody;
+
+		b2Transform transform;
+		transform.SetIdentity();
+
+		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(collider), 0, &otherShape, 0, body->GetTransform(), transform);
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithCircleCoords(UUID uuid, glm::vec2 *center, float radius)
