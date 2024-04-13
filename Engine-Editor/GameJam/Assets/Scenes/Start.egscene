@@ -45,7 +45,7 @@ Entities:
       IsInherited: false
       IsInheritedInChildren: false
     ScriptComponent:
-      Name: Game.Player
+      Name: Game.HumanPlayer
       ScriptFields:
         []
       IsInherited: false

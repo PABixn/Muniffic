@@ -54,6 +54,19 @@ namespace eg
             T component = new T() { Entity = entity };
             return component;
         }
+
+        public T AddComponent<T>() where T : Component, new()
+        {
+            Type componentType = typeof(T);
+            InternalCalls.Entity_AddComponent(entity.ID, componentType);
+            return GetComponent<T>();
+        }
+
+        public void RemoveComponent<T>() where T : Component, new()
+        {
+            Type componentType = typeof(T);
+            InternalCalls.Entity_RemoveComponent(entity.ID, componentType);
+        }
     }
 
     public class Entity
