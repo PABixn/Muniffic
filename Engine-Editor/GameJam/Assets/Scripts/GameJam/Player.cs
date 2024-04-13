@@ -17,6 +17,7 @@ namespace Game
         public float jumpForce;
         public float friction;
         public float lastJump;
+        public float jumpDelay = 1f;
         EntityTypes entityTypes;
         Vector2 collidePos;
         Vector2 collideSize;
@@ -50,13 +51,15 @@ namespace Game
 
         void OnUpdate(float ts)
         {
+            lastJump += ts;
             collidePos.X = transform.translation.X;
             collidePos.Y = transform.translation.Y;
-     
 
-            if (isGrounded == false && floorCollider.CollidesWithBox((collidePos - collideSize), collidePos + collideSize))
+
+            if (isGrounded == false && lastJump >= jumpDelay && floorCollider.CollidesWithBox(collidePos - collideSize / 2, collidePos + collideSize / 2))
             {
                 isGrounded = true;
+                lastJump = 0f;
             }
 
             velocity = Vector2.Zero;
