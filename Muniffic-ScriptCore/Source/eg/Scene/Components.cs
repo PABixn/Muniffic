@@ -531,6 +531,11 @@ namespace eg
             return InternalCalls.BoxCollider2DComponent_CollidesWithCircle(Entity.ID, other.ID);
         }
 
+        public bool CollidesWithCircle(Vector2 center, float radius)
+        {
+            return InternalCalls.BoxCollider2DComponent_CollidesWithCircleCoords(Entity.ID, ref center, radius);
+        }
+
         public bool CollidesWithPoint(Vector2 point)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithPoint(Entity.ID, ref point);
@@ -646,6 +651,11 @@ namespace eg
         public bool CollidesWithCircle(Entity other)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithCircle(Entity.ID, other.ID);
+        }
+
+        public bool CollidesWithCircle(Vector2 center, float radius)
+        {
+            return InternalCalls.CircleCollider2DComponent_CollidesWithCircleCoords(Entity.ID, ref center, radius);
         }
 
         public bool CollidesWithBox(Entity other)

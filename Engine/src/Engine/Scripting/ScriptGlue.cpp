@@ -1090,21 +1090,6 @@ namespace eg
 		return edge;
 	}
 
-	static bool Collider2D_TestOverlap(const b2Shape* shapeA, int32 indexA,
-		const b2Shape* shapeB, int32 indexB,
-		const TransformComponent& transformA, const TransformComponent& transformB) {
-		EG_PROFILE_FUNCTION();
-		return b2TestOverlap(shapeA, indexA, shapeB, indexB, b2Transform(b2Vec2(transformA.Translation.x, transformA.Translation.y), b2Rot(transformA.Rotation.z)), b2Transform(b2Vec2(transformA.Translation.x, transformB.Translation.y), b2Rot(transformB.Rotation.z)));
-	}
-
-	static bool Collider2D_TestOverlap(const b2Shape* shapeA, const b2Shape* shapeB)
-	{
-		EG_PROFILE_FUNCTION();
-		b2Transform transform;
-		transform.SetIdentity();
-		return b2TestOverlap(shapeA, 0, shapeB, 0, transform, transform);
-	}
-
 	static b2PolygonShape* GetShapeFromBoxCollider2DComponent(const BoxCollider2DComponent& boxCollider)
 	{
 		EG_PROFILE_FUNCTION();
@@ -1292,10 +1277,9 @@ namespace eg
 		EG_CORE_ASSERT(bodyA, "Body in BoxCollider2DComponent_CollidesWithBoxCoords is null");
 
 		b2PolygonShape otherShape;
-		otherShape.SetAsBox(size->x, size->y, b2Vec2(center->x, center->y), 0);
+		otherShape.SetAsBox(size->x, size->y, b2Vec2(0, 0), 0);
 
-		b2Transform transform;
-		transform.SetIdentity();
+		b2Transform transform(b2Vec2(center->x, center->y), b2Rot(0));
 
 		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(colliderA), 0, &otherShape, 0, bodyA->GetTransform(), transform);
 	}
