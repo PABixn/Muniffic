@@ -643,6 +643,12 @@ namespace eg
             set => InternalCalls.CircleCollider2DComponent_SetRestitutionThreshold(Entity.ID, ref value);
         }
 
+        public float radius
+        {
+            get => InternalCalls.CircleCollider2DComponent_GetRadius(Entity.ID);
+            set => InternalCalls.CircleCollider2DComponent_SetRadius(Entity.ID, ref value);
+        }
+
         public bool CollidesWith(Entity other)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWith(Entity.ID, other.ID);

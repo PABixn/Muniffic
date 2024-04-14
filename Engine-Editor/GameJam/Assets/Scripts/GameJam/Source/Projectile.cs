@@ -36,7 +36,6 @@ namespace Game
 
         public void UpdatePosition(float ts)
         {
-            DebugConsole.Log(rigidBody.linearVelocity.X.ToString(), DebugConsole.LogType.Info);
             rigidBody.linearVelocity = Velocity;
         }
     }

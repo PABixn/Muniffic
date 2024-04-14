@@ -13,20 +13,40 @@ namespace Game
     {
         public float shotSpeed;
         public float lastShot;
-        public float shotDelay;
         public Vector2 collidePos;
         public Vector2 collideSize;
-        public BoxCollider2DComponent playerCollider;
-        public BoxCollider2DComponent floorCollider;
+        public List<Projectile> projectiles;
 
         public override void OnCreate()
         {
-            
+            base.InitPlayer(10, 100, 2, 800);
+
+            projectiles = new List<Projectile>();
+            shotSpeed = 5;
+            lastShot = 0;
         }
 
         public override void OnUpdate(float ts)
         {
+            lastShot += ts;
 
+            base.UpdatePosition(ts);
+
+            if(lastShot >= attackCooldown && Input.IsKeyDown(KeyCode.Space))
+            {
+                lastShot = 0;
+                projectiles.Add(new Projectile(new Vector2(transform.translation.X + collideSize.X * direction.X + 0.1f * direction.X, transform.translation.Y), Vector2.NormalizeTo(direction, shotSpeed), (int)damage, ProjectileType.Normal));
+            }
+
+            UpdateProjectiles(ts);
+        }
+
+        private void UpdateProjectiles(float ts)
+        {
+            foreach(Projectile projectile in projectiles)
+            {
+                projectile.UpdatePosition(ts);
+            }
         }
     }
 }

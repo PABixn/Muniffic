@@ -358,6 +358,11 @@ namespace eg
         #endregion
 
         #region CircleCollider2D
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float CircleCollider2DComponent_GetRadius(ulong entityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void CircleCollider2DComponent_SetRadius(ulong entityID, ref float radius);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static float CircleCollider2DComponent_GetOffset(ulong entityID);

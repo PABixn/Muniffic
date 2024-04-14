@@ -70,6 +70,32 @@ namespace eg
             return new Vector2(a.X / b, a.Y / b);
         }
 
+        public static float LengthSquared(Vector2 vector)
+        {
+            return vector.X * vector.X + vector.Y * vector.Y;
+        }
+
+        public static float Length(Vector2 vector)
+        {
+            return (float)Math.Sqrt(LengthSquared(vector));
+        }
+
+        public static Vector2 NormalizeTo(Vector2 vector, float length)
+        {
+            float currentLength = Length(vector);
+
+            if (currentLength == 0)
+            {
+                return Vector2.Zero;
+            }
+
+            float scale = length / currentLength;
+            vector.X *= scale;
+            vector.Y *= scale;
+
+            return vector;
+        }
+
         public void NormalizeTo(float length)
         {
             float currentLength = Length();
