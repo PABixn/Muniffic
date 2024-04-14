@@ -1,25 +1,8 @@
 Resources:
-  - UUID: 11372721064612347296
-    ResourcePath: Textures
-    ImageName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
+  - UUID: 14058735185987232522
+    ParentDirectory: 1653657808110757768
+    ResourceName: Dune 2
     Extension: .png
-    Width: 604
-    Height: 569
-    Channels: 3
-    IsSubTexture: false
-  - UUID: 15193311898266730598
-    ResourcePath: Textures
-    ImageName: cb0
-    Extension: .png
-    Width: 800
-    Height: 600
+    Width: 1000
+    Height: 1542
     Channels: 4
-    IsSubTexture: false
-  - UUID: 8785395291164305874
-    ResourcePath: Textures
-    ImageName: cb1
-    Extension: .png
-    Width: 800
-    Height: 600
-    Channels: 4
-    IsSubTexture: false

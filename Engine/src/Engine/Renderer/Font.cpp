@@ -2,6 +2,7 @@
 #include "Font.h"
 #include "Engine/Renderer/Texture.h"
 #include "MSDFData.h"
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 #undef INFINITE
 #include "FontGeometry.h"

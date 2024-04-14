@@ -28,8 +28,6 @@ namespace eg {
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		
-
 		void OnSimulationStart();
 		void OnSimulationStop();
 
@@ -40,10 +38,13 @@ namespace eg {
 
 		void RenderScene(EditorCamera& camera);
 
+		void RenderAxis();
+
 		Entity DuplicateEntity(Entity entity);
 
 		Entity FindEntityByName(const std::string_view& name);
 		Entity GetEntityByUUID(UUID uuid);
+		bool EntityExists(UUID uuid);
 
 		Entity GetPrimaryCameraEntity();
 

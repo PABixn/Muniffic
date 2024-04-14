@@ -6,6 +6,8 @@
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/AddResourcePanel.h"
 #include "Panels/ProjectDirectoryPanel.h"
+#include "Panels/ConsolePanel.h"
+
 
 namespace eg {
 	class EditorLayer : public Layer
@@ -20,7 +22,6 @@ namespace eg {
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& e) override;
 
-		DeleteFilePanel* GetDeleteFilePanel() { return m_DeleteFilePanel; }
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
@@ -57,6 +58,7 @@ namespace eg {
 		void UI_Toolbar();
 	private:
 		friend class UnsavedChangesPanel;
+		friend class ConsolePanel;
 		OrthographicCameraController m_Camera;
 		//Temp
 		Ref<Shader> m_Shader;
@@ -67,7 +69,7 @@ namespace eg {
 		Ref<FrameBuffer> m_FrameBuffer;
 
 		Ref<Scene> m_ActiveScene;
-		Ref<Scene> m_EditorScene;
+		Ref<Scene> m_RuntimeScene;
 		std::filesystem::path m_ActiveScenePath;
 		Entity m_SquareEntity;
 		Entity m_CameraEntity;
@@ -99,17 +101,20 @@ namespace eg {
 		int m_GizmoType = -1;
 
 		bool m_ShowPhysicsColliders = false;
+		bool m_ShowAxis = true;
+		bool m_ShowGrid = true;
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
 		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
-		DeleteFilePanel* m_DeleteFilePanel;
+		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
 		RenameResourcePanel* m_RenameResourcePanel;
-		CreateDirectoryPanel* m_CreateDirectoryPanel;
+		CreateDirectoryPanel* m_CreateDirectoryPanel;*/
+		Scope<ConsolePanel> m_ConsolePanel;
 
 		enum class SceneState
 		{
@@ -122,6 +127,7 @@ namespace eg {
 	public:
 		UnsavedChangesPanel* m_UnsavedChangesPanel;
 		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
+		
 
 	};
 

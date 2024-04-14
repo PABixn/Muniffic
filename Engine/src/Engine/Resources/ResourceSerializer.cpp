@@ -32,19 +32,39 @@ namespace eg
 		YAML::Node textureNode, animationNode, spriteAtlasNode, subTextureNode, fontNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
-			return false;
+		{
+			std::filesystem::create_directories(textureMetadataPath.parent_path());
+			std::ofstream file(textureMetadataPath, std::ios::trunc);
+			file.close();
+		}
 
 		if (!std::filesystem::exists(animationMetadataPath))
-			return false;
+		{
+			std::filesystem::create_directories(animationMetadataPath.parent_path());
+			std::ofstream file(animationMetadataPath, std::ios::trunc);
+			file.close();
+		}
 
 		if (!std::filesystem::exists(spriteAtlasMetadataPath))
-			return false;
+		{
+			std::filesystem::create_directories(spriteAtlasMetadataPath.parent_path());
+			std::ofstream file(spriteAtlasMetadataPath, std::ios::trunc);
+			file.close();
+		}
 
 		if (!std::filesystem::exists(subTextureMetadataPath))
-			return false;
+		{
+			std::filesystem::create_directories(subTextureMetadataPath.parent_path());
+			std::ofstream file(subTextureMetadataPath, std::ios::trunc);
+			file.close();
+		}
 
 		if (!std::filesystem::exists(fontMetadataPath))
-			return false;
+		{
+			std::filesystem::create_directories(fontMetadataPath.parent_path());
+			std::ofstream file(fontMetadataPath, std::ios::trunc);
+			file.close();
+		}
 
 		try
 		{
@@ -101,6 +121,32 @@ namespace eg
 		auto spriteAtlasResources = spriteAtlasNode["Resources"];
 		auto subtextureResource = subTextureNode["Resources"];
 		auto fontResources = fontNode["Resources"];
+
+		if (fontResources)
+		{
+			for (auto resource : fontResources)
+			{
+				UUID uuid = resource["UUID"].as<uint64_t>();
+
+				FontResourceData* data = new FontResourceData();
+				if (resource["ParentDirectory"])
+					data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+				else
+					data->ParentDirectory = 0;
+				if (resource["ResourceName"])
+					data->ResourceName = resource["ResourceName"].as<std::string>();
+				else
+					data->ResourceName = resource["FontName"].as<std::string>();
+				data->Extension = resource["Extension"].as<std::string>();
+
+				CacheFont(uuid, data);
+			}
+		}
+
+		if (ResourceDatabase::GetFontResourceDataCache().size() > 0)
+			Font::SetDefaultFont(ResourceDatabase::GetFontResourceDataCache().begin()->first);
+		else
+			Font::LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
 
 		if (textureResources)
 		{
@@ -168,9 +214,10 @@ namespace eg
 				else
 					data->ParentDirectory = 0;
 				if (resource["ResourceName"])
-					data->ResourceName = resource["AnimationName"].as<std::string>();
+					data->ResourceName = resource["ResourceName"].as<std::string>();
 				else
-					data->ResourceName = resource["ImageName"].as<std::string>();
+					data->ResourceName = resource["AnimationName"].as<std::string>();
+
 				data->Extension = resource["Extension"].as<std::string>();
 				data->FrameRate = resource["FrameRate"].as<float>();
 				data->FrameCount = resource["FrameCount"].as<int>();
@@ -200,6 +247,7 @@ namespace eg
 						data->ResourceName = resource["ResourceName"].as<std::string>();
 					else
 						data->ResourceName = resource["SpriteAtlas"].as<std::string>();
+
 					data->Extension = resource["Extension"].as<std::string>();
 					data->Width = resource["Width"].as<int>();
 					data->Height = resource["Height"].as<int>();
@@ -214,37 +262,13 @@ namespace eg
 					CacheSpriteAtlas(uuid, data);
 				}
 			}
-
-			if (fontResources)
-			{
-				for (auto resource : fontResources)
-				{
-					UUID uuid = resource["UUID"].as<uint64_t>();
-
-					FontResourceData* data = new FontResourceData();
-					if (resource["ParentDirectory"])
-						data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
-					else
-						data->ParentDirectory = 0;
-					if (resource["ResourceName"])
-						data->ResourceName = resource["ResourceName"].as<std::string>();
-					else
-						data->ResourceName = resource["FontName"].as<std::string>();
-					data->Extension = resource["Extension"].as<std::string>();
-
-					CacheFont(uuid, data);
-				}
-			}
-
-			if (ResourceDatabase::GetFontResourceDataCache().size() > 0)
-				Font::SetDefaultFont(ResourceDatabase::GetFontResourceDataCache().begin()->first);
-			else
-				Font::LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
 		}
 	}
 
 	void ResourceSerializer::SerializeResourceCache()
 	{
+		AssetDirectorySerializer::SerializeAssetDirectoryCache();
+
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
 		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
@@ -428,7 +452,7 @@ namespace eg
 		data->Type = ResourceType::Image;
 		TextureResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Image;
-		AssetDirectoryManager::addAsset(AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Image), uuid);
+		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
 	}
 
 	void ResourceSerializer::CacheSubTexture(UUID uuid, SubTextureResourceData* data)
@@ -443,7 +467,7 @@ namespace eg
 		data->Type = ResourceType::SubTexture;
 		SubTextureResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::SubTexture;
-		AssetDirectoryManager::addAsset(AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SubTexture), uuid);
+		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
 	}
 
 	void ResourceSerializer::CacheFont(UUID uuid, FontResourceData* data)
@@ -475,7 +499,7 @@ namespace eg
 		data->Type = ResourceType::Font;
 		FontResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Font;
-		AssetDirectoryManager::addAsset(AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Font), uuid);
+		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
 	}
 
 	void ResourceSerializer::CacheAnimation(UUID uuid, AnimationResourceData* data)
@@ -490,7 +514,7 @@ namespace eg
 		data->Type = ResourceType::Animation;
 		AnimationResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Animation;
-		AssetDirectoryManager::addAsset(AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Animation), uuid);
+		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
 	}
 
 	void ResourceSerializer::CacheSpriteAtlas(UUID uuid, SpriteAtlasResourceData* data)
@@ -505,6 +529,6 @@ namespace eg
 		data->Type = ResourceType::SpriteAtlas;
 		SpriteAtlasResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::SpriteAtlas;
-		AssetDirectoryManager::addAsset(AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SpriteAtlas), uuid);
+		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
 	}
 }

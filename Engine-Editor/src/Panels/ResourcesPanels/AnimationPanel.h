@@ -9,12 +9,12 @@ namespace eg
 		AnimationPanel() = default;
 		AnimationPanel(const std::filesystem::path& path);
 
-		bool InitAnimationPanel(const std::filesystem::path& path);
+		bool InitAnimationPanel() { m_ShowAnimationPanel = false; return true; }
 
 		void OnImGuiRender();
 		void OnUpdate(float dt) { m_PreviewData->Update(dt, 1.0f); }
 
-		void OpenAnimationPanel() { m_ShowAnimationPanel = true; }
+		bool OpenAnimationPanel(const std::filesystem::path& path);
 		void CloseAnimationPanel();
 
 		bool IsAnimationPanelOpen() { return m_ShowAnimationPanel; }
@@ -27,6 +27,7 @@ namespace eg
 		AnimationResourceData* m_ResourceData = nullptr;
 		TextureResourceData* m_TextureData = nullptr;
 		Resource* m_LoadedResource = nullptr;
+		std::filesystem::path m_ResourcePath = "";
 		int m_FrameWidth = 0, m_FrameHeight = 0;
 		int m_Column = 0, m_Row = 0;
 		int m_ColumnCount = 1, m_RowCount = 1;

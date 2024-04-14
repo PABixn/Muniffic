@@ -11,6 +11,11 @@ namespace eg
 {
     public static class InternalCalls
     {
+        #region Console
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Console_Log(string msg, DebugConsole.LogType type);
+        #endregion
+
         #region Entity
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Entity_IsInheritedFromParent(ulong ID, Type componentType);
@@ -80,6 +85,9 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void Entity_SetName(ulong ID, string name);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Entity_Exists(ulong ID);
         #endregion
 
         #region Transform
@@ -144,7 +152,7 @@ namespace eg
 
         #region Animator
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_PlayAnimation(ulong UUID, ref string animationName);
+        internal extern static void AnimatorComponent_PlayAnimation(ulong UUID, string animationName);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_StopAnimation(ulong UUID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -164,6 +172,10 @@ namespace eg
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_RemoveLastAnimation(ulong UUID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_Transition(ulong UUID, string to);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void AnimatorComponent_TransitionByIndex(ulong UUID, int to);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_AddTransition(ulong UUID, string from, string to);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_AddTransitionByIndex(ulong UUID, int from, int to);
@@ -179,7 +191,7 @@ namespace eg
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static string AnimatorComponent_GetCurrentAnimation(ulong UUID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_SetCurrentAnimation(ulong UUID, ref string animationName);
+        internal extern static void AnimatorComponent_SetCurrentAnimation(ulong UUID, string animationName);
 
         #endregion
 

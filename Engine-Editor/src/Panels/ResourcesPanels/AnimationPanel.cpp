@@ -10,11 +10,13 @@
 namespace eg {
 	AnimationPanel::AnimationPanel(const std::filesystem::path& path)
 	{
-		InitAnimationPanel(path);
+		//InitAnimationPanel(path);
 	}
 
-	bool AnimationPanel::InitAnimationPanel(const std::filesystem::path& path)
+	bool AnimationPanel::OpenAnimationPanel(const std::filesystem::path& path)
 	{
+		ShowAnimationPanel(true);
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path textureBasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		bool resourceLoad = false;
 		m_LoadedResource = new Resource();
@@ -30,8 +32,8 @@ namespace eg {
 		m_OriginalResourcePath = path;
 		m_TextureData = new TextureResourceData();
 		(m_TextureData)->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Image);
-		m_TextureData->ResourceName = m_LoadedResource->Path.stem().string();
-		m_TextureData->Extension = m_LoadedResource->Path.extension().string();
+		m_TextureData->ResourceName = path.stem().string();
+		m_TextureData->Extension = path.extension().string();
 		m_TextureData->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
 		m_TextureData->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
 		m_TextureData->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
@@ -71,6 +73,7 @@ namespace eg {
 
 	void AnimationPanel::SetFrames()
 	{
+		EG_PROFILE_FUNCTION();
 		m_PreviewData->ClearFrames();
 		for (int i = m_Row; i < m_Row + m_RowCount; i++)
 			for (int j = m_Column; j < m_Column + m_ColumnCount; j++)
@@ -96,6 +99,7 @@ namespace eg {
 
 	void AnimationPanel::DeleteData()
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_LoadedResource)
 		{
 			if (m_LoadedResource->Data)
@@ -113,6 +117,7 @@ namespace eg {
 
 	void AnimationPanel::OnImGuiRender()
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_ShowAnimationPanel)
 		{
 			int maxColumns = (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth);
@@ -229,15 +234,16 @@ namespace eg {
 			if(m_PreviewData->GetFrameCount() > 0)
 				ImGui::Image((void*)m_PreviewData->GetFrame()->GetTexture()->GetRendererID(), ImVec2(m_BasePreviewWidth, m_BasePreviewHeight), { m_PreviewData->GetFrame()->GetMin().x , m_PreviewData->GetFrame()->GetMax().y}, {m_PreviewData->GetFrame()->GetMax().x , m_PreviewData->GetFrame()->GetMin().y});
 
-			char buffer2[512];
+			/*char buffer2[512];
 			memset(buffer2, 0, sizeof(buffer2));
 			std::strncpy(buffer2, AssetDirectoryManager::getDirectoryPath(m_ResourceData->ParentDirectory).string().c_str(), sizeof(buffer2));
-			/*if(ImGui::InputText("Resource Path: ", buffer2, sizeof(buffer2)))
-					m_ResourceData->ResourcePath = std::filesystem::path(std::string(buffer2));*/
+			if(ImGui::InputText("Resource Path: ", buffer2, sizeof(buffer2)))
+					m_ResourcePath = std::filesystem::path(std::string(buffer2));*/
+
 			if (ImGui::Button("Save"))
 			{
 				SpriteAtlasResourceData* saData = new SpriteAtlasResourceData();
-				saData->ParentDirectory = m_ResourceData->ParentDirectory;
+				saData->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SpriteAtlas);
 				saData->ResourceName = m_ResourceData->ResourceName;
 				saData->Extension = ResourceUtils::GetResourceTypeExtension(ResourceType::SpriteAtlas);
 				saData->Width = m_TextureData->Width;
@@ -247,7 +253,7 @@ namespace eg {
 				for (int i = 0; i < m_PreviewData->GetFrameCount(); i++)
 				{
 					SubTextureResourceData* data = new SubTextureResourceData();
-					data->ParentDirectory = m_ResourceData->ParentDirectory;
+					data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SubTexture);
 					data->Texture = m_TextureUUID;
 					data->ResourceName = m_ResourceData->ResourceName + std::to_string(i);
 					data->TexCoords[0] = m_PreviewData->GetFrame(i)->GetMin();
@@ -259,7 +265,7 @@ namespace eg {
 					saData->Sprites.push_back(uuid);
 				}
 				
-				m_ResourceData->ParentDirectory = m_ResourceData->ParentDirectory == 0 ? AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Animation) : m_ResourceData->ParentDirectory;
+				m_ResourceData->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Animation);
 				m_ResourceData->FrameRate = m_PreviewData->GetFrameRate();
 				m_ResourceData->FrameCount = m_PreviewData->GetFrameCount();
 				m_ResourceData->Loop = m_PreviewData->IsLooped();
@@ -277,6 +283,7 @@ namespace eg {
 
 	void AnimationPanel::CloseAnimationPanel()
 	{
+		EG_PROFILE_FUNCTION();
 		DeleteData();
 		ResetData();
 		ShowAnimationPanel(false);
@@ -284,6 +291,7 @@ namespace eg {
 
 	void AnimationPanel::ResetData()
 	{
+		EG_PROFILE_FUNCTION();
 		m_FrameWidth = 0;
 		m_FrameHeight = 0;
 		m_Column = 0;

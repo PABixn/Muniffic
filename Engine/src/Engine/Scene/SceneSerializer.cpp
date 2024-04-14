@@ -11,11 +11,12 @@
 #include "Engine/Resources/ResourceDatabase.h"
 #include <yaml-cpp/yaml.h>
 #include <fstream>
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 
 
 namespace eg {
-
+	ConsolePanel consolePanel;
 #define READ_SCRIPT_FIELD(FieldType, Type)             \
 	case ScriptFieldType::FieldType:                   \
 	{                                                  \
@@ -35,6 +36,7 @@ namespace eg {
 		case RigidBody2DComponent::BodyType::Kinematic: return "Kinematic";
 		}
 		EG_CORE_ASSERT(false, "Unknown RigidBody2DComponent::BodyType!");
+		ConsolePanel::Log("File: SceneSerializer.cpp - Unknown type of RigidBody2DComponent", ConsolePanel::LogType::Error);
 		return std::string();
 	
 	}
@@ -45,6 +47,7 @@ namespace eg {
 		if (bodyType == "Dynamic")   return RigidBody2DComponent::BodyType::Dynamic;
 		if (bodyType == "Kinematic") return RigidBody2DComponent::BodyType::Kinematic;
 		EG_CORE_ASSERT(false, "Unknown RigidBody2DComponent::BodyType!");
+		ConsolePanel::Log("File: SceneSerializer.cpp - Unknown type of RigidBody2DComponent", ConsolePanel::LogType::Error);
 		return RigidBody2DComponent::BodyType::Static;
 	}
 
@@ -153,7 +156,17 @@ namespace eg {
 			}
 
 			out << YAML::EndSeq; // Animations
-			out << YAML::EndMap; // Animations
+			out << YAML::Key << "Transitions" << YAML::BeginSeq;
+			for (auto& transition : *animatorComponent.Animator2D->GetTransitions())
+			{
+				out << YAML::BeginMap;
+				out << YAML::Key << "From" << YAML::Value << transition.first;
+				out << YAML::Key << "To" << YAML::Value << transition.second;
+				out << YAML::EndMap;
+			}
+
+			out << YAML::EndSeq; // Transitions
+			out << YAML::EndMap; // AnimatorComponent
 		}
 
 		if (entity.HasComponent<CameraComponent>())
@@ -349,6 +362,7 @@ namespace eg {
 
 		std::string sceneName = data["Scene"].as<std::string>();
 		EG_CORE_TRACE("Deserializing scene '{0}'", sceneName);
+		ConsolePanel::Log("File: SceneSerializer.cpp - Deserializing scene " + sceneName, ConsolePanel::LogType::Info);
 
 		ResourceSerializer::DeserializeResourceCache();
 
@@ -365,6 +379,7 @@ namespace eg {
 					name =  tagComponent["Tag"].as<std::string>();
 
 				EG_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
+				ConsolePanel::Log("File: SceneSerializer.cpp - Deserialized entity with name " + name, ConsolePanel::LogType::Info);
 
 				Entity deserializedEntity = m_Scene->CreateEntityWithID(uuid, name);
 
@@ -445,6 +460,7 @@ namespace eg {
 
 								if (fields.find(name) == fields.end()) {
 									EG_CORE_WARN("Field not found!");
+									//ConsolePanel::Log("File: SceneSerializer.cpp - Field not found!", ConsolePanel::LogType::Error);
 									continue;
 								}
 								fieldInstance.Field = fields.at(fieldName);
@@ -568,6 +584,15 @@ namespace eg {
 							//TODO: else load all data for animation from scene file
 						}
 					}
+
+					auto transitions = animatorComponent["Transitions"];
+					if (transitions)
+					{
+						for (auto transition : transitions)
+						{
+							ac.Animator2D->AddTransition(transition["From"].as<uint64_t>(), transition["To"].as<uint64_t>());
+						}
+					}
 				}
 
 				auto rigidBody2DComponent = entity["RigidBody2DComponent"];
@@ -629,6 +654,10 @@ namespace eg {
 
 					if(textComponent["Font"])
 						tc.FontAsset = textComponent["Font"].as<UUID>();
+
+					if (!ResourceDatabase::FindResourceData(tc.FontAsset))
+						tc.FontAsset = Font::GetDefaultFontUUID();
+
 
 					tc.RuntimeFont = ResourceDatabase::GetFontRuntimeResource(tc.FontAsset);
 

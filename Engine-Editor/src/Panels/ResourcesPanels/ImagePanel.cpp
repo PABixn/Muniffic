@@ -13,11 +13,12 @@ namespace eg
 
 	ImagePanel::ImagePanel(const std::filesystem::path& path)
 	{
-		/*m_TextureData.ResourcePath = path;*/
+		m_TexturePath = path;
 	}
 
-	bool ImagePanel::InitImagePanel(const std::filesystem::path& path)
+	bool ImagePanel::OpenImagePanel(const std::filesystem::path& path)
 	{
+		m_TexturePath = path;
 		/*m_TextureData.ResourcePath = path;*/
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		bool resourceLoad = false;
@@ -31,8 +32,8 @@ namespace eg
 			m_OriginalResourcePath = path;
 			m_ResourceData = new TextureResourceData();
 			((TextureResourceData*)m_ResourceData)->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Image);
-			/*((TextureResourceData*)m_ResourceData)->ResourceName = m_TextureData.ResourcePath.stem().string();
-			((TextureResourceData*)m_ResourceData)->Extension = m_TextureData.ResourcePath.extension().string();*/
+			((TextureResourceData*)m_ResourceData)->ResourceName = m_TexturePath.stem().string();
+			((TextureResourceData*)m_ResourceData)->Extension = m_TexturePath.extension().string();
 			((TextureResourceData*)m_ResourceData)->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
 			((TextureResourceData*)m_ResourceData)->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
 			((TextureResourceData*)m_ResourceData)->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
@@ -80,7 +81,7 @@ namespace eg
 			{
 				((TextureResourceData*)m_ResourceData)->ResourceName = std::string(buffer);
 			}
-			//ImGui::Text("Image Name: %s", ((TextureResourceData*)m_ResourceData)->ResourceName.c_str());
+			ImGui::Text("Image Name: %s", ((TextureResourceData*)m_ResourceData)->ResourceName.c_str());
 			ImGui::DragInt("Width", &((TextureResourceData*)m_ResourceData)->Width);
 			ImGui::DragInt("Height", &((TextureResourceData*)m_ResourceData)->Height);
 			//ImGui::DragInt("Top", &((TextureResourceData*)m_ResourceData)->Top);

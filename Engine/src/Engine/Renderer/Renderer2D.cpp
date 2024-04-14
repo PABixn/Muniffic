@@ -10,7 +10,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace eg {
-
 	struct QuadVertex {
 		glm::vec3 Position;
 		glm::vec4 Color;
@@ -237,7 +236,6 @@ namespace eg {
 
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
-
 		StartBatch();
 	}
 
@@ -247,7 +245,6 @@ namespace eg {
 		
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
-
 		StartBatch();
 	}
 
@@ -256,8 +253,8 @@ namespace eg {
 		EG_PROFILE_FUNCTION();
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
-
 		StartBatch();
+
 	}
 
 	void Renderer2D::EndScene() {
@@ -676,6 +673,8 @@ namespace eg {
 
 	void Renderer2D::DrawLine(const glm::vec3& start, const glm::vec3& end, const glm::vec4& color, int entityID)
 	{
+		if(s_Data.LineVertexCount >= Renderer2DData::MaxVertices)
+			FlushAndReset();
 		s_Data.LineVertexBufferPtr->Position = start;
 		s_Data.LineVertexBufferPtr->Color = color;
 		s_Data.LineVertexBufferPtr->EntityID = entityID;

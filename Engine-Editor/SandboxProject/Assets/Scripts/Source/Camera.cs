@@ -21,15 +21,13 @@ namespace Sandbox
         {
             m_Transform = GetComponent<TransformComponent>();
             m_Player = Entity.FindEntityByName("Player");
-            m_Player.AddComponent<TextComponent>();
-            m_Player.GetComponent<TextComponent>().text = "Hello Worldfasdfasdfads!";
-            m_Player.GetComponent<TextComponent>().color = Color.blue;
+            
         }
 
         void OnUpdate(float ts)
         {
-            if (m_Player != null)
-                m_Transform.translation = new Vector3(m_Player.GetComponent<TransformComponent>().translation.XY, DistanceFromPlayer);
+            //if (m_Player != null)
+            //    m_Transform.translation = new Vector3(m_Player.GetComponent<TransformComponent>().translation.XY, DistanceFromPlayer);
 
             float speed = 5f;
             Vector3 velocity = new Vector3(0);
@@ -67,9 +65,9 @@ namespace Sandbox
                 velocity.X = 0f;
             }
 
-            Vector3 translation = m_Transform.translation;
-            translation += velocity * ts;
-            m_Transform.translation = translation;
+            //Vector3 translation = m_Transform.translation;
+            //translation += velocity * ts;
+            //m_Transform.translation = translation;
         }
 
     }

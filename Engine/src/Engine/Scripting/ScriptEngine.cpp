@@ -15,6 +15,8 @@
 
 #include "Filewatch.h"
 
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
+
 namespace eg
 {
 

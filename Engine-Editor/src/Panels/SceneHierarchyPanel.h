@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine.h"
 #include "ResourcesPanels/ImagePanel.h"
+//#include "ConsolePanel.h"
 
 namespace eg {
 

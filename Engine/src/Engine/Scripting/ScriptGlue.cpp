@@ -13,6 +13,8 @@
 #include "../Engine-Editor/src/Commands/Commands.h"
 #include <mono/metadata/appdomain.h>
 
+#include "../Engine-Editor/src/Panels/ConsolePanel.h"
+
 namespace eg
 {
 
@@ -170,7 +172,11 @@ namespace eg
 	static std::unordered_map<MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFunctions;
 
 #define EG_ADD_INTERNAL_CALL(Name) mono_add_internal_call("eg.InternalCalls::" #Name, Name)
-
+	#pragma region Console
+	static void Console_Log(std::string message, ConsolePanel::LogType logType) {
+		ConsolePanel::Log(message, logType);
+	}
+	#pragma endregion
 	#pragma region Entity
 	static MonoObject* Entity_GetScriptInstance(UUID uuid)
 	{
@@ -390,6 +396,13 @@ namespace eg
 			return 0;
 
 		return e.GetUUID();
+	}
+
+	static bool Entity_Exists(UUID uuid)
+	{
+		Scene *scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		return scene->EntityExists(uuid);
 	}
 
 	static uint64_t Entity_Create(MonoString* name)
@@ -640,6 +653,20 @@ namespace eg
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->RemoveLastAnimation();
+	}
+
+	static void AnimatorComponent_TransitionByIndex(UUID uuid, int toIndex)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->Transition(toIndex);
+	}
+
+	static void AnimatorComponent_Transition(UUID uuid, MonoString* toName)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<AnimatorComponent>().Animator2D->Transition(Utils::MonoStringToString(toName));
 	}
 
 	static void AnimatorComponent_AddTransition(UUID uuid, MonoString* fromName, MonoString* toName)
@@ -1187,6 +1214,9 @@ namespace eg
 
 	void ScriptGlue::RegisterFunctions()
 	{
+		EG_ADD_INTERNAL_CALL(Entity_Exists);
+		EG_ADD_INTERNAL_CALL(Console_Log);
+
 		EG_ADD_INTERNAL_CALL(Entity_HasComponent);
 		EG_ADD_INTERNAL_CALL(Entity_FindEntityByName);
 		EG_ADD_INTERNAL_CALL(Entity_GetScriptInstance);
@@ -1244,6 +1274,8 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_AddAnimation);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveAnimation);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveLastAnimation);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_TransitionByIndex);
+		EG_ADD_INTERNAL_CALL(AnimatorComponent_Transition);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_AddTransition);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_AddTransitionByIndex);
 		EG_ADD_INTERNAL_CALL(AnimatorComponent_RemoveTransition);

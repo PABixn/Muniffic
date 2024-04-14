@@ -1,20 +1,52 @@
 Scene: Untitled
 Entities:
-  - Entity: 6694680745760091487
+  - Entity: 1784019609013889458
     Name: Cube
     TagComponent:
-      Tag: Empty Entity
+      Tag: Player
     TransformComponent:
-      Translation: [-2.79999995, 0, 0]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    TextComponent:
-      TextString: Example text
-      Color: [1, 1, 1, 1]
-      Kerning: 0
-      LineSpacing: 0
+    ScriptComponent:
+      Name: Sandbox.Player
+      ScriptFields:
+        []
       IsInherited: false
       IsInheritedInChildren: false
-      Font: 9395689231696494486
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 13365648013025665828
+    Name: Cube
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.769999981
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    ScriptComponent:
+      Name: Sandbox.Camera
+      ScriptFields:
+        []
+      IsInherited: false
+      IsInheritedInChildren: false

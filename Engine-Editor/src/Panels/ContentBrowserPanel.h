@@ -16,14 +16,11 @@ namespace eg {
 		~ContentBrowserPanel() = default;
 		void OnImGuiRender();
 		void RenderFile(UUID key, const std::string& name, ResourceType type);
-		void SetDeleteFilePanel(DeleteFilePanel* deleteFilePanel) { m_DeleteFilePanel = deleteFilePanel; }
-		void SetRenameFolderPanel(RenameFolderPanel* renameFolderPanel) { m_RenameFolderPanel = renameFolderPanel; }
-		void SetDeleteDirectoryPanel(DeleteDirectoryPanel* deleteDirectoryPanel) { m_DeleteDirectoryPanel = deleteDirectoryPanel; }
-		void SetRenameResourcePanel(RenameResourcePanel* renameResourcePanel) { m_RenameResourcePanel = renameResourcePanel; }
 		friend class ProjectDirectoryPanel;
+		void InitPanels();
+
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }
-		void SetCreateDirectoryPanel(CreateDirectoryPanel* createDirectoryPanel) { m_CreateDirectoryPanel = createDirectoryPanel; }
 
 	private:
 		UUID m_BaseDirectory;
@@ -32,10 +29,10 @@ namespace eg {
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_ImageIcon;
-		DeleteFilePanel* m_DeleteFilePanel;
-		RenameFolderPanel* m_RenameFolderPanel;
-		RenameResourcePanel* m_RenameResourcePanel;
-		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
-		CreateDirectoryPanel* m_CreateDirectoryPanel;
+		Scope<DeleteFilePanel> m_DeleteFilePanel;
+		Scope<RenameFolderPanel> m_RenameFolderPanel;
+		Scope<RenameResourcePanel> m_RenameResourcePanel;
+		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel;
+		Scope<CreateDirectoryPanel> m_CreateDirectoryPanel;
 	};
 }

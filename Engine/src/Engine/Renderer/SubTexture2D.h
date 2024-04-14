@@ -38,7 +38,6 @@ namespace eg {
 		private:
 			Ref<Texture2D> m_Texture;
 			glm::vec2 m_TexCoords[4];
-			std::filesystem::path m_FilePath;
 			UUID m_Id;
 	};
 }

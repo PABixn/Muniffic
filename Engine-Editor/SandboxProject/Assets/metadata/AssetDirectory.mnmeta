@@ -1,43 +1,58 @@
-Root: 12523857891494783988
+Root: 11988442194276262217
 Directories:
-  - UUID: 5621847066562922548
-    Name: SpriteAtlas
-    Parent: 12523857891494783988
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 12626429651825487681
-    Name: Textures
-    Parent: 12523857891494783988
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 2038053145590265822
-    Name: Shaders
-    Parent: 12523857891494783988
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 6135900428054684902
-    Name: SubTextures
-    Parent: 12523857891494783988
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 13758687790206567560
-    Name: Fonts
-    Parent: 12523857891494783988
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 8909698963628260848
+  - UUID: 11287664580325964373
     Name: Animations
-    Parent: 12523857891494783988
+    Parent: 11988442194276262217
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 5465926143214164669
+    Name: Fonts
+    Parent: 11988442194276262217
+    Subdirectories:
+      []
+    Assets:
+      - 3411977843401812495
+  - UUID: 5209102977199558525
+    Name: Textures
+    Parent: 11988442194276262217
+    Subdirectories:
+      - 16909472630361066896
+      - 1653657808110757768
+    Assets:
+      []
+  - UUID: 4264436010038973668
+    Name: SubTextures
+    Parent: 11988442194276262217
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 16688336879195097262
+    Name: SpriteAtlas
+    Parent: 11988442194276262217
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 7299656073955205051
+    Name: Shaders
+    Parent: 11988442194276262217
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 1653657808110757768
+    Name: New Folder
+    Parent: 5209102977199558525
+    Subdirectories:
+      []
+    Assets:
+      - 14058735185987232522
+  - UUID: 16909472630361066896
+    Name: New Folder 2
+    Parent: 5209102977199558525
     Subdirectories:
       []
     Assets:
