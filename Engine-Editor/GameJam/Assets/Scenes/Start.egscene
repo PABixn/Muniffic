@@ -1,5 +1,69 @@
 Scene: Untitled
 Entities:
+  - Entity: 13762763288393374918
+    Name: Cube
+    TagComponent:
+      Tag: floor
+    TransformComponent:
+      Translation: [0, -1.60000002, 0]
+      Rotation: [0, 0, 0]
+      Scale: [12.3000002, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 2675935249373906445
+    Name: Cube
+    TagComponent:
+      Tag: Player
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [0.779922783, 0.156586826, 0.156586826, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    ScriptComponent:
+      Name: Game.HumanPlayer
+      ScriptFields:
+        []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
   - Entity: 13739726832879764455
     Name: Cube
     TagComponent:
@@ -29,49 +93,14 @@ Entities:
         []
       IsInherited: false
       IsInheritedInChildren: false
-  - Entity: 2675935249373906445
+  - Entity: 10255765730830503278
     Name: Cube
     TagComponent:
-      Tag: Player
+      Tag: Sensor
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [2.29999995, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [0.64864862, 0.195345923, 0.195345923, 1]
-      TilingFactor: 1
-      IsInherited: false
-      IsInheritedInChildren: false
-    ScriptComponent:
-      Name: Game.SquarePlayer
-      ScriptFields:
-        []
-      IsInherited: false
-      IsInheritedInChildren: false
-    RigidBody2DComponent:
-      Body Type: Dynamic
-      FixedRotation: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 13762763288393374918
-    Name: Cube
-    TagComponent:
-      Tag: floor
-    TransformComponent:
-      Translation: [0, -1.60000002, 0]
-      Rotation: [0, 0, 0]
-      Scale: [12.3000002, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:

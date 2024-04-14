@@ -506,6 +506,7 @@ namespace eg {
 			fixtureDef.friction = bc.Friction;
 			fixtureDef.restitution = bc.Restitution;
 			fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
+			fixtureDef.isSensor = bc.IsSensor;
 
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			bc.RuntimeFixture = fixture;
@@ -525,6 +526,7 @@ namespace eg {
 			fixtureDef.friction = cc.Friction;
 			fixtureDef.restitution = cc.Restitution;
 			fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
+			fixtureDef.isSensor = cc.IsSensor;
 
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			cc.RuntimeFixture = fixture;
@@ -571,6 +573,7 @@ namespace eg {
 				fixtureDef.friction = bc.Friction;
 				fixtureDef.restitution = bc.Restitution;
 				fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
+				fixtureDef.isSensor = bc.IsSensor;
 
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				bc.RuntimeFixture = fixture;
@@ -590,6 +593,7 @@ namespace eg {
 				fixtureDef.friction = cc.Friction;
 				fixtureDef.restitution = cc.Restitution;
 				fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
+				fixtureDef.isSensor = cc.IsSensor;
 				
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				cc.RuntimeFixture = fixture;

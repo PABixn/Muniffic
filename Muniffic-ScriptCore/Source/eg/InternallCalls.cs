@@ -323,6 +323,12 @@ namespace eg
         internal extern static void BoxCollider2DComponent_SetRestitutionThreshold(ulong entityID, ref float restitutionThreshold);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_IsSensor(ulong entityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void BoxCollider2DComponent_SetSensor(ulong entityID, ref bool isSensor);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool BoxCollider2DComponent_CollidesWith(ulong entityID, ulong otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -393,6 +399,12 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void CircleCollider2DComponent_SetRestitutionThreshold(ulong entityID, ref float restitutionThreshold);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool CircleCollider2DComponent_IsSensor(ulong entityID);
+
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        internal extern static void CircleCollider2DComponent_SetSensor(ulong entityID, ref bool isSensor);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool CircleCollider2DComponent_CollidesWith(ulong entityID, ulong otherEntityID);
