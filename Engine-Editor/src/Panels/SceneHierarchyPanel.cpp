@@ -238,7 +238,7 @@ namespace eg {
 			ImGui::TextWrapped("The file you are trying to access is not inside the project cache");
 			if (ImGui::Button("add this resource to project cache"))
 			{
-				bool initialized = m_ImagePanel->InitImagePanel(m_PreviewAbsoluteImagePath);
+				bool initialized = m_ImagePanel->OpenImagePanel(m_PreviewAbsoluteImagePath);
 				if (initialized)
 					m_ImagePanel->ShowImagePanel(true);
 			}

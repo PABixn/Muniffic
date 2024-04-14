@@ -42,9 +42,8 @@ namespace eg {
 		void Update(float dt);
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
-		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; SetPreviewAbsoluteImagePath(""); SetPreviewRelativeImagePath(""); }
+		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; SetPreviewAbsoluteImagePath(""); }
 		void SetPreviewAbsoluteImagePath(std::filesystem::path path) { m_PreviewAbsoluteImagePath = path; }
-		void SetPreviewRelativeImagePath(std::filesystem::path path) { m_PreviewRelativeImagePath = path; }
 	private:
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
@@ -59,7 +58,6 @@ namespace eg {
 		Ref<Texture2D> m_PuzzleIcon;
 		Entity m_SelectionContext;
 		std::filesystem::path m_PreviewAbsoluteImagePath;
-		std::filesystem::path m_PreviewRelativeImagePath;
 		std::vector<EntityDisplayInfo> m_ListOfEntityDisplayed;
 		bool m_FirstDrawAfterSearch;
 	};

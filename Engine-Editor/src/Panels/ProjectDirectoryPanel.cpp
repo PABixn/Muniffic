@@ -72,9 +72,10 @@ namespace eg {
 		}
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 			if (std::filesystem::is_directory(path)) {
-				std::filesystem::path oldPath = (m_ContentBrowserPanel->m_CurrentDirectory);
-				(m_ContentBrowserPanel->m_CurrentDirectory) = path;
-				Commands::ExecuteRawValueCommand(&(m_ContentBrowserPanel->m_CurrentDirectory), oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
+				UUID oldPath = (m_ContentBrowserPanel->m_CurrentDirectory);
+				//ResourceDatabase::
+				//(m_ContentBrowserPanel->m_CurrentDirectory) = ;
+				//Commands::ExecuteRawValueCommand(&(m_ContentBrowserPanel->m_CurrentDirectory), oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
 		}
 		ImGui::PopID();

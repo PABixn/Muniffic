@@ -1,26 +1,5 @@
 Scene: Untitled
 Entities:
-  - Entity: 1784019609013889458
-    Name: Cube
-    TagComponent:
-      Tag: Player
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    ScriptComponent:
-      Name: Sandbox.Player
-      ScriptFields:
-        []
-      IsInherited: false
-      IsInheritedInChildren: false
-    RigidBody2DComponent:
-      Body Type: Static
-      FixedRotation: false
-      IsInherited: false
-      IsInheritedInChildren: false
   - Entity: 13365648013025665828
     Name: Cube
     TagComponent:
@@ -48,5 +27,26 @@ Entities:
       Name: Sandbox.Camera
       ScriptFields:
         []
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 1784019609013889458
+    Name: Cube
+    TagComponent:
+      Tag: Player
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    ScriptComponent:
+      Name: Sandbox.Player
+      ScriptFields:
+        []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
       IsInherited: false
       IsInheritedInChildren: false

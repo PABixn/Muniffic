@@ -262,20 +262,6 @@ namespace eg
 		m_ContentBrowserPanel->OnImGuiRender();
 		m_ProjectDirectoryPanel->OnImGuiRender();
 
-		if(m_DeleteFilePanel->IsShown())
-			m_DeleteFilePanel->OnImGuiRender();
-
-		if(m_RenameFolderPanel->IsShown())
-			m_RenameFolderPanel->OnImGuiRender();
-		
-		if (m_DeleteDirectoryPanel->IsShown())
-			m_DeleteDirectoryPanel->OnImGuiRender();
-
-		if (m_RenameResourcePanel->IsShown())
-			m_RenameResourcePanel->OnImGuiRender();
-
-		if (m_CreateDirectoryPanel->IsShown())
-			m_CreateDirectoryPanel->OnImGuiRender();
 		m_ConsolePanel->OnImGuiRender();
 		
 		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
@@ -808,11 +794,6 @@ namespace eg
 			m_ProjectDirectoryPanel = CreateRef<ProjectDirectoryPanel>();
 			m_ProjectDirectoryPanel->SetContentBrowserPanel(m_ContentBrowserPanel);
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
-			m_DeleteFilePanel = new DeleteFilePanel();
-			m_RenameFolderPanel = new RenameFolderPanel();
-			m_DeleteDirectoryPanel = new DeleteDirectoryPanel();
-			m_RenameResourcePanel = new RenameResourcePanel();
-			m_CreateDirectoryPanel = new CreateDirectoryPanel();
 			m_ContentBrowserPanel->InitPanels();
 
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
