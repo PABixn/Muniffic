@@ -63,7 +63,7 @@ namespace eg
 		ScriptClass EntityClass;
 
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
-		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
+		std::unordered_map<UUID, std::unordered_map<std::string, Ref<ScriptInstance>>> EntityInstances;
 
 		using ScriptFieldMap = std::unordered_map<std::string, ScriptFieldInstance>;
 		std::unordered_map<UUID, ScriptFieldMap> EntityFields;
@@ -253,15 +253,17 @@ namespace eg
 		return s_Data->EntityFields[uuid];
 	}
 
-	MonoImage *ScriptEngine::GetCoreAssemblyImage()
+	MonoImage* ScriptEngine::GetCoreAssemblyImage()
 	{
 		return s_Data->CoreAssemblyImage;
 	}
 
-	MonoObject *ScriptEngine::GetManagedInstance(UUID uuid)
+	MonoObject* ScriptEngine::GetManagedInstance(UUID uuid, std::string name)
 	{
 		EG_CORE_ASSERT(s_Data->EntityInstances.find(uuid) != s_Data->EntityInstances.end());
-		return s_Data->EntityInstances.at(uuid)->GetManagedObject();
+		EG_CORE_ASSERT(s_Data->EntityInstances.at(uuid).find(name) != s_Data->EntityInstances.at(uuid).end());
+
+		return s_Data->EntityInstances.at(uuid).at(name)->GetManagedObject();
 	}
 
 	static void onAppAssemblyFileSystemEvent(const std::string &path, const filewatch::Event change_type)
@@ -340,25 +342,30 @@ namespace eg
 
 	void ScriptEngine::OnCreateEntity(Entity entity)
 	{
+		UUID uuid = entity.GetUUID();
 		const auto &nsc = entity.GetComponent<ScriptComponent>();
-		if (ScriptEngine::EntityClassExists(nsc.Name))
+
+		s_Data->EntityInstances[uuid] = std::unordered_map<std::string, Ref<ScriptInstance>>();
+
+		for (const auto& script : nsc.Scripts)
 		{
-			UUID uuid = entity.GetUUID();
-			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[nsc.Name], entity);
-			s_Data->EntityInstances[uuid] = instance;
-
-			// Copy field values
-
-			s_Data->EntityInstances[uuid] = instance;
-
-			if (s_Data->EntityFields.find(uuid) != s_Data->EntityFields.end())
+			if (ScriptEngine::EntityClassExists(script))
 			{
-				const ScriptFieldMap &fieldMap = s_Data->EntityFields.at(uuid);
-				for (const auto &[name, fieldInstance] : fieldMap)
-					instance->SetFieldValueInternal(name, fieldInstance.m_Buffer);
-			}
+				Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[script], entity);
 
-			instance->InvokeOnCreate();
+				// Copy field values
+
+				s_Data->EntityInstances.at(uuid)[script] = instance;
+
+				if (s_Data->EntityFields.find(uuid) != s_Data->EntityFields.end())
+				{
+					const ScriptFieldMap& fieldMap = s_Data->EntityFields.at(uuid);
+					for (const auto& [name, fieldInstance] : fieldMap)
+						instance->SetFieldValueInternal(name, fieldInstance.m_Buffer);
+				}
+
+				instance->InvokeOnCreate();
+			}
 		}
 	}
 
@@ -367,8 +374,10 @@ namespace eg
 		UUID entityID = entity.GetUUID();
 		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
 		{
-			Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
-			instance->InvokeOnUpdate(ts);
+			for (auto& [key, value] : s_Data->EntityInstances.at(entityID))
+				value->InvokeOnUpdate(ts);
+			/*Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
+			instance->InvokeOnUpdate(ts);*/
 		}
 		else
 		{
@@ -381,11 +390,11 @@ namespace eg
 		return s_Data->SceneContext;
 	}
 
-	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID uuid)
+	std::unordered_map<std::string, Ref<ScriptInstance>> ScriptEngine::GetEntityScriptInstance(UUID uuid)
 	{
 		auto it = s_Data->EntityInstances.find(uuid);
 		if (it == s_Data->EntityInstances.end())
-			return nullptr;
+			return std::unordered_map<std::string, Ref<ScriptInstance>>();
 		return it->second;
 	}
 

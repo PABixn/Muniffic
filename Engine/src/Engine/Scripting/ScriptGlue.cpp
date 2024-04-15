@@ -188,9 +188,9 @@ namespace eg
 	}
 #pragma endregion
 #pragma region Entity
-	static MonoObject *Entity_GetScriptInstance(UUID uuid)
+	static MonoObject *Entity_GetScriptInstance(UUID uuid, std::string name)
 	{
-		return ScriptEngine::GetManagedInstance(uuid);
+		return ScriptEngine::GetManagedInstance(uuid, name);
 	}
 
 	static bool Entity_IsInheritedInChildren(UUID uuid, MonoReflectionType *componentType)

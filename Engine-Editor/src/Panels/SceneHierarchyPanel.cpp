@@ -491,111 +491,113 @@ namespace eg {
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
-				bool scriptExists = ScriptEngine::EntityClassExists(component.Name);
-
-				static char buffer[256];
-				memset(buffer, 0, sizeof(buffer));
-				strcpy_s(buffer, sizeof(buffer), component.Name.c_str());
-
-				UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
-
-				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+				for(std::string scriptName : component.Scripts)
 				{
-					component.Name = std::string(buffer);
-					return;
-				}
-				//Fields
-				
-				bool sceneRunning = scene->IsRunning();
-				
-				if(sceneRunning)
-				{
-					//If Scene running
-					Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
-					if (scriptInstance)
+					bool scriptExists = ScriptEngine::EntityClassExists(scriptName);
+
+					static char buffer[256];
+					memset(buffer, 0, sizeof(buffer));
+					strcpy_s(buffer, sizeof(buffer), scriptName.c_str());
+
+					UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
+
+					if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 					{
-						const auto& fields = scriptInstance->GetScriptClass()->GetFields();
-						for (const auto& [name, field] : fields)
-						{
-							//float a = 5.0f;
-							//ImGui::DragFloat(name.c_str(), &a, 0.1f);
-							switch (field.Type)
-							{
-							case ScriptFieldType::Float:
-							{
-								float value = scriptInstance->GetFieldValue<float>(name);
-								if (ImGui::DragFloat(name.c_str(), &value, 0.1f))
-									scriptInstance->SetFieldValue<float>(name, value);
-								break;
-							}
-							case ScriptFieldType::Int32:
-							{
-								int value = scriptInstance->GetFieldValue<int>(name);
-								if (ImGui::DragInt(name.c_str(), &value, 1.0f))
-									scriptInstance->SetFieldValue<int>(name, value);
-								break;
-							}
-							case ScriptFieldType::Bool:
-							{
-								bool value = scriptInstance->GetFieldValue<bool>(name);
-								if (ImGui::Checkbox(name.c_str(), &value))
-									scriptInstance->SetFieldValue<bool>(name, value);
-								break;
-							}
-							case ScriptFieldType::String:
-							{
-								//td::string value = scriptInstance->GetFieldValue<std::string>(name);
-								//har buffer[256];
-								//emset(buffer, 0, sizeof(buffer));
-								//trcpy(buffer, value.c_str());
-								//f(ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
-								//	scriptInstance->SetFieldValue<std::string>(name, std::string(buffer));
-								//reak;
-							}
-							case ScriptFieldType::Vector2:
-							{
-								glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
-								if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
-									scriptInstance->SetFieldValue<glm::vec2>(name, value);
-								break;
-							}
-							case ScriptFieldType::Vector3:
-							{
-								glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
-								if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
-									scriptInstance->SetFieldValue<glm::vec3>(name, value);
-								break;
-							}
-							case ScriptFieldType::Vector4:
-							{
-								glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
-								if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
-									scriptInstance->SetFieldValue<glm::vec4>(name, value);
-								break;
-							}
-							default:
-								break;
-							}
-						};
+						scriptName = std::string(buffer);
+						return;
 					}
-				}
-				else
-				{
-					if (scriptExists)
+					//Fields
+				
+					bool sceneRunning = scene->IsRunning();
+				
+					if(sceneRunning)
 					{
-						Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(component.Name);
-						const auto& fields = entityClass->GetFields();
-
-						auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
-
-						for (const auto& [name, field] : fields)
-						{	
-							if (entityFields.find(name) != entityFields.end())
+						//If Scene running
+						Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+						if (scriptInstance)
+						{
+							const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+							for (const auto& [name, field] : fields)
 							{
-								// Field has been set in editor
-								ScriptFieldInstance& scriptField = entityFields.at(name);
+								//float a = 5.0f;
+								//ImGui::DragFloat(name.c_str(), &a, 0.1f);
 								switch (field.Type)
 								{
+								case ScriptFieldType::Float:
+								{
+									float value = scriptInstance->GetFieldValue<float>(name);
+									if (ImGui::DragFloat(name.c_str(), &value, 0.1f))
+										scriptInstance->SetFieldValue<float>(name, value);
+									break;
+								}
+								case ScriptFieldType::Int32:
+								{
+									int value = scriptInstance->GetFieldValue<int>(name);
+									if (ImGui::DragInt(name.c_str(), &value, 1.0f))
+										scriptInstance->SetFieldValue<int>(name, value);
+									break;
+								}
+								case ScriptFieldType::Bool:
+								{
+									bool value = scriptInstance->GetFieldValue<bool>(name);
+									if (ImGui::Checkbox(name.c_str(), &value))
+										scriptInstance->SetFieldValue<bool>(name, value);
+									break;
+								}
+								case ScriptFieldType::String:
+								{
+									//td::string value = scriptInstance->GetFieldValue<std::string>(name);
+									//har buffer[256];
+									//emset(buffer, 0, sizeof(buffer));
+									//trcpy(buffer, value.c_str());
+									//f(ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+									//	scriptInstance->SetFieldValue<std::string>(name, std::string(buffer));
+									//reak;
+								}
+								case ScriptFieldType::Vector2:
+								{
+									glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
+									if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
+										scriptInstance->SetFieldValue<glm::vec2>(name, value);
+									break;
+								}
+								case ScriptFieldType::Vector3:
+								{
+									glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
+									if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
+										scriptInstance->SetFieldValue<glm::vec3>(name, value);
+									break;
+								}
+								case ScriptFieldType::Vector4:
+								{
+									glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
+									if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
+										scriptInstance->SetFieldValue<glm::vec4>(name, value);
+									break;
+								}
+								default:
+									break;
+								}
+							};
+						}
+					}
+					else
+					{
+						if (scriptExists)
+						{
+							Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(scriptName);
+							const auto& fields = entityClass->GetFields();
+
+							auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
+
+							for (const auto& [name, field] : fields)
+							{
+								if (entityFields.find(name) != entityFields.end())
+								{
+									// Field has been set in editor
+									ScriptFieldInstance& scriptField = entityFields.at(name);
+									switch (field.Type)
+									{
 									case ScriptFieldType::Float:
 									{
 										float data = scriptField.GetValue<float>();
@@ -662,12 +664,12 @@ namespace eg {
 										}
 										break;
 									}
+									}
 								}
-							}
-							else {
-								// Display control to set it
-								switch (field.Type)
-								{
+								else {
+									// Display control to set it
+									switch (field.Type)
+									{
 									case ScriptFieldType::Float:
 									{
 										float data = 0.0f;
@@ -701,7 +703,7 @@ namespace eg {
 											fieldInstance.SetValue<bool>(data);
 										}
 										break;
-									}	
+									}
 									case ScriptFieldType::String:
 									{
 										//std::string data = "";
@@ -749,13 +751,12 @@ namespace eg {
 										}
 										break;
 									}
+									}
 								}
 							}
 						}
 					}
 				}
-
-
 			}, m_Context);
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)

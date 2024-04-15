@@ -133,7 +133,7 @@ namespace eg {
 
 	struct ScriptComponent: Component
 	{
-		std::string Name;
+		std::vector<std::string> Scripts;
 
 		ScriptComponent() = default;
 		ScriptComponent(const ScriptComponent&) = default;

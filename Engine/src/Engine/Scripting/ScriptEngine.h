@@ -165,7 +165,7 @@ namespace eg {
 		static void OnUpdateEntity(Entity entity, Timestep ts);
 
 		static Scene* GetSceneContext();
-		static Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid);
+		static std::unordered_map<std::string, Ref<ScriptInstance>> GetEntityScriptInstance(UUID uuid);
 
 		static Ref<ScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<ScriptClass>>& GetEnityClasses();
@@ -173,7 +173,7 @@ namespace eg {
 
 		static MonoImage* GetCoreAssemblyImage();
 
-		static MonoObject* GetManagedInstance(UUID uuid);
+		static MonoObject* GetManagedInstance(UUID uuid, std::string name);
 
 		static MonoString* CreateString(const char* string);
 	private:
