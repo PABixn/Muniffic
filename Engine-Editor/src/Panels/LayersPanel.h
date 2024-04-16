@@ -9,6 +9,8 @@
 #include "ConsolePanel.h"
 #include "Engine/Core/UUID.h"
 #include "Engine.h"
+#include "Engine/Scene/Scene.h"
+#include "Engine/Renderer/Renderer2D.h"
 #include "LayerDeletingPanel.h"
 
 namespace eg {
@@ -16,67 +18,29 @@ namespace eg {
 	class LayersPanel {
 	public:
 		friend class LayerDeletingPanel;
-		class LayerInfo {
-		public:
-			std::string name;
-			int index;
-			bool isVisible;
-			std::vector<UUID> entitiesUUID;
-			LayerInfo() {
-				this->index = LayersPanel::Layers.size();
-				this->name = "New Layer " + std::to_string(this->index);
-				this->isVisible = TRUE;
-			};
-			void AddEntity(UUID uuid) {
-				this->entitiesUUID.push_back(uuid);
-			};
-			void RemoveEntity(UUID uuid) {
-				for (int i = 0; i < this->entitiesUUID.size(); i++) {
-					if (entitiesUUID[i] == uuid) {
-						this->entitiesUUID.erase(entitiesUUID.begin() + i);
-					}
-				}
-			};
-			void DeleteAllEntities() {
-				for (int i = 0; i < entitiesUUID.size(); i++) {
-					if (m_Context->GetEntityByUUID(entitiesUUID[i]).GetAnyChildren().size() > 0) {
-						for (auto& child : m_Context->GetEntityByUUID(entitiesUUID[i]).GetAnyChildren()) {
-							LayersPanel::Layers[this->index]->RemoveEntity(child.GetUUID());
-						};
-						m_Context->GetEntityByUUID(entitiesUUID[i]).RemoveAnyChildren();
-					};
-					m_Context->DestroyEntity(m_Context->GetEntityByUUID(entitiesUUID[i]));
-				}
-			};
-			void MoveAllEntitiesToLayer(int layerIndex) {
-				for (int i = 0; i < entitiesUUID.size(); i++) {
-					m_Context->GetEntityByUUID(entitiesUUID[i]).GetEntityInfo()->m_Layer = layerIndex;
-					LayersPanel::Layers[layerIndex]->AddEntity(entitiesUUID[i]);
-				}
-				entitiesUUID.clear();
-			};
-			
-		};
-		static std::vector<LayerInfo*> Layers;
 		void OnImGuiRender();
-		static void AddLayer();
-		static void DeleteLayer(int selectedLayer);
-		static void DeleteLayer(int selectedLayer, int moveTo);
-		static void RepairIndexes();
-		std::string GetSelectedLayerName();
 		void RenameLayer(std::string name);
 		void SetContext(const Ref<Scene>& scene);
-		void AssignLayerForExcistingEntities();
 		static int GetSelectedLayer() {
 			return selectedLayer;
+		};
+		static void SetSelectedLayer(int layer) {
+			selectedLayer = layer;
 		};
 		LayerDeletingPanel* m_LayerDeletingPanel;
 		void SetLayerDeletingPanel(LayerDeletingPanel* layerDeletingPanel) {
 			m_LayerDeletingPanel = layerDeletingPanel;
 		};
+		static void CreateLayer();
+		static void DeleteLayer(int index);
+		static void DeleteLayer(int index, int moveTo);
+		static void MoveEntityToLayer(UUID entityUUID, int layerIndex);
+		static void MoveEntitiesToAnotherLayer(int originalLayer, int newLayer = 0);
+		static void DestroyAllEntitiesInLayer(int layerIndex);
+		static void RepairEntityLayerIndexes(int layer);
 	private:
-		
 		static int selectedLayer;
+		friend class Renderer2D;
 		static Ref<Scene> m_Context;
 	};
 

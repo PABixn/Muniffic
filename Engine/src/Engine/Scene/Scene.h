@@ -6,6 +6,7 @@
 
 #include "../../../vendor/entt/include/entt.hpp"
 #include "EntityInfo.h"
+#include "Hud.h"
 //#include "../../Engine-Editor/src/Panels/LayersPanel.h"
 
 class b2World;
@@ -29,6 +30,9 @@ namespace eg {
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
+		UUID GetUUIDFromEntity(entt::entity entity);
+
+		int GetLayerFromEnttEntity(entt::entity entity);
 		
 
 		void OnSimulationStart();
@@ -63,7 +67,8 @@ namespace eg {
 		bool IsPaused() const { return m_IsPaused; }
 
 		void SetPaused(bool paused) { m_IsPaused = paused; }
-
+		Hud* GetActiveHud() { return m_ActiveHud; }
+		void SetActiveHud(Hud* hud) { m_ActiveHud = hud; }
 		void Step(int frames = 1);
 		const std::unordered_map<UUID, entt::entity>& GetEntityMap() const {
 			return m_EntityMap;
@@ -85,15 +90,18 @@ namespace eg {
 		b2World* m_PhysicsWorld = nullptr;
 		bool m_IsRunning = false;
 		bool m_IsPaused = false;
-
+		
+		Hud* m_ActiveHud = nullptr;
 		int m_StepFrames = 0;
 
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
+		std::unordered_map<entt::entity, UUID> m_ReversedEntityMap;
 		std::unordered_map<UUID, EntityInfo*> m_EntityInfoMap;
-
+		//std::unorderem_map<entt::entity, int>;
 		friend class Entity;
 		friend class SceneHierarchyPanel;
 		friend class SceneSerializer;
+		friend class Hud;
 	};
 
 }

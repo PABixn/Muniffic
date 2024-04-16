@@ -1,7 +1,6 @@
 #include "egpch.h"
 #include "Renderer2D.h"
-#include "Engine/Renderer/VertexArray.h"
-#include "Engine/Renderer/Shader.h"
+
 #include "Engine/Renderer/RenderCommand.h"
 #include "Engine/Renderer/MSDFData.h"
 #include "UniformBuffer.h"
@@ -10,120 +9,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace eg {
-	struct QuadVertex {
-		glm::vec3 Position;
-		glm::vec4 Color;
-		glm::vec2 TexCoord;
-		float TexIndex;
-		float TilingFactor;
-
-		// Editor-only
-		int EntityID = -1;
-	};
-
-	struct CircleVertex {
-		glm::vec3 WorldPosition;
-		glm::vec3 LocalPosition;
-		glm::vec4 Color;
-		float Thickness;
-		float Fade;
-
-		// Editor-only
-		int EntityID = -1;
-	};
-
-	struct LineVertex {
-		glm::vec3 Position;
-		glm::vec4 Color;
-
-		// Editor-only
-		int EntityID = -1;
-	};
-
-	struct TextVertex
-	{
-		glm::vec3 Position;
-		glm::vec4 Color;
-		glm::vec2 TexCoord;
-
-		// TODO: bg color for outline/bg
-
-		// Editor-only
-		int EntityID = -1;
-	};
-
-
-	struct Renderer2DData {
-		static const uint32_t MaxQuads = 10000;
-		static const uint32_t MaxVertices = MaxQuads * 4;
-		static const uint32_t MaxIndices = MaxQuads * 6;
-		static const uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
-
-		Ref<VertexArray> QuadVertexArray;
-		Ref<VertexBuffer> QuadVertexBuffer;
-		Ref<Shader> QuadShader;
-		Ref<Texture2D> WhiteTexture;
-
-		Ref<VertexArray> CircleVertexArray;
-		Ref<VertexBuffer> CircleVertexBuffer;
-		Ref<Shader> CircleShader;
-
-		Ref<VertexArray> LineVertexArray;
-		Ref<VertexBuffer> LineVertexBuffer;
-		Ref<Shader> LineShader;
-
-		Ref<VertexArray> TextVertexArray;
-		Ref<VertexBuffer> TextVertexBuffer;
-		Ref<Shader> TextShader;
-
-		glm::mat4 ViewProjectionMatrix;
-
-		uint32_t QuadIndexCount = 0;
-		QuadVertex* QuadVertexBufferBase = nullptr;
-		QuadVertex* QuadVertexBufferPtr = nullptr;
-
-		uint32_t CircleIndexCount = 0;
-		CircleVertex* CircleVertexBufferBase = nullptr;
-		CircleVertex* CircleVertexBufferPtr = nullptr;
-
-		uint32_t LineVertexCount = 0;
-		LineVertex* LineVertexBufferBase = nullptr;
-		LineVertex* LineVertexBufferPtr = nullptr;
-
-		uint32_t TextIndexCount = 0;
-		TextVertex* TextVertexBufferBase = nullptr;
-		TextVertex* TextVertexBufferPtr = nullptr;
-
-		float LineThickness = 2.0f;
-
-		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
-		uint32_t TextureSlotIndex = 1; // 0 = white texture
-
-		Ref<Texture2D> FontAtlasTexture;
-
-		glm::vec4 QuadVertexPositions[4];
-		
-		Renderer2D::Statistics Stats;
-
-		struct CameraData
-		{
-			glm::mat4 ViewProjection;
-		};
-		CameraData CameraBuffer;
-		Ref<UniformBuffer> CameraUniformBuffer;
-	};	
-
-	static Renderer2DData s_Data;
-
 	
 
-	void Renderer2D::Init() {
-		EG_PROFILE_FUNCTION();
-		s_Data.QuadVertexArray = VertexArray::Create();
+	//static Renderer2DData s_RendererData;
 
-		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
 
-		s_Data.QuadVertexBuffer->SetLayout({
+	void Renderer2D::LayerInfo::Create() {
+
+		// SPRITES
+		#pragma region sprites
+		this->QuadVertexArray = VertexArray::Create();
+		this->QuadVertexBuffer = VertexBuffer::Create(s_RendererData.MaxVertices * sizeof(QuadVertex));
+		this->QuadVertexBuffer->SetLayout({
 			{ShaderDataType::Float3, "a_Position"},
 			{ShaderDataType::Float4, "a_Color"},
 			{ShaderDataType::Float2, "a_TexCoord"},
@@ -131,15 +28,11 @@ namespace eg {
 			{ShaderDataType::Float, "a_TilingFactor"},
 			{ShaderDataType::Int, "a_EntityID"}
 			});
-
-		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
-
-		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
-
-		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
-
+		this->QuadVertexArray->AddVertexBuffer(this->QuadVertexBuffer);
+		this->QuadVertexBufferBase = new QuadVertex[s_RendererData.MaxVertices];
+		uint32_t* quadIndices = new uint32_t[s_RendererData.MaxIndices];
 		UINT32 offset = 0;
-		for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
+		for (uint32_t i = 0; i < s_RendererData.MaxIndices; i += 6)
 		{
 			quadIndices[i + 0] = offset + 0;
 			quadIndices[i + 1] = offset + 1;
@@ -151,17 +44,19 @@ namespace eg {
 
 			offset += 4;
 		}
-
 		Ref<IndexBuffer> quadIB;
-		quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
-		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
+		quadIB = IndexBuffer::Create(quadIndices, s_RendererData.MaxIndices);
+		this->QuadVertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
+		#pragma endregion
+		
+		// CIRCLES
+		#pragma region circles
 
-		// Circles
-		s_Data.CircleVertexArray = VertexArray::Create();
+		this->CircleVertexArray = VertexArray::Create();
 
-		s_Data.CircleVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
-		s_Data.CircleVertexBuffer->SetLayout({
+		this->CircleVertexBuffer = VertexBuffer::Create(s_RendererData.MaxVertices * sizeof(CircleVertex));
+		this->CircleVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_WorldPosition" },
 			{ ShaderDataType::Float3, "a_LocalPosition" },
 			{ ShaderDataType::Float4, "a_Color"         },
@@ -169,64 +64,165 @@ namespace eg {
 			{ ShaderDataType::Float,  "a_Fade"          },
 			{ ShaderDataType::Int,    "a_EntityID"      }
 			});
-		s_Data.CircleVertexArray->AddVertexBuffer(s_Data.CircleVertexBuffer);
-		s_Data.CircleVertexArray->SetIndexBuffer(quadIB); // Use quad IB
-		s_Data.CircleVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
+		this->CircleVertexArray->AddVertexBuffer(this->CircleVertexBuffer);
+		this->CircleVertexArray->SetIndexBuffer(quadIB); // Use quad IB
+		this->CircleVertexBufferBase = new CircleVertex[s_RendererData.MaxVertices];
+		#pragma endregion
 
-		// Lines
-		s_Data.LineVertexArray = VertexArray::Create();
+		// LINES
+		#pragma region lines
+		this->LineVertexArray = VertexArray::Create();
 
-		s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));
-		s_Data.LineVertexBuffer->SetLayout({
+		this->LineVertexBuffer = VertexBuffer::Create(s_RendererData.MaxVertices * sizeof(LineVertex));
+		this->LineVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_Position"      },
 			{ ShaderDataType::Float4, "a_Color"         },
 			{ ShaderDataType::Int,    "a_EntityID"      }
 			});
-		s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
-		s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];
+		this->LineVertexArray->AddVertexBuffer(this->LineVertexBuffer);
+		this->LineVertexBufferBase = new LineVertex[s_RendererData.MaxVertices];
+		#pragma endregion
 
-		// Text
-		s_Data.TextVertexArray = VertexArray::Create();
+		// TEXT
+		#pragma region text
+		this->TextVertexArray = VertexArray::Create();
 
-		s_Data.TextVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(TextVertex));
-		s_Data.TextVertexBuffer->SetLayout({
+		this->TextVertexBuffer = VertexBuffer::Create(s_RendererData.MaxVertices * sizeof(TextVertex));
+		this->TextVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "a_Position"      },
 			{ ShaderDataType::Float4, "a_Color"         },
 			{ ShaderDataType::Float2, "a_TexCoord"      },
 			{ ShaderDataType::Int,    "a_EntityID"      }
 			});
-		s_Data.TextVertexArray->AddVertexBuffer(s_Data.TextVertexBuffer);
-		s_Data.TextVertexArray->SetIndexBuffer(quadIB); // Use quad IB
-		s_Data.TextVertexBufferBase = new TextVertex[s_Data.MaxVertices];
+		this->TextVertexArray->AddVertexBuffer(this->TextVertexBuffer);
+		this->TextVertexArray->SetIndexBuffer(quadIB); // Use quad IB
+		this->TextVertexBufferBase = new TextVertex[s_RendererData.MaxVertices];
+		#pragma endregion
 
-		s_Data.WhiteTexture = Texture2D::Create(TextureSpecification());
+
+		this->WhiteTexture = Texture2D::Create(TextureSpecification());
 		uint32_t whiteTextureData = 0xffffffff;
-		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+		this->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
-		int32_t samplers[s_Data.MaxTextureSlots];
-		for(uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
+		int32_t samplers[s_RendererData.MaxTextureSlots];
+		for (uint32_t i = 0; i < s_RendererData.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.QuadShader = Shader::Create("assets/shaders/Renderer2D_Quad.glsl");
-		s_Data.CircleShader	= Shader::Create("assets/shaders/Renderer2D_Circle.glsl");
-		s_Data.LineShader	= Shader::Create("assets/shaders/Renderer2D_Line.glsl");
-		s_Data.TextShader = Shader::Create("assets/shaders/Renderer2D_Text.glsl");
+		this->QuadShader = Shader::Create("assets/shaders/Renderer2D_Quad.glsl");
+		this->CircleShader = Shader::Create("assets/shaders/Renderer2D_Circle.glsl");
+		this->LineShader = Shader::Create("assets/shaders/Renderer2D_Line.glsl");
+		this->TextShader = Shader::Create("assets/shaders/Renderer2D_Text.glsl");
 
-		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
+		s_RendererData.TextureSlots[0] = this->WhiteTexture;
+
+		s_RendererData.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+		s_RendererData.QuadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
+		s_RendererData.QuadVertexPositions[2] = { 0.5f, 0.5f, 0.0f, 1.0f };
+		s_RendererData.QuadVertexPositions[3] = { -0.5f, 0.5f, 0.0f, 1.0f };
 		
-		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-		s_Data.QuadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
-		s_Data.QuadVertexPositions[2] = { 0.5f, 0.5f, 0.0f, 1.0f };
-		s_Data.QuadVertexPositions[3] = { -0.5f, 0.5f, 0.0f, 1.0f };
 
-		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
+	}
+
+	void Renderer2D::LayerInfo::Delete() {
+		this->QuadIndexCount = 0;
+		this->QuadVertexBufferPtr = this->QuadVertexBufferBase;
+	}
+
+	void Renderer2D::LayerInfo::Flush() {
+		EG_PROFILE_FUNCTION();
+		if(!this->isVisible)
+			return;
+
+		if (this->QuadIndexCount)
+		{
+			uint32_t dataSize = (uint32_t)((uint8_t*)this->QuadVertexBufferPtr - (uint8_t*)this->QuadVertexBufferBase);
+			this->QuadVertexBuffer->SetData(this->QuadVertexBufferBase, dataSize);
+
+			for (uint32_t i = 0; i < s_RendererData.TextureSlotIndex; i++)
+				s_RendererData.TextureSlots[i]->Bind(i);
+
+			this->QuadShader->Bind();
+			RenderCommand::DrawIndexed(this->QuadVertexArray, this->QuadIndexCount);
+			s_RendererData.Stats.DrawCalls++;
+		}
+
+		if (this->CircleIndexCount)
+		{
+			uint32_t dataSize = (uint32_t)((uint8_t*)this->CircleVertexBufferPtr - (uint8_t*)this->CircleVertexBufferBase);
+			this->CircleVertexBuffer->SetData(this->CircleVertexBufferBase, dataSize);
+
+			this->CircleShader->Bind();
+			RenderCommand::DrawIndexed(this->CircleVertexArray, this->CircleIndexCount);
+			s_RendererData.Stats.DrawCalls++;
+
+		}
+
+		if (this->LineVertexCount)
+		{
+			uint32_t dataSize = (uint32_t)((uint8_t*)this->LineVertexBufferPtr - (uint8_t*)this->LineVertexBufferBase);
+			this->LineVertexBuffer->SetData(this->LineVertexBufferBase, dataSize);
+
+			this->LineShader->Bind();
+			RenderCommand::SetLineThickness(s_RendererData.LineThickness);
+			RenderCommand::DrawLines(this->LineVertexArray, this->LineVertexCount);
+			s_RendererData.Stats.DrawCalls++;
+
+		}
+
+		if (this->TextIndexCount)
+		{
+			uint32_t dataSize = (uint32_t)((uint8_t*)this->TextVertexBufferPtr - (uint8_t*)this->TextVertexBufferBase);
+			this->TextVertexBuffer->SetData(this->TextVertexBufferBase, dataSize);
+
+			s_RendererData.FontAtlasTexture->Bind(0);
+
+			this->TextShader->Bind();
+			RenderCommand::DrawIndexed(this->TextVertexArray, this->TextIndexCount);
+			s_RendererData.Stats.DrawCalls++;
+		}
+	}
+
+	void Renderer2D::LayerInfo::StartBatch() {
+		this->QuadIndexCount = 0;
+		this->QuadVertexBufferPtr = this->QuadVertexBufferBase;
+
+		this->CircleIndexCount = 0;
+		this->CircleVertexBufferPtr = this->CircleVertexBufferBase;
+
+		this->LineVertexCount = 0;
+		this->LineVertexBufferPtr = this->LineVertexBufferBase;
+
+		this->TextIndexCount = 0;
+		this->TextVertexBufferPtr = this->TextVertexBufferBase;
+	}
+
+
+
+	
+	void Renderer2D::CreateLayer() {
+		EG_PROFILE_FUNCTION();
+		s_RendererData.layers.push_back(Renderer2D::LayerInfo());
+		s_RendererData.layers[s_RendererData.layers.size()].Create();
+	}
+
+	void Renderer2D::DeleteLayer(int index) {
+		EG_PROFILE_FUNCTION();
+		if (s_RendererData.layers.size() > 1) {
+			s_RendererData.layers[index].Delete();
+			s_RendererData.layers.erase(s_RendererData.layers.begin() + index);
+		}
+	}
+
+	void Renderer2D::Init() {
+		EG_PROFILE_FUNCTION();
+		CreateLayer();
+		s_RendererData.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
 	}
 
 	void Renderer2D::Shutdown() {
 		EG_PROFILE_FUNCTION();
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-		s_Data.TextureSlotIndex = 1;
+		
+		s_RendererData.TextureSlotIndex = 1;
 	}
 
 
@@ -234,8 +230,8 @@ namespace eg {
 	{
 		EG_PROFILE_FUNCTION();
 
-		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
+		s_RendererData.CameraBuffer.ViewProjection = camera.GetViewProjection();
+		s_RendererData.CameraUniformBuffer->SetData(&s_RendererData.CameraBuffer, sizeof(Renderer2DData::CameraData));
 		StartBatch();
 	}
 
@@ -243,94 +239,50 @@ namespace eg {
 	{
 		EG_PROFILE_FUNCTION();
 		
-		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
+		s_RendererData.CameraBuffer.ViewProjection = camera.GetViewProjection();
+		s_RendererData.CameraUniformBuffer->SetData(&s_RendererData.CameraBuffer, sizeof(Renderer2DData::CameraData));
 		StartBatch();
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
 	{
 		EG_PROFILE_FUNCTION();
-		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
+		s_RendererData.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+		s_RendererData.CameraUniformBuffer->SetData(&s_RendererData.CameraBuffer, sizeof(Renderer2DData::CameraData));
 		StartBatch();
 
 	}
 
 	void Renderer2D::EndScene() {
 		EG_PROFILE_FUNCTION();
-		uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+		for (auto& layer : s_RendererData.layers) {
+			uint32_t dataSize = (uint8_t*)layer.QuadVertexBufferPtr - (uint8_t*)layer.QuadVertexBufferBase;
+			layer.QuadVertexBuffer->SetData(layer.QuadVertexBufferBase, dataSize);
+
+		}
 		Flush();
 	}
 
 	void Renderer2D::Flush() {
-		EG_PROFILE_FUNCTION();
-
-		if (s_Data.QuadIndexCount)
-		{
-			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
-			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
-
-			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
-				s_Data.TextureSlots[i]->Bind(i);
-
-			s_Data.QuadShader->Bind();
-			RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
-			s_Data.Stats.DrawCalls++;
+		for (int i = s_RendererData.layers.size(); i > 0;i--) {
+			Flush(i);
 		}
+	}
 
-		if (s_Data.CircleIndexCount)
-		{
-			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.CircleVertexBufferPtr - (uint8_t*)s_Data.CircleVertexBufferBase);
-			s_Data.CircleVertexBuffer->SetData(s_Data.CircleVertexBufferBase, dataSize);
-
-			s_Data.CircleShader->Bind();
-			RenderCommand::DrawIndexed(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
-			s_Data.Stats.DrawCalls++;
-		
-		}
-
-		if (s_Data.LineVertexCount)
-		{
-			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase);
-			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
-
-			s_Data.LineShader->Bind();
-			RenderCommand::SetLineThickness(s_Data.LineThickness);
-			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
-			s_Data.Stats.DrawCalls++;
-		
-		}
-
-		if (s_Data.TextIndexCount)
-		{
-			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.TextVertexBufferPtr - (uint8_t*)s_Data.TextVertexBufferBase);
-			s_Data.TextVertexBuffer->SetData(s_Data.TextVertexBufferBase, dataSize);
-
-			s_Data.FontAtlasTexture->Bind(0);
-
-			s_Data.TextShader->Bind();
-			RenderCommand::DrawIndexed(s_Data.TextVertexArray, s_Data.TextIndexCount);
-			s_Data.Stats.DrawCalls++;
-		}
+	void Renderer2D::Flush(int index) {
+		s_RendererData.layers[index].Flush();
 	}
 
 	void Renderer2D::StartBatch()
 	{
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		for (auto& layer : s_RendererData.layers) {
+			layer.StartBatch();
+		}
+		s_RendererData.TextureSlotIndex = 1;
+	}
 
-		s_Data.CircleIndexCount = 0;
-		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
-
-		s_Data.LineVertexCount = 0;
-		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
-
-		s_Data.TextIndexCount = 0;
-		s_Data.TextVertexBufferPtr = s_Data.TextVertexBufferBase;
-
-		s_Data.TextureSlotIndex = 1;
+	void Renderer2D::StartBatch(int index) {
+		s_RendererData.layers[index].StartBatch();
 	}
 
 	void Renderer2D::FlushAndReset() {
@@ -339,17 +291,17 @@ namespace eg {
 		StartBatch();
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
-		DrawQuad({ position.x, position.y, 0.0f }, size, color);
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, int layerIndex) {
+		DrawQuad({ position.x, position.y, 0.0f }, size, color, layerIndex);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int layerIndex) {
 		EG_PROFILE_FUNCTION();
 
 		constexpr size_t quadVertexCount = 4;
 		const glm::vec2 textureCoords[] = { {0.0f,0.0f}, {1.0f,0.0f}, {1.0f,1.0f}, {0.0f,1.0f} };
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices) 
+		if (s_RendererData.layers[layerIndex].QuadIndexCount >= Renderer2DData::MaxIndices) 
 			FlushAndReset();
 
 		const float texIndex = 0.0f; // White Texture
@@ -360,51 +312,51 @@ namespace eg {
 
 		for (uint32_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Position = transform * s_RendererData.QuadVertexPositions[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Color = color;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexIndex = texIndex;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr++;
 		}
 
-		s_Data.QuadIndexCount += 6;
+		s_RendererData.layers[layerIndex].QuadIndexCount += 6;
 
-		s_Data.Stats.QuadCount++;
+		s_RendererData.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor) {
-		DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor, tintColor);
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor, int layerIndex) {
+		DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor, tintColor, layerIndex);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor) {
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor, int layerIndex) {
 		EG_PROFILE_FUNCTION();
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		DrawQuad(transform, texture, tilingFactor, tintColor);
+		DrawQuad(transform, texture, tilingFactor, tintColor, layerIndex);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor) {
-		DrawQuad({ position.x, position.y, 0.0f }, size, subTexture, tilingFactor, tintColor);
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor, int layerIndex) {
+		DrawQuad({ position.x, position.y, 0.0f }, size, subTexture, tilingFactor, tintColor, layerIndex);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor) {
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor, int layerIndex) {
 		EG_PROFILE_FUNCTION();
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		DrawQuad(transform, subTexture, tilingFactor, tintColor);
+		DrawQuad(transform, subTexture, tilingFactor, tintColor, layerIndex);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID) {
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID, int layerIndex) {
 		EG_PROFILE_FUNCTION();
 
 		constexpr size_t quadVertexCount = 4;
 		const glm::vec2 textureCoords[] = { {0.0f,0.0f}, {1.0f,0.0f}, {1.0f,1.0f}, {0.0f,1.0f} };
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		if (s_RendererData.layers[layerIndex].QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
 		const float texIndex = 0.0f; // White Texture
@@ -412,63 +364,63 @@ namespace eg {
 
 		for (uint32_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr->EntityID = entityID;
-			s_Data.QuadVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Position = transform * s_RendererData.QuadVertexPositions[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Color = color;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexIndex = texIndex;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->EntityID = entityID;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr++;
 		}
 
-		s_Data.QuadIndexCount += 6;
+		s_RendererData.layers[layerIndex].QuadIndexCount += 6;
 
-		s_Data.Stats.QuadCount++;
+		s_RendererData.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor, int entityID) {
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor, int entityID, int layerIndex) {
 		EG_PROFILE_FUNCTION();
 		constexpr size_t quadVertexCount = 4;
 		const glm::vec4 color = { 1.0f,1.0f,1.0f,1.0f };
 		const glm::vec2 textureCoords[] = { {0.0f,0.0f}, {1.0f,0.0f}, {1.0f,1.0f}, {0.0f,1.0f} };
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		if (s_RendererData.layers[layerIndex].QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
 		float texIndex = 0.0f;
-		for(uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
+		for(uint32_t i = 1; i < s_RendererData.TextureSlotIndex; i++)
+			if (*s_RendererData.TextureSlots[i].get() == *texture.get())
 			{
 				texIndex = (float)i;
 				break;
 			}
 
 		if (texIndex == 0.0f) {
-			if(s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+			if(s_RendererData.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
 				FlushAndReset();
 
-			texIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[(int)s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
+			texIndex = (float)s_RendererData.TextureSlotIndex;
+			s_RendererData.TextureSlots[(int)s_RendererData.TextureSlotIndex] = texture;
+			s_RendererData.TextureSlotIndex++;
 		}
 
 		for (uint32_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr->EntityID = entityID;
-			s_Data.QuadVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Position = transform * s_RendererData.QuadVertexPositions[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Color = color;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexIndex = texIndex;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->EntityID = entityID;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr++;
 		}
 
-		s_Data.QuadIndexCount += 6;
+		s_RendererData.layers[layerIndex].QuadIndexCount += 6;
 
-		s_Data.Stats.QuadCount++;
+		s_RendererData.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor, int entityID) {
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor, int entityID, int layerIndex) {
 		EG_PROFILE_FUNCTION();
 
 		constexpr size_t quadVertexCount = 4;
@@ -476,51 +428,51 @@ namespace eg {
 		const glm::vec2* textureCoords = subTexture->GetTexCoords();
 		const Ref<Texture2D> texture = subTexture->GetTexture();
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		if (s_RendererData.layers[layerIndex].QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
 		float texIndex = 0.0f;
 
-		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
+		for (uint32_t i = 1; i < s_RendererData.TextureSlotIndex; i++)
+			if (*s_RendererData.TextureSlots[i].get() == *texture.get())
 			{
 				texIndex = (float)i;
 				break;
 			}
 
 		if (texIndex == 0.0f) {
-			texIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[(int)s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
+			texIndex = (float)s_RendererData.TextureSlotIndex;
+			s_RendererData.TextureSlots[(int)s_RendererData.TextureSlotIndex] = texture;
+			s_RendererData.TextureSlotIndex++;
 		}
 
 		for (uint32_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr->EntityID = entityID;
-			s_Data.QuadVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Position = transform * s_RendererData.QuadVertexPositions[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Color = color;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexIndex = texIndex;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->EntityID = entityID;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr++;
 		}
 
-		s_Data.QuadIndexCount += 6;
+		s_RendererData.layers[layerIndex].QuadIndexCount += 6;
 
-		s_Data.Stats.QuadCount++;
+		s_RendererData.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color) {
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color);
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, int layerIndex) {
+		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color, layerIndex);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color) {
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, int layerIndex) {
 		EG_PROFILE_FUNCTION();
 
 		constexpr size_t quadVertexCount = 4;
 		const glm::vec2 textureCoords[] = { {0.0f,0.0f}, {1.0f,0.0f}, {1.0f,1.0f}, {0.0f,1.0f} };
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		if (s_RendererData.layers[layerIndex].QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
 		const float texIndex = 0.0f; // White Texture
@@ -532,24 +484,24 @@ namespace eg {
 
 		for (uint32_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Position = transform * s_RendererData.QuadVertexPositions[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Color = color;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexIndex = texIndex;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr++;
 		}
 
-		s_Data.QuadIndexCount += 6;
+		s_RendererData.layers[layerIndex].QuadIndexCount += 6;
 
-		s_Data.Stats.QuadCount++;
+		s_RendererData.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor) {
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tilingFactor, tintColor);
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor, int layerIndex) {
+		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tilingFactor, tintColor, layerIndex);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor, int layerIndex)
 	{
 		EG_PROFILE_FUNCTION();
 
@@ -557,22 +509,22 @@ namespace eg {
 		const glm::vec4 color = { 1.0f,1.0f,1.0f,1.0f };
 		const glm::vec2 textureCoords[] = { {0.0f,0.0f}, {1.0f,0.0f}, {1.0f,1.0f}, {0.0f,1.0f} };
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		if (s_RendererData.layers[layerIndex].QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
 		float texIndex = 0.0f;
 
-		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
+		for (uint32_t i = 1; i < s_RendererData.TextureSlotIndex; i++)
+			if (*s_RendererData.TextureSlots[i].get() == *texture.get())
 			{
 				texIndex = (float)i;
 				break;
 			}
 
 		if (texIndex == 0.0f) {
-			texIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[(int)s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
+			texIndex = (float)s_RendererData.TextureSlotIndex;
+			s_RendererData.TextureSlots[(int)s_RendererData.TextureSlotIndex] = texture;
+			s_RendererData.TextureSlotIndex++;
 		}
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
@@ -581,45 +533,45 @@ namespace eg {
 
 		for (uint32_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Position = transform * s_RendererData.QuadVertexPositions[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Color = color;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexIndex = texIndex;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr++;
 		}
 
-		s_Data.QuadIndexCount += 6;
+		s_RendererData.layers[layerIndex].QuadIndexCount += 6;
 
-		s_Data.Stats.QuadCount++;
+		s_RendererData.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor) {
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, subTexture, tilingFactor, tintColor);
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor, int layerIndex) {
+		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, subTexture, tilingFactor, tintColor, layerIndex);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor) {
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor, int layerIndex) {
 		constexpr size_t quadVertexCount = 4;
 		const glm::vec4 color = { 1.0f,1.0f,1.0f,1.0f };
 		const glm::vec2* textureCoords = subTexture->GetTexCoords();
 		const Ref<Texture2D> texture = subTexture->GetTexture();
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		if (s_RendererData.layers[layerIndex].QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
 		float texIndex = 0.0f;
 
-		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
+		for (uint32_t i = 1; i < s_RendererData.TextureSlotIndex; i++)
+			if (*s_RendererData.TextureSlots[i].get() == *texture.get())
 			{
 				texIndex = (float)i;
 				break;
 			}
 
 		if (texIndex == 0.0f) {
-			texIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[(int)s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
+			texIndex = (float)s_RendererData.TextureSlotIndex;
+			s_RendererData.TextureSlots[(int)s_RendererData.TextureSlotIndex] = texture;
+			s_RendererData.TextureSlotIndex++;
 		}
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
@@ -628,28 +580,28 @@ namespace eg {
 
 		for (uint32_t i = 0; i < quadVertexCount; i++)
 		{
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Position = transform * s_RendererData.QuadVertexPositions[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->Color = color;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TexIndex = texIndex;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_RendererData.layers[layerIndex].QuadVertexBufferPtr++;
 		}
 
-		s_Data.QuadIndexCount += 6;
+		s_RendererData.layers[layerIndex].QuadIndexCount += 6;
 
-		s_Data.Stats.QuadCount++;
+		s_RendererData.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entityID)
+	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entityID, int layerIndex)
 	{
 		EG_PROFILE_FUNCTION();
 
 
 		// TODO: implement for circles
-		// if (s_Data.CircleIndexCount >= Renderer2DData::MaxIndices)
+		// if (s_RendererData.CircleIndexCount >= Renderer2DData::MaxIndices)
 		// 	FlushAndReset();
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+		if (s_RendererData.layers[layerIndex].QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
 		const float texIndex = 0.0f; // White Texture
@@ -657,70 +609,70 @@ namespace eg {
 
 		for (uint32_t i = 0; i < 4; i++)
 		{
-			s_Data.CircleVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
-			s_Data.CircleVertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
-			s_Data.CircleVertexBufferPtr->Color = color;
-			s_Data.CircleVertexBufferPtr->Fade = fade;
-			s_Data.CircleVertexBufferPtr->Thickness = thickness;
-			s_Data.CircleVertexBufferPtr->EntityID = entityID;
-			s_Data.CircleVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].CircleVertexBufferPtr->WorldPosition = transform * s_RendererData.QuadVertexPositions[i];
+			s_RendererData.layers[layerIndex].CircleVertexBufferPtr->LocalPosition = s_RendererData.QuadVertexPositions[i] * 2.0f;
+			s_RendererData.layers[layerIndex].CircleVertexBufferPtr->Color = color;
+			s_RendererData.layers[layerIndex].CircleVertexBufferPtr->Fade = fade;
+			s_RendererData.layers[layerIndex].CircleVertexBufferPtr->Thickness = thickness;
+			s_RendererData.layers[layerIndex].CircleVertexBufferPtr->EntityID = entityID;
+			s_RendererData.layers[layerIndex].CircleVertexBufferPtr++;
 		}
 
-		s_Data.CircleIndexCount += 6;
+		s_RendererData.layers[layerIndex].CircleIndexCount += 6;
 
-		s_Data.Stats.QuadCount++;
+		s_RendererData.Stats.QuadCount++;
 	}
 
-	void Renderer2D::DrawLine(const glm::vec3& start, const glm::vec3& end, const glm::vec4& color, int entityID)
+	void Renderer2D::DrawLine(const glm::vec3& start, const glm::vec3& end, const glm::vec4& color, int entityID, int layerIndex)
 	{
-		s_Data.LineVertexBufferPtr->Position = start;
-		s_Data.LineVertexBufferPtr->Color = color;
-		s_Data.LineVertexBufferPtr->EntityID = entityID;
-		s_Data.LineVertexBufferPtr++;
+		s_RendererData.layers[layerIndex].LineVertexBufferPtr->Position = start;
+		s_RendererData.layers[layerIndex].LineVertexBufferPtr->Color = color;
+		s_RendererData.layers[layerIndex].LineVertexBufferPtr->EntityID = entityID;
+		s_RendererData.layers[layerIndex].LineVertexBufferPtr++;
 
-		s_Data.LineVertexBufferPtr->Position = end;
-		s_Data.LineVertexBufferPtr->Color = color;
-		s_Data.LineVertexBufferPtr->EntityID = entityID;
-		s_Data.LineVertexBufferPtr++;
+		s_RendererData.layers[layerIndex].LineVertexBufferPtr->Position = end;
+		s_RendererData.layers[layerIndex].LineVertexBufferPtr->Color = color;
+		s_RendererData.layers[layerIndex].LineVertexBufferPtr->EntityID = entityID;
+		s_RendererData.layers[layerIndex].LineVertexBufferPtr++;
 
-		s_Data.LineVertexCount += 2;
+		s_RendererData.layers[layerIndex].LineVertexCount += 2;
 	}
 
-	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID)
+	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID, int layerIndex)
 	{
 		glm::vec3 p0 = glm::vec3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z);
 		glm::vec3 p1 = glm::vec3(position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z);
 		glm::vec3 p2 = glm::vec3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z);
 		glm::vec3 p3 = glm::vec3(position.x - size.x * 0.5f, position.y + size.y * 0.5f, position.z);
 
-		DrawLine(p0, p1, color, entityID);
-		DrawLine(p1, p2, color, entityID);
-		DrawLine(p2, p3, color, entityID);
-		DrawLine(p3, p0, color, entityID);
+		DrawLine(p0, p1, color, entityID, layerIndex);
+		DrawLine(p1, p2, color, entityID, layerIndex);
+		DrawLine(p2, p3, color, entityID, layerIndex);
+		DrawLine(p3, p0, color, entityID, layerIndex);
 	}
 
-	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
+	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID, int layerIndex)
 	{
 
 		glm::vec3 lineVertices[4];
 		for (size_t i = 0; i < 4; i++)
 		{
-			lineVertices[i] = transform * s_Data.QuadVertexPositions[i];
+			lineVertices[i] = transform * s_RendererData.QuadVertexPositions[i];
 		}
 
-		DrawLine(lineVertices[0], lineVertices[1], color, entityID);
-		DrawLine(lineVertices[1], lineVertices[2], color, entityID);
-		DrawLine(lineVertices[2], lineVertices[3], color, entityID);
-		DrawLine(lineVertices[3], lineVertices[0], color, entityID);
+		DrawLine(lineVertices[0], lineVertices[1], color, entityID, layerIndex);
+		DrawLine(lineVertices[1], lineVertices[2], color, entityID, layerIndex);
+		DrawLine(lineVertices[2], lineVertices[3], color, entityID, layerIndex);
+		DrawLine(lineVertices[3], lineVertices[0], color, entityID, layerIndex);
 	}
 
-	void Renderer2D::DrawString(const std::string& text, Ref<Font> font, const glm::mat4& transform, const TextParams& textParams, int entityID)
+	void Renderer2D::DrawString(const std::string& text, Ref<Font> font, const glm::mat4& transform, const TextParams& textParams, int entityID, int layerIndex)
 	{
 		const auto& fontGeometry = font->GetData()->FontGeometry;
 		const auto& metrics = fontGeometry.getMetrics();
 		Ref<Texture2D> atlas = font->GetAtlasTexture();
 
-		s_Data.FontAtlasTexture = atlas;
+		s_RendererData.FontAtlasTexture = atlas;
 
 		double x = 0.0;
 		double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
@@ -785,33 +737,33 @@ namespace eg {
 			texCoordMax *= glm::vec2(texelWidth, texelHeight);
 
 			//render here
-			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMin.x, quadMin.y, 0.0f, 1.0f);
-			s_Data.TextVertexBufferPtr->Color = textParams.Color;
-			s_Data.TextVertexBufferPtr->TexCoord = texCoordMin;
-			s_Data.TextVertexBufferPtr->EntityID = entityID;
-			s_Data.TextVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->Position = transform * glm::vec4(quadMin.x, quadMin.y, 0.0f, 1.0f);
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->Color = textParams.Color;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->TexCoord = texCoordMin;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->EntityID = entityID;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr++;
 
-			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
-			s_Data.TextVertexBufferPtr->Color = textParams.Color;
-			s_Data.TextVertexBufferPtr->TexCoord = { texCoordMin.x, texCoordMax.y };
-			s_Data.TextVertexBufferPtr->EntityID = entityID;
-			s_Data.TextVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->Position = transform * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->Color = textParams.Color;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->TexCoord = { texCoordMin.x, texCoordMax.y };
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->EntityID = entityID;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr++;
 
-			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMax.x, quadMax.y, 0.0f, 1.0f);
-			s_Data.TextVertexBufferPtr->Color = textParams.Color;
-			s_Data.TextVertexBufferPtr->TexCoord = texCoordMax;
-			s_Data.TextVertexBufferPtr->EntityID = entityID;
-			s_Data.TextVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->Position = transform * glm::vec4(quadMax.x, quadMax.y, 0.0f, 1.0f);
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->Color = textParams.Color;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->TexCoord = texCoordMax;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->EntityID = entityID;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr++;
 
-			s_Data.TextVertexBufferPtr->Position = transform * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
-			s_Data.TextVertexBufferPtr->Color = textParams.Color;
-			s_Data.TextVertexBufferPtr->TexCoord = { texCoordMax.x, texCoordMin.y };
-			s_Data.TextVertexBufferPtr->EntityID = entityID;
-			s_Data.TextVertexBufferPtr++;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->Position = transform * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->Color = textParams.Color;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->TexCoord = { texCoordMax.x, texCoordMin.y };
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr->EntityID = entityID;
+			s_RendererData.layers[layerIndex].TextVertexBufferPtr++;
 
-			s_Data.TextIndexCount += 6;
+			s_RendererData.layers[layerIndex].TextIndexCount += 6;
 
-			s_Data.Stats.QuadCount++;
+			s_RendererData.Stats.QuadCount++;
 
 			if (i < text.size() - 1)
 			{
@@ -823,42 +775,71 @@ namespace eg {
 		}
 	}
 
-	void Renderer2D::DrawString(const std::string& string, const glm::mat4& transform, const TextComponent& component, int entityID)
+	void Renderer2D::DrawString(const std::string& string, const glm::mat4& transform, const TextComponent& component, int entityID, int layerIndex)
 	{
-		DrawString(string, component.FontAsset, transform, { component.Color, component.Kerning, component.LineSpacing }, entityID);
+		DrawString(string, component.FontAsset, transform, { component.Color, component.Kerning, component.LineSpacing }, entityID, layerIndex);
 	}
 
 	float Renderer2D::GetLineThickness()
 	{
-		return s_Data.LineThickness;
+		return s_RendererData.LineThickness;
 	}
 
 	void Renderer2D::SetLineThickness(float thickness)
 	{
-		s_Data.LineThickness = thickness;
+		s_RendererData.LineThickness = thickness;
 	}
 
-	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
+	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID, int layerIndex)
 	{
 		if(src.Texture)
-			DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entityID);
+			DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entityID, layerIndex);
 		else
-			DrawQuad(transform, src.Color, entityID);
+			DrawQuad(transform, src.Color, entityID, layerIndex);
 	}
 
-	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererSTComponent& src, int entityID)
+	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererSTComponent& src, int entityID, int layerIndex)
 	{
 		if(src.SubTexture->GetTexture())
-			DrawQuad(transform, src.SubTexture, src.TilingFactor, src.Color, entityID);
+			DrawQuad(transform, src.SubTexture, src.TilingFactor, src.Color, entityID, layerIndex);
 		else
-			DrawQuad(transform, src.Color, entityID);
+			DrawQuad(transform, src.Color, entityID, layerIndex);
 	}
 
 	void Renderer2D::ResetStats() {
-		memset(&s_Data.Stats, 0, sizeof(Statistics));
+		memset(&s_RendererData.Stats, 0, sizeof(Statistics));
 	}
 
 	Renderer2D::Statistics Renderer2D::GetStats() {
-		return s_Data.Stats;
+		return s_RendererData.Stats;
 	}
+
+	void Renderer2D::SetLayerName(int index, const std::string& name) {
+		s_RendererData.layers[index].name = name;
+	}
+	std::string Renderer2D::GetLayerName(int index) {
+		return s_RendererData.layers[index].name;
+	}
+	void Renderer2D::SetLayerVisibility(int index, bool isVisible) {
+		s_RendererData.layers[index].isVisible = isVisible;
+	}
+	bool Renderer2D::GetLayerVisibility(int index) {
+		return s_RendererData.layers[index].isVisible;
+	}
+	void Renderer2D::SwitchLayerVisibility(int index) {
+		s_RendererData.layers[index].isVisible = !s_RendererData.layers[index].isVisible;
+	}
+
+
+	void Renderer2D::MoveLayerDown(int index) {
+		if (index < s_RendererData.layers.size() - 1) {
+			std::swap(s_RendererData.layers[index], s_RendererData.layers[index + 1]);
+		}
+	}
+	void Renderer2D::MoveLayerUp(int index) {
+		if (index > 0) {
+			std::swap(s_RendererData.layers[index], s_RendererData.layers[index - 1]);
+		}
+	}
+
 }

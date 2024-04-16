@@ -105,11 +105,9 @@ namespace eg {
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityMap[uuid] = (entt::entity)entity;
+		m_ReversedEntityMap[(entt::entity)entity] = uuid;
 		m_EntityInfoMap[uuid] = new EntityInfo(NULL);
-		if (LayersPanel::Layers.size() > 0) {
-			LayersPanel::Layers[LayersPanel::GetSelectedLayer()]->AddEntity(uuid);
-			GetEntityByUUID(uuid).GetEntityInfo()->m_Layer = LayersPanel::GetSelectedLayer();
-		}
+		GetEntityByUUID(uuid).GetEntityInfo()->m_Layer = LayersPanel::GetSelectedLayer();
 		ConsolePanel::Log("File: Scene.cpp - Entity created: " + tag.Tag, ConsolePanel::LogType::Info);
 		return entity;
 	}
@@ -161,10 +159,20 @@ namespace eg {
 		OnPhysics2DStop();
 	}
 
-	
 
+	UUID Scene::GetUUIDFromEntity(entt::entity entity)
+	{
+		auto it = m_ReversedEntityMap.find(entity);
+		if (it != m_ReversedEntityMap.end())
+			return it->second;
+		return UUID();
+	}
 	
-
+	int Scene::GetLayerFromEnttEntity(entt::entity entity)
+	{
+		return m_EntityInfoMap[GetUUIDFromEntity(entity)]->m_Layer;
+	}
+	
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
 		RenderScene(camera);
@@ -249,7 +257,7 @@ namespace eg {
 				{
 					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity, GetLayerFromEnttEntity(entity));
 				}
 			}
 			
@@ -260,7 +268,7 @@ namespace eg {
 				{
 					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
 
-					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity, GetLayerFromEnttEntity(entity));
 				}
 			}
 
@@ -271,7 +279,7 @@ namespace eg {
 				{
 					auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
 
-					Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
+					Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity, GetLayerFromEnttEntity(entity));
 				}
 			}
 
@@ -341,7 +349,7 @@ namespace eg {
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity, GetLayerFromEnttEntity(entity));
 			}
 		}
 
@@ -352,7 +360,7 @@ namespace eg {
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererSTComponent>(entity);
 
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity, GetLayerFromEnttEntity(entity));
 			}
 		}
 
@@ -363,7 +371,7 @@ namespace eg {
 			{
 				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
 
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity, GetLayerFromEnttEntity(entity));
 			}
 		}
 
@@ -374,8 +382,17 @@ namespace eg {
 			{
 				auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
 
-				Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
+				Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity, GetLayerFromEnttEntity(entity));
 			}
+		}
+
+		// Draw HUD
+		{
+			if (m_ActiveHud != nullptr) {
+				for (auto& element : m_ActiveHud->elements) {
+					Renderer2D::DrawRect({ element->GetX(), element->GetY(), 0.0f }, { element->GetWidth(), element->GetHeight() }, element->GetColor(), Renderer2D::s_RendererData.layers.size() - 1);
+				};
+			};
 		}
 
 		Renderer2D::EndScene();

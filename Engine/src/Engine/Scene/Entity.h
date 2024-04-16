@@ -314,6 +314,7 @@ namespace eg
 
 	private:
 		entt::entity m_EntityHandle{ entt::null };
+		friend class Scene;
 		Scene* m_Scene = nullptr;
 	};
 }

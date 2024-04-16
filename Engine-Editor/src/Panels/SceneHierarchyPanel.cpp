@@ -342,17 +342,16 @@ namespace eg {
 		if (entity.IsDrawable()) {
 			ImGui::Text("Layer: ");
 			ImGui::SameLine();
-			if (ImGui::Button(LayersPanel::Layers[entity.GetEntityInfo()->m_Layer]->name.c_str())) {
+			if (ImGui::Button(Renderer2D::s_RendererData.layers[entity.GetEntityInfo()->m_Layer].name.c_str())) {
 				ImGui::OpenPopup("Change Layer");
 			};
 
 			if (ImGui::BeginPopup("Change Layer")) {
-				for (int i = 0; i < LayersPanel::Layers.size(); i++) {
-					if (ImGui::MenuItem(LayersPanel::Layers[i]->name.c_str()))
+				for (int i = 0; i < Renderer2D::s_RendererData.layers.size(); i++) {
+					if (ImGui::MenuItem(Renderer2D::s_RendererData.layers[i].name.c_str()))
 					{
-						LayersPanel::Layers[entity.GetEntityInfo()->m_Layer]->RemoveEntity(entity.GetUUID());
+						LayersPanel::MoveEntityToLayer(entity.GetUUID(), i);
 						entity.GetEntityInfo()->m_Layer = i;
-						LayersPanel::Layers[i]->AddEntity(entity.GetUUID());
 						ImGui::CloseCurrentPopup();
 					};
 				};

@@ -13,17 +13,23 @@ namespace eg {
 	public:
 		HudElement() {
 			this->name = "New HUD Element";
-			this->x = 0;
-			this->y = 0;
 		}
 		std::string name;
-		void SetX(float number) { this->x = number; };
-		void SetY(float number) { this->y = number; };
-		float GetX() { return this->x; };
-		float GetY() { return this->y; };
+		void SetX(float number) { this->position.x = number; };
+		void SetY(float number) { this->position.y = number; };
+		float GetX() { return this->position.x; };
+		float GetY() { return this->position.y; };
+		void SetWidth(float number) { this->size.x = number; };
+		void SetHeight(float number) { this->size.y = number; };
+		float GetWidth() { return this->size.x; };
+		float GetHeight() { return this->size.y; };
+		void SetColor(float r, float g, float b, float a) { this->color = { r, g, b, a }; };
+		glm::vec4 GetColor() { return this->color; };
 	private:
-		float x;
-		float y;
+		glm::vec2 position = { 0.0f, 0.0f };
+		glm::vec2 size = { 0.0f, 0.0f };
+		glm::vec4 color = {0.0f, 0.0f, 0.0f, 0.0f};
+		
 	};
 
 }

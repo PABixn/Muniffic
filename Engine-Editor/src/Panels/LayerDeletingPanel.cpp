@@ -16,10 +16,10 @@ namespace eg {
 			ImGui::OpenPopup("Move");
 		}
 		if (ImGui::BeginPopup("Move")) {
-			for (auto& layer : LayersPanel::Layers) {
-				if (layer->index != LayersPanel::GetSelectedLayer()) {
-					if (ImGui::Button(layer->name.c_str())) {
-						LayersPanel::DeleteLayer(LayersPanel::GetSelectedLayer(), layer->index);
+			for (int i = 0; i< Renderer2D::GetRendererData().layers.size(); i++) {
+				if (i != LayersPanel::GetSelectedLayer()) {
+					if (ImGui::Button(Renderer2D::GetRendererData().layers[i].name.c_str())) {
+						LayersPanel::DeleteLayer(LayersPanel::GetSelectedLayer(), i);
 						ImGui::CloseCurrentPopup();
 						m_Show = false;
 					}

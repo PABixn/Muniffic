@@ -5,6 +5,7 @@
 #include "Imgui/imgui.h"
 #include "Engine/Project/Project.h"
 #include "egpch.h"
+#include "Engine/Renderer/Renderer2D.h"
 //#include "LayersPanel.h"
 
 namespace eg {
