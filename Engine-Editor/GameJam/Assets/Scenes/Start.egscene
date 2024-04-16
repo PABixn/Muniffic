@@ -24,9 +24,8 @@ Entities:
       IsInherited: false
       IsInheritedInChildren: false
     ScriptComponent:
-      Name: Game.Camera
-      ScriptFields:
-        []
+      Scripts:
+        - Name: ""
       IsInherited: false
       IsInheritedInChildren: false
   - Entity: 2675935249373906445
@@ -45,9 +44,12 @@ Entities:
       IsInherited: false
       IsInheritedInChildren: false
     ScriptComponent:
-      Name: Game.SquarePlayer
-      ScriptFields:
-        []
+      Scripts:
+        - Name: Game.Player
+          ScriptFields:
+            - Name: attackCooldown
+              Type: float
+              Value: 3.5999999
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:

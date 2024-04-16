@@ -390,12 +390,14 @@ namespace eg
 		return s_Data->SceneContext;
 	}
 
-	std::unordered_map<std::string, Ref<ScriptInstance>> ScriptEngine::GetEntityScriptInstance(UUID uuid)
+	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID uuid, std::string name)
 	{
 		auto it = s_Data->EntityInstances.find(uuid);
 		if (it == s_Data->EntityInstances.end())
-			return std::unordered_map<std::string, Ref<ScriptInstance>>();
-		return it->second;
+			return nullptr;
+		if(it->second.find(name) == it->second.end())
+			return nullptr;
+		return it->second.at(name);
 	}
 
 	Ref<ScriptClass> ScriptEngine::GetEntityClass(const std::string &name)
@@ -419,7 +421,7 @@ namespace eg
 	}
 
 	ScriptClass::ScriptClass(const std::string &classNamespace, const std::string &className, bool isCore)
-		: m_ClassNamespace(classNamespace), m_ClassName(className)
+		: m_ClassNamespace(classNamespace), m_ClassName(className), m_Fields(std::unordered_map<std::string, ScriptField>())
 	{
 		m_Class = mono_class_from_name(isCore ? s_Data->CoreAssemblyImage : s_Data->AppAssemblyImage, m_ClassNamespace.c_str(), m_ClassName.c_str());
 	}

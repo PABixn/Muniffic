@@ -165,7 +165,7 @@ namespace eg {
 		static void OnUpdateEntity(Entity entity, Timestep ts);
 
 		static Scene* GetSceneContext();
-		static std::unordered_map<std::string, Ref<ScriptInstance>> GetEntityScriptInstance(UUID uuid);
+		static Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid, std::string name);
 
 		static Ref<ScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<ScriptClass>>& GetEnityClasses();

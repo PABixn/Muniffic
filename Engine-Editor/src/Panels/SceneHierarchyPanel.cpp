@@ -491,21 +491,40 @@ namespace eg {
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
-				for(std::string scriptName : component.Scripts)
+				if(ImGui::Button("Add Script"))
+					component.Scripts.push_back("");
+
+				static std::vector<char*> buffers;
+
+				int i = 0;
+
+				for(std::string& scriptName : component.Scripts)
 				{
 					bool scriptExists = ScriptEngine::EntityClassExists(scriptName);
 
-					static char buffer[256];
-					memset(buffer, 0, sizeof(buffer));
-					strcpy_s(buffer, sizeof(buffer), scriptName.c_str());
+					if (buffers.size() <= i)
+					{
+						char* buffer = new char[256];
+						memset(buffer, 0, 256);
+						strcpy_s(buffer, 256, scriptName.c_str());
+						buffers.push_back(buffer);
+					}
+
+					char* buffer = buffers.at(i);
+
+					memset(buffer, 0, 256);
+					strcpy_s(buffer, 256, scriptName.c_str());
+
+					i++;
 
 					UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
 
-					if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+					if (ImGui::InputText(std::string("Class " + std::to_string(i)).c_str(), buffer, 256))
 					{
 						scriptName = std::string(buffer);
 						return;
 					}
+
 					//Fields
 				
 					bool sceneRunning = scene->IsRunning();
@@ -513,7 +532,7 @@ namespace eg {
 					if(sceneRunning)
 					{
 						//If Scene running
-						Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+						Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID(), scriptName);
 						if (scriptInstance)
 						{
 							const auto& fields = scriptInstance->GetScriptClass()->GetFields();
