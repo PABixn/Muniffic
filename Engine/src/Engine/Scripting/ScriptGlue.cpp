@@ -29,9 +29,9 @@ namespace eg
 			return str;
 		}
 
-		const char *getSubstringAfterColon(const char *input)
+		const char* getSubstringAfterColon(const char *input)
 		{
-			const char *colonPosition = strchr(input, ':');
+			const char* colonPosition = strchr(input, ':');
 
 			if (colonPosition != nullptr)
 			{
@@ -41,9 +41,9 @@ namespace eg
 			return nullptr;
 		}
 
-		const char *getSubstringAfterDot(const char *input)
+		const char* getSubstringAfterDot(const char *input)
 		{
-			const char *colonPosition = strchr(input, '.');
+			const char* colonPosition = strchr(input, '.');
 
 			if (colonPosition != nullptr)
 			{
@@ -188,9 +188,9 @@ namespace eg
 	}
 #pragma endregion
 #pragma region Entity
-	static MonoObject *Entity_GetScriptInstance(UUID uuid, std::string name)
+	static MonoObject* Entity_GetScriptInstance(UUID uuid, MonoString* name)
 	{
-		return ScriptEngine::GetManagedInstance(uuid, name);
+		return ScriptEngine::GetManagedInstance(uuid, Utils::MonoStringToString(name));
 	}
 
 	static bool Entity_IsInheritedInChildren(UUID uuid, MonoReflectionType *componentType)

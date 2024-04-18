@@ -63,7 +63,7 @@ namespace eg
         internal extern static ulong Entity_FindEntityByName(string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static object Entity_GetScriptInstance(ulong UUID);
+        internal extern static object Entity_GetScriptInstance(ulong UUID, string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Entity_HasComponent(ulong ID, Type componentType);
