@@ -200,7 +200,7 @@ namespace eg
 			else
 				fullName = className;
 
-			MonoClass *monoClass = mono_class_from_name(s_Data->AppAssemblyImage, nameSpace, className);
+			MonoClass* monoClass = mono_class_from_name(s_Data->AppAssemblyImage, nameSpace, className);
 
 			if (monoClass == entityClass)
 				continue;
@@ -209,6 +209,8 @@ namespace eg
 
 			if (!isEntity)
 				continue;
+
+			MonoClass* baseClass = mono_class_get_parent(monoClass);
 
 			Ref<ScriptClass> scriptClass = CreateRef<ScriptClass>(nameSpace, className);
 			s_Data->EntityClasses[fullName] = scriptClass;
@@ -234,13 +236,37 @@ namespace eg
 				}
 			}
 
+			if (baseClass != nullptr)
+			{
+				int fieldCount = mono_class_num_fields(baseClass);
+				EG_CORE_WARN("Fields of class: {}, with: {} fields", mono_class_get_name(baseClass), fieldCount);
+				void* iterator = nullptr;
+				while (MonoClassField* field = mono_class_get_fields(baseClass, &iterator))
+				{
+					const char* fieldName = mono_field_get_name(field);
+					uint32_t flags = mono_field_get_flags(field);
+
+					EG_CORE_WARN(" {} flags: {}", fieldName, flags);
+					if (flags & MONO_FIELD_ATTR_PUBLIC)
+					{
+						MonoType* monoType = mono_field_get_type(field);
+
+						ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(monoType);
+						const char* MunifficFieldType = Utils::ScriptFieldTypeToString(fieldType);
+
+						EG_CORE_WARN(" {} type: {}", fieldName, MunifficFieldType);
+						scriptClass->m_Fields[fieldName] = { fieldName, fieldType, field };
+					}
+				}
+			}
+
 			EG_CORE_TRACE("{}.{}", nameSpace, className);
 		}
 
 		// mono_field_get_value
 	}
 
-	ScriptFieldMap &ScriptEngine::GetScriptFieldMap(Entity entity)
+	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)
 	{
 		EG_CORE_ASSERT(entity);
 
