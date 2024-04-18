@@ -224,14 +224,15 @@ namespace eg
 			if (ResourceSerializer::TextureResourceDataCache.find(uuid) != ResourceSerializer::TextureResourceDataCache.end())
 			{
 				TextureResourceData* data = ResourceSerializer::TextureResourceDataCache[uuid];
-				ResourceSerializer::TextureResourceDataCache.erase(uuid);
-				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 
 				if (deleteFile)
 				{
 					std::filesystem::path finalPath = GetResourcePath(uuid);
 					std::remove(finalPath.string().c_str());
 				}
+
+				ResourceSerializer::TextureResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 
 				delete data;
 			}
@@ -282,17 +283,14 @@ namespace eg
 
 			FontResourceData* data = ResourceSerializer::FontResourceDataCache[uuid];
 
-			if (ResourceSerializer::FontResourceDataCache.find(uuid) != ResourceSerializer::FontResourceDataCache.end())
-			{
-				ResourceSerializer::FontResourceDataCache.erase(uuid);
-				ResourceSerializer::ResourceTypeInfo.erase(uuid);
-			}
-
 			if (deleteFile)
 			{
 				std::filesystem::path finalPath = GetResourcePath(uuid);
 				std::remove(finalPath.string().c_str());
 			}
+
+			ResourceSerializer::FontResourceDataCache.erase(uuid);
+			ResourceSerializer::ResourceTypeInfo.erase(uuid);
 
 			delete data;
 		}

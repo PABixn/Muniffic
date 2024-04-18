@@ -7,15 +7,15 @@ Directories:
       []
     Assets:
       []
-  - UUID: 11685822950570036394
-    Name: Textures
+  - UUID: 10354316031084856002
+    Name: Shaders
     Parent: 15734058564113413269
     Subdirectories:
       []
     Assets:
       []
-  - UUID: 10354316031084856002
-    Name: Shaders
+  - UUID: 11685822950570036394
+    Name: Textures
     Parent: 15734058564113413269
     Subdirectories:
       []

@@ -223,7 +223,7 @@ namespace eg
 				const char *fieldName = mono_field_get_name(field);
 				uint32_t flags = mono_field_get_flags(field);
 
-				EG_CORE_WARN(" {} flags: {}", fieldName, flags);
+				EG_CORE_WARN("{} flags: {}", fieldName, flags);
 				if (flags & MONO_FIELD_ATTR_PUBLIC)
 				{
 					MonoType *monoType = mono_field_get_type(field);
@@ -231,7 +231,7 @@ namespace eg
 					ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(monoType);
 					const char *MunifficFieldType = Utils::ScriptFieldTypeToString(fieldType);
 
-					EG_CORE_WARN(" {} type: {}", fieldName, MunifficFieldType);
+					EG_CORE_WARN("{} type: {}", fieldName, MunifficFieldType);
 					scriptClass->m_Fields[fieldName] = {fieldName, fieldType, field};
 				}
 			}
@@ -246,7 +246,7 @@ namespace eg
 					const char* fieldName = mono_field_get_name(field);
 					uint32_t flags = mono_field_get_flags(field);
 
-					EG_CORE_WARN(" {} flags: {}", fieldName, flags);
+					EG_CORE_WARN("{} flags: {}", fieldName, flags);
 					if (flags & MONO_FIELD_ATTR_PUBLIC)
 					{
 						MonoType* monoType = mono_field_get_type(field);
@@ -254,7 +254,7 @@ namespace eg
 						ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(monoType);
 						const char* MunifficFieldType = Utils::ScriptFieldTypeToString(fieldType);
 
-						EG_CORE_WARN(" {} type: {}", fieldName, MunifficFieldType);
+						EG_CORE_WARN("{} type: {}", fieldName, MunifficFieldType);
 						scriptClass->m_Fields[fieldName] = { fieldName, fieldType, field };
 					}
 				}

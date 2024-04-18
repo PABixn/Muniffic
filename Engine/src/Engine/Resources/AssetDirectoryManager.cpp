@@ -193,7 +193,7 @@ namespace eg
 		assetDirectory->addAsset(assetUUID);
 	}
 
-	bool AssetDirectoryManager::removeAsset(UUID assetDirectoryUUID, UUID assetUUID)
+	bool AssetDirectoryManager::removeAsset(UUID assetDirectoryUUID, UUID assetUUID, bool deleteFile)
 	{
 		if (assetDirectories.find(assetDirectoryUUID) == assetDirectories.end())
 		{
@@ -214,7 +214,7 @@ namespace eg
 		}
 
 		assets.erase(it);
-		ResourceDatabase::RemoveResource(assetUUID);
+		ResourceDatabase::RemoveResource(assetUUID, deleteFile);
 
 		return true;
 	}

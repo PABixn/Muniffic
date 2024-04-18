@@ -4,6 +4,6 @@ Resources:
     ResourceName: Game.HumanPlayer
     Extension: .cs
   - UUID: 6188134630779233404
-    ParentDirectory: 15227977907628748252
+    ParentDirectory: 0
     ResourceName: Game.SquarePlayer
     Extension: .cs
