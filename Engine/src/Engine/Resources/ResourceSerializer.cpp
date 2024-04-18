@@ -466,18 +466,21 @@ namespace eg
 		std::ofstream spriteAtlasFile(spriteAtlasMetadataPath, std::ios::trunc);
 		std::ofstream subTextureFile(subTextureMetadataPath, std::ios::trunc);
 		std::ofstream fontFile(fontMetadataPath, std::ios::trunc);
+		std::ofstream scriptFile(scriptMetadataPath, std::ios::trunc);
 
 		textureFile << textureOut.c_str();
 		animationFile << animationOut.c_str();
 		spriteAtlasFile << spriteAtlasOut.c_str();
 		subTextureFile << subtextureOut.c_str();
 		fontFile << fontOut.c_str();
+		scriptFile << scriptOut.c_str();
 
 		textureFile.close();
 		animationFile.close();
 		spriteAtlasFile.close();
 		subTextureFile.close();
 		fontFile.close();
+		scriptFile.close();
 	}
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)

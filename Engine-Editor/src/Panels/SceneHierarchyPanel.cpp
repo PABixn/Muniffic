@@ -507,282 +507,291 @@ namespace eg {
 
 				int i = 0;
 
-				for(UUID scriptUUID : component.Scripts)
+				for (UUID scriptUUID : component.Scripts)
 				{
 					std::string& scriptName = ((ScriptResourceData*)ResourceDatabase::GetResourceData(scriptUUID))->ResourceName;
+					bool open = false;
+					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+					open = ImGui::TreeNodeEx((void*)(uint64_t)scriptUUID, flags, scriptName.c_str());
 
-					bool scriptExists = ScriptEngine::EntityClassExists(scriptName);
-
-					if (buffers.size() <= i)
+					if (open)
 					{
-						char* buffer = new char[256];
-						buffers.push_back(buffer);
-					}
+						bool scriptExists = ScriptEngine::EntityClassExists(scriptName);
 
-					char* buffer = buffers.at(i);
-
-					memset(buffer, 0, 256);
-					strcpy_s(buffer, 256, scriptName.c_str());
-
-					i++;
-
-					UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
-
-					if (ImGui::InputText(std::string("Class " + std::to_string(i)).c_str(), buffer, 256))
-					{
-						scriptName = std::string(buffer);
-						return;
-					}
-
-					//Fields
-				
-					bool sceneRunning = scene->IsRunning();
-				
-					if(sceneRunning)
-					{
-						//If Scene running
-						Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID(), scriptName);
-						if (scriptInstance)
+						if (buffers.size() <= i)
 						{
-							const auto& fields = scriptInstance->GetScriptClass()->GetFields();
-							for (const auto& [name, field] : fields)
-							{
-								//float a = 5.0f;
-								//ImGui::DragFloat(name.c_str(), &a, 0.1f);
-								switch (field.Type)
-								{
-								case ScriptFieldType::Float:
-								{
-									float value = scriptInstance->GetFieldValue<float>(name);
-									if (ImGui::DragFloat(name.c_str(), &value, 0.1f))
-										scriptInstance->SetFieldValue<float>(name, value);
-									break;
-								}
-								case ScriptFieldType::Int32:
-								{
-									int value = scriptInstance->GetFieldValue<int>(name);
-									if (ImGui::DragInt(name.c_str(), &value, 1.0f))
-										scriptInstance->SetFieldValue<int>(name, value);
-									break;
-								}
-								case ScriptFieldType::Bool:
-								{
-									bool value = scriptInstance->GetFieldValue<bool>(name);
-									if (ImGui::Checkbox(name.c_str(), &value))
-										scriptInstance->SetFieldValue<bool>(name, value);
-									break;
-								}
-								case ScriptFieldType::String:
-								{
-									//td::string value = scriptInstance->GetFieldValue<std::string>(name);
-									//har buffer[256];
-									//emset(buffer, 0, sizeof(buffer));
-									//trcpy(buffer, value.c_str());
-									//f(ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
-									//	scriptInstance->SetFieldValue<std::string>(name, std::string(buffer));
-									//reak;
-								}
-								case ScriptFieldType::Vector2:
-								{
-									glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
-									if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
-										scriptInstance->SetFieldValue<glm::vec2>(name, value);
-									break;
-								}
-								case ScriptFieldType::Vector3:
-								{
-									glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
-									if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
-										scriptInstance->SetFieldValue<glm::vec3>(name, value);
-									break;
-								}
-								case ScriptFieldType::Vector4:
-								{
-									glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
-									if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
-										scriptInstance->SetFieldValue<glm::vec4>(name, value);
-									break;
-								}
-								default:
-									break;
-								}
-							};
+							char* buffer = new char[256];
+							buffers.push_back(buffer);
 						}
-					}
-					else
-					{
-						if (scriptExists)
+
+						char* buffer = buffers.at(i);
+
+						memset(buffer, 0, 256);
+						strcpy_s(buffer, 256, scriptName.c_str());
+
+						i++;
+
+						UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
+
+						if (ImGui::InputText(std::string("Class " + std::to_string(i)).c_str(), buffer, 256))
 						{
-							Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(scriptName);
-							const auto& fields = entityClass->GetFields();
+							scriptName = std::string(buffer);
+							ImGui::TreePop();
+							return;
+						}
 
-							auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
+						//Fields
 
-							for (const auto& [name, field] : fields)
+						bool sceneRunning = scene->IsRunning();
+
+						if (sceneRunning)
+						{
+							//If Scene running
+							Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID(), scriptName);
+							if (scriptInstance)
 							{
-								if (entityFields.find(name) != entityFields.end())
+								const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+								for (const auto& [name, field] : fields)
 								{
-									// Field has been set in editor
-									ScriptFieldInstance& scriptField = entityFields.at(name);
+									//float a = 5.0f;
+									//ImGui::DragFloat(name.c_str(), &a, 0.1f);
 									switch (field.Type)
 									{
 									case ScriptFieldType::Float:
 									{
-										float data = scriptField.GetValue<float>();
-										if (ImGui::DragFloat(name.c_str(), &data, 0.1f))
-										{
-											scriptField.SetValue(data);
-										}
+										float value = scriptInstance->GetFieldValue<float>(name);
+										if (ImGui::DragFloat(name.c_str(), &value, 0.1f))
+											scriptInstance->SetFieldValue<float>(name, value);
 										break;
 									}
 									case ScriptFieldType::Int32:
 									{
-										int data = scriptField.GetValue<int>();
-										if (ImGui::DragInt(name.c_str(), &data, 1.0f))
-										{
-											scriptField.SetValue(data);
-										}
+										int value = scriptInstance->GetFieldValue<int>(name);
+										if (ImGui::DragInt(name.c_str(), &value, 1.0f))
+											scriptInstance->SetFieldValue<int>(name, value);
 										break;
 									}
 									case ScriptFieldType::Bool:
 									{
-										bool data = scriptField.GetValue<bool>();
-										if (ImGui::Checkbox(name.c_str(), &data))
-										{
-											scriptField.SetValue(data);
-										}
+										bool value = scriptInstance->GetFieldValue<bool>(name);
+										if (ImGui::Checkbox(name.c_str(), &value))
+											scriptInstance->SetFieldValue<bool>(name, value);
 										break;
 									}
 									case ScriptFieldType::String:
 									{
-										//std::string data = scriptField.GetValue<std::string>();
-										//char* buffer[256];
-										//memset(buffer, 0, sizeof(buffer));
-										//strcpy(buffer, data.c_str());
-										//if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
-										//{
-										//	scriptField.SetValue(std::string(buffer));
-										//}
-										//break;
+										//td::string value = scriptInstance->GetFieldValue<std::string>(name);
+										//har buffer[256];
+										//emset(buffer, 0, sizeof(buffer));
+										//trcpy(buffer, value.c_str());
+										//f(ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+										//	scriptInstance->SetFieldValue<std::string>(name, std::string(buffer));
+										//reak;
 									}
 									case ScriptFieldType::Vector2:
 									{
-										glm::vec2 data = scriptField.GetValue<glm::vec2>();
-										if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
-										{
-											scriptField.SetValue(data);
-										}
+										glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
+										if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
+											scriptInstance->SetFieldValue<glm::vec2>(name, value);
 										break;
 									}
 									case ScriptFieldType::Vector3:
 									{
-										glm::vec3 data = scriptField.GetValue<glm::vec3>();
-										if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
-										{
-											scriptField.SetValue(data);
-										}
+										glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
+										if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
+											scriptInstance->SetFieldValue<glm::vec3>(name, value);
 										break;
 									}
 									case ScriptFieldType::Vector4:
 									{
-										glm::vec4 data = scriptField.GetValue<glm::vec4>();
-										if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
-										{
-											scriptField.SetValue(data);
-										}
+										glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
+										if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
+											scriptInstance->SetFieldValue<glm::vec4>(name, value);
 										break;
 									}
-									}
-								}
-								else {
-									// Display control to set it
-									switch (field.Type)
-									{
-									case ScriptFieldType::Float:
-									{
-										float data = 0.0f;
-										if (ImGui::DragFloat(name.c_str(), &data))
-										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<float>(data);
-											float a = fieldInstance.GetValue<float>();
-										}
+									default:
 										break;
 									}
-									case ScriptFieldType::Int32:
+								};
+							}
+						}
+						else
+						{
+							if (scriptExists)
+							{
+								Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(scriptName);
+								const auto& fields = entityClass->GetFields();
+
+								auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
+
+								for (const auto& [name, field] : fields)
+								{
+									if (entityFields.find(name) != entityFields.end())
 									{
-										int data = 0;
-										if (ImGui::DragInt(name.c_str(), &data))
+										// Field has been set in editor
+										ScriptFieldInstance& scriptField = entityFields.at(name);
+										switch (field.Type)
 										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<int>(data);
-										}
-										break;
-									}
-									case ScriptFieldType::Bool:
-									{
-										bool data = false;
-										if (ImGui::Checkbox(name.c_str(), &data))
+										case ScriptFieldType::Float:
 										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<bool>(data);
+											float data = scriptField.GetValue<float>();
+											if (ImGui::DragFloat(name.c_str(), &data, 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
 										}
-										break;
-									}
-									case ScriptFieldType::String:
-									{
-										//std::string data = "";
-										//char buffer[256];
-										//memset(buffer, 0, sizeof(buffer));
-										//strcpy(buffer, data.c_str());
-										//if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
-										//{
-										//	ScriptFieldInstance& fieldInstance = entityFields[name];
-										//	fieldInstance.Field = field;
-										//	fieldInstance.SetValue<std::string>(std::string(buffer));
-										//}
-										//break;
-									}
-									case ScriptFieldType::Vector2:
-									{
-										glm::vec2 data = glm::vec2(0.0f);
-										if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+										case ScriptFieldType::Int32:
 										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<glm::vec2>(data);
+											int data = scriptField.GetValue<int>();
+											if (ImGui::DragInt(name.c_str(), &data, 1.0f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
 										}
-										break;
-									}
-									case ScriptFieldType::Vector3:
-									{
-										glm::vec3 data = glm::vec3(0.0f);
-										if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+										case ScriptFieldType::Bool:
 										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<glm::vec3>(data);
+											bool data = scriptField.GetValue<bool>();
+											if (ImGui::Checkbox(name.c_str(), &data))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
 										}
-										break;
-									}
-									case ScriptFieldType::Vector4:
-									{
-										glm::vec4 data = glm::vec4(0.0f);
-										if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+										case ScriptFieldType::String:
 										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<glm::vec4>(data);
+											//std::string data = scriptField.GetValue<std::string>();
+											//char* buffer[256];
+											//memset(buffer, 0, sizeof(buffer));
+											//strcpy(buffer, data.c_str());
+											//if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+											//{
+											//	scriptField.SetValue(std::string(buffer));
+											//}
+											//break;
 										}
-										break;
+										case ScriptFieldType::Vector2:
+										{
+											glm::vec2 data = scriptField.GetValue<glm::vec2>();
+											if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector3:
+										{
+											glm::vec3 data = scriptField.GetValue<glm::vec3>();
+											if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector4:
+										{
+											glm::vec4 data = scriptField.GetValue<glm::vec4>();
+											if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										}
 									}
+									else {
+										// Display control to set it
+										switch (field.Type)
+										{
+										case ScriptFieldType::Float:
+										{
+											float data = 0.0f;
+											if (ImGui::DragFloat(name.c_str(), &data))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<float>(data);
+												float a = fieldInstance.GetValue<float>();
+											}
+											break;
+										}
+										case ScriptFieldType::Int32:
+										{
+											int data = 0;
+											if (ImGui::DragInt(name.c_str(), &data))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<int>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Bool:
+										{
+											bool data = false;
+											if (ImGui::Checkbox(name.c_str(), &data))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<bool>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::String:
+										{
+											//std::string data = "";
+											//char buffer[256];
+											//memset(buffer, 0, sizeof(buffer));
+											//strcpy(buffer, data.c_str());
+											//if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+											//{
+											//	ScriptFieldInstance& fieldInstance = entityFields[name];
+											//	fieldInstance.Field = field;
+											//	fieldInstance.SetValue<std::string>(std::string(buffer));
+											//}
+											//break;
+										}
+										case ScriptFieldType::Vector2:
+										{
+											glm::vec2 data = glm::vec2(0.0f);
+											if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<glm::vec2>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector3:
+										{
+											glm::vec3 data = glm::vec3(0.0f);
+											if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<glm::vec3>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector4:
+										{
+											glm::vec4 data = glm::vec4(0.0f);
+											if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<glm::vec4>(data);
+											}
+											break;
+										}
+										}
 									}
 								}
 							}
 						}
+
+						ImGui::TreePop();
 					}
 				}
 			}, m_Context);

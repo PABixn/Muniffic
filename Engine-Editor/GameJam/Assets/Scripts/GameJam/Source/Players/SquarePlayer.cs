@@ -13,7 +13,7 @@ namespace Game
     {
         public float shotSpeed;
         public float lastShot;
-        public Vector2 collidePos;
+        public BoxCollider2DComponent playerCollider;
         public Vector2 collideSize;
         public List<Projectile> projectiles;
 
@@ -22,6 +22,8 @@ namespace Game
             base.InitPlayer(10, 100, 2, 800);
 
             projectiles = new List<Projectile>();
+            playerCollider = GetComponent<BoxCollider2DComponent>();
+            collideSize = playerCollider.size;
             shotSpeed = 5;
             lastShot = 0;
         }
