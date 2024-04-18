@@ -62,7 +62,9 @@ namespace Game
             if (rigidBody != null)
             {
                 rigidBody.ApplyLinearImpulse(velocity * ts, true);
-                rigidBody.ApplyLinearImpulse(new Vector2(rigidBody.linearVelocity.X * -1 * friction * ts, 0), true);
+
+                if(isGrounded)
+                    rigidBody.ApplyLinearImpulse(new Vector2(rigidBody.linearVelocity.X * -1 * friction * ts, 0), true);
             }
         }
     }
