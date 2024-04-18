@@ -509,7 +509,8 @@ namespace eg {
 
 				for (UUID scriptUUID : component.Scripts)
 				{
-					std::string& scriptName = ((ScriptResourceData*)ResourceDatabase::GetResourceData(scriptUUID))->ResourceName;
+					ScriptResourceData* data = (ScriptResourceData*)ResourceDatabase::GetResourceData(scriptUUID);
+					std::string& scriptName = data->ResourceName;
 					bool open = false;
 					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 					open = ImGui::TreeNodeEx((void*)(uint64_t)scriptUUID, flags, scriptName.c_str());
@@ -539,6 +540,9 @@ namespace eg {
 							ImGui::TreePop();
 							return;
 						}
+
+
+						ImGui::Checkbox("Enabled", &data->IsEnabled);
 
 						//Fields
 

@@ -97,7 +97,7 @@ namespace eg {
 	class ScriptInstance
 	{
 	public:
-		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity);
+		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity, UUID uuid);
 
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
@@ -127,10 +127,14 @@ namespace eg {
 		}
 
 		MonoObject* GetManagedObject() const { return m_Instance; }
+
+		UUID GetUUID() const { return m_UUID; }
+
 	private:
 		bool GetFieldValueInternal(const std::string& name, void* buffer);
 		bool SetFieldValueInternal(const std::string& name, const void* value);
 	private:
+		UUID m_UUID;
 		Ref<ScriptClass> m_ScriptClass;
 
 		MonoObject* m_Instance = nullptr;

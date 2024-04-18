@@ -291,9 +291,15 @@ namespace eg
 
 					ScriptResourceData* data = new ScriptResourceData();
 
-					data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
-					data->ParentDirectory = 0;
+					if(resource["ParentDirectory"])
+						data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+					else
+						data->ParentDirectory = 0;
 					data->ResourceName = resource["ResourceName"].as<std::string>();
+					if(resource["IsEnabled"])
+						data->IsEnabled = resource["IsEnabled"].as<bool>();
+					else
+						data->IsEnabled = true;
 					data->Extension = resource["Extension"].as<std::string>();
 
 					CacheScript(uuid, data);
@@ -455,6 +461,7 @@ namespace eg
 			scriptOut << YAML::Key << "ParentDirectory" << YAML::Value << value->ParentDirectory;
 			scriptOut << YAML::Key << "ResourceName" << YAML::Value << value->ResourceName;
 			scriptOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
+			scriptOut << YAML::Key << "IsEnabled" << YAML::Value << value->IsEnabled;
 			scriptOut << YAML::EndMap;
 		}
 

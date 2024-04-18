@@ -306,7 +306,7 @@ namespace eg
 
 	bool ScriptEngine::LoadAssembly(const std::filesystem::path &filepath)
 	{
-		s_Data->AppDomain = mono_domain_create_appdomain((char *)"MunifficScriptRuntime", nullptr);
+		s_Data->AppDomain = mono_domain_create_appdomain((char*)"MunifficScriptRuntime", nullptr);
 		mono_domain_set(s_Data->AppDomain, true);
 		s_Data->CoreAssembly = Utils::LoadMonoAssembly(filepath.string(), s_Data->EnableDebugging);
 		if (!s_Data->CoreAssembly)
@@ -375,14 +375,18 @@ namespace eg
 
 		for (UUID scriptUUID : nsc.Scripts)
 		{
+			if(!ResourceDatabase::IsScriptEnabled(scriptUUID))
+				continue;
+
 			std::string scriptName = ResourceDatabase::GetResourceName(scriptUUID);
 
 			if (ScriptEngine::EntityClassExists(scriptName))
 			{
-				Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[scriptName], entity);
+				Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[scriptName], entity, scriptUUID);
 
 				// Copy field values
 
+				//Change scriptName to scriptUUID
 				s_Data->EntityInstances.at(uuid)[scriptName] = instance;
 
 				if (s_Data->EntityFields.find(uuid) != s_Data->EntityFields.end())
@@ -403,7 +407,8 @@ namespace eg
 		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
 		{
 			for (auto& [key, value] : s_Data->EntityInstances.at(entityID))
-				value->InvokeOnUpdate(ts);
+				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()))
+					value->InvokeOnUpdate(ts);
 			/*Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
 			instance->InvokeOnUpdate(ts);*/
 		}
@@ -470,10 +475,12 @@ namespace eg
 		return mono_runtime_invoke(method, instance, params, &exception);
 	}
 
-	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity)
+	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity, UUID uuid)
 		: m_ScriptClass(scriptClass)
 	{
 		m_Instance = m_ScriptClass->Instantiate();
+
+		m_UUID = uuid;
 
 		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
 		m_OnCreateMethod = m_ScriptClass->GetMethod("OnCreate", 0);

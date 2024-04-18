@@ -16,6 +16,25 @@ namespace eg
 	std::unordered_map<UUID, Ref<Font>> ResourceDatabase::RuntimeFontResourceCache;
 	std::unordered_map<UUID, Ref<Texture2D>> ResourceDatabase::RuntimeTextureResourceCache;
 
+	void ResourceDatabase::EnableScript(UUID uuid, bool enable)
+	{
+		if (ResourceSerializer::ScriptResourceDataCache.find(uuid) != ResourceSerializer::ScriptResourceDataCache.end())
+			((ScriptResourceData*)ResourceSerializer::ScriptResourceDataCache.at(uuid))->IsEnabled = enable;
+		else
+			EG_CORE_ERROR("Script resource not found");
+	}
+
+	bool ResourceDatabase::IsScriptEnabled(UUID uuid)
+	{
+		if (ResourceSerializer::ScriptResourceDataCache.find(uuid) != ResourceSerializer::ScriptResourceDataCache.end())
+			return ((ScriptResourceData*)ResourceSerializer::ScriptResourceDataCache.at(uuid))->IsEnabled;
+		else
+		{
+			EG_CORE_ERROR("Script resource not found");
+			return false;
+		}
+	}
+
 	bool ResourceDatabase::FindRuntimeResource(UUID uuid, ResourceType type)
 	{
 		if (type == ResourceType::Font)
