@@ -122,6 +122,8 @@ namespace eg
 			ResourceSerializer::SpriteAtlasResourceDataCache[uuid] = (SpriteAtlasResourceData*)data;
 		else if(resourceType == ResourceType::Font)
 			ResourceSerializer::FontResourceDataCache[uuid] = (FontResourceData*)data;
+		else if(resourceType == ResourceType::Script)
+			ResourceSerializer::ScriptResourceDataCache[uuid] = (ScriptResourceData*)data;
 		else
 			EG_CORE_ERROR("Resource type not supported");
 	}
@@ -143,6 +145,8 @@ namespace eg
 			return ResourceSerializer::SpriteAtlasResourceDataCache.find(uuid) != ResourceSerializer::SpriteAtlasResourceDataCache.end();
 		else if (resourceType == ResourceType::Font)
 			return ResourceSerializer::FontResourceDataCache.find(uuid) != ResourceSerializer::FontResourceDataCache.end();
+		else if (resourceType == ResourceType::Script)
+			return ResourceSerializer::ScriptResourceDataCache.find(uuid) != ResourceSerializer::ScriptResourceDataCache.end();
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
@@ -187,6 +191,14 @@ namespace eg
 		else if (type == ResourceType::Font)
 		{
 			for (auto& [uuid, data] : ResourceSerializer::FontResourceDataCache)
+			{
+				if (data->ResourceName == name)
+					return uuid;
+			}
+		}
+		else if (type == ResourceType::Script)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::ScriptResourceDataCache)
 			{
 				if (data->ResourceName == name)
 					return uuid;
@@ -251,6 +263,15 @@ namespace eg
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
+		else if (resourceType == ResourceType::Script)
+		{
+			if (ResourceSerializer::SpriteAtlasResourceDataCache.find(uuid) != ResourceSerializer::SpriteAtlasResourceDataCache.end())
+			{
+				delete ResourceSerializer::SpriteAtlasResourceDataCache.at(uuid);
+				ResourceSerializer::SpriteAtlasResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+			}
+		}
 		else if (resourceType == ResourceType::Font)
 		{
 			if (uuid == Font::GetDefaultFontUUID())
@@ -303,6 +324,8 @@ namespace eg
 			return ResourceSerializer::SpriteAtlasResourceDataCache.at(uuid);
 		else if (type == ResourceType::Font)
 			return ResourceSerializer::FontResourceDataCache.at(uuid);
+		else if(type == ResourceType::Script)
+			return ResourceSerializer::ScriptResourceDataCache.at(uuid);
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
@@ -423,6 +446,18 @@ namespace eg
 		}
 
 		ResourceSerializer::CacheFont(uuid, data);
+	}
+
+	void AddScriptResourceData(UUID uuid, const std::filesystem::path& originalResource, ScriptResourceData* data)
+	{
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResource, ResourceType::Script);
+
+		if (!std::filesystem::exists(finalPath.parent_path()))
+		{
+			std::filesystem::create_directories(finalPath.parent_path());
+		}
+
+		ResourceSerializer::CacheScript(uuid, data);
 	}
 
 	void AddAnimationResource(UUID uuid, const std::filesystem::path& originalResourcePath, AnimationResourceData* data)
@@ -604,6 +639,9 @@ namespace eg
 			break;
 		case ResourceType::Font:
 			AddFontResourceData(uuid, originalResourcePath, (FontResourceData*)data);
+			break;
+		case ResourceType::Script:
+			AddScriptResourceData(uuid, originalResourcePath, (ScriptResourceData*)data);
 			break;
 		}
 

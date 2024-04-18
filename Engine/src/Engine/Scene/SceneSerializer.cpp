@@ -204,10 +204,12 @@ namespace eg {
 
 			out << YAML::Key << "Scripts" << YAML::Value << YAML::BeginSeq; 
 
-			for (std::string name : scriptComponent.Scripts)
+			for (UUID script : scriptComponent.Scripts)
 			{
 				out << YAML::BeginMap; 
-				out << YAML::Key << "Name" << YAML::Value << name;
+				out << YAML::Key << "ScriptUUID" << YAML::Value << script;
+
+				std::string name = ResourceDatabase::GetResourceName(script);
 
 				// Fields
 				Ref<ScriptClass> scriptClass = ScriptEngine::GetEntityClass(name);
@@ -394,7 +396,7 @@ namespace eg {
 				std::string name;
 				auto tagComponent = entity["TagComponent"];
 				if(tagComponent)
-					name =  tagComponent["Tag"].as<std::string>();
+					name = tagComponent["Tag"].as<std::string>();
 
 				EG_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 				ConsolePanel::Log("File: SceneSerializer.cpp - Deserialized entity with name " + name, ConsolePanel::LogType::Info);
@@ -462,11 +464,16 @@ namespace eg {
 
 					for (auto script : scripts)
 					{
-						std::string name = script["Name"].as<std::string>();
+						if(!script["ScriptUUID"])
+							continue;
 
-						sc.Scripts.push_back(name);
+						UUID uuid = script["ScriptUUID"].as<UUID>();
 
-						auto scriptFields = scriptComponent["ScriptFields"];
+						sc.Scripts.push_back(uuid);
+
+						std::string name = ResourceDatabase::GetResourceName(uuid);
+
+						auto scriptFields = script["ScriptFields"];
 						if (scriptFields)
 						{
 							Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(name);
@@ -513,9 +520,6 @@ namespace eg {
 							}
 						}
 					}
-
-					if(sc.Scripts.size() == 0)
-						sc.Scripts.push_back("");
 
 					if(scriptComponent["IsInherited"])
 						sc.isInherited = scriptComponent["IsInherited"].as<bool>();

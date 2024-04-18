@@ -491,22 +491,31 @@ namespace eg {
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
-				if(ImGui::Button("Add Script"))
-					component.Scripts.push_back("");
+				if (ImGui::Button("Add Script"))
+				{
+					ScriptResourceData* data = new ScriptResourceData();
+					data->ResourceName = "";
+					data->Extension = ".cs";
+					data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Script);
+					data->Type = ResourceType::Script;
+
+					UUID uuid = ResourceDatabase::AddResource(AssetDirectoryManager::getDirectoryPath(data->ParentDirectory), data, ResourceType::Script);
+					component.Scripts.push_back(uuid);
+				}
 
 				static std::vector<char*> buffers;
 
 				int i = 0;
 
-				for(std::string& scriptName : component.Scripts)
+				for(UUID scriptUUID : component.Scripts)
 				{
+					std::string& scriptName = ((ScriptResourceData*)ResourceDatabase::GetResourceData(scriptUUID))->ResourceName;
+
 					bool scriptExists = ScriptEngine::EntityClassExists(scriptName);
 
 					if (buffers.size() <= i)
 					{
 						char* buffer = new char[256];
-						memset(buffer, 0, 256);
-						strcpy_s(buffer, 256, scriptName.c_str());
 						buffers.push_back(buffer);
 					}
 

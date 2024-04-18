@@ -77,7 +77,7 @@ namespace eg
 				return ResourceType::Text;
 			else if (extension == ".anim")
 				return ResourceType::Animation;
-			else if (extension == ".script")
+			else if (extension == ".cs")
 				return ResourceType::Script;
 			else if (extension == ".nativescript")
 				return ResourceType::NativeScript;

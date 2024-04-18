@@ -347,15 +347,17 @@ namespace eg
 
 		s_Data->EntityInstances[uuid] = std::unordered_map<std::string, Ref<ScriptInstance>>();
 
-		for (const auto& script : nsc.Scripts)
+		for (UUID scriptUUID : nsc.Scripts)
 		{
-			if (ScriptEngine::EntityClassExists(script))
+			std::string scriptName = ResourceDatabase::GetResourceName(scriptUUID);
+
+			if (ScriptEngine::EntityClassExists(scriptName))
 			{
-				Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[script], entity);
+				Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[scriptName], entity);
 
 				// Copy field values
 
-				s_Data->EntityInstances.at(uuid)[script] = instance;
+				s_Data->EntityInstances.at(uuid)[scriptName] = instance;
 
 				if (s_Data->EntityFields.find(uuid) != s_Data->EntityFields.end())
 				{
