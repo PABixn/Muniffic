@@ -513,7 +513,21 @@ namespace eg {
 					std::string& scriptName = data->ResourceName;
 					bool open = false;
 					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+					ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
+					float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+					ImGui::Separator();
 					open = ImGui::TreeNodeEx((void*)(uint64_t)scriptUUID, flags, scriptName.c_str());
+					ImGui::PopStyleVar();
+					ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+
+					if (ImGui::Button("X", ImVec2{ lineHeight,lineHeight }))
+					{
+						component.Scripts.erase(std::remove(component.Scripts.begin(), component.Scripts.end(), scriptUUID), component.Scripts.end());
+						ImGui::TreePop();
+						return;
+					}
 
 					if (open)
 					{

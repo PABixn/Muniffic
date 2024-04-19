@@ -1,9 +1,11 @@
 Resources:
-  - UUID: 18365530030281109295
-    ParentDirectory: 0
+  - UUID: 2642678651557622470
+    ParentDirectory: 1614328269446506214
+    ResourceName: Game.Camera
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 4887495504153524748
+    ParentDirectory: 1614328269446506214
     ResourceName: Game.HumanPlayer
     Extension: .cs
-  - UUID: 6188134630779233404
-    ParentDirectory: 0
-    ResourceName: Game.SquarePlayer
-    Extension: .cs
+    IsEnabled: true

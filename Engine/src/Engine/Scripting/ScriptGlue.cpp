@@ -313,7 +313,7 @@ namespace eg
 		Utils::InheritComponent(AllComponents{}, managedType, e, isUndo);
 	}
 
-	static MonoString *Entity_GetAnyChildren(UUID uuid)
+	static int64_t* Entity_GetAnyChildren(UUID uuid, int* size)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
@@ -322,12 +322,18 @@ namespace eg
 
 		std::string children = "";
 
-		for (auto &child : entity.GetAnyChildren())
+		std::vector<Entity> childrenUUIDs = entity.GetAnyChildren();
+
+		int64_t* uuids = new int64_t[childrenUUIDs.size()];
+
+		for (int i = 0; i < childrenUUIDs.size(); i++)
 		{
-			children += std::to_string(child.GetUUID()) + ",";
+			uuids[i] = childrenUUIDs[i].GetUUID();
 		}
 
-		return ScriptEngine::CreateString(children.c_str());
+		*size = childrenUUIDs.size();
+
+		return uuids;
 	}
 
 	static MonoString *Entity_GetChildren(UUID uuid)
@@ -1767,6 +1773,12 @@ namespace eg
 	{
 		return Input::IsKeyPressed(keycode);
 	}
+#pragma endregion
+
+#pragma region Script
+
+
+
 #pragma endregion
 
 	void ScriptGlue::RegisterFunctions()

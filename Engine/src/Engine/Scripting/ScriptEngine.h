@@ -167,6 +167,7 @@ namespace eg {
 		static bool EntityClassExists(const std::string& fullClassName);
 		static void OnCreateEntity(Entity entity);
 		static void OnUpdateEntity(Entity entity, Timestep ts);
+		static std::vector<MonoClass*> GetBaseClasses(MonoClass* klass, MonoClass* entityClass);
 
 		static Scene* GetSceneContext();
 		static Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid, std::string name);

@@ -185,7 +185,7 @@ namespace eg
 		const MonoTableInfo *typeDefinitionsTable = mono_image_get_table_info(s_Data->AppAssemblyImage, MONO_TABLE_TYPEDEF);
 		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
 
-		MonoClass *entityClass = mono_class_from_name(s_Data->CoreAssemblyImage, "eg", "DefaultBehaviour");
+		MonoClass* entityClass = mono_class_from_name(s_Data->CoreAssemblyImage, "eg", "DefaultBehaviour");
 
 		for (int32_t i = 0; i < numTypes; i++)
 		{
@@ -201,6 +201,7 @@ namespace eg
 				fullName = className;
 
 			MonoClass* monoClass = mono_class_from_name(s_Data->AppAssemblyImage, nameSpace, className);
+			
 
 			if (monoClass == entityClass)
 				continue;
@@ -210,7 +211,7 @@ namespace eg
 			if (!isEntity)
 				continue;
 
-			MonoClass* baseClass = mono_class_get_parent(monoClass);
+			std::vector<MonoClass*> baseClasses = GetBaseClasses(monoClass, entityClass);
 
 			Ref<ScriptClass> scriptClass = CreateRef<ScriptClass>(nameSpace, className);
 			s_Data->EntityClasses[fullName] = scriptClass;
@@ -236,26 +237,29 @@ namespace eg
 				}
 			}
 
-			if (baseClass != nullptr)
+			for (MonoClass* baseClass : baseClasses)
 			{
-				int fieldCount = mono_class_num_fields(baseClass);
-				EG_CORE_WARN("Fields of class: {}, with: {} fields", mono_class_get_name(baseClass), fieldCount);
-				void* iterator = nullptr;
-				while (MonoClassField* field = mono_class_get_fields(baseClass, &iterator))
+				if (baseClass != nullptr)
 				{
-					const char* fieldName = mono_field_get_name(field);
-					uint32_t flags = mono_field_get_flags(field);
-
-					EG_CORE_WARN("{} flags: {}", fieldName, flags);
-					if (flags & MONO_FIELD_ATTR_PUBLIC)
+					int fieldCount = mono_class_num_fields(baseClass);
+					EG_CORE_WARN("Fields of class: {}, with: {} fields", mono_class_get_name(baseClass), fieldCount);
+					void* iterator = nullptr;
+					while (MonoClassField* field = mono_class_get_fields(baseClass, &iterator))
 					{
-						MonoType* monoType = mono_field_get_type(field);
+						const char* fieldName = mono_field_get_name(field);
+						uint32_t flags = mono_field_get_flags(field);
 
-						ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(monoType);
-						const char* MunifficFieldType = Utils::ScriptFieldTypeToString(fieldType);
+						EG_CORE_WARN("{} flags: {}", fieldName, flags);
+						if (flags & MONO_FIELD_ATTR_PUBLIC)
+						{
+							MonoType* monoType = mono_field_get_type(field);
 
-						EG_CORE_WARN("{} type: {}", fieldName, MunifficFieldType);
-						scriptClass->m_Fields[fieldName] = { fieldName, fieldType, field };
+							ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(monoType);
+							const char* MunifficFieldType = Utils::ScriptFieldTypeToString(fieldType);
+
+							EG_CORE_WARN("{} type: {}", fieldName, MunifficFieldType);
+							scriptClass->m_Fields[fieldName] = { fieldName, fieldType, field };
+						}
 					}
 				}
 			}
@@ -264,6 +268,20 @@ namespace eg
 		}
 
 		// mono_field_get_value
+	}
+
+	std::vector<MonoClass*> ScriptEngine::GetBaseClasses(MonoClass* monoClass, MonoClass* entityClass)
+	{
+		std::vector<MonoClass*> baseClasses;
+
+		MonoClass* baseClass = mono_class_get_parent(monoClass);
+
+		while (baseClass != nullptr && mono_class_get_name(baseClass) != mono_class_get_name(entityClass))
+		{
+			baseClasses.push_back(baseClass);
+			baseClass = mono_class_get_parent(baseClass);
+		}
+		return baseClasses;
 	}
 
 	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)

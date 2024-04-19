@@ -572,7 +572,7 @@ namespace eg
         }
         
         
-    public bool CollidesWith(ulong entityID)
+    public bool CollidesWith(long entityID)
     {
         return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
     }
@@ -679,7 +679,7 @@ namespace eg
             return InternalCalls.CircleCollider2DComponent_CollidesWithPoint(Entity.ID, ref point);
         }
 
-        public bool CollidesWithEntity(ulong entityID)
+        public bool CollidesWithEntity(long entityID)
         {
 
             return InternalCalls.CircleCollider2DComponent_CollidesWith(Entity.ID, entityID);
@@ -696,7 +696,7 @@ namespace eg
             return CollidesWith(entity);
         }
 
-        public bool CollidesWithEntitySide(ulong entityID, Side side)
+        public bool CollidesWithEntitySide(long entityID, Side side)
         {
            Entity entity = Entity.FindEntityByID(entityID);
            if (entity == null)
