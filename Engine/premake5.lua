@@ -47,7 +47,7 @@ project "Engine"
 		"dwmapi.lib",
 		"yaml-cpp",
 		"Glad",
-		"Imgui"
+		"ImGui"
 	}
 
 	defines{

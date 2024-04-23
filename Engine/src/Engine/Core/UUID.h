@@ -1,5 +1,9 @@
 #pragma once
+#ifndef EG_PLATFORM_LINUX
 #include <xhash>
+#else
+#include <xxhash.h>
+#endif
 
 namespace eg {
 

@@ -1,5 +1,5 @@
 #include "egpch.h"
-#include "OPenGLRendererAPI.h"
+#include "OpenGLRendererAPI.h"
 #include <glad/glad.h>
 
 namespace eg{

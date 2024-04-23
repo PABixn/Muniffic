@@ -2,7 +2,7 @@
 #include "egpch.h"
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Log.h"
-#include "Engine/Imgui/ImguiLayer.h"
+#include "Engine/ImGui/ImGuiLayer.h"
 
 #include "Engine/Core/Timestep.h"
 

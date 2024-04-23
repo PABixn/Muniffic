@@ -19,7 +19,7 @@
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 
 #pragma once
-#include "../../Imgui/imgui.h"      // IMGUI_IMPL_API
+#include "../../ImGui/imgui.h"      // IMGUI_IMPL_API
 
 struct GLFWwindow;
 struct GLFWmonitor;
