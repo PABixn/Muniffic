@@ -1,7 +1,7 @@
 #include "egpch.h"
 #include "OpenGLVertexArray.h"
 #include <glad/glad.h>
-#include "OpenGlBuffer.h"
+#include "OpenGLBuffer.h"
 #include "Engine/Core/Core.h"
 
 namespace eg {

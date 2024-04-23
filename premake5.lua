@@ -30,7 +30,6 @@ group "Dependencies"
 	include "Engine/vendor/GLFW"
 	include "Engine/vendor/Glad"
 	include "Engine/vendor/ImGui"
-	include "Engine/vendor/SPIRV-Cross"
 	include "Engine/vendor/yaml-cpp"
 group ""
 
