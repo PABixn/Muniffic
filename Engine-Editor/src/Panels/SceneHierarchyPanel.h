@@ -2,9 +2,22 @@
 #include "Engine.h"
 #include "ResourcesPanels/ImagePanel.h"
 //#include "ConsolePanel.h"
-
+#include "Imgui/imgui.h"
 namespace eg {
-
+	enum ComponentIcons {
+		ComponentIcon = 0,
+		TransformIcon,
+		CameraIcon,
+		ScriptIcon,
+		SpriteRendererIcon,
+		SubTextureRendererIcon,
+		CircleRendererIcon,
+		RigidBodyIcon,
+		BoxColliderIcon,
+		CircleColliderIcon,
+		TextRendererIcon,
+		AnimatorIcon
+	};
 	enum searchRes
 	{
 		ChildSearched, 
@@ -43,7 +56,7 @@ namespace eg {
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; SetPreviewAbsoluteImagePath(""); }
-		void SetPreviewAbsoluteImagePath(std::filesystem::path path) { m_PreviewAbsoluteImagePath = path; }
+		void SetPreviewAbsoluteImagePath(std::filesystem::path path) { m_PreviewAbsoluteImagePath = path; m_ReevaluatePreview = true; }
 	private:
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
@@ -51,6 +64,8 @@ namespace eg {
 		void DrawComponents(Entity entity);
 		void Search();
 		std::optional<EntityDisplayInfo> SearchEntity(Entity entity);
+		template<typename T, typename UIFunction>
+		void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, int iconOrType);
 	private:
 		std::string m_Search;
 		Ref<ImagePanel> m_ImagePanel;
@@ -58,7 +73,9 @@ namespace eg {
 		Ref<Texture2D> m_PuzzleIcon;
 		Entity m_SelectionContext;
 		std::filesystem::path m_PreviewAbsoluteImagePath;
+		bool m_ReevaluatePreview = true;
 		std::vector<EntityDisplayInfo> m_ListOfEntityDisplayed;
 		bool m_FirstDrawAfterSearch;
+		std::vector<Ref<Texture2D>> m_ComponentIcons;
 	};
 }

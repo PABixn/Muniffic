@@ -49,11 +49,8 @@ namespace eg {
 			flags |= ImGuiTreeNodeFlags_FileEntity;
 			textureID = (ImTextureID)(m_ContentBrowserPanel->m_FileIcon)->GetRendererID();
 		}
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f)); bool is_open = false;
-		if (tag.c_str()[0] != 'm') {
-			is_open = ImGui::CustomTreeNodeWithPicEx((void*)(getPathID(path.string())), flags, tag.c_str(), textureID);
-
-		}
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f)); 
+		bool is_open = ImGui::CustomTreeNodeWithPicEx((void*)(getPathID(path.string())), flags, tag.c_str(), textureID);
 		t = ImGui::GetItemID();
 		ImGui::PopStyleVar();
 		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {

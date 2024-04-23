@@ -1118,8 +1118,11 @@ enum ImGuiTreeNodeFlags_
     ImGuiTreeNodeFlags_EntityWithChildren   = 1 << 15,
     ImGuiTreeNodeFlags_DirectoryEntity      = 1 << 16,
     ImGuiTreeNodeFlags_FileEntity           = 1 << 17,
-    ImGuiTreeNodeFlags_ForceOpen           = 1 << 18,
-    ImGuiTreeNodeFlags_ForceClose          = 1 << 19,
+    ImGuiTreeNodeFlags_ForceOpen            = 1 << 18,
+    ImGuiTreeNodeFlags_ForceClose           = 1 << 19,
+    ImGuiTreeNodeFlags_NoArrow              = 1 << 20,
+    ImGuiTreeNodeFlags_PropertiesComponent  = 1 << 21,
+    ImGuiTreeNodeFlags_CopyingToChildren    = 1 << 22,
     //ImGuiTreeNodeFlags_NoScrollOnOpen     = 1 << 14,  // FIXME: TODO: Disable automatic scroll on TreePop() if node got just open and contents is not visible
     ImGuiTreeNodeFlags_CollapsingHeader     = ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_NoAutoOpenOnLog,
 };
@@ -1792,6 +1795,7 @@ enum ImGuiSliderFlags_
     ImGuiSliderFlags_Logarithmic            = 1 << 5,       // Make the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.
     ImGuiSliderFlags_NoRoundToFormat        = 1 << 6,       // Disable rounding underlying value to match precision of the display format string (e.g. %.3f values are rounded to those 3 digits)
     ImGuiSliderFlags_NoInput                = 1 << 7,       // Disable CTRL+Click or Enter key allowing to input text directly into the widget
+    ImGuiSliderFlags_NoArrows                 = 1 << 8,
     ImGuiSliderFlags_InvalidMask_           = 0x7000000F,   // [Internal] We treat using those bits as being potentially a 'float power' argument from the previous API that has got miscast to this enum, and will trigger an assert if needed.
 
     // Obsolete names (will be removed)

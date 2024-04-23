@@ -44,6 +44,22 @@ namespace eg {
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
 	{
+		//zna2
+		//See ComponentIcon enum (SceneHierarchyPanel.h)
+		m_ComponentIcons = std::vector<Ref<Texture2D>>();
+		std::string IconPath = "resources/icons/hierarchyPanel/Components/";
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"ComponentIcon.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"Transform.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"Camera.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"Script.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"SpriteRen.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"SubTexRen.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"CircleRen.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"RigidBody.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"BoxCol.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"CircleCol.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"TextRen.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"Animator.png"));
 		m_Context = scene;
 		m_SelectionContext = {};
 		m_ImagePanel = CreateRef<ImagePanel>();
@@ -51,24 +67,6 @@ namespace eg {
 		Search();
 		m_PuzzleIcon = Texture2D::Create("resources/icons/hierarchyPanel/puzzle.png");
 	}
-	/* (kind of an backup)
-	bool SceneHierarchyPanel::SearchEntity(Entity entity) {
-		bool searched = false, childsearched = false;
-		std::string silli = entity.GetName();
-		for (Entity e : entity.GetChildren()) {
-			if (SearchEntity(e)) {
-				childsearched = true;
-			}
-		}
-		if (entity.GetName().contains(m_Search)) {
-			searched = true;
-		}
-		if (searched)
-		{
-			m_ListOfEntityDisplayed.push_back(EntityDisplayInfo(entity, searched, childsearched));
-		}
-		return (childsearched || searched);
-	}*/
 
 	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity) {
 		bool searched = false, childsearched = false;
@@ -190,8 +188,9 @@ namespace eg {
 				ImGui::EndPopup();
 			}
 		}
-
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f)); 
 		ImGui::Begin("Properties");
+		ImGui::PopStyleVar();
 		if (m_SelectionContext)
 		{
 			DrawComponents(m_SelectionContext);
@@ -199,40 +198,48 @@ namespace eg {
 		ImGui::End();
 		if (m_PreviewAbsoluteImagePath != "" ) {
 			ImGui::Begin("Preview");
-			GLuint my_opengl_texture; 
+			static GLuint my_opengl_texture; 
+			static unsigned char* image = nullptr;
 			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceDatabase::GetTextureResourceDataCache()) {
 				auto CacheImageData = (pairOfUUIDAndData.second);
 				if (ResourceDatabase::GetResourcePath(pairOfUUIDAndData.first) == m_PreviewAbsoluteImagePath) {
-					stbi_set_flip_vertically_on_load(false);
-					unsigned char* image = stbi_load(m_PreviewAbsoluteImagePath.string().c_str(), &(CacheImageData->Width), &(CacheImageData->Height), &(CacheImageData->Channels), STBI_rgb_alpha);
-					if (image) {
-						glGenTextures(1, &my_opengl_texture);
-						glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
-						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (CacheImageData->Width), (CacheImageData->Height), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-						glGenerateMipmap(GL_TEXTURE_2D); 
-						auto s = ImGui::GetWindowWidth();
-						std::string absImgName = m_PreviewAbsoluteImagePath.filename().string();
-						ImGui::TextWrapped(add("file: ",absImgName.c_str(), ""));
-						if (ImGui::Button("open")) {
-							std::string path = m_PreviewAbsoluteImagePath.string();
-							ShellExecuteA(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+					if (m_ReevaluatePreview)
+					{
+						if (image)
+						{
+							stbi_image_free(image);
 						}
-						ImGui::TextWrapped(add("size: ", std::to_string(CacheImageData->Width).c_str(), add(" x ", std::to_string(CacheImageData->Height).c_str(),"")));
+						image = stbi_load(m_PreviewAbsoluteImagePath.string().c_str(), &(CacheImageData->Width), &(CacheImageData->Height), &(CacheImageData->Channels), STBI_rgb_alpha);
+						if (image) {
+							glGenTextures(1, &my_opengl_texture);
+							glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
+							glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (CacheImageData->Width), (CacheImageData->Height), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+							glGenerateMipmap(GL_TEXTURE_2D);
+						}
+						m_ReevaluatePreview = false;
+					}
+					if (image)
+					{
+						auto s = ImGui::GetWindowWidth(); 
+						std::string absImgName = m_PreviewAbsoluteImagePath.filename().string(); 
+						ImGui::TextWrapped(add("file: ", absImgName.c_str(), "")); 
+						if (ImGui::Button("open")) { 
+							std::string path = m_PreviewAbsoluteImagePath.string(); 
+							ShellExecuteA(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT); 
+						}
+						ImGui::TextWrapped(add("size: ", std::to_string(CacheImageData->Width).c_str(), add(" x ", std::to_string(CacheImageData->Height).c_str(), "")));
 						ImGui::TextWrapped(add("scale of preview: ", (std::to_string(std::round(s / CacheImageData->Width * 100.0) / 100.0)).substr(0, 4).c_str(), ""));
 						ImGui::Image((void*)(intptr_t)my_opengl_texture, ImVec2((int)s, (int)((s * (CacheImageData->Height)) / (CacheImageData->Width))));
-						stbi_image_free(image);
-						ImGui::End();
-						ImGui::End();
-						return;
+						//stbi_image_free(image);
 					}
 					else
 					{
 						std::string absImgPath = m_PreviewAbsoluteImagePath.string();
 						ImGui::TextWrapped(add("file: ", absImgPath.c_str(), " not found"));
-						ImGui::End();
-						ImGui::End();
-						return;
 					}
+					ImGui::End();
+					ImGui::End();
+					return;
 				}
 			}
 			ImGui::TextWrapped("The file you are trying to access is not inside the project cache");
@@ -303,6 +310,7 @@ namespace eg {
 			{
 				Entity draggedEntity = *(Entity*)payload->Data;
 				Commands::ExecuteChangeParentCommand(draggedEntity, entity, m_Context);
+				Search();
 			}
 
 			ImGui::EndDragDropTarget();
@@ -351,25 +359,30 @@ namespace eg {
 		}
 	}
 
-	static void DrawVec3Control(Entity entity, const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f)
+	static void DrawVec3Control(Entity entity, const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool firstValue = false)
 	{
 		float x = values.x, y = values.y, z = values.z;
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
 
 		ImGui::PushID(label.c_str());
-			ImGui::PushStyleVar(ImGuiColumnsFlags_NoBorder, true);
-		ImGui::Columns(2);
+		ImGui::Columns(2, NULL, false);
 		ImGui::SetColumnWidth(0, columnWidth);
+		if(!firstValue)
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6.f);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
-		
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+
+		float columnsWidth = ImGui::GetContentRegionAvail().x-64.f;
+
+
+		ImGui::PushMultiItemsWidths(3, columnsWidth);
+		if(!firstValue)
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6.f);
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		ImVec2 buttonSize = { lineHeight - 1.f, lineHeight };
-		//zna3
-					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.65f,0.15f,0.15f,1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.76f,0.23f,0.23f,1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.42f,0.1f,0.1f,1.0f });
@@ -389,12 +402,12 @@ namespace eg {
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
-		//ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f,0.7f,0.2f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f,0.65f,0.2f,1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f,0.8f,0.3f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f,0.7f,0.2f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f,0.5f,0.0f,1.0f });
 		ImGui::PushFont(boldFont);
+
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 3.f);
 		if (ImGui::Vec3AxisButton("Y", buttonSize))
 		{
 			float check = values.y;
@@ -408,12 +421,12 @@ namespace eg {
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f,0.15f,0.8f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f,0.25f,0.9f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f,0.15f,0.8f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.65f, 0.06f,0.83f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 1.f, 0.45f,1.f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f,0.f,0.8f,1.0f });
 		ImGui::PushFont(boldFont);
-		//ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
 
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 3.f);
 		if (ImGui::Vec3AxisButton("Z", buttonSize))
 		{
 			float check = values.z;
@@ -428,33 +441,42 @@ namespace eg {
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"));
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
-		
-				ImGui::PopStyleVar();
-			ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
 		ImGui::NextColumn();
 		ImGui::PopID();
 	}
 
 	template<typename T, typename UIFunction>
-	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context)
+	void SceneHierarchyPanel::DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, int iconOrType)
 	{
-		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+		//zna2
+		static const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_NoArrow | ImGuiTreeNodeFlags_PropertiesComponent;
 		if (entity.HasComponent<T>())
 		{
+			std::string ajDzik(entity.GetName() + std::to_string(iconOrType));
+			ImGui::PushID(ajDzik.c_str());
 			auto& component = entity.GetComponent<T>();
 			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
 			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-			ImGui::Separator();
-			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
-			ImGui::PopStyleVar();
-			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+			//ImGui::Separator();
+			Ref<Texture2D> iconID = m_ComponentIcons[iconOrType];
 
-			if (ImGui::Button("+", ImVec2{ lineHeight,lineHeight }))
-			{
-				ImGui::OpenPopup("ComponentSettings");
+			bool open;
+			if(entity.GetChildren().size() > 0 && entity.GetInheritableComponent<T>()->isInheritedInChildren)
+				open = ImGui::CustomTreeNodeWithPicEx((void*)typeid(T).hash_code(), (treeNodeFlags| ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(iconID->GetRendererID()));
+			else	
+				open = ImGui::CustomTreeNodeWithPicEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(iconID->GetRendererID()));
+			ImGui::PopStyleVar();
+			if (!(name == std::string("Transform") && !(entity.GetChildren().size() > 0 || entity.GetParent().has_value()))) {
+				ImGui::SameLine(contentRegionAvailable.x - lineHeight);
+				if (ImGui::Button("...", ImVec2{ lineHeight,lineHeight }))
+				{
+					ImGui::OpenPopup("ComponentSettings");
+				}
 			}
+
 			
 			if (ImGui::BeginPopup("ComponentSettings"))
 			{
@@ -501,9 +523,12 @@ namespace eg {
 
 			if (open)
 			{
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.f);
 				uiFunction(component);
 				ImGui::TreePop();
+				ImGui::PopStyleVar();
 			}
+			ImGui::PopID();
 		}
 	}
 
@@ -521,7 +546,6 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
-		//zna1
 		if (entity.HasComponent<TagComponent>())
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10,7));
@@ -554,14 +578,14 @@ namespace eg {
 		float off = (avail - size) * 0.5f;
 		if (off > 0.0f)
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(15, 7));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
 		bool OpenPopup = ImGui::Button("Add Component");
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15);
 		if (OpenPopup)
 			ImGui::OpenPopup("AddComponent");
 		if (ImGui::BeginPopup("AddComponent"))
@@ -581,16 +605,16 @@ namespace eg {
 		}
 
 		ImGui::PopItemWidth();
-		
+
+		//zna1
 		DrawComponent<TransformComponent>("Transform", entity, [entity](auto& component)
 			{
-				DrawVec3Control(entity, "Translation", component.Translation);
-				//glm::vec3 rotation = glm::degrees(component.Rotation);
+				DrawVec3Control(entity, "Translation", component.Translation, 0.0f, 100.f, true);
 				DrawVec3Control(entity, "Rotation", component.Rotation);
-				//component.Rotation = glm::radians(rotation);
 				DrawVec3Control(entity, "Scale", component.Scale, 1.0f);
 				ImGui::EndColumns();
-			}, m_Context);
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.f);
+			}, m_Context, ComponentIcons::TransformIcon);
 
 		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component) {
 			auto& camera = component.Camera;
@@ -672,7 +696,7 @@ namespace eg {
 				if(ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
 					Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
 			}
-			}, m_Context);
+			}, m_Context, ComponentIcons::CameraIcon);
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
@@ -941,7 +965,7 @@ namespace eg {
 				}
 
 
-			}, m_Context);
+			}, m_Context, ComponentIcons::ScriptIcon);
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)
 			{
@@ -979,10 +1003,8 @@ namespace eg {
 				if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
 					Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
 				
-			}, m_Context);
+			}, m_Context, ComponentIcons::SpriteRendererIcon);
 
-
-		//
 		DrawComponent<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D", entity, [](auto& component)
 			{
 				glm::vec4 color = component.Color;
@@ -1057,8 +1079,7 @@ namespace eg {
 				if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
 					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
 
-			}, m_Context);
-		//
+			}, m_Context, ComponentIcons::SubTextureRendererIcon);
 
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [entity](auto& component)
 			{
@@ -1071,7 +1092,7 @@ namespace eg {
 					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Thickness, thickness, entity, "CircleRendererComponent-Thickness");
 				if(ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
 					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Fade, fade, entity, "CircleRendererComponent-Fade");
-			}, m_Context);
+			}, m_Context, ComponentIcons::CircleRendererIcon);
 
 		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [entity](auto& component) {
 			const char* bodyTypeString[] = { "Static", "Dynamic", "Kinematic"};
@@ -1098,7 +1119,7 @@ namespace eg {
 
 			if(ImGui::Checkbox("Fixed Rotation", &component.FixedRotation))
 				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");
-		}, m_Context);
+		}, m_Context, ComponentIcons::RigidBodyIcon);
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [entity](auto& component) {
 			float density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
@@ -1116,7 +1137,7 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Restitution, restitution, entity, "BoxCollider2DComponent-Restitution");
 			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
-		}, m_Context);
+		}, m_Context, ComponentIcons::BoxColliderIcon);
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [entity](auto& component) {
 			float radius = component.Radius, density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
@@ -1134,7 +1155,7 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Restitution, restitution, entity, "CircleCollider2DComponent-Restitution");
 			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
-			}, m_Context);
+			}, m_Context, ComponentIcons::CircleColliderIcon);
 
 		DrawComponent<TextComponent>("Text Renderer", entity, [entity](auto& component)
 			{
@@ -1176,9 +1197,9 @@ namespace eg {
 					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.Kerning, kerning, entity, "TextComponent-Kerning");
 				if(ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f))
 					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing");
-			}, m_Context);
+			}, m_Context, ComponentIcons::TextRendererIcon);
 
-			DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
+		DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
 			{
 				float speed = component.Animator2D->GetSpeed();
 				if (ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f))
@@ -1328,7 +1349,8 @@ namespace eg {
 					}
 					ImGui::TreePop();
 				}
-			}, m_Context);
+			}, m_Context, ComponentIcons::AnimatorIcon);
+		
 	}
 
 	//void AddAnimation

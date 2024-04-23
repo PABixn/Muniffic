@@ -1158,6 +1158,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
     if (window->SkipItems)
         return false;
 
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
@@ -1170,6 +1171,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
     if (!ItemAdd(total_bb, id))
     {
         IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+        PopStyleVar();
         return false;
     }
 
@@ -1184,7 +1186,9 @@ bool ImGui::Checkbox(const char* label, bool* v)
     const ImRect check_bb(pos, pos + ImVec2(square_sz, square_sz));
     RenderNavHighlight(total_bb, id);
     RenderFrame(check_bb.Min, check_bb.Max, GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), true, style.FrameRounding);
+    PushStyleColor(ImGuiCol_CheckMark, ImVec4{ 1.f,1.f,1.f,.6f });
     ImU32 check_col = GetColorU32(ImGuiCol_CheckMark);
+    PopStyleColor();
     bool mixed_value = (g.LastItemData.InFlags & ImGuiItemFlags_MixedValue) != 0;
     if (mixed_value)
     {
@@ -1206,6 +1210,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
         RenderText(label_pos, label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+    PopStyleVar();
     return pressed;
 }
 
@@ -2367,6 +2372,45 @@ bool ImGui::DragBehavior(ImGuiID id, ImGuiDataType data_type, void* p_v, float v
     return false;
 }
 
+void IncreaseDecreaseArrowBehavior(const bool& pressedArr, const bool& heldArr, const ImGuiDataType& data_type, void* p_data, const int& id, const int& ArrowID, bool& value_changed, short plusMinus) {
+    static int HeldRightArrowID = 0;
+    static int CountFrameWhenHold = 0;
+    if (pressedArr)
+    {
+        if (data_type == ImGuiDataType_Float) {
+            float* floatData = (float*)p_data;
+            *floatData += (plusMinus);
+            ImGui::MarkItemEdited(id);
+            value_changed = true;
+        }
+    }
+    else if (heldArr)
+    {
+        if (HeldRightArrowID != ArrowID)
+        {
+            HeldRightArrowID = ArrowID;
+        }
+        CountFrameWhenHold++;
+        if (CountFrameWhenHold > 20)
+        {
+            if (data_type == ImGuiDataType_Float) {
+                float* floatData = (float*)p_data;
+                *floatData += plusMinus;
+                ImGui::MarkItemEdited(ArrowID);
+                value_changed = true;
+            }
+
+        }
+
+    }
+    else if (HeldRightArrowID == ArrowID)//released
+    {
+        HeldRightArrowID = 0;
+        CountFrameWhenHold = 0;
+    }
+
+}
+
 // Note: p_data, p_min and p_max are _pointers_ to a memory address holding the data. For a Drag widget, p_min and p_max are optional.
 // Read code of e.g. DragFloat(), DragInt() etc. or examples in 'Demo->Widgets->Data Types' to understand how to use this function directly.
 bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags)
@@ -2379,11 +2423,13 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
     const float w = CalcItemWidth();
+    const float ArrowWidth = 13.f;
 
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
-    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
+    ImRect frame_bb = ImRect(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
     const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
-
+    if (!(flags & ImGuiSliderFlags_NoArrows))
+        frame_bb = ImRect(frame_bb.Min + ImVec2(ArrowWidth,0.f), frame_bb.Max - ImVec2(ArrowWidth,0.f));
     const bool temp_input_allowed = (flags & ImGuiSliderFlags_NoInput) == 0;
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, id, &frame_bb, temp_input_allowed ? ImGuiItemFlags_Inputable : 0))
@@ -2434,14 +2480,66 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     }
 
     // Draw frame
-    const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+    ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
     RenderNavHighlight(frame_bb, id);
-    RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding);
+    if (flags & ImGuiSliderFlags_NoArrows)
+        RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding);
+    else
+        RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true,  0.f);
 
+    //TODO: Drawing increase and decrease arrows
+    //zna4
+    //left(decrease) arrow
+    bool value_changed = false;
+    ImRect leftArrow_bb = ImRect(ImVec2(frame_bb.Min.x - ArrowWidth, frame_bb.Min.y), ImVec2(frame_bb.Min.x, frame_bb.Max.y));
+    int LeftArrowID = id + 1;
+    PushID(LeftArrowID);
+    if (!ItemAdd(leftArrow_bb, LeftArrowID)) {
+        PopID();
+        return false;
+    }
+    bool hoveredArr, heldArr;
+    bool pressedArr = ButtonBehavior(leftArrow_bb, LeftArrowID, &hoveredArr, &heldArr);
+    frame_col = GetColorU32(g.ActiveId == LeftArrowID ? ImGuiCol_FrameBgActive : hoveredArr ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+    RenderFrameRounded(leftArrow_bb.Min, leftArrow_bb.Max, frame_col, ImDrawFlags_RoundCornersLeft, false, g.Style.FrameRounding);
+    if (hovered || hoveredArr) {
+        const float ArrowHeight = leftArrow_bb.Max.y - leftArrow_bb.Min.y;
+        window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 5 / 8), leftArrow_bb.Min.y + (ArrowHeight / 4)));
+        window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 3 / 8), leftArrow_bb.Min.y + (ArrowHeight / 2)));
+        window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 5 / 8), leftArrow_bb.Min.y + (ArrowHeight * 3 / 4)));
+        window->DrawList->PathStroke(GetColorU32(ImGuiCol_Text), false, 1.0f);
+    }
+    IncreaseDecreaseArrowBehavior(pressedArr, heldArr, data_type, p_data, id, LeftArrowID, value_changed, -1);
+    PopID();
+
+    //right(increase) arrow
+    ImRect rightArrow_bb = ImRect(ImVec2(frame_bb.Max.x, frame_bb.Min.y), ImVec2(frame_bb.Max.x + ArrowWidth, frame_bb.Max.y));
+    int RightArrowID = id + 2;
+    PushID(RightArrowID);
+    if (!ItemAdd(rightArrow_bb, RightArrowID)) {
+        PopID();
+        return false;
+    }
+    pressedArr = ButtonBehavior(rightArrow_bb, RightArrowID, &hoveredArr, &heldArr);
+    frame_col = GetColorU32(g.ActiveId == RightArrowID ? ImGuiCol_FrameBgActive : hoveredArr ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+    RenderFrameRounded(rightArrow_bb.Min, rightArrow_bb.Max, frame_col, ImDrawFlags_RoundCornersRight, false, g.Style.FrameRounding);
+    if (hovered || hoveredArr) {
+        const float ArrowHeight = rightArrow_bb.Max.y - rightArrow_bb.Min.y;
+        window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 3 / 8), rightArrow_bb.Min.y + (ArrowHeight / 4)));
+        window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 5 / 8), rightArrow_bb.Min.y + (ArrowHeight / 2)));
+        window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 3 / 8), rightArrow_bb.Min.y + (ArrowHeight * 3 / 4)));
+        window->DrawList->PathStroke(GetColorU32(ImGuiCol_Text), false, 1.0f);
+    }
+    IncreaseDecreaseArrowBehavior(pressedArr, heldArr, data_type, p_data, id, RightArrowID, value_changed, 1);
+    PopID();
+
+    
     // Drag behavior
-    const bool value_changed = DragBehavior(id, data_type, p_data, v_speed, p_min, p_max, format, flags);
-    if (value_changed)
-        MarkItemEdited(id);
+    if (!value_changed) {
+        value_changed = DragBehavior(id, data_type, p_data, v_speed, p_min, p_max, format, flags);
+        if (value_changed)
+            MarkItemEdited(id);
+    }
 
     // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
     char value_buf[64];
@@ -2451,7 +2549,7 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
 
     if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x + ArrowWidth, frame_bb.Min.y + style.FramePadding.y), label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags);
     return value_changed;
@@ -4088,7 +4186,6 @@ static void InputTextReconcileUndoStateAfterUserCallback(ImGuiInputTextState* st
 //  doing UTF8 > U16 > UTF8 conversions on the go to easily interface with stb_textedit. Ideally should stay in UTF-8 all the time. See https://github.com/nothings/stb/issues/188)
 bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_size, const ImVec2& size_arg, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* callback_user_data)
 {
-    //zna1
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
@@ -6242,6 +6339,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_ToggledSelection;
 
     // Render
+    //zna3
     const ImU32 text_col = GetColorU32(ImGuiCol_Text);
     ImGuiNavHighlightFlags nav_highlight_flags = ImGuiNavHighlightFlags_TypeThin;
     if (display_frame)
@@ -6252,6 +6350,8 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         RenderNavHighlight(frame_bb, id, nav_highlight_flags);
         if (flags & ImGuiTreeNodeFlags_Bullet)
             RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.60f, text_pos.y + g.FontSize * 0.5f), text_col);
+        else if (flags & ImGuiTreeNodeFlags_NoArrow) {
+        }
         else if (!is_leaf)
             RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Right, 1.0f);
         else // Leaf without bullet, left-adjusted text
@@ -6274,6 +6374,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         RenderNavHighlight(frame_bb, id, nav_highlight_flags);
         if (flags & ImGuiTreeNodeFlags_Bullet)
             RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.5f, text_pos.y + g.FontSize * 0.5f), text_col);
+        else if (flags & ImGuiTreeNodeFlags_NoArrow) {}
         else if (!is_leaf)
             RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Right, 0.70f);
         if (g.LogEnabled)
@@ -6777,7 +6878,12 @@ bool ImGui::CustomTreeNodeWithPicBehavior(ImTextureID textureID, ImGuiID id, ImG
     const float text_offset_x = g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2);           // Collapser arrow width + Spacing
     const float text_offset_y = ImMax(padding.y, window->DC.CurrLineTextBaseOffset);                    // Latch before ItemSize changes it
     const float text_width = g.FontSize + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f);  // Include collapser
-    ImVec2 text_pos(window->DC.CursorPos.x + text_offset_x + 20, window->DC.CursorPos.y + text_offset_y);
+    ImVec2 text_pos;
+    if (flags & ImGuiTreeNodeFlags_PropertiesComponent)
+    {
+        text_pos = ImVec2(window->DC.CursorPos.x + text_offset_x+10, window->DC.CursorPos.y + text_offset_y);
+    }
+    else text_pos = ImVec2(window->DC.CursorPos.x + text_offset_x + 20, window->DC.CursorPos.y + text_offset_y);
     ItemSize(ImVec2(text_width, frame_height), padding.y);
 
     // For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
@@ -6888,6 +6994,13 @@ bool ImGui::CustomTreeNodeWithPicBehavior(ImTextureID textureID, ImGuiID id, ImG
     // Render
     const ImU32 text_col = GetColorU32(ImGuiCol_Text);
     ImGuiNavHighlightFlags nav_highlight_flags = ImGuiNavHighlightFlags_TypeThin;
+    if (display_frame)
+    {
+        // Framed type
+        const ImU32 bg_col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+        RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, true, style.FrameRounding);
+        RenderNavHighlight(frame_bb, id, nav_highlight_flags);
+    }
     if (hovered || selected)
     {
         const ImU32 bg_col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
@@ -6944,8 +7057,10 @@ bool ImGui::CustomTreeNodeWithPicBehavior(ImTextureID textureID, ImGuiID id, ImG
         lastTreeDepth = 0;
     }
 //drawing icons
-        
-    ImRect bb(window->DC.CursorPos + ImVec2(15, -27), window->DC.CursorPos + ImVec2(35, -7));
+    ImRect bb;
+    if (flags & ImGuiTreeNodeFlags_PropertiesComponent)
+        bb = ImRect(window->DC.CursorPos + ImVec2(13, -25), window->DC.CursorPos + ImVec2(28, -10));
+    else bb = ImRect(window->DC.CursorPos + ImVec2(15, -27), window->DC.CursorPos + ImVec2(35, -7));
     window->DrawList->AddImage(textureID, bb.Min, bb.Max);
 
     //TODO: drawing an eye
@@ -6961,8 +7076,25 @@ bool ImGui::CustomTreeNodeWithPicBehavior(ImTextureID textureID, ImGuiID id, ImG
     if (flags & ImGuiTreeNodeFlags_EntityWithChildren) {
         RenderArrow(window->DrawList, ImVec2(window->WorkRect.Max.x - 30, text_pos.y), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Left, 1.0f);
     }
+    //zna3
+    //TODO: changing to a nice icon and adding a info when hovered over the image
+    if (flags & ImGuiTreeNodeFlags_CopyingToChildren)
+    {
+        ImVec2 xyOfStart(frame_bb.Max - ImVec2(2 * frame_height, frame_height) + ImVec2(-7.f + (frame_height / 4), (frame_height/8)));
+        ImVec2 xyOfEnd(frame_bb.Max - ImVec2(frame_height, 0.f) + ImVec2(-7.f, -(frame_height / 8)));
+        window->DrawList->AddImage(textureID, xyOfStart, xyOfEnd);
+        if (hovered)
+        {
+            if (GetMousePos().x > xyOfStart.x && GetMousePos().x < xyOfEnd.x && IsMouseClicked(0)) {
+                OpenPopup("inhInChildren");
+            }
+            if (BeginPopup("inhInChildren")) {
+                ImGui::MenuItem("this component is inherited in children");
+                ImGui::EndPopup();
+            }
+        }
 
-
+    }
 
     if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
         TreePushOverrideID(id);
