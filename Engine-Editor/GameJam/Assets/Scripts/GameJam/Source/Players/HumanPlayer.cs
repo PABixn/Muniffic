@@ -29,9 +29,6 @@ namespace Game
             jumpDelay = 1f;
             collidePos = Vector2.Zero;
             collideSize = playerCollider.size;
-
-            foreach(Entity e in entity.GetAnyChildren())
-                DebugConsole.Log("Children: " + e.name, DebugConsole.LogType.Info);
         }
 
         public override void OnUpdate(float ts)

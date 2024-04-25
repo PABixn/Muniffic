@@ -70,21 +70,49 @@ namespace eg
         }
     }
 
-    public class Entity
+    public struct Entity
     { 
         /// <summary>
         /// UUID of the entity, given by the engine at creation.
         /// </summary>
-        public readonly long ID;
+        public long ID;
 
-        protected Entity()
+        public Entity(long id)
         {
-            ID = 0;
+            this.ID = id;
         }
-        internal Entity(long id)
+
+        #region Operators
+        public static bool operator ==(Entity a, Entity b)
         {
-            ID = id;
+            return a.ID == b.ID;
         }
+
+        public static bool operator !=(Entity a, Entity b)
+        {
+            return a.ID != b.ID;
+        }
+
+        public static bool operator ==(Entity a, long b)
+        {
+            return a.ID == b;
+        }
+
+        public static bool operator !=(Entity a, long b)
+        {
+            return a.ID != b;
+        }
+
+        public static bool operator ==(long a, Entity b)
+        {
+            return a == b.ID;
+        }
+
+        public static bool operator !=(long a, Entity b)
+        {
+            return a != b.ID;
+        }
+        #endregion
 
         #region Instance
 
@@ -112,7 +140,7 @@ namespace eg
             {
                 long parentID = InternalCalls.Entity_GetParent(ID);
                 if (parentID == 0)
-                    return null;
+                    return new Entity(0);
 
                 return new Entity(parentID);
             }
@@ -409,7 +437,7 @@ namespace eg
         public static Entity FindEntityByID(long ID)
         {
             if (!Exists(ID))
-                return null;
+                return new Entity(0);
 
             return new Entity(ID);
         }
@@ -423,7 +451,7 @@ namespace eg
         {
             long entityID = InternalCalls.Entity_FindEntityByName(name);
             if (entityID == 0)
-                return null;
+                return new Entity(0);
 
             return new Entity(entityID);
         }
@@ -437,7 +465,7 @@ namespace eg
         {
             long entityID = InternalCalls.Entity_Create(name);
             if (entityID == 0)
-                return null;
+                return new Entity(0);
 
             return new Entity(entityID);
         }

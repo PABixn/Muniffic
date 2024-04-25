@@ -487,7 +487,7 @@ namespace eg
 		return mono_class_get_method_from_name(m_Class, name.c_str(), parameterCount);
 	}
 
-	MonoObject *ScriptClass::InvokeMethod(MonoObject *instance, MonoMethod *method, void **params)
+	MonoObject* ScriptClass::InvokeMethod(MonoObject *instance, MonoMethod *method, void **params)
 	{
 		MonoObject *exception = nullptr;
 		return mono_runtime_invoke(method, instance, params, &exception);
@@ -503,6 +503,8 @@ namespace eg
 		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
 		m_OnCreateMethod = m_ScriptClass->GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = m_ScriptClass->GetMethod("OnUpdate", 1);
+		m_OnCollisionEnterMethod = m_ScriptClass->GetMethod("OnCollisionEnter", 1);
+		m_OnCollisionExitMethod = m_ScriptClass->GetMethod("OnCollisionExit", 1);
 
 		// Calling entity constructor
 		{
@@ -525,7 +527,6 @@ namespace eg
 
 	void ScriptInstance::InvokeOnUpdate(float ts)
 	{
-
 		if (m_OnUpdateMethod)
 		{
 			void *arg = &ts;

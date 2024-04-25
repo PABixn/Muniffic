@@ -13,14 +13,15 @@ Entities:
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    SpriteRendererComponent:
+    CircleRendererComponent:
       Color: [1, 1, 1, 1]
-      TilingFactor: 1
+      Thickness: 1
+      Fade: 0.00499999989
       IsInherited: false
       IsInheritedInChildren: false
     ScriptComponent:
       Scripts:
-        - ScriptUUID: 4887495504153524748
+        - ScriptUUID: 6370029969853740667
           ScriptFields:
             []
       IsInherited: false
@@ -30,9 +31,9 @@ Entities:
       FixedRotation: false
       IsInherited: false
       IsInheritedInChildren: false
-    BoxCollider2DComponent:
+    CircleCollider2DComponent:
       Offset: [0, 0]
-      Size: [0.5, 0.5]
+      Radius: 0.5
       Density: 1
       Friction: 0.5
       Restitution: 0
@@ -105,7 +106,7 @@ Entities:
       IsInheritedInChildren: false
     ScriptComponent:
       Scripts:
-        - ScriptUUID: 2642678651557622470
+        - ScriptUUID: 8741614671586200841
           ScriptFields:
             []
       IsInherited: false

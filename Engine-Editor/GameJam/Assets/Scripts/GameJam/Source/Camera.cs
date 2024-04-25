@@ -36,6 +36,8 @@ namespace Game
 
             transform = GetComponent<TransformComponent>();
             playerTransform = player.GetComponent<TransformComponent>();
+
+            transform.translation = new Vector3(playerTransform.translation.X, playerTransform.translation.Y, 10 / zoom);
         }
 
         void OnUpdate(float ts)

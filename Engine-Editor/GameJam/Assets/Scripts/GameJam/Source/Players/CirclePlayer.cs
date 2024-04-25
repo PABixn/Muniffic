@@ -38,6 +38,11 @@ namespace Game
             shotSpeed = 5f;
         }
 
+        public void OnCollisionEnter(Collision2D collision)
+        {
+            DebugConsole.Log(collision.otherEntity.ID.ToString() + "    X: " + collision.contactPoints.X + "    Y: " + collision.contactPoints.Y, DebugConsole.LogType.Error);
+        }
+
         public override void OnUpdate(float ts)
         {
             lastJump += ts;

@@ -141,6 +141,8 @@ namespace eg {
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
+		MonoMethod* m_OnCollisionEnterMethod = nullptr;
+		MonoMethod* m_OnCollisionExitMethod = nullptr;
 		inline static char s_FieldValueBuffer[16];
 
 		friend class ScriptEngine;
