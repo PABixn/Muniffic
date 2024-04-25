@@ -320,8 +320,6 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(uuid);
 		EG_CORE_ASSERT(entity, "Entity does not exist!");
 
-		std::string children = "";
-
 		std::vector<Entity> childrenUUIDs = entity.GetAnyChildren();
 
 		int64_t* uuids = new int64_t[childrenUUIDs.size()];
@@ -336,21 +334,25 @@ namespace eg
 		return uuids;
 	}
 
-	static MonoString *Entity_GetChildren(UUID uuid)
+	static int64_t* Entity_GetChildren(UUID uuid, int* size)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
 		EG_CORE_ASSERT(entity, "Entity does not exist!");
 
-		std::string children = "";
+		std::vector<Entity> childrenUUIDs = entity.GetChildren();
 
-		for (auto &child : entity.GetChildren())
+		int64_t* uuids = new int64_t[childrenUUIDs.size()];
+
+		for (int i = 0; i < childrenUUIDs.size(); i++)
 		{
-			children += std::to_string(child.GetUUID()) + ",";
+			uuids[i] = childrenUUIDs[i].GetUUID();
 		}
 
-		return ScriptEngine::CreateString(children.c_str());
+		*size = childrenUUIDs.size();
+
+		return uuids;
 	}
 
 	static bool Entity_HasComponent(UUID uuid, MonoReflectionType *componentType)

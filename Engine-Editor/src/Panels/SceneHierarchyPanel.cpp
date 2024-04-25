@@ -525,7 +525,10 @@ namespace eg {
 					if (ImGui::Button("X", ImVec2{ lineHeight,lineHeight }))
 					{
 						component.Scripts.erase(std::remove(component.Scripts.begin(), component.Scripts.end(), scriptUUID), component.Scripts.end());
-						ImGui::TreePop();
+
+						if(open)
+							ImGui::TreePop();
+
 						return;
 					}
 

@@ -337,16 +337,17 @@ namespace eg
         /// <returns>A list of Entity objects representing the children entities.</returns>
         public List<Entity> GetChildren()
         {
-            string children = InternalCalls.Entity_GetChildren(ID);
+            IntPtr ptr = InternalCalls.Entity_GetChildren(ID, out int size);
 
-            string[] entityIDs = children.Split(',');
+            long[] managedArray = new long[size];
+
+            Marshal.Copy(ptr, managedArray, 0, size);
 
             List<Entity> entities = new List<Entity>();
 
-            foreach (string entityID in entityIDs)
+            foreach (long entityID in managedArray)
             {
-                if (entityID != string.Empty)
-                    entities.Add(new Entity(long.Parse(entityID)));
+                entities.Add(new Entity(entityID));
             }
 
             return entities;

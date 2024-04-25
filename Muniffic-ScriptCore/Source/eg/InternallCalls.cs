@@ -57,7 +57,7 @@ namespace eg
         internal extern static IntPtr Entity_GetAnyChildren(long ID, out int size);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static string Entity_GetChildren(long ID);
+        internal extern static IntPtr Entity_GetChildren(long ID, out int size);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static long Entity_FindEntityByName(string name);
