@@ -239,7 +239,6 @@ namespace eg {
 			std::strncpy(buffer2, AssetDirectoryManager::getDirectoryPath(m_ResourceData->ParentDirectory).string().c_str(), sizeof(buffer2));
 			if(ImGui::InputText("Resource Path: ", buffer2, sizeof(buffer2)))
 					m_ResourcePath = std::filesystem::path(std::string(buffer2));*/
-
 			if (ImGui::Button("Save"))
 			{
 				SpriteAtlasResourceData* saData = new SpriteAtlasResourceData();

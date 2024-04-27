@@ -28,13 +28,145 @@
 
 namespace eg {
 
-	const char* add(const char* begining, const char* middle, const char* ending) {
+	static const float WidthOfProperty = 0.75f;
+
+	static const char* add(const char* begining, const char* middle, const char* ending) {
 		size_t resultLength = strlen(middle) + strlen(begining) + strlen(ending);
 		char* resultMsg = new char[resultLength];
 		strcpy(resultMsg, begining);
 		strcat(resultMsg, middle);
 		strcat(resultMsg, ending);
 		return resultMsg;
+	}
+
+	static void PropertyLabel(const char* label) {
+		ImGui::SameLine();
+		bool s = ImGui::TextWrappedWithLineLimit(label, 1);
+
+		if (s && ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::PushTextWrapPos(100.f);
+			ImGui::TextWrapped(label);
+			ImGui::PopTextWrapPos();
+			ImGui::EndTooltip();
+
+		}
+	}
+
+	static void DrawVec3Control(Entity entity, const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool firstValue = false)
+	{
+		float x = values.x, y = values.y, z = values.z;
+		ImGuiIO& io = ImGui::GetIO();
+		auto boldFont = io.Fonts->Fonts[0];
+
+		ImGui::PushID(label.c_str());
+		float columnsWidth = ImGui::GetContentRegionAvail().x * WidthOfProperty-68.f;
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+		ImGui::PushMultiItemsWidths(3, columnsWidth);
+		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+		ImVec2 buttonSize = { lineHeight - 1.f, lineHeight };
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.65f,0.15f,0.15f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.76f,0.23f,0.23f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.42f,0.1f,0.1f,1.0f });
+		ImGui::PushFont(boldFont);
+		if (ImGui::StylisedButton("X", buttonSize, ImDrawFlags_RoundCornersLeft))
+		{
+			float check = values.x;
+			values.x = resetValue;
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"), check != 0 ? true : false);
+		}
+		ImGui::PopFont();
+		ImGui::PopStyleColor(3);
+		ImGui::SameLine();
+
+		if (ImGui::DragFloatRounded("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight))
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"));
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f,0.65f,0.2f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f,0.8f,0.3f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f,0.5f,0.0f,1.0f });
+		ImGui::PushFont(boldFont);
+
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 3.f);
+		if (ImGui::StylisedButton("Y", buttonSize, ImDrawFlags_RoundCornersLeft))
+		{
+			float check = values.y;
+			values.y = resetValue;
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"), check != 0 ? true : false);
+		}
+		ImGui::PopFont();
+		ImGui::PopStyleColor(3);
+		ImGui::SameLine();
+		if (ImGui::DragFloatRounded("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight))
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"));
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.65f, 0.06f,0.83f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 1.f, 0.45f,1.f,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f,0.f,0.8f,1.0f });
+		ImGui::PushFont(boldFont);
+
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 3.f);
+		if (ImGui::StylisedButton("Z", buttonSize, ImDrawFlags_RoundCornersLeft))
+		{
+			float check = values.z;
+			values.z = resetValue;
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"), check != 0 ? true : false);
+		}
+
+		ImGui::PopFont();
+		ImGui::PopStyleColor(3);
+		ImGui::SameLine();
+		if (ImGui::DragFloatRounded("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight))
+			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"));
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
+		PropertyLabel(label.c_str());
+		ImGui::PopID();
+	}
+
+	static bool DrawComponentPropertyFloat(const char* label, float* value) {
+
+		ImGui::PushID(label);
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x*WidthOfProperty - 4.f);
+		bool changed_value = ImGui::DragFloat("", value);
+		ImGui::PopItemWidth();
+		PropertyLabel(label);
+
+		ImGui::PopID();
+		return changed_value;
+	}
+	
+	static void DrawComponentPropertyCombo(const char* label, std::vector<const char*> possiblevalues, int currentSelected, std::function<void(int number)> fun) {
+		ImGui::PushID(label);
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * WidthOfProperty - 4.f);
+		char* currentValueString = (char*)possiblevalues[currentSelected];
+		if (ImGui::BeginCombo("", currentValueString))
+		{
+			for (int i = 0; i < possiblevalues.size(); i++)
+			{
+				bool isSelected = possiblevalues[currentSelected] == possiblevalues[i];
+				if (ImGui::Selectable(possiblevalues[i], isSelected))
+				{
+					currentValueString = (char*)possiblevalues[i];
+					fun(i);
+				}
+
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+		ImGui::PopItemWidth();
+		PropertyLabel(label);
+		ImGui::PopID();
 	}
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
@@ -44,7 +176,6 @@ namespace eg {
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
 	{
-		//zna2
 		//See ComponentIcon enum (SceneHierarchyPanel.h)
 		m_ComponentIcons = std::vector<Ref<Texture2D>>();
 		std::string IconPath = "resources/icons/hierarchyPanel/Components/";
@@ -68,7 +199,7 @@ namespace eg {
 		m_PuzzleIcon = Texture2D::Create("resources/icons/hierarchyPanel/puzzle.png");
 	}
 
-	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity) {
+	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity) {                                 
 		bool searched = false, childsearched = false;
 		std::string silli = entity.GetName();
 		EntityDisplayInfo currentEntityDisplayInfo = EntityDisplayInfo();
@@ -140,7 +271,6 @@ namespace eg {
 		ImGui::PushItemWidth(ImGui::GetWindowWidth()-rightAndLeftFreeSpace);
 		ImGui::SetCursorPosX(rightAndLeftFreeSpace/2);
 		ImGui::SetCursorPosY(40.f);
-		//zna2
 		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount()==2) {
 			Search();
 		}
@@ -358,99 +488,9 @@ namespace eg {
 			ImGui::TreePop();
 		}
 	}
-
-	static void DrawVec3Control(Entity entity, const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool firstValue = false)
-	{
-		float x = values.x, y = values.y, z = values.z;
-		ImGuiIO& io = ImGui::GetIO();
-		auto boldFont = io.Fonts->Fonts[0];
-
-		ImGui::PushID(label.c_str());
-		ImGui::Columns(2, NULL, false);
-		ImGui::SetColumnWidth(0, columnWidth);
-		if(!firstValue)
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6.f);
-		ImGui::Text(label.c_str());
-		ImGui::NextColumn();
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
-
-		float columnsWidth = ImGui::GetContentRegionAvail().x-64.f;
-
-
-		ImGui::PushMultiItemsWidths(3, columnsWidth);
-		if(!firstValue)
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6.f);
-		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight - 1.f, lineHeight };
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.65f,0.15f,0.15f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.76f,0.23f,0.23f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.42f,0.1f,0.1f,1.0f });
-		ImGui::PushFont(boldFont);
-		if (ImGui::Vec3AxisButton("X", buttonSize))
-		{
-			float check = values.x;
-			values.x = resetValue;
-			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"), check != 0 ? true : false);
-		}
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-	
-		if (ImGui::Vec3AxisDragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f"))
-			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"));
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f,0.65f,0.2f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f,0.8f,0.3f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f,0.5f,0.0f,1.0f });
-		ImGui::PushFont(boldFont);
-
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 3.f);
-		if (ImGui::Vec3AxisButton("Y", buttonSize))
-		{
-			float check = values.y;
-			values.y = resetValue;
-			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"), check != 0 ? true : false);
-		}
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-		if(ImGui::Vec3AxisDragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f"))
-			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"));
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.65f, 0.06f,0.83f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 1.f, 0.45f,1.f,1.0f });
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f,0.f,0.8f,1.0f });
-		ImGui::PushFont(boldFont);
-
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 3.f);
-		if (ImGui::Vec3AxisButton("Z", buttonSize))
-		{
-			float check = values.z;
-			values.z = resetValue;
-			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"), check != 0 ? true : false);
-		}
-		
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-		ImGui::SameLine();
-		if(ImGui::Vec3AxisDragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f"))
-			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"));
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-		ImGui::PopStyleVar();
-		ImGui::PopStyleVar();
-		ImGui::NextColumn();
-		ImGui::PopID();
-	}
-
 	template<typename T, typename UIFunction>
 	void SceneHierarchyPanel::DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, int iconOrType)
 	{
-		//zna2
 		static const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_NoArrow | ImGuiTreeNodeFlags_PropertiesComponent;
 		if (entity.HasComponent<T>())
 		{
@@ -606,14 +646,11 @@ namespace eg {
 
 		ImGui::PopItemWidth();
 
-		//zna1
 		DrawComponent<TransformComponent>("Transform", entity, [entity](auto& component)
 			{
-				DrawVec3Control(entity, "Translation", component.Translation, 0.0f, 100.f, true);
+				DrawVec3Control(entity, "Translation yeeeeeeeeeeee", component.Translation, 0.0f, 100.f, true);
 				DrawVec3Control(entity, "Rotation", component.Rotation);
 				DrawVec3Control(entity, "Scale", component.Scale, 1.0f);
-				ImGui::EndColumns();
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.f);
 			}, m_Context, ComponentIcons::TransformIcon);
 
 		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component) {
@@ -621,34 +658,19 @@ namespace eg {
 
 			if(ImGui::Checkbox("Primary", &component.Primary))
 				Commands::ExecuteRawValueCommand<bool>(&component.Primary, !component.Primary, "CameraComponent-Primary");
-
+			//zna2
 			const char* projectionTypeString[] = { "Perspective","Orthographic" };
-			const char* currentProjectionTypeString = projectionTypeString[(int)camera.GetProjectionType()];
-			if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
-			{
-				for (int i = 0; i < 2; i++)
+			DrawComponentPropertyCombo("Projection", std::vector<const char*>(projectionTypeString, projectionTypeString + sizeof projectionTypeString / sizeof projectionTypeString[0]), (int)camera.GetProjectionType(), [&camera](int number) {
+				Commands::ExecuteValueCommand<SceneCamera::ProjectionType>([&camera](SceneCamera::ProjectionType projectionType)
 				{
-					bool isSelected = currentProjectionTypeString == projectionTypeString[i];
-					if (ImGui::Selectable(projectionTypeString[i], isSelected))
-					{
-						currentProjectionTypeString = projectionTypeString[i];
-						Commands::ExecuteValueCommand<SceneCamera::ProjectionType>([&camera](SceneCamera::ProjectionType projectionType)
-							{
-								camera.SetProjectionType(projectionType);
-							}, (SceneCamera::ProjectionType)i, camera.GetProjectionType(), "CameraComponent-ProjectionType", true);
-					}
-
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
-				}
-
-				ImGui::EndCombo();
-			}
+					camera.SetProjectionType(projectionType);
+				}, (SceneCamera::ProjectionType)number, camera.GetProjectionType(), "CameraComponent-ProjectionType", true);
+			});
 
 			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 			{
 				float perspectiveVerticalFov = glm::degrees(camera.GetPerspectiveVerticalFOV());
-				if (ImGui::DragFloat("Vertical FOV", &perspectiveVerticalFov))
+				if (DrawComponentPropertyFloat("Vertical FOV", &perspectiveVerticalFov))
 					//camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
 					Commands::ExecuteValueCommand<float>([&camera](float verticalFov)
 						{
@@ -656,14 +678,14 @@ namespace eg {
 						}, perspectiveVerticalFov, glm::degrees(camera.GetPerspectiveVerticalFOV()), "CameraComponent-Vertical FOV");
 
 				float perspectiveNear = camera.GetPerspectiveNearClip();
-				if (ImGui::DragFloat("Near", &perspectiveNear))
+				if (DrawComponentPropertyFloat("Near", &perspectiveNear))
 					Commands::ExecuteValueCommand<float>([&camera](float nearClip)
 						{
 							camera.SetPerspectiveNearClip(nearClip);
 						}, perspectiveNear, camera.GetPerspectiveNearClip(), "CameraComponent-Near");
 
 				float perspectiveFar = camera.GetPerspectiveFarClip();
-				if (ImGui::DragFloat("Far", &perspectiveFar))
+				if (DrawComponentPropertyFloat("Far", &perspectiveFar))
 					Commands::ExecuteValueCommand<float>([&camera](float farClip)
 						{
 							camera.SetPerspectiveFarClip(farClip);
@@ -673,21 +695,21 @@ namespace eg {
 			if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
 			{
 				float size = camera.GetOrthographicSize();
-				if (ImGui::DragFloat("Size", &size))
+				if (DrawComponentPropertyFloat("Size", &size))
 					Commands::ExecuteValueCommand<float>([&camera](float size)
 						{
 							camera.SetOrthographicSize(size);
 						}, size, camera.GetOrthographicSize(), "CameraComponent-Size");
 
 				float nearClip = camera.GetOrthographicNearClip();
-				if (ImGui::DragFloat("Near", &nearClip))
+				if (DrawComponentPropertyFloat("Near", &nearClip))
 					Commands::ExecuteValueCommand<float>([&camera](float nearClip)
 						{
 							camera.SetOrthographicNearClip(nearClip);
 						}, nearClip, camera.GetOrthographicNearClip(), "CameraComponent-Near");
 
 				float farClip = camera.GetOrthographicFarClip();
-				if (ImGui::DragFloat("Far", &farClip))
+				if (DrawComponentPropertyFloat("Far", &farClip))
 					Commands::ExecuteValueCommand<float>([&camera](float farClip)
 						{
 							camera.SetOrthographicFarClip(farClip);
@@ -880,7 +902,7 @@ namespace eg {
 									case ScriptFieldType::Float:
 									{
 										float data = 0.0f;
-										if (ImGui::DragFloat(name.c_str(), &data))
+										if (DrawComponentPropertyFloat(name.c_str(), &data))
 										{
 											ScriptFieldInstance& fieldInstance = entityFields[name];
 											fieldInstance.Field = field;

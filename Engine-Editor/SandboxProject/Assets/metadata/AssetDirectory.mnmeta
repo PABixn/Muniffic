@@ -1,12 +1,5 @@
 Root: 11988442194276262217
 Directories:
-  - UUID: 11287664580325964373
-    Name: Animations
-    Parent: 11988442194276262217
-    Subdirectories:
-      []
-    Assets:
-      []
   - UUID: 5465926143214164669
     Name: Fonts
     Parent: 11988442194276262217
@@ -20,6 +13,13 @@ Directories:
     Subdirectories:
       - 16909472630361066896
       - 1653657808110757768
+    Assets:
+      []
+  - UUID: 11287664580325964373
+    Name: Animations
+    Parent: 11988442194276262217
+    Subdirectories:
+      []
     Assets:
       []
   - UUID: 4264436010038973668

@@ -255,6 +255,127 @@ void ImGui::TextEx(const char* text, const char* text_end, ImGuiTextFlags flags)
     }
 }
 
+bool ImGui::TextWithLineLimitEx(const char* text, const int& lineLimit, const char* text_end_Arg, ImGuiTextFlags flags)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+    bool neededToBeShortened = false;
+    ImGuiContext& g = *GImGui;
+    char* text_end = (char*)text_end_Arg;
+    // Accept null ranges
+    if (text == text_end)
+        text = text_end = "";
+
+    // Calculate length
+    const char* text_begin = text;
+    if (text_end == NULL)
+        text_end =(char*) text + strlen(text); // FIXME-OPT
+
+    ImVec2 text_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
+    const float wrap_pos_x = window->DC.TextWrapPos;
+    const bool wrap_enabled = (wrap_pos_x >= 0.0f);
+    if (text_end - text <= 2000 || wrap_enabled)
+    {
+        // Common case
+        const float wrap_width = wrap_enabled ? CalcWrapWidthForPos(window->DC.CursorPos, wrap_pos_x) : 0.0f;
+        ImVec2 text_size = CalcTextSize(text_begin, text_end, false, wrap_width);
+
+        while (text_size.y>(lineLimit* g.FontSize))
+        {
+            neededToBeShortened = true;
+            text_end[-1] = '\0';
+            text_end[-2] = '-';
+            text_end = &text_end[-1];
+            text_size = CalcTextSize(text_begin, text_end, false, wrap_width);
+        }
+        //text_pos = ImVec2(text_pos.x+(ImGui::GetContentRegionAvail().x - text_size.x), text_pos.y);
+        ImRect bb(text_pos, text_pos + text_size);
+        ItemSize(text_size, 0.0f);
+        if (!ItemAdd(bb, 0))
+            return false;
+
+        // Render (we don't hide text after ## in this end-user function)
+        RenderTextWrapped(bb.Min, text_begin, text_end, wrap_width);
+        return neededToBeShortened;
+    }
+    else
+    {
+        // Long text!
+        // Perform manual coarse clipping to optimize for long multi-line text
+        // - From this point we will only compute the width of lines that are visible. Optimization only available when word-wrapping is disabled.
+        // - We also don't vertically center the text within the line full height, which is unlikely to matter because we are likely the biggest and only item on the line.
+        // - We use memchr(), pay attention that well optimized versions of those str/mem functions are much faster than a casually written loop.
+        const char* line = text;
+        const float line_height = GetTextLineHeight();
+        ImVec2 text_size(0, 0);
+
+        // Lines to skip (can't skip when logging text)
+        ImVec2 pos = text_pos;
+        if (!g.LogEnabled)
+        {
+            int lines_skippable = (int)((window->ClipRect.Min.y - text_pos.y) / line_height);
+            if (lines_skippable > 0)
+            {
+                int lines_skipped = 0;
+                while (line < text_end && lines_skipped < lines_skippable)
+                {
+                    const char* line_end = (const char*)memchr(line, '\n', text_end - line);
+                    if (!line_end)
+                        line_end = text_end;
+                    if ((flags & ImGuiTextFlags_NoWidthForLargeClippedText) == 0)
+                        text_size.x = ImMax(text_size.x, CalcTextSize(line, line_end).x);
+                    line = line_end + 1;
+                    lines_skipped++;
+                }
+                pos.y += lines_skipped * line_height;
+            }
+            return false;
+        }
+
+        // Lines to render
+        if (line < text_end)
+        {
+            ImRect line_rect(pos, pos + ImVec2(FLT_MAX, line_height));
+            while (line < text_end)
+            {
+                if (IsClippedEx(line_rect, 0))
+                    break;
+
+                const char* line_end = (const char*)memchr(line, '\n', text_end - line);
+                if (!line_end)
+                    line_end = text_end;
+                text_size.x = ImMax(text_size.x, CalcTextSize(line, line_end).x);
+                RenderText(pos, line, line_end, false);
+                line = line_end + 1;
+                line_rect.Min.y += line_height;
+                line_rect.Max.y += line_height;
+                pos.y += line_height;
+            }
+
+            // Count remaining lines
+            int lines_skipped = 0;
+            while (line < text_end)
+            {
+                const char* line_end = (const char*)memchr(line, '\n', text_end - line);
+                if (!line_end)
+                    line_end = text_end;
+                if ((flags & ImGuiTextFlags_NoWidthForLargeClippedText) == 0)
+                    text_size.x = ImMax(text_size.x, CalcTextSize(line, line_end).x);
+                line = line_end + 1;
+                lines_skipped++;
+            }
+            pos.y += lines_skipped * line_height;
+        }
+        text_size.y = (pos - text_pos).y;
+
+        ImRect bb(text_pos, text_pos + text_size);
+        ItemSize(text_size, 0.0f);
+        ItemAdd(bb, 0);
+        return false;
+    }
+}
+
 void ImGui::TextUnformatted(const char* text, const char* text_end)
 {
     TextEx(text, text_end, ImGuiTextFlags_NoWidthForLargeClippedText);
@@ -279,6 +400,16 @@ void ImGui::TextV(const char* fmt, va_list args)
     TextEx(text, text_end, ImGuiTextFlags_NoWidthForLargeClippedText);
 }
 
+bool ImGui::TextWithLineLimitV(const char* fmt, const int& lineLimit,va_list args)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    const char* text, * text_end;
+    ImFormatStringToTempBufferV(&text, &text_end, fmt, args);
+    return TextWithLineLimitEx(text, lineLimit, text_end, ImGuiTextFlags_NoWidthForLargeClippedText);
+}
 void ImGui::TextColored(const ImVec4& col, const char* fmt, ...)
 {
     va_list args;
@@ -318,6 +449,15 @@ void ImGui::TextWrapped(const char* fmt, ...)
     va_end(args);
 }
 
+bool ImGui::TextWrappedWithLineLimit(const char* fmt, const int& lines ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    bool res = TextWrappedWithLineLimitV(fmt,lines, args);
+    va_end(args);
+    return res;
+}
+
 void ImGui::TextWrappedV(const char* fmt, va_list args)
 {
     ImGuiContext& g = *GImGui;
@@ -327,6 +467,18 @@ void ImGui::TextWrappedV(const char* fmt, va_list args)
     TextV(fmt, args);
     if (need_backup)
         PopTextWrapPos();
+}
+
+bool ImGui::TextWrappedWithLineLimitV(const char* fmt,const int& lineLimit, va_list args)
+{
+    ImGuiContext& g = *GImGui;
+    const bool need_backup = (g.CurrentWindow->DC.TextWrapPos < 0.0f);  // Keep existing wrap position if one is already set
+    if (need_backup)
+        PushTextWrapPos(0.0f);
+    bool res = TextWithLineLimitV(fmt,lineLimit, args);
+    if (need_backup)
+        PopTextWrapPos();
+    return res;
 }
 
 void ImGui::LabelText(const char* label, const char* fmt, ...)
@@ -718,7 +870,7 @@ bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags
     return pressed;
 }
 
-bool ImGui::Vec3AxisButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags)
+bool ImGui::StylisedButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags, ImDrawFlags drawFlags)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -748,7 +900,7 @@ bool ImGui::Vec3AxisButtonEx(const char* label, const ImVec2& size_arg, ImGuiBut
     // Render
     const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
     RenderNavHighlight(bb, id);
-    Vec3AxisRenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding, ImDrawCornerFlags_Left);
+    RenderFrameRounded(bb.Min, bb.Max, col, drawFlags,  true, style.FrameRounding);
 
     if (g.LogEnabled)
         LogSetNextTextDecoration("[", "]");
@@ -767,9 +919,9 @@ bool ImGui::Button(const char* label, const ImVec2& size_arg)
     return ButtonEx(label, size_arg, ImGuiButtonFlags_None);
 }
 
-bool ImGui::Vec3AxisButton(const char* label, const ImVec2& size_arg)
+bool ImGui::StylisedButton(const char* label, const ImVec2& size_arg, ImDrawFlags drawFlags)
 {
-    return Vec3AxisButtonEx(label, size_arg, ImGuiButtonFlags_None);
+    return StylisedButtonEx(label, size_arg, ImGuiButtonFlags_None, drawFlags);
 }
 
 // Small buttons fits within text without additional vertical spacing.
@@ -2372,48 +2524,9 @@ bool ImGui::DragBehavior(ImGuiID id, ImGuiDataType data_type, void* p_v, float v
     return false;
 }
 
-void IncreaseDecreaseArrowBehavior(const bool& pressedArr, const bool& heldArr, const ImGuiDataType& data_type, void* p_data, const int& id, const int& ArrowID, bool& value_changed, short plusMinus) {
-    static int HeldRightArrowID = 0;
-    static int CountFrameWhenHold = 0;
-    if (pressedArr)
-    {
-        if (data_type == ImGuiDataType_Float) {
-            float* floatData = (float*)p_data;
-            *floatData += (plusMinus);
-            ImGui::MarkItemEdited(id);
-            value_changed = true;
-        }
-    }
-    else if (heldArr)
-    {
-        if (HeldRightArrowID != ArrowID)
-        {
-            HeldRightArrowID = ArrowID;
-        }
-        CountFrameWhenHold++;
-        if (CountFrameWhenHold > 20)
-        {
-            if (data_type == ImGuiDataType_Float) {
-                float* floatData = (float*)p_data;
-                *floatData += plusMinus;
-                ImGui::MarkItemEdited(ArrowID);
-                value_changed = true;
-            }
-
-        }
-
-    }
-    else if (HeldRightArrowID == ArrowID)//released
-    {
-        HeldRightArrowID = 0;
-        CountFrameWhenHold = 0;
-    }
-
-}
-
 // Note: p_data, p_min and p_max are _pointers_ to a memory address holding the data. For a Drag widget, p_min and p_max are optional.
 // Read code of e.g. DragFloat(), DragInt() etc. or examples in 'Demo->Widgets->Data Types' to understand how to use this function directly.
-bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags)
+bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags, ImDrawFlags drawFlags)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -2423,12 +2536,18 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
     const float w = CalcItemWidth();
+    bool drawArrows = !(flags & ImGuiSliderFlags_NoArrows);
     const float ArrowWidth = 13.f;
+
+    char value_buf[64];
+    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
+    if (ImGui::CalcTextSize(value_buf, value_buf_end).x > (w - 2 * (ArrowWidth)-6.f))
+        drawArrows = false;
 
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
     ImRect frame_bb = ImRect(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
     const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
-    if (!(flags & ImGuiSliderFlags_NoArrows))
+    if (drawArrows)
         frame_bb = ImRect(frame_bb.Min + ImVec2(ArrowWidth,0.f), frame_bb.Max - ImVec2(ArrowWidth,0.f));
     const bool temp_input_allowed = (flags & ImGuiSliderFlags_NoInput) == 0;
     ItemSize(total_bb, style.FramePadding.y);
@@ -2475,6 +2594,10 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     if (temp_input_is_active)
     {
         // Only clamp CTRL+Click input when ImGuiSliderFlags_AlwaysClamp is set
+        if (drawArrows)
+        {
+            frame_bb = ImRect(frame_bb.Min - ImVec2(ArrowWidth, 0.f), frame_bb.Max + ImVec2(ArrowWidth, 0.f));
+        }
         const bool is_clamp_input = (flags & ImGuiSliderFlags_AlwaysClamp) != 0 && (p_min == NULL || p_max == NULL || DataTypeCompare(data_type, p_min, p_max) < 0);
         return TempInputScalar(frame_bb, id, label, data_type, p_data, format, is_clamp_input ? p_min : NULL, is_clamp_input ? p_max : NULL);
     }
@@ -2482,57 +2605,156 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     // Draw frame
     ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
     RenderNavHighlight(frame_bb, id);
-    if (flags & ImGuiSliderFlags_NoArrows)
-        RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding);
-    else
-        RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true,  0.f);
-
-    //TODO: Drawing increase and decrease arrows
-    //zna4
-    //left(decrease) arrow
+    if (drawFlags) {
+        if (drawArrows)
+            RenderFrameRounded(frame_bb.Min, frame_bb.Max, frame_col, drawFlags, true, 0.f);
+        else
+            RenderFrameRounded(frame_bb.Min, frame_bb.Max, frame_col, drawFlags,true, style.FrameRounding);
+    }
+    else {
+        if (drawArrows)
+            RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, 0.f);
+        else
+            RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding);
+    }
+    //increase and decrease arrows
     bool value_changed = false;
-    ImRect leftArrow_bb = ImRect(ImVec2(frame_bb.Min.x - ArrowWidth, frame_bb.Min.y), ImVec2(frame_bb.Min.x, frame_bb.Max.y));
-    int LeftArrowID = id + 1;
-    PushID(LeftArrowID);
-    if (!ItemAdd(leftArrow_bb, LeftArrowID)) {
-        PopID();
-        return false;
-    }
-    bool hoveredArr, heldArr;
-    bool pressedArr = ButtonBehavior(leftArrow_bb, LeftArrowID, &hoveredArr, &heldArr);
-    frame_col = GetColorU32(g.ActiveId == LeftArrowID ? ImGuiCol_FrameBgActive : hoveredArr ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
-    RenderFrameRounded(leftArrow_bb.Min, leftArrow_bb.Max, frame_col, ImDrawFlags_RoundCornersLeft, false, g.Style.FrameRounding);
-    if (hovered || hoveredArr) {
-        const float ArrowHeight = leftArrow_bb.Max.y - leftArrow_bb.Min.y;
-        window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 5 / 8), leftArrow_bb.Min.y + (ArrowHeight / 4)));
-        window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 3 / 8), leftArrow_bb.Min.y + (ArrowHeight / 2)));
-        window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 5 / 8), leftArrow_bb.Min.y + (ArrowHeight * 3 / 4)));
-        window->DrawList->PathStroke(GetColorU32(ImGuiCol_Text), false, 1.0f);
-    }
-    IncreaseDecreaseArrowBehavior(pressedArr, heldArr, data_type, p_data, id, LeftArrowID, value_changed, -1);
-    PopID();
+    if (drawArrows)
+    {
+        ImRect leftArrow_bb = ImRect(ImVec2(frame_bb.Min.x - ArrowWidth, frame_bb.Min.y), ImVec2(frame_bb.Min.x, frame_bb.Max.y));
+        int ArrowID = id + 1;
+        PushID(ArrowID);
+        if (!ItemAdd(leftArrow_bb, ArrowID)) {
+            PopID();
+            return false;
+        }
+        bool hoveredArr, heldArr;
+        bool pressedArr = ButtonBehavior(leftArrow_bb, ArrowID, &hoveredArr, &heldArr);
+        frame_col = GetColorU32(g.ActiveId == ArrowID ? ImGuiCol_FrameBgActive : hoveredArr ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+        RenderFrameRounded(leftArrow_bb.Min, leftArrow_bb.Max, frame_col, ((drawFlags == ImDrawFlags_None) || !(drawFlags & ImDrawFlags_RoundCornersRight)) ? ImDrawFlags_RoundCornersLeft : ImDrawFlags_RoundCornersNone, false, g.Style.FrameRounding);
+        if (hovered || hoveredArr) {
+            const float ArrowHeight = leftArrow_bb.Max.y - leftArrow_bb.Min.y;
+            window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 5 / 8), leftArrow_bb.Min.y + (ArrowHeight / 4)));
+            window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 3 / 8), leftArrow_bb.Min.y + (ArrowHeight / 2)));
+            window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 5 / 8), leftArrow_bb.Min.y + (ArrowHeight * 3 / 4)));
+            window->DrawList->PathStroke(GetColorU32(ImGuiCol_Text), false, 1.0f);
+        }
+        auto IncreaseDecreaseArrowBehavior = [&](const short plusMinus) {
 
-    //right(increase) arrow
-    ImRect rightArrow_bb = ImRect(ImVec2(frame_bb.Max.x, frame_bb.Min.y), ImVec2(frame_bb.Max.x + ArrowWidth, frame_bb.Max.y));
-    int RightArrowID = id + 2;
-    PushID(RightArrowID);
-    if (!ItemAdd(rightArrow_bb, RightArrowID)) {
-        PopID();
-        return false;
-    }
-    pressedArr = ButtonBehavior(rightArrow_bb, RightArrowID, &hoveredArr, &heldArr);
-    frame_col = GetColorU32(g.ActiveId == RightArrowID ? ImGuiCol_FrameBgActive : hoveredArr ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
-    RenderFrameRounded(rightArrow_bb.Min, rightArrow_bb.Max, frame_col, ImDrawFlags_RoundCornersRight, false, g.Style.FrameRounding);
-    if (hovered || hoveredArr) {
-        const float ArrowHeight = rightArrow_bb.Max.y - rightArrow_bb.Min.y;
-        window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 3 / 8), rightArrow_bb.Min.y + (ArrowHeight / 4)));
-        window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 5 / 8), rightArrow_bb.Min.y + (ArrowHeight / 2)));
-        window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 3 / 8), rightArrow_bb.Min.y + (ArrowHeight * 3 / 4)));
-        window->DrawList->PathStroke(GetColorU32(ImGuiCol_Text), false, 1.0f);
-    }
-    IncreaseDecreaseArrowBehavior(pressedArr, heldArr, data_type, p_data, id, RightArrowID, value_changed, 1);
-    PopID();
+            static int HeldArrowID = 0;
+            static int CountFrameWhenHold = 0;
+            auto checkAndDoStuff = [&]() {
+                if (data_type == ImGuiDataType_Float) {
+                    float* floatData = (float*)p_data;
+                    float* floatMin = (float*)p_min;
+                    float* floatMax = (float*)p_max;
+                    if (*floatMax != *floatMin) {
+                        if ((((*floatData + (plusMinus * v_speed) > *floatMin)) && (*floatData + (plusMinus * v_speed) < *floatMax)))
+                        {
+                            *floatData += v_speed * plusMinus;
+                            ImGui::MarkItemEdited(ArrowID);
+                            value_changed = true;
+                        }
+                        else if ((*floatData != *floatMin && *floatData != *floatMax))
+                        {
+                            if (plusMinus > 0)
+                            {
+                                *floatData = *floatMax;
+                                ImGui::MarkItemEdited(ArrowID);
+                                value_changed = true;
+                            }
+                            else {
+                                *floatData = *floatMin;
+                                ImGui::MarkItemEdited(ArrowID);
+                                value_changed = true;
 
+                            }
+                        }
+                    }
+                    else {
+                        *floatData += v_speed * plusMinus;
+                        ImGui::MarkItemEdited(ArrowID);
+                        value_changed = true;
+                    }
+                }
+                else if (data_type == ImGuiDataType_S32) {
+                    int* intData = (int*)p_data;
+                    int* intMin = (int*)p_min;
+                    int* intMax = (int*)p_max;
+                    if (*intMax != *intMin) {
+                        if ((((*intData + (plusMinus * v_speed) > *intMin)) && (*intData + (plusMinus * v_speed) < *intMax)))
+                        {
+                            *intData += v_speed * plusMinus;
+                            ImGui::MarkItemEdited(ArrowID);
+                            value_changed = true;
+                        }
+                        else if ((*intData != *intMin && *intData != *intMax))
+                        {
+                            if (plusMinus > 0)
+                            {
+                                *intData = *intMax;
+                                ImGui::MarkItemEdited(ArrowID);
+                                value_changed = true;
+                            }
+                            else {
+                                *intData = *intMin;
+                                ImGui::MarkItemEdited(ArrowID);
+                                value_changed = true;
+
+                            }
+                        }
+                    }
+                    else {
+                        *intData += v_speed * plusMinus;
+                        ImGui::MarkItemEdited(ArrowID);
+                        value_changed = true;
+                    }
+                }
+            };
+            if (pressedArr)
+            {
+                HeldArrowID = 0;
+                CountFrameWhenHold = 0;
+                checkAndDoStuff();
+            }
+            else if (heldArr)
+            {
+                if (HeldArrowID != ArrowID)
+                {
+                    HeldArrowID = ArrowID;
+                }
+                CountFrameWhenHold++;
+                if (CountFrameWhenHold > 20)
+                {
+                    checkAndDoStuff();
+                }
+
+            }
+        };
+        IncreaseDecreaseArrowBehavior(-1);
+        PopID();
+
+        //right(increase) arrow
+        ImRect rightArrow_bb = ImRect(ImVec2(frame_bb.Max.x, frame_bb.Min.y), ImVec2(frame_bb.Max.x + ArrowWidth, frame_bb.Max.y));
+        ArrowID = id + 2;
+        PushID(ArrowID);
+        if (!ItemAdd(rightArrow_bb, ArrowID)) {
+            PopID();
+            return false;
+        }
+        pressedArr = ButtonBehavior(rightArrow_bb, ArrowID, &hoveredArr, &heldArr);
+        frame_col = GetColorU32(g.ActiveId == ArrowID ? ImGuiCol_FrameBgActive : hoveredArr ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+        RenderFrameRounded(rightArrow_bb.Min, rightArrow_bb.Max, frame_col, (drawFlags == ImDrawFlags_None || !(drawFlags & ImDrawFlags_RoundCornersLeft))?ImDrawFlags_RoundCornersRight : ImDrawFlags_RoundCornersNone, false, g.Style.FrameRounding);
+        if (hovered || hoveredArr) {
+            const float ArrowHeight = rightArrow_bb.Max.y - rightArrow_bb.Min.y;
+            window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 3 / 8), rightArrow_bb.Min.y + (ArrowHeight / 4)));
+            window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 5 / 8), rightArrow_bb.Min.y + (ArrowHeight / 2)));
+            window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 3 / 8), rightArrow_bb.Min.y + (ArrowHeight * 3 / 4)));
+            window->DrawList->PathStroke(GetColorU32(ImGuiCol_Text), false, 1.0f);
+        }
+        IncreaseDecreaseArrowBehavior(1);
+        PopID();
+    }
     
     // Drag behavior
     if (!value_changed) {
@@ -2542,101 +2764,12 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     }
 
     // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
-    char value_buf[64];
-    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
     if (g.LogEnabled)
         LogSetNextTextDecoration("{", "}");
     RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
 
     if (label_size.x > 0.0f)
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x + ArrowWidth, frame_bb.Min.y + style.FramePadding.y), label);
-
-    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags);
-    return value_changed;
-}
-bool ImGui::Vec3AxisDragScalar(const char* label, ImGuiDataType data_type, void* p_data, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags)
-{
-    ImGuiWindow* window = GetCurrentWindow();
-    if (window->SkipItems)
-        return false;
-
-    ImGuiContext& g = *GImGui;
-    const ImGuiStyle& style = g.Style;
-    const ImGuiID id = window->GetID(label);
-    const float w = CalcItemWidth();
-
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
-    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
-    const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
-
-    const bool temp_input_allowed = (flags & ImGuiSliderFlags_NoInput) == 0;
-    ItemSize(total_bb, style.FramePadding.y);
-    if (!ItemAdd(total_bb, id, &frame_bb, temp_input_allowed ? ImGuiItemFlags_Inputable : 0))
-        return false;
-
-    // Default format string when passing NULL
-    if (format == NULL)
-        format = DataTypeGetInfo(data_type)->PrintFmt;
-
-    const bool hovered = ItemHoverable(frame_bb, id);
-    bool temp_input_is_active = temp_input_allowed && TempInputIsActive(id);
-    if (!temp_input_is_active)
-    {
-        // Tabbing or CTRL-clicking on Drag turns it into an InputText
-        const bool input_requested_by_tabbing = temp_input_allowed && (g.LastItemData.StatusFlags & ImGuiItemStatusFlags_FocusedByTabbing) != 0;
-        const bool clicked = hovered && IsMouseClicked(0, id);
-        const bool double_clicked = (hovered && g.IO.MouseClickedCount[0] == 2 && TestKeyOwner(ImGuiKey_MouseLeft, id));
-        const bool make_active = (input_requested_by_tabbing || clicked || double_clicked || g.NavActivateId == id || g.NavActivateInputId == id);
-        if (make_active && (clicked || double_clicked))
-            SetKeyOwner(ImGuiKey_MouseLeft, id);
-        if (make_active && temp_input_allowed)
-            if (input_requested_by_tabbing || (clicked && g.IO.KeyCtrl) || double_clicked || g.NavActivateInputId == id)
-                temp_input_is_active = true;
-
-        // (Optional) simple click (without moving) turns Drag into an InputText
-        if (temp_input_allowed && !temp_input_is_active)
-            if (g.ActiveId == id && hovered && g.IO.MouseReleased[0] && !IsMouseDragPastThreshold(0, g.IO.MouseDragThreshold * DRAG_MOUSE_THRESHOLD_FACTOR))
-            {
-                g.NavActivateId = g.NavActivateInputId = id;
-                g.NavActivateFlags = ImGuiActivateFlags_PreferInput;
-                temp_input_is_active = true;
-            }
-
-        if (make_active && !temp_input_is_active)
-        {
-            SetActiveID(id, window);
-            SetFocusID(id, window);
-            FocusWindow(window);
-            g.ActiveIdUsingNavDirMask = (1 << ImGuiDir_Left) | (1 << ImGuiDir_Right);
-        }
-    }
-
-    if (temp_input_is_active)
-    {
-        // Only clamp CTRL+Click input when ImGuiSliderFlags_AlwaysClamp is set
-        const bool is_clamp_input = (flags & ImGuiSliderFlags_AlwaysClamp) != 0 && (p_min == NULL || p_max == NULL || DataTypeCompare(data_type, p_min, p_max) < 0);
-        return TempInputScalar(frame_bb, id, label, data_type, p_data, format, is_clamp_input ? p_min : NULL, is_clamp_input ? p_max : NULL);
-    }
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
-    // Draw frame
-    const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
-    RenderNavHighlight(frame_bb, id);
-    Vec3AxisRenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding, ImDrawCornerFlags_Right);
-    PopStyleVar();
-    // Drag behavior
-    const bool value_changed = DragBehavior(id, data_type, p_data, v_speed, p_min, p_max, format, flags);
-    if (value_changed)
-        MarkItemEdited(id);
-
-    // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
-    char value_buf[64];
-    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
-    if (g.LogEnabled)
-        LogSetNextTextDecoration("{", "}");
-    RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
-
-    if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags);
     return value_changed;
@@ -2681,9 +2814,9 @@ bool ImGui::DragFloat(const char* label, float* v, float v_speed, float v_min, f
 {
     return DragScalar(label, ImGuiDataType_Float, v, v_speed, &v_min, &v_max, format, flags);
 }
-bool ImGui::Vec3AxisDragFloat(const char* label, float* v, float v_speed, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
+bool ImGui::DragFloatRounded(const char* label, float* v, float v_speed, float v_min, float v_max, const char* format, ImGuiSliderFlags flags, ImDrawFlags drawFlags)
 {
-    return Vec3AxisDragScalar(label, ImGuiDataType_Float, v, v_speed, &v_min, &v_max, format, flags);
+    return DragScalar(label, ImGuiDataType_Float, v, v_speed, &v_min, &v_max, format, flags, drawFlags);
 }
 
 bool ImGui::DragFloat2(const char* label, float v[2], float v_speed, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
