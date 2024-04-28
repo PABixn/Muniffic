@@ -74,6 +74,7 @@ project "Engine"
 			"%{Library.WinMM}",
 			"%{Library.WinVersion}",
 			"%{Library.BCrypt}",
+			"%{Library.Vulkan}",
 		}
 
 		defines
