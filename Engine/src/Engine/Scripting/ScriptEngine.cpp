@@ -84,7 +84,7 @@ namespace eg
 
 		// TOOD: move this to Filesystem class
 
-		MonoAssembly *LoadMonoAssembly(const std::filesystem::path &assemblyPath, bool loadPDB = false)
+		MonoAssembly* LoadMonoAssembly(const std::filesystem::path &assemblyPath, bool loadPDB = false)
 		{
 			ScopedBuffer fileData = FileSystem::ReadFileBinary(assemblyPath.string());
 
@@ -96,7 +96,7 @@ namespace eg
 
 			// NOTE: We can't use this image for anything other than loading the assembly because this image doesn't have a reference to the assembly
 			MonoImageOpenStatus status;
-			MonoImage *image = mono_image_open_from_data_full(fileData.As<char>(), fileData.Size(), 1, &status, 0);
+			MonoImage* image = mono_image_open_from_data_full(fileData.As<char>(), fileData.Size(), 1, &status, 0);
 
 			if (status != MONO_IMAGE_OK)
 			{
@@ -441,6 +441,17 @@ namespace eg
 		return s_Data->SceneContext;
 	}
 
+	std::vector<Ref<ScriptInstance>> ScriptEngine::GetEntityScriptInstances(UUID uuid)
+	{
+		std::vector<Ref<ScriptInstance>> result;
+		if (s_Data->EntityInstances.find(uuid) != s_Data->EntityInstances.end())
+		{
+			for (auto& [key, value] : s_Data->EntityInstances.at(uuid))
+				result.push_back(value);
+		}
+		return result;
+	}
+
 	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID uuid, std::string name)
 	{
 		auto it = s_Data->EntityInstances.find(uuid);
@@ -487,7 +498,7 @@ namespace eg
 		return mono_class_get_method_from_name(m_Class, name.c_str(), parameterCount);
 	}
 
-	MonoObject* ScriptClass::InvokeMethod(MonoObject *instance, MonoMethod *method, void **params)
+	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void **params)
 	{
 		MonoObject *exception = nullptr;
 		return mono_runtime_invoke(method, instance, params, &exception);
@@ -506,7 +517,6 @@ namespace eg
 		m_OnCollisionEnterMethod = m_ScriptClass->GetMethod("OnCollisionEnter", 1);
 		m_OnCollisionExitMethod = m_ScriptClass->GetMethod("OnCollisionExit", 1);
 
-		// Calling entity constructor
 		{
 			UUID uuid = entity.GetUUID();
 			void *arg = &uuid;
@@ -531,6 +541,28 @@ namespace eg
 		{
 			void *arg = &ts;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &arg);
+		}
+	}
+
+	void ScriptInstance::InvokeOn2DCollisionEnter(InternalCollision2DEvent collision)
+	{
+		if (m_OnCollisionEnterMethod)
+		{
+			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
+			Collision2D* args = new Collision2D(uuid, collision.contactPoints);
+			void* arg = args;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionEnterMethod, &arg);
+		}
+	}
+
+	void ScriptInstance::InvokeOn2DCollisionExit(InternalCollision2DEvent collision)
+	{
+		if (m_OnCollisionExitMethod)
+		{
+			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
+			Collision2D* args = new Collision2D(uuid, collision.contactPoints);
+			void* arg = args;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionExitMethod, &arg);
 		}
 	}
 

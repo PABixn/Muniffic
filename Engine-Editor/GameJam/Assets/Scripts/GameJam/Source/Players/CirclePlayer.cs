@@ -40,7 +40,12 @@ namespace Game
 
         public void OnCollisionEnter(Collision2D collision)
         {
-            DebugConsole.Log(collision.otherEntity.ID.ToString() + "    X: " + collision.contactPoints.X + "    Y: " + collision.contactPoints.Y, DebugConsole.LogType.Error);
+            DebugConsole.Log("Collision enter: " + collision.otherEntity.name + "    X: " + collision.contactPoints.X + "    Y: " + collision.contactPoints.Y, DebugConsole.LogType.Error);
+        }
+
+        public void OnCollisionExit(Collision2D collision)
+        {
+            DebugConsole.Log("Collision exit: " + collision.otherEntity.ID + "    X: " + collision.contactPoints.X + "    Y: " + collision.contactPoints.Y, DebugConsole.LogType.Error);
         }
 
         public override void OnUpdate(float ts)

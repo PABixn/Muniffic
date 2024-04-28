@@ -25,6 +25,7 @@ namespace eg {
 
 	Scene::~Scene()
 	{
+
 	}
 	
 	
@@ -506,6 +507,7 @@ namespace eg {
 			fixtureDef.friction = bc.Friction;
 			fixtureDef.restitution = bc.Restitution;
 			fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
+			fixtureDef.userData.pointer = entity.GetUUID();
 
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			bc.RuntimeFixture = fixture;
@@ -525,6 +527,7 @@ namespace eg {
 			fixtureDef.friction = cc.Friction;
 			fixtureDef.restitution = cc.Restitution;
 			fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
+			fixtureDef.userData.pointer = entity.GetUUID();
 
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			cc.RuntimeFixture = fixture;
@@ -551,6 +554,11 @@ namespace eg {
 	void Scene::OnPhysics2DStart()
 	{
 		m_PhysicsWorld = new b2World({ 0.0f, -9.81f });
+		
+		ContactListener* listener = new ContactListener();
+
+		m_PhysicsWorld->SetContactListener(listener);
+
 		auto view = m_Registry.view<RigidBody2DComponent>();
 		for (auto entity : view)
 		{
@@ -571,6 +579,7 @@ namespace eg {
 				fixtureDef.friction = bc.Friction;
 				fixtureDef.restitution = bc.Restitution;
 				fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
+				fixtureDef.userData.pointer = e.GetUUID();
 
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				bc.RuntimeFixture = fixture;
@@ -590,6 +599,7 @@ namespace eg {
 				fixtureDef.friction = cc.Friction;
 				fixtureDef.restitution = cc.Restitution;
 				fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
+				fixtureDef.userData.pointer = e.GetUUID();
 				
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				cc.RuntimeFixture = fixture;

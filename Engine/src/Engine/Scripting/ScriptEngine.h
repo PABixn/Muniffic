@@ -3,6 +3,7 @@
 #include "Engine/Core/Timestep.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Scene/Entity.h"
+#include <Engine/Scene/ColliderEvents.h>
 
 extern "C" {
 	typedef struct _MonoClass MonoClass;
@@ -101,10 +102,10 @@ namespace eg {
 
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
+		void InvokeOn2DCollisionEnter(InternalCollision2DEvent collision);
+		void InvokeOn2DCollisionExit(InternalCollision2DEvent collision);
 		
 		Ref<ScriptClass> GetScriptClass() const { return m_ScriptClass; }
-
-		
 
 		template<typename T>
 		T GetFieldValue(const std::string& name)
@@ -173,6 +174,7 @@ namespace eg {
 
 		static Scene* GetSceneContext();
 		static Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid, std::string name);
+		static std::vector<Ref<ScriptInstance>> GetEntityScriptInstances(UUID uuid);
 
 		static Ref<ScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<ScriptClass>>& GetEnityClasses();
