@@ -7218,12 +7218,12 @@ bool ImGui::CustomTreeNodeWithPicBehavior(ImTextureID textureID, ImGuiID id, ImG
         window->DrawList->AddImage(textureID, xyOfStart, xyOfEnd);
         if (hovered)
         {
-            if (GetMousePos().x > xyOfStart.x && GetMousePos().x < xyOfEnd.x && IsMouseClicked(0)) {
-                OpenPopup("inhInChildren");
-            }
-            if (BeginPopup("inhInChildren")) {
-                ImGui::MenuItem("this component is inherited in children");
-                ImGui::EndPopup();
+            if (GetMousePos().x > xyOfStart.x && GetMousePos().x < xyOfEnd.x) {
+                ImGui::BeginTooltip();
+                ImGui::PushTextWrapPos(150.f);
+                ImGui::TextWrapped("This component is inherited in children");
+                ImGui::PopTextWrapPos();
+                ImGui::EndTooltip();
             }
         }
 

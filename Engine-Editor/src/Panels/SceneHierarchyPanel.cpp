@@ -30,7 +30,7 @@ namespace eg {
 
 	static const float WidthOfProperty = 0.75f;
 
-	static const char* add(const char* begining, const char* middle, const char* ending) {
+	const char* add(const char* begining, const char* middle, const char* ending) {
 		size_t resultLength = strlen(middle) + strlen(begining) + strlen(ending);
 		char* resultMsg = new char[resultLength];
 		strcpy(resultMsg, begining);
@@ -39,6 +39,25 @@ namespace eg {
 		return resultMsg;
 	}
 
+	float CalculatePreferedComponentPropertyWidth(const char* label) {
+		float WidthOfLabel = ImGui::CalcTextSize(label).x;
+		if (WidthOfLabel > ImGui::GetContentRegionAvail().x * (1.f - WidthOfProperty) - 4.f)
+		{
+			if (WidthOfLabel > ImGui::GetContentRegionAvail().x * .5f - 4.f)
+			{
+				return ImGui::GetContentRegionAvail().x * .5f - 14.f;
+			}
+			else
+			{
+				return ImGui::GetContentRegionAvail().x - WidthOfLabel - 14.f;
+			}
+		}
+		else
+		{
+			return ImGui::GetContentRegionAvail().x * WidthOfProperty - 4.f;
+		}
+	}
+	
 	static void PropertyLabel(const char* label) {
 		ImGui::SameLine();
 		bool s = ImGui::TextWrappedWithLineLimit(label, 1);
@@ -52,6 +71,18 @@ namespace eg {
 			ImGui::EndTooltip();
 
 		}
+	}
+
+
+	void ComponentPropertyBeforeDraw(const char* label) {
+		ImGui::PushID(label);
+		ImGui::PushItemWidth(CalculatePreferedComponentPropertyWidth(label));
+	}
+	void ComponentPropertyAfterDraw(const char* label) {
+		ImGui::PopItemWidth();
+		PropertyLabel(label);
+		ImGui::PopID();
+
 	}
 
 	static void DrawVec3Control(Entity entity, const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool firstValue = false)
@@ -131,18 +162,78 @@ namespace eg {
 		ImGui::PopID();
 	}
 
-	static bool DrawComponentPropertyFloat(const char* label, float* value) {
+	static bool DrawComponentPropertyFloat(const char* label, float* value, float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char* format = "%.3f") {
 
+		ComponentPropertyBeforeDraw(label);
+		bool changed_value = ImGui::DragFloat("", value, speed, min, max, format);
+		ComponentPropertyAfterDraw(label);
+		return changed_value;
+	}
+
+	static bool DrawComponentPropertyFloat2(const char* label, float value[2], float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char* format = "%.3f") {
+
+		ComponentPropertyBeforeDraw(label);
+		bool changed_value = ImGui::DragFloat2("", value, speed, min, max, format);
+		ComponentPropertyAfterDraw(label);
+		return changed_value;
+	}
+
+	static bool DrawComponentPropertyFloat3(const char* label, float value[3], float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char* format = "%.3f") {
+
+		ComponentPropertyBeforeDraw(label);
+		bool changed_value = ImGui::DragFloat3("", value, speed, min, max, format);
+		ComponentPropertyAfterDraw(label);
+		return changed_value;
+	}
+
+	static bool DrawComponentPropertyFloat4(const char* label, float value[4], float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char* format = "%.3f") {
+
+		ComponentPropertyBeforeDraw(label);
+		bool changed_value = ImGui::DragFloat4("", value, speed, min, max, format);
+		ComponentPropertyAfterDraw(label);
+		return changed_value;
+	}
+
+	static bool DrawComponentPropertyInt(const char* label, int* value, float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char* format = "%.3f") {
+
+		ComponentPropertyBeforeDraw(label);
+		bool changed_value = ImGui::DragInt("", value, speed, min, max, format);
+		ComponentPropertyAfterDraw(label);
+		return changed_value;
+	}
+
+
+	static bool DrawComponentPropertyColorEdit4(const char* label, float col[4]) {
+
+		ComponentPropertyBeforeDraw(label);
+		bool changed_value = ImGui::ColorEdit4("", col);
+		ComponentPropertyAfterDraw(label);
+		return changed_value;
+	}
+
+
+	static bool DrawComponentPropertyInputText(const char* label, char* buf, size_t buf_size) {
+		ComponentPropertyBeforeDraw(label);
+		bool changed = ImGui::InputText("", buf, buf_size);
+		ComponentPropertyAfterDraw(label);
+		return changed;
+	}
+
+	static bool DrawComponentPropertyInputText(const char* label, std::string* val) {
+		ComponentPropertyBeforeDraw(label);
+		bool changed = ImGui::InputText("", val);
+		ComponentPropertyAfterDraw(label);
+		return changed;
+	}
+
+	static bool DrawComponentPropertyCheckbox(const char* label, bool* CheckedValue) {
 		ImGui::PushID(label);
-		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x*WidthOfProperty - 4.f);
-		bool changed_value = ImGui::DragFloat("", value);
-		ImGui::PopItemWidth();
+		bool changed_value = ImGui::Checkbox("", CheckedValue);
 		PropertyLabel(label);
-
 		ImGui::PopID();
 		return changed_value;
 	}
-	
+
 	static void DrawComponentPropertyCombo(const char* label, std::vector<const char*> possiblevalues, int currentSelected, std::function<void(int number)> fun) {
 		ImGui::PushID(label);
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * WidthOfProperty - 4.f);
@@ -648,7 +739,7 @@ namespace eg {
 
 		DrawComponent<TransformComponent>("Transform", entity, [entity](auto& component)
 			{
-				DrawVec3Control(entity, "Translation yeeeeeeeeeeee", component.Translation, 0.0f, 100.f, true);
+				DrawVec3Control(entity, "Translation", component.Translation, 0.0f, 100.f, true);
 				DrawVec3Control(entity, "Rotation", component.Rotation);
 				DrawVec3Control(entity, "Scale", component.Scale, 1.0f);
 			}, m_Context, ComponentIcons::TransformIcon);
@@ -656,7 +747,7 @@ namespace eg {
 		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component) {
 			auto& camera = component.Camera;
 
-			if(ImGui::Checkbox("Primary", &component.Primary))
+			if(DrawComponentPropertyCheckbox("Primary", &component.Primary))
 				Commands::ExecuteRawValueCommand<bool>(&component.Primary, !component.Primary, "CameraComponent-Primary");
 			//zna2
 			const char* projectionTypeString[] = { "Perspective","Orthographic" };
@@ -715,7 +806,7 @@ namespace eg {
 							camera.SetOrthographicFarClip(farClip);
 						}, farClip, camera.GetOrthographicFarClip(), "CameraComponent-Far");
 
-				if(ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
+				if(DrawComponentPropertyCheckbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
 					Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
 			}
 			}, m_Context, ComponentIcons::CameraIcon);
@@ -730,7 +821,7 @@ namespace eg {
 
 				UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
 
-				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+				if (DrawComponentPropertyInputText("Class", buffer, sizeof(buffer)))
 				{
 					component.Name = std::string(buffer);
 					return;
@@ -755,21 +846,21 @@ namespace eg {
 							case ScriptFieldType::Float:
 							{
 								float value = scriptInstance->GetFieldValue<float>(name);
-								if (ImGui::DragFloat(name.c_str(), &value, 0.1f))
+								if (DrawComponentPropertyFloat(name.c_str(), &value, 0.1f))
 									scriptInstance->SetFieldValue<float>(name, value);
 								break;
 							}
 							case ScriptFieldType::Int32:
 							{
 								int value = scriptInstance->GetFieldValue<int>(name);
-								if (ImGui::DragInt(name.c_str(), &value, 1.0f))
+								if (DrawComponentPropertyInt(name.c_str(), &value, 1.0f))
 									scriptInstance->SetFieldValue<int>(name, value);
 								break;
 							}
 							case ScriptFieldType::Bool:
 							{
 								bool value = scriptInstance->GetFieldValue<bool>(name);
-								if (ImGui::Checkbox(name.c_str(), &value))
+								if (DrawComponentPropertyCheckbox(name.c_str(), &value))
 									scriptInstance->SetFieldValue<bool>(name, value);
 								break;
 							}
@@ -786,21 +877,21 @@ namespace eg {
 							case ScriptFieldType::Vector2:
 							{
 								glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
-								if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
+								if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
 									scriptInstance->SetFieldValue<glm::vec2>(name, value);
 								break;
 							}
 							case ScriptFieldType::Vector3:
 							{
 								glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
-								if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
+								if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
 									scriptInstance->SetFieldValue<glm::vec3>(name, value);
 								break;
 							}
 							case ScriptFieldType::Vector4:
 							{
 								glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
-								if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
+								if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
 									scriptInstance->SetFieldValue<glm::vec4>(name, value);
 								break;
 							}
@@ -830,7 +921,7 @@ namespace eg {
 									case ScriptFieldType::Float:
 									{
 										float data = scriptField.GetValue<float>();
-										if (ImGui::DragFloat(name.c_str(), &data, 0.1f))
+										if (DrawComponentPropertyFloat(name.c_str(), &data, 0.1f))
 										{
 											scriptField.SetValue(data);
 										}
@@ -839,7 +930,7 @@ namespace eg {
 									case ScriptFieldType::Int32:
 									{
 										int data = scriptField.GetValue<int>();
-										if (ImGui::DragInt(name.c_str(), &data, 1.0f))
+										if (DrawComponentPropertyInt(name.c_str(), &data, 1.0f))
 										{
 											scriptField.SetValue(data);
 										}
@@ -848,7 +939,7 @@ namespace eg {
 									case ScriptFieldType::Bool:
 									{
 										bool data = scriptField.GetValue<bool>();
-										if (ImGui::Checkbox(name.c_str(), &data))
+										if (DrawComponentPropertyCheckbox(name.c_str(), &data))
 										{
 											scriptField.SetValue(data);
 										}
@@ -869,7 +960,7 @@ namespace eg {
 									case ScriptFieldType::Vector2:
 									{
 										glm::vec2 data = scriptField.GetValue<glm::vec2>();
-										if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+										if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
 										{
 											scriptField.SetValue(data);
 										}
@@ -878,7 +969,7 @@ namespace eg {
 									case ScriptFieldType::Vector3:
 									{
 										glm::vec3 data = scriptField.GetValue<glm::vec3>();
-										if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+										if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
 										{
 											scriptField.SetValue(data);
 										}
@@ -887,7 +978,7 @@ namespace eg {
 									case ScriptFieldType::Vector4:
 									{
 										glm::vec4 data = scriptField.GetValue<glm::vec4>();
-										if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+										if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
 										{
 											scriptField.SetValue(data);
 										}
@@ -914,7 +1005,7 @@ namespace eg {
 									case ScriptFieldType::Int32:
 									{
 										int data = 0;
-										if (ImGui::DragInt(name.c_str(), &data))
+										if (DrawComponentPropertyInt(name.c_str(), &data))
 										{
 											ScriptFieldInstance& fieldInstance = entityFields[name];
 											fieldInstance.Field = field;
@@ -925,7 +1016,7 @@ namespace eg {
 									case ScriptFieldType::Bool:
 									{
 										bool data = false;
-										if (ImGui::Checkbox(name.c_str(), &data))
+										if (DrawComponentPropertyCheckbox(name.c_str(), &data))
 										{
 											ScriptFieldInstance& fieldInstance = entityFields[name];
 											fieldInstance.Field = field;
@@ -936,6 +1027,7 @@ namespace eg {
 									case ScriptFieldType::String:
 									{
 										//std::string data = "";
+										//char buffer[256];
 										//char buffer[256];
 										//memset(buffer, 0, sizeof(buffer));
 										//strcpy(buffer, data.c_str());
@@ -950,7 +1042,7 @@ namespace eg {
 									case ScriptFieldType::Vector2:
 									{
 										glm::vec2 data = glm::vec2(0.0f);
-										if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+										if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
 										{
 											ScriptFieldInstance& fieldInstance = entityFields[name];
 											fieldInstance.Field = field;
@@ -961,7 +1053,7 @@ namespace eg {
 									case ScriptFieldType::Vector3:
 									{
 										glm::vec3 data = glm::vec3(0.0f);
-										if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+										if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
 										{
 											ScriptFieldInstance& fieldInstance = entityFields[name];
 											fieldInstance.Field = field;
@@ -972,7 +1064,7 @@ namespace eg {
 									case ScriptFieldType::Vector4:
 									{
 										glm::vec4 data = glm::vec4(0.0f);
-										if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+										if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
 										{
 											ScriptFieldInstance& fieldInstance = entityFields[name];
 											fieldInstance.Field = field;
@@ -993,7 +1085,7 @@ namespace eg {
 			{
 				glm::vec4 color = component.Color;
 
-				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
+				if(DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand<glm::vec4, SpriteRendererComponent>(&component.Color, color, entity, "SpriteRendererComponent-Color");
 
 				
@@ -1022,7 +1114,7 @@ namespace eg {
 				}
 
 				float factor = component.TilingFactor;
-				if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
+				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
 					Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
 				
 			}, m_Context, ComponentIcons::SpriteRendererIcon);
@@ -1031,7 +1123,7 @@ namespace eg {
 			{
 				glm::vec4 color = component.Color;
 
-				if (ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
+				if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
 
 				ImGui::Button("Texture", { 100.0f, 0.0f });
@@ -1058,11 +1150,8 @@ namespace eg {
 					ImGui::EndDragDropTarget();
 				}
 
-				ImGui::Text("Min Coords:");
-				ImGui::SameLine();
-				ImGui::PushID(0);
 				glm::vec2 minCoords = component.SubTexture->GetCoords(0);
-				if (ImGui::DragFloat2("##UV", (float*)component.SubTexture->GetCoordsPtr(0), 0.01f, 0.0f, 1.0f))
+				if (DrawComponentPropertyFloat2("Min coords", (float*)component.SubTexture->GetCoordsPtr(0), 0.01f, 0.0f, 1.0f))
 				{
 					glm::vec2 newCoords = component.SubTexture->GetCoords(0);
 					std::vector<glm::vec2> oldCoords = { minCoords, component.SubTexture->GetCoords(1),component.SubTexture->GetCoords(3) };
@@ -1076,12 +1165,8 @@ namespace eg {
 							component.SubTexture->SetTexCoords(3, coords[2]);
 						}, newCoordsVec, oldCoords, "SpriteRendererComponent-MinTexCoords", true);
 				}
-				ImGui::PopID();
-				ImGui::Text("Max Coords:");
-				ImGui::SameLine();
-				ImGui::PushID(2);
 				glm::vec2 maxCoords = component.SubTexture->GetCoords(2);
-				if (ImGui::DragFloat2("##UV", (float*)component.SubTexture->GetCoordsPtr(2), 0.01f, 0.0f, 1.0f))
+				if (DrawComponentPropertyFloat2("Max coords", (float*)component.SubTexture->GetCoordsPtr(2), 0.01f, 0.0f, 1.0f))
 				{
 					glm::vec2 newCoords = component.SubTexture->GetCoords(2);
 					std::vector<glm::vec2> oldCoords = { component.SubTexture->GetCoords(1), maxCoords, component.SubTexture->GetCoords(3) };
@@ -1095,10 +1180,9 @@ namespace eg {
 							component.SubTexture->SetTexCoords(3, coords[2]);
 						}, newCoordsVec, oldCoords, "SpriteRendererComponent-MaxTexCoords", true);
 				}
-				ImGui::PopID();
 
 				float factor = component.TilingFactor;
-				if (ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
+				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
 					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
 
 			}, m_Context, ComponentIcons::SubTextureRendererIcon);
@@ -1107,18 +1191,25 @@ namespace eg {
 			{
 				float thickness = component.Thickness, fade = component.Fade;
 				glm::vec4 color = component.Color;
-				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
+				if(DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand<glm::vec4, CircleRendererComponent>(&component.Color, color, entity, "CircleRendererComponent-Color");
 
-				if(ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
+				if(DrawComponentPropertyFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
 					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Thickness, thickness, entity, "CircleRendererComponent-Thickness");
-				if(ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
+				if(DrawComponentPropertyFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
 					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Fade, fade, entity, "CircleRendererComponent-Fade");
 			}, m_Context, ComponentIcons::CircleRendererIcon);
 
 		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [entity](auto& component) {
 			const char* bodyTypeString[] = { "Static", "Dynamic", "Kinematic"};
 			const char* currentBodyTypeString = bodyTypeString[(int)component.Type];
+
+			DrawComponentPropertyCombo("BodyType", std::vector<const char*>(bodyTypeString, bodyTypeString + sizeof bodyTypeString / sizeof bodyTypeString[0]), (int)component.Type, [&component, &entity](int number) {
+				RigidBody2DComponent::BodyType type = component.Type;
+				component.Type = (RigidBody2DComponent::BodyType)number;
+				Commands::ExecuteRawValueCommand<RigidBody2DComponent::BodyType, RigidBody2DComponent>(&component.Type, type, entity, "RigidBody2DComponent-Body Type", true);
+			});
+			/*
 			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
 			{
 				for (int i = 0; i < 2; i++)
@@ -1138,8 +1229,8 @@ namespace eg {
 
 				ImGui::EndCombo();
 			}
-
-			if(ImGui::Checkbox("Fixed Rotation", &component.FixedRotation))
+			*/
+			if(DrawComponentPropertyCheckbox("Fixed Rotation", &component.FixedRotation))
 				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");
 		}, m_Context, ComponentIcons::RigidBodyIcon);
 
@@ -1147,17 +1238,17 @@ namespace eg {
 			float density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset, size = component.Size;
 
-			if(ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
+			if(DrawComponentPropertyFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
 				Commands::ExecuteRawValueCommand<glm::vec2, BoxCollider2DComponent>(&component.Offset, offset, entity, "BoxCollider2DComponent-Offset");
-			if(ImGui::DragFloat2("Size", glm::value_ptr(component.Size), 0.1f))
+			if(DrawComponentPropertyFloat2("Size", glm::value_ptr(component.Size), 0.1f))
 				Commands::ExecuteRawValueCommand<glm::vec2, BoxCollider2DComponent>(&component.Size, size, entity, "BoxCollider2DComponent-Size");
-			if(ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Density, density, entity, "BoxCollider2DComponent-Density");
-			if(ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Friction, friction, entity, "BoxCollider2DComponent-Friction");
-			if(ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Restitution, restitution, entity, "BoxCollider2DComponent-Restitution");
-			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
+			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
 		}, m_Context, ComponentIcons::BoxColliderIcon);
 
@@ -1165,17 +1256,17 @@ namespace eg {
 			float radius = component.Radius, density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset;
 
-			if(ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
+			if(DrawComponentPropertyFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
 				Commands::ExecuteRawValueCommand<glm::vec2, CircleCollider2DComponent>(&component.Offset, offset, entity, "CircleCollider2DComponent-Offset");
-			if(ImGui::DragFloat("Radius", &component.Radius, 0.1f))
+			if(DrawComponentPropertyFloat("Radius", &component.Radius, 0.1f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Radius, radius, entity, "CircleCollider2DComponent-Radius");
-			if(ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Density, density, entity, "CircleCollider2DComponent-Density");
-			if(ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Friction, friction, entity, "CircleCollider2DComponent-Friction");
-			if(ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Restitution, restitution, entity, "CircleCollider2DComponent-Restitution");
-			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
+			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
 			}, m_Context, ComponentIcons::CircleColliderIcon);
 
@@ -1184,7 +1275,7 @@ namespace eg {
 				float kerning = component.Kerning, lineSpacing = component.LineSpacing;
 				glm::vec4 color = component.Color;
 
-				if(ImGui::InputTextMultiline("Text String", &component.TextString))
+				if(DrawComponentPropertyInputText("Text String", &component.TextString))
 					Commands::ExecuteRawValueCommand<std::string, TextComponent>(&component.TextString, component.TextString, entity, "TextComponent-Text String");
 
 				std::string selectedFontName = "OpenSans-Regular";
@@ -1213,18 +1304,18 @@ namespace eg {
 					ImGui::EndCombo();
 				}
 
-				if(ImGui::ColorEdit4("Color", glm::value_ptr(component.Color)))
+				if(DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand<glm::vec4, TextComponent>(&component.Color, color, entity, "TextComponent-Color");
-				if(ImGui::DragFloat("Kerning", &component.Kerning, 0.025f))
+				if(DrawComponentPropertyFloat("Kerning", &component.Kerning, 0.025f))
 					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.Kerning, kerning, entity, "TextComponent-Kerning");
-				if(ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f))
+				if(DrawComponentPropertyFloat("Line Spacing", &component.LineSpacing, 0.025f))
 					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing");
 			}, m_Context, ComponentIcons::TextRendererIcon);
 
 		DrawComponent<AnimatorComponent>("Animator", entity, [entity](auto& component)
 			{
 				float speed = component.Animator2D->GetSpeed();
-				if (ImGui::DragFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f))
+				if (DrawComponentPropertyFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f))
 				{
 					Commands::ExecuteRawValueCommand<float>(component.Animator2D->GetSpeedPtr(), speed, "AnimatorComponent-Speed");
 				}
@@ -1260,8 +1351,8 @@ namespace eg {
 						if (ImGui::TreeNode(animation->GetName().c_str()))
 						{
 							ImGui::Text("Frame rate: %d", animation->GetFrameRate());
-							ImGui::Checkbox("Looped", animation->IsLoopedPtr());
-							ImGui::Checkbox("Playing", animation->IsPlayingPtr());
+							DrawComponentPropertyCheckbox("Looped", animation->IsLoopedPtr());
+							DrawComponentPropertyCheckbox("Playing", animation->IsPlayingPtr());
 							ImGui::PushID("Frames" + i);
 							if (ImGui::TreeNode("Frames")) 
 							{
@@ -1374,9 +1465,5 @@ namespace eg {
 			}, m_Context, ComponentIcons::AnimatorIcon);
 		
 	}
-
-	//void AddAnimation
-
-
 
 }
