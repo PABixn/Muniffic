@@ -133,7 +133,7 @@ namespace eg {
 
 	struct ScriptComponent: Component
 	{
-		std::string Name;
+		std::vector<UUID> Scripts;
 
 		ScriptComponent() = default;
 		ScriptComponent(const ScriptComponent&) = default;
@@ -224,6 +224,10 @@ namespace eg {
 
 		CircleCollider2DComponent() = default;
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
+
+		#pragma region Functionality
+
+		#pragma endregion
 	};
 
 	struct TextComponent : Component

@@ -3,6 +3,7 @@
 #include "Engine/Core/Timestep.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Scene/Entity.h"
+#include <Engine/Scene/ColliderEvents.h>
 
 extern "C" {
 	typedef struct _MonoClass MonoClass;
@@ -97,14 +98,14 @@ namespace eg {
 	class ScriptInstance
 	{
 	public:
-		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity);
+		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity, UUID uuid);
 
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
+		void InvokeOn2DCollisionEnter(InternalCollision2DEvent collision);
+		void InvokeOn2DCollisionExit(InternalCollision2DEvent collision);
 		
 		Ref<ScriptClass> GetScriptClass() const { return m_ScriptClass; }
-
-		
 
 		template<typename T>
 		T GetFieldValue(const std::string& name)
@@ -127,16 +128,22 @@ namespace eg {
 		}
 
 		MonoObject* GetManagedObject() const { return m_Instance; }
+
+		UUID GetUUID() const { return m_UUID; }
+
 	private:
 		bool GetFieldValueInternal(const std::string& name, void* buffer);
 		bool SetFieldValueInternal(const std::string& name, const void* value);
 	private:
+		UUID m_UUID;
 		Ref<ScriptClass> m_ScriptClass;
 
 		MonoObject* m_Instance = nullptr;
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
+		MonoMethod* m_OnCollisionEnterMethod = nullptr;
+		MonoMethod* m_OnCollisionExitMethod = nullptr;
 		inline static char s_FieldValueBuffer[16];
 
 		friend class ScriptEngine;
@@ -163,9 +170,11 @@ namespace eg {
 		static bool EntityClassExists(const std::string& fullClassName);
 		static void OnCreateEntity(Entity entity);
 		static void OnUpdateEntity(Entity entity, Timestep ts);
+		static std::vector<MonoClass*> GetBaseClasses(MonoClass* klass, MonoClass* entityClass);
 
 		static Scene* GetSceneContext();
-		static Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid);
+		static Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid, std::string name);
+		static std::vector<Ref<ScriptInstance>> GetEntityScriptInstances(UUID uuid);
 
 		static Ref<ScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<ScriptClass>>& GetEnityClasses();
@@ -173,7 +182,7 @@ namespace eg {
 
 		static MonoImage* GetCoreAssemblyImage();
 
-		static MonoObject* GetManagedInstance(UUID uuid);
+		static MonoObject* GetManagedInstance(UUID uuid, std::string name);
 
 		static MonoString* CreateString(const char* string);
 	private:

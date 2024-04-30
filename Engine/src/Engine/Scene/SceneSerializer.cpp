@@ -199,56 +199,76 @@ namespace eg {
 		if (entity.HasComponent<ScriptComponent>())
 		{
 			out << YAML::Key << "ScriptComponent";
-			out << YAML::BeginMap; // ScriptComponent
+			out << YAML::BeginMap; 
 			auto& scriptComponent = entity.GetComponent<ScriptComponent>();
-			out << YAML::Key << "Name" << YAML::Value << scriptComponent.Name;
 
-			// Fields
-			Ref<ScriptClass> scriptClass = ScriptEngine::GetEntityClass(scriptComponent.Name);
-			const auto& fields = scriptClass->GetFields();
-			if (fields.size() > 0) {
-				out << YAML::Key << "ScriptFields" << YAML::Value;
-				auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
-				out << YAML::BeginSeq;
-				for (auto& [name, field] : fields)
+			out << YAML::Key << "Scripts" << YAML::Value << YAML::BeginSeq; 
+
+			for (UUID script : scriptComponent.Scripts)
+			{
+				out << YAML::BeginMap; 
+				out << YAML::Key << "ScriptUUID" << YAML::Value << script;
+
+				std::string name = ResourceDatabase::GetResourceName(script);
+
+				// Fields
+				Ref<ScriptClass> scriptClass = ScriptEngine::GetEntityClass(name);
+
+				if (scriptClass)
 				{
-					if(entityFields.find(field.Name) == entityFields.end())
-						continue;
-					
-					out << YAML::BeginMap; // Field
-					// Field has been set in the editor
-					out << YAML::Key << "Name" << YAML::Value << field.Name;
-					ScriptFieldInstance& fieldInstance = entityFields.at(name);
-					out << YAML::Key << "Type" << YAML::Value << Utils::ScriptFieldTypeToString(field.Type);
-					out << YAML::Key << "Value" << YAML::Value;
-					switch (field.Type)
-					{
-						case ScriptFieldType::Float:	out << fieldInstance.GetValue<float>(); break;
-						case ScriptFieldType::Int32:	out << fieldInstance.GetValue<int>(); break;
-						case ScriptFieldType::UInt32:	out << fieldInstance.GetValue<uint32_t>(); break;
-						case ScriptFieldType::Int64:	out << fieldInstance.GetValue<int64_t>(); break;
-						case ScriptFieldType::Bool:		out << fieldInstance.GetValue<bool>(); break;
-						case ScriptFieldType::Short:	out << fieldInstance.GetValue<short>(); break;
-						case ScriptFieldType::UShort:	out << fieldInstance.GetValue<unsigned short>(); break;
-						case ScriptFieldType::Byte:		out << fieldInstance.GetValue<unsigned char>(); break;
-						case ScriptFieldType::SByte:	out << fieldInstance.GetValue<char>(); break;
-						case ScriptFieldType::Double:	out << fieldInstance.GetValue<double>(); break;
-						case ScriptFieldType::Vector2:	out << fieldInstance.GetValue<glm::vec2>(); break;
-						case ScriptFieldType::Vector3:	out << fieldInstance.GetValue<glm::vec3>(); break;
-						case ScriptFieldType::Vector4:	out << fieldInstance.GetValue<glm::vec4>(); break;
-						case ScriptFieldType::Entity:	out << fieldInstance.GetValue<float>(); break;
+					const auto& fields = scriptClass->GetFields();
 
+					if (!fields.empty())
+					{
+						out << YAML::Key << "ScriptFields" << YAML::Value << YAML::BeginSeq;
+						auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
+
+						for (auto& [name, field] : fields)
+						{
+							if (entityFields.find(field.Name) == entityFields.end())
+								continue;
+
+							out << YAML::BeginMap;
+
+							out << YAML::Key << "Name" << YAML::Value << field.Name;
+							ScriptFieldInstance& fieldInstance = entityFields.at(name);
+							out << YAML::Key << "Type" << YAML::Value << Utils::ScriptFieldTypeToString(field.Type);
+							out << YAML::Key << "Value" << YAML::Value;
+							switch (field.Type)
+							{
+							case ScriptFieldType::Float:	out << fieldInstance.GetValue<float>(); break;
+							case ScriptFieldType::Int32:	out << fieldInstance.GetValue<int>(); break;
+							case ScriptFieldType::UInt32:	out << fieldInstance.GetValue<uint32_t>(); break;
+							case ScriptFieldType::Int64:	out << fieldInstance.GetValue<int64_t>(); break;
+							case ScriptFieldType::Bool:		out << fieldInstance.GetValue<bool>(); break;
+							case ScriptFieldType::Short:	out << fieldInstance.GetValue<short>(); break;
+							case ScriptFieldType::UShort:	out << fieldInstance.GetValue<unsigned short>(); break;
+							case ScriptFieldType::Byte:		out << fieldInstance.GetValue<unsigned char>(); break;
+							case ScriptFieldType::SByte:	out << fieldInstance.GetValue<char>(); break;
+							case ScriptFieldType::Double:	out << fieldInstance.GetValue<double>(); break;
+							case ScriptFieldType::Vector2:	out << fieldInstance.GetValue<glm::vec2>(); break;
+							case ScriptFieldType::Vector3:	out << fieldInstance.GetValue<glm::vec3>(); break;
+							case ScriptFieldType::Vector4:	out << fieldInstance.GetValue<glm::vec4>(); break;
+							case ScriptFieldType::Entity:	out << fieldInstance.GetValue<float>(); break;
+							}
+
+							out << YAML::EndMap;
+						}
+
+						out << YAML::EndSeq;
 					}
-					out << YAML::EndMap; // Field
 				}
-				out << YAML::EndSeq;
+
+				out << YAML::EndMap;
 			}
+
+			out << YAML::EndSeq;
 
 			out << YAML::Key << "IsInherited" << YAML::Value << scriptComponent.isInherited;
 			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << scriptComponent.isInheritedInChildren;
 			out << YAML::EndMap; // ScriptComponent
-
 		}
+
 		if (entity.HasComponent<RigidBody2DComponent>())
 		{
 			auto& rb = entity.GetComponent<RigidBody2DComponent>();
@@ -376,7 +396,7 @@ namespace eg {
 				std::string name;
 				auto tagComponent = entity["TagComponent"];
 				if(tagComponent)
-					name =  tagComponent["Tag"].as<std::string>();
+					name = tagComponent["Tag"].as<std::string>();
 
 				EG_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 				ConsolePanel::Log("File: SceneSerializer.cpp - Deserialized entity with name " + name, ConsolePanel::LogType::Info);
@@ -439,53 +459,66 @@ namespace eg {
 				if (scriptComponent)
 				{
 					auto& sc = deserializedEntity.AddComponent<ScriptComponent>();
-					sc.Name = scriptComponent["Name"].as<std::string>();
-					
-					auto scriptFields = scriptComponent["ScriptFields"];
-					if (scriptFields)
+
+					auto scripts = scriptComponent["Scripts"];
+
+					for (auto script : scripts)
 					{
-						Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(sc.Name);
-						EG_CORE_ASSERT(entityClass, "Entity class not found!");
-						const auto& fields = entityClass->GetFields();
-						auto& entityFields = ScriptEngine::GetScriptFieldMap(deserializedEntity);
+						if(!script["ScriptUUID"])
+							continue;
 
-						if (entityClass) {
-							for (auto scriptField : scriptFields)
-							{
-								std::string fieldName = scriptField["Name"].as<std::string>();
-								std::string field = scriptField["Type"].as<std::string>();
-								ScriptFieldType fieldType = Utils::ScriptFieldTypeFromString(field);
+						UUID uuid = script["ScriptUUID"].as<UUID>();
 
-								ScriptFieldInstance& fieldInstance = entityFields[fieldName];
+						sc.Scripts.push_back(uuid);
 
-								if (fields.find(name) == fields.end()) {
-									EG_CORE_WARN("Field not found!");
-									//ConsolePanel::Log("File: SceneSerializer.cpp - Field not found!", ConsolePanel::LogType::Error);
-									continue;
-								}
-								fieldInstance.Field = fields.at(fieldName);
+						/*std::string name = ResourceDatabase::GetResourceName(uuid);*/
 
-								switch (fieldType)
-								{
-									READ_SCRIPT_FIELD(Float, float);
-									READ_SCRIPT_FIELD(Double, double);
-									READ_SCRIPT_FIELD(Bool, bool);
-									READ_SCRIPT_FIELD(Char, char);
-									READ_SCRIPT_FIELD(Byte, uint8_t);
-									READ_SCRIPT_FIELD(Short, int16_t);
-									READ_SCRIPT_FIELD(Int32, int32_t);
-									READ_SCRIPT_FIELD(Int64, int64_t);
-									READ_SCRIPT_FIELD(SByte, int8_t);
-									READ_SCRIPT_FIELD(UShort, uint16_t);
-									READ_SCRIPT_FIELD(UInt32, uint32_t);
-									READ_SCRIPT_FIELD(UInt64, uint64_t);
-									READ_SCRIPT_FIELD(Vector2, glm::vec2);
-									READ_SCRIPT_FIELD(Vector3, glm::vec3);
-									READ_SCRIPT_FIELD(Vector4, glm::vec4);
-									READ_SCRIPT_FIELD(Entity, UUID);
-								}
-							}
-						}
+						//auto scriptFields = script["ScriptFields"];
+						//if (scriptFields)
+						//{
+						//	Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(name);
+						//	EG_CORE_ASSERT(entityClass, "Entity class not found!");
+						//	const auto& fields = entityClass->GetFields();
+						//	auto& entityFields = ScriptEngine::GetScriptFieldMap(deserializedEntity);
+
+						//	if (entityClass) {
+						//		for (auto scriptField : scriptFields)
+						//		{
+						//			std::string fieldName = scriptField["Name"].as<std::string>();
+						//			std::string field = scriptField["Type"].as<std::string>();
+						//			ScriptFieldType fieldType = Utils::ScriptFieldTypeFromString(field);
+
+						//			ScriptFieldInstance& fieldInstance = entityFields[fieldName];
+
+						//			if (fields.find(name) == fields.end()) {
+						//				EG_CORE_WARN("Field not found!");
+						//				//ConsolePanel::Log("File: SceneSerializer.cpp - Field not found!", ConsolePanel::LogType::Error);
+						//				continue;
+						//			}
+						//			fieldInstance.Field = fields.at(fieldName);
+
+						//			switch (fieldType)
+						//			{
+						//				READ_SCRIPT_FIELD(Float, float);
+						//				READ_SCRIPT_FIELD(Double, double);
+						//				READ_SCRIPT_FIELD(Bool, bool);
+						//				READ_SCRIPT_FIELD(Char, char);
+						//				READ_SCRIPT_FIELD(Byte, uint8_t);
+						//				READ_SCRIPT_FIELD(Short, int16_t);
+						//				READ_SCRIPT_FIELD(Int32, int32_t);
+						//				READ_SCRIPT_FIELD(Int64, int64_t);
+						//				READ_SCRIPT_FIELD(SByte, int8_t);
+						//				READ_SCRIPT_FIELD(UShort, uint16_t);
+						//				READ_SCRIPT_FIELD(UInt32, uint32_t);
+						//				READ_SCRIPT_FIELD(UInt64, uint64_t);
+						//				READ_SCRIPT_FIELD(Vector2, glm::vec2);
+						//				READ_SCRIPT_FIELD(Vector3, glm::vec3);
+						//				READ_SCRIPT_FIELD(Vector4, glm::vec4);
+						//				READ_SCRIPT_FIELD(Entity, UUID);
+						//			}
+						//		}
+						//	}
+						//}
 					}
 
 					if(scriptComponent["IsInherited"])

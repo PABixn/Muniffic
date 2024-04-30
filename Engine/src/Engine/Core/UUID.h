@@ -6,12 +6,12 @@ namespace eg {
 	{
 	public:
 		UUID();
-		UUID(uint64_t uuid);
+		UUID(int64_t uuid);
 		UUID(const UUID&) = default;
 
-		operator uint64_t() const { return m_UUID; }
+		operator int64_t() const { return m_UUID; }
 	private:
-		uint64_t m_UUID;
+		int64_t m_UUID;
 	};
 
 }
@@ -24,7 +24,7 @@ namespace std {
 	{
 		std::size_t operator()(const eg::UUID& uuid) const
 		{
-			return (uint64_t)uuid;
+			return (int64_t)uuid;
 		}
 	};
 

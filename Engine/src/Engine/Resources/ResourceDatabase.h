@@ -32,6 +32,8 @@ namespace eg
 		static ResourceType GetResourceType(UUID uuid);
 		static std::string GetResourceName(UUID uuid);
 		static UUID GetResourceParentDirectory(UUID uuid);
+		static bool IsScriptEnabled(UUID uuid);
+		static void EnableScript(UUID uuid, bool enabled);
 
 		static void RemoveResource(UUID uuid, bool deleteFile = false);
 		static void RemoveResource(UUID uuid, ResourceType resourceType, bool deleteFile = false);

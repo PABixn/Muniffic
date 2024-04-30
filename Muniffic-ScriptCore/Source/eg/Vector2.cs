@@ -45,14 +45,80 @@ namespace eg
             return new Vector2(a.X + b.X, a.Y + b.Y);
         }
 
+        static public Vector2 operator +(Vector2 a, float b)
+        {
+            return new Vector2(a.X + b, a.Y + b);
+        }
+
         static public Vector2 operator -(Vector2 a, Vector2 b)
         {
             return new Vector2(a.X - b.X, a.Y - b.Y);
         }
 
+        static public Vector2 operator -(Vector2 a, float b)
+        {
+            return new Vector2(a.X - b, a.Y - b);
+        }
+
         static public Vector2 operator *(Vector2 a, float b)
         {
             return new Vector2(a.X * b, a.Y * b);
+        }
+
+        static public Vector2 operator / (Vector2 a, float b)
+        {
+            return new Vector2(a.X / b, a.Y / b);
+        }
+
+        public static float LengthSquared(Vector2 vector)
+        {
+            return vector.X * vector.X + vector.Y * vector.Y;
+        }
+
+        public static float Length(Vector2 vector)
+        {
+            return (float)Math.Sqrt(LengthSquared(vector));
+        }
+
+        public static Vector2 NormalizeTo(Vector2 vector, float length)
+        {
+            float currentLength = Length(vector);
+
+            if (currentLength == 0)
+            {
+                return Vector2.Zero;
+            }
+
+            float scale = length / currentLength;
+            vector.X *= scale;
+            vector.Y *= scale;
+
+            return vector;
+        }
+
+        public void NormalizeTo(float length)
+        {
+            float currentLength = Length();
+            if (currentLength == 0)
+            {
+                return;
+            }
+            float scale = length / currentLength;
+            X *= scale;
+            Y *= scale;
+        }
+
+        public void Normalize()
+        {
+            NormalizeTo(1.0f);
+        }
+
+        public static Vector2 FindVector(Vector2 from, Vector2 to)
+        {
+            Vector2 vector = new Vector2();
+            vector.X = to.X - from.X;
+            vector.Y = to.Y - from.Y;
+            return vector; 
         }
     };
 }

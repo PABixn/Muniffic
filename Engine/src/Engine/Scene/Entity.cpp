@@ -92,7 +92,7 @@ namespace eg {
 
 		auto& scriptComponent = entity.GetComponent<ScriptComponent>();
 
-		scriptComponent.Name = component->Name;
+		scriptComponent.Scripts = component->Scripts;
 		scriptComponent.isInherited = component->isInherited;
 		scriptComponent.isInheritedInChildren = component->isInheritedInChildren;
 		ConsolePanel::Log("File: Entity.cpp - Script component set successfully", ConsolePanel::LogType::Info);

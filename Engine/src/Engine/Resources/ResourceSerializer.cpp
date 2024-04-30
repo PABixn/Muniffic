@@ -17,6 +17,7 @@ namespace eg
 	std::unordered_map<UUID, SpriteAtlasResourceData*> ResourceSerializer::SpriteAtlasResourceDataCache;
 	std::unordered_map<UUID, SubTextureResourceData*> ResourceSerializer::SubTextureResourceDataCache;
 	std::unordered_map<UUID, FontResourceData*> ResourceSerializer::FontResourceDataCache;
+	std::unordered_map<UUID, ScriptResourceData*> ResourceSerializer::ScriptResourceDataCache;
 	std::unordered_map<UUID, ResourceType> ResourceSerializer::ResourceTypeInfo;
 
 	bool ResourceSerializer::DeserializeResourceCache()
@@ -28,8 +29,9 @@ namespace eg
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
 		std::filesystem::path subTextureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SubTexture);
 		std::filesystem::path fontMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Font);
+		std::filesystem::path scriptMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Script);
 
-		YAML::Node textureNode, animationNode, spriteAtlasNode, subTextureNode, fontNode;
+		YAML::Node textureNode, animationNode, spriteAtlasNode, subTextureNode, fontNode, scriptNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
 		{
@@ -63,6 +65,13 @@ namespace eg
 		{
 			std::filesystem::create_directories(fontMetadataPath.parent_path());
 			std::ofstream file(fontMetadataPath, std::ios::trunc);
+			file.close();
+		}
+
+		if (!std::filesystem::exists(scriptMetadataPath))
+		{
+			std::filesystem::create_directories(scriptMetadataPath.parent_path());
+			std::ofstream file(scriptMetadataPath, std::ios::trunc);
 			file.close();
 		}
 
@@ -116,11 +125,22 @@ namespace eg
 			return false;
 		}
 
+		try
+		{
+			scriptNode = YAML::LoadFile(scriptMetadataPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", scriptMetadataPath, e.what());
+			return false;
+		}
+
 		auto textureResources = textureNode["Resources"];
 		auto animationResources = animationNode["Resources"];
 		auto spriteAtlasResources = spriteAtlasNode["Resources"];
 		auto subtextureResource = subTextureNode["Resources"];
 		auto fontResources = fontNode["Resources"];
+		auto scriptResources = scriptNode["Resources"];
 
 		if (fontResources)
 		{
@@ -262,6 +282,29 @@ namespace eg
 					CacheSpriteAtlas(uuid, data);
 				}
 			}
+
+			if (scriptResources)
+			{
+				for (auto resource : scriptResources)
+				{
+					UUID uuid = resource["UUID"].as<uint64_t>();
+
+					ScriptResourceData* data = new ScriptResourceData();
+
+					if(resource["ParentDirectory"])
+						data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+					else
+						data->ParentDirectory = 0;
+					data->ResourceName = resource["ResourceName"].as<std::string>();
+					if(resource["IsEnabled"])
+						data->IsEnabled = resource["IsEnabled"].as<bool>();
+					else
+						data->IsEnabled = true;
+					data->Extension = resource["Extension"].as<std::string>();
+
+					CacheScript(uuid, data);
+				}
+			}
 		}
 	}
 
@@ -274,9 +317,10 @@ namespace eg
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
 		std::filesystem::path subTextureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SubTexture);
 		std::filesystem::path fontMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Font);
+		std::filesystem::path scriptMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Script);
 
 
-		YAML::Emitter textureOut, animationOut, spriteAtlasOut, subtextureOut, fontOut;
+		YAML::Emitter textureOut, animationOut, spriteAtlasOut, subtextureOut, fontOut, scriptOut;
 
 		if(!std::filesystem::exists(textureMetadataPath.parent_path()))
 			std::filesystem::create_directories(textureMetadataPath.parent_path());
@@ -292,6 +336,9 @@ namespace eg
 
 		if (!std::filesystem::exists(fontMetadataPath.parent_path()))
 			std::filesystem::create_directories(fontMetadataPath.parent_path());
+
+		if (!std::filesystem::exists(scriptMetadataPath.parent_path()))
+			std::filesystem::create_directories(scriptMetadataPath.parent_path());
 
 		textureOut << YAML::BeginMap;
 		textureOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
@@ -404,23 +451,43 @@ namespace eg
 		fontOut << YAML::EndSeq;
 		fontOut << YAML::EndMap;
 
+		scriptOut << YAML::BeginMap;
+		scriptOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
+
+		for (auto& [key, value] : ScriptResourceDataCache)
+		{
+			scriptOut << YAML::BeginMap;
+			scriptOut << YAML::Key << "UUID" << YAML::Value << key;
+			scriptOut << YAML::Key << "ParentDirectory" << YAML::Value << value->ParentDirectory;
+			scriptOut << YAML::Key << "ResourceName" << YAML::Value << value->ResourceName;
+			scriptOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
+			scriptOut << YAML::Key << "IsEnabled" << YAML::Value << value->IsEnabled;
+			scriptOut << YAML::EndMap;
+		}
+
+		scriptOut << YAML::EndSeq;
+		scriptOut << YAML::EndMap;
+
 		std::ofstream textureFile(textureMetadataPath, std::ios::trunc);
 		std::ofstream animationFile(animationMetadataPath, std::ios::trunc);
 		std::ofstream spriteAtlasFile(spriteAtlasMetadataPath, std::ios::trunc);
 		std::ofstream subTextureFile(subTextureMetadataPath, std::ios::trunc);
 		std::ofstream fontFile(fontMetadataPath, std::ios::trunc);
+		std::ofstream scriptFile(scriptMetadataPath, std::ios::trunc);
 
 		textureFile << textureOut.c_str();
 		animationFile << animationOut.c_str();
 		spriteAtlasFile << spriteAtlasOut.c_str();
 		subTextureFile << subtextureOut.c_str();
 		fontFile << fontOut.c_str();
+		scriptFile << scriptOut.c_str();
 
 		textureFile.close();
 		animationFile.close();
 		spriteAtlasFile.close();
 		subTextureFile.close();
 		fontFile.close();
+		scriptFile.close();
 	}
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
@@ -499,6 +566,21 @@ namespace eg
 		data->Type = ResourceType::Font;
 		FontResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Font;
+		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
+	}
+
+	void ResourceSerializer::CacheScript(UUID uuid, ScriptResourceData* data)
+	{
+		if (ScriptResourceDataCache.find(uuid) != ScriptResourceDataCache.end())
+		{
+			if (ScriptResourceDataCache[uuid] != nullptr)
+				delete ScriptResourceDataCache[uuid];
+			ScriptResourceDataCache.erase(uuid);
+		}
+
+		data->Type = ResourceType::Script;
+		ScriptResourceDataCache[uuid] = data;
+		ResourceTypeInfo[uuid] = ResourceType::Script;
 		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
 	}
 

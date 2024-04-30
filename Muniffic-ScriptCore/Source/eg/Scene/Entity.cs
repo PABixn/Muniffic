@@ -21,7 +21,8 @@ namespace eg
         {
             entity = new Entity(0);
         }
-        internal DefaultBehaviour(ulong id)
+
+        internal DefaultBehaviour(long id)
         {
             entity = new Entity(id);
         }
@@ -54,23 +55,64 @@ namespace eg
             T component = new T() { Entity = entity };
             return component;
         }
+
+        public T AddComponent<T>() where T : Component, new()
+        {
+            Type componentType = typeof(T);
+            InternalCalls.Entity_AddComponent(entity.ID, componentType);
+            return GetComponent<T>();
+        }
+
+        public void RemoveComponent<T>() where T : Component, new()
+        {
+            Type componentType = typeof(T);
+            InternalCalls.Entity_RemoveComponent(entity.ID, componentType);
+        }
     }
 
-    public class Entity
-    {
+    public struct Entity
+    { 
         /// <summary>
         /// UUID of the entity, given by the engine at creation.
         /// </summary>
-        public readonly ulong ID;
+        public long ID;
 
-        protected Entity()
+        public Entity(long id)
         {
-            ID = 0;
+            this.ID = id;
         }
-        internal Entity(ulong id)
+
+        #region Operators
+        public static bool operator ==(Entity a, Entity b)
         {
-            ID = id;
+            return a.ID == b.ID;
         }
+
+        public static bool operator !=(Entity a, Entity b)
+        {
+            return a.ID != b.ID;
+        }
+
+        public static bool operator ==(Entity a, long b)
+        {
+            return a.ID == b;
+        }
+
+        public static bool operator !=(Entity a, long b)
+        {
+            return a.ID != b;
+        }
+
+        public static bool operator ==(long a, Entity b)
+        {
+            return a == b.ID;
+        }
+
+        public static bool operator !=(long a, Entity b)
+        {
+            return a != b.ID;
+        }
+        #endregion
 
         #region Instance
 
@@ -96,9 +138,9 @@ namespace eg
         {
             get
             {
-                ulong parentID = InternalCalls.Entity_GetParent(ID);
+                long parentID = InternalCalls.Entity_GetParent(ID);
                 if (parentID == 0)
-                    return null;
+                    return new Entity(0);
 
                 return new Entity(parentID);
             }
@@ -151,7 +193,7 @@ namespace eg
         /// Sets the parent entity of the current entity.
         /// </summary>
         /// <param name="entity">The UUID of the parent entity.</param>
-        public void SetParent(ulong entity)
+        public void SetParent(long entity)
         {
             InternalCalls.Entity_SetParent(ID, entity);
         }
@@ -171,7 +213,7 @@ namespace eg
         /// </summary>
         /// <param name="entity">The entity to check.</param>
         /// <returns>true if the current entity is a child of the specified entity; otherwise, false.</returns>
-        public bool IsChildOfAny(ulong entity)
+        public bool IsChildOfAny(long entity)
         {
             return InternalCalls.Entity_IsChildOfAny(ID, entity);
         }
@@ -191,7 +233,7 @@ namespace eg
         /// </summary>
         /// <param name="entity">The UUID of the entity to check.</param>
         /// <returns>true if the current entity is a child of the specified entity; otherwise, false.</returns>
-        public bool IsChild(ulong entity)
+        public bool IsChild(long entity)
         {
             return InternalCalls.Entity_IsChild(ID, entity);
         }
@@ -209,7 +251,7 @@ namespace eg
         /// Adds the specified entity as a child of the current entity.
         /// </summary>
         /// <param name="entity">The UUID of the entity to add as a child.</param>
-        public void AddChild(ulong entity)
+        public void AddChild(long entity)
         {
             InternalCalls.Entity_AddChild(ID, entity);
         }
@@ -227,7 +269,7 @@ namespace eg
         /// Removes the specified entity as a child of the current entity.
         /// </summary>
         /// <param name="entity">The UUID of the entity to remove as a child.</param>
-        public void RemoveChild(ulong entity)
+        public void RemoveChild(long entity)
         {
             InternalCalls.Entity_RemoveChild(ID, entity);
         }
@@ -273,16 +315,17 @@ namespace eg
         /// <returns>A list of Entity objects representing the children entities.</returns>
         public List<Entity> GetAnyChildren()
         {
-            string children = InternalCalls.Entity_GetAnyChildren(ID);
+            IntPtr ptr = InternalCalls.Entity_GetAnyChildren(ID, out int size);
 
-            string[] entityIDs = children.Split(',');
+            long[] managedArray = new long[size];
+
+            Marshal.Copy(ptr, managedArray, 0, size);
 
             List<Entity> entities = new List<Entity>();
 
-            foreach (string entityID in entityIDs)
+            foreach (long entityID in managedArray)
             {
-                if (entityID != string.Empty)
-                    entities.Add(new Entity(ulong.Parse(entityID)));
+                entities.Add(new Entity(entityID));
             }
 
             return entities;
@@ -294,16 +337,17 @@ namespace eg
         /// <returns>A list of Entity objects representing the children entities.</returns>
         public List<Entity> GetChildren()
         {
-            string children = InternalCalls.Entity_GetChildren(ID);
+            IntPtr ptr = InternalCalls.Entity_GetChildren(ID, out int size);
 
-            string[] entityIDs = children.Split(',');
+            long[] managedArray = new long[size];
+
+            Marshal.Copy(ptr, managedArray, 0, size);
 
             List<Entity> entities = new List<Entity>();
 
-            foreach (string entityID in entityIDs)
+            foreach (long entityID in managedArray)
             {
-                if (entityID != string.Empty)
-                    entities.Add(new Entity(ulong.Parse(entityID)));
+                entities.Add(new Entity(entityID));
             }
 
             return entities;
@@ -381,7 +425,7 @@ namespace eg
         /// </summary>
         /// <param name="ID">The ID of the entity.</param>
         /// <returns>true if the entity exists; otherwise, false.</returns>
-        public static bool Exists(ulong ID)
+        public static bool Exists(long ID)
         {
             return InternalCalls.Entity_Exists(ID);
         }
@@ -391,10 +435,10 @@ namespace eg
         /// </summary>
         /// <param name="ID">The ID of the entity.</param>
         /// <returns>The entity with the specified ID, or null if the entity does not exist.</returns>
-        public static Entity FindEntityByID(ulong ID)
+        public static Entity FindEntityByID(long ID)
         {
             if (!Exists(ID))
-                return null;
+                return new Entity(0);
 
             return new Entity(ID);
         }
@@ -406,9 +450,9 @@ namespace eg
         /// <returns>Entity reference or null if entity has not been found.</returns>
         public static Entity FindEntityByName(string name)
         {
-            ulong entityID = InternalCalls.Entity_FindEntityByName(name);
+            long entityID = InternalCalls.Entity_FindEntityByName(name);
             if (entityID == 0)
-                return null;
+                return new Entity(0);
 
             return new Entity(entityID);
         }
@@ -420,9 +464,9 @@ namespace eg
         /// <returns>Entity reference or null if entity has not been created.</returns>
         public static Entity Create(string name)
         {
-            ulong entityID = InternalCalls.Entity_Create(name);
+            long entityID = InternalCalls.Entity_Create(name);
             if (entityID == 0)
-                return null;
+                return new Entity(0);
 
             return new Entity(entityID);
         }
@@ -441,7 +485,7 @@ namespace eg
         /// Destroys entity.
         /// </summary>
         /// <param name="ID">UUID of the entity that should be destroyed.</param>
-        public static void Destroy(ulong ID)
+        public static void Destroy(long ID)
         {
             InternalCalls.Entity_Destroy(ID);
         }

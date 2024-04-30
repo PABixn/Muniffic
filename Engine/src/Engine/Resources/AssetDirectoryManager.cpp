@@ -87,6 +87,8 @@ namespace eg
 		AssetDirectory* spriteAtlas = new AssetDirectory(UUID(), "SpriteAtlas", rootUUID);
 
 		AssetDirectory* shaders = new AssetDirectory(UUID(), "Shaders", rootUUID);
+
+		AssetDirectory* scripts = new AssetDirectory(UUID(), "Scripts", rootUUID);
 	}
 
 	bool AssetDirectoryManager::moveAssetDirectory(UUID assetDirectoryUUID, UUID newParentUUID)
@@ -191,7 +193,7 @@ namespace eg
 		assetDirectory->addAsset(assetUUID);
 	}
 
-	bool AssetDirectoryManager::removeAsset(UUID assetDirectoryUUID, UUID assetUUID)
+	bool AssetDirectoryManager::removeAsset(UUID assetDirectoryUUID, UUID assetUUID, bool deleteFile)
 	{
 		if (assetDirectories.find(assetDirectoryUUID) == assetDirectories.end())
 		{
@@ -212,7 +214,7 @@ namespace eg
 		}
 
 		assets.erase(it);
-		ResourceDatabase::RemoveResource(assetUUID);
+		ResourceDatabase::RemoveResource(assetUUID, deleteFile);
 
 		return true;
 	}
