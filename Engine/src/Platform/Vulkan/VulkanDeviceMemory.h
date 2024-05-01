@@ -12,6 +12,7 @@ namespace eg {
 		~VulkanDeviceMemory();
 
 		VkDeviceMemory GetDeviceMemory() const { return m_deviceMemory; }
+		static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	private:
 		VkDeviceMemory m_deviceMemory;
 	};

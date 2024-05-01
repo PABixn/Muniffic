@@ -8,9 +8,8 @@ namespace eg {
 
 	class VulkanSurface {
 	public:
-		VulkanSurface();
+		VulkanSurface(const VkInstance& instance);
 		~VulkanSurface();
-		void CreateSurface(const VkInstance& instance);
 		void Cleanup(const VkInstance& instance);
 		const VkSurfaceKHR& GetSurface() { return m_Surface; }
 		VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);

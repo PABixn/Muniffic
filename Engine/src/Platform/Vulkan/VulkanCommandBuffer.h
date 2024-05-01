@@ -10,8 +10,11 @@ namespace eg {
 	public:
 		VulkanCommandBuffer BeginSingleTimeCommands(VkDevice logicalDevice,  VkCommandPool commandPool);
 		void EndSingleTimeCommands(VkDevice logicalDevice, VkQueue graphicsQueue, VkCommandPool commandPool);
+		void RecordCommandBuffer(VkDevice logicalDevice, VkCommandPool commandPool, VkRenderPass renderPass, VkExtent2D swapChainextent,VkFramebuffer framebuffer, VkPipeline pipeline, VkPipelineLayout pipelineLayout, VkDescriptorSet descriptorSet, VkBuffer vertexBuffer, VkBuffer indexBuffer, uint32_t indexCount);
 
 		VkCommandBuffer getCommandBuffer() const { return m_commandBuffer; }
+
+		operator VkCommandBuffer() const { return m_commandBuffer; }
 	private:
 		VkCommandBuffer m_commandBuffer;
 	};

@@ -13,6 +13,8 @@ namespace eg {
 		~VulkanImage();
 
 		void TransitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
+		static VkFormat FindSupportedFormat(VkDevice device, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+		static bool HasStencilComponent(VkFormat format);
 
 		VkImage GetImage() const { return m_Image; }
 	private:

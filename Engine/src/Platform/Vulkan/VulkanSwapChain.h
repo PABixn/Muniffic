@@ -43,5 +43,6 @@ namespace eg {
 		std::vector<VulkanImageView> m_ImageViews;
 		VulkanImage m_ColorImage;
 		VulkanImage m_DepthImage;
+		std::vector<VkFramebuffer> m_Framebuffers;
 	};
 }

@@ -6,7 +6,7 @@
 
 namespace eg {
 
-	struct QueueFamilyIndices {
+	struct VulkanQueueFamilyIndices {
 		std::optional<uint32_t> graphicsFamily;
 		std::optional<uint32_t> presentFamily;
 
@@ -23,7 +23,7 @@ namespace eg {
 		void Cleanup();
 		const VkQueue& GetQueue() { return m_Queue; }
 
-		static QueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
+		static VulkanQueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
 	private:
 		VkQueue m_Queue;
 	};
