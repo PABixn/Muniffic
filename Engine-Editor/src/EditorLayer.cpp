@@ -162,7 +162,7 @@ namespace eg
 		}
 
 		OnOverlayRender();
-		m_FrameBuffer->Unbind();
+		//m_FrameBuffer->Unbind();
 	}
 
 	void EditorLayer::OnImGuiRender()

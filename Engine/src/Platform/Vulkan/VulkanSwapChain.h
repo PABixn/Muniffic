@@ -3,7 +3,7 @@
 #include "Engine/Core/Core.h"
 #include "VulkanQueue.h"
 #include "VulkanImageView.h"
-#include "VulkanImage.h"
+#include "VulkanSwapChainImage.h"
 
 #include <GLFW/glfw3.h>
 
@@ -30,6 +30,7 @@ namespace eg {
 		
 		void RecreateSwapChain(const VkDevice& device, const VkSurfaceKHR& surface, const VkPhysicalDevice& physicalDevice, const VkExtent2D& extent);
 		
+		VkSampleCountFlagBits GetMaxUsableSampleCount();
 
 		void Cleanup(const VkDevice& device);
 		const VkSwapchainKHR& GetSwapchain() { return m_Swapchain; }
@@ -41,8 +42,9 @@ namespace eg {
 		VkFormat m_ImageFormat;
 		VkExtent2D m_Extent;
 		std::vector<VulkanImageView> m_ImageViews;
-		VulkanImage m_ColorImage;
-		VulkanImage m_DepthImage;
+		VulkanSwapChainImage m_ColorImage;
+		VulkanSwapChainImage m_DepthImage;
 		std::vector<VkFramebuffer> m_Framebuffers;
+		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
 	};
 }

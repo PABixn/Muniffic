@@ -10,7 +10,7 @@ namespace eg {
 		VulkanDescriptorPool();
 		~VulkanDescriptorPool();
 
-		void createPool(VkDevice device, uint32_t maxSets, const std::vector<VkDescriptorPoolSize>& poolSizes);
+		void createPool(VkDevice logicalDevice);
 		void destroyPool(VkDevice device);
 
 		VkDescriptorPool getPool() const { return m_Pool; }

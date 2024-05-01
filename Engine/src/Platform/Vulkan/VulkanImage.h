@@ -1,25 +1,35 @@
 #pragma once
 #define GLFW_INCLUDE_VULKAN
-#include "Engine/Core/Core.h"
-#include "VulkanImageView.h"
-#include "VulkanDeviceMemory.h"
-
+#include "Engine/Renderer/Texture.h"
 #include <GLFW/glfw3.h>
 
-namespace eg {
-	class VulkanImage {
+namespace eg{
+	class VulkanImage: public Texture2D {
 	public:
-		VulkanImage(VkDevice logicalDevice,  uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
+		VulkanImage();
 		~VulkanImage();
 
-		void TransitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
-		static VkFormat FindSupportedFormat(VkDevice device, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
-		static bool HasStencilComponent(VkFormat format);
+		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(const UUID& uuid);
+		static Ref<Texture2D> Create(const TextureSpecification& specification);
 
-		VkImage GetImage() const { return m_Image; }
+		void createImage();
+		void createImageView(VkFormat format, VkImageAspectFlags aspectFlags);
+		void createSampler();
+		void transitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout);
+		void copyBufferToImage(VkBuffer buffer, uint32_t width, uint32_t height);
+		void cleanup();
+		VkImage getImage();
+		VkImageView getImageView();
+		VkSampler getSampler();
+
 	private:
-		VkImage m_Image;
-		VulkanDeviceMemory m_ImageMemory;
-		VulkanImageView m_ImageView;
+		UUID m_Id;
+		VkImage image;
+		VkDeviceMemory imageMemory;
+		VkImageView imageView;
+		TextureSpecification m_Specification;
+		uint32_t m_Width, m_Height;
+		
 	};
 }

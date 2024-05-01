@@ -7,7 +7,7 @@
 namespace eg {
 	class VulkanImageView {
 	public:
-		VulkanImageView(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+		VulkanImageView(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
 		~VulkanImageView();
 
 		VkImageView GetImageView() const { return imageView; }

@@ -41,7 +41,8 @@ namespace eg
 		}
 	private:
 		
-	private:TextureSpecification m_Specification;
+	private:
+		TextureSpecification m_Specification;
 
 		std::string m_Path;
 		bool m_IsLoaded = false;

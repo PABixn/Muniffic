@@ -13,6 +13,7 @@ namespace eg {
 
 			void CopyTo(VkBuffer dstBuffer, VkDeviceSize size);
 			void CopyFrom(VkBuffer dstBuffer, VkDeviceSize size);
+			static void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 			VkBuffer GetBuffer() { return m_Buffer; }
 			VulkanDeviceMemory GetBufferMemory() { return m_BufferMemory; }

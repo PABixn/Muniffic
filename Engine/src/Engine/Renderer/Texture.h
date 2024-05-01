@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Core/UUID.h"
+#include "Engine/Core/Core.h"
 namespace eg {
 
 	enum class ImageFormat
