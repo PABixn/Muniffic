@@ -23,7 +23,7 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		if (!ResourceDatabase::FindResourceData(id, ResourceType::SubTexture))
 			return nullptr;
-		SubTextureResourceData *subTexData = (SubTextureResourceData*)ResourceDatabase::GetResourceData(id, ResourceType::SubTexture);
+		SubTextureResourceData *subTexData = (SubTextureResourceData*)ResourceDatabase::GetResourceData(id);
 
 		Ref<SubTexture2D> subTex = CreateRef<SubTexture2D>();
 		Ref<Texture2D> texture = Texture2D::Create(subTexData->Texture);

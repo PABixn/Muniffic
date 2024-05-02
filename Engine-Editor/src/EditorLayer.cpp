@@ -19,19 +19,21 @@
 
 namespace eg
 {
-	static Ref<Font> s_Font;
+	static UUID s_Font;
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
-		s_Font = Font::GetDefaultFont();
+		
 	}
 
 	constexpr float AxisLength = 100000000.0f;
 
 	void EditorLayer::OnAttach()
 	{
+		
+
 		ResourceSystemConfig resourceSystemConfig;
-		resourceSystemConfig.MaxLoaderCount = 3;
+		resourceSystemConfig.MaxLoaderCount = 4;
 		resourceSystemConfig.ResourceDirectory = "../resources";
 
 		if (!resourceSystemInit(resourceSystemConfig))
@@ -72,6 +74,7 @@ namespace eg
 
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		Renderer2D::SetLineThickness(3.0f);
+		s_Font = Font::GetDefaultFontUUID();
 	}
 
 	void EditorLayer::OnDetach()
@@ -126,7 +129,7 @@ namespace eg
 		case SceneState::Play:
 		{
 			// Update
-			m_ActiveScene->OnUpdateRuntime(ts);
+			m_RuntimeScene->OnUpdateRuntime(ts);
 
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
@@ -138,7 +141,7 @@ namespace eg
 		{
 			m_EditorCamera.OnUpdate(ts);
 
-			m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera);
+			m_RuntimeScene->OnUpdateSimulation(ts, m_EditorCamera);
 			break;
 		}
 		}
@@ -256,24 +259,7 @@ namespace eg
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
-		
-		m_ContentBrowserPanel->SetDeleteFilePanel(m_DeleteFilePanel);
-		m_ContentBrowserPanel->SetRenameFolderPanel(m_RenameFolderPanel);
-		m_ContentBrowserPanel->SetDeleteDirectoryPanel(m_DeleteDirectoryPanel);
-		m_ContentBrowserPanel->SetRenameResourcePanel(m_RenameResourcePanel);
 		m_ContentBrowserPanel->OnImGuiRender();
-
-		if(m_DeleteFilePanel->IsShown())
-			m_DeleteFilePanel->OnImGuiRender();
-
-		if(m_RenameFolderPanel->IsShown())
-			m_RenameFolderPanel->OnImGuiRender();
-		
-		if (m_DeleteDirectoryPanel->IsShown())
-			m_DeleteDirectoryPanel->OnImGuiRender();
-
-		if (m_RenameResourcePanel->IsShown())
-			m_RenameResourcePanel->OnImGuiRender();
 		m_ConsolePanel->OnImGuiRender();
 		
 		if ((*(this->m_UnsavedChangesPanel)).GetUnsavedChangesPanelRender()) {
@@ -303,7 +289,6 @@ namespace eg
 			Commands::ExecuteRawValueCommand(&m_ShowAxis, !m_ShowAxis, "Show Axis");
 		if(ImGui::Checkbox("Show Grid", &m_ShowGrid))
 			Commands::ExecuteRawValueCommand(&m_ShowGrid, !m_ShowGrid, "Show Grid");
-		ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
@@ -701,8 +686,8 @@ namespace eg
 
 	void EditorLayer::NewScene()
 	{
-		m_EditorScene = CreateRef<Scene>();
-		m_ActiveScene = m_EditorScene;
+		m_ActiveScene = CreateRef<Scene>();
+		m_RuntimeScene = m_ActiveScene;
 
 		if (m_SceneState != SceneState::Edit)
 			OnSceneStop();
@@ -741,8 +726,8 @@ namespace eg
 		SceneSerializer serializer(newScene);
 		if (serializer.Deserialize(path.string()))
 		{
-			m_EditorScene = newScene;
 			m_ActiveScene = newScene;
+			m_RuntimeScene = m_ActiveScene;
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 			m_ActiveScenePath = path;
 		}
@@ -804,12 +789,9 @@ namespace eg
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+			m_ContentBrowserPanel->InitPanels();
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
-			m_DeleteFilePanel = new DeleteFilePanel();
-			m_RenameFolderPanel = new RenameFolderPanel();
-			m_DeleteDirectoryPanel = new DeleteDirectoryPanel();
-			m_RenameResourcePanel = new RenameResourcePanel();
-			m_ConsolePanel = CreateScope<ConsolePanel>();
+
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		}
 		else
@@ -837,17 +819,16 @@ namespace eg
 
 	void EditorLayer::OnScenePlay()
 	{
-		if (!m_EditorScene)
-			return;
+		if (!m_RuntimeScene)
+			m_RuntimeScene = CreateRef<Scene>();
 		if (m_SceneState == SceneState::Simulate)
 			OnSceneStop();
 		m_SceneState = SceneState::Play;
-		ConsolePanel::ClearLogs();
-		ConsolePanel::Log("File: EditorLayer.cpp - Scene started", ConsolePanel::LogType::Info);
-		m_ActiveScene = Scene::Copy(m_EditorScene);
-		m_ActiveScene->OnRuntimeStart();
 
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		m_RuntimeScene = Scene::Copy(m_ActiveScene);
+		m_RuntimeScene->OnRuntimeStart();
+		ConsolePanel::Log("File: EditorLayer.cpp - Scene started", ConsolePanel::LogType::Info);
+		m_SceneHierarchyPanel.SetContext(m_RuntimeScene);
 	}
 
 	void EditorLayer::OnSceneSimulate()
@@ -857,12 +838,10 @@ namespace eg
 
 		m_SceneState = SceneState::Simulate;
 
-		m_ActiveScene = Scene::Copy(m_EditorScene);
-		m_ActiveScene->OnSimulationStart();
+		m_RuntimeScene = Scene::Copy(m_ActiveScene);
+		m_RuntimeScene->OnSimulationStart();
 		ConsolePanel::Log("File: EditorLayer.cpp - Simulation started", ConsolePanel::LogType::Info);
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-		
-
+		m_SceneHierarchyPanel.SetContext(m_RuntimeScene);
 	}
 
 	void EditorLayer::OnScenePause()
@@ -883,9 +862,9 @@ namespace eg
 			m_ActiveScene->OnSimulationStop();
 
 		m_SceneState = SceneState::Edit;
-		m_ActiveScene->OnRuntimeStop();
-		m_ActiveScene = m_EditorScene;
+		m_RuntimeScene->OnRuntimeStop();
 		ConsolePanel::Log("File: EditorLayer.cpp - Scene stopped", ConsolePanel::LogType::Info);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnDuplicateEntity()
@@ -897,7 +876,7 @@ namespace eg
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity)
 		{
-			Entity newEntity = m_EditorScene->DuplicateEntity(selectedEntity);
+			Entity newEntity = m_ActiveScene->DuplicateEntity(selectedEntity);
 			m_SceneHierarchyPanel.SetSelectedEntity(newEntity);
 			ConsolePanel::Log("File: EditorLayer.cpp - Entity duplicated", ConsolePanel::LogType::Info);
 		}

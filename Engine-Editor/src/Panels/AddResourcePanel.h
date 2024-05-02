@@ -25,5 +25,7 @@ namespace eg {
 
 		bool m_showResourcePanel = false;
 		std::filesystem::path m_ResourcePath;
+		bool m_ImagePanelinitialized = false;
+		bool m_AnimationPanelinitialized = false;
 	};
 }

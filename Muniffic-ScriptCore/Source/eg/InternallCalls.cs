@@ -85,6 +85,9 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void Entity_SetName(ulong ID, string name);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Entity_Exists(ulong ID);
         #endregion
 
         #region Transform

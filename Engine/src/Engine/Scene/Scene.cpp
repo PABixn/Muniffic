@@ -502,6 +502,11 @@ namespace eg {
 		return {};
 	}
 
+	bool Scene::EntityExists(UUID uuid)
+	{
+		return m_EntityMap.find(uuid) != m_EntityMap.end();
+	}
+
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		auto view = m_Registry.view<CameraComponent>();

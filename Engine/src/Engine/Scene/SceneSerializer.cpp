@@ -306,6 +306,7 @@ namespace eg {
 			out << YAML::Key << "LineSpacing" << YAML::Value << textComponent.LineSpacing;
 			out << YAML::Key << "IsInherited" << YAML::Value << textComponent.isInherited;
 			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << textComponent.isInheritedInChildren;
+			out << YAML::Key << "Font" << YAML::Value << textComponent.FontAsset;
 			out << YAML::EndMap; // TextComponent
 		}
 
@@ -530,9 +531,8 @@ namespace eg {
 
 						if (ResourceDatabase::FindResourceData(textureUUID, ResourceType::Image))
 						{
-							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(textureUUID, ResourceType::Image);
-							std::filesystem::path finalPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
-							src.Texture = Texture2D::Create(finalPath.string());
+							src.TextureUUID = textureUUID;
+							src.Texture = ResourceDatabase::GetTextureRuntimeResource(textureUUID);
 						}
 						else
 						{
@@ -559,12 +559,10 @@ namespace eg {
 
 						if (ResourceDatabase::FindResourceData(uuid, ResourceType::Image))
 						{
-							TextureResourceData* texData = (TextureResourceData*)ResourceDatabase::GetResourceData(uuid, ResourceType::Image);
-							std::filesystem::path texturePath = texData->ResourcePath / std::string(texData->ImageName + texData->Extension);
-							auto path = Project::GetAssetFileSystemPath(texturePath);
+							std::filesystem::path texturePath = ResourceDatabase::GetResourcePath(uuid);
 							auto minCoords = spriteRendererComponentST["MinCoords"].as<glm::vec2>();
 							auto maxCoords = spriteRendererComponentST["MaxCoords"].as<glm::vec2>();
-							Ref<Texture2D> texture = Texture2D::Create(path.string());
+							Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 							src.SubTexture = CreateRef<SubTexture2D>(texture, minCoords, maxCoords);
 						}
 						else
@@ -676,6 +674,15 @@ namespace eg {
 					tc.Color = textComponent["Color"].as<glm::vec4>();
 					tc.Kerning = textComponent["Kerning"].as<float>();
 					tc.LineSpacing = textComponent["LineSpacing"].as<float>();
+
+					if(textComponent["Font"])
+						tc.FontAsset = textComponent["Font"].as<UUID>();
+
+					if (!ResourceDatabase::FindResourceData(tc.FontAsset))
+						tc.FontAsset = Font::GetDefaultFontUUID();
+
+
+					tc.RuntimeFont = ResourceDatabase::GetFontRuntimeResource(tc.FontAsset);
 
 					if(textComponent["IsInherited"])
 						tc.isInherited = textComponent["IsInherited"].as<bool>();

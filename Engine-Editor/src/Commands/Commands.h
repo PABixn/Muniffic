@@ -100,17 +100,17 @@ namespace eg
 			virtual void Redo() = 0;
 		};
 
-		class RenameDirectoryCommand : public Command
+		class MoveDirectoryCommand : public Command
 		{
 		public:
-			RenameDirectoryCommand(const std::filesystem::path& path, const std::string& newName)
-				: m_NewName(newName), m_Path(path)
+			MoveDirectoryCommand(UUID directoryUUID, UUID newParent)
+				: m_DirectoryUUID(directoryUUID), m_NewParent(newParent)
 			{
 				Commands::AddCommand(this);
 
-				m_OldName = path.filename().string();
+				m_OldParent = AssetDirectoryManager::getParentDirectoryUUID(directoryUUID);
 
-				ResourceDatabase::RenameDirectory(path, newName);
+				AssetDirectoryManager::moveAssetDirectory(directoryUUID, newParent);
 			}
 
 			void Execute(CommandArgs args) override {};
@@ -118,7 +118,30 @@ namespace eg
 			void Redo() override;
 
 		protected:
-			std::filesystem::path m_Path;
+			UUID m_DirectoryUUID;
+			UUID m_NewParent;
+			UUID m_OldParent;
+		};
+
+		class RenameDirectoryCommand : public Command
+		{
+		public:
+			RenameDirectoryCommand(UUID directoryUUID, const std::string& newName)
+				: m_NewName(newName), m_DirectoryUUID(directoryUUID)
+			{
+				Commands::AddCommand(this);
+
+				m_OldName = AssetDirectoryManager::getDirectoryName(directoryUUID);
+
+				AssetDirectoryManager::changeAssetDirectoryName(directoryUUID, newName);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_DirectoryUUID;
 			std::string m_OldName;
 			std::string m_NewName;
 		};
@@ -149,14 +172,14 @@ namespace eg
 		class MoveResourceCommand : public Command
 		{
 		public:
-			MoveResourceCommand(UUID uuid, const std::filesystem::path& path)
-				: m_UUID(uuid), m_Path(path)
+			MoveResourceCommand(UUID resourceUUID, UUID directory)
+				: m_UUID(resourceUUID), m_ParentDirectory(directory)
 			{
 				Commands::AddCommand(this);
 
-				m_OldPath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / ResourceDatabase::GetResourcePath(uuid);
+				m_OldParentDirectory = ResourceDatabase::GetResourceParentDirectory(resourceUUID);
 
-				ResourceDatabase::MoveResource(uuid, path);
+				ResourceDatabase::MoveResource(m_UUID, m_ParentDirectory);
 			}
 
 			void Execute(CommandArgs args) override {};
@@ -165,8 +188,8 @@ namespace eg
 
 		protected:
 			UUID m_UUID;
-			std::filesystem::path m_Path;
-			std::filesystem::path m_OldPath;
+			UUID m_ParentDirectory;
+			UUID m_OldParentDirectory;
 		};
 
 		class LoadResourceCommand : public Command
@@ -177,7 +200,7 @@ namespace eg
 			{
 				Commands::AddCommand(this);
 
-				ResourceDatabase::LoadResource(path);
+				m_UUID = ResourceDatabase::LoadResource(path);
 			}
 
 			void Execute(CommandArgs args) override {};
@@ -186,17 +209,20 @@ namespace eg
 
 		protected:
 			std::filesystem::path m_Path;
+			UUID m_UUID;
 		};
 
-		class DeleteDirectoryCommand : public Command
+		class CreateDirectoryCommand : public Command
 		{
-		public:
-			DeleteDirectoryCommand(const std::filesystem::path& directory)
-				: m_Directory(directory)
+		public: 
+			CreateDirectoryCommand(std::string name, UUID parentDirectory)
+				: m_ParentDirectory(parentDirectory)
 			{
 				Commands::AddCommand(this);
 
-				ResourceDatabase::DeleteDirectory(directory);
+				m_DirectoryUUID = UUID();
+
+				m_DirectoryData = new AssetDirectory(m_DirectoryUUID, name, parentDirectory);
 			}
 
 			void Execute(CommandArgs args) override {};
@@ -204,14 +230,39 @@ namespace eg
 			void Redo() override;
 
 		protected:
-			std::filesystem::path m_Directory;
+			std::string name;
+			UUID m_DirectoryUUID;
+			AssetDirectory* m_DirectoryData;
+			UUID m_ParentDirectory;
+		};
+
+		class DeleteDirectoryCommand : public Command
+		{
+		public:
+			DeleteDirectoryCommand(UUID directory)
+				: m_Directory(directory)
+			{
+				Commands::AddCommand(this);
+
+				m_DirectoryData = AssetDirectoryManager::getAssetDirectory(directory);
+
+				AssetDirectoryManager::removeAssetDirectory(m_Directory);
+			}
+
+			void Execute(CommandArgs args) override {};
+			void Undo() override;
+			void Redo() override;
+
+		protected:
+			UUID m_Directory;
+			AssetDirectory* m_DirectoryData;
 		};
 
 		class DeleteResourceCommand : public Command
 		{
 		public:
 			DeleteResourceCommand(UUID uuid, ResourceType resourceType, bool deleteFile = false)
-				: m_UUID(uuid), m_ResourceType(resourceType), m_DeleteFile(deleteFile), m_Resource(ResourceUtils::GetResourcePointer(uuid, resourceType))
+				: m_UUID(uuid), m_ResourceType(resourceType), m_DeleteFile(deleteFile), m_Resource(ResourceDatabase::GetResourceData(uuid))
 			{
 				if(m_DeleteFile == false)
 					Commands::AddCommand(this);
@@ -821,9 +872,21 @@ namespace eg
 			}
 		}
 
-		static Command* ExecuteRenameDirectoryCommand(const std::filesystem::path& path, const std::string& newName)
+		static Command* ExecuteMoveDirectoryCommand(UUID directoryUUID, UUID newParent)
 		{
-			Command* command = new RenameDirectoryCommand(path, newName);
+			Command* command = new MoveDirectoryCommand(directoryUUID, newParent);
+			return command;
+		}
+
+		static Command* ExecuteCreateDirectoryCommand(std::string name, UUID parentDirectory)
+		{
+			Command* command = new CreateDirectoryCommand(name, parentDirectory);
+			return command;
+		}
+
+		static Command* ExecuteRenameDirectoryCommand(UUID directoryUUID, const std::string& newName)
+		{
+			Command* command = new RenameDirectoryCommand(directoryUUID, newName);
 			return command;
 		}
 
@@ -833,9 +896,9 @@ namespace eg
 			return command;
 		}
 
-		static Command* ExecuteMoveResourceCommand(UUID uuid, const std::filesystem::path& path)
+		static Command* ExecuteMoveResourceCommand(UUID uuid, UUID parentDirectory)
 		{
-			Command* command = new MoveResourceCommand(uuid, path);
+			Command* command = new MoveResourceCommand(uuid, parentDirectory);
 			return command;
 		}
 
@@ -851,7 +914,7 @@ namespace eg
 			return command;
 		}
 
-		static Command* ExecuteDeleteDirectoryCommand(const std::filesystem::path& directory)
+		static Command* ExecuteDeleteDirectoryCommand(UUID directory)
 		{
 			Command* command = new DeleteDirectoryCommand(directory);
 			return command;

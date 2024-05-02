@@ -21,9 +21,9 @@ namespace eg {
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& e) override;
 
-		DeleteFilePanel* GetDeleteFilePanel() { return m_DeleteFilePanel; }
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
-		std::filesystem::path GetCurrentPath() { m_ContentBrowserPanel->GetCurrentPath(); }
+		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
+
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
@@ -67,7 +67,7 @@ namespace eg {
 		Ref<FrameBuffer> m_FrameBuffer;
 
 		Ref<Scene> m_ActiveScene;
-		Ref<Scene> m_EditorScene;
+		Ref<Scene> m_RuntimeScene;
 		std::filesystem::path m_ActiveScenePath;
 		Entity m_SquareEntity;
 		Entity m_CameraEntity;
@@ -106,10 +106,11 @@ namespace eg {
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
-		DeleteFilePanel* m_DeleteFilePanel;
+		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
 		RenameResourcePanel* m_RenameResourcePanel;
+		CreateDirectoryPanel* m_CreateDirectoryPanel;*/
 		Scope<ConsolePanel> m_ConsolePanel;
 
 		enum class SceneState

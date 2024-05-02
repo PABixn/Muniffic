@@ -17,6 +17,8 @@ namespace eg
 	{
 		m_ImagePanel = CreateRef<ImagePanel>();
 		m_AnimationPanel = CreateRef<AnimationPanel>();
+		m_ImagePanelinitialized = m_ImagePanel->InitImagePanel();
+		m_AnimationPanelinitialized = m_AnimationPanel->InitAnimationPanel();
 	}
 	void AddResourcePanel::OnImGuiRender()
 	{
@@ -29,9 +31,8 @@ namespace eg
 					bool resourceChosen = ChooseNewResource("Image (*.png)\0*.png\0");
 					if (resourceChosen)
 					{
-						bool initialized = m_AnimationPanel->InitAnimationPanel(m_ResourcePath);
-						if(initialized)
-							m_AnimationPanel->OpenAnimationPanel();
+						if(m_AnimationPanel)
+							m_AnimationPanel->OpenAnimationPanel(m_ResourcePath);
 					}
 				}
 				if (ImGui::Button("Shader"))
@@ -50,9 +51,8 @@ namespace eg
 					bool resourceChosen = ChooseNewResource("Image (*.png)\0*.png\0");
 					if (resourceChosen)
 					{
-						bool initialized = m_ImagePanel->InitImagePanel(m_ResourcePath);
-						if (initialized)
-							m_ImagePanel->ShowImagePanel(true);
+						if (m_ImagePanel)
+							m_ImagePanel->OpenImagePanel(m_ResourcePath);
 					}
 				}
 				if (ImGui::Button("Script"))

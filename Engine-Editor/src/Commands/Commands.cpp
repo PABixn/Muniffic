@@ -181,23 +181,37 @@ namespace eg
 		SetCurrentCommand(false);
 	}
 
+	void Commands::CreateDirectoryCommand::Undo()
+	{
+		AssetDirectoryManager::removeAssetDirectory(m_DirectoryUUID);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::CreateDirectoryCommand::Redo()
+	{
+		AssetDirectoryManager::addAssetDirectory(m_DirectoryUUID, m_DirectoryData);
+
+		SetCurrentCommand(false);
+	}
+
 	void Commands::DeleteDirectoryCommand::Undo()
 	{
-		std::filesystem::create_directory(m_Directory);
+		AssetDirectoryManager::addAssetDirectory(m_Directory, m_DirectoryData);
 
 		SetCurrentCommand(true);
 	}
 
 	void Commands::DeleteDirectoryCommand::Redo()
 	{
-		ResourceDatabase::DeleteDirectory(m_Directory);
+		AssetDirectoryManager::removeAssetDirectory(m_Directory);
 
 		SetCurrentCommand(false);
 	}
 
 	void Commands::LoadResourceCommand::Undo()
 	{
-		ResourceDatabase::RemoveResource(m_Path);
+		ResourceDatabase::RemoveResource(m_UUID);
 
 		SetCurrentCommand(true);
 	}
@@ -211,14 +225,14 @@ namespace eg
 
 	void Commands::MoveResourceCommand::Undo()
 	{
-		ResourceDatabase::MoveResource(m_UUID, m_OldPath);
+		ResourceDatabase::MoveResource(m_UUID, m_OldParentDirectory);
 
 		SetCurrentCommand(true);
 	}
 
 	void Commands::MoveResourceCommand::Redo()
 	{
-		ResourceDatabase::MoveResource(m_UUID, m_Path);
+		ResourceDatabase::MoveResource(m_UUID, m_ParentDirectory);
 
 		SetCurrentCommand(false);
 	}
@@ -237,17 +251,30 @@ namespace eg
 		SetCurrentCommand(false);
 	}
 
+	void Commands::MoveDirectoryCommand::Undo()
+	{
+		AssetDirectoryManager::moveAssetDirectory(m_DirectoryUUID, m_OldParent);
+
+		SetCurrentCommand(true);
+	}
+
+	void Commands::MoveDirectoryCommand::Redo()
+	{
+		AssetDirectoryManager::moveAssetDirectory(m_OldParent, m_DirectoryUUID);
+
+		SetCurrentCommand(false);
+	}
+
 	void Commands::RenameDirectoryCommand::Undo()
 	{
-		std::filesystem::path newPath = m_Path.parent_path() / m_NewName;
-		ResourceDatabase::RenameDirectory(newPath, m_OldName);
+		AssetDirectoryManager::changeAssetDirectoryName(m_DirectoryUUID, m_OldName);
 
 		SetCurrentCommand(true);
 	}
 
 	void Commands::RenameDirectoryCommand::Redo()
 	{
-		ResourceDatabase::RenameDirectory(m_Path, m_NewName);
+		AssetDirectoryManager::changeAssetDirectoryName(m_DirectoryUUID, m_NewName);
 
 		SetCurrentCommand(false);
 	}

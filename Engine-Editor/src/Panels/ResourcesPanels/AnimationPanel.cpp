@@ -3,17 +3,19 @@
 
 #include "Engine/Resources/ResourceSerializer.h"
 #include "Engine/Resources/ResourceDatabase.h"
+#include "Engine/Resources/ResourceUtils.h"
 #include "Imgui/imgui.h"
 
 
 namespace eg {
 	AnimationPanel::AnimationPanel(const std::filesystem::path& path)
 	{
-		InitAnimationPanel(path);
+		//InitAnimationPanel(path);
 	}
 
-	bool AnimationPanel::InitAnimationPanel(const std::filesystem::path& path)
+	bool AnimationPanel::OpenAnimationPanel(const std::filesystem::path& path)
 	{
+		ShowAnimationPanel(true);
 		EG_PROFILE_FUNCTION();
 		std::filesystem::path textureBasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		bool resourceLoad = false;
@@ -29,9 +31,9 @@ namespace eg {
 		}
 		m_OriginalResourcePath = path;
 		m_TextureData = new TextureResourceData();
-		(m_TextureData)->ResourcePath = "Textures";
-		m_TextureData->ImageName = m_LoadedResource->Path.stem().string();
-		m_TextureData->Extension = m_LoadedResource->Path.extension().string();
+		(m_TextureData)->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Image);
+		m_TextureData->ResourceName = path.stem().string();
+		m_TextureData->Extension = path.extension().string();
 		m_TextureData->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
 		m_TextureData->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
 		m_TextureData->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
@@ -45,8 +47,8 @@ namespace eg {
 		frames.push_back(SubTexture2D::Create(m_PreviewOriginImage, { 0, 0 }, { 1, 1 }));
 		m_PreviewData = Animation::Create(frames);
 		m_ResourceData = new AnimationResourceData();
-		m_ResourceData->ResourcePath = "";
-		m_ResourceData->AnimationName = std::filesystem::path(m_LoadedResource->Name).stem().string();
+		m_ResourceData->ParentDirectory = 0;
+		m_ResourceData->ResourceName = std::filesystem::path(m_LoadedResource->Name).stem().string();
 		m_ResourceData->Extension = ".anim";
 
 		m_ImageAspectRatio = (float)m_PreviewOriginImage->GetWidth() / (float)m_PreviewOriginImage->GetHeight();
@@ -224,25 +226,26 @@ namespace eg {
 			ImGui::Checkbox("Loop", m_PreviewData->IsLoopedPtr());
 			char buffer[512];
 			memset(buffer, 0, sizeof(buffer));
-			std::strncpy(buffer, m_ResourceData->AnimationName.c_str(), sizeof(buffer));
+			std::strncpy(buffer, m_ResourceData->ResourceName.c_str(), sizeof(buffer));
 
 			if (ImGui::InputText("Animation Name: ", buffer, sizeof(buffer)))
-				m_ResourceData->AnimationName = std::string(buffer);
-			ImGui::Text("Animation: %s", m_ResourceData->AnimationName.c_str());
+				m_ResourceData->ResourceName = std::string(buffer);
+			ImGui::Text("Animation: %s", m_ResourceData->ResourceName.c_str());
 			if(m_PreviewData->GetFrameCount() > 0)
 				ImGui::Image((void*)m_PreviewData->GetFrame()->GetTexture()->GetRendererID(), ImVec2(m_BasePreviewWidth, m_BasePreviewHeight), { m_PreviewData->GetFrame()->GetMin().x , m_PreviewData->GetFrame()->GetMax().y}, {m_PreviewData->GetFrame()->GetMax().x , m_PreviewData->GetFrame()->GetMin().y});
 
-			char buffer2[512];
+			/*char buffer2[512];
 			memset(buffer2, 0, sizeof(buffer2));
-			std::strncpy(buffer2, m_ResourceData->ResourcePath.string().c_str(), sizeof(buffer2));
+			std::strncpy(buffer2, AssetDirectoryManager::getDirectoryPath(m_ResourceData->ParentDirectory).string().c_str(), sizeof(buffer2));
 			if(ImGui::InputText("Resource Path: ", buffer2, sizeof(buffer2)))
-					m_ResourceData->ResourcePath = std::filesystem::path(std::string(buffer2));
+					m_ResourcePath = std::filesystem::path(std::string(buffer2));*/
+
 			if (ImGui::Button("Save"))
 			{
 				SpriteAtlasResourceData* saData = new SpriteAtlasResourceData();
-				saData->ResourcePath = "SpriteAtlas" / m_ResourceData->ResourcePath;
-				saData->AtlasName = m_ResourceData->AnimationName;
-				saData->Extension = ResourceDatabase::GetResourceTypeExtension(ResourceType::SpriteAtlas);
+				saData->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SpriteAtlas);
+				saData->ResourceName = m_ResourceData->ResourceName;
+				saData->Extension = ResourceUtils::GetResourceTypeExtension(ResourceType::SpriteAtlas);
 				saData->Width = m_TextureData->Width;
 				saData->Height = m_TextureData->Height;
 				saData->Channels = m_TextureData->Channels;
@@ -250,9 +253,9 @@ namespace eg {
 				for (int i = 0; i < m_PreviewData->GetFrameCount(); i++)
 				{
 					SubTextureResourceData* data = new SubTextureResourceData();
-					data->ResourcePath = "SubTextures" / m_ResourceData->ResourcePath;
+					data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SubTexture);
 					data->Texture = m_TextureUUID;
-					data->SubTextureName = m_ResourceData->AnimationName + std::to_string(i);
+					data->ResourceName = m_ResourceData->ResourceName + std::to_string(i);
 					data->TexCoords[0] = m_PreviewData->GetFrame(i)->GetMin();
 					data->TexCoords[1] = { m_PreviewData->GetFrame(i)->GetMax().x, m_PreviewData->GetFrame(i)->GetMin().y };
 					data->TexCoords[2] = m_PreviewData->GetFrame(i)->GetMax();
@@ -262,7 +265,7 @@ namespace eg {
 					saData->Sprites.push_back(uuid);
 				}
 				
-				m_ResourceData->ResourcePath = m_ResourceData->ResourcePath.empty() ? "Animations" : "Animations" / m_ResourceData->ResourcePath;
+				m_ResourceData->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Animation);
 				m_ResourceData->FrameRate = m_PreviewData->GetFrameRate();
 				m_ResourceData->FrameCount = m_PreviewData->GetFrameCount();
 				m_ResourceData->Loop = m_PreviewData->IsLooped();

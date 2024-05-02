@@ -7,6 +7,7 @@ Game engine aiming to introduce wide AI support and many game creation facilitat
 - Download zip archive
 - Unpack zip archive
 - Make sure you have python installed and added to PATH
+- Make sure you have git installed and added to PATH
 - Run Muniffic/scripts/setup.bat
 - Install all necessary software according to given prompts (install all vulkan additional software)
 - Run Muniffic/Engine-Editor/SandboxProject/Assets/Scripts/Win-GenProjects.bat
