@@ -7,7 +7,6 @@ namespace eg {
 	}
 
 	void BasicAudio::InitializeXAudio2() {
-		std::cout << "loaded" << std::endl;
 		hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 		if (FAILED(hr))
 			EG_CORE_TRACE(hr);

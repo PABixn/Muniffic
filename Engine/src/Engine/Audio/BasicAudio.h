@@ -38,9 +38,7 @@ namespace eg {
 		std::filesystem::path GetPath() { return m_Path; }
 		void SetPath(std::filesystem::path val) { m_Path = val; LoadCurrentAudio(); }
 		BasicAudio(std::string& path);
-		BasicAudio() { 
-			EG_CORE_TRACE("what");
-		};
+		BasicAudio() = default;
 		bool Play();
 		bool* IsLoopedPtr() { return &looped; }
 		bool* IsPlayingFromStartPtr() { return &playingFromStart; }

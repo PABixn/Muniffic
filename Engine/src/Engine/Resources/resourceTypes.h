@@ -10,6 +10,7 @@ namespace eg
 	enum class ResourceType
 	{
 		Animation,
+		Audio,
 		SpriteAtlas,
 		SubTexture,
 		Shader,
@@ -46,6 +47,10 @@ namespace eg
 		std::string Extension = "";
 		UUID ParentDirectory = 0;
 		ResourceType Type;
+	};
+
+	struct AudioResourceData : public ResourceData
+	{
 	};
 
 	struct SpriteAtlasResourceData : public ResourceData

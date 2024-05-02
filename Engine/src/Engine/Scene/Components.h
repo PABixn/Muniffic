@@ -98,8 +98,6 @@ namespace eg {
 
 	struct AnimatorComponent : Component
 	{
-		Ref<Animator> Animator2D;
-
 		AnimatorComponent()
 		{
 			Animator2D = CreateRef<Animator>();
@@ -107,6 +105,8 @@ namespace eg {
 		AnimatorComponent(const AnimatorComponent&) = default;
 		AnimatorComponent(const Ref<Animator>& animator)
 			: Animator2D(animator) {}
+
+		Ref<Animator> Animator2D;
 	};
 
 	struct CircleRendererComponent: Component
@@ -238,13 +238,11 @@ namespace eg {
 
 	struct AudioListenerComponent : Component
 	{
-		//SoLoud::Soloud soloudInstance;
 		int a;
 	};
 
 	struct AudioSourceComponent : Component
 	{
-		Ref<BasicAudio> Audio;
 		AudioSourceComponent()
 		{
 			Audio = CreateRef<BasicAudio>();
@@ -252,6 +250,8 @@ namespace eg {
 		AudioSourceComponent(const AudioSourceComponent&) = default;
 		AudioSourceComponent(const Ref<BasicAudio>& audio)
 			: Audio(audio) {}
+
+		Ref<BasicAudio> Audio;
 	};
 
 	template<typename... Component>
@@ -271,6 +271,5 @@ namespace eg {
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent,
 		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent,
-		AnimatorComponent
-		, AudioListenerComponent, AudioSourceComponent>;
+		AnimatorComponent, AudioListenerComponent, AudioSourceComponent>;
 }

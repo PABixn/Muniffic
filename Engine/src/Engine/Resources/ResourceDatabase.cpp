@@ -122,6 +122,8 @@ namespace eg
 			ResourceSerializer::SpriteAtlasResourceDataCache[uuid] = (SpriteAtlasResourceData*)data;
 		else if(resourceType == ResourceType::Font)
 			ResourceSerializer::FontResourceDataCache[uuid] = (FontResourceData*)data;
+		else if(resourceType == ResourceType::Audio)
+			ResourceSerializer::AudioResourceDataCache[uuid] = (AudioResourceData*)data;
 		else
 			EG_CORE_ERROR("Resource type not supported");
 	}
@@ -143,6 +145,8 @@ namespace eg
 			return ResourceSerializer::SpriteAtlasResourceDataCache.find(uuid) != ResourceSerializer::SpriteAtlasResourceDataCache.end();
 		else if (resourceType == ResourceType::Font)
 			return ResourceSerializer::FontResourceDataCache.find(uuid) != ResourceSerializer::FontResourceDataCache.end();
+		else if (resourceType == ResourceType::Audio)
+			return ResourceSerializer::AudioResourceDataCache.find(uuid) != ResourceSerializer::AudioResourceDataCache.end();
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
@@ -192,6 +196,18 @@ namespace eg
 					return uuid;
 			}
 		}
+		else if (type == ResourceType::Audio)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::AudioResourceDataCache)
+			{
+				if (data->ResourceName == name)
+					return uuid;
+			}
+		}
+		else
+		{
+			EG_CORE_ERROR("Resource type not supported");
+		}
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
@@ -213,6 +229,23 @@ namespace eg
 			{
 				TextureResourceData* data = ResourceSerializer::TextureResourceDataCache[uuid];
 				ResourceSerializer::TextureResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+
+				if (deleteFile)
+				{
+					std::filesystem::path finalPath = GetResourcePath(uuid);
+					std::remove(finalPath.string().c_str());
+				}
+
+				delete data;
+			}
+		}
+		else if (resourceType == ResourceType::Audio)
+		{
+			if (ResourceSerializer::AudioResourceDataCache.find(uuid) != ResourceSerializer::AudioResourceDataCache.end())
+			{
+				AudioResourceData* data = ResourceSerializer::AudioResourceDataCache[uuid];
+				ResourceSerializer::AudioResourceDataCache.erase(uuid);
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 
 				if (deleteFile)
@@ -303,6 +336,8 @@ namespace eg
 			return ResourceSerializer::SpriteAtlasResourceDataCache.at(uuid);
 		else if (type == ResourceType::Font)
 			return ResourceSerializer::FontResourceDataCache.at(uuid);
+		else if(type == ResourceType::Audio)
+			return ResourceSerializer::AudioResourceDataCache.at(uuid);
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
@@ -450,6 +485,21 @@ namespace eg
 		}
 
 		ResourceSerializer::CacheSpriteAtlas(uuid, data);
+	}
+
+	void AddAudioResource(UUID uuid, const std::filesystem::path& originalResourcePath, AudioResourceData* data)
+	{
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Audio);
+
+		if (finalPath != originalResourcePath)
+		{
+			if (!std::filesystem::exists(finalPath.parent_path()))
+			{
+				std::filesystem::create_directories(finalPath.parent_path());
+			}
+		}
+
+		ResourceSerializer::CacheAudio(uuid, data);
 	}
 
 	UUID ResourceDatabase::GetResourceParentDirectory(UUID uuid)
@@ -605,6 +655,9 @@ namespace eg
 		case ResourceType::Font:
 			AddFontResourceData(uuid, originalResourcePath, (FontResourceData*)data);
 			break;
+		case ResourceType::Audio:
+			AddAudioResource(uuid, originalResourcePath, (AudioResourceData*)data);
+				break;
 		}
 
 		return uuid;

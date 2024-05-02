@@ -1172,10 +1172,5 @@ namespace eg {
 				ImGui::EndDragDropTarget();
 			}
 		}, m_Context);
-
-		/*DrawComponent<AudioListenerComponent>("Audio Listener", entity, [](auto& component)
-		{
-			ImGui::Text("i am an audio listener");
-		}, m_Context);*/
 	}
 }
