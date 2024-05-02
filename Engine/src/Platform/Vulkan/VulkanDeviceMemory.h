@@ -7,12 +7,16 @@
 namespace eg {
 	class VulkanDeviceMemory {
 	public:
-		VulkanDeviceMemory(VkDevice device, VkMemoryPropertyFlags properties, VkImage& image);
-		VulkanDeviceMemory(VkDevice device, VkMemoryPropertyFlags properties, VkBuffer& buffer);
-		~VulkanDeviceMemory();
+		VulkanDeviceMemory() = default;
+		~VulkanDeviceMemory() = default;
+		static VulkanDeviceMemory& Create(VkDevice m_Device, VkPhysicalDevice m_PhysicalDevice, VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags memoryProperties);
+		static VulkanDeviceMemory& Create(VkDevice m_Device, VkPhysicalDevice m_PhysicalDevice, VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags memoryProperties, void* data, size_t size);
+		static VulkanDeviceMemory& Create(VkDevice m_Device, VkPhysicalDevice m_PhysicalDevice, VkMemoryPropertyFlags memoryProperties, VkBuffer buffer);
+		static VulkanDeviceMemory& Create(VkDevice m_Device, VkPhysicalDevice m_PhysicalDevice, VkMemoryPropertyFlags memoryProperties, VkImage image);
+		void Cleanup(VkDevice device);
 
 		VkDeviceMemory GetDeviceMemory() const { return m_deviceMemory; }
-		static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+		static uint32_t FindMemoryType(VkPhysicalDevice physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	private:
 		VkDeviceMemory m_deviceMemory;
 	};

@@ -10,9 +10,11 @@ namespace eg {
 		std::optional<uint32_t> graphicsFamily;
 		std::optional<uint32_t> presentFamily;
 
-		bool isComplete() {
+		bool IsComplete() {
 			return graphicsFamily.has_value() && presentFamily.has_value();
 		}
+
+		static VulkanQueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
 	};
 
 	class VulkanQueue {
@@ -21,7 +23,8 @@ namespace eg {
 		~VulkanQueue();
 		void CreateQueue(const VkDevice& device, const VkPhysicalDevice& physicalDevice, const VkSurfaceKHR& surface);
 		void Cleanup();
-		const VkQueue& GetQueue() { return m_Queue; }
+		const VkQueue& GetQueue() const { return m_Queue; }
+		VkQueue& GetQueueRef() { return m_Queue; }
 
 		static VulkanQueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
 	private:

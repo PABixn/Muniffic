@@ -7,8 +7,8 @@
 namespace eg {
 	class VulkanMultisampling {
 	public:
-		VulkanMultisampling();
-		~VulkanMultisampling();
+		VulkanMultisampling() = default;
+		~VulkanMultisampling() = default;
 
 		VkSampleCountFlagBits getMaxUsableSampleCount();
 		VkSampleCountFlagBits getMsaaSamples() { return m_msaaSamples; }

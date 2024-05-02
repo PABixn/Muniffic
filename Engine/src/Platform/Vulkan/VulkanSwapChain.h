@@ -3,37 +3,40 @@
 #include "Engine/Core/Core.h"
 #include "VulkanQueue.h"
 #include "VulkanImageView.h"
-#include "VulkanSwapChainImage.h"
-
+#include "VulkanImage.h"
 #include <GLFW/glfw3.h>
 
 namespace eg {
-	struct VulkanSwapchainSupportDetails {
+	struct VulkanSwapChainSupportDetails {
 		VkSurfaceCapabilitiesKHR capabilities;
 		std::vector<VkSurfaceFormatKHR> formats;
 		std::vector<VkPresentModeKHR> presentModes;
 
-		static VulkanSwapchainSupportDetails querySwapChainSupportDetails(VkPhysicalDevice physicalDevice);
-		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+		static VulkanSwapChainSupportDetails QuerySwapChainSupportDetails(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
+		VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+		VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	};
 
-	class VulkanSwapchain {
+	class VulkanSwapChain {
 	public:
-		VulkanSwapchain();
-		~VulkanSwapchain();
-		void CreateSwapchain(const VkDevice& device, const VkSurfaceKHR& surface, const VkPhysicalDevice& physicalDevice, const VkExtent2D& extent);
-		void CreateImageViews(const VkDevice& device);
-		void CreateColorResources(const VkDevice& device, const VkPhysicalDevice& physicalDevice, const VulkanQueue& queue, const VkCommandPool& commandPool);
-		void CreateDepthResources(const VkDevice& device, const VkPhysicalDevice& physicalDevice, const VulkanQueue& queue, const VkCommandPool& commandPool);
-		void CreateFramebuffers(const VkDevice& device, const VkRenderPass& renderPass);
+		VulkanSwapChain() = default;
+		~VulkanSwapChain() = default;
+		void Init();
+		void CreateImageViews();
+		void CreateColorResources();
+		void CreateDepthResources();
+		void CreateFramebuffers();
 		
-		void RecreateSwapChain(const VkDevice& device, const VkSurfaceKHR& surface, const VkPhysicalDevice& physicalDevice, const VkExtent2D& extent);
+		void RecreateSwapChain();
+
+		void generateMipMaps(VkImage image, VkFormat format, int32_t texWidth, int32_t texHeight, int32_t mipLevels);
 		
 		VkSampleCountFlagBits GetMaxUsableSampleCount();
 
-		void Cleanup(const VkDevice& device);
-		const VkSwapchainKHR& GetSwapchain() { return m_Swapchain; }
+		void Cleanup();
+		void CleanupSwapChain();
+
+		const VkSwapchainKHR& GetSwapChain() { return m_Swapchain; }
 	private:
 		void ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 	private:
@@ -42,9 +45,10 @@ namespace eg {
 		VkFormat m_ImageFormat;
 		VkExtent2D m_Extent;
 		std::vector<VulkanImageView> m_ImageViews;
-		VulkanSwapChainImage m_ColorImage;
-		VulkanSwapChainImage m_DepthImage;
+		VulkanImage m_ColorImage;
+		VulkanImage m_DepthImage;
 		std::vector<VkFramebuffer> m_Framebuffers;
-		VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
+		VkSampleCountFlagBits m_MsaaSamples = VK_SAMPLE_COUNT_1_BIT;
+		uint32_t m_MipLevels = 1;
 	};
 }

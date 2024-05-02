@@ -2,19 +2,25 @@
 #define GLFW_INCLUDE_VULKAN
 #include "Engine/Core/Core.h"
 #include "VulkanQueue.h"
+#include "VulkanDeviceExtensions.h"
 #include <GLFW/glfw3.h>
 
 namespace eg {
 
 	class VulkanLogicalDevice {
 	public:
-		VulkanLogicalDevice();
+		VulkanLogicalDevice() = default;
 		~VulkanLogicalDevice();
-		void CreateLogicalDevice(const VkPhysicalDevice& physicalDevice, const VkSurfaceKHR& surface);
+
+		void Init(const VkPhysicalDevice& physicalDevice, const VkSurfaceKHR& surface, VulkanDeviceExtensions& extensions);
 		void Cleanup();
-		const VkDevice& GetDevice() { return m_Device; }
-		const VulkanQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
-		const VulkanQueue& GetPresentQueue() { return m_PresentQueue; }
+
+
+		const VkDevice& GetDevice() const { return m_Device; }
+		const VulkanQueue& GetVulkanGraphicsQueue() const  { return m_GraphicsQueue; }
+		const VkQueue& GetGraphicsQueue() const { return m_GraphicsQueue.GetQueue(); }
+		const VulkanQueue& GetVulkanPresentQueue() const { return m_PresentQueue; }
+		const VkQueue& GetPresentQueue() const { return m_PresentQueue.GetQueue(); }
 	private:
 		VkDevice m_Device;
 		VulkanQueue m_GraphicsQueue;

@@ -8,13 +8,14 @@ namespace eg {
 
 	class VulkanDebugMessenger {
 	public:
-		VulkanDebugMessenger();
-		~VulkanDebugMessenger();
-		void SetupDebugMessenger(const VkInstance& instance);
+		VulkanDebugMessenger() = default;
+		~VulkanDebugMessenger() = default;
+		void Init(const VkInstance& instance);
 		static void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 		void Cleanup(const VkInstance& instance);
 	private:
 		void CreateDebugUtilsMessengerEXT(const VkInstance& instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo);
+		void DestroyDebugUtilsMessengerEXT(const VkInstance& instance);
 		static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
 			VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 			VkDebugUtilsMessageTypeFlagsEXT messageType,

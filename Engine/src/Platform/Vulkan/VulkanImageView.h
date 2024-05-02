@@ -7,11 +7,13 @@
 namespace eg {
 	class VulkanImageView {
 	public:
-		VulkanImageView(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
-		~VulkanImageView();
+		VulkanImageView() = default;
+		static VulkanImageView& Create(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
+		void Cleanup(VkDevice device);
+		~VulkanImageView() = default;
 
-		VkImageView GetImageView() const { return imageView; }
+		VkImageView GetImageView() const { return m_ImageView; }
 	private:
-		VkImageView imageView;
+		VkImageView m_ImageView;
 	};
 }

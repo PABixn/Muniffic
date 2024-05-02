@@ -2,7 +2,7 @@
 #include "../../Engine/vendor/Glad/include/glad/glad.h"
 #include "../../Engine/vendor/GLFW/include/GLFW/glfw3.h"
 #include "Engine/Events/Event.h"
-
+#include "Engine/Renderer/GraphicsContext.h"
 namespace eg {
 	struct WindowProps
 	{
@@ -34,6 +34,7 @@ namespace eg {
 		virtual bool IsVSync() const = 0;
 
 		virtual void* GetNativeWindow() const = 0;
+		virtual GraphicsContext* GetContext() const = 0;
 		
 		static Scope<Window> Create(const WindowProps& props = WindowProps());
 	};
