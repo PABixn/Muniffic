@@ -5,11 +5,13 @@
 #include <GLFW/glfw3.h>
 
 namespace eg {
+	//RenderPass maybe should contain VulkanSwapChain
 	class VulkanRenderPass {
 	public:
-		VulkanRenderPass(VkDevice device, VkFormat swapChainImageFormat, VkSampleCountFlagBits msaaSamples);
-		~VulkanRenderPass();
+		VulkanRenderPass() = default;
+		~VulkanRenderPass() = default;
 
+		void Init();
 		void cleanup(VkDevice device);
 
 		VkRenderPass getRenderPass() const { return renderPass; }

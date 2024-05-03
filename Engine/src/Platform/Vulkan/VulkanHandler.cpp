@@ -19,7 +19,8 @@ namespace eg {
 		m_PhysicalDevice.Init(m_Instance.GetInstance(), m_Surface.GetSurface(), m_DeviceExtensions);
 		m_LogicalDevice.Init(m_PhysicalDevice.GetPhysicalDevice(), m_Surface.GetSurface(), m_DeviceExtensions);
 		VulkanDeviceMemoryManager::Init(m_LogicalDevice.GetDevice(), m_PhysicalDevice.GetPhysicalDevice());
-		m_SwapChain.Init(m_LogicalDevice.GetDevice(), m_Surface.GetSurface(), m_PhysicalDevice.GetPhysicalDevice(), m_Window);
+		m_SwapChain.Init();
+		m_RenderPass.Init();
 	}
 
 	VulkanHandler::VulkanHandler(GLFWwindow* window):m_Window(window)
@@ -32,6 +33,8 @@ namespace eg {
 
 	void VulkanHandler::Cleanup()
 	{
+		m_SwapChain.CleanupSwapChain();
+		m_RenderPass.cleanup(m_LogicalDevice.GetDevice());
 		m_LogicalDevice.Cleanup();
 
 		m_Surface.Cleanup(m_Instance.GetInstance());

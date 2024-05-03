@@ -3,6 +3,7 @@
 #include "VulkanCommandManager.h"
 #include "Engine/Core/Application.h"
 #include "VulkanContext.h"
+
 namespace eg {
 
     VulkanHandler* getVulkanHandler() {

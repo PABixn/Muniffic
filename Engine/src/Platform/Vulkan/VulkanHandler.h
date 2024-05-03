@@ -11,17 +11,15 @@
 #include "VulkanLogicalDevice.h"
 #include "VulkanSwapChain.h"
 #include "VulkanCommandBuffer.h"
+#include "VulkanRenderPass.h"
 
 #include "VulkanDeviceMemoryManager.h"
-
+#include "VulkanConstants.h"
 #include <GLFW/glfw3.h>
 
 
 
 namespace eg {
-	namespace VulkanConstants {
-		constexpr const uint32_t MAX_FRAMES_IN_FLIGHT = 2;
-}
 	class VulkanHandler {
 	public:
 		VulkanHandler() = default;
@@ -52,6 +50,7 @@ namespace eg {
 		VulkanPhysicalDevice m_PhysicalDevice;
 		VulkanLogicalDevice m_LogicalDevice;
 		VulkanSwapChain m_SwapChain;
+		VulkanRenderPass m_RenderPass;
 		std::vector<VulkanCommandBuffer> m_commandBuffers;
 		GLFWwindow* m_Window;
 	};

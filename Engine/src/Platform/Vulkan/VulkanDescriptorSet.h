@@ -1,20 +1,25 @@
 #pragma once
 #define GLFW_INCLUDE_VULKAN
 #include "Engine/Core/Core.h"
-
+#include "VulkanVertex.h"
+#include "VulkanBuffer.h"
 #include <GLFW/glfw3.h>
 
 namespace eg {
 
-	class VulkanDescriptorSet {
+	class VulkanDescriptorSets {
 	public:
-		VulkanDescriptorSet(VkDevice device, VkDescriptorSetLayout layout, VkDescriptorPool pool);
-		~VulkanDescriptorSet();
+		VulkanDescriptorSets() = default;
+		~VulkanDescriptorSets() = default;
 
-		void updateDescriptorSet(VkDevice device, VkBuffer uniformBuffer, VkImageView imageView, VkSampler sampler, VkDeviceSize bufferSize);
-		VkDescriptorSet getDescriptorSet() const { return m_descriptorSet; }
+		void Create(VkDevice logicalDevice, VkDescriptorPool descriptorPool, VkDescriptorSetLayout descriptorSetLayout, const std::vector<VulkanBuffer>& uniformBuffers);
+		void Create(VkDevice logicalDevice, VkDescriptorPool descriptorPool, VkDescriptorSetLayout descriptorSetLayout, VkSampler sampler, VkImageView imageView, const std::vector<VulkanBuffer>& uniformBuffers);
+		//void updateDescriptorSet(VkDevice device, VkBuffer uniformBuffer, VkImageView imageView, VkSampler sampler, VkDeviceSize bufferSize);
+
+		void Bind(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, uint32_t descriptorIndex);
+		const std::vector<VkDescriptorSet>& getDescriptorSets() const { return m_descriptorSets; }
 
 	private:
-		VkDescriptorSet m_descriptorSet;
+		std::vector<VkDescriptorSet> m_descriptorSets;
 	};
 }

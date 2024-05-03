@@ -37,6 +37,14 @@ namespace eg {
 		void CleanupSwapChain();
 
 		const VkSwapchainKHR& GetSwapChain() { return m_Swapchain; }
+		const std::vector<VkImage>& GetImages() const { return m_Images; }
+		const VkFormat& GetImageFormat() const { return m_ImageFormat; }
+		const VkExtent2D& GetExtent() const { return m_Extent; }
+		const std::vector<VulkanImageView>& GetImageViews() const { return m_ImageViews; }
+		const VulkanImage& GetColorImage() const { return m_ColorImage; }
+		const VulkanImage& GetDepthImage() const { return m_DepthImage; }
+		const VkSampleCountFlagBits& GetMsaaSamples() const { return m_MsaaSamples; }
+		const uint32_t& GetMipLevels() const { return m_MipLevels; }
 	private:
 		void ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 	private:

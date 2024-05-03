@@ -15,7 +15,6 @@ namespace eg {
 		static VulkanDeviceMemory& AllocateMemory(VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags memoryProperties, void* data, size_t size);
 		static VulkanDeviceMemory& AllocateImageMemory(VkImage image, VkMemoryPropertyFlags memoryProperties);
 		static VulkanDeviceMemory& AllocateBufferMemory(VkBuffer buffer, VkMemoryPropertyFlags memoryProperties);
-		static VulkanDeviceMemory& AllocateCommandBufferMemory(VkCommandPool commandPool, VkCommandBuffer commandBuffer, VkMemoryPropertyFlags memoryProperties);
 
 		static void FreeMemory(VulkanDeviceMemory& memory);
 

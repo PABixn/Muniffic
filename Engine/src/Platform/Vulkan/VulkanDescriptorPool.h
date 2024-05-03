@@ -7,11 +7,11 @@
 namespace eg {
 	class VulkanDescriptorPool {
 	public:
-		VulkanDescriptorPool();
-		~VulkanDescriptorPool();
+		VulkanDescriptorPool() = default;
+		~VulkanDescriptorPool() = default;
 
-		void createPool(VkDevice logicalDevice);
-		void destroyPool(VkDevice device);
+		void Create(VkDevice logicalDevice);
+		void Cleanup(VkDevice logicalDevice);
 
 		VkDescriptorPool getPool() const { return m_Pool; }
 

@@ -7,13 +7,13 @@
 namespace eg {
 	class VulkanDescriptorSetLayout {
 	public:
-		VulkanDescriptorSetLayout();
-		~VulkanDescriptorSetLayout();
+		VulkanDescriptorSetLayout() = default;
+		~VulkanDescriptorSetLayout() = default;
 
-		void createDescriptorSetLayout(VkDevice device);
-		void destroyDescriptorSetLayout(VkDevice device);
+		void Init();
+		void Cleanup();
 
-		VkDescriptorSetLayout getDescriptorSetLayout() const { return m_descriptorSetLayout; }
+		const VkDescriptorSetLayout& GetDescriptorSetLayout() const { return m_descriptorSetLayout; }
 	public:
 		VkDescriptorSetLayout m_descriptorSetLayout;
 	};

@@ -25,7 +25,7 @@ namespace eg {
 		return VK_FORMAT_UNDEFINED;
 	}
 
-	class VulkanVertexInputLayout: BufferLayout{
+	class VulkanVertexInputLayout: public BufferLayout{
 	public:
 		VkVertexInputBindingDescription GetBindingDescription();
 
