@@ -1,6 +1,6 @@
 #include "egpch.h"
 #include "VulkanShader.h"
-#include <glad/glad.h>
+
 #include <fstream>
 #include <filesystem>
 #include <glm/gtc/type_ptr.hpp>
@@ -8,6 +8,7 @@
 #include "spirv_cross/spirv_cross.hpp"
 #include "spirv_cross/spirv_glsl.hpp"
 #include "shaderc/shaderc.hpp"
+#include "VulkanUtils.h"
 
 #include "Engine/Core/Timer.h"
 
@@ -16,34 +17,34 @@ namespace eg
 
 	namespace Utils {
 
-		static GLenum ShaderTypeFromString(const std::string& type)
+		static ShaderType ShaderTypeFromString(const std::string& type)
 		{
 			if (type == "vertex")
-				return GL_VERTEX_SHADER;
+				return ShaderType::VERTEX;
 			if (type == "fragment" || type == "pixel")
-				return GL_FRAGMENT_SHADER;
+				return ShaderType::FRAGMENT;
 
 			EG_CORE_ASSERT(false, "Unknown shader type!");
-			return 0;
+			return ShaderType::NONE;
 		}
 
-		static shaderc_shader_kind GLShaderStageToShaderC(GLenum stage)
+		static shaderc_shader_kind GLShaderStageToShaderC(ShaderType stage)
 		{
 			switch (stage)
 			{
-			case GL_VERTEX_SHADER:   return shaderc_glsl_vertex_shader;
-			case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
+			case ShaderType::VERTEX:   return shaderc_glsl_vertex_shader;
+			case ShaderType::FRAGMENT: return shaderc_glsl_fragment_shader;
 			}
 			EG_CORE_ASSERT(false);
 			return (shaderc_shader_kind)0;
 		}
 
-		static const char* GLShaderStageToString(GLenum stage)
+		static const char* GLShaderStageToString(ShaderType stage)
 		{
 			switch (stage)
 			{
-			case GL_VERTEX_SHADER:   return "GL_VERTEX_SHADER";
-			case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
+			case ShaderType::VERTEX:   return "ShaderType::VERTEX";
+			case ShaderType::FRAGMENT: return "ShaderType::FRAGMENT";
 			}
 			EG_CORE_ASSERT(false);
 			return nullptr;
@@ -52,7 +53,7 @@ namespace eg
 		static const char* GetCacheDirectory()
 		{
 			// TODO: make sure the assets directory is valid
-			return "assets/cache/shader/opengl";
+			return "assets/cache/shader/vulkan";
 		}
 
 		static void CreateCacheDirectoryIfNeeded()
@@ -62,23 +63,23 @@ namespace eg
 				std::filesystem::create_directories(cacheDirectory);
 		}
 
-		static const char* GLShaderStageCachedOpenGLFileExtension(uint32_t stage)
+		static const char* GLShaderStageCachedOpenGLFileExtension(ShaderType stage)
 		{
 			switch (stage)
 			{
-			case GL_VERTEX_SHADER:    return ".cached_opengl.vert";
-			case GL_FRAGMENT_SHADER:  return ".cached_opengl.frag";
+			case ShaderType::VERTEX:    return ".cached_opengl.vert";
+			case ShaderType::FRAGMENT:  return ".cached_opengl.frag";
 			}
 			EG_CORE_ASSERT(false);
 			return "";
 		}
 
-		static const char* GLShaderStageCachedVulkanFileExtension(uint32_t stage)
+		static const char* GLShaderStageCachedVulkanFileExtension(ShaderType stage)
 		{
 			switch (stage)
 			{
-			case GL_VERTEX_SHADER:    return ".cached_vulkan.vert";
-			case GL_FRAGMENT_SHADER:  return ".cached_vulkan.frag";
+			case ShaderType::VERTEX:    return ".cached_vulkan.vert";
+			case ShaderType::FRAGMENT:  return ".cached_vulkan.frag";
 			}
 			EG_CORE_ASSERT(false);
 			return "";
@@ -89,13 +90,12 @@ namespace eg
 		: m_RendererID(0), m_Name(name)
 	{
 		EG_PROFILE_FUNCTION();
-		std::unordered_map<GLenum, std::string> shaderSources;
-		shaderSources[GL_VERTEX_SHADER] = vertexSrc;
-		shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
-
-		CompileOrGetVulkanBinaries(shaderSources);
-		CompileOrGetOpenGLBinaries();
-		CreateProgram();
+		std::unordered_map<ShaderType, std::vector<uint32_t>> shaderSources;
+		std::vector<uint32_t> vertData(vertexSrc.begin(), vertexSrc.end());
+		std::vector<uint32_t> fragData(fragmentSrc.begin(), fragmentSrc.end());
+		shaderSources[ShaderType::VERTEX] = vertData;
+		shaderSources[ShaderType::FRAGMENT] = fragData;
+		m_VulkanShaderModules = CreateShaderModules(shaderSources);
 	}
 
 	VulkanShader::VulkanShader(const std::string& filepath)
@@ -103,16 +103,7 @@ namespace eg
 	{
 		EG_PROFILE_FUNCTION();
 		Utils::CreateCacheDirectoryIfNeeded();
-
-		std::string shaderSource = Readfile(filepath);
-		auto shaderSources = Preprocess(shaderSource);
-		{
-			Timer timer;
-			CompileOrGetVulkanBinaries(shaderSources);
-			CompileOrGetOpenGLBinaries();
-			CreateProgram();
-			EG_CORE_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
-		}
+		m_VulkanShaderModules = CreateShaderModules(filepath);
 
 		// Extract name from filepath
 		auto lastSlash = filepath.find_last_of("/\\");
@@ -121,29 +112,11 @@ namespace eg
 		auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
 		m_Name = filepath.substr(lastSlash, count);
 	}
+
 	VulkanShader::~VulkanShader()
 	{
-		EG_PROFILE_FUNCTION();
-		glDeleteProgram(m_RendererID);
-	}
-
-	void VulkanShader::Bind() const
-	{
-		EG_PROFILE_FUNCTION();
-		glUseProgram(m_RendererID);
-	}
-
-	void VulkanShader::Unbind() const
-	{
-		EG_PROFILE_FUNCTION();
-		glUseProgram(0);
-	}
-
-
-
-	std::vector<VkPipelineShaderStageCreateInfo> VulkanShader::CreateShaderStages(std::filesystem::path shadersPath)
-	{
-		
+		vkDestroyShaderModule(GetVulkanHandler()->GetVulkanLogicalDevice().GetDevice(), m_VulkanShaderModules[ShaderType::VERTEX], nullptr);
+		vkDestroyShaderModule(GetVulkanHandler()->GetVulkanLogicalDevice().GetDevice(), m_VulkanShaderModules[ShaderType::FRAGMENT], nullptr);
 	}
 
 	std::string VulkanShader::Readfile(const std::string& filepath)
@@ -175,11 +148,11 @@ namespace eg
 		return result;
 	}
 
-	std::unordered_map<GLenum, std::string> VulkanShader::Preprocess(const std::string& source)
+	std::unordered_map<ShaderType, std::string> VulkanShader::Preprocess(const std::string& source)
 	{
 		EG_PROFILE_FUNCTION();
 
-		std::unordered_map<GLenum, std::string> shaderSources;
+		std::unordered_map<ShaderType, std::string> shaderSources;
 
 		const char* typeToken = "#type";
 		size_t typeTokenLength = strlen(typeToken);
@@ -190,7 +163,7 @@ namespace eg
 			EG_CORE_ASSERT(eol != std::string::npos, "Syntax error");
 			size_t begin = pos + typeTokenLength + 1; //Start of shader type name (after "#type " keyword)
 			std::string type = source.substr(begin, eol - begin);
-			EG_CORE_ASSERT(Utils::ShaderTypeFromString(type), "Invalid shader type specified");
+			EG_CORE_ASSERT(static_cast<uint32_t>(Utils::ShaderTypeFromString(type)), "Invalid shader type specified");
 
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol); //Start of shader code after shader type declaration line
 			EG_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
@@ -202,7 +175,7 @@ namespace eg
 		return shaderSources;
 	}
 
-	void VulkanShader::CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources)
+	void VulkanShader::CompileOrGetVulkanBinaries(const std::unordered_map<ShaderType, std::string>& shaderSources)
 	{
 		GLuint program = glCreateProgram();
 
@@ -320,61 +293,47 @@ namespace eg
 
 	VkShaderModule VulkanShader::CreateShaderModule(std::filesystem::path shaderPath)
 	{
-		return VkShaderModule();
+		
 	}
 
-	VkShaderModule VulkanShader::CreateShaderModule(const std::vector<char>& code)
+	VkShaderModule VulkanShader::CreateShaderModule(const std::vector<uint32_t>& code)
 	{
-		return VkShaderModule();
-	}
+		VulkanHandler* handler = GetVulkanHandler();
 
-	std::vector<VkShaderModule> VulkanShader::CreateShaderModules(std::filesystem::path shadersPath)
-	{
-		return std::vector<VkShaderModule>();
-	}
+		VkShaderModule shaderModule;
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = code.size();
+		createInfo.pCode = code.data();
 
-	void VulkanShader::CreateProgram()
-	{
-		GLuint program = glCreateProgram();
-
-		std::vector<GLuint> shaderIDs;
-		for (auto&& [stage, spirv] : m_VulkanSPIRV)
+		VkShaderModule shaderModule;
+		if (vkCreateShaderModule(handler->GetVulkanLogicalDevice().GetDevice(), &createInfo, nullptr, &shaderModule))
 		{
-			GLuint shaderID = shaderIDs.emplace_back(glCreateShader(stage));
-			glShaderBinary(1, &shaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, spirv.data(), spirv.size() * sizeof(uint32_t));
-			glSpecializeShader(shaderID, "main", 0, nullptr, nullptr);
-			glAttachShader(program, shaderID);
+			throw std::runtime_error("failed to create shader module!");
 		}
 
-		glLinkProgram(program);
-
-		GLint isLinked;
-		glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
-		if (isLinked == GL_FALSE)
-		{
-			GLint maxLength;
-			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-
-			std::vector<GLchar> infoLog(maxLength);
-			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
-			EG_CORE_ERROR("Shader linking failed ({0}):\n{1}", m_FilePath, infoLog.data());
-
-			glDeleteProgram(program);
-
-			for (auto id : shaderIDs)
-				glDeleteShader(id);
-		}
-
-		for (auto id : shaderIDs)
-		{
-			glDetachShader(program, id);
-			glDeleteShader(id);
-		}
-
-		m_RendererID = program;
+		return shaderModule;
 	}
 
-	void VulkanShader::Reflect(GLenum stage, const std::vector<uint32_t>& shaderData)
+	std::unordered_map<ShaderType, VkShaderModule> VulkanShader::CreateShaderModules(std::filesystem::path shadersPath)
+	{
+		std::unordered_map<ShaderType, VkShaderModule> shaderModules;
+		std::string shaderSource = Readfile(shadersPath.string());
+		auto shaderSources = Preprocess(shaderSource);
+		CompileOrGetVulkanBinaries(shaderSources);
+		shaderModules[ShaderType::VERTEX] = CreateShaderModule(m_VulkanSPIRV[ShaderType::VERTEX]);
+		shaderModules[ShaderType::FRAGMENT] = CreateShaderModule(m_VulkanSPIRV[ShaderType::FRAGMENT]);
+	}
+
+	std::unordered_map<ShaderType, VkShaderModule> VulkanShader::CreateShaderModules(const std::unordered_map<ShaderType, std::vector<uint32_t>>& shaderData)
+	{
+		std::unordered_map<ShaderType, VkShaderModule> shaderModules;
+		for (auto&& [stage, data] : shaderData)
+			shaderModules[stage] = CreateShaderModule(data);
+		return shaderModules;
+	}
+
+	void VulkanShader::Reflect(ShaderType stage, const std::vector<uint32_t>& shaderData)
 	{
 		spirv_cross::Compiler compiler(shaderData);
 		spirv_cross::ShaderResources resources = compiler.get_shader_resources();

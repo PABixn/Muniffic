@@ -2,13 +2,16 @@
 #include "glm/glm.hpp"
 namespace eg
 {
+	enum class ShaderType : uint32_t
+	{
+		NONE = 0, VERTEX, FRAGMENT, COMPUTE
+
+		
+	};
 	class Shader
 	{
 	public:
 		virtual~Shader() = default;
-
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
 
 		virtual void SetInt(const std::string& name, int value) = 0;
 		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) = 0;

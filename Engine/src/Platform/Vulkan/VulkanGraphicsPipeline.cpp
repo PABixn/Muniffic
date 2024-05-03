@@ -12,9 +12,21 @@ namespace eg {
 
 		m_DescriptorSetLayout.Create();
 
-		VulkanShader shader = VulkanShader(shaderPath.string());
+		Scope<VulkanShader> shader = CreateScope<VulkanShader>(shaderPath.string());
 
-		VkPipelineShaderStageCreateInfo shaderStages[] = { shader.GetVertexShaderStage(), shader.GetFragmentShaderStage()};
+		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+		vertShaderStageInfo.module = shader->GetVertexShaderModule();
+		vertShaderStageInfo.pName = "main";
+
+		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+		fragShaderStageInfo.module = shader->GetFragmentShaderModule();
+		fragShaderStageInfo.pName = "main";
+
+		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo};
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -121,6 +133,8 @@ namespace eg {
 		if (vkCreateGraphicsPipelines(logicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create graphics graphics Pipeline!");
 		}
+
+		shader = nullptr;
 
 		m_DescriptorPool.Create(logicalDevice);
 		m_DescriptorSets.Create(logicalDevice, m_DescriptorPool.getPool(), m_DescriptorSetLayout.GetDescriptorSetLayout(), m_UniformBuffers);
