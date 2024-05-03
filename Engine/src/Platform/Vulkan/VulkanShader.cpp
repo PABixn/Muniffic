@@ -306,7 +306,6 @@ namespace eg
 		createInfo.codeSize = code.size();
 		createInfo.pCode = code.data();
 
-		VkShaderModule shaderModule;
 		if (vkCreateShaderModule(handler->GetVulkanLogicalDevice().GetDevice(), &createInfo, nullptr, &shaderModule))
 		{
 			throw std::runtime_error("failed to create shader module!");

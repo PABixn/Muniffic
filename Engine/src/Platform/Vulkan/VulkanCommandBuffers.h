@@ -12,7 +12,7 @@ namespace eg {
 		~VulkanCommandBuffers() = default;
 
 		void Create(VkDevice device, VkCommandPool commandPool, uint32_t imageCount);
-		void Reset(uint32_t index);
+		void Reset(uint32_t index, VkCommandBufferResetFlags flags);
 
 		VkCommandBuffer getCommandBuffer(uint32_t index) const { return (VkCommandBuffer)m_CommandBuffers[index]; }
 		const std::vector<VulkanCommandBuffer>& getCommandBuffers() const { return m_CommandBuffers; }

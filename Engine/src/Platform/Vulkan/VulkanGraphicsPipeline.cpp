@@ -110,7 +110,7 @@ namespace eg {
 
 		if (vkCreatePipelineLayout(logicalDevice, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS)
 		{
-			throw std::runtime_error("failed to create graphicsPipeline layout!");
+			EG_ASSERT("failed to create graphicsPipeline layout!");
 		}
 
 		VkGraphicsPipelineCreateInfo pipelineInfo{};

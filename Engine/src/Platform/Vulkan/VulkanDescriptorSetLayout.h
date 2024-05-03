@@ -10,7 +10,7 @@ namespace eg {
 		VulkanDescriptorSetLayout() = default;
 		~VulkanDescriptorSetLayout() = default;
 
-		void Init();
+		void Create();
 		void Cleanup();
 
 		const VkDescriptorSetLayout& GetDescriptorSetLayout() const { return m_descriptorSetLayout; }

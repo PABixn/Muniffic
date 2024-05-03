@@ -85,7 +85,7 @@ namespace eg {
 		}
 	}
 
-	void VulkanRenderPass::cleanup(VkDevice device)
+	void VulkanRenderPass::Cleanup(VkDevice device)
 	{
 		vkDestroyRenderPass(device, renderPass, nullptr);
 	}

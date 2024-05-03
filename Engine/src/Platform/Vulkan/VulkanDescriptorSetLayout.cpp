@@ -3,7 +3,7 @@
 #include "VulkanUtils.h"
 namespace eg {
 
-	void VulkanDescriptorSetLayout::Init()
+	void VulkanDescriptorSetLayout::Create()
 	{
 		VulkanHandler* handler = GetVulkanHandler();
 		VkDevice device = handler->GetVulkanLogicalDevice().GetDevice();
