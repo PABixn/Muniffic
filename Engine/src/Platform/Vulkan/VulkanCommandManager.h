@@ -7,6 +7,7 @@
 namespace eg {
 	class VulkanCommandManager {
 	public:
+		static void Init(VkDevice logicalDevice, VkQueue graphicsQueue, VkCommandPool commandPool);
 		static VulkanCommandBuffer BeginSingleTimeCommands();
 		static void EndSingleTimeCommands(VulkanCommandBuffer& commandBuffer);
 		static void RecordCommandBuffer(VkRenderPass renderPass, VkExtent2D swapChainextent, VkFramebuffer framebuffer, VkPipeline pipeline, VkPipelineLayout pipelineLayout, VkDescriptorSet descriptorSet, VkBuffer vertexBuffer, VkBuffer indexBuffer, uint32_t indexCount);

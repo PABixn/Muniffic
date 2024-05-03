@@ -13,6 +13,7 @@ namespace eg {
 
 		static VulkanDeviceMemory& AllocateMemory(VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags memoryProperties);
 		static VulkanDeviceMemory& AllocateMemory(VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags memoryProperties, void* data, size_t size);
+		static void MapMemory(VulkanDeviceMemory& deviceMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, float* data);
 		static VulkanDeviceMemory& AllocateImageMemory(VkImage image, VkMemoryPropertyFlags memoryProperties);
 		static VulkanDeviceMemory& AllocateBufferMemory(VkBuffer buffer, VkMemoryPropertyFlags memoryProperties);
 

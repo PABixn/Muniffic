@@ -12,6 +12,8 @@
 #include "VulkanSwapChain.h"
 #include "VulkanCommandBuffer.h"
 #include "VulkanRenderPass.h"
+#include "VulkanGraphicsPipeline.h"
+#include "VulkanCommandPool.h"
 
 #include "VulkanDeviceMemoryManager.h"
 #include "VulkanConstants.h"
@@ -37,9 +39,11 @@ namespace eg {
 		const VulkanLogicalDevice& GetVulkanLogicalDevice() { return m_LogicalDevice; }
 		const VulkanSwapChain& GetVulkanSwapChain() { return m_SwapChain; }
 		const std::vector<VulkanCommandBuffer>& GetVulkanCommandBuffers() { return m_commandBuffers; }
+		const VulkanRenderPass& GetVulkanRenderPass() { return m_RenderPass; }
+		const VulkanGraphicsPipeline& GetVulkanGraphicsPipeline() { return m_GraphicsPipeline; }
+		const VulkanCommandPool& GetVulkanCommandPool() { return m_CommandPool; }
 
 		GLFWwindow* GetWindow() { return m_Window; }
-		//VkCommandPool& GetCommandPool() { return m_SwapChain.GetCommandPool(); }
 	private:
 		
 
@@ -51,6 +55,8 @@ namespace eg {
 		VulkanLogicalDevice m_LogicalDevice;
 		VulkanSwapChain m_SwapChain;
 		VulkanRenderPass m_RenderPass;
+		VulkanGraphicsPipeline m_GraphicsPipeline;
+		VulkanCommandPool m_CommandPool;
 		std::vector<VulkanCommandBuffer> m_commandBuffers;
 		GLFWwindow* m_Window;
 	};

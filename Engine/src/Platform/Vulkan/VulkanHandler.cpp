@@ -1,6 +1,6 @@
 #include "egpch.h"
 #include "VulkanHandler.h"
-
+#include "VulkanCommandManager.h"
 namespace eg {
 	
 	Ref<VulkanHandler> VulkanHandler::Create(GLFWwindow* window)
@@ -18,9 +18,16 @@ namespace eg {
 		m_Surface.Init(m_Instance.GetInstance(), m_Window);
 		m_PhysicalDevice.Init(m_Instance.GetInstance(), m_Surface.GetSurface(), m_DeviceExtensions);
 		m_LogicalDevice.Init(m_PhysicalDevice.GetPhysicalDevice(), m_Surface.GetSurface(), m_DeviceExtensions);
+		VulkanCommandManager::Init(m_LogicalDevice.GetDevice(), m_LogicalDevice.GetGraphicsQueue(), m_CommandPool.GetPool());	
 		VulkanDeviceMemoryManager::Init(m_LogicalDevice.GetDevice(), m_PhysicalDevice.GetPhysicalDevice());
 		m_SwapChain.Init();
 		m_RenderPass.Init();
+		m_GraphicsPipeline.Create(m_LogicalDevice.GetDevice(), m_RenderPass.GetRenderPass(), {}, {});
+		m_CommandPool.Create();
+		m_SwapChain.CreateColorResources();
+		m_SwapChain.CreateDepthResources();
+		m_SwapChain.CreateFramebuffers();
+
 	}
 
 	VulkanHandler::VulkanHandler(GLFWwindow* window):m_Window(window)
@@ -34,7 +41,10 @@ namespace eg {
 	void VulkanHandler::Cleanup()
 	{
 		m_SwapChain.CleanupSwapChain();
-		m_RenderPass.cleanup(m_LogicalDevice.GetDevice());
+		m_GraphicsPipeline.Cleanup();
+		m_RenderPass.Cleanup(m_LogicalDevice.GetDevice());
+		m_CommandPool.Cleanup();
+		
 		m_LogicalDevice.Cleanup();
 
 		m_Surface.Cleanup(m_Instance.GetInstance());

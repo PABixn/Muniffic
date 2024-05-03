@@ -12,9 +12,9 @@ namespace eg {
 		~VulkanRenderPass() = default;
 
 		void Init();
-		void cleanup(VkDevice device);
+		void Cleanup(VkDevice device);
 
-		VkRenderPass getRenderPass() const { return renderPass; }
+		VkRenderPass GetRenderPass() const { return renderPass; }
 
 	private:
 		VkRenderPass renderPass;

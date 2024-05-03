@@ -2,7 +2,12 @@
 #include "VulkanCommandManager.h"
 
 namespace eg {
-
+    void VulkanCommandManager::Init(VkDevice logicalDevice, VkQueue graphicsQueue, VkCommandPool commandPool)
+    {
+		m_logicalDevice = logicalDevice;
+		m_graphicsQueue = graphicsQueue;
+		m_commandPool = commandPool;
+    }
     VulkanCommandBuffer VulkanCommandManager::BeginSingleTimeCommands()
     {
         VulkanCommandBuffer commandBuffer;

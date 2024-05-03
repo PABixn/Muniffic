@@ -13,6 +13,8 @@ namespace eg {
 		static VulkanDeviceMemory& Create(VkDevice m_Device, VkPhysicalDevice m_PhysicalDevice, VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags memoryProperties, void* data, size_t size);
 		static VulkanDeviceMemory& Create(VkDevice m_Device, VkPhysicalDevice m_PhysicalDevice, VkMemoryPropertyFlags memoryProperties, VkBuffer buffer);
 		static VulkanDeviceMemory& Create(VkDevice m_Device, VkPhysicalDevice m_PhysicalDevice, VkMemoryPropertyFlags memoryProperties, VkImage image);
+
+		static void Allocate(VkDevice device, VulkanDeviceMemory& deviceMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, float* data);
 		void Cleanup(VkDevice device);
 
 		VkDeviceMemory GetDeviceMemory() const { return m_deviceMemory; }

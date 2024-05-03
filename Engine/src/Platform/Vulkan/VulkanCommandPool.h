@@ -7,10 +7,13 @@
 namespace eg {
 	class VulkanCommandPool {
 	public:
-		VulkanCommandPool(VkDevice logicalDevice, VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkCommandPoolCreateFlags flags = 0);
-		~VulkanCommandPool();
+		VulkanCommandPool() = default;
+		~VulkanCommandPool() = default;
 
-		VkCommandPool getCommandPool() const { return m_commandPool; }
+		void Create(VkCommandPoolCreateFlags flags = 0);
+		void Cleanup();
+
+		VkCommandPool GetPool() const { return m_commandPool; }
 	private:
 		VkCommandPool m_commandPool;
 	};

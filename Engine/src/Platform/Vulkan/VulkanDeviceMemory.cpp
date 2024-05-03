@@ -75,6 +75,14 @@ namespace eg {
 		return deviceMemory;
 	}
 
+	void VulkanDeviceMemory::Allocate(VkDevice device, VulkanDeviceMemory& deviceMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, float* data)
+	{
+		void* mappedData;	
+		vkMapMemory(device, deviceMemory.m_deviceMemory, 0, size, 0, &mappedData);
+		memcpy(mappedData, data, size);
+		vkUnmapMemory(device, deviceMemory.m_deviceMemory);
+	}
+
 	void VulkanDeviceMemory::Cleanup(VkDevice device)
 	{
 		vkFreeMemory(device, m_deviceMemory, nullptr);

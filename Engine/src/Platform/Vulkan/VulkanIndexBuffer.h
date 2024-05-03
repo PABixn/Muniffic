@@ -1,21 +1,21 @@
 #pragma once
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-
+#include "VulkanBuffer.h"
 namespace eg {
 	class VulkanIndexBuffer {
 	public:
 		//Might turn this into a template class later for different index types
-		VulkanIndexBuffer(VkDevice device, VkPhysicalDevice physicalDevice, VkCommandPool commandPool, VkQueue queue, uint32_t* indices, uint32_t indexCount);
-		~VulkanIndexBuffer();
+		VulkanIndexBuffer() = default;
+		~VulkanIndexBuffer() = default;
 
-		VkBuffer getBuffer() { return buffer; }
-		VkDeviceMemory getBufferMemory() { return bufferMemory; }
+		void Create(VkDevice device, VkPhysicalDevice physicalDevice, VkCommandPool commandPool, VkQueue queue, uint32_t* indices, uint32_t indexCount);
+		void Cleanup(VkDevice device);
+
+		VulkanBuffer& getBuffer() { return m_Indexbuffer; }
 		uint32_t getIndexCount() { return indexCount; }
 	private:
-		VkBuffer buffer;
-		VkDeviceMemory bufferMemory;
+		VulkanBuffer m_Indexbuffer;
 		uint32_t indexCount;
-		VkDevice device;
 	};
 }

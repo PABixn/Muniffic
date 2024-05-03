@@ -19,7 +19,31 @@ namespace eg {
             throw std::runtime_error("failed to create buffer!");
         }
 
-        VulkanDeviceMemoryManager::AllocateBufferMemory(buffer.m_Buffer, properties);
+        buffer.m_BufferMemory = VulkanDeviceMemoryManager::AllocateBufferMemory(buffer.m_Buffer, properties);
+
+        buffer.m_Size = size;
+
+        return buffer;
+    }
+
+    template <typename T>
+    VulkanBuffer VulkanBuffer::CreateBuffer(VkDevice device, VkPhysicalDevice physicalDevice, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, T* data)
+    {
+        VulkanBuffer buffer;
+        VkBufferCreateInfo bufferInfo{};
+        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        bufferInfo.size = size;
+        bufferInfo.usage = usage;
+        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer.m_Buffer) != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to create buffer!");
+        }
+
+        buffer.m_BufferMemory = VulkanDeviceMemoryManager::AllocateBufferMemory(buffer.m_Buffer, properties);
+
+        VulkanDeviceMemoryManager::MapMemory(buffer.m_BufferMemory, size, usage, properties, data);
 
         buffer.m_Size = size;
 
@@ -38,9 +62,9 @@ namespace eg {
         CopyBuffer(m_Buffer, dstBuffer, size);
     }
 
-    void VulkanBuffer::CopyFrom(VulkanBuffer dstBuffer, VkDeviceSize size)
+    void VulkanBuffer::CopyFrom(VulkanBuffer srcBuffer, VkDeviceSize size)
     {
-        CopyBuffer(dstBuffer, m_Buffer, size);
+        CopyBuffer(srcBuffer, m_Buffer, size);
     }
 
     void VulkanBuffer::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
@@ -70,6 +94,12 @@ namespace eg {
     {
 		CopyBuffer(srcBuffer.m_Buffer, dstBuffer.m_Buffer, size);
         dstBuffer.m_Size = size;
+    }
+
+    void VulkanBuffer::Destroy(VkDevice device)
+    {
+        vkDestroyBuffer(device, m_Buffer, nullptr);
+		m_BufferMemory.Cleanup(device);
     }
 
 }

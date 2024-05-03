@@ -2,6 +2,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include "Engine/Core/Core.h"
 #include "Engine/Renderer/Buffer.h"
+#include "VulkanBuffer.h"
 #include <GLFW/glfw3.h>
 namespace eg {
 	VkFormat ShaderDataTypeToVulkanFormat(ShaderDataType type)
@@ -34,18 +35,17 @@ namespace eg {
 
 	class VulkanVertexBuffer {
 	public:
-		VulkanVertexBuffer(VkDevice logicalDevice, float* vertices, uint32_t size, uint32_t stride);
-		~VulkanVertexBuffer();
+		VulkanVertexBuffer() = default;
+		~VulkanVertexBuffer() = default;
+
+		void Create(VkDevice logicalDevice, VkPhysicalDevice,float* vertices, uint32_t size, uint32_t stride);
+		void Cleanup(VkDevice logicalDevice);
 
 		void Bind();
 		void Unbind();
 
-		VkBuffer GetBuffer() { return m_Buffer; }
-		VkDeviceMemory GetBufferMemory() { return m_BufferMemory; }
-
+		VulkanBuffer& GetVulkanBuffer() { return m_VertexBuffer; }
 	private:
-		VkBuffer m_Buffer;
-		VkDeviceMemory m_BufferMemory;
-		VkDevice m_LogicalDevice;
+		VulkanBuffer m_VertexBuffer;
 	};
 }

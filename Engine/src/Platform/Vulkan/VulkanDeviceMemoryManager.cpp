@@ -21,6 +21,17 @@ namespace eg {
 		return memory;
 	}
 
+	void VulkanDeviceMemoryManager::MapMemory(VulkanDeviceMemory& deviceMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, float* data)
+	{
+		VulkanDeviceMemory::Allocate(m_Device, deviceMemory, size, usage, properties, data);
+	}
+
+	/*VulkanDeviceMemory& VulkanDeviceMemoryManager::AllocateMemory(VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags memoryProperties, void* data, size_t size, VkBuffer buffer)
+	{
+		VulkanDeviceMemory memory = VulkanDeviceMemory::Create(m_Device, m_PhysicalDevice, memoryRequirements, memoryProperties, data, size, buffer);
+		return memory;
+	}*/
+
 	VulkanDeviceMemory& VulkanDeviceMemoryManager::AllocateImageMemory(VkImage image, VkMemoryPropertyFlags memoryProperties)
 	{
 		VulkanDeviceMemory memory = VulkanDeviceMemory::Create(m_Device, m_PhysicalDevice, memoryProperties, image);
