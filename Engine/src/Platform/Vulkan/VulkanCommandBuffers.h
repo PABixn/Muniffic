@@ -8,15 +8,15 @@ namespace eg {
 	// Wrapper for Vulkan command buffers (don't think it's necessary)
 	class VulkanCommandBuffers {
 	public:
-		VulkanCommandBuffers();
-		~VulkanCommandBuffers();
+		VulkanCommandBuffers() = default;
+		~VulkanCommandBuffers() = default;
 
-		void createCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t imageCount);
-		void destroyCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t imageCount);
+		void Create(VkDevice device, VkCommandPool commandPool, uint32_t imageCount);
+		void Reset(uint32_t index);
 
-		VkCommandBuffer getCommandBuffer(uint32_t index) const { return (VkCommandBuffer)m_commandBuffers[index]; }
-		const std::vector<VulkanCommandBuffer>& getCommandBuffers() const { return m_commandBuffers; }
+		VkCommandBuffer getCommandBuffer(uint32_t index) const { return (VkCommandBuffer)m_CommandBuffers[index]; }
+		const std::vector<VulkanCommandBuffer>& getCommandBuffers() const { return m_CommandBuffers; }
 	private:
-		std::vector<VulkanCommandBuffer> m_commandBuffers;
+		std::vector<VulkanCommandBuffer> m_CommandBuffers;
 	};
 }

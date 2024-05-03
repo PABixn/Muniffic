@@ -42,4 +42,9 @@ namespace eg {
 	{
 
 	}
+
+	void VulkanCommandBuffer::Reset(VkCommandBufferResetFlags flags)
+	{
+		vkResetCommandBuffer(m_commandBuffer, flags);
+	}
 }
