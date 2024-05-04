@@ -2,6 +2,7 @@
 #include "VulkanSwapChain.h"
 #include "VulkanCommandManager.h"
 #include "Engine/Core/Application.h"
+#include "VulkanImageFactory.h"
 #include "VulkanContext.h"
 
 namespace eg {
@@ -122,7 +123,7 @@ namespace eg {
         m_ImageViews.resize(m_Images.size());
 
         for (size_t i = 0; i < m_Images.size(); i++) {
-            m_ImageViews[i] = VulkanImageView::Create(device, m_Images[i], m_ImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, m_MipLevels);
+            m_ImageViews[i] = VulkanImageFactory::CreateImageView(device, m_Images[i], m_ImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, m_MipLevels);
         }
     }
 
@@ -130,7 +131,7 @@ namespace eg {
     {
         VulkanHandler* handler = getVulkanHandler();
         VkDevice device = handler->GetVulkanLogicalDevice().GetDevice();
-        m_ColorImage = VulkanImage::Create(device, m_Extent.width, m_Extent.height, 1, m_MsaaSamples, m_ImageFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
+        m_ColorImage = VulkanImageFactory::CreateImage(device, m_Extent.width, m_Extent.height, m_MsaaSamples, m_ImageFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_COLOR_BIT, 1);
     }
 
     void VulkanSwapChain::CreateDepthResources()
@@ -138,7 +139,7 @@ namespace eg {
         VulkanHandler* handler = getVulkanHandler();
         VkDevice device = handler->GetVulkanLogicalDevice().GetDevice();
         VkFormat depthFormat = VulkanImage::FindDepthFormat(device);
-        m_DepthImage = VulkanImage::Create(device, m_Extent.width, m_Extent.height, 1, m_MsaaSamples, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_DEPTH_BIT);
+        m_DepthImage = VulkanImageFactory::CreateImage(device, m_Extent.width, m_Extent.height, m_MsaaSamples, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
     }
 
     void VulkanSwapChain::CreateFramebuffers()
@@ -195,101 +196,7 @@ namespace eg {
         CreateFramebuffers();
     }
 
-    void VulkanSwapChain::generateMipMaps(VkImage image, VkFormat format, int32_t texWidth, int32_t texHeight, int32_t mipLevels)
-    {
-        VulkanHandler* handler = getVulkanHandler();
-        VkPhysicalDevice physicalDevice = handler->GetVulkanPhysicalDevice().GetPhysicalDevice();
-        VkDevice device = handler->GetVulkanLogicalDevice().GetDevice();
-        VkCommandPool commandPool = handler->GetVulkanCommandPool().GetPool();
-        VkQueue graphicsQueue = handler->GetVulkanLogicalDevice().GetGraphicsQueue();
-
-        VkFormatProperties formatProperties{};
-
-        vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProperties);
-
-        if (!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)) {
-            throw std::runtime_error("texture image format does not support linear blitting");
-        }
-
-       VulkanCommandBuffer commandBuffer = VulkanCommandManager::BeginSingleTimeCommands();
-
-        VkImageMemoryBarrier barrier{};
-        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-        barrier.image = image;
-        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.levelCount = 1;
-        barrier.subresourceRange.layerCount = 1;
-
-
-
-        int32_t mipWidth = texWidth;
-        int32_t mipHeight = texHeight;
-
-        for (uint32_t i = 1; i < mipLevels; i++) {
-            barrier.subresourceRange.baseMipLevel = i - 1;
-            barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-            barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-            barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-            barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-
-            vkCmdPipelineBarrier(commandBuffer,
-                VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
-                0, nullptr,
-                0, nullptr,
-                1, &barrier);
-
-            VkImageBlit blit{};
-            blit.srcOffsets[0] = { 0,0,0 };
-            blit.srcOffsets[1] = { mipWidth, mipHeight, 1 };
-            blit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            blit.srcSubresource.mipLevel = i - 1;
-            blit.srcSubresource.baseArrayLayer = 0;
-            blit.srcSubresource.layerCount = 1;
-            blit.dstOffsets[0] = { 0,0,0 };
-            blit.dstOffsets[1] = { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 };
-            blit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            blit.dstSubresource.mipLevel = i;
-            blit.dstSubresource.baseArrayLayer = 0;
-            blit.dstSubresource.layerCount = 1;
-
-            vkCmdBlitImage(commandBuffer,
-                image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                1, &blit,
-                VK_FILTER_LINEAR);
-
-            barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-            barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-            vkCmdPipelineBarrier(commandBuffer,
-                VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
-                0, nullptr,
-                0, nullptr,
-                1, &barrier);
-
-            if (mipWidth > 1) mipWidth /= 2;
-            if (mipHeight > 1) mipHeight /= 2;
-        }
-
-        barrier.subresourceRange.baseMipLevel = mipLevels - 1;
-        barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-        barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-        vkCmdPipelineBarrier(commandBuffer,
-            VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
-            0, nullptr,
-            0, nullptr,
-            1, &barrier);
-
-        VulkanCommandManager::EndSingleTimeCommands(commandBuffer);
-    }
+    
 
     VkSampleCountFlagBits VulkanSwapChain::GetMaxUsableSampleCount()
     {
@@ -321,16 +228,14 @@ namespace eg {
     {
         VulkanHandler* handler = getVulkanHandler();
         VkDevice device = handler->GetVulkanLogicalDevice().GetDevice();
-        m_ColorImage.Cleanup(device);
-
-		m_DepthImage.Cleanup(device);
+        VulkanImageFactory::DestroyImage(m_ColorImage, device);
 
 		for (size_t i = 0; i < m_Framebuffers.size(); i++) {
 			vkDestroyFramebuffer(device, m_Framebuffers[i], nullptr);
 		}
 
 		for (size_t i = 0; i < m_ImageViews.size(); i++) {
-			m_ImageViews[i].Cleanup(device);
+            VulkanImageFactory::DestroyImageView(m_ImageViews[i], device);
 		}
 
 		vkDestroySwapchainKHR(device, m_Swapchain, nullptr);

@@ -25,7 +25,7 @@ namespace eg {
 		return imageViewObj;
 	}
 
-	void VulkanImageView::Cleanup(VkDevice device)
+	void VulkanImageView::Destroy(VkDevice device)
 	{
 		vkDestroyImageView(device, m_ImageView, nullptr);
 	}

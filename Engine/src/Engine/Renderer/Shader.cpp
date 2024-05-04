@@ -1,12 +1,14 @@
 #include "egpch.h"
 #include "Shader.h"
 #include <glad/glad.h>
+#
 #include "Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Platform/Vulkan/VulkanShader.h"
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
 namespace eg {
-	Ref<Shader> Shader::Create(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& name)
+	Ref<Shader> Shader::Create(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& name, BufferLayout layout)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -16,7 +18,10 @@ namespace eg {
 				return nullptr;
 			case RendererAPI::API::OpenGL:
 				ConsolePanel::Log("File: Shader.cpp - Successfully Created Shader", ConsolePanel::LogType::Info);
-				return std::make_shared<OpenGLShader>(vertexSrc, fragmentSrc, name);
+				return CreateRef<OpenGLShader>(vertexSrc, fragmentSrc, name);
+			case RendererAPI::API::Vulkan:
+				ConsolePanel::Log("File: Shader.cpp - Successfully Created Shader", ConsolePanel::LogType::Info);
+				return CreateRef<VulkanShader>(vertexSrc, fragmentSrc, name, layout);
 		}
 
 		EG_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -24,7 +29,7 @@ namespace eg {
 		return nullptr;
 	}
 
-	Ref<Shader> Shader::Create(const std::string& filepath)
+	Ref<Shader> Shader::Create(const std::string& filepath, BufferLayout layout)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -34,7 +39,10 @@ namespace eg {
 			return nullptr;
 		case RendererAPI::API::OpenGL: 
 			ConsolePanel::Log("File: Shader.cpp - Successfully Created Shader", ConsolePanel::LogType::Info);
-			return  std::make_shared<OpenGLShader>(filepath);
+			return  CreateRef<OpenGLShader>(filepath);
+		case RendererAPI::API::Vulkan:
+			ConsolePanel::Log("File: Shader.cpp - Successfully Created Shader", ConsolePanel::LogType::Info);
+			return CreateRef<VulkanShader>(filepath, layout);
 		}
 
 		EG_CORE_ASSERT(false, "Unknown RendererAPI!");

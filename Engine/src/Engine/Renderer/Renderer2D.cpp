@@ -229,7 +229,6 @@ namespace eg {
 		s_Data.TextureSlotIndex = 1;
 	}
 
-
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		EG_PROFILE_FUNCTION();

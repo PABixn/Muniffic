@@ -86,8 +86,8 @@ namespace eg
 		}
 	}
 
-	VulkanShader::VulkanShader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& name)
-		: m_RendererID(0), m_Name(name)
+	VulkanShader::VulkanShader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& name, BufferLayout layout)
+		: m_RendererID(0), m_Name(name), m_Layout(layout)
 	{
 		EG_PROFILE_FUNCTION();
 		std::unordered_map<ShaderType, std::vector<uint32_t>> shaderSources;
@@ -96,10 +96,11 @@ namespace eg
 		shaderSources[ShaderType::VERTEX] = vertData;
 		shaderSources[ShaderType::FRAGMENT] = fragData;
 		m_VulkanShaderModules = CreateShaderModules(shaderSources);
+		m_GraphicsPipeline = CreateGraphicsPipeline();
 	}
 
-	VulkanShader::VulkanShader(const std::string& filepath)
-		: m_FilePath(filepath), m_RendererID(0)
+	VulkanShader::VulkanShader(const std::string& filepath, BufferLayout layout)
+		: m_FilePath(filepath), m_RendererID(0), m_Layout(layout)
 	{
 		EG_PROFILE_FUNCTION();
 		Utils::CreateCacheDirectoryIfNeeded();
@@ -229,66 +230,6 @@ namespace eg
 
 		for (auto&& [stage, data] : shaderData)
 			Reflect(stage, data);
-	}
-
-
-
-	void VulkanShader::CompileOrGetOpenGLBinaries()
-	{
-		auto& shaderData = m_OpenGLSPIRV;
-
-		shaderc::Compiler compiler;
-		shaderc::CompileOptions options;
-		options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
-		const bool optimize = false;
-		if (optimize)
-			options.SetOptimizationLevel(shaderc_optimization_level_performance);
-
-		std::filesystem::path cacheDirectory = Utils::GetCacheDirectory();
-
-		shaderData.clear();
-		m_OpenGLSourceCode.clear();
-		for (auto&& [stage, spirv] : m_VulkanSPIRV)
-		{
-			std::filesystem::path shaderFilePath = m_FilePath;
-			std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + Utils::GLShaderStageCachedOpenGLFileExtension(stage));
-
-			std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
-			if (in.is_open())
-			{
-				in.seekg(0, std::ios::end);
-				auto size = in.tellg();
-				in.seekg(0, std::ios::beg);
-
-				auto& data = shaderData[stage];
-				data.resize(size / sizeof(uint32_t));
-				in.read((char*)data.data(), size);
-			}
-			else
-			{
-				spirv_cross::CompilerGLSL glslCompiler(spirv);
-				m_OpenGLSourceCode[stage] = glslCompiler.compile();
-				auto& source = m_OpenGLSourceCode[stage];
-
-				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str());
-				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
-				{
-					EG_CORE_ERROR(module.GetErrorMessage());
-					EG_CORE_ASSERT(false);
-				}
-
-				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
-
-				std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
-				if (out.is_open())
-				{
-					auto& data = shaderData[stage];
-					out.write((char*)data.data(), data.size() * sizeof(uint32_t));
-					out.flush();
-					out.close();
-				}
-			}
-		}
 	}
 
 	VkShaderModule VulkanShader::CreateShaderModule(std::filesystem::path shaderPath)

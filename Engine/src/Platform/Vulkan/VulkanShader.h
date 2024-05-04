@@ -3,6 +3,8 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "Engine/Renderer/Shader.h"
+#include "VulkanVertex.h"
+#include "VulkanGraphicsPipeline.h"
 #include <unordered_map>
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -10,8 +12,8 @@ namespace eg {
 	class VulkanShader : public Shader
 	{
 	public:
-		VulkanShader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& name);
-		VulkanShader(const std::string& filepath);
+		VulkanShader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& name, BufferLayout layout);
+		VulkanShader(const std::string& filepath, BufferLayout layout);
 		virtual~VulkanShader();
 
 		virtual void SetInt(const std::string& name, int value) override;
@@ -39,7 +41,11 @@ namespace eg {
 		//VkPipelineShaderStageCreateInfo GetFragmentShaderStage() const { return m_VulkanShaderModules[ShaderType::FRAGMENT]; }
 		VkShaderModule GetVertexShaderModule() const { return m_VulkanShaderModules.at(ShaderType::FRAGMENT); }
 		VkShaderModule GetFragmentShaderModule() const { return m_VulkanShaderModules.at(ShaderType::FRAGMENT); }
+		VkShaderModule GetShaderModule(ShaderType type) const { return m_VulkanShaderModules.at(type); }
 
+		const VulkanGraphicsPipeline& GetGraphicsPipeline() const { return m_GraphicsPipeline; }
+		const VulkanVertexInputLayout& GetLayout() const { return m_Layout; }
+		VulkanVertexInputLayout& GetLayout() { return m_Layout; }
 	private:
 		std::string Readfile(const std::string& filepath);
 		std::unordered_map<ShaderType, std::string> Preprocess(const std::string& source);
@@ -55,8 +61,8 @@ namespace eg {
 		std::string m_FilePath;
 		std::string m_Name;
 		std::unordered_map<ShaderType, std::vector<uint32_t>> m_VulkanSPIRV;
-		std::unordered_map<ShaderType, std::vector<uint32_t>> m_OpenGLSPIRV;
 		std::unordered_map<ShaderType, VkShaderModule> m_VulkanShaderModules;
-		std::unordered_map<ShaderType, std::string> m_OpenGLSourceCode;
+		VulkanGraphicsPipeline m_GraphicsPipeline;
+		VulkanVertexInputLayout m_Layout;
 	};
 }

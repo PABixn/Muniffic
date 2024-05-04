@@ -28,9 +28,10 @@ namespace eg {
 
 	class VulkanVertexInputLayout: public BufferLayout{
 	public:
-		VkVertexInputBindingDescription GetBindingDescription();
+		VulkanVertexInputLayout(BufferLayout& layout) : BufferLayout(layout) {}
+		VkVertexInputBindingDescription& GetBindingDescription();
 
-		std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
+		std::vector<VkVertexInputAttributeDescription>& GetAttributeDescriptions();
 	};
 
 	class VulkanVertexBuffer {
@@ -38,7 +39,7 @@ namespace eg {
 		VulkanVertexBuffer() = default;
 		~VulkanVertexBuffer() = default;
 
-		void Create(VkDevice logicalDevice, VkPhysicalDevice,float* vertices, uint32_t size, uint32_t stride);
+		void Create(VkDevice logicalDevice, VkPhysicalDevice physicalDevice, BufferLayout& layout, float* vertices, uint32_t count);
 		void Cleanup(VkDevice logicalDevice);
 
 		void Bind();
@@ -47,5 +48,6 @@ namespace eg {
 		VulkanBuffer& GetVulkanBuffer() { return m_VertexBuffer; }
 	private:
 		VulkanBuffer m_VertexBuffer;
+		VulkanVertexInputLayout m_VertexInputLayout;
 	};
 }

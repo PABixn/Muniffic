@@ -43,6 +43,7 @@ namespace eg {
 		VulkanDeviceMemory memory = VulkanDeviceMemory::Create(m_Device, m_PhysicalDevice, memoryProperties, buffer);
 		return memory;
 	}
+	
 
 	void VulkanDeviceMemoryManager::FreeMemory(VulkanDeviceMemory& memory)
 	{

@@ -28,8 +28,6 @@ namespace eg {
 		void CreateFramebuffers();
 		
 		void RecreateSwapChain();
-
-		void generateMipMaps(VkImage image, VkFormat format, int32_t texWidth, int32_t texHeight, int32_t mipLevels);
 		
 		VkSampleCountFlagBits GetMaxUsableSampleCount();
 

@@ -23,6 +23,7 @@ namespace eg {
 			static void CopyBuffer(VulkanBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 			static void CopyBuffer(VulkanBuffer srcBuffer, VulkanBuffer dstBuffer, VkDeviceSize size);
 
+			void FreeMemory(VkDevice device);
 			void Destroy(VkDevice device);
 
 			const VkBuffer& GetBuffer() const { return m_Buffer; }

@@ -96,10 +96,16 @@ namespace eg {
         dstBuffer.m_Size = size;
     }
 
+    void VulkanBuffer::FreeMemory(VkDevice device)
+    {
+        m_BufferMemory.Cleanup(device);
+    }
+
     void VulkanBuffer::Destroy(VkDevice device)
     {
         vkDestroyBuffer(device, m_Buffer, nullptr);
 		m_BufferMemory.Cleanup(device);
+        m_Size = 0;
     }
 
 }

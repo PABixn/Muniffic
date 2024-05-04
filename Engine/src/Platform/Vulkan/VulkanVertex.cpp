@@ -3,7 +3,7 @@
 
 namespace eg {
 
-	VkVertexInputBindingDescription VulkanVertexInputLayout::GetBindingDescription(){
+	VkVertexInputBindingDescription& VulkanVertexInputLayout::GetBindingDescription(){
 		{
 			VkVertexInputBindingDescription bindingDescription = {};
 			bindingDescription.binding = 0;
@@ -14,7 +14,7 @@ namespace eg {
 		}
 	}
 
-	std::vector<VkVertexInputAttributeDescription> VulkanVertexInputLayout::GetAttributeDescriptions() {
+	std::vector<VkVertexInputAttributeDescription>& VulkanVertexInputLayout::GetAttributeDescriptions() {
 		std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
 		uint32_t offset = 0;
 		for (const auto& element : GetElements()) {
@@ -29,9 +29,9 @@ namespace eg {
 		return attributeDescriptions;
 	}
 
-	void VulkanVertexBuffer::Create(VkDevice logicalDevice, VkPhysicalDevice physicalDevice,float* vertices, uint32_t size, uint32_t stride)
+	void VulkanVertexBuffer::Create(VkDevice logicalDevice, VkPhysicalDevice physicalDevice, BufferLayout& layout, float* vertices, uint32_t count)
 	{
-		VkDeviceSize bufferSize = stride * size;
+		VkDeviceSize bufferSize = layout.GetStride() * count;
 
 		VulkanBuffer stagingBuffer;
 		stagingBuffer.CreateBuffer(logicalDevice, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertices);
@@ -41,6 +41,13 @@ namespace eg {
 		m_VertexBuffer.CopyFrom(stagingBuffer, stagingBuffer.GetSize());
 
 		stagingBuffer.Destroy(logicalDevice);
+
+		m_VertexInputLayout = layout;
+	}
+
+	void VulkanVertexBuffer::Cleanup(VkDevice logicalDevice)
+	{
+		m_VertexBuffer.Destroy(logicalDevice);
 	}
 
 }

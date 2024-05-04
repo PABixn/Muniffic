@@ -5,12 +5,12 @@
 #include <GLFW/glfw3.h>
 
 namespace eg {
-	class VulkanTexture :public Texture2D {
-		VulkanTexture() = default;
-		VulkanTexture(const TextureSpecification& specification);
-		VulkanTexture(const std::string& path);
-		VulkanTexture(const UUID& id);
-		virtual ~VulkanTexture();
+	class VulkanTexture2D :public Texture2D {
+		VulkanTexture2D() = default;
+		VulkanTexture2D(const TextureSpecification& specification);
+		VulkanTexture2D(const std::string& path);
+		VulkanTexture2D(const UUID& id);
+		virtual ~VulkanTexture2D();
 
 		static Ref<Texture2D> Create(const std::string& path);
 		static Ref<Texture2D> Create(const UUID& id);

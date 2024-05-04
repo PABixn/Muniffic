@@ -1,6 +1,6 @@
 #include "egpch.h"
 #include "VulkanDeviceMemory.h"
-
+#include "VulkanCommandManager.h"
 namespace eg {
 	VulkanDeviceMemory& VulkanDeviceMemory::Create(VkDevice device, VkPhysicalDevice physicalDevice, VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags memoryProperties)
 	{

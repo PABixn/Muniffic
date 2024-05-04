@@ -1,5 +1,6 @@
 #pragma once
 #include "glm/glm.hpp"
+#include "Engine/Renderer/Buffer.h"
 namespace eg
 {
 	enum class ShaderType : uint32_t
@@ -23,8 +24,8 @@ namespace eg
 
 		virtual const std::string& GetName() const = 0;
 
-		static Ref<Shader> Create(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& name);
-		static Ref<Shader> Create(const std::string& filepath);
+		static Ref<Shader> Create(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& name, BufferLayout layout = {});
+		static Ref<Shader> Create(const std::string& filepath, BufferLayout layout = {});
 	};
 
 	class ShaderLibrary

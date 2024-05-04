@@ -9,7 +9,7 @@ namespace eg
 	{
 	public:
 		enum class API {
-			None = 0, OpenGL
+			None = 0, OpenGL, Vulkan
 		};
 	public:
 		virtual void Init () = 0;
