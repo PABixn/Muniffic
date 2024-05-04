@@ -5,10 +5,12 @@
 namespace eg {
 	class VulkanGraphicsPipelineCreateInfo {
 	public:
-		VulkanGraphicsPipelineCreateInfo();
+		VulkanGraphicsPipelineCreateInfo(bool setBaseInfo = true);
 		VulkanGraphicsPipelineCreateInfo(VkPipelineCreateFlags flags, uint32_t stageCount, VkPipelineShaderStageCreateInfo* pStages, VkPipelineVertexInputStateCreateInfo* pVertexInputState, VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState, VkPipelineTessellationStateCreateInfo* pTessellationState, VkPipelineViewportStateCreateInfo* pViewportState, VkPipelineRasterizationStateCreateInfo* pRasterizationState, VkPipelineMultisampleStateCreateInfo* pMultisampleState, VkPipelineDepthStencilStateCreateInfo* pDepthStencilState, VkPipelineColorBlendStateCreateInfo* pColorBlendState, VkPipelineDynamicStateCreateInfo* pDynamicState, VkPipelineLayout layout, VkRenderPass renderPass, uint32_t subpass, VkPipeline);
 		VulkanGraphicsPipelineCreateInfo(const VkGraphicsPipelineCreateInfo& info);
 		~VulkanGraphicsPipelineCreateInfo() = default;
+
+		void SetBaseInfo();
 
 		VkGraphicsPipelineCreateInfo* GetCreateInfo() { return &m_CreateInfo; }
 

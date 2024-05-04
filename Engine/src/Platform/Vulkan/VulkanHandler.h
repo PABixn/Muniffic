@@ -39,7 +39,7 @@ namespace eg {
 		const VulkanLogicalDevice& GetVulkanLogicalDevice() { return m_LogicalDevice; }
 		const VulkanSwapChain& GetVulkanSwapChain() { return m_SwapChain; }
 		const std::vector<VulkanCommandBuffer>& GetVulkanCommandBuffers() { return m_commandBuffers; }
-		const VulkanRenderPass& GetVulkanRenderPass() { return m_RenderPass; }
+		const VulkanRenderPass& GetMainRenderPass() { return m_MainRenderPass; }
 		const VulkanGraphicsPipeline& GetVulkanGraphicsPipeline() { return m_GraphicsPipeline; }
 		const VulkanCommandPool& GetVulkanCommandPool() { return m_CommandPool; }
 
@@ -54,7 +54,7 @@ namespace eg {
 		VulkanPhysicalDevice m_PhysicalDevice;
 		VulkanLogicalDevice m_LogicalDevice;
 		VulkanSwapChain m_SwapChain;
-		VulkanRenderPass m_RenderPass;
+		VulkanRenderPass m_MainRenderPass;
 		VulkanGraphicsPipeline m_GraphicsPipeline;
 		VulkanCommandPool m_CommandPool;
 		std::vector<VulkanCommandBuffer> m_commandBuffers;

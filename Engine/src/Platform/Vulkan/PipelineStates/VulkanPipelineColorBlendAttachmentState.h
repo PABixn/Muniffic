@@ -1,4 +1,5 @@
 #pragma once
+#include "egpch.h"
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -6,6 +7,7 @@ namespace eg {
 	class VulkanPipelineColorBlendAttachmentState {
 	public:
 		VulkanPipelineColorBlendAttachmentState();
+		VulkanPipelineColorBlendAttachmentState(const VkPipelineColorBlendAttachmentState& state);
 		VulkanPipelineColorBlendAttachmentState(VkColorComponentFlags colorWriteMask, VkBool32 blendEnable);
 		VulkanPipelineColorBlendAttachmentState(VkColorComponentFlags colorWriteMask, VkBool32 blendEnable, VkBlendFactor srcColorBlendFactor, VkBlendFactor dstColorBlendFactor, VkBlendOp colorBlendOp, VkBlendFactor srcAlphaBlendFactor, VkBlendFactor dstAlphaBlendFactor, VkBlendOp alphaBlendOp);
 		~VulkanPipelineColorBlendAttachmentState() = default;

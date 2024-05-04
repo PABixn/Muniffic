@@ -83,6 +83,8 @@ namespace eg {
 		{
 			throw std::runtime_error("failed to create render pass!");
 		}
+
+		pipelineBuilder = CreateRef<VulkanGraphicsPipelineBuilder>(logicalDevice, renderPass);
 	}
 
 	void VulkanRenderPass::Cleanup(VkDevice device)

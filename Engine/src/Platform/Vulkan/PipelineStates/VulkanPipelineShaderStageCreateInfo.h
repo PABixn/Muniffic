@@ -3,6 +3,7 @@
 #include "Engine/Renderer/Shader.h"
 #include "Platform/Vulkan/VulkanShader.h"
 #include <GLFW/glfw3.h>
+#include <vector>
 
 namespace eg {
 	class VulkanPipelineShaderStageCreateInfo {

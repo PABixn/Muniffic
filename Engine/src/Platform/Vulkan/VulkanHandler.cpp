@@ -21,8 +21,7 @@ namespace eg {
 		VulkanCommandManager::Init(m_LogicalDevice.GetDevice(), m_LogicalDevice.GetGraphicsQueue(), m_CommandPool.GetPool());	
 		VulkanDeviceMemoryManager::Init(m_LogicalDevice.GetDevice(), m_PhysicalDevice.GetPhysicalDevice());
 		m_SwapChain.Init();
-		m_RenderPass.Init();
-		m_GraphicsPipeline.Create(m_LogicalDevice.GetDevice(), m_RenderPass.GetRenderPass(), {}, {});
+		m_MainRenderPass.Init();
 		m_CommandPool.Create();
 		m_SwapChain.CreateColorResources();
 		m_SwapChain.CreateDepthResources();
@@ -42,7 +41,7 @@ namespace eg {
 	{
 		m_SwapChain.CleanupSwapChain();
 		m_GraphicsPipeline.Cleanup();
-		m_RenderPass.Cleanup(m_LogicalDevice.GetDevice());
+		m_MainRenderPass.Cleanup(m_LogicalDevice.GetDevice());
 		m_CommandPool.Cleanup();
 		
 		m_LogicalDevice.Cleanup();

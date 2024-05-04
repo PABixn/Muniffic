@@ -10,6 +10,7 @@ namespace eg {
 		VulkanDescriptorSetLayout() = default;
 		~VulkanDescriptorSetLayout() = default;
 
+		//Write an abstract class for VulkanDescriptorSetLayout creation and cleanup
 		void Create();
 		void Cleanup();
 

@@ -24,6 +24,8 @@ namespace eg
 
 		virtual const std::string& GetName() const = 0;
 
+		virtual void Bind() = 0;
+
 		static Ref<Shader> Create(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& name, BufferLayout layout = {});
 		static Ref<Shader> Create(const std::string& filepath, BufferLayout layout = {});
 	};

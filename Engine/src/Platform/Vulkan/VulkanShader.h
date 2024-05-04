@@ -26,6 +26,8 @@ namespace eg {
 
 		virtual const std::string& GetName() const override { return m_Name; }
 
+		virtual void Bind() override;
+
 		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
 		void UploadUniformMat3(const std::string& name, const glm::mat3& matrix);
 
@@ -39,18 +41,20 @@ namespace eg {
 
 		//VkPipelineShaderStageCreateInfo GetVertexShaderStage() const { return m_VulkanShaderModules[ShaderType::VERTEX]; }
 		//VkPipelineShaderStageCreateInfo GetFragmentShaderStage() const { return m_VulkanShaderModules[ShaderType::FRAGMENT]; }
-		VkShaderModule GetVertexShaderModule() const { return m_VulkanShaderModules.at(ShaderType::FRAGMENT); }
+		VkShaderModule GetVertexShaderModule() const { return m_VulkanShaderModules.at(ShaderType::VERTEX); }
 		VkShaderModule GetFragmentShaderModule() const { return m_VulkanShaderModules.at(ShaderType::FRAGMENT); }
 		VkShaderModule GetShaderModule(ShaderType type) const { return m_VulkanShaderModules.at(type); }
+		const std::vector<VkPipelineShaderStageCreateInfo>& GetShaderStages() const;
 
 		const VulkanGraphicsPipeline& GetGraphicsPipeline() const { return m_GraphicsPipeline; }
 		const VulkanVertexInputLayout& GetLayout() const { return m_Layout; }
 		VulkanVertexInputLayout& GetLayout() { return m_Layout; }
+		const VulkanDescriptorSetLayout& GetDescriptorSetLayout() const { return m_DescriptorSetLayout; }
+		uint32_t GetStageCount() const { return m_VulkanShaderModules.size(); }
 	private:
 		std::string Readfile(const std::string& filepath);
 		std::unordered_map<ShaderType, std::string> Preprocess(const std::string& source);
 		void CompileOrGetVulkanBinaries(const std::unordered_map<ShaderType, std::string>& shaderSources);
-		void CompileOrGetOpenGLBinaries();
 		VkShaderModule CreateShaderModule(std::filesystem::path shaderPath);
 		VkShaderModule CreateShaderModule(const std::vector<uint32_t>& code);
 		std::unordered_map<ShaderType, VkShaderModule> CreateShaderModules(std::filesystem::path shadersPath);
@@ -62,7 +66,11 @@ namespace eg {
 		std::string m_Name;
 		std::unordered_map<ShaderType, std::vector<uint32_t>> m_VulkanSPIRV;
 		std::unordered_map<ShaderType, VkShaderModule> m_VulkanShaderModules;
-		VulkanGraphicsPipeline m_GraphicsPipeline;
+		Ref<VulkanGraphicsPipeline> m_GraphicsPipeline;
 		VulkanVertexInputLayout m_Layout;
+		VulkanDescriptorSetLayout m_DescriptorSetLayout;
+		VulkanDescriptorSets m_DescriptorSets;
+		VulkanDescriptorPool m_DescriptorPool;
+		std::vector<VulkanBuffer> m_UniformBuffers;
 	};
 }

@@ -1,6 +1,10 @@
 #include "egpch.h"
 #include "VulkanShader.h"
-
+#include "Engine/Core/Timer.h"
+#include "GraphicsPipelineFactory.h"
+#include "VulkanUtils.h"
+#include "VulkanCommandManager.h"
+#include "PipelineStates/VulkanPipelineShaderStageCreateInfo.h"
 #include <fstream>
 #include <filesystem>
 #include <glm/gtc/type_ptr.hpp>
@@ -10,7 +14,8 @@
 #include "shaderc/shaderc.hpp"
 #include "VulkanUtils.h"
 
-#include "Engine/Core/Timer.h"
+
+
 
 namespace eg
 {
@@ -90,13 +95,18 @@ namespace eg
 		: m_RendererID(0), m_Name(name), m_Layout(layout)
 	{
 		EG_PROFILE_FUNCTION();
+		VulkanHandler* handler = GetVulkanHandler();
+		Ref<VulkanGraphicsPipelineBuilder> factory = handler->GetMainRenderPass().GetPipelineBuilder();
 		std::unordered_map<ShaderType, std::vector<uint32_t>> shaderSources;
 		std::vector<uint32_t> vertData(vertexSrc.begin(), vertexSrc.end());
 		std::vector<uint32_t> fragData(fragmentSrc.begin(), fragmentSrc.end());
 		shaderSources[ShaderType::VERTEX] = vertData;
 		shaderSources[ShaderType::FRAGMENT] = fragData;
 		m_VulkanShaderModules = CreateShaderModules(shaderSources);
-		m_GraphicsPipeline = CreateGraphicsPipeline();
+		m_DescriptorSetLayout.Create();
+		m_GraphicsPipeline = factory->setShader(this).SetBaseInfo().build();
+		m_DescriptorPool.Create(handler->GetVulkanLogicalDevice().GetDevice());
+		m_DescriptorSets.Create(handler->GetVulkanLogicalDevice().GetDevice(), m_DescriptorPool.getPool(), m_DescriptorSetLayout.GetDescriptorSetLayout(), m_UniformBuffers);
 	}
 
 	VulkanShader::VulkanShader(const std::string& filepath, BufferLayout layout)
@@ -118,6 +128,15 @@ namespace eg
 	{
 		vkDestroyShaderModule(GetVulkanHandler()->GetVulkanLogicalDevice().GetDevice(), m_VulkanShaderModules[ShaderType::VERTEX], nullptr);
 		vkDestroyShaderModule(GetVulkanHandler()->GetVulkanLogicalDevice().GetDevice(), m_VulkanShaderModules[ShaderType::FRAGMENT], nullptr);
+	}
+
+	const std::vector<VkPipelineShaderStageCreateInfo>& VulkanShader::GetShaderStages() const
+	{
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+		for(auto&& [stage, module] : m_VulkanShaderModules)
+		{
+			shaderStages.push_back(VulkanPipelineShaderStageCreateInfo(stage, module));
+		}
 	}
 
 	std::string VulkanShader::Readfile(const std::string& filepath)
@@ -295,5 +314,13 @@ namespace eg
 			EG_CORE_TRACE("    Binding = {0}", binding);
 			EG_CORE_TRACE("    Members = {0}", memberCount);
 		}
+	}
+
+	void VulkanShader::Bind()
+	{
+		EG_PROFILE_FUNCTION();
+		VulkanCommandBuffer commandBuffer = VulkanCommandManager::BeginSingleTimeCommands();
+		m_GraphicsPipeline->Bind(commandBuffer.getCommandBuffer());
+		m_DescriptorSets.Bind(commandBuffer.getCommandBuffer(), m_GraphicsPipeline->GetPipelineLayout(), 0/*should be current frame*/);
 	}
 }
