@@ -43,6 +43,7 @@ namespace eg {
 
 		auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 
+		spriteRendererComponent.TextureUUID = component->TextureUUID;
 		spriteRendererComponent.Color = component->Color;
 		spriteRendererComponent.Texture = component->Texture;
 		spriteRendererComponent.TilingFactor = component->TilingFactor;
@@ -59,6 +60,7 @@ namespace eg {
 
 		auto& spriteRendererSTComponent = entity.GetComponent<SpriteRendererSTComponent>();
 
+		spriteRendererSTComponent.SubTextureUUID = component->SubTextureUUID;
 		spriteRendererSTComponent.Color = component->Color;
 		spriteRendererSTComponent.SubTexture = component->SubTexture;
 		spriteRendererSTComponent.TilingFactor = component->TilingFactor;
