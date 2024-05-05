@@ -390,7 +390,6 @@ namespace eg {
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
-			DisplayAddComponentEntry<AudioListenerComponent>("Audio Listener");
 			DisplayAddComponentEntry<AudioSourceComponent>("Audio Source");
 			DisplayAddComponentEntry<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D");
 			DisplayAddComponentEntry<AnimatorComponent>("Animator");
@@ -772,11 +771,11 @@ namespace eg {
 
 				if (ImGui::BeginDragDropTarget())
 				{
-					uint64_t* uuid;
+					int64_t* uuid;
 
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 					{
-						uuid = (uint64_t*)payload->Data;
+						uuid = (int64_t*)payload->Data;
 
 						Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*uuid);
 						if (texture->IsLoaded())
@@ -1154,23 +1153,21 @@ namespace eg {
 				if(ImGui::Button(component.Audio->GetFileName().c_str(), { 100.0f, 0.0f })) component.Audio->Play();
 			}
 			else ImGui::Button("Audio", { 100.0f, 0.0f });
-			
-			ImGui::Checkbox("Loop", component.Audio->IsLoopedPtr());
-			ImGui::Checkbox("Playing from start", component.Audio->IsPlayingFromStartPtr());
-			ImGui::SliderFloat("Volume", component.Audio->GetVolumePtr(), 0, 10);
 
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
-					const wchar_t* path = (const wchar_t*)payload->Data;
-					std::filesystem::path audioPath = std::filesystem::path(path);
-					std::string s = audioPath.string();
-					//component.Audio = BasicAudio();
-					component.Audio->SetPath(std::filesystem::path(s));
+					const int64_t* uuid = (const int64_t*)payload->Data;
+					component.AudioUUID = *uuid;
+					component.Audio->SetPath(ResourceDatabase::GetResourcePath(*uuid));
 				}
 				ImGui::EndDragDropTarget();
 			}
+			
+			ImGui::Checkbox("Loop", component.Audio->IsLoopedPtr());
+			ImGui::Checkbox("Playing from start", component.Audio->IsPlayingFromStartPtr());
+			ImGui::SliderFloat("Volume", component.Audio->GetVolumePtr(), 0, 10);
 		}, m_Context);
 	}
 }

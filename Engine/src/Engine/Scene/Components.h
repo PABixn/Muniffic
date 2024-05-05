@@ -236,11 +236,6 @@ namespace eg {
 		float LineSpacing = 0.0f;
 	};
 
-	struct AudioListenerComponent : Component
-	{
-		int a;
-	};
-
 	struct AudioSourceComponent : Component
 	{
 		AudioSourceComponent()
@@ -252,6 +247,7 @@ namespace eg {
 			: Audio(audio) {}
 
 		Ref<BasicAudio> Audio;
+		UUID AudioUUID = 0;
 	};
 
 	template<typename... Component>
@@ -263,13 +259,12 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		RigidBody2DComponent, BoxCollider2DComponent,
-		CircleCollider2DComponent, TextComponent, AnimatorComponent,
-		AudioListenerComponent, AudioSourceComponent>;
+		CircleCollider2DComponent, TextComponent, AnimatorComponent, AudioSourceComponent>;
 
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent,
 		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent,
-		AnimatorComponent, AudioListenerComponent, AudioSourceComponent>;
+		AnimatorComponent, AudioSourceComponent>;
 }

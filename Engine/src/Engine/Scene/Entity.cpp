@@ -196,17 +196,6 @@ namespace eg {
 	}
 
 	template<>
-	void Entity::SetComponent<AudioListenerComponent>(Entity& entity, AudioListenerComponent* component)
-	{
-		if (!entity.HasComponent<AudioListenerComponent>())
-			entity.AddComponent<AudioListenerComponent>();
-
-		auto& audioListenerComponent = entity.GetComponent<AudioListenerComponent>();
-
-	
-	}
-
-	template<>
 	void Entity::SetComponent<AudioSourceComponent>(Entity& entity, AudioSourceComponent* component)
 	{
 		if (!entity.HasComponent<AudioSourceComponent>())

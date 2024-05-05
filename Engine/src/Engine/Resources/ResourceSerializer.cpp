@@ -17,6 +17,7 @@ namespace eg
 	std::unordered_map<UUID, SpriteAtlasResourceData*> ResourceSerializer::SpriteAtlasResourceDataCache;
 	std::unordered_map<UUID, SubTextureResourceData*> ResourceSerializer::SubTextureResourceDataCache;
 	std::unordered_map<UUID, FontResourceData*> ResourceSerializer::FontResourceDataCache;
+	std::unordered_map<UUID, AudioResourceData*> ResourceSerializer::AudioResourceDataCache;
 	std::unordered_map<UUID, ResourceType> ResourceSerializer::ResourceTypeInfo;
 
 	bool ResourceSerializer::DeserializeResourceCache()

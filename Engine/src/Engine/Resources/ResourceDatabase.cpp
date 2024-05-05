@@ -208,10 +208,6 @@ namespace eg
 		{
 			EG_CORE_ERROR("Resource type not supported");
 		}
-		else
-		{
-			EG_CORE_ERROR("Resource type not supported");
-		}
 
 		return 0;
 	}
@@ -550,6 +546,16 @@ namespace eg
 			data->ResourceName = filePath.stem().string();
 			data->Extension = filePath.extension().string();
 			AddFontResourceData(uuid, filePath, data);
+
+			return uuid;
+		}
+		else if (type == ResourceType::Audio)
+		{
+			AudioResourceData* data = new AudioResourceData();
+			data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(type);
+			data->ResourceName = filePath.stem().string();
+			data->Extension = filePath.extension().string();
+			AddAudioResource(uuid, filePath, data);
 
 			return uuid;
 		}

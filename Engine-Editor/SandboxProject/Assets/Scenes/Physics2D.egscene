@@ -17,6 +17,7 @@ Entities:
       LineSpacing: 0
       IsInherited: false
       IsInheritedInChildren: false
+      Font: 582289350730979359
   - Entity: 16442485196201648565
     Name: Cube
     TagComponent:
@@ -45,8 +46,6 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-    AudioListenerComponent:
-      Audio: {}
       IsInherited: false
       IsInheritedInChildren: false
   - Entity: 9681069167797108457
@@ -103,16 +102,10 @@ Entities:
       RestitutionThreshold: 0.5
       IsInherited: false
       IsInheritedInChildren: false
-      Fade: 0
-    AudioSourceComponent:
-      AudioFilePath: C:\Users\mniedziolka\Desktop\Muniffic\Engine-Editor\SandboxProject\Assets\fail.wav
-      AudioPlayingFromStart: false
   - Entity: 16108228054420389651
     Name: Cube
     TagComponent:
       Tag: Empty Entity
-    AudioSourceComponent:
-      AudioFilePath: C:\Users\mniedziolka\Downloads\arpeggiator-end-credits-wav-14644.wav
     TransformComponent:
       Translation: [5.06258726, -0.334269524, -3.81469999e-06]
       Rotation: [0, -0, -2.26661325]
@@ -191,6 +184,13 @@ Entities:
       RestitutionThreshold: 0.5
       IsInherited: false
       IsInheritedInChildren: false
+    AudioSourceComponent:
+      AudioUUID: 6219572606901673563
+      IsLooped: true
+      IsPlayingFromStart: true
+      Volume: 1
+      IsInherited: false
+      IsInheritedInChildren: false
   - Entity: 882254563876239753
     Name: Cube
     TagComponent:
@@ -210,6 +210,8 @@ Entities:
     RigidBody2DComponent:
       Body Type: Static
       FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
     CircleCollider2DComponent:
       Offset: [0, 0]
       Radius: 0.5
@@ -217,6 +219,8 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
   - Entity: 12466326309952554741
     Name: Cube
     TagComponent:
@@ -225,10 +229,14 @@ Entities:
       Translation: [4.30000019, 2.98023224e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
     CircleRendererComponent:
       Color: [1, 1, 1, 1]
       Thickness: 1
       Fade: 0.00499999989
+      IsInherited: false
+      IsInheritedInChildren: false
     CircleCollider2DComponent:
       Offset: [0, 0]
       Radius: 0.5
@@ -236,7 +244,5 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-    AudioSourceComponent:
-      AudioFilePath: C:\Users\natsue\Documents\muniffic\Muniffic\Engine-Editor\SandboxProject\Assets\yeepie.mp3
       IsInherited: false
       IsInheritedInChildren: false

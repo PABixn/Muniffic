@@ -310,24 +310,19 @@ namespace eg {
 			out << YAML::EndMap; // TextComponent
 		}
 
-		if (entity.HasComponent<AudioListenerComponent>())
-		{
-			out << YAML::Key << "AudioListenerComponent";
-			out << YAML::BeginMap;
-
-			//auto& audioListenerComponent = entity.GetComponent<AudioListenerComponent>();
-			//out << YAML::Key << "AudioFilePath" << YAML::Value << audioListenerComponent.Audio.GetPath().string();
-
-			out << YAML::EndMap;
-		}
-
 		if (entity.HasComponent<AudioSourceComponent>())
 		{
 			out << YAML::Key << "AudioSourceComponent";
 			out << YAML::BeginMap;
 
 			auto& audioSourceComponent = entity.GetComponent<AudioSourceComponent>();
-			out << YAML::Key << "AudioFilePath" << YAML::Value << audioSourceComponent.Audio->GetPath().string();
+			out << YAML::Key << "AudioUUID" << YAML::Value << audioSourceComponent.AudioUUID;
+			out << YAML::Key << "IsLooped" << YAML::Value << audioSourceComponent.Audio->IsLooped();
+			out << YAML::Key << "IsPlayingFromStart" << YAML::Value << audioSourceComponent.Audio->IsPlayingFromStart();
+			out << YAML::Key << "Volume" << YAML::Value << audioSourceComponent.Audio->GetVolume();
+			
+			out << YAML::Key << "IsInherited" << YAML::Value << audioSourceComponent.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << audioSourceComponent.isInheritedInChildren;
 
 			out << YAML::EndMap;
 		}
@@ -693,15 +688,16 @@ namespace eg {
 				auto audioSourceComponent = entity["AudioSourceComponent"];
 				if (audioSourceComponent)
 				{
-					auto& alc = deserializedEntity.AddComponent<AudioSourceComponent>();
-					auto s = (audioSourceComponent["AudioFilePath"].as<std::string>());
-					alc.Audio->SetPath(s);
-				}
-				auto audioListenerComponent = entity["AudioListenerComponent"];
-				if (audioListenerComponent)
-				{
-					deserializedEntity.AddComponent<AudioListenerComponent>();
-					//auto s = (audioListenerComponent["AudioFilePath"].as<std::string>());
+					auto& asc = deserializedEntity.AddComponent<AudioSourceComponent>();
+
+					asc.AudioUUID = audioSourceComponent["AudioUUID"].as<uint64_t>();
+					asc.Audio = CreateRef<BasicAudio>();
+					asc.Audio->SetVolume(audioSourceComponent["Volume"].as<float>());
+					asc.Audio->SetIsLooped(audioSourceComponent["IsLooped"].as<bool>());
+					asc.Audio->SetIsPlayingFromStart(audioSourceComponent["IsPlayingFromStart"].as<bool>());
+					asc.Audio->SetPath(ResourceDatabase::GetResourcePath(asc.AudioUUID));
+					asc.isInherited = audioSourceComponent["IsInherited"].as<bool>();
+					asc.isInheritedInChildren = audioSourceComponent["IsInheritedInChildren"].as<bool>();
 				}
 			}
 		}

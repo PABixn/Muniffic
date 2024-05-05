@@ -655,10 +655,6 @@ namespace eg {
 	{
 	}
 	template<>
-	void Scene::OnComponentAdded<AudioListenerComponent>(Entity entity, AudioListenerComponent& component)
-	{
-	}
-	template<>
 	void Scene::OnComponentAdded<AudioSourceComponent>(Entity entity, AudioSourceComponent& component)
 	{
 	}
