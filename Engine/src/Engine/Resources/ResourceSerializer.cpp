@@ -172,7 +172,7 @@ namespace eg
 		{
 			for (auto resource : textureResources)
 			{
-				UUID uuid = resource["UUID"].as<uint64_t>();
+				UUID uuid = resource["UUID"].as<int64_t>();
 
 				TextureResourceData* data = new TextureResourceData();
 				if(resource["ParentDirectory"])

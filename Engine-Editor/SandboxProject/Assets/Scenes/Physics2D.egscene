@@ -1,21 +1,18 @@
 Scene: Untitled
 Entities:
-  - Entity: 13365648013025665828
+  - Entity: 17840196090138894
     Name: Cube
-    Children:
-      - 17073850376887753544
-      - 12517384886456998586
     TagComponent:
       Tag: Camera
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 2]
+      Scale: [0.600000024, 0.600000024, 1]
       IsInherited: true
       IsInheritedInChildren: true
     CameraComponent:
       Camera:
-        ProjectionType: 0
+        ProjectionType: 1
         PerspectiveFOV: 0.769999981
         PerspectiveNear: 0.00999999978
         PerspectiveFar: 1000
@@ -26,103 +23,13 @@ Entities:
       FixedAspectRatio: false
       IsInherited: false
       IsInheritedInChildren: false
-    ScriptComponent:
-      Name: Sandbox.Camera
-      ScriptFields:
-        []
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 1784019609013889458
+  - Entity: 133656480130256658
     Name: Cube
     TagComponent:
       Tag: Player
     TransformComponent:
-      Translation: [0, 3.79999995, 0]
-      Rotation: [0, 0.000989571214, 0]
-      Scale: [5.0999999, 5.5, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TilingFactor: 0
-      IsInherited: false
-      IsInheritedInChildren: false
-    SpriteRendererSTComponent:
-      Color: [1, 1, 1, 1]
-      TilingFactor: 1
-    CircleRendererComponent:
-      Color: [1, 1, 1, 1]
-      Thickness: 1
-      Fade: 0.00499999989
-      IsInherited: false
-      IsInheritedInChildren: false
-    AnimatorComponent:
-      Speed: 1
-      Animations:
-        []
-      Transitions:
-        []
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 0.769999981
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 5
-        OrthographicNear: 19
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    ScriptComponent:
-      Name: Sandbox.Player
-      ScriptFields:
-        []
-      IsInherited: false
-      IsInheritedInChildren: false
-    RigidBody2DComponent:
-      Body Type: Static
-      FixedRotation: false
-      IsInherited: false
-      IsInheritedInChildren: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
-    CircleCollider2DComponent:
-      Offset: [0, 0]
-      Radius: 0.5
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      RestitutionThreshold: 0.5
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 17073850376887753544
-    Name: Cube
-    Parent: 13365648013025665828
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
       Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-  - Entity: 12517384886456998586
-    Name: Cube
-    Parent: 13365648013025665828
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Rotation: [0, -3.0999999, 0]
+      Scale: [6.9000001, 6.30000019, 1]
       IsInherited: true
       IsInheritedInChildren: true

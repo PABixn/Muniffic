@@ -1,0 +1,11 @@
+Resources:
+  - UUID: 6285971809919665303
+    ParentDirectory: 3351936095448067910
+    ResourceName: Sandbox.Player
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 7072136074673604438
+    ParentDirectory: 3351936095448067910
+    ResourceName: Sandbox.Player
+    Extension: .cs
+    IsEnabled: true

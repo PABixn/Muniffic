@@ -77,5 +77,6 @@ namespace eg {
 		std::vector<EntityDisplayInfo> m_ListOfEntityDisplayed;
 		bool m_FirstDrawAfterSearch;
 		std::vector<Ref<Texture2D>> m_ComponentIcons;
+		std::vector<Ref<Animation>> m_PreviewedAnimations;
 	};
 }

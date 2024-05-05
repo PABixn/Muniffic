@@ -1,3 +1,25 @@
 Scene: Untitled
 Entities:
-  []
+  - Entity: 5064742515943418478
+    Name: Cube
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [-2.79999995, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [4.0999999, 3, 0.400000006]
+      IsInherited: true
+      IsInheritedInChildren: true
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        - 5552202101603446473
+        - 7425998791788163770
+      Transitions:
+        - From: 0
+          To: 1
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 7072136074673604438
+      IsInherited: false
+      IsInheritedInChildren: false

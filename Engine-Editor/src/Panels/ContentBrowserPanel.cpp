@@ -75,10 +75,18 @@ namespace eg
 	{
 		static float thumbnailSize = 128.0f;
 
-		ImGui::PushID(key);
+		ImGui::PushID(name.c_str());
+
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
-		if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+
+		if (ImGui::BeginDragDropSource())
+		{
+			ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(uint64_t));
+			ImGui::EndDragDropSource();
+		}
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
 			if (type == ResourceType::Image)
 			{
 				auto* s = (*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).GetSceneHierarchyPanel();
@@ -86,6 +94,7 @@ namespace eg
 			}
 		}
 		DrawCenteredText(name.c_str(), thumbnailSize);
+		
 		if (ImGui::BeginPopupContextItem("FileOptions"))
 		{
 			if (ImGui::MenuItem("Delete"))

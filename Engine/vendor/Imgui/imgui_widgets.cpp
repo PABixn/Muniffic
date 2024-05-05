@@ -410,6 +410,27 @@ bool ImGui::TextWithLineLimitV(const char* fmt, const int& lineLimit,va_list arg
     ImFormatStringToTempBufferV(&text, &text_end, fmt, args);
     return TextWithLineLimitEx(text, lineLimit, text_end, ImGuiTextFlags_NoWidthForLargeClippedText);
 }
+
+bool ImGui::TextWithLineLimitAndToolTipV(const char* fmt, const int& lineLimit, va_list args)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    const char* text, * text_end;
+    ImFormatStringToTempBufferV(&text, &text_end, fmt, args);
+    if (TextWithLineLimitEx(text, lineLimit, text_end, ImGuiTextFlags_NoWidthForLargeClippedText))
+    {
+        if (IsItemHovered()) {
+            BeginTooltip();
+            TextWrappedV(text, args);
+            EndTooltip();
+        }
+        return true;
+    }
+    return false;
+}
+
 void ImGui::TextColored(const ImVec4& col, const char* fmt, ...)
 {
     va_list args;
@@ -6360,7 +6381,11 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         frame_bb.Max.x += IM_FLOOR(window->WindowPadding.x * 0.5f);
     }
 
-    const float text_offset_x = g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2);           // Collapser arrow width + Spacing
+    float text_offset_x = g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2);           // Collapser arrow width + Spacing
+    if (flags & ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow)
+    {
+        text_offset_x += 6.f;
+    }
     const float text_offset_y = ImMax(padding.y, window->DC.CurrLineTextBaseOffset);                    // Latch before ItemSize changes it
     const float text_width = g.FontSize + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f);  // Include collapser
     ImVec2 text_pos(window->DC.CursorPos.x + text_offset_x, window->DC.CursorPos.y + text_offset_y);
@@ -7141,53 +7166,57 @@ bool ImGui::CustomTreeNodeWithPicBehavior(ImTextureID textureID, ImGuiID id, ImG
     }
     RenderNavHighlight(frame_bb, id, nav_highlight_flags);
 //drawing hierarchy lines
-    static int childnumber;
-    static int lastTreeDepth;
-    static int lastFrame;
-    if (!lastFrame) {
-        lastFrame = ImGui::GetFrameCount();
-        lastTreeDepth = 0;
-    }
-    if (ImGui::GetFrameCount() != lastFrame) {
-        childnumber = 0;
-        lastFrame = ImGui::GetFrameCount();
-        lastTreeDepth = 0;
-    }
-    if (window->DC.TreeDepth > 0) {
-        if (lastTreeDepth > window->DC.TreeDepth) {
-            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (lastTreeDepth + 1)) - (2 * (lastTreeDepth - 1)), text_pos.y + g.FontSize * 0.5f - 40));
-            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (lastTreeDepth + 1)) - (2 * (lastTreeDepth - 1)), text_pos.y + g.FontSize * 0.5f));
-            window->DrawList->PathStroke(text_col, false, 2.0f);
-            lastTreeDepth = window->DC.TreeDepth;
-            childnumber = 0;
+    if (flags & ImGuiTreeNodeFlags_Entity)
+    {
+        static int childnumber;
+        static int lastTreeDepth;
+        static int lastFrame;
+        if (!lastFrame) {
+            lastFrame = ImGui::GetFrameCount();
+            lastTreeDepth = 0;
         }
-        if (lastTreeDepth != window->DC.TreeDepth) {
-            lastTreeDepth = window->DC.TreeDepth;
+        if (ImGui::GetFrameCount() != lastFrame) {
             childnumber = 0;
+            lastFrame = ImGui::GetFrameCount();
+            lastTreeDepth = 0;
+        }
+        if (window->DC.TreeDepth > 0) {
+            if (lastTreeDepth > window->DC.TreeDepth) {
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (lastTreeDepth + 1)) - (2 * (lastTreeDepth - 1)), text_pos.y + g.FontSize * 0.5f - 40));
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (lastTreeDepth + 1)) - (2 * (lastTreeDepth - 1)), text_pos.y + g.FontSize * 0.5f));
+                window->DrawList->PathStroke(text_col, false, 2.0f);
+                lastTreeDepth = window->DC.TreeDepth;
+                childnumber = 0;
+            }
+            if (lastTreeDepth != window->DC.TreeDepth) {
+                lastTreeDepth = window->DC.TreeDepth;
+                childnumber = 0;
+            }
+            else
+            {
+                childnumber += 1;
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 40));
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 10));
+                window->DrawList->PathStroke(text_col, false, 2.0f);
+            }
+            window->DrawList->AddCircleFilled(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f), 3, text_col);
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 11, text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathStroke(text_col, false, 2.0f);
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 10));
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathStroke(text_col, false, 2.0f);
+            for (int i = 1; i < window->DC.TreeDepth; i++) {
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (i + 1)) - (2 * (i - 1)), text_pos.y + g.FontSize * 0.5f - 40));
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (i + 1)) - (2 * (i - 1)), text_pos.y + g.FontSize * 0.5f));
+                window->DrawList->PathStroke(text_col, false, 2.0f);
+            }
         }
         else
         {
-            childnumber += 1;
-            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 40));
-            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 10));
-            window->DrawList->PathStroke(text_col, false, 2.0f);
+            lastTreeDepth = 0;
         }
-        window->DrawList->AddCircleFilled(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f), 3, text_col);
-        window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f));
-        window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 11, text_pos.y + g.FontSize * 0.5f));
-        window->DrawList->PathStroke(text_col, false, 2.0f);
-        window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 10));
-        window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f));
-        window->DrawList->PathStroke(text_col, false, 2.0f);
-        for (int i = 1; i < window->DC.TreeDepth; i++) {
-            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (i + 1)) - (2 * (i - 1)), text_pos.y + g.FontSize * 0.5f - 40));
-            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (i + 1)) - (2 * (i - 1)), text_pos.y + g.FontSize * 0.5f));
-            window->DrawList->PathStroke(text_col, false, 2.0f);
-        }
-    }
-    else
-    {
-        lastTreeDepth = 0;
+
     }
 //drawing icons
     ImRect bb;

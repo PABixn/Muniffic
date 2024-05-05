@@ -516,6 +516,7 @@ namespace ImGui
     IMGUI_API void          Text(const char* fmt, ...)                                      IM_FMTARGS(1); // formatted text
     IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
     IMGUI_API bool          TextWithLineLimitV(const char* fmt, const int& lineLimit, va_list args)                            IM_FMTLIST(1);
+    IMGUI_API bool          TextWithLineLimitAndToolTipV(const char* fmt, const int& lineLimit, va_list args)                            IM_FMTLIST(1);
     IMGUI_API void          TextColored(const ImVec4& col, const char* fmt, ...)            IM_FMTARGS(2); // shortcut for PushStyleColor(ImGuiCol_Text, col); Text(fmt, ...); PopStyleColor();
     IMGUI_API void          TextColoredV(const ImVec4& col, const char* fmt, va_list args)  IM_FMTLIST(2);
     IMGUI_API void          TextDisabled(const char* fmt, ...)                              IM_FMTARGS(1); // shortcut for PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]); Text(fmt, ...); PopStyleColor();
@@ -1126,6 +1127,7 @@ enum ImGuiTreeNodeFlags_
     ImGuiTreeNodeFlags_NoArrow              = 1 << 20,
     ImGuiTreeNodeFlags_PropertiesComponent  = 1 << 21,
     ImGuiTreeNodeFlags_CopyingToChildren    = 1 << 22,
+    ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow    = 1 << 23,
     //ImGuiTreeNodeFlags_NoScrollOnOpen     = 1 << 14,  // FIXME: TODO: Disable automatic scroll on TreePop() if node got just open and contents is not visible
     ImGuiTreeNodeFlags_CollapsingHeader     = ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_NoAutoOpenOnLog,
 };
