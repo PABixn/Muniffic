@@ -319,8 +319,8 @@ namespace eg
 	void VulkanShader::Bind()
 	{
 		EG_PROFILE_FUNCTION();
-		VulkanCommandBuffer commandBuffer = VulkanCommandManager::BeginSingleTimeCommands();
-		m_GraphicsPipeline->Bind(commandBuffer.getCommandBuffer());
-		m_DescriptorSets.Bind(commandBuffer.getCommandBuffer(), m_GraphicsPipeline->GetPipelineLayout(), 0/*should be current frame*/);
+		VulkanHandler* handler = GetVulkanHandler();
+		m_GraphicsPipeline->Bind(handler->GetCurrentCommandBuffer());
+		m_DescriptorSets.Bind(handler->GetCurrentCommandBuffer(), m_GraphicsPipeline->GetPipelineLayout(), 0/*should be current frame*/);
 	}
 }

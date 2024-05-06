@@ -7,6 +7,9 @@ namespace eg {
 	void VulkanContext::Init() {
 		m_VulkanHandler.Init();
 	}
+	void VulkanContext::StartFrame()
+	{
+	}
 	void VulkanContext::SwapBuffers()
 	{
 		m_VulkanHandler.DrawFrame();

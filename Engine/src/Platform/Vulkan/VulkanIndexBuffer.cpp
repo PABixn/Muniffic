@@ -1,24 +1,20 @@
 #include "egpch.h"
 #include "VulkanIndexBuffer.h"
-#include "VulkanDeviceMemoryManager.h"
+#include "VulkanBufferFactory.h"
 
 namespace eg {
-	void eg::VulkanIndexBuffer::Create(VkDevice device, VkPhysicalDevice physicalDevice, VkCommandPool commandPool, VkQueue queue, uint32_t* indices, uint32_t indexCount)
+
+	Ref<VulkanIndexBuffer> VulkanIndexBuffer::Create(uint32_t* vertices, uint32_t count)
 	{
-		VkDeviceSize bufferSize = sizeof(indices[0]) * indexCount;
-
-		VulkanBuffer stagingBuffer;
-		stagingBuffer.CreateBuffer(device, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, indices);
-
-		m_Indexbuffer.CreateBuffer(device, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-		
-		m_Indexbuffer.CopyFrom(stagingBuffer, bufferSize);
-
-		stagingBuffer.Destroy(device);
+		return CreateRef<VulkanIndexBuffer>(VulkanBufferFactory::GetInstance()->CreateIndexBuffer(vertices, count));
 	}
 
 	void eg::VulkanIndexBuffer::Cleanup(VkDevice device)
 	{
 		m_Indexbuffer.Destroy(device);
+	}
+	void VulkanIndexBuffer::Bind() const
+	{
+		vkCmdBindIndexBuffer(m_CommandBuffer, m_Indexbuffer.GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 	}
 }

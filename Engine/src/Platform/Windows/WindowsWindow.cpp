@@ -7,7 +7,7 @@
 
 namespace eg
 {
-	
+
 	static bool s_GLFWInitialized = false;
 
 	static void GLFWErrorCallback(int error, const char* description)
@@ -43,10 +43,10 @@ namespace eg
 		}
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 
-		m_Context = new OpenGLContext(m_Window);
+		m_Context = new VulkanContext(m_Window);
 		m_Context->Init();
 
-		
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
@@ -76,24 +76,24 @@ namespace eg
 
 				switch (action)
 				{
-					case GLFW_PRESS:
-					{
-						KeyPressedEvent event((KeyCode)key, 0);
-						data.EventCallback(event);
-						break;
-					}
-					case GLFW_RELEASE:
-					{
-						KeyReleasedEvent event((KeyCode)key);
-						data.EventCallback(event);
-						break;
-					}
-					case GLFW_REPEAT:
-					{
-						KeyPressedEvent event((KeyCode)key, true);
-						data.EventCallback(event);
-						break;
-					}
+				case GLFW_PRESS:
+				{
+					KeyPressedEvent event((KeyCode)key, 0);
+					data.EventCallback(event);
+					break;
+				}
+				case GLFW_RELEASE:
+				{
+					KeyReleasedEvent event((KeyCode)key);
+					data.EventCallback(event);
+					break;
+				}
+				case GLFW_REPEAT:
+				{
+					KeyPressedEvent event((KeyCode)key, true);
+					data.EventCallback(event);
+					break;
+				}
 				}
 			});
 
@@ -142,7 +142,7 @@ namespace eg
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			data.DropFile(count, paths);
 			});
-		
+
 	}
 
 	void WindowsWindow::Shutdown()
@@ -169,10 +169,10 @@ namespace eg
 		m_Data.VSync = enabled;
 	}
 
-	bool WindowsWindow::IsVSync() const 
+	bool WindowsWindow::IsVSync() const
 	{
 		return m_Data.VSync;
 	}
 
-	
+
 }

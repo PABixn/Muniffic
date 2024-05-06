@@ -12,10 +12,16 @@ namespace eg {
 		~VulkanRenderPass() = default;
 
 		void Init();
+		void InitPipelineBuilder(VkDevice device);
 		void Cleanup(VkDevice device);
 
-		VkRenderPass GetRenderPass() const { return renderPass; }
+		VkRenderPass& GetRenderPass()  { return renderPass; }
 		const Ref<VulkanGraphicsPipelineBuilder>& GetPipelineBuilder() const { return pipelineBuilder; }
+
+		operator VkRenderPass& () { return renderPass; }
+		operator const VkRenderPass& () const { return renderPass; }
+		operator Ref<VulkanGraphicsPipelineBuilder>& () { return pipelineBuilder; }
+		operator const Ref<VulkanGraphicsPipelineBuilder>& () const { return pipelineBuilder; }
 	private:
 		VkRenderPass renderPass;
 		Ref<VulkanGraphicsPipelineBuilder> pipelineBuilder;

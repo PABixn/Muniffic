@@ -21,6 +21,10 @@ namespace eg {
 		{
 			s_RendererAPI->Clear();
 		}
+		inline static void DrawIndexed(const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer, uint32_t indexCount = 0)
+		{
+			s_RendererAPI->DrawIndexed(vertexBuffer, indexBuffer, indexCount);
+		}
 		inline static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0)
 		{
 			s_RendererAPI->DrawIndexed(vertexArray, indexCount);
@@ -35,6 +39,8 @@ namespace eg {
 		{
 			s_RendererAPI->SetLineThickness(thickness);
 		}
+
+		inline static RendererAPI* GetRendererAPI() { return s_RendererAPI; }
 
 	private:
 		static RendererAPI* s_RendererAPI;

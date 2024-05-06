@@ -8,7 +8,12 @@ namespace eg {
 		VulkanSemaphore(VkDevice device);
 		~VulkanSemaphore();
 
-		VkSemaphore getSemaphore() const { return m_Semaphore; }
+		VkSemaphore GetSemaphore() const { return m_Semaphore; }
+
+		operator VkSemaphore&() { return m_Semaphore; }
+		operator const VkSemaphore&() const { return m_Semaphore; }
+		operator VkSemaphore*() { return &m_Semaphore; }
+		operator const VkSemaphore*() const { return &m_Semaphore; }
 	private:
 		VkSemaphore m_Semaphore;
 		VkDevice m_Device;

@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/Core/Window.h"
-#include "Platform/OpenGL/OpenGLContext.h"
+#include "Platform/Vulkan/VulkanContext.h"
 #include "../../Engine-Editor/src/Commands/Commands.h"
 
 namespace eg

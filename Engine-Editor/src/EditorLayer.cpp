@@ -15,22 +15,18 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-
-
 namespace eg
 {
 	static UUID s_Font;
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
-		
 	}
 
 	constexpr float AxisLength = 100000000.0f;
 
 	void EditorLayer::OnAttach()
 	{
-		
 
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
@@ -102,9 +98,10 @@ namespace eg
 
 		m_EditorCamera.OnUpdate(ts);
 		m_SceneHierarchyPanel.Update(ts);
-
+		
 		Renderer2D::ResetStats();
 		m_FrameBuffer->Bind();
+		Renderer2D::BeginFrame();
 		RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		RenderCommand::Clear();
 
@@ -118,12 +115,12 @@ namespace eg
 			if (m_ViewportFocused)
 				m_Camera.OnUpdate(ts);
 			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
-			if(m_AddResourcePanel->IsResourcePanelOpen())
+			if (m_AddResourcePanel->IsResourcePanelOpen())
 				m_AddResourcePanel->Update(ts);
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
 			// m_ActiveScene->OnRenderEditor(m_EditorCamera);
-			// Renderer2D::EndScene();
+			// Renderer2D::EndBatch();
 			break;
 		}
 		case SceneState::Play:
@@ -134,7 +131,7 @@ namespace eg
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
 			// m_ActiveScene->OnRenderRuntime(m_EditorCamera);
-			// Renderer2D::EndScene();
+			// Renderer2D::EndBatch();
 			break;
 		}
 		case SceneState::Simulate:
@@ -162,7 +159,7 @@ namespace eg
 		}
 
 		OnOverlayRender();
-		//m_FrameBuffer->Unbind();
+		// m_FrameBuffer->Unbind();
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -261,9 +258,11 @@ namespace eg
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();
 		m_ConsolePanel->OnImGuiRender();
-		
-		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
-			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
+
+		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender())
+		{
+			if (!GetIsSaved())
+				(*m_UnsavedChangesPanel).OnImGuiRender();
 		}
 
 		ImGui::Begin("Stats");
@@ -283,11 +282,11 @@ namespace eg
 
 		ImGui::Begin("Settings");
 
-		if(ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
+		if (ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
 			Commands::ExecuteRawValueCommand(&m_ShowPhysicsColliders, !m_ShowPhysicsColliders, "Show Physics Colliders");
-		if(ImGui::Checkbox("Show Axis", &m_ShowAxis))
+		if (ImGui::Checkbox("Show Axis", &m_ShowAxis))
 			Commands::ExecuteRawValueCommand(&m_ShowAxis, !m_ShowAxis, "Show Axis");
-		if(ImGui::Checkbox("Show Grid", &m_ShowGrid))
+		if (ImGui::Checkbox("Show Grid", &m_ShowGrid))
 			Commands::ExecuteRawValueCommand(&m_ShowGrid, !m_ShowGrid, "Show Grid");
 		ImGui::End();
 
@@ -487,26 +486,26 @@ namespace eg
 		switch (e.GetKeyCode())
 		{
 		case Key::Z:
+		{
+			if (controlPressed)
 			{
-				if (controlPressed)
-				{
-					if(Commands::CanRevert(true))
-						Commands::GetCurrentCommand()->Undo();
-				}
-
-				break;
+				if (Commands::CanRevert(true))
+					Commands::GetCurrentCommand()->Undo();
 			}
-			case Key::Y:
+
+			break;
+		}
+		case Key::Y:
+		{
+			if (controlPressed)
 			{
-				if (controlPressed)
-				{
-					if (Commands::CanRevert(false))
-						Commands::GetCurrentCommand(1)->Redo();
-				}
-
-				break;
+				if (Commands::CanRevert(false))
+					Commands::GetCurrentCommand(1)->Redo();
 			}
-			
+
+			break;
+		}
+
 		case Key::S:
 		{
 			if (controlPressed)
@@ -518,7 +517,7 @@ namespace eg
 		}
 		case Key::A:
 		{
-			if(controlPressed)
+			if (controlPressed)
 				m_AddResourcePanel->showResourcePanel(true);
 		}
 		case Key::N:
@@ -613,26 +612,26 @@ namespace eg
 			Renderer2D::BeginScene(m_EditorCamera);
 		}
 
-		if(m_ShowAxis)
+		if (m_ShowAxis)
 		{
-			glm::vec3 start = { 0,0,0 };
-			Renderer2D::DrawLine(start, { AxisLength, 0,0 }, { 1.0f, 0.0f, 0.0f, 1.0f });
-			Renderer2D::DrawLine(start, { 0, AxisLength,0 }, { 0.0f, 1.0f, 0.0f, 1.0f });
-			Renderer2D::DrawLine(start, { 0, 0, AxisLength }, { 1.0f, 0.0f, 1.0f, 1.0f });
+			glm::vec3 start = {0, 0, 0};
+			Renderer2D::DrawLine(start, {AxisLength, 0, 0}, {1.0f, 0.0f, 0.0f, 1.0f});
+			Renderer2D::DrawLine(start, {0, AxisLength, 0}, {0.0f, 1.0f, 0.0f, 1.0f});
+			Renderer2D::DrawLine(start, {0, 0, AxisLength}, {1.0f, 0.0f, 1.0f, 1.0f});
 		}
-		if(m_ShowGrid)
+		if (m_ShowGrid)
 		{
 			int linesAmount = 10000;
 			for (int i = -linesAmount; i <= linesAmount; i++)
 			{
 				if (i == 0)
 					continue;
-				Renderer2D::DrawLine({ -linesAmount ,i , 0 }, { linesAmount , i, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f });
-				Renderer2D::DrawLine({ i ,-linesAmount , 0 }, { i , linesAmount, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f });
-				Renderer2D::DrawLine({ -linesAmount ,0 , i }, { linesAmount , 0, i }, { 0.2f, 0.2f, 0.2f, 1.0f });
-				Renderer2D::DrawLine({ 0 ,-linesAmount , i }, { 0 , linesAmount, i }, { 0.2f, 0.2f, 0.2f, 1.0f });
-				Renderer2D::DrawLine({ i ,0 , -linesAmount }, { i , 0, linesAmount }, { 0.2f, 0.2f, 0.2f, 1.0f });
-				Renderer2D::DrawLine({ 0 ,i , -linesAmount }, { 0 , i, linesAmount }, { 0.2f, 0.2f, 0.2f, 1.0f });
+				Renderer2D::DrawLine({-linesAmount, i, 0}, {linesAmount, i, 0}, {0.2f, 0.2f, 0.2f, 1.0f});
+				Renderer2D::DrawLine({i, -linesAmount, 0}, {i, linesAmount, 0}, {0.2f, 0.2f, 0.2f, 1.0f});
+				Renderer2D::DrawLine({-linesAmount, 0, i}, {linesAmount, 0, i}, {0.2f, 0.2f, 0.2f, 1.0f});
+				Renderer2D::DrawLine({0, -linesAmount, i}, {0, linesAmount, i}, {0.2f, 0.2f, 0.2f, 1.0f});
+				Renderer2D::DrawLine({i, 0, -linesAmount}, {i, 0, linesAmount}, {0.2f, 0.2f, 0.2f, 1.0f});
+				Renderer2D::DrawLine({0, i, -linesAmount}, {0, i, linesAmount}, {0.2f, 0.2f, 0.2f, 1.0f});
 			}
 		}
 
@@ -674,14 +673,14 @@ namespace eg
 		// Draw selected entity outline
 		if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity())
 		{
-			if(selectedEntity.HasComponent<TransformComponent>())
+			if (selectedEntity.HasComponent<TransformComponent>())
 			{
 				const TransformComponent &transform = selectedEntity.GetComponent<TransformComponent>();
 				Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
 			}
 		}
 
-		Renderer2D::EndScene();
+		Renderer2D::EndFrame();
 	}
 
 	void EditorLayer::NewScene()
@@ -705,7 +704,8 @@ namespace eg
 		{
 			OpenScene(filepath);
 		}
-		else {
+		else
+		{
 			ConsolePanel::Log("File: EditorLayer.cpp - Empty file path", ConsolePanel::LogType::Error);
 			return;
 		}
@@ -742,7 +742,8 @@ namespace eg
 
 			m_ActiveScenePath = filepath;
 		}
-		else {
+		else
+		{
 			ConsolePanel::Log("File: EditorLayer.cpp - Empty file path", ConsolePanel::LogType::Error);
 			return;
 		}
@@ -869,10 +870,11 @@ namespace eg
 
 	void EditorLayer::OnDuplicateEntity()
 	{
-		if (m_SceneState == SceneState::Play){
+		if (m_SceneState == SceneState::Play)
+		{
 			ConsolePanel::Log("File: EditorLayer.cpp - Cannot duplicate entities while playing", ConsolePanel::LogType::Warning);
 			return;
-		}	
+		}
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity)
 		{
@@ -880,7 +882,8 @@ namespace eg
 			m_SceneHierarchyPanel.SetSelectedEntity(newEntity);
 			ConsolePanel::Log("File: EditorLayer.cpp - Entity duplicated", ConsolePanel::LogType::Info);
 		}
-		else {
+		else
+		{
 			ConsolePanel::Log("File: EditorLayer.cpp - No entity selected for duplication", ConsolePanel::LogType::Warning);
 		}
 	}

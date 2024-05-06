@@ -1,6 +1,7 @@
 #include "egpch.h"
 #include "VulkanVertex.h"
-
+#include "VulkanBufferFactory.h"
+#include "VulkanDeviceMemoryManager.h"
 namespace eg {
 
 	VkVertexInputBindingDescription& VulkanVertexInputLayout::GetBindingDescription(){
@@ -29,25 +30,36 @@ namespace eg {
 		return attributeDescriptions;
 	}
 
-	void VulkanVertexBuffer::Create(VkDevice logicalDevice, VkPhysicalDevice physicalDevice, BufferLayout& layout, float* vertices, uint32_t count)
+	VulkanVertexBuffer::VulkanVertexBuffer(const VulkanBuffer& buffer)
+: m_VertexBuffer(buffer)
 	{
-		VkDeviceSize bufferSize = layout.GetStride() * count;
-
-		VulkanBuffer stagingBuffer;
-		stagingBuffer.CreateBuffer(logicalDevice, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertices);
-
-		m_VertexBuffer.CreateBuffer(logicalDevice, physicalDevice, bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-
-		m_VertexBuffer.CopyFrom(stagingBuffer, stagingBuffer.GetSize());
-
-		stagingBuffer.Destroy(logicalDevice);
-
-		m_VertexInputLayout = layout;
 	}
 
 	void VulkanVertexBuffer::Cleanup(VkDevice logicalDevice)
 	{
 		m_VertexBuffer.Destroy(logicalDevice);
+	}
+
+	void VulkanVertexBuffer::Bind() const
+	{
+		VkBuffer buffers[] = { m_VertexBuffer.GetBuffer() };
+		VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+	}
+
+	void VulkanVertexBuffer::SetData(void* data, uint32_t size)
+	{
+		VulkanDeviceMemoryManager::MapMemory(m_VertexBuffer.GetBufferMemory(), size, (float*)data);
+	}
+
+	Ref<VertexBuffer> VulkanVertexBuffer::Create(uint32_t size)
+	{
+		return CreateRef<VertexBuffer>(VulkanBufferFactory::GetInstance()->CreateVertexBuffer(size));
+	}
+
+	Ref<VertexBuffer> VulkanVertexBuffer::Create(float* vertices, uint32_t size)
+	{
+		return CreateRef<VertexBuffer>(VulkanBufferFactory::GetInstance()->CreateVertexBuffer(vertices, size));
 	}
 
 }

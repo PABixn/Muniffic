@@ -61,6 +61,7 @@ namespace eg {
 		subpass.pDepthStencilAttachment = &depthAttachmentRef;
 		subpass.pResolveAttachments = &colorAttachmentResolveRef;
 
+
 		VkSubpassDependency dependency{};
 		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 		dependency.dstSubpass = 0;
@@ -85,6 +86,11 @@ namespace eg {
 		}
 
 		pipelineBuilder = CreateRef<VulkanGraphicsPipelineBuilder>(logicalDevice, renderPass);
+	}
+
+	void VulkanRenderPass::InitPipelineBuilder(VkDevice device)
+	{
+		pipelineBuilder = CreateRef<VulkanGraphicsPipelineBuilder>(device, renderPass);
 	}
 
 	void VulkanRenderPass::Cleanup(VkDevice device)

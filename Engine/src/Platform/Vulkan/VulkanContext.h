@@ -7,6 +7,7 @@ namespace eg {
 	public:
 		VulkanContext(GLFWwindow* windowHandle);
 		virtual void Init() override;
+		virtual void StartFrame() override;
 		virtual void SwapBuffers() override;
 
 		VulkanHandler& GetVulkanHandler() { return m_VulkanHandler; }

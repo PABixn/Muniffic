@@ -3,7 +3,7 @@
 #include "Engine/Core/Core.h"
 namespace eg {
 
-	void VulkanFence::Create(VkDevice device, bool signaled)
+	VulkanFence::VulkanFence(VkDevice device, bool signaled)
 	{
 		VkFenceCreateInfo fenceInfo{};
 		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;

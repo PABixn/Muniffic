@@ -15,7 +15,10 @@ namespace eg {
 		void Reset(VkCommandBufferResetFlags flags = 0);
 		VkCommandBuffer getCommandBuffer() const { return m_commandBuffer; }
 
-		operator VkCommandBuffer() const { return m_commandBuffer; }
+		operator VkCommandBuffer&() { return m_commandBuffer; }
+		operator const VkCommandBuffer&() const { return m_commandBuffer; }
+		operator VkCommandBuffer*() { return &m_commandBuffer; }
+		operator const VkCommandBuffer*() const { return &m_commandBuffer; }
 	private:
 		VkCommandBuffer m_commandBuffer;
 	};

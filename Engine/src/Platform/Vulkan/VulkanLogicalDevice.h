@@ -21,6 +21,11 @@ namespace eg {
 		const VkQueue& GetGraphicsQueue() const { return m_GraphicsQueue.GetQueue(); }
 		const VulkanQueue& GetVulkanPresentQueue() const { return m_PresentQueue; }
 		const VkQueue& GetPresentQueue() const { return m_PresentQueue.GetQueue(); }
+		
+		operator VkDevice*() { return &m_Device; }
+		operator VkDevice&() { return m_Device; }
+		operator const VkDevice*() const { return &m_Device; }
+		operator const VkDevice&() const { return m_Device; }
 	private:
 		VkDevice m_Device;
 		VulkanQueue m_GraphicsQueue;

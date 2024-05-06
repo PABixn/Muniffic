@@ -146,7 +146,7 @@ namespace eg {
     {
         VulkanHandler* handler = getVulkanHandler();
         VkDevice device = handler->GetVulkanLogicalDevice().GetDevice();
-        VkRenderPass renderPass = handler->GetVulkanRenderPass().GetRenderPass();
+        VkRenderPass renderPass = handler->GetMainRenderPass().GetRenderPass();
         m_Framebuffers.resize(m_ImageViews.size());
         for (size_t i = 0; i < m_ImageViews.size(); i++)
         {

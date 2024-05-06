@@ -28,24 +28,38 @@ namespace eg {
 
 	class VulkanVertexInputLayout: public BufferLayout{
 	public:
+		VulkanVertexInputLayout() = default;
 		VulkanVertexInputLayout(BufferLayout& layout) : BufferLayout(layout) {}
+		VulkanVertexInputLayout(const BufferLayout& layout) : BufferLayout(layout) {}
 		VkVertexInputBindingDescription& GetBindingDescription();
 
 		std::vector<VkVertexInputAttributeDescription>& GetAttributeDescriptions();
 	};
 
-	class VulkanVertexBuffer {
+	class VulkanVertexBuffer : public VertexBuffer{
 	public:
 		VulkanVertexBuffer() = default;
+		VulkanVertexBuffer(const VulkanBuffer& buffer) : m_VertexBuffer(buffer) {}
+		VulkanVertexBuffer(const VulkanVertexBuffer& buffer) = default;
+		VulkanVertexBuffer(const VulkanVertexBuffer& buffer) = default;
+		VulkanVertexBuffer(const VulkanBuffer& buffer);
 		~VulkanVertexBuffer() = default;
 
-		void Create(VkDevice logicalDevice, VkPhysicalDevice physicalDevice, BufferLayout& layout, float* vertices, uint32_t count);
+		// static Ref<VulkanVertexBuffer> Create(BufferLayout& layout, float* vertices, uint32_t count);
 		void Cleanup(VkDevice logicalDevice);
 
-		void Bind();
-		void Unbind();
+		virtual void Bind() const override;
 
+		virtual void SetLayout(const BufferLayout& layout) { m_VertexInputLayout = VulkanVertexInputLayout(layout); }
+		virtual const BufferLayout& GetLayout() const { return m_VertexInputLayout; }
+
+		virtual void SetData(void* data, uint32_t size);
+
+		static Ref<VertexBuffer> Create(uint32_t size);
+		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
 		VulkanBuffer& GetVulkanBuffer() { return m_VertexBuffer; }
+
+		friend class VulkanBufferFactory;
 	private:
 		VulkanBuffer m_VertexBuffer;
 		VulkanVertexInputLayout m_VertexInputLayout;

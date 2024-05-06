@@ -43,6 +43,12 @@ namespace eg {
 		const VulkanImage& GetDepthImage() const { return m_DepthImage; }
 		const VkSampleCountFlagBits& GetMsaaSamples() const { return m_MsaaSamples; }
 		const uint32_t& GetMipLevels() const { return m_MipLevels; }
+		const std::vector<VkFramebuffer>& GetFramebuffers() const { return m_Framebuffers; }
+
+		operator VkSwapchainKHR&() { return m_Swapchain; }
+		operator const VkSwapchainKHR&() const { return m_Swapchain; }
+		operator VkSwapchainKHR*() { return &m_Swapchain; }
+		operator const VkSwapchainKHR*() const { return &m_Swapchain; }
 	private:
 		void ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 	private:

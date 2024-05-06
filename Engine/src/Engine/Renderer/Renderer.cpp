@@ -4,8 +4,9 @@
 #include "Engine/Renderer/Renderer2D.h"
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
-namespace eg {
-	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
+namespace eg
+{
+	Renderer::SceneData *Renderer::m_SceneData = new Renderer::SceneData;
 
 	void Renderer::Init()
 	{
@@ -26,17 +27,16 @@ namespace eg {
 		RenderCommand::SetViewPort(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(OrthographicCamera& camera)
+	void Renderer::BeginScene(OrthographicCamera &camera)
 	{
 		m_SceneData->ViewProjectionMatrix = camera.GetViewProjection();
-
 	}
 
-	void Renderer::EndScene()
+	void Renderer::EndBatch()
 	{
 	}
 
-	void Renderer::Submit(const Ref<Shader>& shader,const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
+	void Renderer::Submit(const Ref<Shader> &shader, const Ref<VertexArray> &vertexArray, const glm::mat4 &transform)
 	{
 		shader->Bind();
 		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
