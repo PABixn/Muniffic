@@ -9,3 +9,18 @@ Resources:
     ResourceName: Sandbox.Player
     Extension: .cs
     IsEnabled: true
+  - UUID: 4638334623984140792
+    ParentDirectory: 3351936095448067910
+    ResourceName: Sandbox.Player
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 1886055777986391813
+    ParentDirectory: 3351936095448067910
+    ResourceName: Sandbox.Silli
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 8187111699707744540
+    ParentDirectory: 3351936095448067910
+    ResourceName: Sandbox.Silli
+    Extension: .cs
+    IsEnabled: true
