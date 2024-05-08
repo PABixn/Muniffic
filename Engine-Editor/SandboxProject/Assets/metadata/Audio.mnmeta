@@ -1,0 +1,9 @@
+Resources:
+  - UUID: 10006639298304141610
+    ParentDirectory: 13535924615636718722
+    ResourceName: jump
+    Extension: .mp3
+  - UUID: 6219572606901673563
+    ParentDirectory: 13535924615636718722
+    ResourceName: fail
+    Extension: .wav

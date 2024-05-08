@@ -17,7 +17,13 @@
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_circle_shape.h>
 
+#include <Mmsystem.h>
+#include <mciapi.h>
+#pragma comment(lib, "Winmm.lib")
+
 namespace eg {
+	bool EvaluateSceneAudio = true;
+
 	Scene::Scene()
 	{
 	}
@@ -139,29 +145,66 @@ namespace eg {
 				ScriptEngine::OnCreateEntity(e);
 			}
 		}
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
+				ASourceView.get<AudioSourceComponent>(f).Audio->LoadCurrentAudio();
+				if (ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart()) {
+					ASourceView.get<AudioSourceComponent>(f).Audio->Play();
+				}
+			}
+		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		OnPhysics2DStop();
 		m_IsRunning = false;
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
 
+
+				ASourceView.get<AudioSourceComponent>(f).Audio->Stop();
+
+			}
+		}
 		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart()
 	{
 		OnPhysics2DStart();
+		// Audio
+		if (EvaluateSceneAudio) {
+				auto ASourceView = m_Registry.view<AudioSourceComponent>();
+				for (auto f : ASourceView)
+				{
+					ASourceView.get<AudioSourceComponent>(f).Audio->LoadCurrentAudio();
+					if (ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart()) {
+						ASourceView.get<AudioSourceComponent>(f).Audio->Play();
+					}
+				}
+		}
 	}
 
 	void Scene::OnSimulationStop()
 	{
 		OnPhysics2DStop();
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
+				
+
+					ASourceView.get<AudioSourceComponent>(f).Audio->Stop();
+				
+			}
+		}
 	}
 
-	
-
-	
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
@@ -217,6 +260,7 @@ namespace eg {
 					}
 				}
 			}
+
 		}
 
 		// Render 2D
@@ -311,6 +355,7 @@ namespace eg {
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
+		
 		if (!m_IsPaused || m_StepFrames-- > 0)
 			// Physics
 		{
@@ -607,6 +652,10 @@ namespace eg {
 
 	template<>
 	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<AudioSourceComponent>(Entity entity, AudioSourceComponent& component)
 	{
 	}
 

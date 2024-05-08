@@ -310,6 +310,24 @@ namespace eg {
 			out << YAML::EndMap; // TextComponent
 		}
 
+		if (entity.HasComponent<AudioSourceComponent>())
+		{
+			out << YAML::Key << "AudioSourceComponent";
+			out << YAML::BeginMap;
+
+			auto& audioSourceComponent = entity.GetComponent<AudioSourceComponent>();
+			out << YAML::Key << "AudioUUID" << YAML::Value << audioSourceComponent.AudioUUID;
+			out << YAML::Key << "IsLooped" << YAML::Value << audioSourceComponent.Audio->IsLooped();
+			out << YAML::Key << "IsPlayingFromStart" << YAML::Value << audioSourceComponent.Audio->IsPlayingFromStart();
+			out << YAML::Key << "Volume" << YAML::Value << audioSourceComponent.Audio->GetVolume();
+			
+			out << YAML::Key << "IsInherited" << YAML::Value << audioSourceComponent.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << audioSourceComponent.isInheritedInChildren;
+
+			out << YAML::EndMap;
+		}
+
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -665,6 +683,21 @@ namespace eg {
 						tc.isInherited = textComponent["IsInherited"].as<bool>();
 					if(textComponent["IsInheritedInChildren"])
 						tc.isInheritedInChildren = textComponent["IsInheritedInChildren"].as<bool>();
+				}
+
+				auto audioSourceComponent = entity["AudioSourceComponent"];
+				if (audioSourceComponent)
+				{
+					auto& asc = deserializedEntity.AddComponent<AudioSourceComponent>();
+
+					asc.AudioUUID = audioSourceComponent["AudioUUID"].as<uint64_t>();
+					asc.Audio = CreateRef<BasicAudio>();
+					asc.Audio->SetVolume(audioSourceComponent["Volume"].as<float>());
+					asc.Audio->SetIsLooped(audioSourceComponent["IsLooped"].as<bool>());
+					asc.Audio->SetIsPlayingFromStart(audioSourceComponent["IsPlayingFromStart"].as<bool>());
+					asc.Audio->SetPath(ResourceDatabase::GetResourcePath(asc.AudioUUID));
+					asc.isInherited = audioSourceComponent["IsInherited"].as<bool>();
+					asc.isInheritedInChildren = audioSourceComponent["IsInheritedInChildren"].as<bool>();
 				}
 			}
 		}

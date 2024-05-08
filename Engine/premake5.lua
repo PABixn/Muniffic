@@ -10,6 +10,8 @@ project "Engine"
 	pchheader "egpch.h"
 	pchsource "src/egpch.cpp"
 
+	defines "SFML_STATIC"
+
 	files
 	{
 		"src/**.h",
@@ -19,13 +21,14 @@ project "Engine"
 		"vendor/glm/glm/**.hpp",
 		"vendor/glm/glm/**.inl",
 		"vendor/ImGuizmo/ImGuizmo.h",
-		"vendor/ImGuizmo/ImGuizmo.cpp"
+		"vendor/ImGuizmo/ImGuizmo.cpp",
 	}
 
 	includedirs 
 	{
 		"src",
 		".",
+		"vendor",
 		"vendor/spdlog/include",
 		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.filewatch}",
@@ -43,7 +46,6 @@ project "Engine"
 		"%{IncludeDir.mono}",
 		"vendor"
 	}
-
 	links
 	{
 		"Box2D",
@@ -54,7 +56,11 @@ project "Engine"
 		"Glad",
 		"Imgui",
 		"msdf-atlas-gen",
-		"%{Library.mono}",
+		"%{Library.mono}"
+	}
+	libdirs
+	{
+		
 	}
 
 	defines{

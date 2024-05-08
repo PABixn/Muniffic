@@ -17,6 +17,7 @@ namespace eg
 	std::unordered_map<UUID, SpriteAtlasResourceData*> ResourceSerializer::SpriteAtlasResourceDataCache;
 	std::unordered_map<UUID, SubTextureResourceData*> ResourceSerializer::SubTextureResourceDataCache;
 	std::unordered_map<UUID, FontResourceData*> ResourceSerializer::FontResourceDataCache;
+	std::unordered_map<UUID, AudioResourceData*> ResourceSerializer::AudioResourceDataCache;
 	std::unordered_map<UUID, ResourceType> ResourceSerializer::ResourceTypeInfo;
 
 	bool ResourceSerializer::DeserializeResourceCache()
@@ -28,8 +29,9 @@ namespace eg
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
 		std::filesystem::path subTextureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SubTexture);
 		std::filesystem::path fontMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Font);
+		std::filesystem::path audioMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Audio);
 
-		YAML::Node textureNode, animationNode, spriteAtlasNode, subTextureNode, fontNode;
+		YAML::Node textureNode, animationNode, spriteAtlasNode, subTextureNode, fontNode, audioNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
 		{
@@ -63,6 +65,13 @@ namespace eg
 		{
 			std::filesystem::create_directories(fontMetadataPath.parent_path());
 			std::ofstream file(fontMetadataPath, std::ios::trunc);
+			file.close();
+		}
+
+		if (!std::filesystem::exists(audioMetadataPath))
+		{
+			std::filesystem::create_directories(audioMetadataPath.parent_path());
+			std::ofstream file(audioMetadataPath, std::ios::trunc);
 			file.close();
 		}
 
@@ -116,11 +125,22 @@ namespace eg
 			return false;
 		}
 
+		try
+		{
+			audioNode = YAML::LoadFile(audioMetadataPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", audioMetadataPath, e.what());
+			return false;
+		}
+
 		auto textureResources = textureNode["Resources"];
 		auto animationResources = animationNode["Resources"];
 		auto spriteAtlasResources = spriteAtlasNode["Resources"];
 		auto subtextureResource = subTextureNode["Resources"];
 		auto fontResources = fontNode["Resources"];
+		auto audioResources = audioNode["Resources"];
 
 		if (fontResources)
 		{
@@ -262,6 +282,29 @@ namespace eg
 					CacheSpriteAtlas(uuid, data);
 				}
 			}
+
+			if (audioResources)
+			{
+				for (auto resource : audioResources)
+				{
+					UUID uuid = resource["UUID"].as<uint64_t>();
+
+					AudioResourceData* data = new AudioResourceData();
+					if (resource["ParentDirectory"])
+						data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+					else
+						data->ParentDirectory = 0;
+					if (resource["ResourceName"])
+						data->ResourceName = resource["ResourceName"].as<std::string>();
+					else
+						data->ResourceName = resource["AudioName"].as<std::string>();
+
+					data->Extension = resource["Extension"].as<std::string>();
+
+					CacheAudio(uuid, data);
+				}
+			}
+
 		}
 	}
 
@@ -274,9 +317,10 @@ namespace eg
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
 		std::filesystem::path subTextureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SubTexture);
 		std::filesystem::path fontMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Font);
+		std::filesystem::path audioMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Audio);
 
 
-		YAML::Emitter textureOut, animationOut, spriteAtlasOut, subtextureOut, fontOut;
+		YAML::Emitter textureOut, animationOut, spriteAtlasOut, subtextureOut, fontOut, audioOut;
 
 		if(!std::filesystem::exists(textureMetadataPath.parent_path()))
 			std::filesystem::create_directories(textureMetadataPath.parent_path());
@@ -292,6 +336,9 @@ namespace eg
 
 		if (!std::filesystem::exists(fontMetadataPath.parent_path()))
 			std::filesystem::create_directories(fontMetadataPath.parent_path());
+
+		if (!std::filesystem::exists(audioMetadataPath.parent_path()))
+			std::filesystem::create_directories(audioMetadataPath.parent_path());
 
 		textureOut << YAML::BeginMap;
 		textureOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
@@ -404,23 +451,42 @@ namespace eg
 		fontOut << YAML::EndSeq;
 		fontOut << YAML::EndMap;
 
+		audioOut << YAML::BeginMap;
+		audioOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
+
+		for (auto& [key, value] : AudioResourceDataCache)
+		{
+			audioOut << YAML::BeginMap;
+			audioOut << YAML::Key << "UUID" << YAML::Value << key;
+			audioOut << YAML::Key << "ParentDirectory" << YAML::Value << value->ParentDirectory;
+			audioOut << YAML::Key << "ResourceName" << YAML::Value << value->ResourceName;
+			audioOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
+			audioOut << YAML::EndMap;
+		}
+
+		audioOut << YAML::EndSeq;
+		audioOut << YAML::EndMap;
+
 		std::ofstream textureFile(textureMetadataPath, std::ios::trunc);
 		std::ofstream animationFile(animationMetadataPath, std::ios::trunc);
 		std::ofstream spriteAtlasFile(spriteAtlasMetadataPath, std::ios::trunc);
 		std::ofstream subTextureFile(subTextureMetadataPath, std::ios::trunc);
 		std::ofstream fontFile(fontMetadataPath, std::ios::trunc);
+		std::ofstream audioFile(audioMetadataPath, std::ios::trunc);
 
 		textureFile << textureOut.c_str();
 		animationFile << animationOut.c_str();
 		spriteAtlasFile << spriteAtlasOut.c_str();
 		subTextureFile << subtextureOut.c_str();
 		fontFile << fontOut.c_str();
+		audioFile << audioOut.c_str();
 
 		textureFile.close();
 		animationFile.close();
 		spriteAtlasFile.close();
 		subTextureFile.close();
 		fontFile.close();
+		audioFile.close();
 	}
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
@@ -499,6 +565,21 @@ namespace eg
 		data->Type = ResourceType::Font;
 		FontResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Font;
+		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
+	}
+
+	void ResourceSerializer::CacheAudio(UUID uuid, AudioResourceData* data)
+	{
+		if (AudioResourceDataCache.find(uuid) != AudioResourceDataCache.end())
+		{
+			if (AudioResourceDataCache[uuid] != nullptr)
+				delete AudioResourceDataCache[uuid];
+			AudioResourceDataCache.erase(uuid);
+		}
+
+		data->Type = ResourceType::Audio;
+		AudioResourceDataCache[uuid] = data;
+		ResourceTypeInfo[uuid] = ResourceType::Audio;
 		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
 	}
 

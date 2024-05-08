@@ -262,7 +262,7 @@ namespace eg
 		m_ContentBrowserPanel->OnImGuiRender();
 		m_ConsolePanel->OnImGuiRender();
 		
-		if ((*m_UnsavedChangesPanel).GetUnsavedChangesPanelRender()) {
+		if ((*(this->m_UnsavedChangesPanel)).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
 		}
 
