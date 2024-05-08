@@ -645,6 +645,9 @@ namespace eg
 		data->Type = ResourceType::Script;
 		ScriptResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Script;
+		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
+	}
+
 	void ResourceSerializer::CacheAudio(UUID uuid, AudioResourceData* data)
 	{
 		if (AudioResourceDataCache.find(uuid) != AudioResourceDataCache.end())
