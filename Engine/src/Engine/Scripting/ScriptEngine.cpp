@@ -225,42 +225,43 @@ namespace eg
 				uint32_t flags = mono_field_get_flags(field);
 
 				EG_CORE_WARN("{} flags: {}", fieldName, flags);
-				if (flags & MONO_FIELD_ATTR_PUBLIC)
-				{
-					MonoType *monoType = mono_field_get_type(field);
+				if (!(flags & MONO_FIELD_ATTR_PUBLIC))
+					continue;
+				
+				MonoType *monoType = mono_field_get_type(field);
 
-					ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(monoType);
-					const char *MunifficFieldType = Utils::ScriptFieldTypeToString(fieldType);
+				ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(monoType);
+				const char *MunifficFieldType = Utils::ScriptFieldTypeToString(fieldType);
 
-					EG_CORE_WARN("{} type: {}", fieldName, MunifficFieldType);
-					scriptClass->m_Fields[fieldName] = {fieldName, fieldType, field};
-				}
+				EG_CORE_WARN("{} type: {}", fieldName, MunifficFieldType);
+				scriptClass->m_Fields[fieldName] = {fieldName, fieldType, field};
 			}
 
 			for (MonoClass* baseClass : baseClasses)
 			{
-				if (baseClass != nullptr)
+				if (baseClass == nullptr)
+					continue;
+				
+				int fieldCount = mono_class_num_fields(baseClass);
+				EG_CORE_WARN("Fields of class: {}, with: {} fields", mono_class_get_name(baseClass), fieldCount);
+				void* iterator = nullptr;
+				while (MonoClassField* field = mono_class_get_fields(baseClass, &iterator))
 				{
-					int fieldCount = mono_class_num_fields(baseClass);
-					EG_CORE_WARN("Fields of class: {}, with: {} fields", mono_class_get_name(baseClass), fieldCount);
-					void* iterator = nullptr;
-					while (MonoClassField* field = mono_class_get_fields(baseClass, &iterator))
-					{
-						const char* fieldName = mono_field_get_name(field);
-						uint32_t flags = mono_field_get_flags(field);
+					const char* fieldName = mono_field_get_name(field);
+					uint32_t flags = mono_field_get_flags(field);
 
-						EG_CORE_WARN("{} flags: {}", fieldName, flags);
-						if (flags & MONO_FIELD_ATTR_PUBLIC)
-						{
-							MonoType* monoType = mono_field_get_type(field);
+					EG_CORE_WARN("{} flags: {}", fieldName, flags);
 
-							ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(monoType);
-							const char* MunifficFieldType = Utils::ScriptFieldTypeToString(fieldType);
+					if (!(flags & MONO_FIELD_ATTR_PUBLIC))
+						continue;
 
-							EG_CORE_WARN("{} type: {}", fieldName, MunifficFieldType);
-							scriptClass->m_Fields[fieldName] = { fieldName, fieldType, field };
-						}
-					}
+					MonoType* monoType = mono_field_get_type(field);
+
+					ScriptFieldType fieldType = Utils::MonoTypeToScriptFieldType(monoType);
+					const char* MunifficFieldType = Utils::ScriptFieldTypeToString(fieldType);
+
+					EG_CORE_WARN("{} type: {}", fieldName, MunifficFieldType);
+					scriptClass->m_Fields[fieldName] = { fieldName, fieldType, field };
 				}
 			}
 
@@ -398,42 +399,36 @@ namespace eg
 
 			std::string scriptName = ResourceDatabase::GetResourceName(scriptUUID);
 
-			if (ScriptEngine::EntityClassExists(scriptName))
-			{
-				Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[scriptName], entity, scriptUUID);
+			if (!ScriptEngine::EntityClassExists(scriptName))
+				continue;
 
-				// Copy field values
+			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[scriptName], entity, scriptUUID);
 
-				//Change scriptName to scriptUUID
-				s_Data->EntityInstances.at(uuid)[scriptName] = instance;
+			// Copy field values
 
-				if (s_Data->EntityFields.find(uuid) != s_Data->EntityFields.end())
-				{
-					const ScriptFieldMap& fieldMap = s_Data->EntityFields.at(uuid);
-					for (const auto& [name, fieldInstance] : fieldMap)
-						instance->SetFieldValueInternal(name, fieldInstance.m_Buffer);
-				}
+			//Change scriptName to scriptUUID
+			s_Data->EntityInstances.at(uuid)[scriptName] = instance;
 
-				instance->InvokeOnCreate();
-			}
+			if (s_Data->EntityFields.find(uuid) == s_Data->EntityFields.end())
+				continue;
+
+			const ScriptFieldMap& fieldMap = s_Data->EntityFields.at(uuid);
+			for (const auto& [name, fieldInstance] : fieldMap)
+				instance->SetFieldValueInternal(name, fieldInstance.m_Buffer);
+
+			instance->InvokeOnCreate();
 		}
 	}
 
 	void ScriptEngine::OnUpdateEntity(Entity entity, Timestep ts)
 	{
 		UUID entityID = entity.GetUUID();
-		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
-		{
-			for (auto& [key, value] : s_Data->EntityInstances.at(entityID))
-				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()))
-					value->InvokeOnUpdate(ts);
-			/*Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
-			instance->InvokeOnUpdate(ts);*/
-		}
-		else
-		{
+		if (s_Data->EntityInstances.find(entityID) == s_Data->EntityInstances.end())
 			EG_CORE_ERROR("Couldn't find script instance for entity {}!", entityID);
-		}
+
+		for (auto& [key, value] : s_Data->EntityInstances.at(entityID))
+			if(ResourceDatabase::IsScriptEnabled(value->GetUUID()))
+				value->InvokeOnUpdate(ts);
 	}
 
 	Scene *ScriptEngine::GetSceneContext()
@@ -444,11 +439,13 @@ namespace eg
 	std::vector<Ref<ScriptInstance>> ScriptEngine::GetEntityScriptInstances(UUID uuid)
 	{
 		std::vector<Ref<ScriptInstance>> result;
-		if (s_Data->EntityInstances.find(uuid) != s_Data->EntityInstances.end())
-		{
+
+		if (s_Data->EntityInstances.find(uuid) == s_Data->EntityInstances.end())
+			return result;
+
 			for (auto& [key, value] : s_Data->EntityInstances.at(uuid))
 				result.push_back(value);
-		}
+
 		return result;
 	}
 
@@ -531,39 +528,41 @@ namespace eg
 
 	void ScriptInstance::InvokeOnCreate()
 	{
-		if (m_OnCreateMethod)
-			m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
+		if (!m_OnCreateMethod)
+			return;
+
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
 	}
 
 	void ScriptInstance::InvokeOnUpdate(float ts)
 	{
-		if (m_OnUpdateMethod)
-		{
-			void *arg = &ts;
-			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &arg);
-		}
+		if (!m_OnUpdateMethod)
+			return;
+
+		void *arg = &ts;
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &arg);
 	}
 
 	void ScriptInstance::InvokeOn2DCollisionEnter(InternalCollision2DEvent collision)
 	{
-		if (m_OnCollisionEnterMethod)
-		{
-			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
-			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
-			void* arg = args;
-			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionEnterMethod, &arg);
-		}
+		if (!m_OnCollisionEnterMethod)
+			return;
+
+		UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
+		Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
+		void* arg = args;
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionEnterMethod, &arg);
 	}
 
 	void ScriptInstance::InvokeOn2DCollisionExit(InternalCollision2DEvent collision)
 	{
-		if (m_OnCollisionExitMethod)
-		{
-			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
-			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
-			void* arg = args;
-			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionExitMethod, &arg);
-		}
+		if (!m_OnCollisionExitMethod)
+			return;
+
+		UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
+		Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
+		void* arg = args;
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionExitMethod, &arg);
 	}
 
 	ScriptField::ScriptField(const std::string &name, ScriptFieldType type, MonoClassField *valuePtr)

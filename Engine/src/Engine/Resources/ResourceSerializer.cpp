@@ -571,7 +571,7 @@ namespace eg
 
 	void ResourceSerializer::CacheScript(UUID uuid, ScriptResourceData* data)
 	{
-		if (ScriptResourceDataCache.find(uuid) != ScriptResourceDataCache.end())
+		if (ScriptResourceDataCache.find(uuid) == ScriptResourceDataCache.end())
 		{
 			if (ScriptResourceDataCache[uuid] != nullptr)
 				delete ScriptResourceDataCache[uuid];
