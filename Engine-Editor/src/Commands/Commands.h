@@ -267,7 +267,11 @@ namespace eg
 				if(m_DeleteFile == false)
 					Commands::AddCommand(this);
 
-				ResourceDatabase::RemoveResource(m_UUID, resourceType, deleteFile);
+				ResourceData* data = (ResourceData*)ResourceDatabase::GetResourceData(uuid);
+
+				AssetDirectoryManager::removeAsset(data->ParentDirectory, uuid, deleteFile);
+
+				//ResourceDatabase::RemoveResource(m_UUID, resourceType, deleteFile);
 			}
 
 			void Execute(CommandArgs args) override {};

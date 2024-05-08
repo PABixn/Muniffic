@@ -24,7 +24,7 @@ namespace eg
 		static bool addSubDirectory(UUID parentUUID, UUID subdirectoryUUID);
 		static bool removeSubDirectory(UUID parentUUID, UUID subdirectoryUUID);
 		static bool addAsset(UUID directoryUUID, UUID assetUUID);
-		static bool removeAsset(UUID directoryUUID, UUID assetUUID);
+		static bool removeAsset(UUID directoryUUID, UUID assetUUID, bool deleteFile = false);
 		static bool changeAssetDirectoryName(UUID uuid, const std::string& newName);
 		static bool moveAsset(UUID assetUUID, UUID oldAssetDirectoryUUID, UUID newAssetDirectoryUUID);
 		static bool moveAsset(UUID assetUUID, UUID newAssetDirectoryUUID);

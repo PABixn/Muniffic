@@ -74,6 +74,11 @@ namespace eg
 		UUID Texture;
 	};
 
+	struct ScriptResourceData : public ResourceData
+	{
+		bool IsEnabled = true;
+	};
+
 	struct FontResourceData : public ResourceData
 	{
 	};

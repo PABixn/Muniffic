@@ -45,6 +45,7 @@ namespace eg {
 		Entity FindEntityByName(const std::string_view& name);
 		Entity GetEntityByUUID(UUID uuid);
 		bool EntityExists(UUID uuid);
+		void AwakeRuntimeBody(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
 
@@ -72,6 +73,8 @@ namespace eg {
 
 		void OnPhysics2DStart();
 		void OnPhysics2DStop();
+
+		void* StartRuntimeBody(Entity entity);
 
 	private:
 		entt::registry m_Registry;
