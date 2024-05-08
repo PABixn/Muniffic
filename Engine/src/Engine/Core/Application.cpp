@@ -18,6 +18,7 @@ namespace eg
 	Application::Application(const ApplicationSpecification applicationSpec)
 		: m_Specification(applicationSpec)
 	{
+		
 		EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;

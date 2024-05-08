@@ -19,7 +19,7 @@ namespace eg {
 
 	Application* CreateApplication(ApplicationCommandLineArgs args) {
 		ApplicationSpecification spec;
-		spec.Name = "Editor";
+		spec.Name = "Muniffic editor";
 		spec.CommandLineArgs = args;
 
 		return new Editor(spec);

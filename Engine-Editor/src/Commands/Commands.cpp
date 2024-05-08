@@ -318,6 +318,20 @@ namespace eg
 		return isUndo ? currentCommandIndex >= 0 : currentCommandIndex < static_cast<int>(commandHistory.size()) - 1;
 	}
 
+	/*template<>
+	void Commands::SetComponent<AudioListenerComponent>(Entity& entity, AudioListenerComponent* component)
+	{
+		if (!entity.HasComponent<AudioListenerComponent>())
+			entity.AddComponent<AudioListenerComponent>();
+	}
+	template<>
+	void Commands::SetComponent<AudioSourceComponent>(Entity& entity, AudioSourceComponent* component)
+	{
+		if (!entity.HasComponent<AudioSourceComponent>())
+			entity.AddComponent<AudioSourceComponent>();
+		entity.GetComponent<AudioSourceComponent>().Audio.SetPath((component->Audio.GetPath().string()));
+	}*/
+
 	template<typename T>
 	void TrySetComponent(Entity& entity, std::optional<T>* component)
 	{
