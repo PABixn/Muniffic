@@ -120,6 +120,7 @@ namespace eg {
 			m_DepthAttachment = 0;
 		}
 
+		glCreateFramebuffers()
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 

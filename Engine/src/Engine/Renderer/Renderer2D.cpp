@@ -64,22 +64,26 @@ namespace eg
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
 
-		Ref<VertexArray> QuadVertexArray;
+		Ref<IndexBuffer> QuadIndexBuffer;
 		Ref<VertexBuffer> QuadVertexBuffer;
 		Ref<Shader> QuadShader;
 		Ref<Texture2D> WhiteTexture;
+		uint32_t QuadIndexOffset = 0;
 
-		Ref<VertexArray> CircleVertexArray;
+		Ref<IndexBuffer> CircleIndexBuffer;
 		Ref<VertexBuffer> CircleVertexBuffer;
 		Ref<Shader> CircleShader;
+		uint32_t CircleIndexOffset = 0;
 
-		Ref<VertexArray> LineVertexArray;
+		Ref<IndexBuffer> LineIndexBuffer;
 		Ref<VertexBuffer> LineVertexBuffer;
 		Ref<Shader> LineShader;
+		uint32_t LineIndexOffset = 0;
 
-		Ref<VertexArray> TextVertexArray;
+		Ref<IndexBuffer> TextIndexBuffer;
 		Ref<VertexBuffer> TextVertexBuffer;
 		Ref<Shader> TextShader;
+		uint32_t TextIndexOffset = 0;
 
 		glm::mat4 ViewProjectionMatrix;
 
@@ -120,10 +124,10 @@ namespace eg
 
 	static Renderer2DData s_Data;
 
+
 	void Renderer2D::Init()
 	{
 		EG_PROFILE_FUNCTION();
-		s_Data.QuadVertexArray = VertexArray::Create();
 
 		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
 
@@ -134,8 +138,6 @@ namespace eg
 											{ShaderDataType::Float, "a_TilingFactor"},
 											{ShaderDataType::Int, "a_EntityID"}});
 
-		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
-
 		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
 
 		uint32_t *quadIndices = new uint32_t[s_Data.MaxIndices];
@@ -143,24 +145,12 @@ namespace eg
 		UINT32 offset = 0;
 		for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
 		{
-			quadIndices[i + 0] = offset + 0;
-			quadIndices[i + 1] = offset + 1;
-			quadIndices[i + 2] = offset + 2;
-
-			quadIndices[i + 3] = offset + 2;
-			quadIndices[i + 4] = offset + 3;
-			quadIndices[i + 5] = offset + 0;
+			
 
 			offset += 4;
 		}
 
-		Ref<IndexBuffer> quadIB;
-		quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
-		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
-		delete[] quadIndices;
-
 		// Circles
-		s_Data.CircleVertexArray = VertexArray::Create();
 
 		s_Data.CircleVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
 		s_Data.CircleVertexBuffer->SetLayout({{ShaderDataType::Float3, "a_WorldPosition"},
@@ -169,30 +159,23 @@ namespace eg
 											  {ShaderDataType::Float, "a_Thickness"},
 											  {ShaderDataType::Float, "a_Fade"},
 											  {ShaderDataType::Int, "a_EntityID"}});
-		s_Data.CircleVertexArray->AddVertexBuffer(s_Data.CircleVertexBuffer);
-		s_Data.CircleVertexArray->SetIndexBuffer(quadIB); // Use quad IB
+
 		s_Data.CircleVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
 
 		// Lines
-		s_Data.LineVertexArray = VertexArray::Create();
 
 		s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));
 		s_Data.LineVertexBuffer->SetLayout({{ShaderDataType::Float3, "a_Position"},
 											{ShaderDataType::Float4, "a_Color"},
 											{ShaderDataType::Int, "a_EntityID"}});
-		s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
-		s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];
 
 		// Text
-		s_Data.TextVertexArray = VertexArray::Create();
 
 		s_Data.TextVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(TextVertex));
 		s_Data.TextVertexBuffer->SetLayout({{ShaderDataType::Float3, "a_Position"},
 											{ShaderDataType::Float4, "a_Color"},
 											{ShaderDataType::Float2, "a_TexCoord"},
 											{ShaderDataType::Int, "a_EntityID"}});
-		s_Data.TextVertexArray->AddVertexBuffer(s_Data.TextVertexBuffer);
-		s_Data.TextVertexArray->SetIndexBuffer(quadIB); // Use quad IB
 		s_Data.TextVertexBufferBase = new TextVertex[s_Data.MaxVertices];
 
 		s_Data.WhiteTexture = Texture2D::Create(TextureSpecification());
@@ -278,12 +261,11 @@ namespace eg
 		{
 			uint32_t dataSize = (uint32_t)((uint8_t *)s_Data.QuadVertexBufferPtr - (uint8_t *)s_Data.QuadVertexBufferBase);
 			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
-
+			s_Data.QuadIndexBuffer->SetData();
 			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 				s_Data.TextureSlots[i]->Bind(i);
 
-			s_Data.QuadShader->Bind();
-			RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+			RenderCommand::DrawIndexed(s_Data.QuadVertexBuffer, s_Data.QuadIndexBuffer, s_Data.QuadShader);
 			s_Data.Stats.DrawCalls++;
 		}
 
@@ -291,9 +273,9 @@ namespace eg
 		{
 			uint32_t dataSize = (uint32_t)((uint8_t *)s_Data.CircleVertexBufferPtr - (uint8_t *)s_Data.CircleVertexBufferBase);
 			s_Data.CircleVertexBuffer->SetData(s_Data.CircleVertexBufferBase, dataSize);
+			s_Data.CircleIndexBuffer->SetData();
 
-			s_Data.CircleShader->Bind();
-			RenderCommand::DrawIndexed(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
+			RenderCommand::DrawIndexed(s_Data.CircleVertexBuffer, s_Data.CircleIndexBuffer, s_Data.CircleShader);
 			s_Data.Stats.DrawCalls++;
 		}
 
@@ -301,10 +283,10 @@ namespace eg
 		{
 			uint32_t dataSize = (uint32_t)((uint8_t *)s_Data.LineVertexBufferPtr - (uint8_t *)s_Data.LineVertexBufferBase);
 			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
-
+			s_Data.LineIndexBuffer->SetData();
 			s_Data.LineShader->Bind();
 			RenderCommand::SetLineThickness(s_Data.LineThickness);
-			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
+			RenderCommand::DrawLines(s_Data.LineVertexBuffer, s_Data.LineIndexBuffer, s_Data.LineShader);
 			s_Data.Stats.DrawCalls++;
 		}
 
@@ -312,11 +294,10 @@ namespace eg
 		{
 			uint32_t dataSize = (uint32_t)((uint8_t *)s_Data.TextVertexBufferPtr - (uint8_t *)s_Data.TextVertexBufferBase);
 			s_Data.TextVertexBuffer->SetData(s_Data.TextVertexBufferBase, dataSize);
-
+			s_Data.TextIndexBuffer->SetData();
 			s_Data.FontAtlasTexture->Bind(0);
 
-			s_Data.TextShader->Bind();
-			RenderCommand::DrawIndexed(s_Data.TextVertexArray, s_Data.TextIndexCount);
+			RenderCommand::DrawIndexed(s_Data.TextVertexBuffer, s_Data.CircleIndexBuffer, s_Data.TextShader);
 			s_Data.Stats.DrawCalls++;
 		}
 	}
@@ -375,6 +356,16 @@ namespace eg
 			s_Data.QuadVertexBufferPtr++;
 		}
 
+		int quadIndices[6] = {0, 1, 2, 2, 3, 0};
+
+		for (int i = 0; i < 6; i++)
+		{
+			quadIndices[i] += s_Data.QuadIndexOffset;
+		}
+
+		s_Data.QuadIndexBuffer->SetData(quadIndices, sizeof(quadIndices));
+
+		s_Data.QuadIndexOffset += 4;
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
@@ -430,7 +421,16 @@ namespace eg
 			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
+		int quadIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
+		for (int i = 0; i < 6; i++)
+		{
+			quadIndices[i] += s_Data.QuadIndexOffset;
+		}
+
+		s_Data.QuadIndexBuffer->SetData(quadIndices, sizeof(quadIndices));
+
+		s_Data.QuadIndexOffset += 4;
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
@@ -474,7 +474,16 @@ namespace eg
 			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
+		int quadIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
+		for (int i = 0; i < 6; i++)
+		{
+			quadIndices[i] += s_Data.QuadIndexOffset;
+		}
+
+		s_Data.QuadIndexBuffer->SetData(quadIndices, sizeof(quadIndices));
+
+		s_Data.QuadIndexOffset += 4;
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
@@ -518,7 +527,16 @@ namespace eg
 			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
+		int quadIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
+		for (int i = 0; i < 6; i++)
+		{
+			quadIndices[i] += s_Data.QuadIndexOffset;
+		}
+
+		s_Data.QuadIndexBuffer->SetData(quadIndices, sizeof(quadIndices));
+
+		s_Data.QuadIndexOffset += 4;
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
@@ -553,7 +571,16 @@ namespace eg
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;
 		}
+		int quadIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
+		for (int i = 0; i < 6; i++)
+		{
+			quadIndices[i] += s_Data.QuadIndexOffset;
+		}
+
+		s_Data.QuadIndexBuffer->SetData(quadIndices, sizeof(quadIndices));
+
+		s_Data.QuadIndexOffset += 4;
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
@@ -602,7 +629,16 @@ namespace eg
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;
 		}
+		int quadIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
+		for (int i = 0; i < 6; i++)
+		{
+			quadIndices[i] += s_Data.QuadIndexOffset;
+		}
+
+		s_Data.QuadIndexBuffer->SetData(quadIndices, sizeof(quadIndices));
+
+		s_Data.QuadIndexOffset += 4;
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
@@ -650,7 +686,16 @@ namespace eg
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;
 		}
+		int quadIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
+		for (int i = 0; i < 6; i++)
+		{
+			quadIndices[i] += s_Data.QuadIndexOffset;
+		}
+
+		s_Data.QuadIndexBuffer->SetData(quadIndices, sizeof(quadIndices));
+
+		s_Data.QuadIndexOffset += 4;
 		s_Data.QuadIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
@@ -679,7 +724,16 @@ namespace eg
 			s_Data.CircleVertexBufferPtr->EntityID = entityID;
 			s_Data.CircleVertexBufferPtr++;
 		}
+		int quadIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
+		for (int i = 0; i < 6; i++)
+		{
+			quadIndices[i] += s_Data.CircleIndexOffset;
+		}
+
+		s_Data.QuadIndexBuffer->SetData(quadIndices, sizeof(quadIndices));
+
+		s_Data.CircleIndexOffset += 4;
 		s_Data.CircleIndexCount += 6;
 
 		s_Data.Stats.QuadCount++;
@@ -825,6 +879,16 @@ namespace eg
 			s_Data.TextVertexBufferPtr->EntityID = entityID;
 			s_Data.TextVertexBufferPtr++;
 
+			int quadIndices[6] = { 0, 1, 2, 2, 3, 0 };
+
+			for (int i = 0; i < 6; i++)
+			{
+				quadIndices[i] += s_Data.TextIndexOffset;
+			}
+
+			s_Data.QuadIndexBuffer->SetData(quadIndices, sizeof(quadIndices));
+
+			s_Data.TextIndexOffset += 4;
 			s_Data.TextIndexCount += 6;
 
 			s_Data.Stats.QuadCount++;

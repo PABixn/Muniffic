@@ -8,7 +8,7 @@ namespace eg {
 		inline static void Init()
 		{
 			EG_PROFILE_FUNCTION();
-			s_RendererAPI->Init();
+			s_RendererAPI = RendererAPI::Create();
 		}
 
 		inline static void SetViewPort(uint32_t x, uint32_t y, uint32_t width, uint32_t height) { s_RendererAPI->SetViewPort(x, y, width, height); }
@@ -24,6 +24,10 @@ namespace eg {
 		inline static void DrawIndexed(const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer, uint32_t indexCount = 0)
 		{
 			s_RendererAPI->DrawIndexed(vertexBuffer, indexBuffer, indexCount);
+		}
+		inline static void DrawIndexed(const Ref<VertexBuffer>& vertexBuffer, const Ref<IndexBuffer>& indexBuffer, Ref<Shader> shader)
+		{
+			s_RendererAPI->DrawIndexed(vertexBuffer, indexBuffer, shader);
 		}
 		inline static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0)
 		{
@@ -43,7 +47,7 @@ namespace eg {
 		inline static RendererAPI* GetRendererAPI() { return s_RendererAPI; }
 
 	private:
-		static RendererAPI* s_RendererAPI;
+		static Ref<RendererAPI> s_RendererAPI;
 	};
 
 }

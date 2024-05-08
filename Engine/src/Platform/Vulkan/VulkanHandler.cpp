@@ -3,6 +3,8 @@
 #include "VulkanCommandManager.h"
 #include "Engine/Renderer/RenderCommand.h"
 #include "VulkanRenderAPI.h"
+#include "VulkanRenderPaassBuilder.h"
+#include "RenderPassInfo/VulkanSubpassBuilder.h"
 namespace eg {
 	
 	Ref<VulkanHandler> VulkanHandler::Create(GLFWwindow* window)
@@ -23,12 +25,12 @@ namespace eg {
 		VulkanCommandManager::Init(m_LogicalDevice.GetDevice(), m_LogicalDevice.GetGraphicsQueue(), m_CommandPool.GetPool());
 		VulkanDeviceMemoryManager::Init(m_LogicalDevice.GetDevice(), m_PhysicalDevice.GetPhysicalDevice());
 		m_SwapChain.Init();
-		m_MainRenderPass.Init();
+		CreateMainRenderPass();
 		m_CommandPool.Create();
 		m_SwapChain.CreateColorResources();
 		m_SwapChain.CreateDepthResources();
 		m_SwapChain.CreateFramebuffers();
-
+		InitBuilders();
 	}
 
 	VulkanHandler::VulkanHandler(GLFWwindow* window) :m_Window(window)
@@ -63,6 +65,27 @@ namespace eg {
 			m_RenderFinishedSemaphores[i] = VulkanSemaphore(m_LogicalDevice.GetDevice());
 			m_InFlightFences[i] = VulkanFence(m_LogicalDevice.GetDevice());
 		}
+	}
+
+	void VulkanHandler::CreateMainRenderPass()
+	{
+		VkSampleCountFlagBits msaaSamples = m_SwapChain.GetMsaaSamples();
+		VkFormat imageFormat = m_SwapChain.GetImageFormat();
+
+		m_MainRenderPass = VulkanRenderPassBuilder::Get()
+			.AddSubpass(VulkanSubpassBuilder::Get()
+			.AddColorAttachment(imageFormat, msaaSamples, false)
+			.SetDepthStencilAttachment(VulkanImage::FindDepthFormat(m_LogicalDevice), msaaSamples, false)
+			.AddResolveAttachment(imageFormat, false)
+			.Build())
+			.AddDependency(VK_SUBPASS_EXTERNAL, 0)
+			.Build(m_LogicalDevice);
+	}
+
+	void VulkanHandler::InitBuilders()
+	{
+		VulkanSubpassBuilder::Get().Init(m_LogicalDevice.GetDevice());
+		VulkanRenderPassBuilder::Get().Init(m_LogicalDevice.GetDevice());
 	}
 
 	void VulkanHandler::StartFrame()

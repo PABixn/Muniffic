@@ -13,14 +13,18 @@ namespace eg {
 		~VulkanIndexBuffer() = default;
 
 		static Ref<VulkanIndexBuffer> Create(uint32_t* vertices, uint32_t count);
+		virtual void AddData(uint32_t* data, uint32_t size) override;
+		virtual void SetData(void* data, uint32_t size) override;
+		virtual void SetData() override;
 		void Cleanup(VkDevice device);
 
 		virtual void Bind() const;
 
 		virtual uint32_t GetCount() const { return indexCount; }
-		VulkanBuffer& getBuffer() { return m_Indexbuffer; }
+		VulkanBuffer& GetBuffer() { return m_Indexbuffer; }
 	private:
 		VulkanBuffer m_Indexbuffer;
+		std::vector<uint32_t> m_Indices;
 		uint32_t indexCount;
 	};
 }

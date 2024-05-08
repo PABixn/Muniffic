@@ -41,8 +41,7 @@ namespace eg {
 		VulkanVertexBuffer() = default;
 		VulkanVertexBuffer(const VulkanBuffer& buffer) : m_VertexBuffer(buffer) {}
 		VulkanVertexBuffer(const VulkanVertexBuffer& buffer) = default;
-		VulkanVertexBuffer(const VulkanVertexBuffer& buffer) = default;
-		VulkanVertexBuffer(const VulkanBuffer& buffer);
+		VulkanVertexBuffer(VulkanVertexBuffer& buffer) = default;
 		~VulkanVertexBuffer() = default;
 
 		// static Ref<VulkanVertexBuffer> Create(BufferLayout& layout, float* vertices, uint32_t count);
@@ -58,6 +57,11 @@ namespace eg {
 		static Ref<VertexBuffer> Create(uint32_t size);
 		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
 		VulkanBuffer& GetVulkanBuffer() { return m_VertexBuffer; }
+
+		VulkanBuffer& GetBuffer() { return m_VertexBuffer; }
+		const VulkanBuffer& GetBuffer() const { return m_VertexBuffer; }
+		VulkanVertexInputLayout& GetVertexInputLayout() { return m_VertexInputLayout; }
+		const VulkanVertexInputLayout& GetVertexInputLayout() const { return m_VertexInputLayout; }
 
 		friend class VulkanBufferFactory;
 	private:

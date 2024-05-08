@@ -3,6 +3,35 @@
 #include "VulkanDeviceMemoryManager.h"
 #include "VulkanCommandManager.h"
 namespace eg {
+
+    VulkanVertexBuffer& VulkanBufferFactory::CreateVertexBuffer(float* vertices, int size, BufferLayout& layout)
+    {
+        VkDeviceSize bufferSize = size;
+
+        VulkanBuffer stagingBuffer = CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertices);
+
+        VulkanBuffer VertexBuffer = CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+        CopyBuffer(stagingBuffer, VertexBuffer, bufferSize);
+
+        stagingBuffer.Destroy(m_device);
+
+        VulkanVertexBuffer buffer(VertexBuffer);
+        buffer.m_VertexInputLayout = layout;
+
+        return buffer;
+    }
+    VulkanVertexBuffer& VulkanBufferFactory::CraeteVertexBuffer(int size, BufferLayout& layout)
+    {
+        VkDeviceSize bufferSize = size;
+
+        VulkanBuffer VertexBuffer = CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+        VulkanVertexBuffer buffer(VertexBuffer);
+        buffer.m_VertexInputLayout = layout;
+
+        return buffer;
+    }
     VulkanVertexBuffer& VulkanBufferFactory::CreateVertexBuffer(float* vertices, int size)
 	{
          
@@ -108,7 +137,7 @@ namespace eg {
 		CopyBuffer(srcBuffer.m_Buffer, dstBuffer.m_Buffer, size);
     }
 
-    VulkanIndexBuffer& VulkanBufferFactory::CreateIndexBuffer(uint32_t* vertices, uint32_t count)
+    VulkanBuffer& VulkanBufferFactory::CreateIndexBuffer(uint32_t* vertices, uint32_t count)
     {
         VkDeviceSize bufferSize = count * sizeof(uint32_t);
 
@@ -120,9 +149,7 @@ namespace eg {
 
 		stagingBuffer.Destroy(m_device);
 
-		VulkanIndexBuffer buffer(indexBuffer, count);
-
-		return buffer;
+		return indexBuffer;
     }
 
     VulkanUniformBuffer& VulkanBufferFactory::CreateUniformBuffer(uint32_t size, uint32_t binding)
@@ -133,4 +160,5 @@ namespace eg {
         VulkanDeviceMemoryManager::MapMemoryBind(buffer.m_Buffer.m_BufferMemory, bufferSize, &buffer.mappedMemory);
         return buffer;
     }
+    
 }

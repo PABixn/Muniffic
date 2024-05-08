@@ -16,6 +16,7 @@
 #include "VulkanCommandPool.h"
 #include "VulkanSemaphore.h"
 #include "VulkanFence.h"
+#include "GeometrySystem/VulkanGeometrySystem.h"
 
 #include "VulkanDeviceMemoryManager.h"
 #include "VulkanConstants.h"
@@ -37,6 +38,9 @@ namespace eg {
 
 		void CreateCommandBuffers();
 		void CreateSyncObjects();
+		void CreateMainRenderPass();
+
+		void InitBuilders();
 		
 		void RecordCommandBuffer(VkCommandBuffer& commandBuffer, uint32_t imageIndex);
 		VkCommandBuffer GetCurrentCommandBuffer() {return m_commandBuffers[m_CurrentFrame].getCommandBuffer(); }
@@ -71,5 +75,6 @@ namespace eg {
 		GLFWwindow* m_Window;
 		uint32_t m_CurrentFrame = 0;
 		uint32_t m_NextImageIndex = 0;
+		VulkanGeometryS
 	};
 }

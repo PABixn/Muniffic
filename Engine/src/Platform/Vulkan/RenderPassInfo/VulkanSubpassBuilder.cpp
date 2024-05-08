@@ -9,9 +9,21 @@ namespace eg {
 		return *this;
 	}
 
+	VulkanSubpassBuilder& VulkanSubpassBuilder::AddColorAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve)
+	{
+		m_Attachments.push_back(VulkanAttachment::CreateColorAttachment(format, samples, preserve));
+		return *this;
+	}
+
 	VulkanSubpassBuilder& VulkanSubpassBuilder::SetDepthStencilAttachment(VkFormat format, VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve)
 	{
 		m_Attachments.push_back(VulkanAttachment::CreateDepthAttachment(format, samples, initialLayout, finalLayout, preserve));
+		return *this;
+	}
+
+	VulkanSubpassBuilder& VulkanSubpassBuilder::SetDepthStencilAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve)
+	{
+		m_Attachments.push_back(VulkanAttachment::CreateDepthAttachment(format, samples, preserve));
 		return *this;
 	}
 
@@ -21,9 +33,21 @@ namespace eg {
 		return *this;
 	}
 
+	VulkanSubpassBuilder& VulkanSubpassBuilder::AddInputAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve)
+	{
+		m_Attachments.push_back(VulkanAttachment::CreateInputAttachment(format, samples, preserve));
+		return *this;
+	}
+
 	VulkanSubpassBuilder& VulkanSubpassBuilder::AddResolveAttachment(VkFormat format, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve)
 	{
 		m_Attachments.push_back(VulkanAttachment::CreateResolveAttachment(format, initialLayout, finalLayout, preserve));
+		return *this;
+	}
+
+	VulkanSubpassBuilder& VulkanSubpassBuilder::AddResolveAttachment(VkFormat format, bool preserve)
+	{
+		m_Attachments.push_back(VulkanAttachment::CreateResolveAttachment(format, preserve));
 		return *this;
 	}
 

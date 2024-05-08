@@ -23,8 +23,10 @@ namespace eg {
 		void CopyBuffer(VulkanBuffer& srcBuffer, VkBuffer& dstBuffer, VkDeviceSize& size);
 		void CopyBuffer(VkBuffer& srcBuffer, VulkanBuffer& dstBuffer, VkDeviceSize& size);
 
-		VulkanIndexBuffer& CreateIndexBuffer(uint32_t* vertices, uint32_t count);
+		VulkanBuffer& CreateIndexBuffer(uint32_t* vertices, uint32_t count);
 		VulkanUniformBuffer& CreateUniformBuffer(uint32_t size, uint32_t binding);
+		VulkanVertexBuffer& CreateVertexBuffer(float* vertices, int size, BufferLayout& layout);
+		VulkanVertexBuffer& CraeteVertexBuffer(int size, BufferLayout& layout);
 		VulkanVertexBuffer& CreateVertexBuffer(float* vertices, int size);
 		VulkanVertexBuffer& CreateVertexBuffer(int size);
 

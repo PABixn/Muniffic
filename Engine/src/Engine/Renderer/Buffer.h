@@ -120,6 +120,10 @@ namespace eg {
 
 		virtual uint32_t GetCount() const = 0; 
 
+		virtual void AddData(uint32_t* data, uint32_t size) = 0;
+		virtual void SetData(void* data, uint32_t size) = 0;
+		virtual void SetData() = 0;
+
 		static Ref<IndexBuffer> Create(uint32_t* vertices, uint32_t count);
 	};
 

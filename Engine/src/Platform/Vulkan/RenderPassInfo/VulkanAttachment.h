@@ -19,9 +19,13 @@ namespace eg{
 
 		static VulkanAttachment& CreateAttachment(VkFormat format, VkSampleCountFlagBits samples, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp, VkAttachmentLoadOp stencilLoadOp, VkAttachmentStoreOp stencilStoreOp, VkImageLayout initialLayout, VkImageLayout finalLayout, uint32_t refAttachment, VulkanAttachmentType type, bool preserve);
 		static VulkanAttachment& CreateColorAttachment(VkFormat format, VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve, uint32_t refAttachment = 0);
+		static VulkanAttachment& CreateColorAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve);
 		static VulkanAttachment& CreateDepthAttachment(VkFormat format, VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve, uint32_t refAttachment = 0);
+		static VulkanAttachment& CreateDepthAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve);
 		static VulkanAttachment& CreateResolveAttachment(VkFormat format, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve, uint32_t refAttachment = 0);
+		static VulkanAttachment& CreateResolveAttachment(VkFormat format, bool preserve);
 		static VulkanAttachment& CreateInputAttachment(VkFormat format, VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve, uint32_t refAttachment = 0);
+		static VulkanAttachment& CreateInputAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve);
 
 		const VkAttachmentDescription& GetAttachmentDescription() const { return m_AttachmentDescription; }
 		const VkAttachmentReference& GetAttachmentReference() const { return m_AttachmentReference; }

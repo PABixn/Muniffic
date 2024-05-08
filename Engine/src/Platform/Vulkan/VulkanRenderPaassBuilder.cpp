@@ -15,6 +15,11 @@ namespace eg {
 
 	VulkanRenderPass& VulkanRenderPassBuilder::Build()
 	{
+		Build(m_Device);
+	}
+
+	VulkanRenderPass& VulkanRenderPassBuilder::Build(VkDevice device)
+	{
 		VulkanRenderPass renderPass;
 		std::vector<VkSubpassDescription> subpassDescriptions;
 		std::vector<VkSubpassDependency> dependencies;
@@ -31,7 +36,7 @@ namespace eg {
 		{
 			dependencies.push_back(dependency.GetSubpassDependency());
 		}
-		
+
 		VkRenderPassCreateInfo renderPassInfo = {};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());

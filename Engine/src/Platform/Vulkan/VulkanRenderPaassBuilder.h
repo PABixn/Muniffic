@@ -11,7 +11,12 @@ namespace eg {
 		VulkanRenderPassBuilder() = default;
 		~VulkanRenderPassBuilder() = default;
 
-		void Init(VkDevice device) { this->device = device; }
+		static VulkanRenderPassBuilder& Get() {
+			static VulkanRenderPassBuilder instance;
+			return instance;
+		}
+
+		void Init(VkDevice device) { this->m_Device = device; }
 
 		VulkanRenderPassBuilder& AddSubpass(VkPipelineBindPoint bindPoint, std::vector<VulkanAttachment> colorAttachments, VulkanAttachment depthStencilAttachment);
 		VulkanRenderPassBuilder& AddSubpass(VulkanSubpass& subpass) { m_Subpasses.push_back(subpass); }
@@ -19,8 +24,9 @@ namespace eg {
 		VulkanRenderPassBuilder& AddDependency(VulkanSubpassDependency& dependency) { m_Dependencies.push_back(dependency); }
 
 		VulkanRenderPass& Build();
+		VulkanRenderPass& Build(VkDevice device);
 	private:
-		VkDevice device;
+		VkDevice m_Device;
 		std::vector<VulkanSubpass> m_Subpasses;
 		std::vector<VulkanSubpassDependency> m_Dependencies;
 	};

@@ -2,6 +2,7 @@
 #include "VulkanAttachment.h"
 
 namespace eg {
+
 	VulkanAttachment& VulkanAttachment::CreateAttachment(VkFormat format, VkSampleCountFlagBits samples, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp, VkAttachmentLoadOp stencilLoadOp, VkAttachmentStoreOp stencilStoreOp, VkImageLayout initialLayout, VkImageLayout finalLayout, uint32_t refAttachment, VulkanAttachmentType type, bool preserve)
 	{
 		VulkanAttachment attachment;
@@ -51,6 +52,11 @@ namespace eg {
 		return attachment;
 	}
 
+	VulkanAttachment& VulkanAttachment::CreateColorAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve)
+	{
+		return CreateColorAttachment(format, samples, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, preserve);
+	}
+
 	VulkanAttachment& VulkanAttachment::CreateDepthAttachment(VkFormat format, VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve, uint32_t refAttachment)
 	{
 		VulkanAttachment attachment;
@@ -74,6 +80,11 @@ namespace eg {
 		attachment.m_Preserve = preserve;
 
 		return attachment;
+	}
+
+	VulkanAttachment& VulkanAttachment::CreateDepthAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve)
+	{
+		return CreateDepthAttachment(format, samples, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, preserve);
 	}
 
 	VulkanAttachment& VulkanAttachment::CreateResolveAttachment(VkFormat format, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve, uint32_t refAttachment)
@@ -100,6 +111,12 @@ namespace eg {
 
 		return attachment;
 	}
+
+	VulkanAttachment& VulkanAttachment::CreateResolveAttachment(VkFormat format, bool preserve)
+	{
+		return CreateResolveAttachment(format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, preserve);
+	}
+
 	VulkanAttachment& VulkanAttachment::CreateInputAttachment(VkFormat format, VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve, uint32_t refAttachment)
 	{
 		VulkanAttachment attachment;
@@ -124,4 +141,10 @@ namespace eg {
 
 		return attachment;
 	}
+
+	VulkanAttachment& VulkanAttachment::CreateInputAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve)
+	{
+		return CreateInputAttachment(format, samples, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, preserve);
+	}
+
 }

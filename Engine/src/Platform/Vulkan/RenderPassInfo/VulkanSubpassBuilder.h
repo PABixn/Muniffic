@@ -18,9 +18,13 @@ namespace eg {
 		}
 
 		VulkanSubpassBuilder& AddColorAttachment(VkFormat format, VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve);
+		VulkanSubpassBuilder& AddColorAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve);
 		VulkanSubpassBuilder& SetDepthStencilAttachment(VkFormat format, VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve);
+		VulkanSubpassBuilder& SetDepthStencilAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve);
 		VulkanSubpassBuilder& AddInputAttachment(VkFormat format, VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve);
+		VulkanSubpassBuilder& AddInputAttachment(VkFormat format, VkSampleCountFlagBits samples, bool preserve);
 		VulkanSubpassBuilder& AddResolveAttachment(VkFormat format, VkImageLayout initialLayout, VkImageLayout finalLayout, bool preserve);
+		VulkanSubpassBuilder& AddResolveAttachment(VkFormat format, bool preserve);
 		VulkanSubpassBuilder& AddAttachment(VulkanAttachment& attachment);
 		VulkanSubpassBuilder& AddAttachments(std::vector<VulkanAttachment>& attachments);
 		VulkanSubpassBuilder& SetSubpassDescription(VkPipelineBindPoint bindPoint) { m_BindPoint = bindPoint; return *this; }
