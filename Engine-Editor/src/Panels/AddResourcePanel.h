@@ -18,6 +18,10 @@ namespace eg {
 		bool ChooseNewResource(const std::string filter);
 		void showResourcePanel(bool show) { m_showResourcePanel = show; }
 
+		bool ButtonCenteredOnLine(const char* label, int width = 0, int height = 0, float alignment = 0.5f);
+		void TextCenteredOnLine(const char* label, float alignment = 0.5f);
+		bool PositionButtonWithTheSameWidth(const char* label,int numberOfButtonsInLine,int index,int width = 0, int height = 0);
+
 		bool IsResourcePanelOpen() { return m_showResourcePanel; }
 	private:
 		Ref<ImagePanel> m_ImagePanel;
