@@ -4,6 +4,7 @@
 #include "Engine/Resources/Systems/ResourceSystem.h"
 #include "ResourcesPanels/AnimationPanel.h"
 #include "ResourcesPanels/ImagePanel.h"
+#include <imgui/imgui.h>
 
 
 namespace eg {
@@ -18,9 +19,10 @@ namespace eg {
 		bool ChooseNewResource(const std::string filter);
 		void showResourcePanel(bool show) { m_showResourcePanel = show; }
 
-		bool ButtonCenteredOnLine(const char* label, int width = 0, int height = 0, float alignment = 0.5f);
+		bool ButtonCenteredOnLine(const char* label, int width = 0, int height = 0, bool IsDown = false, float alignment = 0.5f);
 		void TextCenteredOnLine(const char* label, float alignment = 0.5f);
-		bool PositionButtonWithTheSameWidth(const char* label,int numberOfButtonsInLine,int index,int width = 0, int height = 0);
+		bool PositionButtonWithTheSameWidth(const char* label,int numberOfButtonsInLine,int index, int width = 0, int height = 0);
+		
 
 		bool IsResourcePanelOpen() { return m_showResourcePanel; }
 	private:

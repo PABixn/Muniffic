@@ -10,6 +10,7 @@
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
 #include "../EditorLayer.h"
+#include <Imgui/imgui_internal.h>
 
 namespace eg
 {
@@ -28,9 +29,8 @@ namespace eg
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2((size * 0.05), 10));
 				ImGui::Begin("Resource Loader",nullptr,ImGuiWindowFlags_NoDecoration);
 				ImGui::SetWindowSize(ImVec2(size, 500));
-				//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
 				TextCenteredOnLine("Resource Loader");
-				if (PositionButtonWithTheSameWidth("Animation",4,1,150,50)/*ImGui::Button("Animation", ImVec2(150, 50))*/)
+				if (PositionButtonWithTheSameWidth("Animation",4,1, 150,50))
 				{
 					bool resourceChosen = ChooseNewResource("Image (*.png)\0*.png\0");
 					if (resourceChosen)
@@ -40,17 +40,17 @@ namespace eg
 					}
 				}
 				ImGui::SameLine();
-				if (PositionButtonWithTheSameWidth("Shader", 4, 2,150,50))
+				if (PositionButtonWithTheSameWidth("Shader", 4, 2, 150,50))
 				{
 					bool resourceChosen = ChooseNewResource("Shader (*.shader)\0*.shader\0");
 				}
 				ImGui::SameLine();
-				if (PositionButtonWithTheSameWidth("Font", 4, 3,150,50))
+				if (PositionButtonWithTheSameWidth("Font", 4, 3, 150,50))
 				{
 					bool resourceChosen = ChooseNewResource("Font (*.ttf)\0*.ttf\0");
 				}
 				ImGui::SameLine();
-				if (PositionButtonWithTheSameWidth("Text", 4, 4,150,50)) {
+				if (PositionButtonWithTheSameWidth("Text", 4, 4, 150,50)) {
 					bool resourceChosen = ChooseNewResource("Text (*.txt)\0*.txt\0");
 				}
 				if (PositionButtonWithTheSameWidth("Image", 4, 1, 150, 50))
@@ -77,7 +77,7 @@ namespace eg
 				{
 					bool resourceChosen = ChooseNewResource("Custom (*.custom)\0*.custom\0");
 				}
-				if(ButtonCenteredOnLine("Cancel", 150, 50))
+				if(ButtonCenteredOnLine("Cancel", 150, 50, true))
 				{
 					m_showResourcePanel = false;
 				}
@@ -106,9 +106,11 @@ namespace eg
 		return true;
 	}
 
-	bool AddResourcePanel::ButtonCenteredOnLine(const char* label, int width, int height, float alignment)
+	bool AddResourcePanel::ButtonCenteredOnLine(const char* label, int width, int height,bool isDown, float alignment)
 	{
 		ImGuiStyle& style = ImGui::GetStyle();
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
 
 		float windowWidth = ImGui::GetWindowSize().x;
 		float textWidth = ImGui::CalcTextSize(label).x;
@@ -116,37 +118,63 @@ namespace eg
 
 		if (width && height)
 		{
+			if (isDown)
+				ImGui::SetCursorPosY(ImGui::GetWindowSize().y - style.WindowPadding.y - windowWidth * 0.025 - height);
 			textWidth = width;
 			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-			return ImGui::Button(label, ImVec2(width, height));
+			bool OpenPopup = ImGui::Button(label,ImVec2(width,height));
+			ImGui::PopStyleVar();
+			return OpenPopup;
 		}
 
+		if (isDown)
+			ImGui::SetCursorPosY(ImGui::GetWindowSize().y - style.WindowPadding.y - windowWidth * 0.025 - ImGui::CalcTextSize(label).y);
 		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-		return ImGui::Button(label);
+		bool OpenPopup = ImGui::Button(label);
+		ImGui::PopStyleVar();
+		return OpenPopup;
 	}
 
 	void AddResourcePanel::TextCenteredOnLine(const char* label, float alignment) {
+		float oldSize = ImGui::GetFont()->Scale;
+		ImGui::GetFont()->Scale *= 2;
+		ImGui::PushFont(ImGui::GetFont());
+
 		float windowWidth = ImGui::GetWindowSize().x;
 		float textWidth = ImGui::CalcTextSize(label).x;
 
 		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
 		ImGui::Text(label);
+		ImGui::GetFont()->Scale = oldSize;
+		ImGui::PopFont();;
+		
 	}
 
-	bool AddResourcePanel::PositionButtonWithTheSameWidth(const char* label,int numberOfButtonsInLine,int index, int width, int height) {
+	bool AddResourcePanel::PositionButtonWithTheSameWidth(const char* label, int numberOfButtonsInLine, int index, int width, int height) {
 		if (index <= numberOfButtonsInLine) {
 			ImGuiStyle& style = ImGui::GetStyle();
-			float windowWidth = ImGui::GetWindowSize().x - style.WindowPadding.x * 2; 
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+
+			float windowHeight = ImGui::GetWindowSize().y;
+			float windowWidth = ImGui::GetWindowSize().x - style.WindowPadding.x * 2;
 			float spaceForOneBtn = width + ((windowWidth - width * 4) / (numberOfButtonsInLine - 1));
-			
-			float space = spaceForOneBtn * (index - 1) + style.WindowPadding.x;
-			ImGui::SetCursorPosX(space);
 
-			if (width && height)
-				return ImGui::Button(label, ImVec2(width, height));
+			float spaceX = spaceForOneBtn * (index - 1) + style.WindowPadding.x;
+			float spaceY = ImGui::GetCursorPosY() + windowHeight * 0.1;
+			ImGui::SetCursorPosX(spaceX);
+			ImGui::SetCursorPosY(spaceY);
 
-			return ImGui::Button(label);
-			
+			if (width && height) {
+				bool OpenPopup = ImGui::Button(label, ImVec2(width, height));
+				ImGui::PopStyleVar();
+				return OpenPopup;
+			}
+
+			bool OpenPopup = ImGui::Button(label);
+			ImGui::PopStyleVar();
+			return OpenPopup;
+
 		}
 		return NULL;
 	}
