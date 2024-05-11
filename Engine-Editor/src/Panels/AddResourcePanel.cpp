@@ -20,15 +20,16 @@ namespace eg
 		m_AnimationPanel = CreateRef<AnimationPanel>();
 		m_ImagePanelinitialized = m_ImagePanel->InitImagePanel();
 		m_AnimationPanelinitialized = m_AnimationPanel->InitAnimationPanel();
+		m_AnimationIcon = Texture2D::Create("resources/icons/addResourcePanel/animation_icon.png");
 	}
 	void AddResourcePanel::OnImGuiRender()
 	{
 		if (!m_showResourcePanel)
 			return;
 				int size = 800;
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2((size * 0.05), 10));
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2((size * 0.05), 20));
 				ImGui::Begin("Resource Loader",nullptr,ImGuiWindowFlags_NoDecoration);
-				ImGui::SetWindowSize(ImVec2(size, 500));
+				ImGui::SetWindowSize(ImVec2(size, 425));
 				TextCenteredOnLine("Resource Loader");
 				if (PositionButtonWithTheSameWidth("Animation",4,1, 150,50))
 				{
@@ -136,6 +137,7 @@ namespace eg
 	}
 
 	void AddResourcePanel::TextCenteredOnLine(const char* label, float alignment) {
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 40));
 		float oldSize = ImGui::GetFont()->Scale;
 		ImGui::GetFont()->Scale *= 2;
 		ImGui::PushFont(ImGui::GetFont());
@@ -147,6 +149,7 @@ namespace eg
 		ImGui::Text(label);
 		ImGui::GetFont()->Scale = oldSize;
 		ImGui::PopFont();;
+		ImGui::PopStyleVar();
 		
 	}
 
@@ -155,24 +158,22 @@ namespace eg
 			ImGuiStyle& style = ImGui::GetStyle();
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 80));
 
-			float windowHeight = ImGui::GetWindowSize().y;
 			float windowWidth = ImGui::GetWindowSize().x - style.WindowPadding.x * 2;
 			float spaceForOneBtn = width + ((windowWidth - width * 4) / (numberOfButtonsInLine - 1));
 
 			float spaceX = spaceForOneBtn * (index - 1) + style.WindowPadding.x;
-			float spaceY = ImGui::GetCursorPosY() + windowHeight * 0.1;
 			ImGui::SetCursorPosX(spaceX);
-			ImGui::SetCursorPosY(spaceY);
 
 			if (width && height) {
 				bool OpenPopup = ImGui::Button(label, ImVec2(width, height));
-				ImGui::PopStyleVar();
+				ImGui::PopStyleVar(2);
 				return OpenPopup;
 			}
 
 			bool OpenPopup = ImGui::Button(label);
-			ImGui::PopStyleVar();
+			ImGui::PopStyleVar(2);
 			return OpenPopup;
 
 		}

@@ -28,6 +28,7 @@ namespace eg {
 	private:
 		Ref<ImagePanel> m_ImagePanel;
 		Ref<AnimationPanel> m_AnimationPanel;
+		Ref<Texture2D> m_AnimationIcon;
 
 		bool m_showResourcePanel = false;
 		std::filesystem::path m_ResourcePath;
