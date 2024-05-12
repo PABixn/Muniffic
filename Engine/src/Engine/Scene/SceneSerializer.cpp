@@ -214,51 +214,51 @@ namespace eg {
 				// Fields
 				Ref<ScriptClass> scriptClass = ScriptEngine::GetEntityClass(name);
 
-				if (!scriptClass)
-					continue;
-
-				const auto& fields = scriptClass->GetFields();
-
-				if (fields.empty())
-					continue;
-
-				out << YAML::Key << "ScriptFields" << YAML::Value << YAML::BeginSeq;
-				auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
-
-				for (auto& [name, field] : fields)
+				if (scriptClass)
 				{
-					if (entityFields.find(field.Name) == entityFields.end())
-						continue;
+					const auto& fields = scriptClass->GetFields();
 
-					out << YAML::BeginMap;
-
-					out << YAML::Key << "Name" << YAML::Value << field.Name;
-					ScriptFieldInstance& fieldInstance = entityFields.at(name);
-					out << YAML::Key << "Type" << YAML::Value << Utils::ScriptFieldTypeToString(field.Type);
-					out << YAML::Key << "Value" << YAML::Value;
-
-					switch (field.Type)
+					if (!fields.empty())
 					{
-						case ScriptFieldType::Float:	out << fieldInstance.GetValue<float>(); break;
-						case ScriptFieldType::Int32:	out << fieldInstance.GetValue<int>(); break;
-						case ScriptFieldType::UInt32:	out << fieldInstance.GetValue<uint32_t>(); break;
-						case ScriptFieldType::Int64:	out << fieldInstance.GetValue<int64_t>(); break;
-						case ScriptFieldType::Bool:		out << fieldInstance.GetValue<bool>(); break;
-						case ScriptFieldType::Short:	out << fieldInstance.GetValue<short>(); break;
-						case ScriptFieldType::UShort:	out << fieldInstance.GetValue<unsigned short>(); break;
-						case ScriptFieldType::Byte:		out << fieldInstance.GetValue<unsigned char>(); break;
-						case ScriptFieldType::SByte:	out << fieldInstance.GetValue<char>(); break;
-						case ScriptFieldType::Double:	out << fieldInstance.GetValue<double>(); break;
-						case ScriptFieldType::Vector2:	out << fieldInstance.GetValue<glm::vec2>(); break;
-						case ScriptFieldType::Vector3:	out << fieldInstance.GetValue<glm::vec3>(); break;
-						case ScriptFieldType::Vector4:	out << fieldInstance.GetValue<glm::vec4>(); break;
-						case ScriptFieldType::Entity:	out << fieldInstance.GetValue<float>(); break;
-					}
+						out << YAML::Key << "ScriptFields" << YAML::Value << YAML::BeginSeq;
+						auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
 
-					out << YAML::EndMap;
+						for (auto& [name, field] : fields)
+						{
+							if (entityFields.find(field.Name) == entityFields.end())
+								continue;
+
+							out << YAML::BeginMap;
+
+							out << YAML::Key << "Name" << YAML::Value << field.Name;
+							ScriptFieldInstance& fieldInstance = entityFields.at(name);
+							out << YAML::Key << "Type" << YAML::Value << Utils::ScriptFieldTypeToString(field.Type);
+							out << YAML::Key << "Value" << YAML::Value;
+							switch (field.Type)
+							{
+							case ScriptFieldType::Float:	out << fieldInstance.GetValue<float>(); break;
+							case ScriptFieldType::Int32:	out << fieldInstance.GetValue<int>(); break;
+							case ScriptFieldType::UInt32:	out << fieldInstance.GetValue<uint32_t>(); break;
+							case ScriptFieldType::Int64:	out << fieldInstance.GetValue<int64_t>(); break;
+							case ScriptFieldType::Bool:		out << fieldInstance.GetValue<bool>(); break;
+							case ScriptFieldType::Short:	out << fieldInstance.GetValue<short>(); break;
+							case ScriptFieldType::UShort:	out << fieldInstance.GetValue<unsigned short>(); break;
+							case ScriptFieldType::Byte:		out << fieldInstance.GetValue<unsigned char>(); break;
+							case ScriptFieldType::SByte:	out << fieldInstance.GetValue<char>(); break;
+							case ScriptFieldType::Double:	out << fieldInstance.GetValue<double>(); break;
+							case ScriptFieldType::Vector2:	out << fieldInstance.GetValue<glm::vec2>(); break;
+							case ScriptFieldType::Vector3:	out << fieldInstance.GetValue<glm::vec3>(); break;
+							case ScriptFieldType::Vector4:	out << fieldInstance.GetValue<glm::vec4>(); break;
+							case ScriptFieldType::Entity:	out << fieldInstance.GetValue<float>(); break;
+							}
+
+							out << YAML::EndMap;
+						}
+
+						out << YAML::EndSeq;
+					}
 				}
 
-				out << YAML::EndSeq;
 				out << YAML::EndMap;
 			}
 
