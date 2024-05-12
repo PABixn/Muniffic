@@ -14,6 +14,7 @@
 #include "ImGuizmo.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <Engine/Assistant/AssistantManager.h>
 
 
 
@@ -30,7 +31,7 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
-		
+		AssistantManager* assistantManager = new AssistantManager();
 
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;

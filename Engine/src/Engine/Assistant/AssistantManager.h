@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "python/include/Python.h"
 
 namespace eg
 {

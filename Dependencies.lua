@@ -12,6 +12,7 @@ IncludeDir["ImGuizmo"] = "%{wks.location}/Engine/vendor/ImGuizmo"
 IncludeDir["glm"] = "%{wks.location}/Engine/vendor/glm"
 IncludeDir["entt"] = "%{wks.location}/Engine/vendor/entt/include"
 IncludeDir["mono"] = "%{wks.location}/Engine/vendor/mono/include"
+IncludeDir["python"] = "%{wks.location}/Engine/vendor/python/include"
 IncludeDir["shaderc"] = "%{wks.location}/Engine/vendor/shaderc/include"
 IncludeDir["SPIRV_Cross"] = "%{wks.location}/Engine/vendor/SPIRV-Cross"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
@@ -22,9 +23,11 @@ LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
 LibraryDir["mono"] = "%{wks.location}/Engine/vendor/mono/lib/%{cfg.buildcfg}"
+LibraryDir["python"] = "%{wks.location}/Engine/vendor/python/lib/%{cfg.buildcfg}"
 
 Library = {}
 Library["mono"] = "%{LibraryDir.mono}/libmono-static-sgen.lib"
+Library["python"] = "%{LibraryDir.python}/python312.lib"
 
 Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
 Library["VulkanUtils"] = "%{LibraryDir.VulkanSDK}/VkLayer_utils.lib"

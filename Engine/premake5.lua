@@ -44,6 +44,7 @@ project "Engine"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.mono}",
+		"%{IncludeDir.python}",
 		"vendor"
 	}
 	links
@@ -56,7 +57,8 @@ project "Engine"
 		"Glad",
 		"Imgui",
 		"msdf-atlas-gen",
-		"%{Library.mono}"
+		"%{Library.mono}",
+		"%{Library.python}"
 	}
 	libdirs
 	{

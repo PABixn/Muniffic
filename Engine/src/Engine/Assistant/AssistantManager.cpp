@@ -10,6 +10,6 @@ namespace eg
 
 	void AssistantManager::Init()
 	{
-		
+		Py_Initialize();
 	}
 }
