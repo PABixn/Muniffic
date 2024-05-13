@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 def create_assistant(name, model="gpt-3.5-turbo", instructions=None, tools=None):
     load_dotenv()
-    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client = openai.OpenAI()
     assistant = client.beta.assistants.create(
         name=name,
         model=model,
@@ -35,7 +35,6 @@ def add_message(thread_id, message):
 def initiate_run(assistant_id, thread_id, instructions=None):
     load_dotenv()
     client = openai.OpenAI()
-    print(assistant_id, thread_id, instructions)
     run = client.beta.threads.runs.create(
         assistant_id=assistant_id,
         thread_id=thread_id,
@@ -70,3 +69,13 @@ def get_last_message(thread_id):
     client = openai.OpenAI()
     response = client.beta.threads.messages.list(thread_id=thread_id).data[0].content[0].text.value
     return response
+
+
+def check_if_assistant_exists(assistant_id):
+    load_dotenv()
+    client = openai.OpenAI()
+    try:
+        assistant = client.beta.assistants.retrieve(assistant_id=assistant_id)
+        return True
+    except Exception:
+        return False

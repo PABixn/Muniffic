@@ -584,6 +584,11 @@ namespace eg
 			}
 			break;
 		}
+		case Key::Enter:
+		{
+			m_AssistantPanel->RunMessage();
+			break;
+		}
 		}
 
 		return false;

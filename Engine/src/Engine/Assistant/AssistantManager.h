@@ -32,6 +32,7 @@ namespace eg
 		void InitiateRun(std::string threadID);
 		void AddMessage(std::string threadID, std::string message);
 		std::string WaitForCompletion(std::string threadID);
+		bool CheckIfAssistantExists(std::string assistantID);
 
 
 		std::vector<Message*> SetAssistantID(std::string assistantID) { m_AssistantID = assistantID; }
@@ -52,6 +53,7 @@ namespace eg
 		PyObject* m_InitiateRun;
 		PyObject* m_WaitForCompletion;
 		PyObject* m_GetLastMessage;
+		PyObject* m_CheckIfAssistantExists;
 	};
 }
 

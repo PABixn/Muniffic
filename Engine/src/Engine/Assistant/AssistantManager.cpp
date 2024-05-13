@@ -57,8 +57,9 @@ namespace eg
 		m_InitiateRun = PyObject_GetAttrString(m_pModule, "initiate_run");
 		m_WaitForCompletion = PyObject_GetAttrString(m_pModule, "wait_for_completion");
 		m_GetLastMessage = PyObject_GetAttrString(m_pModule, "get_last_message");
+		m_CheckIfAssistantExists = PyObject_GetAttrString(m_pModule, "check_if_assistant_exists");
 
-		if (m_CreateAssistant == nullptr || m_CreateThread == nullptr || m_InitiateRun == nullptr || m_WaitForCompletion == nullptr || m_GetLastMessage == nullptr)
+		if (m_CreateAssistant == nullptr || m_CreateThread == nullptr || m_InitiateRun == nullptr || m_WaitForCompletion == nullptr || m_GetLastMessage == nullptr || m_CheckIfAssistantExists == nullptr)
 		{
 			EG_CORE_ERROR("Failed to load Python functions");
 		}
@@ -172,7 +173,9 @@ namespace eg
 			return "";
 		}
 
-		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(m_Threads.at(threadID)->m_RunIDs.at(0).c_str()));
+		std::string runID = m_Threads.at(threadID)->m_RunIDs.at(m_Threads.at(threadID)->m_RunIDs.size()-1);
+
+		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()));
 
 		if (args == nullptr)
 		{
@@ -275,29 +278,42 @@ namespace eg
 		else
 			return false;
 
+		if (!CheckIfAssistantExists(m_AssistantID))
+		{
+			EG_CORE_ERROR("Assistant with ID {0} does not exist", m_AssistantID);
+			return false;
+		}
+
 		EG_CORE_INFO("Assistant loaded with ID: {0}", m_AssistantID);
 
 		return true;
 	}
 
+	bool AssistantManager::CheckIfAssistantExists(std::string assistantID)
+	{
+		PyObject* args = PyTuple_Pack(1, PyUnicode_FromString(assistantID.c_str()));
+
+		if (args == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to create args object");
+			return false;
+		}
+
+		PyObject* result = PyObject_CallObject(m_CheckIfAssistantExists, args);
+
+		if (result == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to call check_if_assistant_exists function");
+			return false;
+		}
+
+		return PyObject_IsTrue(result);
+	}
+
 	AssistantManager::~AssistantManager()
 	{
-		delete m_pModule;
-		delete m_CreateAssistant;
-		delete m_CreateThread;
-		delete m_AddMessage;
-		delete m_InitiateRun;
-		delete m_WaitForCompletion;
-		delete m_GetLastMessage;
-
-		m_pModule = nullptr;
-		m_AddMessage = nullptr;
-		m_CreateAssistant = nullptr;
-		m_CreateThread = nullptr;
-		m_InitiateRun = nullptr;
-		m_WaitForCompletion = nullptr;
-		m_GetLastMessage = nullptr;
-
 		Py_Finalize();
 	}
 }

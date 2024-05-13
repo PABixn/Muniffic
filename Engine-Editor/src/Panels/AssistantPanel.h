@@ -10,8 +10,10 @@ namespace eg
 		AssistantPanel();
 		~AssistantPanel();
 		void OnImGuiRender();
+		void RunMessage();
 
 	private:
+		static char buffer[1024];
 		std::string threadID;
 		AssistantManager* assistantManager;
 	};

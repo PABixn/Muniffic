@@ -5,6 +5,8 @@
 
 namespace eg
 {
+	char AssistantPanel::buffer[1024];
+
 	AssistantPanel::AssistantPanel()
 	{
 		assistantManager = new AssistantManager();
@@ -32,13 +34,20 @@ namespace eg
 
 		for (Message* msg : assistantManager->GetMessages(threadID))
 		{
-			std::string content = msg->role + ": " + msg->content;
-			ImGui::Text(content.c_str());
+			std::string role = msg->role + ": ";
+
+			if (msg->role == "assistant")
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
+			else
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.0f, 1.0f));
+
+			ImGui::Button(role.c_str());
+			ImGui::PopStyleColor();
+			ImGui::SameLine();
+			ImGui::Text(msg->content.c_str());
 		}
 
 		ImGui::Separator();
-
-		static char buffer[1024];
 
 		ImGui::Text("Message:");
 		ImGui::SameLine();
@@ -46,12 +55,17 @@ namespace eg
 
 		if (ImGui::Button("Send"))
 		{
-			assistantManager->AddMessage(threadID, buffer);
-			assistantManager->InitiateRun(threadID);
-			memset(buffer, 0, 1024);
-			assistantManager->WaitForCompletion(threadID);
+			RunMessage();
 		}
 
 		ImGui::End();
+	}
+
+	void AssistantPanel::RunMessage()
+	{
+		assistantManager->AddMessage(threadID, buffer);
+		assistantManager->InitiateRun(threadID);
+		memset(buffer, 0, 1024);
+		assistantManager->WaitForCompletion(threadID);
 	}
 }
