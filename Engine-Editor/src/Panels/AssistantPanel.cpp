@@ -1,14 +1,24 @@
 #include "egpch.h"
 #include "AssistantPanel.h"
 #include <Imgui/imgui.h>
+#include "Engine/Project/Project.h"
 
 namespace eg
 {
 	AssistantPanel::AssistantPanel()
 	{
 		assistantManager = new AssistantManager();
-		assistantManager->CreateAssistant("Bob", "You are a helpful assistant.");
+
+		if(!assistantManager->LoadAssistant())
+			assistantManager->CreateAssistant("Bob", "You are a helpful assistant.");
+
 		threadID = assistantManager->CreateThread();
+	}
+
+	AssistantPanel::~AssistantPanel()
+	{
+		delete assistantManager;
+		assistantManager = nullptr;
 	}
 
 	void AssistantPanel::OnImGuiRender()
@@ -30,7 +40,9 @@ namespace eg
 
 		static char buffer[1024];
 
-		ImGui::InputText("Message", buffer, 1024);
+		ImGui::Text("Message:");
+		ImGui::SameLine();
+		ImGui::InputTextMultiline("##", buffer, 1024);
 
 		if (ImGui::Button("Send"))
 		{

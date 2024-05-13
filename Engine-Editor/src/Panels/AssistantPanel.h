@@ -8,6 +8,7 @@ namespace eg
 	{
 	public:
 		AssistantPanel();
+		~AssistantPanel();
 		void OnImGuiRender();
 
 	private:

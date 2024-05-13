@@ -23,6 +23,9 @@ namespace eg
 		AssistantManager();
 		~AssistantManager();
 
+		bool LoadAssistant();
+		void SaveAssistant();
+
 		void Init();
 		void CreateAssistant(std::string assistantName, std::string assistantInstructions);
 		std::string CreateThread();
@@ -30,6 +33,9 @@ namespace eg
 		void AddMessage(std::string threadID, std::string message);
 		std::string WaitForCompletion(std::string threadID);
 
+
+		std::vector<Message*> SetAssistantID(std::string assistantID) { m_AssistantID = assistantID; }
+		std::string GetAssistantID() { return m_AssistantID; }
 		std::vector<Message*> GetMessages(std::string threadID) { return m_Threads.at(threadID)->messages; }
 
 	private:

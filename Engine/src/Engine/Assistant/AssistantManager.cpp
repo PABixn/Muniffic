@@ -3,6 +3,9 @@
 #include "egpch.h"
 #include "AssistantManager.h"
 #include <Engine/Project/Project.h>
+#include <yaml-cpp/yaml.h>
+#include <fstream>
+#include "Engine/Utils/YAMLConversion.h"
 
 namespace eg
 {
@@ -23,7 +26,7 @@ namespace eg
 			EG_CORE_ERROR("Failed to get sysPath object");
 		}
 
-		std::filesystem::path modulePath = Project::GetResourcesPath() / "resources/python";
+		std::filesystem::path modulePath = Project::GetResourcesPath() / "resources/assistant";
 
 		PyObject* path = PyUnicode_FromString(modulePath.string().c_str());
 
@@ -82,6 +85,8 @@ namespace eg
 		EG_CORE_INFO("Assistant created with ID: {0}", PyUnicode_AsUTF8(result));
 
 		m_AssistantID = PyUnicode_AsUTF8(result);
+
+		SaveAssistant();
 	}
 
 	std::string AssistantManager::CreateThread()
@@ -173,6 +178,7 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
+			return "";
 		}
 
 		PyObject* result = PyObject_CallObject(m_WaitForCompletion, args);
@@ -181,6 +187,7 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call wait_for_completion function");
+			return "";
 		}
 
 		std::string status = PyUnicode_AsUTF8(result);
@@ -193,6 +200,7 @@ namespace eg
 			{
 				PyErr_Print();
 				EG_CORE_ERROR("Failed to create args object");
+				return "";
 			}
 
 			result = PyObject_CallObject(m_GetLastMessage, args);
@@ -201,6 +209,7 @@ namespace eg
 			{
 				PyErr_Print();
 				EG_CORE_ERROR("Failed to call get_last_message function");
+				return "";
 			}
 
 			std::string message = PyUnicode_AsUTF8(result);
@@ -218,5 +227,77 @@ namespace eg
 			EG_CORE_ERROR("Run " + status);
 			return "";
 		}
+	}
+
+	void AssistantManager::SaveAssistant()
+	{
+		std::filesystem::path path = Project::GetResourcesPath() / "resources/assistant/assistant.mndata";
+		YAML::Emitter out;
+
+		if(!std::filesystem::exists(path.parent_path()))
+			std::filesystem::create_directories(path.parent_path());
+
+		out << YAML::BeginMap;
+		out << YAML::Key << "assistantID" << YAML::Value << m_AssistantID;
+		out << YAML::EndMap;
+
+		std::ofstream file(path.string(), std::ios::trunc);
+		file << out.c_str();
+		file.close();
+	}
+
+	bool AssistantManager::LoadAssistant()
+	{
+		std::filesystem::path path = Project::GetResourcesPath() / "resources/assistant/assistant.mndata";
+
+		if (!std::filesystem::exists(path))
+		{
+			std::filesystem::create_directories(path.parent_path());
+			std::ofstream file(path.string(), std::ios::trunc);
+			file.close();
+			return false;
+		}
+
+		YAML::Node data;
+
+		try
+		{
+			data = YAML::LoadFile(path.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			EG_CORE_ERROR("Failed to load assistant data");
+			return false;
+		}
+
+		if(data["assistantID"])
+			m_AssistantID = data["assistantID"].as<std::string>();
+		else
+			return false;
+
+		EG_CORE_INFO("Assistant loaded with ID: {0}", m_AssistantID);
+
+		return true;
+	}
+
+	AssistantManager::~AssistantManager()
+	{
+		delete m_pModule;
+		delete m_CreateAssistant;
+		delete m_CreateThread;
+		delete m_AddMessage;
+		delete m_InitiateRun;
+		delete m_WaitForCompletion;
+		delete m_GetLastMessage;
+
+		m_pModule = nullptr;
+		m_AddMessage = nullptr;
+		m_CreateAssistant = nullptr;
+		m_CreateThread = nullptr;
+		m_InitiateRun = nullptr;
+		m_WaitForCompletion = nullptr;
+		m_GetLastMessage = nullptr;
+
+		Py_Finalize();
 	}
 }
