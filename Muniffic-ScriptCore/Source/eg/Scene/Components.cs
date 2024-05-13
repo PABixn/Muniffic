@@ -180,103 +180,184 @@ namespace eg
         }
     }
 
+    /// <summary>
+    /// Represents an animator component that controls animations for an entity.
+    /// </summary>
     public class AnimatorComponent : Component
     {
+        /// <summary>
+        /// Gets or sets the speed of the animations.
+        /// </summary>
         public float Speed
         {
             get => InternalCalls.AnimatorComponent_GetSpeed(Entity.ID);
             set => InternalCalls.AnimatorComponent_SetSpeed(Entity.ID, value);
         }
 
+        /// <summary>
+        /// Plays the specified animation.
+        /// </summary>
+        /// <param name="animationName">The name of the animation to play.</param>
         public void Play(string animationName)
         {
             InternalCalls.AnimatorComponent_PlayAnimation(Entity.ID, animationName);
         }
 
+        /// <summary>
+        /// Stops the currently playing animation.
+        /// </summary>
         public void Stop()
         {
             InternalCalls.AnimatorComponent_StopAnimation(Entity.ID);
         }
 
+        /// <summary>
+        /// Pauses the currently playing animation.
+        /// </summary>
         public void Pause()
         {
             InternalCalls.AnimatorComponent_PauseAnimation(Entity.ID);
         }
 
+        /// <summary>
+        /// Updates the animation with the specified delta time.
+        /// </summary>
+        /// <param name="deltaTime">The time elapsed since the last update.</param>
         public void Update(float deltaTime)
         {
             InternalCalls.AnimatorComponent_UpdateAnimation(Entity.ID, deltaTime);
         }
 
+        /// <summary>
+        /// Changes the current animation to the specified animation.
+        /// </summary>
+        /// <param name="animationName">The name of the animation to change to.</param>
         public void ChangeAnimation(string animationName)
         {
             InternalCalls.AnimatorComponent_ChangeAnimation(Entity.ID, animationName);
         }
 
+        /// <summary>
+        /// Adds a new animation with the specified name.
+        /// </summary>
+        /// <param name="animationName">The name of the animation to add.</param>
         public void AddAnimation(string animationName)
         {
             InternalCalls.AnimatorComponent_AddAnimation(Entity.ID, animationName);
         }
 
+        /// <summary>
+        /// Removes the animation with the specified name.
+        /// </summary>
+        /// <param name="animationName">The name of the animation to remove.</param>
         public void RemoveAnimation(string animationName)
         {
             InternalCalls.AnimatorComponent_RemoveAnimation(Entity.ID, animationName);
         }
 
+        /// <summary>
+        /// Removes the last added animation.
+        /// </summary>
         public void RemoveLastAnimation()
         {
             InternalCalls.AnimatorComponent_RemoveLastAnimation(Entity.ID);
         }
 
+        /// <summary>
+        /// Transitions the animation to the specified animation.
+        /// </summary>
+        /// <param name="to">The name of the animation to transition to.</param>
         public void Transition(string to)
         {
             InternalCalls.AnimatorComponent_Transition(Entity.ID, to);
         }
 
+        /// <summary>
+        /// Transitions the animation to the animation at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the animation to transition to.</param>
         public void TransitionByIndex(int index)
         {
             InternalCalls.AnimatorComponent_TransitionByIndex(Entity.ID, index);
         }
 
+        /// <summary>
+        /// Adds a transition between two animations.
+        /// </summary>
+        /// <param name="from">The name of the animation to transition from.</param>
+        /// <param name="to">The name of the animation to transition to.</param>
         public void AddTransition(string from, string to)
         {
             InternalCalls.AnimatorComponent_AddTransition(Entity.ID, from, to);
         }
 
+        /// <summary>
+        /// Removes a transition between two animations.
+        /// </summary>
+        /// <param name="from">The name of the animation to transition from.</param>
+        /// <param name="to">The name of the animation to transition to.</param>
         public void RemoveTransition(string from, string to)
         {
             InternalCalls.AnimatorComponent_RemoveTransition(Entity.ID, from, to);
         }
 
+        /// <summary>
+        /// Adds a transition between two animations using their indices.
+        /// </summary>
+        /// <param name="from">The index of the animation to transition from.</param>
+        /// <param name="to">The index of the animation to transition to.</param>
         public void AddTransitionByIndex(int from, int to)
         {
             InternalCalls.AnimatorComponent_AddTransitionByIndex(Entity.ID, from, to);
         }
 
+        /// <summary>
+        /// Removes a transition between two animations using their indices.
+        /// </summary>
+        /// <param name="from">The index of the animation to transition from.</param>
+        /// <param name="to">The index of the animation to transition to.</param>
         public void RemoveTransitionByIndex(int from, int to)
         {
             InternalCalls.AnimatorComponent_RemoveTransitionByIndex(Entity.ID, from, to);
         }
 
+        /// <summary>
+        /// Checks if a transition between two animations is possible.
+        /// </summary>
+        /// <param name="from">The name of the animation to transition from.</param>
+        /// <param name="to">The name of the animation to transition to.</param>
         public void CanTransition(string from, string to)
         {
             InternalCalls.AnimatorComponent_CanTransition(Entity.ID, from, to);
         }
 
+        /// <summary>
+        /// Checks if a transition between two animations is possible using their indices.
+        /// </summary>
+        /// <param name="from">The index of the animation to transition from.</param>
+        /// <param name="to">The index of the animation to transition to.</param>
         public void CanTransitionByIndex(int from, int to)
         {
             InternalCalls.AnimatorComponent_CanTransitionByIndex(Entity.ID, from, to);
         }
 
+        /// <summary>
+        /// Gets the name of the currently playing animation.
+        /// </summary>
+        /// <returns>The name of the currently playing animation.</returns>
         public string GetCurrentAnimation()
         {
             return InternalCalls.AnimatorComponent_GetCurrentAnimation(Entity.ID);
         }
+
+        /// <summary>
+        /// Sets the current animation to the specified animation.
+        /// </summary>
+        /// <param name="animationName">The name of the animation to set as current.</param>
         public void SetCurrentAnimation(string animationName)
         {
             InternalCalls.AnimatorComponent_SetCurrentAnimation(Entity.ID, animationName);
         }
-
     }
 
     public class CameraComponent : Component
@@ -462,6 +543,9 @@ namespace eg
             LEFT = 0, RIGHT, TOP, BOTTOM
         }
 
+    /// <summary>
+    /// Represents a 2D box collider component.
+    /// </summary>
     public class BoxCollider2DComponent : Component
     {
         /// <summary>
@@ -492,97 +576,178 @@ namespace eg
             set => InternalCalls.BoxCollider2DComponent_SetOffset(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Density of the collider.
+        /// </summary>
         public float density
         {
             get => InternalCalls.BoxCollider2DComponent_GetDensity(Entity.ID);
             set => InternalCalls.BoxCollider2DComponent_SetDensity(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Friction of the collider.
+        /// </summary>
         public float friction
         {
             get => InternalCalls.BoxCollider2DComponent_GetFriction(Entity.ID);
             set => InternalCalls.BoxCollider2DComponent_SetFriction(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Restitution of the collider.
+        /// </summary>
         public float restitution
         {
             get => InternalCalls.BoxCollider2DComponent_GetRestitution(Entity.ID);
             set => InternalCalls.BoxCollider2DComponent_SetRestitution(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Restitution threshold of the collider.
+        /// </summary>
         public float restitutionThreshold
         {
             get => InternalCalls.BoxCollider2DComponent_GetRestitutionThreshold(Entity.ID);
             set => InternalCalls.BoxCollider2DComponent_SetRestitutionThreshold(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Checks if the collider collides with the specified entity.
+        /// </summary>
+        /// <param name="other">The entity to check collision with.</param>
+        /// <returns>True if the collider collides with the entity, otherwise false.</returns>
         public bool CollidesWith(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the collider collides with the specified box collider entity.
+        /// </summary>
+        /// <param name="other">The box collider entity to check collision with.</param>
+        /// <returns>True if the collider collides with the box collider entity, otherwise false.</returns>
         public bool CollidesWithBox(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithBox(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the collider collides with the specified circle collider entity.
+        /// </summary>
+        /// <param name="other">The circle collider entity to check collision with.</param>
+        /// <returns>True if the collider collides with the circle collider entity, otherwise false.</returns>
         public bool CollidesWithCircle(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithCircle(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the collider collides with the specified circle defined by center and radius.
+        /// </summary>
+        /// <param name="center">The center of the circle.</param>
+        /// <param name="radius">The radius of the circle.</param>
+        /// <returns>True if the collider collides with the circle, otherwise false.</returns>
         public bool CollidesWithCircle(Vector2 center, float radius)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithCircleCoords(Entity.ID, ref center, radius);
         }
 
+        /// <summary>
+        /// Checks if the collider collides with the specified point.
+        /// </summary>
+        /// <param name="point">The point to check collision with.</param>
+        /// <returns>True if the collider collides with the point, otherwise false.</returns>
         public bool CollidesWithPoint(Vector2 point)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithPoint(Entity.ID, ref point);
         }
 
+        /// <summary>
+        /// Checks if the collider collides with the specified edge defined by start and end points.
+        /// </summary>
+        /// <param name="start">The start point of the edge.</param>
+        /// <param name="end">The end point of the edge.</param>
+        /// <returns>True if the collider collides with the edge, otherwise false.</returns>
         public bool CollidesWithEdge(Vector2 start, Vector2 end)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithEdgeCoords(Entity.ID, ref start, ref end);
         }
 
+        /// <summary>
+        /// Checks if the collider collides with the bottom edge of the specified entity.
+        /// </summary>
+        /// <param name="other">The entity to check collision with.</param>
+        /// <returns>True if the collider collides with the bottom edge of the entity, otherwise false.</returns>
         public bool CollidesWithBottomEdge(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithBottomEdge(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the collider collides with the top edge of the specified entity.
+        /// </summary>
+        /// <param name="other">The entity to check collision with.</param>
+        /// <returns>True if the collider collides with the top edge of the entity, otherwise false.</returns>
         public bool CollidesWithTopEdge(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithTopEdge(Entity.ID, other.ID);
         }
-        
+
+        /// <summary>
+        /// Checks if the collider collides with the left edge of the specified entity.
+        /// </summary>
+        /// <param name="other">The entity to check collision with.</param>
+        /// <returns>True if the collider collides with the left edge of the entity, otherwise false.</returns>
         public bool CollidesWithLeftEdge(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithLeftEdge(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the collider collides with the right edge of the specified entity.
+        /// </summary>
+        /// <param name="other">The entity to check collision with.</param>
+        /// <returns>True if the collider collides with the right edge of the entity, otherwise false.</returns>
         public bool CollidesWithRightEdge(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithRightEdge(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the collider collides with the specified box defined by center and size.
+        /// </summary>
+        /// <param name="center">The center of the box.</param>
+        /// <param name="size">The size of the box.</param>
+        /// <returns>True if the collider collides with the box, otherwise false.</returns>
         public bool CollidesWithBox(Vector2 center, Vector2 size)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithBoxCoords(Entity.ID, ref center, ref size);
         }
-        
-        
-    public bool CollidesWith(long entityID)
-    {
-        return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
-    }
 
-    bool CollidesWithEntitiesSide(Entity entity, Side side)
-    {
-        if (entity == null)
+
+        /// <summary>
+        /// Checks if the collider collides with the specified entity.
+        /// </summary>
+        /// <param name="entityID">The ID of the entity to check collision with.</param>
+        /// <returns>True if the collider collides with the entity, otherwise false.</returns>
+        public bool CollidesWith(long entityID)
         {
-            return false;
+            return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
         }
+
+        /// <summary>
+        /// Checks if the collider collides with the specified side of the specified entity.
+        /// </summary>
+        /// <param name="entity">The entity to check collision with.</param>
+        /// <param name="side">The side to check collision with.</param>
+        /// <returns>True if the collider collides with the specified side of the entity, otherwise false.</returns>
+        bool CollidesWithEntitiesSide(Entity entity, Side side)
+        {
+            if (entity == null)
+            {
+                return false;
+            }
 
             switch (side)
             {
@@ -596,95 +761,162 @@ namespace eg
                     return this.CollidesWithBottomEdge(entity);
             }
 
-        return false;
-    }
-
-    bool CollidesWithEntity(string entityName)
-    {
-        Entity entity = Entity.FindEntityByName(entityName);
-        if (entity == null)
-        {
             return false;
         }
 
-        return CollidesWith(entity);
-    }
+        /// <summary>
+        /// Checks if the collider collides with the specified entity.
+        /// </summary>
+        /// <param name="entityName">The name of the entity to check collision with.</param>
+        /// <returns>True if the collider collides with the entity, otherwise false.</returns>
+        bool CollidesWithEntity(string entityName)
+        {
+            Entity entity = Entity.FindEntityByName(entityName);
+            if (entity == null)
+            {
+                return false;
+            }
+
+            return CollidesWith(entity);
+        }
     }
 
+    /// <summary>
+    /// Represents a circle collider component for 2D entities.
+    /// </summary>
     public class CircleCollider2DComponent : Component
     {
+        /// <summary>
+        /// Gets or sets the offset of the circle collider.
+        /// </summary>
         public float offset
         {
             get => InternalCalls.CircleCollider2DComponent_GetOffset(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetOffset(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Gets or sets the density of the circle collider.
+        /// </summary>
         public float density
         {
             get => InternalCalls.CircleCollider2DComponent_GetDensity(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetDensity(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Gets or sets the friction of the circle collider.
+        /// </summary>
         public float friction
         {
             get => InternalCalls.CircleCollider2DComponent_GetFriction(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetFriction(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Gets or sets the restitution of the circle collider.
+        /// </summary>
         public float restitution
         {
             get => InternalCalls.CircleCollider2DComponent_GetRestitution(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetRestitution(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Gets or sets the restitution threshold of the circle collider.
+        /// </summary>
         public float restitutionThreshold
         {
             get => InternalCalls.CircleCollider2DComponent_GetRestitutionThreshold(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetRestitutionThreshold(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Gets or sets the radius of the circle collider.
+        /// </summary>
         public float radius
         {
             get => InternalCalls.CircleCollider2DComponent_GetRadius(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetRadius(Entity.ID, ref value);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with the specified entity.
+        /// </summary>
+        /// <param name="other">The entity to check collision with.</param>
+        /// <returns>True if the circle collider collides with the entity, otherwise false.</returns>
         public bool CollidesWith(Entity other)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWith(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with another circle collider.
+        /// </summary>
+        /// <param name="other">The other circle collider to check collision with.</param>
+        /// <returns>True if the circle collider collides with the other circle collider, otherwise false.</returns>
         public bool CollidesWithCircle(Entity other)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithCircle(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with a circle defined by the center and radius.
+        /// </summary>
+        /// <param name="center">The center of the circle.</param>
+        /// <param name="radius">The radius of the circle.</param>
+        /// <returns>True if the circle collider collides with the circle, otherwise false.</returns>
         public bool CollidesWithCircle(Vector2 center, float radius)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithCircleCoords(Entity.ID, ref center, radius);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with a box collider.
+        /// </summary>
+        /// <param name="other">The box collider to check collision with.</param>
+        /// <returns>True if the circle collider collides with the box collider, otherwise false.</returns>
         public bool CollidesWithBox(Entity other)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithBox(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with a box defined by the center and size.
+        /// </summary>
+        /// <param name="center">The center of the box.</param>
+        /// <param name="size">The size of the box.</param>
+        /// <returns>True if the circle collider collides with the box, otherwise false.</returns>
         public bool CollidesWithBox(Vector2 center, Vector2 size)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithBoxCoords(Entity.ID, ref center, ref size);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with a point.
+        /// </summary>
+        /// <param name="point">The point to check collision with.</param>
+        /// <returns>True if the circle collider collides with the point, otherwise false.</returns>
         public bool CollidesWithPoint(Vector2 point)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithPoint(Entity.ID, ref point);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with an entity with the specified ID.
+        /// </summary>
+        /// <param name="entityID">The ID of the entity to check collision with.</param>
+        /// <returns>True if the circle collider collides with the entity, otherwise false.</returns>
         public bool CollidesWithEntity(long entityID)
         {
-
             return InternalCalls.CircleCollider2DComponent_CollidesWith(Entity.ID, entityID);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with an entity with the specified name.
+        /// </summary>
+        /// <param name="entityName">The name of the entity to check collision with.</param>
+        /// <returns>True if the circle collider collides with the entity, otherwise false.</returns>
         public bool CollidesWithEntity(string entityName)
         {
             Entity entity = Entity.FindEntityByName(entityName);
@@ -696,54 +928,85 @@ namespace eg
             return CollidesWith(entity);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with an entity on the specified side.
+        /// </summary>
+        /// <param name="entityID">The ID of the entity to check collision with.</param>
+        /// <param name="side">The side to check collision with.</param>
+        /// <returns>True if the circle collider collides with the entity on the specified side, otherwise false.</returns>
         public bool CollidesWithEntitySide(long entityID, Side side)
         {
-           Entity entity = Entity.FindEntityByID(entityID);
-           if (entity == null)
-           {
-               return false;
-           }
+            Entity entity = Entity.FindEntityByID(entityID);
+            if (entity == null)
+            {
+                return false;
+            }
 
-           switch (side)
-           {
-               case Side.LEFT:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, entity.ID);
-               case Side.RIGHT:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, entity.ID);
-               case Side.TOP:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, entity.ID);
-               case Side.BOTTOM:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, entity.ID);
-               default:
-                   return false;
-           }
+            switch (side)
+            {
+                case Side.LEFT:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, entity.ID);
+                case Side.RIGHT:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, entity.ID);
+                case Side.TOP:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, entity.ID);
+                case Side.BOTTOM:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, entity.ID);
+                default:
+                    return false;
+            }
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with entities on the left edge.
+        /// </summary>
+        /// <param name="other">The entity to check collision with.</param>
+        /// <returns>True if the circle collider collides with entities on the left edge, otherwise false.</returns>
         public bool CollidesWithEntitiesLeftEdge(Entity other)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with entities on the right edge.
+        /// </summary>
+        /// <param name="other">The entity to check collision with.</param>
+        /// <returns>True if the circle collider collides with entities on the right edge, otherwise false.</returns>
         public bool CollidesWithEntitiesRightEdge(Entity other)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with entities on the top edge.
+        /// </summary>
+        /// <param name="other">The entity to check collision with.</param>
+        /// <returns>True if the circle collider collides with entities on the top edge, otherwise false.</returns>
         public bool CollidesWithEntitiesTopEdge(Entity other)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with entities on the bottom edge.
+        /// </summary>
+        /// <param name="other">The entity to check collision with.</param>
+        /// <returns>True if the circle collider collides with entities on the bottom edge, otherwise false.</returns>
         public bool CollidesWithEntitiesBottomEdge(Entity other)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, other.ID);
         }
 
+        /// <summary>
+        /// Checks if the circle collider collides with an edge defined by the start and end points.
+        /// </summary>
+        /// <param name="start">The start point of the edge.</param>
+        /// <param name="end">The end point of the edge.</param>
+        /// <returns>True if the circle collider collides with the edge, otherwise false.</returns>
         public bool CollidesWithEdge(Vector2 start, Vector2 end)
         {
             return InternalCalls.CircleCollider2DComponent_CollidesWithEdgeCoords(Entity.ID, ref start, ref end);
         }
-
     }
 
     public class TextComponent : Component
