@@ -6,6 +6,7 @@
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/AddResourcePanel.h"
 #include "Panels/ConsolePanel.h"
+#include "Panels/AssistantPanel.h"
 
 
 namespace eg {
@@ -113,6 +114,7 @@ namespace eg {
 		RenameResourcePanel* m_RenameResourcePanel;
 		CreateDirectoryPanel* m_CreateDirectoryPanel;*/
 		Scope<ConsolePanel> m_ConsolePanel;
+		Scope<AssistantPanel> m_AssistantPanel;
 
 		enum class SceneState
 		{

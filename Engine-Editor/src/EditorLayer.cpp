@@ -31,8 +31,6 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
-		AssistantManager* assistantManager = new AssistantManager();
-
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
 		resourceSystemConfig.ResourceDirectory = "../resources";
@@ -262,6 +260,7 @@ namespace eg
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();
 		m_ConsolePanel->OnImGuiRender();
+		m_AssistantPanel->OnImGuiRender();
 		
 		if ((*(this->m_UnsavedChangesPanel)).GetUnsavedChangesPanelRender()) {
 			if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
@@ -793,6 +792,7 @@ namespace eg
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 			m_ContentBrowserPanel->InitPanels();
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
+			m_AssistantPanel = CreateScope<AssistantPanel>();
 
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		}
