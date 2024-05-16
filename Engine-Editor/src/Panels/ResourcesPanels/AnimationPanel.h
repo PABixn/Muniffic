@@ -38,6 +38,8 @@ namespace eg
 		float m_PreviewAspectRatio = 1;
 		int m_BasePreviewWidth = 1, m_BasePreviewHeight = 1;
 
+		std::vector<std::pair<int,int>> m_SelectedFrames;
+
 		//TextureResourceData m_TextureData;
 		std::filesystem::path m_OriginalResourcePath = "";
 

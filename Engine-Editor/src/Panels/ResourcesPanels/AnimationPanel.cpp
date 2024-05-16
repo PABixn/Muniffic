@@ -216,8 +216,19 @@ namespace eg {
 					if(j != 0)
 					ImGui::SameLine();
 					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
-					bool isSelected = j >= m_Column && j < m_Column + m_ColumnCount && i >= m_Row && i < m_Row + m_RowCount;
-					ImVec4 borderColor = isSelected ? ImVec4{0.0f, 1.0f, 0.0f, 1.0f} : ImVec4{1.0f, 0.0f, 0.0f, 1.0f};
+
+					bool isSelected = (j >= m_Column && j < m_Column + m_ColumnCount && i >= m_Row && i < m_Row + m_RowCount);
+					std::pair<int, int> frameIndex = std::make_pair(i, j - 1);
+					auto it = std::find(m_SelectedFrames.begin(), m_SelectedFrames.end(), frameIndex);
+
+					if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && it != m_SelectedFrames.end())
+						m_SelectedFrames.erase(it);
+					else if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+						m_SelectedFrames.emplace_back(frameIndex);
+
+					bool isSelectedFrame = std::find(m_SelectedFrames.begin(), m_SelectedFrames.end(), std::make_pair(i, j)) != m_SelectedFrames.end();
+
+					ImVec4 borderColor = isSelectedFrame ? ImVec4{0.0f, 1.0f, 0.0f, 1.0f} : ImVec4{1.0f, 0.0f, 0.0f, 1.0f};
 					ImGui::Image((void*)m_PreviewOriginImage->GetRendererID(), ImVec2(m_BasePreviewWidthImage / (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth), m_BasePreviewHeightImage / (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight)), { j * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f- (i) * (float)m_FrameHeight / (float)m_TextureData->Height }, { (j + 1) * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f- (i+1) * (float)m_FrameHeight / (float)m_TextureData->Height }, {1,1,1,1}, borderColor);
 					ImGui::PopStyleVar();
 				}
@@ -303,5 +314,6 @@ namespace eg {
 		m_PreviewData = nullptr;
 		m_ShowAnimationPanel = false;
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animation";
+		m_SelectedFrames.clear();
 	}
 }
