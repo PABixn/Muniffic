@@ -75,13 +75,21 @@ namespace eg {
 	{
 		EG_PROFILE_FUNCTION();
 		m_PreviewData->ClearFrames();
-		for (int i = m_Row; i < m_Row + m_RowCount; i++)
+		/*for (int i = m_Row; i < m_Row + m_RowCount; i++)
 			for (int j = m_Column; j < m_Column + m_ColumnCount; j++)
 			{
 				glm::vec2 min = { j *(float)m_FrameWidth / (float)m_TextureData->Width, 1.0f- ((i+1) * (float)m_FrameHeight) / (float)m_TextureData->Height };
 				glm::vec2 max = { (j+1) *(float)m_FrameWidth / (float)m_TextureData->Width,1.0f- (i * (float)m_FrameHeight) / (float)m_TextureData->Height };
 				m_PreviewData->AddFrame(SubTexture2D::Create(m_PreviewOriginImage, min, max));
 			}
+		*/
+
+		std::sort(m_SelectedFrames.begin(), m_SelectedFrames.end());
+		for (auto frame : m_SelectedFrames) {
+			glm::vec2 min = { frame.second * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f - ((frame.first + 1) * (float)m_FrameHeight) / (float)m_TextureData->Height };
+			glm::vec2 max = { (frame.second + 1) * (float)m_FrameWidth / (float)m_TextureData->Width,1.0f - (frame.first * (float)m_FrameHeight) / (float)m_TextureData->Height };
+			m_PreviewData->AddFrame(SubTexture2D::Create(m_PreviewOriginImage, min, max));
+		}
 
 		m_PreviewAspectRatio = (float)m_FrameWidth / (float)m_FrameHeight;
 		if (m_PreviewAspectRatio < 1.0f)
@@ -216,22 +224,56 @@ namespace eg {
 					if(j != 0)
 					ImGui::SameLine();
 					ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
-
-					bool isSelected = (j >= m_Column && j < m_Column + m_ColumnCount && i >= m_Row && i < m_Row + m_RowCount);
-					std::pair<int, int> frameIndex = std::make_pair(i, j - 1);
+					std::pair<int, int> frameIndex = std::make_pair(i, j);
 					auto it = std::find(m_SelectedFrames.begin(), m_SelectedFrames.end(), frameIndex);
-
-					if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && it != m_SelectedFrames.end())
-						m_SelectedFrames.erase(it);
-					else if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-						m_SelectedFrames.emplace_back(frameIndex);
+					bool isSelected = it != m_SelectedFrames.end();
 
 					bool isSelectedFrame = std::find(m_SelectedFrames.begin(), m_SelectedFrames.end(), std::make_pair(i, j)) != m_SelectedFrames.end();
 
 					ImVec4 borderColor = isSelectedFrame ? ImVec4{0.0f, 1.0f, 0.0f, 1.0f} : ImVec4{1.0f, 0.0f, 0.0f, 1.0f};
-					ImGui::Image((void*)m_PreviewOriginImage->GetRendererID(), ImVec2(m_BasePreviewWidthImage / (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth), m_BasePreviewHeightImage / (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight)), { j * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f- (i) * (float)m_FrameHeight / (float)m_TextureData->Height }, { (j + 1) * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f- (i+1) * (float)m_FrameHeight / (float)m_TextureData->Height }, {1,1,1,1}, borderColor);
+
+					ImGui::Image(
+						(void*)m_PreviewOriginImage->GetRendererID(), 
+						ImVec2(
+							m_BasePreviewWidthImage / (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth),
+							m_BasePreviewHeightImage / (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight)
+						),
+						{ 
+							j * (float)m_FrameWidth / (float)m_TextureData->Width,
+							1.0f- (i) * (float)m_FrameHeight / (float)m_TextureData->Height
+						}, 
+						{ 
+							(j + 1) * (float)m_FrameWidth / (float)m_TextureData->Width, 
+							1.0f- (i+1) * (float)m_FrameHeight / (float)m_TextureData->Height
+						}, 
+						{1,1,1,1}, 
+						borderColor);
+
+					if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && isSelected) {
+						m_SelectedFrames.erase(it);
+						SetFrames();
+					}
+					else if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+						m_SelectedFrames.emplace_back(frameIndex);
+						SetFrames();
+					}
+
 					ImGui::PopStyleVar();
 				}
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
+			if (ImGui::Button("Select all",ImVec2(80,30))) {
+				for (int i = 0; i < (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight); i++)
+					for (int j = 0; j < (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth); j++) {
+						std::pair<int, int> frameIndex = std::make_pair(i, j);
+						m_SelectedFrames.emplace_back(frameIndex);
+						SetFrames();
+					}
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Select none", ImVec2(80, 30))) {
+				m_SelectedFrames.clear();
+			}
+			ImGui::PopStyleVar();
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
 			ImGui::DragFloat("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500);
 			ImGui::Checkbox("Loop", m_PreviewData->IsLoopedPtr());
@@ -243,7 +285,15 @@ namespace eg {
 				m_ResourceData->ResourceName = std::string(buffer);
 			ImGui::Text("Animation: %s", m_ResourceData->ResourceName.c_str());
 			if(m_PreviewData->GetFrameCount() > 0)
-				ImGui::Image((void*)m_PreviewData->GetFrame()->GetTexture()->GetRendererID(), ImVec2(m_BasePreviewWidth, m_BasePreviewHeight), { m_PreviewData->GetFrame()->GetMin().x , m_PreviewData->GetFrame()->GetMax().y}, {m_PreviewData->GetFrame()->GetMax().x , m_PreviewData->GetFrame()->GetMin().y});
+				ImGui::Image(
+					(void*)m_PreviewData->GetFrame()->GetTexture()->GetRendererID(),
+					ImVec2(m_BasePreviewWidth, m_BasePreviewHeight), 
+					{ 
+						m_PreviewData->GetFrame()->GetMin().x , m_PreviewData->GetFrame()->GetMax().y
+					}, 
+					{
+						m_PreviewData->GetFrame()->GetMax().x , m_PreviewData->GetFrame()->GetMin().y
+					});
 
 			/*char buffer2[512];
 			memset(buffer2, 0, sizeof(buffer2));
