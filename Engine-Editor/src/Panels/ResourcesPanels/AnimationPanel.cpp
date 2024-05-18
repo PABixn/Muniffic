@@ -52,6 +52,7 @@ namespace eg {
 		m_ResourceData->Extension = ".anim";
 
 		m_AnimationEditorPanel = CreateRef<AnimationEditorPanel>();
+		m_NoFramesPanel = CreateRef<NoFramesPanel>();
 
 		m_ImageAspectRatio = (float)m_PreviewOriginImage->GetWidth() / (float)m_PreviewOriginImage->GetHeight();
 		if (m_ImageAspectRatio < 1.0f) 
@@ -282,11 +283,8 @@ namespace eg {
 					if (m_SelectedFrames.size() > 0)
 						m_AnimationEditorPanel->OpenAnimationEditorPanel(m_SelectedFrames);
 					else
-						m_NoFramesPanel->OpenNoFramesPanel();
-						
+						m_NoFramesPanel->OpenNoFramesPanel();	
 				}
-
-		
 			}
 			ImGui::PopStyleVar(2);
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
@@ -353,6 +351,9 @@ namespace eg {
 			if (ImGui::Button("Cancel"))
 				CloseAnimationPanel();
 			ImGui::End();
+
+			m_AnimationEditorPanel->OnImGuiRender();
+			m_NoFramesPanel->OnImGuiRender();
 		}
 	}
 

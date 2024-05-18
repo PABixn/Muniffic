@@ -4,8 +4,9 @@
 namespace eg {
 	NoFramesPanel::NoFramesPanel() {}
 
-	void NoFramesPanel::OpenNoFramesPanel() {
-		m_ShowNoFramesPanel = true;
+	bool NoFramesPanel::OpenNoFramesPanel() {
+		ShowNoFramesPanel(true);
+		return true;
 	}
 
 	void NoFramesPanel::OnImGuiRender() {
@@ -13,9 +14,10 @@ namespace eg {
 			return;
 		ImGui::Begin("No Selected Frames", nullptr, ImGuiWindowFlags_NoDecoration);
 		ImGui::SetWindowSize(ImVec2(300, 150));
-		ImGui::Text("At least one frame must be selected");
-		if (ButtonCenteredOnLine("Close",100,50,true));
-			m_ShowNoFramesPanel = false;
+		TextCenteredOnLine("At least one frame must be selected");
+		if (ButtonCenteredOnLine("Close",100,50,true))
+			ShowNoFramesPanel(false);
+		ImGui::End();
 	}
 
 	bool NoFramesPanel::ButtonCenteredOnLine(const char* label, int width, int height, bool isDown, float alignment)
@@ -45,6 +47,18 @@ namespace eg {
 		bool OpenPopup = ImGui::Button(label);
 		ImGui::PopStyleVar();
 		return OpenPopup;
+	}
+
+	void NoFramesPanel::TextCenteredOnLine(const char* label, float alignment) {
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 40));
+
+		float windowWidth = ImGui::GetWindowSize().x;
+		float textWidth = ImGui::CalcTextSize(label).x;
+
+		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+		ImGui::Text(label);
+		ImGui::PopStyleVar();
+
 	}
 
 }
