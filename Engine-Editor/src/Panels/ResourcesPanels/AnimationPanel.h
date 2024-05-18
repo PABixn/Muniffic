@@ -1,6 +1,8 @@
 #pragma once
 #include "Engine.h"
 #include <filesystem>
+#include "AnimationEditorPanel.h"
+#include "../NoFramesPanel.h"
 
 namespace eg
 {
@@ -50,5 +52,8 @@ namespace eg
 		Ref<Animation> m_PreviewData = nullptr;
 		bool m_ShowAnimationPanel = false;
 		std::filesystem::path m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animation";
+
+		Ref<AnimationEditorPanel> m_AnimationEditorPanel;
+		Ref<NoFramesPanel> m_NoFramesPanel;
 	};
 }

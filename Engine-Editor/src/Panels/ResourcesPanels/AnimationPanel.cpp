@@ -51,6 +51,8 @@ namespace eg {
 		m_ResourceData->ResourceName = std::filesystem::path(m_LoadedResource->Name).stem().string();
 		m_ResourceData->Extension = ".anim";
 
+		m_AnimationEditorPanel = CreateRef<AnimationEditorPanel>();
+
 		m_ImageAspectRatio = (float)m_PreviewOriginImage->GetWidth() / (float)m_PreviewOriginImage->GetHeight();
 		if (m_ImageAspectRatio < 1.0f) 
 		{
@@ -261,7 +263,8 @@ namespace eg {
 					ImGui::PopStyleVar();
 				}
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
-			if (ImGui::Button("Select all",ImVec2(80,30))) {
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(20, 20));
+			if (ImGui::Button("Select all",ImVec2(90,40))) {
 				for (int i = 0; i < (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight); i++)
 					for (int j = 0; j < (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth); j++) {
 						std::pair<int, int> frameIndex = std::make_pair(i, j);
@@ -270,10 +273,22 @@ namespace eg {
 					}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Select none", ImVec2(80, 30))) {
+			if (ImGui::Button("Select none", ImVec2(90, 40))) {
 				m_SelectedFrames.clear();
+				SetFrames();
 			}
-			ImGui::PopStyleVar();
+			if (ImGui::Button("Open animation editor panel", ImVec2(200, 40))) {
+				if (m_AnimationEditorPanel) {
+					if (m_SelectedFrames.size() > 0)
+						m_AnimationEditorPanel->OpenAnimationEditorPanel(m_SelectedFrames);
+					else
+						m_NoFramesPanel->OpenNoFramesPanel();
+						
+				}
+
+		
+			}
+			ImGui::PopStyleVar(2);
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
 			ImGui::DragFloat("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500);
 			ImGui::Checkbox("Loop", m_PreviewData->IsLoopedPtr());
