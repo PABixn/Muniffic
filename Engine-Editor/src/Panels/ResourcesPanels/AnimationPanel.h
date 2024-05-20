@@ -18,6 +18,12 @@ namespace eg
 		void CloseAnimationPanel();
 
 		bool IsAnimationPanelOpen() { return m_ShowAnimationPanel; }
+	public:
+		std::vector<std::pair<int, int>> m_SelectedFrames;
+		Ref<Texture2D> m_PreviewOriginImage = nullptr;
+		int m_FrameWidth = 0, m_FrameHeight = 0;
+		int m_BasePreviewWidthImage = 1, m_BasePreviewHeightImage = 1;
+		TextureResourceData* m_TextureData = nullptr;
 	private:
 		void ShowAnimationPanel(bool show) { m_ShowAnimationPanel = show; }
 		void ResetData();
@@ -25,16 +31,14 @@ namespace eg
 		void DeleteData();
 	private:
 		AnimationResourceData* m_ResourceData = nullptr;
-		TextureResourceData* m_TextureData = nullptr;
 		Resource* m_LoadedResource = nullptr;
 		std::filesystem::path m_ResourcePath = "";
-		int m_FrameWidth = 0, m_FrameHeight = 0;
+		
 		int m_Column = 0, m_Row = 0;
 		int m_ColumnCount = 1, m_RowCount = 1;
 		
 		float m_ImageAspectRatio = 1;
-		int m_BasePreviewWidthImage = 1, m_BasePreviewHeightImage = 1;
-
+		
 		float m_PreviewAspectRatio = 1;
 		int m_BasePreviewWidth = 1, m_BasePreviewHeight = 1;
 
@@ -42,9 +46,7 @@ namespace eg
 		std::filesystem::path m_OriginalResourcePath = "";
 
 		UUID m_TextureUUID;
-
-
-		Ref<Texture2D> m_PreviewOriginImage = nullptr;
+		
 		Ref<Animation> m_PreviewData = nullptr;
 		bool m_ShowAnimationPanel = false;
 		std::filesystem::path m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animation";

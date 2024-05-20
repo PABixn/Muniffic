@@ -221,6 +221,33 @@ namespace eg {
 					ImGui::Image((void*)m_PreviewOriginImage->GetRendererID(), ImVec2(m_BasePreviewWidthImage / (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth), m_BasePreviewHeightImage / (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight)), { j * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f- (i) * (float)m_FrameHeight / (float)m_TextureData->Height }, { (j + 1) * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f- (i+1) * (float)m_FrameHeight / (float)m_TextureData->Height }, {1,1,1,1}, borderColor);
 					ImGui::PopStyleVar();
 				}
+<<<<<<< Updated upstream
+=======
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(20, 20));
+			if (ImGui::Button("Select all",ImVec2(90,40))) {
+				for (int i = 0; i < (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight); i++)
+					for (int j = 0; j < (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth); j++) {
+						std::pair<int, int> frameIndex = std::make_pair(i, j);
+						m_SelectedFrames.emplace_back(frameIndex);
+						SetFrames();
+					}
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Select none", ImVec2(90, 40))) {
+				m_SelectedFrames.clear();
+				SetFrames();
+			}
+			if (ImGui::Button("Open animation editor panel", ImVec2(200, 40))) {
+				if (m_AnimationEditorPanel) {
+					if (m_SelectedFrames.size() > 0)
+						m_AnimationEditorPanel->OpenAnimationEditorPanel();
+					else
+						m_NoFramesPanel->OpenNoFramesPanel();
+				}
+			}
+			ImGui::PopStyleVar(2);
+>>>>>>> Stashed changes
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
 			ImGui::DragFloat("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500);
 			ImGui::Checkbox("Loop", m_PreviewData->IsLoopedPtr());
