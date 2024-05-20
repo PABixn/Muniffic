@@ -64,6 +64,14 @@ def wait_for_completion(thread_id, run_id):
         time.sleep(1)
 
 
+def get_run_status(thread_id, run_id):
+    load_dotenv()
+    client = openai.OpenAI()
+    run = client.beta.threads.runs.retrieve(
+        thread_id=thread_id,
+        run_id=run_id)
+    return run.status
+
 def get_last_message(thread_id):
     load_dotenv()
     client = openai.OpenAI()

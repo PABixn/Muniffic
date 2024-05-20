@@ -17,6 +17,7 @@ namespace eg
 	void AssistantManager::Init()
 	{
 		Py_Initialize();
+		PyEval_InitThreads();
 
 		PyObject* sysPath = PySys_GetObject("path");
 
@@ -55,11 +56,11 @@ namespace eg
 		m_CreateThread = PyObject_GetAttrString(m_pModule, "create_thread");
 		m_AddMessage = PyObject_GetAttrString(m_pModule, "add_message");
 		m_InitiateRun = PyObject_GetAttrString(m_pModule, "initiate_run");
-		m_WaitForCompletion = PyObject_GetAttrString(m_pModule, "wait_for_completion");
+		m_GetRunStatus = PyObject_GetAttrString(m_pModule, "get_run_status");
 		m_GetLastMessage = PyObject_GetAttrString(m_pModule, "get_last_message");
 		m_CheckIfAssistantExists = PyObject_GetAttrString(m_pModule, "check_if_assistant_exists");
 
-		if (m_CreateAssistant == nullptr || m_CreateThread == nullptr || m_InitiateRun == nullptr || m_WaitForCompletion == nullptr || m_GetLastMessage == nullptr || m_CheckIfAssistantExists == nullptr)
+		if (m_CreateAssistant == nullptr || m_CreateThread == nullptr || m_InitiateRun == nullptr || m_GetRunStatus == nullptr || m_GetLastMessage == nullptr || m_CheckIfAssistantExists == nullptr)
 		{
 			EG_CORE_ERROR("Failed to load Python functions");
 		}
@@ -148,6 +149,7 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
+			return;
 		}
 
 		PyObject_CallObject(m_AddMessage, args);
@@ -159,18 +161,18 @@ namespace eg
 		m_Threads.at(threadID)->messages.push_back(messageObj);
 	}
 
-	std::string AssistantManager::WaitForCompletion(std::string threadID)
+	bool AssistantManager::TryGetMessage(std::string threadID)
 	{
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
 			EG_CORE_ERROR("Thread not found");
-			return "";
+			return false;
 		}
 
 		if (m_Threads.at(threadID)->m_RunIDs.size() == 0)
 		{
 			EG_CORE_ERROR("No run IDs found for thread");
-			return "";
+			return false;
 		}
 
 		std::string runID = m_Threads.at(threadID)->m_RunIDs.at(m_Threads.at(threadID)->m_RunIDs.size()-1);
@@ -181,21 +183,23 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
-			return "";
+			return false;
 		}
 
-		PyObject* result = PyObject_CallObject(m_WaitForCompletion, args);
+		PyObject* result = PyObject_CallObject(m_GetRunStatus, args);
 
 		if (result == nullptr)
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call wait_for_completion function");
-			return "";
+			return false;
 		}
 
 		std::string status = PyUnicode_AsUTF8(result);
 
-		if (status == "completed")
+		if(status == "in_progress")
+			return false;
+		else if (status == "completed")
 		{
 			args = PyTuple_Pack(1, PyUnicode_FromString(threadID.c_str()));
 
@@ -203,7 +207,7 @@ namespace eg
 			{
 				PyErr_Print();
 				EG_CORE_ERROR("Failed to create args object");
-				return "";
+				return false;
 			}
 
 			result = PyObject_CallObject(m_GetLastMessage, args);
@@ -212,7 +216,7 @@ namespace eg
 			{
 				PyErr_Print();
 				EG_CORE_ERROR("Failed to call get_last_message function");
-				return "";
+				return false;
 			}
 
 			std::string message = PyUnicode_AsUTF8(result);
@@ -223,12 +227,12 @@ namespace eg
 
 			m_Threads.at(threadID)->messages.push_back(messageObj);
 
-			return message;
+			return true;
 		}
 		else if (status == "failed" || status == "cancelled" || status == "expired")
 		{
 			EG_CORE_ERROR("Run " + status);
-			return "";
+			return false;
 		}
 	}
 
