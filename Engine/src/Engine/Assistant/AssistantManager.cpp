@@ -56,14 +56,16 @@ namespace eg
 		m_CreateThread = PyObject_GetAttrString(m_pModule, "create_thread");
 		m_AddMessage = PyObject_GetAttrString(m_pModule, "add_message");
 		m_InitiateRun = PyObject_GetAttrString(m_pModule, "initiate_run");
-		m_GetRunStatus = PyObject_GetAttrString(m_pModule, "get_run_status");
+		m_WaitForCompletion = PyObject_GetAttrString(m_pModule, "wait_for_completion");
 		m_GetLastMessage = PyObject_GetAttrString(m_pModule, "get_last_message");
 		m_CheckIfAssistantExists = PyObject_GetAttrString(m_pModule, "check_if_assistant_exists");
 
-		if (m_CreateAssistant == nullptr || m_CreateThread == nullptr || m_InitiateRun == nullptr || m_GetRunStatus == nullptr || m_GetLastMessage == nullptr || m_CheckIfAssistantExists == nullptr)
+		if (m_CreateAssistant == nullptr || m_CreateThread == nullptr || m_InitiateRun == nullptr || m_WaitForCompletion == nullptr || m_GetLastMessage == nullptr || m_CheckIfAssistantExists == nullptr)
 		{
 			EG_CORE_ERROR("Failed to load Python functions");
 		}
+
+		PyEval_SaveThread();
 	}
 
 	void AssistantManager::CreateAssistant(std::string assistantName, std::string assistantInstructions = "")
@@ -89,10 +91,14 @@ namespace eg
 		m_AssistantID = PyUnicode_AsUTF8(result);
 
 		SaveAssistant();
+
+		PyEval_SaveThread();
 	}
 
 	std::string AssistantManager::CreateThread()
 	{
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
 		PyObject* result = PyObject_CallObject(m_CreateThread, nullptr);
 
 		if (result == nullptr)
@@ -105,6 +111,8 @@ namespace eg
 		Thread* thread = new Thread();
 		m_Threads[threadID] = thread;
 
+		PyGILState_Release(gstate);
+
 		return threadID;
 	}
 
@@ -116,12 +124,17 @@ namespace eg
 			return;
 		}
 
+		// Ensure GIL state is acquired
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
 		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(m_AssistantID.c_str()), PyUnicode_FromString(threadID.c_str()));
 
 		if (args == nullptr)
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
+			PyGILState_Release(gstate);
+			return;
 		}
 
 		PyObject* result = PyObject_CallObject(m_InitiateRun, args);
@@ -130,10 +143,16 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call initiate_run function");
+			PyGILState_Release(gstate);
+			return;
 		}
 
 		m_Threads.at(threadID)->m_RunIDs.push_back(PyUnicode_AsUTF8(result));
+
+		// Release GIL state
+		PyGILState_Release(gstate);
 	}
+
 
 	void AssistantManager::AddMessage(std::string threadID, std::string message)
 	{
@@ -143,25 +162,37 @@ namespace eg
 			return;
 		}
 
+		Message* messageObj = new Message();
+		messageObj->role = "user";
+		messageObj->content = message;
+
+		m_Threads.at(threadID)->messages.push_back(messageObj);
+
+		// Ensure GIL state is acquired
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
 		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(message.c_str()));
 
 		if (args == nullptr)
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
+			PyGILState_Release(gstate);
+
+			delete messageObj;
+			m_Threads.at(threadID)->messages.pop_back();
+
 			return;
 		}
 
 		PyObject_CallObject(m_AddMessage, args);
 
-		Message* messageObj = new Message();
-		messageObj->role = "user";
-		messageObj->content = message;
-
-		m_Threads.at(threadID)->messages.push_back(messageObj);
+		// Release GIL state
+		PyGILState_Release(gstate);
 	}
 
-	bool AssistantManager::TryGetMessage(std::string threadID)
+
+	bool AssistantManager::WaitForCompletion(std::string threadID)
 	{
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
@@ -175,7 +206,10 @@ namespace eg
 			return false;
 		}
 
-		std::string runID = m_Threads.at(threadID)->m_RunIDs.at(m_Threads.at(threadID)->m_RunIDs.size()-1);
+		std::string runID = m_Threads.at(threadID)->m_RunIDs.at(m_Threads.at(threadID)->m_RunIDs.size() - 1);
+
+		// Ensure GIL state is acquired
+		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()));
 
@@ -183,23 +217,23 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
+			PyGILState_Release(gstate);
 			return false;
 		}
 
-		PyObject* result = PyObject_CallObject(m_GetRunStatus, args);
+		PyObject* result = PyObject_CallObject(m_WaitForCompletion, args);
 
 		if (result == nullptr)
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call wait_for_completion function");
+			PyGILState_Release(gstate);
 			return false;
 		}
 
 		std::string status = PyUnicode_AsUTF8(result);
 
-		if(status == "in_progress")
-			return false;
-		else if (status == "completed")
+		if (status == "completed")
 		{
 			args = PyTuple_Pack(1, PyUnicode_FromString(threadID.c_str()));
 
@@ -207,6 +241,7 @@ namespace eg
 			{
 				PyErr_Print();
 				EG_CORE_ERROR("Failed to create args object");
+				PyGILState_Release(gstate);
 				return false;
 			}
 
@@ -216,10 +251,13 @@ namespace eg
 			{
 				PyErr_Print();
 				EG_CORE_ERROR("Failed to call get_last_message function");
+				PyGILState_Release(gstate);
 				return false;
 			}
 
 			std::string message = PyUnicode_AsUTF8(result);
+
+			PyGILState_Release(gstate);
 
 			Message* messageObj = new Message();
 			messageObj->role = "assistant";
@@ -232,9 +270,14 @@ namespace eg
 		else if (status == "failed" || status == "cancelled" || status == "expired")
 		{
 			EG_CORE_ERROR("Run " + status);
+			PyGILState_Release(gstate);
 			return false;
 		}
+
+		PyGILState_Release(gstate);
+		return false; // Added to handle cases where no condition is met
 	}
+
 
 	void AssistantManager::SaveAssistant()
 	{
@@ -295,6 +338,8 @@ namespace eg
 
 	bool AssistantManager::CheckIfAssistantExists(std::string assistantID)
 	{
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
 		PyObject* args = PyTuple_Pack(1, PyUnicode_FromString(assistantID.c_str()));
 
 		if (args == nullptr)
@@ -311,13 +356,17 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call check_if_assistant_exists function");
 			return false;
-		}
+		}	
+
+		PyGILState_Release(gstate);
 
 		return PyObject_IsTrue(result);
 	}
 
 	AssistantManager::~AssistantManager()
 	{
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
 		Py_Finalize();
 	}
 }

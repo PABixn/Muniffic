@@ -31,7 +31,7 @@ namespace eg
 		std::string CreateThread();
 		void InitiateRun(std::string threadID);
 		void AddMessage(std::string threadID, std::string message);
-		bool TryGetMessage(std::string threadID);
+		bool WaitForCompletion(std::string threadID);
 		bool CheckIfAssistantExists(std::string assistantID);
 
 
@@ -51,7 +51,7 @@ namespace eg
 		PyObject* m_CreateThread;
 		PyObject* m_AddMessage;
 		PyObject* m_InitiateRun;
-		PyObject* m_GetRunStatus;
+		PyObject* m_WaitForCompletion;
 		PyObject* m_GetLastMessage;
 		PyObject* m_CheckIfAssistantExists;
 	};

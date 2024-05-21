@@ -7,10 +7,11 @@
 namespace eg
 {
 	char AssistantPanel::buffer[1024];
+	static ImGui::MarkdownConfig mdConfig;
 
 	AssistantPanel::AssistantPanel()
 	{
-		initiateTime = time.now();
+		lastCheckTime = time.now();
 
 		assistantManager = new AssistantManager();
 
@@ -28,15 +29,18 @@ namespace eg
 		assistantManager = nullptr;
 	}
 
+	void DoMessage(AssistantManager* assistantManager, std::string threadID, char* buffer)
+	{
+		std::string message = buffer;
+		memset(buffer, 0, 1024);
+		assistantManager->AddMessage(threadID, message);
+		assistantManager->InitiateRun(threadID);
+		assistantManager->WaitForCompletion(threadID);
+	}
+
 	void AssistantPanel::OnImGuiRender()
 	{
-		if(pendingMessage && std::chrono::duration_cast<std::chrono::milliseconds>(time.now() - initiateTime).count() % 100 == 0)
-			if(assistantManager->TryGetMessage(threadID))
-				pendingMessage = false;
-
 		ImGui::Begin("Assistant Panel");
-
-		static ImGui::MarkdownConfig mdConfig;
 
 		ImGui::Text("This is your conversation with Bob.");
 		ImGui::Text("Thread ID : % s", threadID.c_str());
@@ -66,7 +70,9 @@ namespace eg
 
 		if (ImGui::Button("Send"))
 		{
-			RunMessage();
+			std::thread t(DoMessage, assistantManager, threadID, buffer);
+			t.detach();
+			//RunMessage();
 		}
 
 		ImGui::End();
@@ -74,11 +80,9 @@ namespace eg
 
 	void AssistantPanel::RunMessage()
 	{
-		pendingMessage = true;
 		assistantManager->AddMessage(threadID, buffer);
 		assistantManager->InitiateRun(threadID);
 		memset(buffer, 0, 1024);
-		if(assistantManager->TryGetMessage(threadID))
-			pendingMessage = false;
+		assistantManager->WaitForCompletion(threadID);
 	}
 }
