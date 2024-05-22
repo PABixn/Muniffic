@@ -65,7 +65,7 @@ Entities:
       IsInheritedInChildren: false
     BoxCollider2DComponent:
       Offset: [0, 0]
-      Size: [0.479999989, 0.379999995]
+      Size: [0.5, 0.449999988]
       Density: 1
       Friction: 0.5
       Restitution: 0
@@ -89,8 +89,8 @@ Entities:
       Color: [1, 1, 1, 1]
       TilingFactor: 1
       TextureUUID: 0
-      MinCoords: [0.125, 0.5]
-      MaxCoords: [0.25, 0.75]
+      MinCoords: [0, 0]
+      MaxCoords: [1000, 1000]
     AnimatorComponent:
       Speed: 1
       Animations:
@@ -105,9 +105,7 @@ Entities:
       Scripts:
         - ScriptUUID: 6370029969853740667
           ScriptFields:
-            - Name: direction
-              Type: vector2
-              Value: [0, 3.5999999]
+            []
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:
@@ -138,5 +136,65 @@ Entities:
       Color: [1, 1, 1, 1]
       TilingFactor: 1
       TextureUUID: 1569974947467129450
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 192935143182986994
+    Name: Cube
+    TagComponent:
+      Tag: wall1
+    TransformComponent:
+      Translation: [-20.7999992, -3.09999967, 0]
+      Rotation: [0, -0, 0]
+      Scale: [21.1000004, 4, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 8403456816719425748
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 1300007765374772275
+    Name: Cube
+    TagComponent:
+      Tag: wall2
+    TransformComponent:
+      Translation: [20.3999996, -3.0999999, 0]
+      Rotation: [0, 0, 0]
+      Scale: [21.1000004, 4, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 8403456816719425748
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
       IsInherited: false
       IsInheritedInChildren: false
