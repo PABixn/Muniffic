@@ -1,7 +1,7 @@
 Resources:
   - UUID: 6370029969853740667
     ParentDirectory: 7971197052863430193
-    ResourceName: Game.CirclePlayer
+    ResourceName: Game.SquarePlayer
     Extension: .cs
     IsEnabled: true
   - UUID: 4808558139062134088

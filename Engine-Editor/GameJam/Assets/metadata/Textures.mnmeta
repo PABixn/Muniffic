@@ -1,2 +1,43 @@
 Resources:
-  []
+  - UUID: 1569974947467129450
+    ParentDirectory: 4342498036523794994
+    ResourceName: background
+    Extension: .png
+    Width: 1920
+    Height: 1080
+    Channels: 3
+  - UUID: 8403456816719425748
+    ParentDirectory: 4342498036523794994
+    ResourceName: LongDetached
+    Extension: .png
+    Width: 1827
+    Height: 467
+    Channels: 4
+  - UUID: 611558403006634469
+    ParentDirectory: 8171699039257142944
+    ResourceName: squareIdle
+    Extension: .png
+    Width: 8640
+    Height: 7680
+    Channels: 4
+  - UUID: 9023926812894577311
+    ParentDirectory: 4342498036523794994
+    ResourceName: squareIdle
+    Extension: .png
+    Width: 8640
+    Height: 7680
+    Channels: 4
+  - UUID: 9017708924757034408
+    ParentDirectory: 8171699039257142944
+    ResourceName: squareWalk
+    Extension: .png
+    Width: 3510
+    Height: 960
+    Channels: 4
+  - UUID: 3225956202710576761
+    ParentDirectory: 4342498036523794994
+    ResourceName: squareWalk
+    Extension: .png
+    Width: 3510
+    Height: 960
+    Channels: 4

@@ -23,7 +23,7 @@ namespace Game
 
         public void InitPlayer(float speed, float damage, float attackCooldown, float health)
         {
-            direction = Vector2.Zero;
+            direction = new Vector2(1,0);
             velocity = Vector2.Zero;
             friction = 0.8f;
             this.isGrounded = true;
@@ -39,8 +39,9 @@ namespace Game
         public abstract void OnCreate();
         public abstract void OnUpdate(float ts);
 
-        public void UpdatePosition(float ts)
+        public bool UpdatePosition(float ts)
         {
+            bool didMove = false;
             velocity = Vector2.Zero;
 
             if (Input.IsKeyDown(KeyCode.S) && Math.Abs(velocity.Y) <= 10f)
@@ -52,11 +53,15 @@ namespace Game
             {
                 direction = new Vector2(-1, 0);
                 velocity.X -= speed;
+                transform.rotation = new Vector3(0, -3.6f, 0);
+                didMove = true;
             }
             if (Input.IsKeyDown(KeyCode.D) && velocity.X <= 10f)
             {
                 direction = new Vector2(1, 0);
                 velocity.X += speed;
+                transform.rotation = new Vector3(0, 0, 0);
+                didMove = true;
             }
 
             if (rigidBody != null)
@@ -66,6 +71,8 @@ namespace Game
                 if(isGrounded)
                     rigidBody.ApplyLinearImpulse(new Vector2(rigidBody.linearVelocity.X * -1 * friction * ts, 0), true);
             }
+
+            return didMove;
         }
     }
 }

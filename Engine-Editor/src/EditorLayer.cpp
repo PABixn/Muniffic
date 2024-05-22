@@ -270,8 +270,13 @@ namespace eg
 
 		ImGui::Begin("Stats");
 		std::string name = "None";
-		if (m_HoveredEntity)
-			name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
+
+		if (m_HoveredEntity.GetScene() == m_ActiveScene.get())
+		{
+			if (m_HoveredEntity)
+				name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
+		}
+
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 
 		auto stats = Renderer2D::GetStats();

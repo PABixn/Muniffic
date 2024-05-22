@@ -103,8 +103,8 @@ namespace eg {
 		int m_GizmoType = -1;
 
 		bool m_ShowPhysicsColliders = false;
-		bool m_ShowAxis = true;
-		bool m_ShowGrid = true;
+		bool m_ShowAxis = false;
+		bool m_ShowGrid = false;
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
