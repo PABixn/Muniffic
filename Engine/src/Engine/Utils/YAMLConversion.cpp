@@ -70,13 +70,13 @@ namespace YAML
 	Node convert<eg::UUID>::encode(const eg::UUID& uuid)
 	{
 		Node node;
-		node.push_back((uint64_t)uuid);
+		node.push_back((int64_t)uuid);
 		return node;
 	}
 
 	bool convert<eg::UUID>::decode(const Node& node, eg::UUID& uuid)
 	{
-		uuid = node.as<uint64_t>();
+		uuid = node.as<int64_t>();
 		return true;
 	}
 	Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)

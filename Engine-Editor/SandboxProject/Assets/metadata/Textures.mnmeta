@@ -1,2 +1,43 @@
 Resources:
-  []
+  - UUID: 1799419931226198864
+    ParentDirectory: 7944269225031781095
+    ResourceName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
+    Extension: .png
+    Width: 604
+    Height: 569
+    Channels: 3
+  - UUID: 5293402252350669400
+    ParentDirectory: 7944269225031781095
+    ResourceName: Dune 2
+    Extension: .png
+    Width: 1000
+    Height: 1542
+    Channels: 4
+  - UUID: 2849638184997151150
+    ParentDirectory: 7944269225031781095
+    ResourceName: cb0
+    Extension: .png
+    Width: 800
+    Height: 600
+    Channels: 4
+  - UUID: 404307955052495212
+    ParentDirectory: 7944269225031781095
+    ResourceName: Chess_Board
+    Extension: .png
+    Width: 480
+    Height: 480
+    Channels: 1
+  - UUID: 2061541685866814509
+    ParentDirectory: 7944269225031781095
+    ResourceName: Float00Animation
+    Extension: .png
+    Width: 300
+    Height: 167
+    Channels: 4
+  - UUID: 7663378090969376037
+    ParentDirectory: 7944269225031781095
+    ResourceName: Float01Animation
+    Extension: .png
+    Width: 300
+    Height: 60
+    Channels: 4

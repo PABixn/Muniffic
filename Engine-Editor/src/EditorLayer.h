@@ -5,6 +5,7 @@
 #include "Engine/Renderer/EditorCamera.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/AddResourcePanel.h"
+#include "Panels/ProjectDirectoryPanel.h"
 #include "Panels/ConsolePanel.h"
 #include "Panels/AssistantPanel.h"
 
@@ -23,6 +24,7 @@ namespace eg {
 		virtual void OnEvent(Event& e) override;
 
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
+		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
 
 	private:
@@ -106,7 +108,8 @@ namespace eg {
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
-		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
+		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
+		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
 		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;

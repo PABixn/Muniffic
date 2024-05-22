@@ -29,7 +29,6 @@ namespace eg
 
 		m_Window = Window::Create(WindowProps(applicationSpec.Name));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-
 		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();

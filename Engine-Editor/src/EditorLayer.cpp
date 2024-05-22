@@ -259,6 +259,8 @@ namespace eg
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();
+		m_ProjectDirectoryPanel->OnImGuiRender();
+
 		m_ConsolePanel->OnImGuiRender();
 		m_AssistantPanel->OnImGuiRender();
 		
@@ -795,9 +797,11 @@ namespace eg
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
-			m_ContentBrowserPanel->InitPanels();
+			m_ProjectDirectoryPanel = CreateRef<ProjectDirectoryPanel>();
+			m_ProjectDirectoryPanel->SetContentBrowserPanel(m_ContentBrowserPanel);
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
 			m_AssistantPanel = CreateScope<AssistantPanel>();
+			m_ContentBrowserPanel->InitPanels();
 
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		}
