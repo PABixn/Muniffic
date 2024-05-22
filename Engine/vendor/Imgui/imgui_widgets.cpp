@@ -7244,7 +7244,8 @@ bool ImGui::CustomTreeNodeWithPicBehavior(ImTextureID textureID, ImGuiID id, ImG
     {
         ImVec2 xyOfStart(frame_bb.Max - ImVec2(2 * frame_height, frame_height) + ImVec2(-7.f + (frame_height / 4), (frame_height/8)));
         ImVec2 xyOfEnd(frame_bb.Max - ImVec2(frame_height, 0.f) + ImVec2(-7.f, -(frame_height / 8)));
-        window->DrawList->AddImage(textureID, xyOfStart, xyOfEnd);
+        window->DrawList->AddImage(textureID, xyOfStart, ImVec2(xyOfEnd.x - (.25f * frame_height), xyOfEnd.y - (.25f * frame_height)));
+        window->DrawList->AddImage(textureID, ImVec2(xyOfEnd.x-(.5f * frame_height), xyOfEnd.y - (.5f * frame_height)), xyOfEnd);
         if (hovered)
         {
             if (GetMousePos().x > xyOfStart.x && GetMousePos().x < xyOfEnd.x) {

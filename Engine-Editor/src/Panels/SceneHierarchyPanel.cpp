@@ -211,7 +211,7 @@ namespace eg {
 		return changed_value;
 	}
 
-	static bool DrawComponentPropertyInt(const char* label, int* value, float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char* format = "%.3f") {
+	static bool DrawComponentPropertyInt(const char* label, int* value, float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char* format = "%d") {
 
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragInt("", value, speed, min, max, format);
@@ -850,30 +850,43 @@ namespace eg {
 				static std::vector<char*> buffers;
 
 				int i = 0;
+				int j = 0;
 
 				for (UUID scriptUUID : component.Scripts)
 				{
+					ImGui::PushID("Scr" + j);
 					ScriptResourceData* data = (ScriptResourceData*)ResourceDatabase::GetResourceData(scriptUUID);
 					std::string& scriptName = data->ResourceName;
-					bool open = false;
-					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
+					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow;
 					ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
-					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 2,2 });
+					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 1.f, 1.f, 0.05f));
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,4 });
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.f);
+
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
 					float lineHeight = GImGui->Font->FontSize+ GImGui->Style.FramePadding.y * 2.0f;
-					//ImGui::Separator();
-					ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.3f, .3f, .3f, 1.f));
-					open = ImGui::TreeNodeEx((void*)(uint64_t)scriptUUID, flags, scriptName.c_str());
+					bool open = ImGui::TreeNodeEx((void*)(uint64_t)scriptUUID, flags, scriptName.c_str());
+					ImGui::SameLine(contentRegionAvailable.x - lineHeight);
+
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.f, 1.f, 1.f, 0.0f));
+					bool del = ImGui::Button("X", ImVec2{ lineHeight,lineHeight });
 					ImGui::PopStyleColor();
+
 					ImGui::PopStyleVar();
-					ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+					ImGui::PopStyleVar();
+					ImGui::PopStyleColor();
+					
+					//ImGui::Separator();
 
-					if (ImGui::Button("X", ImVec2{ lineHeight,lineHeight })){
-						component.Scripts.erase(std::remove(component.Scripts.begin(), component.Scripts.end(), scriptUUID), component.Scripts.end());
+					if (del){
+						component.Scripts.erase(std::find(component.Scripts.begin(), component.Scripts.end(), scriptUUID));
 
-						if(open)
+						if (open) {
 							ImGui::TreePop();
-
+							ImGui::Indent();
+						}
+						
+						ImGui::PopID();
 						return;
 					}
 
@@ -896,15 +909,17 @@ namespace eg {
 
 						UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
 
-						if (ImGui::InputText(std::string("Class " + std::to_string(i)).c_str(), buffer, 256))
+						if (DrawComponentPropertyInputText(std::string("Class " + std::to_string(i)).c_str(), buffer, 256))
 						{
 							scriptName = std::string(buffer);
 							ImGui::TreePop();
+							ImGui::Indent();
+							ImGui::PopID();
 							return;
 						}
 
 
-						ImGui::Checkbox("Enabled", &data->IsEnabled);
+						//DrawComponentPropertyCheckbox("Enabled", &data->IsEnabled);
 
 						//Fields
 
@@ -926,21 +941,21 @@ namespace eg {
 									case ScriptFieldType::Float:
 									{
 										float value = scriptInstance->GetFieldValue<float>(name);
-										if (ImGui::DragFloat(name.c_str(), &value, 0.1f))
+										if (DrawComponentPropertyFloat(name.c_str(), &value, 0.1f))
 											scriptInstance->SetFieldValue<float>(name, value);
 										break;
 									}
 									case ScriptFieldType::Int32:
 									{
 										int value = scriptInstance->GetFieldValue<int>(name);
-										if (ImGui::DragInt(name.c_str(), &value, 1.0f))
+										if (DrawComponentPropertyInt(name.c_str(), &value, 1.0f))
 											scriptInstance->SetFieldValue<int>(name, value);
 										break;
 									}
 									case ScriptFieldType::Bool:
 									{
 										bool value = scriptInstance->GetFieldValue<bool>(name);
-										if (ImGui::Checkbox(name.c_str(), &value))
+										if (DrawComponentPropertyCheckbox(name.c_str(), &value))
 											scriptInstance->SetFieldValue<bool>(name, value);
 										break;
 									}
@@ -957,21 +972,21 @@ namespace eg {
 									case ScriptFieldType::Vector2:
 									{
 										glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
-										if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
+										if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
 											scriptInstance->SetFieldValue<glm::vec2>(name, value);
 										break;
 									}
 									case ScriptFieldType::Vector3:
 									{
 										glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
-										if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
+										if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
 											scriptInstance->SetFieldValue<glm::vec3>(name, value);
 										break;
 									}
 									case ScriptFieldType::Vector4:
 									{
 										glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
-										if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
+										if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
 											scriptInstance->SetFieldValue<glm::vec4>(name, value);
 										break;
 									}
@@ -994,6 +1009,7 @@ namespace eg {
 								{
 									if (entityFields.find(name) != entityFields.end())
 									{
+										//zna2
 										// Field has been set in editor
 										ScriptFieldInstance& scriptField = entityFields.at(name);
 										switch (field.Type)
@@ -1001,7 +1017,7 @@ namespace eg {
 										case ScriptFieldType::Float:
 										{
 											float data = scriptField.GetValue<float>();
-											if (ImGui::DragFloat(name.c_str(), &data, 0.1f))
+											if (DrawComponentPropertyFloat(name.c_str(), &data, 0.1f))
 											{
 												scriptField.SetValue(data);
 											}
@@ -1010,7 +1026,7 @@ namespace eg {
 										case ScriptFieldType::Int32:
 										{
 											int data = scriptField.GetValue<int>();
-											if (ImGui::DragInt(name.c_str(), &data, 1.0f))
+											if (DrawComponentPropertyInt(name.c_str(), &data, 1.0f))
 											{
 												scriptField.SetValue(data);
 											}
@@ -1019,7 +1035,7 @@ namespace eg {
 										case ScriptFieldType::Bool:
 										{
 											bool data = scriptField.GetValue<bool>();
-											if (ImGui::Checkbox(name.c_str(), &data))
+											if (DrawComponentPropertyCheckbox(name.c_str(), &data))
 											{
 												scriptField.SetValue(data);
 											}
@@ -1040,7 +1056,7 @@ namespace eg {
 										case ScriptFieldType::Vector2:
 										{
 											glm::vec2 data = scriptField.GetValue<glm::vec2>();
-											if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+											if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
 											{
 												scriptField.SetValue(data);
 											}
@@ -1049,7 +1065,7 @@ namespace eg {
 										case ScriptFieldType::Vector3:
 										{
 											glm::vec3 data = scriptField.GetValue<glm::vec3>();
-											if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+											if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
 											{
 												scriptField.SetValue(data);
 											}
@@ -1058,7 +1074,7 @@ namespace eg {
 										case ScriptFieldType::Vector4:
 										{
 											glm::vec4 data = scriptField.GetValue<glm::vec4>();
-											if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+											if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
 											{
 												scriptField.SetValue(data);
 											}
@@ -1073,7 +1089,7 @@ namespace eg {
 										case ScriptFieldType::Float:
 										{
 											float data = 0.0f;
-											if (ImGui::DragFloat(name.c_str(), &data))
+											if (DrawComponentPropertyFloat(name.c_str(), &data))
 											{
 												ScriptFieldInstance& fieldInstance = entityFields[name];
 												fieldInstance.Field = field;
@@ -1085,7 +1101,7 @@ namespace eg {
 										case ScriptFieldType::Int32:
 										{
 											int data = 0;
-											if (ImGui::DragInt(name.c_str(), &data))
+											if (DrawComponentPropertyInt(name.c_str(), &data))
 											{
 												ScriptFieldInstance& fieldInstance = entityFields[name];
 												fieldInstance.Field = field;
@@ -1096,7 +1112,7 @@ namespace eg {
 										case ScriptFieldType::Bool:
 										{
 											bool data = false;
-											if (ImGui::Checkbox(name.c_str(), &data))
+											if (DrawComponentPropertyCheckbox(name.c_str(), &data))
 											{
 												ScriptFieldInstance& fieldInstance = entityFields[name];
 												fieldInstance.Field = field;
@@ -1121,7 +1137,7 @@ namespace eg {
 										case ScriptFieldType::Vector2:
 										{
 											glm::vec2 data = glm::vec2(0.0f);
-											if (ImGui::DragFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+											if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
 											{
 												ScriptFieldInstance& fieldInstance = entityFields[name];
 												fieldInstance.Field = field;
@@ -1132,7 +1148,7 @@ namespace eg {
 										case ScriptFieldType::Vector3:
 										{
 											glm::vec3 data = glm::vec3(0.0f);
-											if (ImGui::DragFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+											if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
 											{
 												ScriptFieldInstance& fieldInstance = entityFields[name];
 												fieldInstance.Field = field;
@@ -1143,7 +1159,7 @@ namespace eg {
 										case ScriptFieldType::Vector4:
 										{
 											glm::vec4 data = glm::vec4(0.0f);
-											if (ImGui::DragFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+											if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
 											{
 												ScriptFieldInstance& fieldInstance = entityFields[name];
 												fieldInstance.Field = field;
@@ -1159,8 +1175,11 @@ namespace eg {
 
 						ImGui::TreePop();
 					}
-				}
 
+					ImGui::PopID();
+					j++;
+				}
+				ImGui::Indent();
 
 			}, m_Context, ComponentIcons::ScriptIcon);
 
