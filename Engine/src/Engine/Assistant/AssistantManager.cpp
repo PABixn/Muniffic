@@ -70,6 +70,8 @@ namespace eg
 
 	void AssistantManager::CreateAssistant(std::string assistantName, std::string assistantInstructions = "")
 	{
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
 		PyObject* args = PyTuple_Pack(3, PyUnicode_FromString(assistantName.c_str()), PyUnicode_FromString("gpt-3.5-turbo"), PyUnicode_FromString(assistantInstructions.c_str()));
 
 		if (args == nullptr)
@@ -90,9 +92,9 @@ namespace eg
 
 		m_AssistantID = PyUnicode_AsUTF8(result);
 
-		SaveAssistant();
+		PyGILState_Release(gstate);
 
-		PyEval_SaveThread();
+		SaveAssistant();
 	}
 
 	std::string AssistantManager::CreateThread()
