@@ -47,6 +47,8 @@ namespace eg
 
 		ImGui::Separator();
 
+		std::string lastMessageRole = "";
+
 		for (Message* msg : assistantManager->GetMessages(threadID))
 		{
 			std::string role = msg->role + ": ";
@@ -60,6 +62,19 @@ namespace eg
 			ImGui::PopStyleColor();
 			ImGui::SameLine();
 			ImGui::Markdown(msg->content.c_str(), msg->content.length(), mdConfig);
+
+			lastMessageRole = msg->role;
+		}
+
+		if (lastMessageRole == "user")
+		{
+			std::string msg = "Responding...";
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
+			ImGui::Button("assistant: ");
+			ImGui::PopStyleColor();
+			ImGui::SameLine();
+			ImGui::Markdown(msg.c_str(), msg.length(), mdConfig);
+
 		}
 
 		ImGui::Separator();

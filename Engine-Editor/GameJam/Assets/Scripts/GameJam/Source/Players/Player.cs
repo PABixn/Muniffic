@@ -25,7 +25,7 @@ namespace Game
         {
             direction = new Vector2(1,0);
             velocity = Vector2.Zero;
-            friction = 0.8f;
+            friction = 10f;
             this.isGrounded = true;
             transform = GetComponent<TransformComponent>();
             rigidBody = GetComponent<RigidBody2DComponent>();

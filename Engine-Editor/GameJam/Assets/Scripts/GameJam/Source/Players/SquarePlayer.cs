@@ -28,7 +28,7 @@ namespace Game
             projectiles = new List<Projectile>();
             playerCollider = GetComponent<BoxCollider2DComponent>();
             animator = GetComponent<AnimatorComponent>();
-            animator.ChangeAnimation("squareIdle");
+            animator.Play("squareIdle");
             collideSize = playerCollider.size;
             shotSpeed = 5;
             lastShot = 0;
