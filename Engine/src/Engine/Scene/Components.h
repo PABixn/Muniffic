@@ -104,7 +104,8 @@ namespace eg {
 		{
 			Animator2D = CreateRef<Animator>();
 		};
-		AnimatorComponent(const AnimatorComponent&) = default;
+		AnimatorComponent(const AnimatorComponent& animator)
+			: Animator2D(animator.Animator2D) {};
 		AnimatorComponent(const Ref<Animator>& animator)
 			: Animator2D(animator) {}
 	};

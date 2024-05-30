@@ -548,7 +548,7 @@ namespace eg {
 		}
 		//flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f));
-		opened = ImGui::CustomTreeNodeEx((void*)(uint64_t)entity.GetUUID(), flags, tag.c_str());
+		opened = ImGui::CustomTreeNodeEx((void*)(int64_t)entity.GetUUID(), flags, tag.c_str());
 		ImGui::PopStyleVar();
 		if (ImGui::BeginDragDropSource())
 		{
@@ -864,7 +864,7 @@ namespace eg {
 
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
 					float lineHeight = GImGui->Font->FontSize+ GImGui->Style.FramePadding.y * 2.0f;
-					bool open = ImGui::TreeNodeEx((void*)(uint64_t)scriptUUID, flags, scriptName.c_str());
+					bool open = ImGui::TreeNodeEx((void*)(int64_t)scriptUUID, flags, scriptName.c_str());
 					ImGui::SameLine(contentRegionAvailable.x - lineHeight);
 
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.f, 1.f, 1.f, 0.0f));
@@ -1398,7 +1398,7 @@ namespace eg {
 				{
 					std::string name = "Animation" + std::to_string(component.Animator2D->GetAnimations()->size());
 					component.Animator2D->AddAnimationWithName(name);
-					Commands::ExecuteVectorCommand<Ref<Animation>>({ component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, CreateRef<Animation>() });
+					Commands::ExecuteVectorCommand<Ref<Animation>>({ component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, Animation::Create() });
 				}
 				const Ref<std::vector<Ref<Animation>>> animations = component.Animator2D->GetAnimations();
 				if (animations->size() > 0)
@@ -1414,12 +1414,12 @@ namespace eg {
 						if (component.Animator2D->GetCurrentAnimation() != nullptr && animations->size() > 0)
 						{
 							ImGui::TextWithLineLimitAndToolTipV(std::string("Current Animation: "+component.Animator2D->GetCurrentAnimation()->GetName()).c_str(),1, 0);
-							if (component.Animator2D->GetCurrentAnimation()->GetFrame())
+							if (component.Animator2D->GetCurrentAnimation()->GetFrame().SubTexture)
 							{
-								Ref<SubTexture2D> subtexture = component.Animator2D->GetCurrentAnimation()->GetFrame();
+								Ref<SubTexture2D> subtexture = component.Animator2D->GetCurrentAnimation()->GetFrame().SubTexture;
 								ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
 								ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
-								ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
+								ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame().SubTexture->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
 							}
 						}
 					}
@@ -1446,14 +1446,14 @@ namespace eg {
 								{
 									m_PreviewedAnimations.push_back(animation);
 								}
-								if (ShowAnimationPreview && animation->GetFrame())
+								if (ShowAnimationPreview && animation->GetFrame().SubTexture)
 								{
 									ImGui::Columns(2, 0, false);
 									ImGui::SetColumnWidth(0, 100.f);
-									Ref<SubTexture2D> subtexture = animation->GetFrame();
+									Ref<SubTexture2D> subtexture = animation->GetFrame().SubTexture;
 									ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
 									ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
-									ImGui::Image((void*)(intptr_t)animation->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
+									ImGui::Image((void*)(intptr_t)animation->GetFrame().SubTexture->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
 									ImGui::NextColumn();
 
 								}
@@ -1478,13 +1478,13 @@ namespace eg {
 							ImGui::PopStyleVar();
 							if (ImGui::BeginDragDropTarget())
 							{
-								uint64_t* uuid;
+								int64_t* uuid;
 
 								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 								{
-									uuid = (uint64_t*)payload->Data;
+									uuid = (int64_t*)payload->Data;
 
-									Ref<Animation> animation = Animation::Create(*uuid);
+									Ref<Animation> animation = Animation::Create((UUID)(*uuid));
 									if (animation)
 									{
 										Ref<Animation> oldAnim = component.Animator2D->GetAnimation(i);
@@ -1511,7 +1511,7 @@ namespace eg {
 							{
 								index = std::find((*animations).begin(), (*animations).end(), animation) - (*animations).begin();
 							}
-							if (ShowAnimationPreview && animation->GetFrame())
+							if (ShowAnimationPreview && animation->GetFrame().SubTexture)
 							{
 								ImGui::EndColumns();
 							}

@@ -4,12 +4,13 @@
 namespace eg {
 	class AnimationEditorPanel {
 	public:
-		bool OpenAnimationEditorPanel(std::vector<std::pair<int, int>>& frames);
+		bool OpenAnimationEditorPanel(UUID asset);
 		void OnImGuiRender();
 	private:
 		void ShowAnimationEditorPanel(bool show) { m_ShowAnimationEditorPanel = show; };
 	private:
-		std::vector<std::pair<int, int>> m_frames;
 		bool m_ShowAnimationEditorPanel = false;
+		Ref<Animation> m_Anim;
+		Resource* m_LoadedResource;
 	};
 }

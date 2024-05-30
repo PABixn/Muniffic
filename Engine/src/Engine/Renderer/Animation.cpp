@@ -9,44 +9,50 @@ namespace eg
 	{
 	}
 
-	Animation::Animation(const std::string &path)
+	Animation::Animation(const std::string& path)
 		: m_frameRate(1.0f), m_loop(true), m_playing(false), m_frame(0), m_AnimationID(UUID())
 	{
 		m_name = path;
 	}
 
-	Animation::Animation(const UUID &, const std::string &path)
+	Animation::Animation(const UUID&, const std::string& path)
 		: m_frameRate(1.0f), m_loop(true), m_playing(false), m_frame(0), m_AnimationID(UUID())
 	{
 		m_name = path;
 	}
 
-	Animation::Animation(const std::vector<Ref<SubTexture2D>> &frames, float frameRate, bool loop)
+	Animation::Animation(const std::vector<FrameData>& frames, float frameRate, bool loop)
 		: m_frames(frames), m_frameRate(frameRate), m_loop(loop), m_playing(false), m_frame(0), m_AnimationID(UUID())
 	{
 	}
 
-	Animation::Animation(const UUID &id, const std::vector<Ref<SubTexture2D>> &frames, float frameRate, bool loop)
+	Animation::Animation(const UUID& id, const std::vector<FrameData>& frames, float frameRate, bool loop)
 		: m_frames(frames), m_frameRate(frameRate), m_loop(loop), m_playing(false), m_frame(0), m_AnimationID(id)
 	{
 	}
 
-	Ref<Animation> Animation::Create(const std::string &path)
+	/*Ref<Animation> Animation::Create()
+	 {
+		return CreateRef<Animation>();
+	}*/
+
+	Ref<Animation> Animation::Create(const std::string& path)
 	{
 		return CreateRef<Animation>(path);
 	}
 
-	Ref<Animation> Animation::Create(const std::vector<Ref<SubTexture2D>> &frames, float frameRate, bool loop)
+	Ref<Animation> Animation::Create(const std::vector<FrameData>& frames, float frameRate, bool loop)
 	{
 		return CreateRef<Animation>(frames, frameRate, loop);
+		//return nullptr;
 	}
 
-	Ref<Animation> Animation::Create(const UUID &id)
+	Ref<Animation> Animation::Create(const UUID& id)
 	{
 		EG_PROFILE_FUNCTION();
 		if (!ResourceDatabase::FindResourceData(id, ResourceType::Animation))
 			return nullptr;
-		AnimationResourceData *animData = (AnimationResourceData *)ResourceDatabase::GetResourceData(id);
+		AnimationResourceData* animData = (AnimationResourceData*)ResourceDatabase::GetResourceData(id);
 		Ref<Animation> anim = CreateRef<Animation>();
 		anim->m_AnimationID = id;
 		anim->m_name = animData->ResourceName;
@@ -54,9 +60,9 @@ namespace eg
 		anim->m_loop = animData->Loop;
 		anim->m_frame = 0;
 
-		for (auto &frame : animData->Frames)
+		for (auto& frame : animData->Frames)
 		{
-			if (!anim->AddFrame(SubTexture2D::Create(frame)))
+			if (!anim->AddFrame(FrameData(SubTexture2D::Create(frame),1.0f)).SubTexture)
 				return nullptr;
 		}
 		return anim;
@@ -67,7 +73,7 @@ namespace eg
 		if (m_playing && m_frames.size() > 0)
 		{
 			m_AnimationEnded = false;
-			m_frame += m_frameRate * speed * dt;
+			m_frame += m_frameRate * speed * dt * GetFrame().FrameDuration;
 			if ((int)m_frame >= m_frames.size())
 			{
 				m_AnimationEnded = true;
@@ -125,12 +131,12 @@ namespace eg
 		m_frameRate = frameRate;
 	}
 
-	void Animation::SetName(const std::string &name)
+	void Animation::SetName(const std::string& name)
 	{
 		m_name = name;
 	}
 
-	void Animation::SetID(const UUID &id)
+	void Animation::SetID(const UUID& id)
 	{
 		m_AnimationID = id;
 	}
@@ -149,31 +155,30 @@ namespace eg
 		}
 	}
 
-	Ref<SubTexture2D> Animation::AddFrame(const Ref<SubTexture2D> &frame)
+	Animation::FrameData Animation::AddFrame(const FrameData& frame)
 	{
 		EG_PROFILE_FUNCTION();
-		if (!frame)
-			return nullptr;
+		if (!frame.SubTexture)
+			return Animation::FrameData{};
 		m_frames.push_back(frame);
 		return frame;
 	}
 
-	void Animation::AddFrames(const std::vector<Ref<SubTexture2D>> &frames)
+	void Animation::AddFrames(const std::vector<Ref<SubTexture2D>>& frames)
 	{
 		EG_PROFILE_FUNCTION();
 		m_frames.insert(m_frames.end(), frames.begin(), frames.end());
 	}
-	const Ref<SubTexture2D> &Animation::GetFrame(int frame) const
+	const Animation::FrameData& Animation::GetFrame(int frame) const
 	{
 		EG_PROFILE_FUNCTION();
 		if (m_frames.size() > 0 && frame < m_frames.size() && frame >= 0)
 			return m_frames[frame];
-		return nullptr;
+		return Animation::FrameData{};
 	}
-	const Ref<SubTexture2D> &Animation::GetFrame() const
+	const Animation::FrameData& Animation::GetFrame() const
 	{
 		EG_PROFILE_FUNCTION();
 		return GetFrame((int)m_frame);
 	}
-
 }

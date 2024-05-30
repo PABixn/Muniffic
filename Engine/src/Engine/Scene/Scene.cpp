@@ -269,7 +269,7 @@ namespace eg {
 				for (auto entity : group)
 				{
 					auto [sprite, animator] = group.get<SpriteRendererSTComponent, AnimatorComponent>(entity);
-					sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame();
+					sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame().SubTexture;
 				}
 			}
 

@@ -7,6 +7,7 @@
 #include "DeleteDirectoryPanel.h"
 #include "RenameResourcePanel.h"
 #include "CreateDirectoryPanel.h"
+#include "ContentBrowserRightClickPanel.h"
 
 namespace eg {
 	
@@ -34,5 +35,7 @@ namespace eg {
 		Scope<RenameResourcePanel> m_RenameResourcePanel;
 		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel;
 		Scope<CreateDirectoryPanel> m_CreateDirectoryPanel;
+		
+		Ref<ContentBrowserRightClickPanel> m_ContentBrowserRightClickPanel;
 	};
 }

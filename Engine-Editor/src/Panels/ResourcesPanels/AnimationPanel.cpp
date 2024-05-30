@@ -17,7 +17,7 @@ namespace eg {
 	{
 		ShowAnimationPanel(true);
 		EG_PROFILE_FUNCTION();
-		std::filesystem::path textureBasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
+		std::filesystem::path textureBasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animations";
 		bool resourceLoad = false;
 		m_LoadedResource = new Resource();
 		resourceLoad = resourceSystemLoad(path.string(), ResourceType::Image, m_LoadedResource);
@@ -40,19 +40,16 @@ namespace eg {
 		m_FrameHeight = ((ImageResourceData*)m_LoadedResource->Data)->height;
 		m_FrameWidth = ((ImageResourceData*)m_LoadedResource->Data)->width;
 
-		
-
 		m_PreviewOriginImage = Texture2D::Create(path.string());
-		std::vector<Ref<SubTexture2D>> frames;
-		frames.push_back(SubTexture2D::Create(m_PreviewOriginImage, { 0, 0 }, { 1, 1 }));
-		m_PreviewData = Animation::Create(frames);
+		m_FrameData.SubTexture = SubTexture2D::Create(m_PreviewOriginImage, {0, 0}, {1, 1});
+		m_FrameData.FrameDuration = 1.0f;//*m_PreviewData->GetFrameRatePtr();
+		m_FrameData.isKeyFrame = false;
+		m_FramesData.push_back(m_FrameData);
+		m_PreviewData = Animation::Create();
 		m_ResourceData = new AnimationResourceData();
 		m_ResourceData->ParentDirectory = 0;
 		m_ResourceData->ResourceName = std::filesystem::path(m_LoadedResource->Name).stem().string();
 		m_ResourceData->Extension = ".anim";
-
-		m_AnimationEditorPanel = CreateRef<AnimationEditorPanel>();
-		m_NoFramesPanel = CreateRef<NoFramesPanel>();
 
 		m_ImageAspectRatio = (float)m_PreviewOriginImage->GetWidth() / (float)m_PreviewOriginImage->GetHeight();
 		if (m_ImageAspectRatio < 1.0f) 
@@ -91,7 +88,12 @@ namespace eg {
 		for (auto frame : m_SelectedFrames) {
 			glm::vec2 min = { frame.second * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f - ((frame.first + 1) * (float)m_FrameHeight) / (float)m_TextureData->Height };
 			glm::vec2 max = { (frame.second + 1) * (float)m_FrameWidth / (float)m_TextureData->Width,1.0f - (frame.first * (float)m_FrameHeight) / (float)m_TextureData->Height };
-			m_PreviewData->AddFrame(SubTexture2D::Create(m_PreviewOriginImage, min, max));
+			m_FrameData.SubTexture = SubTexture2D::Create(m_PreviewOriginImage, min, max);
+			if (std::find(m_KeyFrames.begin(), m_KeyFrames.end(), frame) != m_KeyFrames.end())
+				m_FrameData.isKeyFrame = true;
+			else
+				m_FrameData.isKeyFrame = false;
+			m_PreviewData->AddFrame(m_FrameData);
 		}
 
 		m_PreviewAspectRatio = (float)m_FrameWidth / (float)m_FrameHeight;
@@ -218,7 +220,7 @@ namespace eg {
 					m_RowCount = maxRows;
 				SetFrames();
 			}
-
+			ImGui::Text("Right click to select key frames");
 			ImGui::Text("Image Preview:");
 			
 			for (int i = 0; i < (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight); i++)
@@ -231,9 +233,17 @@ namespace eg {
 					auto it = std::find(m_SelectedFrames.begin(), m_SelectedFrames.end(), frameIndex);
 					bool isSelected = it != m_SelectedFrames.end();
 
-					bool isSelectedFrame = std::find(m_SelectedFrames.begin(), m_SelectedFrames.end(), std::make_pair(i, j)) != m_SelectedFrames.end();
+					auto it_key = std::find(m_KeyFrames.begin(), m_KeyFrames.end(), frameIndex);
+					bool isKeyFrame = it_key != m_KeyFrames.end();
 
-					ImVec4 borderColor = isSelectedFrame ? ImVec4{0.0f, 1.0f, 0.0f, 1.0f} : ImVec4{1.0f, 0.0f, 0.0f, 1.0f};
+					bool isSelectedFrame = std::find(m_SelectedFrames.begin(), m_SelectedFrames.end(), std::make_pair(i, j)) != m_SelectedFrames.end();
+					bool isSelectedKeyFrame = std::find(m_KeyFrames.begin(), m_KeyFrames.end(), frameIndex) != m_KeyFrames.end();
+
+					ImVec4 borderColor = ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f };
+					if (isSelectedKeyFrame)
+						borderColor = { 1.0f, 0.0f, 1.0f, 1.0f };
+					else if (isSelectedFrame)
+						borderColor = ImVec4{ 0.0f, 1.0f, 0.0f, 1.0f };
 
 					ImGui::Image(
 						(void*)m_PreviewOriginImage->GetRendererID(), 
@@ -252,6 +262,17 @@ namespace eg {
 						{1,1,1,1}, 
 						borderColor);
 
+					if (ImGui::IsItemClicked(ImGuiMouseButton_Right) && isSelectedKeyFrame) {
+						m_KeyFrames.erase(it_key);
+						SetFrames();
+					}
+					else if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+						m_KeyFrames.emplace_back(frameIndex);
+						if(!isSelected)
+							m_SelectedFrames.emplace_back(frameIndex);
+						SetFrames();
+					}
+
 					if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && isSelected) {
 						m_SelectedFrames.erase(it);
 						SetFrames();
@@ -260,7 +281,6 @@ namespace eg {
 						m_SelectedFrames.emplace_back(frameIndex);
 						SetFrames();
 					}
-
 					ImGui::PopStyleVar();
 				}
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
@@ -278,14 +298,6 @@ namespace eg {
 				m_SelectedFrames.clear();
 				SetFrames();
 			}
-			if (ImGui::Button("Open animation editor panel", ImVec2(200, 40))) {
-				if (m_AnimationEditorPanel) {
-					if (m_SelectedFrames.size() > 0)
-						m_AnimationEditorPanel->OpenAnimationEditorPanel(m_SelectedFrames);
-					else
-						m_NoFramesPanel->OpenNoFramesPanel();	
-				}
-			}
 			ImGui::PopStyleVar(2);
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
 			ImGui::DragFloat("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500);
@@ -299,13 +311,13 @@ namespace eg {
 			ImGui::Text("Animation: %s", m_ResourceData->ResourceName.c_str());
 			if(m_PreviewData->GetFrameCount() > 0)
 				ImGui::Image(
-					(void*)m_PreviewData->GetFrame()->GetTexture()->GetRendererID(),
+					(void*)m_PreviewData->GetFrame().SubTexture->GetTexture()->GetRendererID(),
 					ImVec2(m_BasePreviewWidth, m_BasePreviewHeight), 
 					{ 
-						m_PreviewData->GetFrame()->GetMin().x , m_PreviewData->GetFrame()->GetMax().y
+						m_PreviewData->GetFrame().SubTexture->GetMin().x , m_PreviewData->GetFrame().SubTexture->GetMax().y
 					}, 
 					{
-						m_PreviewData->GetFrame()->GetMax().x , m_PreviewData->GetFrame()->GetMin().y
+						m_PreviewData->GetFrame().SubTexture->GetMax().x , m_PreviewData->GetFrame().SubTexture->GetMin().y
 					});
 
 			/*char buffer2[512];
@@ -329,10 +341,10 @@ namespace eg {
 					data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SubTexture);
 					data->Texture = m_TextureUUID;
 					data->ResourceName = m_ResourceData->ResourceName + std::to_string(i);
-					data->TexCoords[0] = m_PreviewData->GetFrame(i)->GetMin();
-					data->TexCoords[1] = { m_PreviewData->GetFrame(i)->GetMax().x, m_PreviewData->GetFrame(i)->GetMin().y };
-					data->TexCoords[2] = m_PreviewData->GetFrame(i)->GetMax();
-					data->TexCoords[3] = { m_PreviewData->GetFrame(i)->GetMin().x, m_PreviewData->GetFrame(i)->GetMax().y };
+					data->TexCoords[0] = m_PreviewData->GetFrame(i).SubTexture->GetMin();
+					data->TexCoords[1] = { m_PreviewData->GetFrame(i).SubTexture->GetMax().x, m_PreviewData->GetFrame(i).SubTexture->GetMin().y };
+					data->TexCoords[2] = m_PreviewData->GetFrame(i).SubTexture->GetMax();
+					data->TexCoords[3] = { m_PreviewData->GetFrame(i).SubTexture->GetMin().x, m_PreviewData->GetFrame(i).SubTexture->GetMax().y };
 					UUID uuid = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)data, ResourceType::SubTexture);
 					m_ResourceData->Frames.push_back(uuid);
 					saData->Sprites.push_back(uuid);
@@ -352,8 +364,6 @@ namespace eg {
 				CloseAnimationPanel();
 			ImGui::End();
 
-			m_AnimationEditorPanel->OnImGuiRender();
-			m_NoFramesPanel->OnImGuiRender();
 		}
 	}
 

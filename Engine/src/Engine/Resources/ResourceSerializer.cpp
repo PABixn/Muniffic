@@ -146,7 +146,7 @@ namespace eg
 		{
 			for (auto resource : fontResources)
 			{
-				UUID uuid = resource["UUID"].as<uint64_t>();
+				UUID uuid = resource["UUID"].as<int64_t>();
 
 				FontResourceData* data = new FontResourceData();
 				if (resource["ParentDirectory"])
@@ -196,7 +196,7 @@ namespace eg
 		{
 			for (auto resource : subtextureResource)
 			{
-				UUID uuid = resource["UUID"].as<uint64_t>();
+				UUID uuid = resource["UUID"].as<int64_t>();
 
 				SubTextureResourceData* data = new SubTextureResourceData();
 				if (resource["ParentDirectory"])
@@ -208,7 +208,7 @@ namespace eg
 				else
 					data->ResourceName = resource["SubtextureName"].as<std::string>();
 				data->Extension = resource["Extension"].as<std::string>();
-				data->Texture = resource["Texture"].as<uint64_t>();
+				data->Texture = resource["Texture"].as<int64_t>();
 
 				auto texCoords = resource["TexCoords"];
 				int i = 0;
@@ -226,7 +226,7 @@ namespace eg
 		{
 			for (auto resource : animationResources)
 			{
-				UUID uuid = resource["UUID"].as<uint64_t>();
+				UUID uuid = resource["UUID"].as<int64_t>();
 
 				AnimationResourceData* data = new AnimationResourceData();
 				if (resource["ParentDirectory"])
@@ -246,7 +246,7 @@ namespace eg
 				auto frames = resource["Frames"];
 				for (auto frame : frames)
 				{
-					data->Frames.push_back(frame.as<uint64_t>());
+					data->Frames.push_back(frame.as<int64_t>());
 				}
 
 				CacheAnimation(uuid, data);
@@ -256,7 +256,7 @@ namespace eg
 			{
 				for (auto resource : spriteAtlasResources)
 				{
-					UUID uuid = resource["UUID"].as<uint64_t>();
+					UUID uuid = resource["UUID"].as<int64_t>();
 
 					SpriteAtlasResourceData* data = new SpriteAtlasResourceData();
 					if (resource["ParentDirectory"])
@@ -276,7 +276,7 @@ namespace eg
 					auto sprites = resource["Sprites"];
 					for (auto sprite : sprites)
 					{
-						data->Sprites.push_back(sprite.as<uint64_t>());
+						data->Sprites.push_back(sprite.as<int64_t>());
 					}
 
 					CacheSpriteAtlas(uuid, data);
@@ -287,7 +287,7 @@ namespace eg
 			{
 				for (auto resource : scriptResources)
 				{
-					UUID uuid = resource["UUID"].as<uint64_t>();
+					UUID uuid = resource["UUID"].as<int64_t>();
 
 					ScriptResourceData* data = new ScriptResourceData();
 

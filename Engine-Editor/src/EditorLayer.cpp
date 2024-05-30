@@ -57,6 +57,8 @@ namespace eg
 
 		m_ActiveScene = CreateRef<Scene>();
 
+		m_AnimationEditorPanel = CreateRef<AnimationEditorPanel>();
+
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
 		{

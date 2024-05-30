@@ -7,6 +7,7 @@
 #include "Panels/AddResourcePanel.h"
 #include "Panels/ProjectDirectoryPanel.h"
 #include "Panels/ConsolePanel.h"
+#include "Panels/ResourcesPanels/AnimationEditorPanel.h"
 
 
 namespace eg {
@@ -116,6 +117,7 @@ namespace eg {
 		RenameResourcePanel* m_RenameResourcePanel;
 		CreateDirectoryPanel* m_CreateDirectoryPanel;*/
 		Scope<ConsolePanel> m_ConsolePanel;
+		Ref<AnimationEditorPanel> m_AnimationEditorPanel;
 
 		enum class SceneState
 		{
@@ -128,7 +130,7 @@ namespace eg {
 	public:
 		UnsavedChangesPanel* m_UnsavedChangesPanel;
 		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
-		
+		Ref<AnimationEditorPanel> GetAnimationEditorPanel() { return m_AnimationEditorPanel; };
 
 	};
 

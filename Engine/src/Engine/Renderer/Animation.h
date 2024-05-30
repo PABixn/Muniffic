@@ -9,15 +9,22 @@ namespace eg {
 	
 	class Animation {
 	public:
+		struct FrameData {
+			Ref<SubTexture2D> SubTexture;
+			float FrameDuration;
+			bool isKeyFrame;
+		};
+		//Do not use constructors, use Animation::Create instead
 		Animation();
+		Animation(const UUID& id, const std::vector<FrameData>& frames, float frameRate = 1.0f, bool loop = true);
 		Animation(const std::string& path);
 		Animation(const UUID&, const std::string& path);
-		Animation(const std::vector<Ref<SubTexture2D>>& frames, float frameRate = 1.0f, bool loop = true);
-		Animation(const UUID& id, const std::vector<Ref<SubTexture2D>>& frames, float frameRate = 1.0f, bool loop = true);
+		Animation(const std::vector<FrameData>& frames, float frameRate = 1.0f, bool loop = true);
 		~Animation() = default;
 
+		inline static Ref<Animation> Create() { return CreateRef<Animation>();};
 		static Ref<Animation> Create(const std::string& path);
-		static Ref<Animation> Create(const std::vector<Ref<SubTexture2D>>& frames, float frameRate = 1.0f, bool loop = true);
+		static Ref<Animation> Create(const std::vector<FrameData>& frames, float frameRate = 1.0f, bool loop = true);
 		static Ref<Animation> Create(const UUID& id);
 
 		void Update(float dt, float speed);
@@ -34,12 +41,12 @@ namespace eg {
 
 		void RemoveFrame(int index);
 		void ClearFrames();
-		Ref<SubTexture2D> AddFrame(const Ref<SubTexture2D>& frame);
+		FrameData AddFrame(const FrameData& frame);
 		void AddFrames(const std::vector<Ref<SubTexture2D>>& frames);
 
-		inline const std::vector<Ref<SubTexture2D>>& GetFrames() const { return m_frames; }
-		const Ref<SubTexture2D>& GetFrame() const;
-		const Ref<SubTexture2D>& GetFrame(int frame) const;
+		inline const std::vector<FrameData>& GetFrames() const { return m_frames; }
+		const FrameData& GetFrame() const;
+		const FrameData& GetFrame(int frame) const;
 		inline float GetCurrentFrame() const { return m_frame; }
 		inline float* GetCurrentFramePtr() { return &m_frame; }
 		inline const float GetFrameCount() const { return m_frames.size(); }
@@ -60,7 +67,7 @@ namespace eg {
 		bool m_playing = false;
 		bool m_AnimationEnded = false;
 		UUID m_AnimationID;
-		std::vector<Ref<SubTexture2D>> m_frames;
+		std::vector<FrameData> m_frames;
 
 		std::string m_name = "";
 	};

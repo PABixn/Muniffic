@@ -537,7 +537,7 @@ namespace eg {
 
 					if (spriteRendererComponent["TextureUUID"])
 					{
-						uint64_t textureUUID = spriteRendererComponent["TextureUUID"].as<uint64_t>();
+						int64_t textureUUID = spriteRendererComponent["TextureUUID"].as<int64_t>();
 
 						if (ResourceDatabase::FindResourceData(textureUUID, ResourceType::Image))
 						{
@@ -565,7 +565,7 @@ namespace eg {
 					src.TilingFactor = spriteRendererComponentST["TilingFactor"].as<float>();
 					if (spriteRendererComponentST["TextureUUID"])
 					{
-						uint64_t textureUUID = spriteRendererComponentST["TextureUUID"].as<uint64_t>();
+						int64_t textureUUID = spriteRendererComponentST["TextureUUID"].as<int64_t>();
 
 						if (ResourceDatabase::FindResourceData(uuid, ResourceType::Image))
 						{
@@ -611,7 +611,7 @@ namespace eg {
 						for (auto animation : animations)
 						{
 							//TODO: if animation uses prefab
-							Ref<Animation> anim = Animation::Create(UUID(animation.as<uint64_t>()));
+							Ref<Animation> anim = Animation::Create(UUID(animation.as<int64_t>()));
 							if(anim)
 								ac.Animator2D->AddAnimation(anim);
 							//TODO: else load all data for animation from scene file
@@ -623,7 +623,7 @@ namespace eg {
 					{
 						for (auto transition : transitions)
 						{
-							ac.Animator2D->AddTransition(transition["From"].as<uint64_t>(), transition["To"].as<uint64_t>());
+							ac.Animator2D->AddTransition(transition["From"].as<int64_t>(), transition["To"].as<int64_t>());
 						}
 					}
 				}

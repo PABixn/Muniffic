@@ -1,8 +1,8 @@
 #pragma once
 #include "Engine.h"
 #include <filesystem>
-#include "AnimationEditorPanel.h"
 #include "../NoFramesPanel.h"
+
 
 namespace eg
 {
@@ -41,6 +41,7 @@ namespace eg
 		int m_BasePreviewWidth = 1, m_BasePreviewHeight = 1;
 
 		std::vector<std::pair<int,int>> m_SelectedFrames;
+		std::vector<std::pair<int, int>> m_KeyFrames;
 
 		//TextureResourceData m_TextureData;
 		std::filesystem::path m_OriginalResourcePath = "";
@@ -52,8 +53,7 @@ namespace eg
 		Ref<Animation> m_PreviewData = nullptr;
 		bool m_ShowAnimationPanel = false;
 		std::filesystem::path m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animation";
-
-		Ref<AnimationEditorPanel> m_AnimationEditorPanel;
-		Ref<NoFramesPanel> m_NoFramesPanel;
+		std::vector<Animation::FrameData> m_FramesData;
+		Animation::FrameData m_FrameData;
 	};
 }

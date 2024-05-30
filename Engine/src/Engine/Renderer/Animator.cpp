@@ -89,20 +89,20 @@ namespace eg {
 	void Animator::ResizeAnimations(size_t size)
 	{
 		EG_PROFILE_FUNCTION();
-		if(size > m_Animations->size())
+		if (size > m_Animations->size())
 			m_Animations->resize(size);
 	}
 
 	void Animator::AddEmptyAnimation()
 	{
 		EG_PROFILE_FUNCTION();
-		m_Animations->push_back(CreateRef<Animation>());
+		m_Animations->push_back(Animation::Create());
 	}
 
 	void Animator::AddAnimationWithName(const std::string& name)
 	{
 		EG_PROFILE_FUNCTION();
-		m_Animations->push_back(CreateRef<Animation>(name));
+		m_Animations->push_back(Animation::Create(name));
 	}
 
 	void Animator::RemoveAnimation(size_t index)

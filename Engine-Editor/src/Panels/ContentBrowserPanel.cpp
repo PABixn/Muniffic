@@ -69,6 +69,7 @@ namespace eg
 		m_DeleteDirectoryPanel = CreateScope<DeleteDirectoryPanel>();
 		m_RenameResourcePanel = CreateScope<RenameResourcePanel>();
 		m_CreateDirectoryPanel = CreateScope<CreateDirectoryPanel>();
+		m_ContentBrowserRightClickPanel = CreateRef<ContentBrowserRightClickPanel>();
 	}
 
 	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)
@@ -82,7 +83,7 @@ namespace eg
 
 		if (ImGui::BeginDragDropSource())
 		{
-			ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(uint64_t));
+			ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(int64_t));
 			ImGui::EndDragDropSource();
 		}
 
@@ -93,19 +94,39 @@ namespace eg
 				(*s).SetPreviewAbsoluteImagePath(std::filesystem::path(ResourceDatabase::GetResourcePath(key)));
 			}
 		}
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+			ImGui::OpenPopup("FileOptions");
+		}
+		/*if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+			EditorLayer* e = (EditorLayer*)Application::Get().GetFirstLayer();
+			e->GetAnimationEditorPanel()->OpenAnimationEditorPanel(key);
+			m_ContentBrowserRightClickPanel->OpenContentBrowserRightClickPanel(key,ImGui::GetMousePos().x, ImGui::GetMousePos().y);
+		}*/
 		DrawCenteredText(name.c_str(), thumbnailSize);
-		
+		AnimationResourceData* animData = (AnimationResourceData*)ResourceDatabase::GetResourceData(key);
 		if (ImGui::BeginPopupContextItem("FileOptions"))
 		{
 			if (ImGui::MenuItem("Delete"))
 			{
 				m_DeleteFilePanel->ShowWindow(key, type);
-				ImGui::PopStyleColor();
-				//ImGui::NextColumn();
+				ImGui::NextColumn();
 				ImGui::EndPopup();
+				ImGui::PopStyleColor();
 				ImGui::PopID();
 				return;
 			}
+			if (animData->Type == ResourceType::Animation) {
+				if (ImGui::MenuItem("Open animation editor panel")) {
+					EditorLayer* e = (EditorLayer*)Application::Get().GetFirstLayer();
+					e->GetAnimationEditorPanel()->OpenAnimationEditorPanel(key);
+					ImGui::EndPopup();
+					ImGui::PopStyleColor();
+					ImGui::PopID();
+					return;
+				}
+			}
+			ImGui::EndPopup();
 		}
 		ImGui::PopStyleColor();
 		ImGui::PopID();
@@ -143,7 +164,7 @@ namespace eg
 				{
 					if (ResourceUtils::CanDrop(AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory)))
 					{
-						uint64_t uuid = *(uint64_t*)payload->Data;
+						int64_t uuid = *(int64_t*)payload->Data;
 						if (ResourceDatabase::FindResourceData(uuid))
 							Commands::ExecuteMoveResourceCommand(uuid, AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory));
 						else
@@ -188,6 +209,8 @@ namespace eg
 
 		for (UUID asset : AssetDirectoryManager::getAssets(m_CurrentDirectory))
 		{
+			//AnimationResourceData* animData = (AnimationResourceData*)ResourceDatabase::GetResourceData(asset);
+			//animData->
 			ResourceType type = ResourceDatabase::GetResourceType(asset);
 			std::string name = ResourceDatabase::GetResourceName(asset);
 			if (name.find(buffer) == std::string::npos)
@@ -227,7 +250,7 @@ namespace eg
 
 			if (ImGui::BeginDragDropSource())
 			{
-				ImGui::SetDragDropPayload("ContentBrowserPanel", &directory, sizeof(uint64_t));
+				ImGui::SetDragDropPayload("ContentBrowserPanel", &directory, sizeof(int64_t));
 				ImGui::Text(name.c_str());
 				ImGui::EndDragDropSource();
 			}
@@ -238,7 +261,7 @@ namespace eg
 				{
 					if (ResourceUtils::CanDrop(directory))
 					{
-						uint64_t uuid = *(uint64_t*)payload->Data;
+						int64_t uuid = *(int64_t*)payload->Data;
 
 						if (ResourceDatabase::FindResourceData(uuid))
 							Commands::ExecuteMoveResourceCommand(uuid, directory);
@@ -275,6 +298,9 @@ namespace eg
 			Commands::ExecuteRawValueCommand(&padding, offset, std::string("ContentBrowserPanel-Padding"));
 
 		ImGui::End();
+		EditorLayer* e = (EditorLayer*)Application::Get().GetFirstLayer();
+		e->GetAnimationEditorPanel()->OnImGuiRender();
+		//m_ContentBrowserRightClickPanel->OnImGuiRender();
 	}
 
 }
