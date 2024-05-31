@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace eg
 {
     /// <summary>
-    /// Base class for all scripts.
+    /// Base class for all scripts, from which all scripts should be derived.
     /// </summary>
     public class DefaultBehaviour
     {
@@ -56,6 +56,11 @@ namespace eg
             return component;
         }
 
+        /// <summary>
+        /// Adds component of given type to entity.
+        /// </summary>
+        /// <typeparam name="T">Component type.</typeparam>
+        /// <returns>Component reference or null if component has not been added to the entity.</returns>
         public T AddComponent<T>() where T : Component, new()
         {
             Type componentType = typeof(T);
@@ -63,6 +68,10 @@ namespace eg
             return GetComponent<T>();
         }
 
+        /// <summary>
+        /// Removes the specified component from the entity.
+        /// </summary>
+        /// <typeparam name="T">The type of the component.</typeparam>
         public void RemoveComponent<T>() where T : Component, new()
         {
             Type componentType = typeof(T);
@@ -187,7 +196,6 @@ namespace eg
         {
             InternalCalls.Entity_InheritComponent(ID, typeof(T), false);
         }
-
     
         /// <summary>
         /// Sets the parent entity of the current entity.
@@ -310,7 +318,7 @@ namespace eg
         }
 
         /// <summary>
-        /// Retrieves all children entities of the current entity, including entities with empty IDs.
+        /// Retrieves all children entities of the current entity, including the children of the children.
         /// </summary>
         /// <returns>A list of Entity objects representing the children entities.</returns>
         public List<Entity> GetAnyChildren()
@@ -332,7 +340,7 @@ namespace eg
         }
 
         /// <summary>
-        /// Retrieves all children entities of the current entity, excluding entities with empty IDs.
+        /// Retrieves all direct children entities of the current entity, excluding the children of the children.
         /// </summary>
         /// <returns>A list of Entity objects representing the children entities.</returns>
         public List<Entity> GetChildren()
@@ -431,7 +439,7 @@ namespace eg
         }
 
         /// <summary>
-        /// Finds an entity by its ID.
+        /// Retrieves entity from scene by ID.
         /// </summary>
         /// <param name="ID">The ID of the entity.</param>
         /// <returns>The entity with the specified ID, or null if the entity does not exist.</returns>
