@@ -41,10 +41,8 @@ namespace eg {
 		m_FrameWidth = ((ImageResourceData*)m_LoadedResource->Data)->width;
 
 		m_PreviewOriginImage = Texture2D::Create(path.string());
-		m_FrameData.SubTexture = SubTexture2D::Create(m_PreviewOriginImage, {0, 0}, {1, 1});
-		m_FrameData.FrameDuration = 1.0f;//*m_PreviewData->GetFrameRatePtr();
-		m_FrameData.isKeyFrame = false;
-		m_FramesData.push_back(m_FrameData);
+		//m_FrameData.SubTexture = SubTexture2D::Create(m_PreviewOriginImage, {0, 0}, {1, 1});
+		//m_FramesData.push_back(m_FrameData);
 		m_PreviewData = Animation::Create();
 		m_ResourceData = new AnimationResourceData();
 		m_ResourceData->ParentDirectory = 0;
@@ -84,6 +82,7 @@ namespace eg {
 			}
 		*/
 
+		int i = 1;
 		std::sort(m_SelectedFrames.begin(), m_SelectedFrames.end());
 		for (auto frame : m_SelectedFrames) {
 			glm::vec2 min = { frame.second * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f - ((frame.first + 1) * (float)m_FrameHeight) / (float)m_TextureData->Height };
@@ -93,7 +92,10 @@ namespace eg {
 				m_FrameData.isKeyFrame = true;
 			else
 				m_FrameData.isKeyFrame = false;
+			m_FrameData.FrameDuration = 1.0f / *m_PreviewData->GetFrameRatePtr();
+			m_FrameData.FramePosition = (1.0f / m_PreviewData->GetFrameRate()) * i;
 			m_PreviewData->AddFrame(m_FrameData);
+			i++;
 		}
 
 		m_PreviewAspectRatio = (float)m_FrameWidth / (float)m_FrameHeight;
@@ -300,7 +302,9 @@ namespace eg {
 			}
 			ImGui::PopStyleVar(2);
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
-			ImGui::DragFloat("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500);
+			if (ImGui::DragFloat("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500)) {
+				SetFrames();
+			}
 			ImGui::Checkbox("Loop", m_PreviewData->IsLoopedPtr());
 			char buffer[512];
 			memset(buffer, 0, sizeof(buffer));
@@ -391,5 +395,7 @@ namespace eg {
 		m_ShowAnimationPanel = false;
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animation";
 		m_SelectedFrames.clear();
+		m_KeyFrames.clear();
+		m_FrameData = {};
 	}
 }

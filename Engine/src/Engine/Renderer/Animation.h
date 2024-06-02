@@ -12,6 +12,7 @@ namespace eg {
 		struct FrameData {
 			Ref<SubTexture2D> SubTexture;
 			float FrameDuration;
+			float FramePosition;
 			bool isKeyFrame;
 		};
 		//Do not use constructors, use Animation::Create instead

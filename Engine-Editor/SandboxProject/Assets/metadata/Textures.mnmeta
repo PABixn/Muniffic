@@ -62,3 +62,24 @@ Resources:
     Width: 1920
     Height: 1080
     Channels: 3
+  - UUID: 375509340916034907
+    ParentDirectory: 7944269225031781095
+    ResourceName: kuruoze3
+    Extension: .png
+    Width: 1920
+    Height: 1080
+    Channels: 3
+  - UUID: 3144710554014479654
+    ParentDirectory: 7944269225031781095
+    ResourceName: execution
+    Extension: .png
+    Width: 1920
+    Height: 1080
+    Channels: 3
+  - UUID: 768760532345836331
+    ParentDirectory: 7944269225031781095
+    ResourceName: double_girl
+    Extension: .png
+    Width: 1919
+    Height: 1047
+    Channels: 4
