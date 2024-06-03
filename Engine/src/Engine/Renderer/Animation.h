@@ -11,8 +11,8 @@ namespace eg {
 	public:
 		struct FrameData {
 			Ref<SubTexture2D> SubTexture;
-			float FrameDuration;
-			float FramePosition;
+			int FrameDuration;
+			//float FramePosition;
 			bool isKeyFrame;
 		};
 		//Do not use constructors, use Animation::Create instead
@@ -56,13 +56,13 @@ namespace eg {
 		inline bool IsLooped() const { return m_loop; }
 		inline bool* IsLoopedPtr() { return &m_loop; }
 		inline bool DidAnimationEnd() const { return m_AnimationEnded; }
-		inline float GetFrameRate() const { return m_frameRate; }
-		inline float* GetFrameRatePtr() { return &m_frameRate; }
+		inline int GetFrameRate() const { return m_frameRate; }
+		inline int* GetFrameRatePtr() { return &m_frameRate; }
 		inline const std::string& GetName() const { return m_name; }
 		inline const UUID& GetID() const { return m_AnimationID; }
 
 	private:
-		float m_frameRate;
+		int m_frameRate;
 		float m_frame = 0;
 		bool m_loop = false;
 		bool m_playing = false;

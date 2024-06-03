@@ -69,7 +69,6 @@ namespace eg
 		m_DeleteDirectoryPanel = CreateScope<DeleteDirectoryPanel>();
 		m_RenameResourcePanel = CreateScope<RenameResourcePanel>();
 		m_CreateDirectoryPanel = CreateScope<CreateDirectoryPanel>();
-		m_ContentBrowserRightClickPanel = CreateRef<ContentBrowserRightClickPanel>();
 	}
 
 	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)

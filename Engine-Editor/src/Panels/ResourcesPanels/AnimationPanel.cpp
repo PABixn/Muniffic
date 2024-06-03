@@ -92,8 +92,8 @@ namespace eg {
 				m_FrameData.isKeyFrame = true;
 			else
 				m_FrameData.isKeyFrame = false;
-			m_FrameData.FrameDuration = 1.0f / *m_PreviewData->GetFrameRatePtr();
-			m_FrameData.FramePosition = (1.0f / m_PreviewData->GetFrameRate()) * i;
+			m_FrameData.FrameDuration = 1;//*m_PreviewData->GetFrameRatePtr();
+			//m_FrameData.FramePosition = (1.0f / *m_PreviewData->GetFrameRatePtr()) * i;
 			m_PreviewData->AddFrame(m_FrameData);
 			i++;
 		}
@@ -302,7 +302,7 @@ namespace eg {
 			}
 			ImGui::PopStyleVar(2);
 			ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
-			if (ImGui::DragFloat("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500)) {
+			if (ImGui::DragInt("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500)) {
 				SetFrames();
 			}
 			ImGui::Checkbox("Loop", m_PreviewData->IsLoopedPtr());
