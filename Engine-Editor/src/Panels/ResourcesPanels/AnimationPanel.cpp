@@ -82,7 +82,6 @@ namespace eg {
 			}
 		*/
 
-		int i = 1;
 		std::sort(m_SelectedFrames.begin(), m_SelectedFrames.end());
 		for (auto frame : m_SelectedFrames) {
 			glm::vec2 min = { frame.second * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f - ((frame.first + 1) * (float)m_FrameHeight) / (float)m_TextureData->Height };
@@ -92,10 +91,8 @@ namespace eg {
 				m_FrameData.isKeyFrame = true;
 			else
 				m_FrameData.isKeyFrame = false;
-			m_FrameData.FrameDuration = 1;//*m_PreviewData->GetFrameRatePtr();
-			//m_FrameData.FramePosition = (1.0f / *m_PreviewData->GetFrameRatePtr()) * i;
+			m_FrameData.FrameDuration = *m_PreviewData->GetFrameRatePtr();
 			m_PreviewData->AddFrame(m_FrameData);
-			i++;
 		}
 
 		m_PreviewAspectRatio = (float)m_FrameWidth / (float)m_FrameHeight;

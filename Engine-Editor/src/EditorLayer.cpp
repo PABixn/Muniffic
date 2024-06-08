@@ -122,6 +122,8 @@ namespace eg
 			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 			if(m_AddResourcePanel->IsResourcePanelOpen())
 				m_AddResourcePanel->Update(ts);
+			if(m_AnimationEditorPanel->IsAnimationEditorOpen())
+				m_AnimationEditorPanel->Update(ts);
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
 			// m_ActiveScene->OnRenderEditor(m_EditorCamera);
