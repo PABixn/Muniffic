@@ -21,7 +21,6 @@ namespace eg {
 		Ref<Animation> m_Anim;
 		Ref<Texture2D> m_PlayIcon;
 		Ref<Texture2D> m_StopIcon;
-		Resource* m_LoadedResource;
 		std::vector<Animation::FrameData> m_FramesData;
 	};
 }

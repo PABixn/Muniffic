@@ -18,8 +18,8 @@ namespace eg {
 
 		for (auto& anim : m_Anim->GetFrames()) {
 			m_FramesData.emplace_back(anim);
-			SetFrames();
 		}
+		SetFrames();
 
 		return m_Anim != nullptr;
 	}
@@ -145,19 +145,19 @@ namespace eg {
 		}*/
 
 		ImGui::BeginChild("Animation timeline", ImVec2(ImGui::GetWindowSize().x, 100), true);
-		for (float x = ImGui::GetWindowPos().x + 6; x < ImGui::GetWindowPos().x + ImGui::GetWindowSize().x; x += 22.0f) {
-			ImGui::GetWindowDrawList()->AddLine(ImVec2(x, ImGui::GetWindowPos().y), ImVec2(x, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y ), IM_COL32(255, 255, 255, 255));
+		for (float i = ImGui::GetWindowPos().x + 6; i < ImGui::GetWindowPos().x + ImGui::GetWindowSize().x; i += 22.0f) {
+			ImGui::GetWindowDrawList()->AddLine(ImVec2(i, ImGui::GetWindowPos().y), ImVec2(i, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y ), IM_COL32(255, 255, 255, 255));
 		}
 
 		int i = 0;
 		for(auto anim : m_FramesData) {
 			ImVec2 cursorPos = ImGui::GetCursorScreenPos(); 
-			float rectWidth = 21 * anim.FrameDuration;// + 1 * (anim.FrameDuration - 1);
+			float rectWidth = 20 * anim.FrameDuration + 1 * (anim.FrameDuration - 1);
 
 			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), IM_COL32(207, 159, 255, 255));
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y));
 			ImGui::InvisibleButton(("rectBtn" + std::to_string(i)).c_str(), ImVec2(rectWidth, 40));
-			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + rectWidth + 1, cursorPos.y));
+			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + rectWidth + 2, cursorPos.y));
 			
 			if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
 				if (!isDragging) {
@@ -187,11 +187,13 @@ namespace eg {
 		if (ImGui::Button("Save")) {
 			ShowAnimationEditorPanel(false);
 			m_FramesData.clear();
+			m_Anim = nullptr;
 			
 		}
 		if (ImGui::Button("Close")) {
 			ShowAnimationEditorPanel(false);
 			m_FramesData.clear();
+			m_Anim = nullptr;
 		}
 		ImGui::End();
 			

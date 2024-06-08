@@ -73,7 +73,7 @@ namespace eg
 		if (m_playing && m_frames.size() > 0)
 		{
 			m_AnimationEnded = false;
-			m_frame += m_frameRate * speed * dt * (1/GetFrame().FrameDuration);
+			m_frame += m_frameRate * speed * dt * (float)(1.0f/GetFrame().FrameDuration);
 			if ((int)m_frame >= m_frames.size())
 			{
 				m_AnimationEnded = true;
