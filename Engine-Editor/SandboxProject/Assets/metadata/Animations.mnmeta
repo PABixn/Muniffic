@@ -1,4 +1,29 @@
 Resources:
+  - UUID: 4241400959172382745
+    ParentDirectory: 6933720336091776977
+    ResourceName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
+    Extension: .anim
+    FrameRate: 1
+    FrameCount: 16
+    Loop: true
+    FrameDuration: 0
+    Frames:
+      - 2959600570837826034
+      - 905121137077083250
+      - 3702892607175170389
+      - 2902719779476587267
+      - 1176770358038974121
+      - 6544604136755341282
+      - 1662251906798892705
+      - 4114838827981090089
+      - 1213108942605108356
+      - 6322250508275596551
+      - 4436153443135132290
+      - 5182189725072890801
+      - 7155028963294382981
+      - 482229466561052558
+      - 5724716377207395263
+      - 1606126232775495477
   - UUID: 5552202101603446473
     ParentDirectory: 6933720336091776977
     ResourceName: Chess_Board
@@ -6,6 +31,7 @@ Resources:
     FrameRate: 1
     FrameCount: 30
     Loop: true
+    FrameDuration: 0
     Frames:
       - 5280573410682282809
       - 4218170099035580984
@@ -37,30 +63,37 @@ Resources:
       - 3890553563595153146
       - 4319551565920537126
       - 2139809403722151643
-  - UUID: 4241400959172382745
+  - UUID: 312792881510441434
     ParentDirectory: 6933720336091776977
-    ResourceName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
+    ResourceName: execution
     Extension: .anim
     FrameRate: 1
-    FrameCount: 16
+    FrameCount: 9
     Loop: true
+    FrameDuration: 0
     Frames:
-      - 2959600570837826034
-      - 905121137077083250
-      - 3702892607175170389
-      - 2902719779476587267
-      - 1176770358038974121
-      - 6544604136755341282
-      - 1662251906798892705
-      - 4114838827981090089
-      - 1213108942605108356
-      - 6322250508275596551
-      - 4436153443135132290
-      - 5182189725072890801
-      - 7155028963294382981
-      - 482229466561052558
-      - 5724716377207395263
-      - 1606126232775495477
+      - 4036045672629384887
+      - 1951751320246131452
+      - 8038029877327025563
+      - 3905156042118021843
+      - 1889751255321759671
+      - 9042902536610007304
+      - 6209926028128552593
+      - 5891235319744747272
+      - 3350525876901110894
+  - UUID: 8104602050649579290
+    ParentDirectory: 6933720336091776977
+    ResourceName: Dune 2
+    Extension: .anim
+    FrameRate: 2
+    FrameCount: 4
+    Loop: true
+    FrameDuration: 0
+    Frames:
+      - 3337996826704469057
+      - 6150258439703729245
+      - 3507660817863943896
+      - 8779167474771427541
   - UUID: 2372111567478568890
     ParentDirectory: 6933720336091776977
     ResourceName: double_girl
@@ -68,6 +101,7 @@ Resources:
     FrameRate: 1
     FrameCount: 9
     Loop: true
+    FrameDuration: 0
     Frames:
       - 178579961453707347
       - 8045579421316556842
@@ -85,6 +119,7 @@ Resources:
     FrameRate: 1
     FrameCount: 36
     Loop: true
+    FrameDuration: 0
     Frames:
       - 6766322362858172487
       - 8076015998055696028
@@ -122,35 +157,6 @@ Resources:
       - 581275596845243141
       - 6501693319391288807
       - 6027821097559830489
-  - UUID: 312792881510441434
-    ParentDirectory: 6933720336091776977
-    ResourceName: execution
-    Extension: .anim
-    FrameRate: 1
-    FrameCount: 9
-    Loop: true
-    Frames:
-      - 4036045672629384887
-      - 1951751320246131452
-      - 8038029877327025563
-      - 3905156042118021843
-      - 1889751255321759671
-      - 9042902536610007304
-      - 6209926028128552593
-      - 5891235319744747272
-      - 3350525876901110894
-  - UUID: 8104602050649579290
-    ParentDirectory: 6933720336091776977
-    ResourceName: Dune 2
-    Extension: .anim
-    FrameRate: 2
-    FrameCount: 4
-    Loop: true
-    Frames:
-      - 3337996826704469057
-      - 6150258439703729245
-      - 3507660817863943896
-      - 8779167474771427541
   - UUID: 4782787536950434280
     ParentDirectory: 6933720336091776977
     ResourceName: Float00Animation
@@ -158,6 +164,7 @@ Resources:
     FrameRate: 24
     FrameCount: 45
     Loop: true
+    FrameDuration: 0
     Frames:
       - 4908293394606999761
       - 843076310403099226
@@ -211,6 +218,7 @@ Resources:
     FrameRate: 24
     FrameCount: 20
     Loop: true
+    FrameDuration: 0
     Frames:
       - 3976930391698337315
       - 2991412023032722915
@@ -239,6 +247,7 @@ Resources:
     FrameRate: 1
     FrameCount: 1
     Loop: true
+    FrameDuration: 0
     Frames:
       - 5841026427230564936
   - UUID: 7580568283597507903
@@ -248,6 +257,7 @@ Resources:
     FrameRate: 1
     FrameCount: 9
     Loop: true
+    FrameDuration: 0
     Frames:
       - 3269430051226134119
       - 3073023643355022065
@@ -265,6 +275,7 @@ Resources:
     FrameRate: 2
     FrameCount: 9
     Loop: true
+    FrameDuration: 0
     Frames:
       - 972202302702572290
       - 1398423696430620866
@@ -282,6 +293,7 @@ Resources:
     FrameRate: 1
     FrameCount: 9
     Loop: true
+    FrameDuration: 0
     Frames:
       - 5515065194258810929
       - 6159493321649902972
@@ -299,6 +311,7 @@ Resources:
     FrameRate: 1
     FrameCount: 9
     Loop: true
+    FrameDuration: 0
     Frames:
       - 1075057556396666141
       - 4057674316951484284

@@ -4,15 +4,23 @@
 namespace eg {
 	static bool isDisplayed = false;
 	static Animation::FrameData displayedAnim;
-	static int clickedFrame = -1; static bool isDragging = false;
-	static ImVec2 initialMousePos;
-	static ImVec2 initialRectPos;
+	static int clickedFrame = -1; 
+	static bool isDragging = false;
+	static int draggingIndex = -1;
+	//static ImVec2 initialMousePos;
+	//static ImVec2 initialRectPos;
 
 	bool AnimationEditorPanel::OpenAnimationEditorPanel(UUID asset) {
 		ShowAnimationEditorPanel(true);
 		m_Anim = Animation::Create(asset);
 		m_PlayIcon = Texture2D::Create("resources/icons/PlayButton.png");
 		m_StopIcon = Texture2D::Create("resources/icons/StopButton.png");
+
+		for (auto& anim : m_Anim->GetFrames()) {
+			m_FramesData.emplace_back(anim);
+			SetFrames();
+		}
+
 		return m_Anim != nullptr;
 	}
 
@@ -136,23 +144,54 @@ namespace eg {
 			i++;
 		}*/
 
-		for (auto& anim : m_Anim->GetFrames()) {
-			m_FramesData.emplace_back(anim);
+		ImGui::BeginChild("Animation timeline", ImVec2(ImGui::GetWindowSize().x, 100), true);
+		for (float x = ImGui::GetWindowPos().x + 6; x < ImGui::GetWindowPos().x + ImGui::GetWindowSize().x; x += 22.0f) {
+			ImGui::GetWindowDrawList()->AddLine(ImVec2(x, ImGui::GetWindowPos().y), ImVec2(x, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y ), IM_COL32(255, 255, 255, 255));
+		}
+
+		int i = 0;
+		for(auto anim : m_FramesData) {
+			ImVec2 cursorPos = ImGui::GetCursorScreenPos(); 
+			float rectWidth = 21 * anim.FrameDuration;// + 1 * (anim.FrameDuration - 1);
+
+			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), IM_COL32(207, 159, 255, 255));
+			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y));
+			ImGui::InvisibleButton(("rectBtn" + std::to_string(i)).c_str(), ImVec2(rectWidth, 40));
+			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + rectWidth + 1, cursorPos.y));
+			
+			if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+				if (!isDragging) {
+					isDragging = true;
+					draggingIndex = i;
+				}
+			}
+
+			if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && draggingIndex == i) {
+				isDragging = false;
+				draggingIndex = -1;
+			}
+
+			i++;
+		}
+
+		if (isDragging && draggingIndex != -1) {
+			int deltaX = ImGui::GetIO().MouseDelta.x;
+			m_FramesData[draggingIndex].FrameDuration += deltaX/2;
+			m_FramesData[draggingIndex].FrameDuration = std::max(1, m_FramesData[draggingIndex].FrameDuration);
 			SetFrames();
 		}
 
-		for(int i=0;i<m_FramesData.size();i++) {
-			auto anim = m_FramesData[i];
-			ImVec2 cursorPos = ImGui::GetCursorScreenPos(); 
-			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + 20 * anim.FrameDuration, cursorPos.y + 40), IM_COL32(207, 159, 255, 255));
-			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y));
-			ImGui::InvisibleButton(("rectBtn" + std::to_string(i)).c_str(), ImVec2(20, 40));
-			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + 20 * anim.FrameDuration + 2, cursorPos.y));
-		}
+		ImGui::EndChild();
 
-		ImGui::SetCursorPos(ImVec2(15, ImGui::GetWindowHeight() - 50));
+		ImGui::SetCursorPos(ImVec2(15, ImGui::GetWindowHeight() - 100));
+		if (ImGui::Button("Save")) {
+			ShowAnimationEditorPanel(false);
+			m_FramesData.clear();
+			
+		}
 		if (ImGui::Button("Close")) {
 			ShowAnimationEditorPanel(false);
+			m_FramesData.clear();
 		}
 		ImGui::End();
 			
@@ -217,6 +256,6 @@ namespace eg {
 			m_Anim->AddFrame(anim);
 		}
 
-		//m_Anim->SetFrame(0);
+		m_Anim->SetFrame(0);
 	}
 }
