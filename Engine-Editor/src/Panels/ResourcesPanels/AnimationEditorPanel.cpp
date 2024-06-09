@@ -29,7 +29,7 @@ namespace eg {
 			return;
 
 		ImGui::Begin("Animation Editor Panel", nullptr, ImGuiWindowFlags_HorizontalScrollbar);
-		ImGui::SetWindowSize(ImVec2(1000, 600));
+		ImGui::SetWindowSize(ImVec2(1000, 800));
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
@@ -183,7 +183,9 @@ namespace eg {
 
 		ImGui::EndChild();
 
-		ImGui::SetCursorPos(ImVec2(15, ImGui::GetWindowHeight() - 100));
+		ImGui::DragInt("Frame Rate %f:", m_Anim->GetFrameRatePtr(), 1.0f, 1.0f, 500);
+
+		//ImGui::SetCursorPos(ImVec2(15, ImGui::GetWindowHeight() - 100));
 		if (ImGui::Button("Save")) {
 			ShowAnimationEditorPanel(false);
 			m_FramesData.clear();

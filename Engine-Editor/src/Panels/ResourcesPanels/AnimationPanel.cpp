@@ -73,6 +73,10 @@ namespace eg {
 	{
 		EG_PROFILE_FUNCTION();
 		m_PreviewData->ClearFrames();
+
+		m_FrameWidth = m_TextureData->Width / m_ColumnCount;
+		m_FrameHeight = m_TextureData->Height / m_RowCount;
+
 		/*for (int i = m_Row; i < m_Row + m_RowCount; i++)
 			for (int j = m_Column; j < m_Column + m_ColumnCount; j++)
 			{
@@ -91,7 +95,7 @@ namespace eg {
 				m_FrameData.isKeyFrame = true;
 			else
 				m_FrameData.isKeyFrame = false;
-			m_FrameData.FrameDuration = *m_PreviewData->GetFrameRatePtr();
+			m_FrameData.FrameDuration = 1;
 			m_PreviewData->AddFrame(m_FrameData);
 		}
 
@@ -169,6 +173,20 @@ namespace eg {
 				}
 				SetFrames();
 			}
+
+			if (ImGui::DragInt("Column Count: %d", &m_ColumnCount, 1.0f, 1, maxColumns))
+			{
+				if(m_ColumnCount < 1)
+					m_ColumnCount = 1;
+				SetFrames();
+			}
+
+			if (ImGui::DragInt("Row Count: %d", &m_RowCount, 1.0f, 1, maxRows))
+			{
+				if(m_RowCount < 1)
+					m_RowCount = 1;
+				SetFrames();
+			}
 			
 			if (ImGui::DragInt("Column: %d", &m_Column, 1.0f, 0, maxColumns))
 			{
@@ -198,7 +216,7 @@ namespace eg {
 				SetFrames();
 			}
 
-			if(ImGui::DragInt("Column Count: %d", &m_ColumnCount, 1.0f, 1, maxColumns))
+			/*if (ImGui::DragInt("Column Count: %d", &m_ColumnCount, 1.0f, 1, maxColumns))
 			{
 				if(m_ColumnCount > maxColumns)
 					m_ColumnCount = maxColumns - m_ColumnCount;
@@ -218,7 +236,7 @@ namespace eg {
 				else if(m_RowCount > maxRows)
 					m_RowCount = maxRows;
 				SetFrames();
-			}
+			}*/
 			ImGui::Text("Right click to select key frames");
 			ImGui::Text("Image Preview:");
 			
