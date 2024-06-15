@@ -6,12 +6,25 @@ using System.Threading.Tasks;
 
 namespace eg
 {
+
+    /// <summary>
+    /// Represents a debug console for logging messages.
+    /// </summary>
     public class DebugConsole
     {
+        /// <summary>
+        /// Severity of log message.
+        /// </summary>
         public enum LogType
         {
             Info = 0, Warning = 1, Error = 2
         }
+
+        /// <summary>
+        /// Logs a message to the debug console.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="logType">The type of log message.</param>
         public static void Log(string message, LogType logType)
         {
             InternalCalls.Console_Log(message, logType);
@@ -24,7 +37,7 @@ namespace eg
     public abstract class Component
     { 
         /// <summary>
-        /// Reference to entity the component is attached to.
+        /// Entity the component is attached to.
         /// </summary>
         public Entity Entity { get; internal set; }
 
@@ -56,7 +69,7 @@ namespace eg
     public class TransformComponent : Component
     {
         /// <summary>
-        /// Translation of the entity.
+        /// Translation (position) of the entity relative to point (0,0,0).
         /// </summary>
         public Vector3 translation
         {
