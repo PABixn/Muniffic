@@ -7,7 +7,7 @@ namespace eg {
 		bool OpenAnimationEditorPanel(UUID asset);
 		void OnImGuiRender();
 		void Menu(Animation::FrameData anim);
-		void DrawFramePreview(Animation::FrameData anim = {});
+		void DrawFramePreview(Animation::FrameData anim = {}, bool addSpace = false);
 		void DrawAnimationPreview();
 		void Update(float dt) { m_Anim->Update(dt, 1.0f); };
 		bool IsAnimationEditorOpen() { return m_ShowAnimationEditorPanel; };
@@ -18,6 +18,7 @@ namespace eg {
 		bool m_ShowAnimationEditorPanel = false;
 		bool m_PlayAnimation;
 		bool m_ShowLongerFrame = false;
+		bool m_ShowInitialFrame = true;
 		Ref<Animation> m_Anim;
 		Ref<Texture2D> m_PlayIcon;
 		Ref<Texture2D> m_StopIcon;

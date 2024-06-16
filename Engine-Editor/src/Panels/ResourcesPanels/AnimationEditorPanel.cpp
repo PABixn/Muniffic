@@ -39,6 +39,7 @@ namespace eg {
 		if (ImGui::ImageButton((ImTextureID)(*m_Anim->IsPlayingPtr() ? m_StopIcon->GetRendererID() : m_PlayIcon->GetRendererID()), ImVec2(50, 50))) {
 			if (*m_Anim->IsPlayingPtr()) {
 				m_Anim->Stop();
+				//m_ShowInitialFrame = true;
 				m_PlayAnimation = false;
 			}
 			else {
@@ -53,7 +54,7 @@ namespace eg {
 		ImGui::PopStyleColor(3);
 
 		if(!m_PlayAnimation)
-			DrawFramePreview(m_Anim->GetFrame(0));
+			DrawFramePreview(m_Anim->GetFrame(0),true);
 
 		/*for (auto anim : m_Anim->GetFrames()) {
 			auto minCoords = anim.SubTexture.get()->GetMin();
@@ -158,6 +159,25 @@ namespace eg {
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y));
 			ImGui::InvisibleButton(("rectBtn" + std::to_string(i)).c_str(), ImVec2(rectWidth, 40));
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + rectWidth + 2, cursorPos.y));
+
+			if (!m_PlayAnimation) {
+				if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+					if (clickedFrame < 0) {
+						clickedFrame = i;
+					}
+					else if (clickedFrame == i) {
+						isDisplayed = !isDisplayed;
+						//m_ShowInitialFrame = true;
+					}
+					if (clickedFrame != i) {
+						//m_ShowInitialFrame = false;
+					}
+					displayedAnim = anim;
+					clickedFrame = i;
+				}
+			}
+
+			
 			
 			if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
 				if (!isDragging) {
@@ -182,6 +202,10 @@ namespace eg {
 		}
 
 		ImGui::EndChild();
+
+		if (!m_PlayAnimation && isDisplayed) {
+			DrawFramePreview(displayedAnim);
+		}
 
 		ImGui::DragInt("Frame Rate %f:", m_Anim->GetFrameRatePtr(), 1.0f, 1.0f, 500);
 
@@ -219,19 +243,25 @@ namespace eg {
 		}
 	}
 
-	void AnimationEditorPanel::DrawFramePreview(Animation::FrameData anim) {
+	void AnimationEditorPanel::DrawFramePreview(Animation::FrameData anim,bool addSpace) {
 		if (anim.SubTexture == nullptr) {
 			anim = m_Anim->GetFrames()[0];
 		}
 		auto minCoords = anim.SubTexture.get()->GetMin();
 		auto maxCoords = anim.SubTexture.get()->GetMax();
 		SubTexture2D* imageSubTexture = anim.SubTexture.get();
+		float spaceY = ImGui::GetCursorPosY();
+		if (addSpace)
+			spaceY = ImGui::GetCursorPosY() + 330;
+		ImVec2 cursorPos = { ImGui::GetCursorPos().x, spaceY };
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 300) * 0.5f);
 		ImGui::SetCursorPosY(100);
 
 		if (m_Anim->GetFrameCount() > 0) {
 			ImGui::Image((ImTextureID)imageSubTexture->GetTexture()->GetRendererID(), ImVec2(300, 300), ImVec2(minCoords.x, maxCoords.y), ImVec2(maxCoords.x, minCoords.y));
 		}
+
+		ImGui::SetCursorPos(cursorPos);
 	}
 
 	void AnimationEditorPanel::DrawAnimationPreview() {
