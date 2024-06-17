@@ -151,11 +151,14 @@ namespace eg {
 		}
 
 		int i = 0;
-		for(auto anim : m_FramesData) {
-			ImVec2 cursorPos = ImGui::GetCursorScreenPos(); 
+		for (auto anim : m_FramesData) {
+			ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 			float rectWidth = 20 * anim.FrameDuration + 1 * (anim.FrameDuration - 1);
 
-			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), IM_COL32(207, 159, 255, 255));
+			if (m_FramesToSwap.find(i) != m_FramesToSwap.end())
+				ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), IM_COL32(65, 51, 122, 255));
+			else
+				ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), IM_COL32(194, 239, 235, 255));
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y));
 			ImGui::InvisibleButton(("rectBtn" + std::to_string(i)).c_str(), ImVec2(rectWidth, 40));
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + rectWidth + 2, cursorPos.y));
@@ -174,11 +177,19 @@ namespace eg {
 					}
 					displayedAnim = anim;
 					clickedFrame = i;
+					if (m_FramesToSwap.size() < 2 && m_FramesToSwap.find(i) == m_FramesToSwap.end()) {
+						m_FramesToSwap.insert({ i,anim });
+					}
+					else if (m_FramesToSwap.find(i) != m_FramesToSwap.end()) {
+						m_FramesToSwap.erase(i);
+					}
+				}
+
+				if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+					ImGui::OpenPopup("AnimationOptions");
 				}
 			}
 
-			
-			
 			if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
 				if (!isDragging) {
 					isDragging = true;
@@ -192,6 +203,19 @@ namespace eg {
 			}
 
 			i++;
+		}
+
+		if (ImGui::BeginPopup("AnimationOptions")) {
+			if (m_FramesToSwap.size() == 2) {
+				if(ImGui::MenuItem("Swap frames")){
+					auto anim1 = m_FramesToSwap.begin();
+					m_FramesData[anim1->first] = m_FramesToSwap.rbegin()->second;
+					m_FramesData[m_FramesToSwap.rbegin()->first] = anim1->second;
+					SetFrames();
+					m_FramesToSwap.clear();
+				}
+			}
+			ImGui::EndPopup();
 		}
 
 		if (isDragging && draggingIndex != -1) {
