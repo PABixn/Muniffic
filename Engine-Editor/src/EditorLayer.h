@@ -6,6 +6,8 @@
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/AddResourcePanel.h"
 #include "Panels/ConsolePanel.h"
+#include "Panels/WelcomingPanel.h"
+#include "Panels/NameNewProjectPanel.h"
 
 
 namespace eg {
@@ -22,6 +24,7 @@ namespace eg {
 		virtual void OnEvent(Event& e) override;
 
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
+		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
 
 	private:
@@ -105,8 +108,10 @@ namespace eg {
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
-		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
+		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
+		Scope<WelcomingPanel> m_WelcomePanel;
+		Scope<NameNewProjectPanel> m_NameNewProjectPanel;
 		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;

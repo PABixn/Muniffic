@@ -1,0 +1,16 @@
+Root: 7064868660051125682
+Directories:
+  - UUID: 7064868660051125682
+    Name: kutas/Assets/Scenes
+    Parent: 7712143179533698495
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 969229990105610382
+    Name: kutas/Assets/Scripts
+    Parent: 7712143179533698495
+    Subdirectories:
+      []
+    Assets:
+      []

@@ -33,6 +33,11 @@ namespace eg {
 			return s_ActiveProject->m_Config.AssetDirectory; 
 		}
 
+		static void SetAssetDirectory(const std::filesystem::path& newDirectory) {
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			s_ActiveProject->m_Config.AssetDirectory = newDirectory;
+		}
+
 		static const std::filesystem::path& GetProjectDirectory()
 		{
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
@@ -44,6 +49,11 @@ namespace eg {
 			return "Hello";
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_Config.Name; 
+		}
+
+		static void SetProjectName(const std::string& newName) {
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			s_ActiveProject->m_Config.Name = newName;
 		}
 
 		//TODO: Move this to AssetManager
@@ -68,9 +78,19 @@ namespace eg {
 			return s_ActiveProject->m_Config.SceneDirectory; 
 		}
 
+		static void SetScenesDirectory(const std::filesystem::path& newDirectory) {
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			s_ActiveProject->m_Config.SceneDirectory = newDirectory;
+		}
+
 		static const std::filesystem::path& GetScriptModulePath() {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_Config.ScriptModulePath; 
+		}
+
+		static void SetScriptModulePath(const std::filesystem::path& newDirectory) {
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			s_ActiveProject->m_Config.ScriptModulePath = newDirectory;
 		}
 
 		static const std::filesystem::path& GetStartScene() {

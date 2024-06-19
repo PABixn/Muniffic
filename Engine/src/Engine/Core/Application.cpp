@@ -18,7 +18,6 @@ namespace eg
 	Application::Application(const ApplicationSpecification applicationSpec)
 		: m_Specification(applicationSpec)
 	{
-		
 		EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
@@ -29,7 +28,6 @@ namespace eg
 
 		m_Window = Window::Create(WindowProps(applicationSpec.Name));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-
 		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
@@ -87,14 +85,6 @@ namespace eg
 
 			ExecuteMainThreadQueue();
 
-			if (!m_Minimized)
-			{
-				{
-					EG_PROFILE_SCOPE("LayerStack OnUpdate");
-					for (Layer *layer : m_LayerStack)
-						layer->OnUpdate(timestep);
-				}
-			}
 
 			m_ImGuiLayer->Begin();
 			{
@@ -104,6 +94,16 @@ namespace eg
 			}
 
 			m_ImGuiLayer->End();
+
+
+			if (!m_Minimized)
+			{
+				{
+					EG_PROFILE_SCOPE("LayerStack OnUpdate");
+					for (Layer *layer : m_LayerStack)
+						layer->OnUpdate(timestep);
+				}
+			}
 
 			m_Window->OnUpdate();
 		}
