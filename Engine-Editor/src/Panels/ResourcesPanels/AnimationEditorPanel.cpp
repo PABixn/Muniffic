@@ -147,13 +147,13 @@ namespace eg {
 
 		ImGui::BeginChild("Animation timeline", ImVec2(ImGui::GetWindowSize().x, 100), true);
 		for (float i = ImGui::GetWindowPos().x + 6; i < ImGui::GetWindowPos().x + ImGui::GetWindowSize().x; i += 22.0f) {
-			ImGui::GetWindowDrawList()->AddLine(ImVec2(i, ImGui::GetWindowPos().y), ImVec2(i, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y ), IM_COL32(255, 255, 255, 255));
+			ImGui::GetWindowDrawList()->AddLine(ImVec2(i, ImGui::GetWindowPos().y), ImVec2(i, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y ), IM_COL32(255, 255, 255, 255), 0.8f);
 		}
 
 		int i = 0;
 		for (auto anim : m_FramesData) {
 			ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-			float rectWidth = 20 * anim.FrameDuration + 1 * (anim.FrameDuration - 1);
+			float rectWidth = 20 * anim.FrameDuration + 2 * (anim.FrameDuration - 1);
 
 			if (m_FramesToSwap.find(i) != m_FramesToSwap.end())
 				ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), IM_COL32(65, 51, 122, 255));
@@ -291,6 +291,7 @@ namespace eg {
 	void AnimationEditorPanel::DrawAnimationPreview() {
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 300) * 0.5f);
 		ImGui::SetCursorPosY(100);
+		float spaceY = ImGui::GetCursorPos().y + 322;
 		int i = 0;
 		if (m_Anim->GetFrameCount() > 0) {
 			ImGui::Image(
@@ -305,6 +306,7 @@ namespace eg {
 			);
 			
 		}
+		ImGui::SetCursorPosY(spaceY);
 	}
 
 	void AnimationEditorPanel::SetFrames() {

@@ -1,10 +1,10 @@
 Resources:
-  - UUID: 4394848458116890032
+  - UUID: 1799419931226198864
     ParentDirectory: 7944269225031781095
-    ResourceName: kuruoze1
+    ResourceName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
     Extension: .png
-    Width: 1920
-    Height: 1080
+    Width: 604
+    Height: 569
     Channels: 3
   - UUID: 5293402252350669400
     ParentDirectory: 7944269225031781095
@@ -13,12 +13,12 @@ Resources:
     Width: 1000
     Height: 1542
     Channels: 4
-  - UUID: 1799419931226198864
+  - UUID: 4394848458116890032
     ParentDirectory: 7944269225031781095
-    ResourceName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
+    ResourceName: kuruoze1
     Extension: .png
-    Width: 604
-    Height: 569
+    Width: 1920
+    Height: 1080
     Channels: 3
   - UUID: 2849638184997151150
     ParentDirectory: 7944269225031781095
@@ -34,6 +34,13 @@ Resources:
     Width: 480
     Height: 480
     Channels: 1
+  - UUID: 2061541685866814509
+    ParentDirectory: 7944269225031781095
+    ResourceName: Float00Animation
+    Extension: .png
+    Width: 300
+    Height: 167
+    Channels: 4
   - UUID: 477662199836197797
     ParentDirectory: 7944269225031781095
     ResourceName: ototoi kiyagare1
@@ -47,13 +54,6 @@ Resources:
     Extension: .png
     Width: 300
     Height: 60
-    Channels: 4
-  - UUID: 2061541685866814509
-    ParentDirectory: 7944269225031781095
-    ResourceName: Float00Animation
-    Extension: .png
-    Width: 300
-    Height: 167
     Channels: 4
   - UUID: 5146566864264519193
     ParentDirectory: 7944269225031781095
