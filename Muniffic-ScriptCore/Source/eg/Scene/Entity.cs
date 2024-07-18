@@ -490,6 +490,16 @@ namespace eg
         }
 
         /// <summary>
+        /// Destroys the entity with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the entity to destroy.</param>
+        public static void Destroy(string name)
+        {
+            long id = InternalCalls.Entity_FindEntityByName(name);
+            InternalCalls.Entity_Destroy(id);
+        }
+
+        /// <summary>
         /// Destroys entity.
         /// </summary>
         /// <param name="ID">UUID of the entity that should be destroyed.</param>

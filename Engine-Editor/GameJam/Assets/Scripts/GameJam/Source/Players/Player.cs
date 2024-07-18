@@ -53,7 +53,7 @@ namespace Game
             {
                 direction = new Vector2(-1, 0);
                 velocity.X -= speed;
-                transform.rotation = new Vector3(0, -3.6f, 0);
+                transform.rotation = new Vector3(0, -3.14f, 0);
                 didMove = true;
             }
             if (Input.IsKeyDown(KeyCode.D) && velocity.X <= 10f)

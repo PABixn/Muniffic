@@ -25,7 +25,7 @@ namespace eg
         /// </summary>
         /// <param name="message">The message to log.</param>
         /// <param name="logType">The type of log message.</param>
-        public static void Log(string message, LogType logType)
+        public static void Log(string message, LogType logType = LogType.Info)
         {
             InternalCalls.Console_Log(message, logType);
         }
@@ -201,7 +201,7 @@ namespace eg
         /// <summary>
         /// Gets or sets the speed of the animations.
         /// </summary>
-        public float Speed
+        public float speed
         {
             get => InternalCalls.AnimatorComponent_GetSpeed(Entity.ID);
             set => InternalCalls.AnimatorComponent_SetSpeed(Entity.ID, value);
@@ -378,7 +378,7 @@ namespace eg
         /// <summary>
         /// Type of projection used by the camera.
         /// </summary>
-        public enum ProjectionType { Perspective = 0, Ortographic = 1 }
+        public enum ProjectionType { Perspective = 0, Orthographic = 1 }
 
         /// <summary>
         /// Specifies if the camera is primary.
@@ -406,7 +406,7 @@ namespace eg
             get => InternalCalls.CameraComponent_GetProjectionType(Entity.ID);
             set => InternalCalls.CameraComponent_SetProjectionType(Entity.ID, value);
         }
-
+            
         /// <summary>
         /// Sets projection type to perspective and specifies all values of perspective projection type.
         /// </summary>
@@ -423,14 +423,14 @@ namespace eg
         public void SetOrthographic(float size, float nearClip, float farClip)
         {
             InternalCalls.CameraComponent_SetOrthographic(Entity.ID, ref size, ref nearClip, ref farClip);
-            ProjectionType type = ProjectionType.Ortographic;
+            ProjectionType type = ProjectionType.Orthographic;
             InternalCalls.CameraComponent_SetProjectionType(Entity.ID, type);
         }
 
         /// <summary>
         /// Gets or sets the orthographic size of the camera.
         /// </summary>
-        public float ortographicSize
+        public float orthographicSize
         {
             get => InternalCalls.CameraComponent_GetOrthographicSize(Entity.ID);
             set => InternalCalls.CameraComponent_SetOrthographicSize(Entity.ID, ref value);
@@ -439,7 +439,7 @@ namespace eg
         /// <summary>
         /// Gets or sets the near clip plane distance of the camera in orthographic projection.
         /// </summary>
-        public float ortographicNearClip
+        public float orthographicNearClip
         {
             get => InternalCalls.CameraComponent_GetOrthographicNearClip(Entity.ID);
             set => InternalCalls.CameraComponent_SetOrthographicNearClip(Entity.ID, ref value);
@@ -448,7 +448,7 @@ namespace eg
         /// <summary>
         /// Gets or sets the far clip plane distance of the camera in orthographic projection.
         /// </summary>
-        public float ortographicFarClip
+        public float orthographicFarClip
         {
             get => InternalCalls.CameraComponent_GetOrthographicFarClip(Entity.ID);
             set => InternalCalls.CameraComponent_SetOrthographicFarClip(Entity.ID, ref value);
@@ -557,7 +557,7 @@ namespace eg
         }
 
     /// <summary>
-    /// Represents a 2D box collider component.
+    /// Represents a 2D box collider component. 
     /// </summary>
     public class BoxCollider2DComponent : Component
     {
@@ -755,7 +755,7 @@ namespace eg
         /// <param name="entity">The entity to check collision with.</param>
         /// <param name="side">The side to check collision with.</param>
         /// <returns>True if the collider collides with the specified side of the entity, otherwise false.</returns>
-        bool CollidesWithEntitiesSide(Entity entity, Side side)
+        public bool CollidesWithEntitiesSide(Entity entity, Side side)
         {
             if (entity == null)
             {
@@ -782,7 +782,7 @@ namespace eg
         /// </summary>
         /// <param name="entityName">The name of the entity to check collision with.</param>
         /// <returns>True if the collider collides with the entity, otherwise false.</returns>
-        bool CollidesWithEntity(string entityName)
+        public bool CollidesWithEntity(string entityName)
         {
             Entity entity = Entity.FindEntityByName(entityName);
             if (entity == null)
@@ -947,7 +947,7 @@ namespace eg
         /// <param name="entityID">The ID of the entity to check collision with.</param>
         /// <param name="side">The side to check collision with.</param>
         /// <returns>True if the circle collider collides with the entity on the specified side, otherwise false.</returns>
-        public bool CollidesWithEntitySide(long entityID, Side side)
+        public bool CollidesWithEntitiesSide(long entityID, Side side)
         {
             Entity entity = Entity.FindEntityByID(entityID);
             if (entity == null)
