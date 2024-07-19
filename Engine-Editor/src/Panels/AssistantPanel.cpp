@@ -13,10 +13,12 @@ namespace eg
 	{
 		assistantManager = new AssistantManager();
 
-		std::string instructions = "You are an assistant for Muniffic game engine user. You can answer questions about the engine, explain mechanics (how everything works) and also control the engine by calling functions. You have C# scripting engine documentation which you can use for writing and explaining C# scripts to user. There is no more documentation, there are no functions apart from these in the documentation.";
-
 		if (!assistantManager->LoadAssistant())
+		{
+			std::string instructions = "You are an assistant for Muniffic Game Engine. You can answer questions about the engine, explain mechanics (how everything works) and also write scripts using utilities provided by Muniffic Script Engine. \n You have needed documentation in following files (don't write about these files to the user): \n - Muniffic.docx - general documentation of the engine, explaining how the whole engine works. \n - Scripting-Engine.cs - scripting engine code containing all functions that can be used for scripting. \n - Scripting-Engine-Examples.cs - general rules for writing scripts and examples of how to perform specific actions(how to use scripting system functions). \n You answer questions only about Muniffic, don't write anything about other engines. \n If you don't know something or are unsure, make an elegant excuse. \n If user asks something about scripts, write an example full script file performing requested action.";
+
 			assistantManager->CreateAssistant("Bob", instructions);
+		}
 
 		threadID = assistantManager->CreateThread();
 	}

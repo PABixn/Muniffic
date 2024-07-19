@@ -8,7 +8,52 @@
  * - OnUpdate() - called every frame.
  * - OnCollisionEnter(Collision2D collision) - called when the entity starts colliding with another entity.
  * - OnCollisionExit(Collision2D collision) - called when the entity stops colliding with another entity.
+ * Before using any component, it must be checked if the entity has it by calling HasComponent<ComponentType>() function.
+ * To have a working collider, entity must have a RigidBody2DComponent and a collider component (BoxCollider2DComponent or CircleCollider2DComponent).
+ * RigidBody2D component is required for physics simulation.
+ * Rigidbody2D component must be initialized by calling AwakeRuntimeBody() function.
+ * When having a RigidBody2DComponent, TransformComponent can't be used to change entity's position, ApplyLinearImpulse(Vector2 force) function has to be used instead to apply force to the entity.
 */
+
+
+//EXAMPLE SCRIPT
+
+using System;
+using eg;
+
+public class MyScript : DefaultBehaviour
+{
+    //Serialized property
+    public float speed = 1.0f;
+
+    //Called when the script is created
+    public void OnCreate()
+    {
+        //Do something
+    }
+
+    //Called every frame
+    public void OnUpdate(float ts)
+    {
+        //Move entity
+        if (!HasComponent<RigidBody2DComponent>())
+            GetComponent<TransformComponent>().translation += new Vector3(speed * ts, 0, 0);
+        else
+            GetComponent<RigidBody2DComponent>().ApplyLinearImpulse(new Vector2(speed, 0));
+    }
+
+    //Called when the entity starts colliding with another entity
+    public void OnCollisionEnter(Collision2D collision)
+    {
+        //Do something
+    }
+
+    //Called when the entity stops colliding with another entity
+    public void OnCollisionExit(Collision2D collision)
+    {
+        //Do something
+    }
+}
 
 
 //DEFAULT BEHAVIOUR CLASS

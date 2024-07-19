@@ -72,7 +72,7 @@ namespace eg
 	{
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
-		PyObject* args = PyTuple_Pack(3, PyUnicode_FromString(assistantName.c_str()), PyUnicode_FromString("gpt-3.5-turbo"), PyUnicode_FromString(assistantInstructions.c_str()));
+		PyObject* args = PyTuple_Pack(3, PyUnicode_FromString(assistantName.c_str()), PyUnicode_FromString("gpt-4o-mini"), PyUnicode_FromString(assistantInstructions.c_str()));
 
 		if (args == nullptr)
 		{
@@ -87,7 +87,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call create_assistant function");
 		}
-
+			
 		EG_CORE_INFO("Assistant created with ID: {0}", PyUnicode_AsUTF8(result));
 
 		m_AssistantID = PyUnicode_AsUTF8(result);

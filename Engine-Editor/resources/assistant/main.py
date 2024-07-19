@@ -5,14 +5,29 @@ import openai
 from dotenv import load_dotenv
 
 
-def create_assistant(name, model="gpt-3.5-turbo", instructions=None, tools=None):
+def create_assistant(name, model="gpt-4o-mini", instructions=None):
     load_dotenv()
     client = openai.OpenAI()
+
+    vector_store = client.beta.vector_stores.create(name="Muniffic documentation")
+
+    file_paths = [os.getcwd() + "/resources/assistant/doc/Muniffic.docx",
+                  os.getcwd() + "/resources/assistant/doc/Scripting Engine Docs/Scripting-Engine.cs",
+                  os.getcwd() + "/resources/assistant/doc/Scripting Engine Docs/Scripting-Engine-Examples.cs"]
+
+    file_streams = [open(path, "rb") for path in file_paths]
+
+    file_batch = client.beta.vector_stores.file_batches.upload_and_poll(vector_store_id=vector_store.id, files=file_streams)
+
+    print(file_batch.status)
+
     assistant = client.beta.assistants.create(
         name=name,
         model=model,
         instructions=instructions,
-        tools=tools)
+        tools=[{"type": "file_search"}],
+        tool_resources={"file_search": {"vector_store_ids": [vector_store.id]}})
+
     return assistant.id
 
 
@@ -71,6 +86,7 @@ def get_run_status(thread_id, run_id):
         thread_id=thread_id,
         run_id=run_id)
     return run.status
+
 
 def get_last_message(thread_id):
     load_dotenv()
