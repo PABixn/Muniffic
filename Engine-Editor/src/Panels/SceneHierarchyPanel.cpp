@@ -18,6 +18,7 @@
 #include "shellapi.h"
 #include "functional"
 #include "ConsolePanel.h"
+#include "../EditorActions.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -313,7 +314,9 @@ namespace eg {
 		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"TextRen.png"));
 		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"Animator.png"));
 		m_Context = scene;
+		EditorActions::SetScene(scene);
 		m_SelectionContext = {};
+		EditorActions::SetSelectionContext(&m_SelectionContext);
 		m_ImagePanel = CreateRef<ImagePanel>();
 		m_ListOfEntityDisplayed = std::vector<EntityDisplayInfo>();
 		Search();
@@ -724,7 +727,9 @@ namespace eg {
 			std::strncpy(buffer, tag.c_str(), sizeof(buffer)); 
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer), ImGuiInputTextFlags_Wrapped))
 			{
+				std::string name = tag;
 				tag = std::string(buffer);
+				Commands::ExecuteRawValueCommand<std::string>(&tag, name, "TagComponent-Tag");
 			}
 			ImGui::PopItemWidth();
 			ImGui::PopStyleVar();

@@ -1,0 +1,21 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "CreateEntity",
+      "description": "Creates an entity with given name",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity"
+          }
+        },
+        "required": [
+          "entityName"
+        ]
+      }
+    }
+  }
+]

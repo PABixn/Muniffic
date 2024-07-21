@@ -54,6 +54,8 @@ namespace eg
 		PyObject* m_WaitForCompletion;
 		PyObject* m_GetLastMessage;
 		PyObject* m_CheckIfAssistantExists;
+		PyObject* m_GetToolCall;
+		PyObject* m_SubmitToolOutputs;
 	};
 }
 
