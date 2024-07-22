@@ -26,9 +26,9 @@ namespace eg
 		else if (actionName == "ChangeName")
 		{
 			Entity entity = m_Scene->FindEntityByName(params[0]);
-			auto& tag = entity.GetComponent<TagComponent>().Tag;
+			std::string& tag = entity.GetComponent<TagComponent>().Tag;
 			std::string name = tag;
-			name = params[1];
+			tag = params[1];
 
 			Commands::ExecuteRawValueCommand(&tag, name, "Assistant-TagComponent-Tag");
 

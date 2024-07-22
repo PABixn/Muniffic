@@ -120,7 +120,9 @@ def get_tool_call(thread_id, run_id):
             i += 1
 
         result.append(resulted)
-        
+
+    print(result)
+
     return result
 
 

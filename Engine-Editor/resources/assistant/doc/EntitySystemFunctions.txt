@@ -41,6 +41,10 @@
           "entityName": {
             "type": "string",
             "description": "Name of the entity."
+          },
+          "newName": {
+            "type": "string",
+            "description": "New name of the entity."
           }
         },
         "required": [

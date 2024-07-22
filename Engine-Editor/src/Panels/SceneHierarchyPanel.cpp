@@ -398,6 +398,7 @@ namespace eg {
 		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount()==2) {
 			Search();
 		}
+		Search();
 		for (EntityDisplayInfo e : m_ListOfEntityDisplayed) {
 			DrawEntityNode(e);
 		}

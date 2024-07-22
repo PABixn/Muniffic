@@ -274,192 +274,7 @@ namespace eg
 		}
 		else if (status == "requires_action")
 		{
-			args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()));
-
-			if (args == nullptr)
-			{
-				PyErr_Print();
-				EG_CORE_ERROR("Failed to create args object");
-				PyGILState_Release(gstate);
-				return false;
-			}
-
-			result = PyObject_CallObject(m_GetToolCall, args);
-
-			if (result == nullptr)
-			{
-				PyErr_Print();
-				EG_CORE_ERROR("Failed to call get_tool_call function");
-				PyGILState_Release(gstate);
-				return false;
-			}
-
-			if (PyList_Check(result))
-			{
-				std::vector<std::unordered_map<std::string, std::string>> toolCalls;
-
-				std::vector<PyObject*> list_result;
-
-				Py_ssize_t size = PyList_Size(result);
-				for (Py_ssize_t i = 0; i < size; ++i)
-				{
-					PyObject* item = PyList_GetItem(result, i);
-					list_result.push_back(item);
-				}
-
-				for (PyObject* item : list_result)
-				{
-					if (item && PyDict_Check(item))
-					{
-						std::unordered_map<std::string, std::string> dict_result;
-						PyObject* key;
-						PyObject* value;
-						Py_ssize_t pos = 0;
-
-						while (PyDict_Next(item, &pos, &key, &value))
-						{
-							if (PyUnicode_Check(key))
-							{
-								std::string cpp_key = PyUnicode_AsUTF8(key);
-								if (PyUnicode_Check(value))
-								{
-									dict_result[cpp_key] = PyUnicode_AsUTF8(value);
-								}
-								else if (PyLong_Check(value))
-								{
-									dict_result[cpp_key] = std::to_string(PyLong_AsLong(value));
-								}
-								else if (PyFloat_Check(value))
-								{
-									dict_result[cpp_key] = std::to_string(PyFloat_AsDouble(value));
-								}
-							}
-						}
-
-						toolCalls.push_back(dict_result);
-					}
-				}
-
-				std::string output = "{";
-				int i = 0;
-
-				for (std::unordered_map<std::string, std::string> toolCall : toolCalls)
-				{
-					std::string toolCallID = toolCall["tool_call_id"];
-					std::string functionName = toolCall["function_name"];
-					std::vector<std::string> params;
-
-					for (auto& [key, value] : toolCall)
-					{
-						if(key.substr(0, 3) == "arg")
-							params.push_back(value);
-					}
-
-					std::string callToolOutput = EditorActions::ExecuteEntityAction(functionName, params);
-
-
-					output += "\"" + toolCallID + "\": \"" + callToolOutput + "\"";
-
-					if (i != toolCalls.size() - 1)
-						output += ",";
-
-					i++;
-				}
-
-				output += "}";
-
-				EG_CORE_INFO(output);
-
-				if (toolCalls.size() > 0)
-				{
-					args = PyTuple_Pack(3, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()), PyUnicode_FromString(output.c_str()));
-
-					if (args == nullptr)
-					{
-						PyErr_Print();
-						EG_CORE_ERROR("Failed to create args object");
-						PyGILState_Release(gstate);
-						return false;
-					}
-
-					result = PyObject_CallObject(m_SubmitToolOutputs, args);
-
-					if (result == nullptr)
-					{
-						PyErr_Print();
-						EG_CORE_ERROR("Failed to call submit_tool_outputs function");
-						PyGILState_Release(gstate);
-						return false;
-					}
-				}
-
-				args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()));
-
-				if (args == nullptr)
-				{
-					PyErr_Print();
-					EG_CORE_ERROR("Failed to create args object");
-					PyGILState_Release(gstate);
-					return false;
-				}
-
-				result = PyObject_CallObject(m_WaitForCompletion, args);
-
-				if (result == nullptr)
-				{
-					PyErr_Print();
-					EG_CORE_ERROR("Failed to call wait_for_completion function");
-					PyGILState_Release(gstate);
-					return false;
-				}
-
-				std::string status = PyUnicode_AsUTF8(result);
-
-				if (status == "completed")
-				{
-					args = PyTuple_Pack(1, PyUnicode_FromString(threadID.c_str()));
-
-					if (args == nullptr)
-					{
-						PyErr_Print();
-						EG_CORE_ERROR("Failed to create args object");
-						PyGILState_Release(gstate);
-						return false;
-					}
-
-					result = PyObject_CallObject(m_GetLastMessage, args);
-
-					if (result == nullptr)
-					{
-						PyErr_Print();
-						EG_CORE_ERROR("Failed to call get_last_message function");
-						PyGILState_Release(gstate);
-						return false;
-					}
-
-					std::string message = PyUnicode_AsUTF8(result);
-
-					PyGILState_Release(gstate);
-
-					Message* messageObj = new Message();
-					messageObj->role = "assistant";
-					messageObj->content = message;
-
-					m_Threads.at(threadID)->messages.push_back(messageObj);
-
-					return true;
-				}
-				else if (status == "requires_action" || status == "failed" || status == "cancelled" || status == "expired")
-				{
-					EG_CORE_ERROR("Run " + status);
-					PyGILState_Release(gstate);
-					return false;
-				}
-			}
-
-			PyGILState_Release(gstate);
-
-			return true;
+			TakeAction(threadID, runID, gstate);
 		}
 		else if (status == "failed" || status == "cancelled" || status == "expired")
 		{
@@ -470,6 +285,131 @@ namespace eg
 
 		PyGILState_Release(gstate);
 		return false;
+	}
+
+	bool AssistantManager::TakeAction(std::string threadID, std::string runID, PyGILState_STATE gstate)
+	{
+		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()));
+
+		if (args == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to create args object");
+			PyGILState_Release(gstate);
+			return false;
+		}
+
+		PyObject* result = PyObject_CallObject(m_GetToolCall, args);
+
+		if (result == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to call get_tool_call function");
+			PyGILState_Release(gstate);
+			return false;
+		}
+
+		if (PyList_Check(result))
+		{
+			std::vector<std::unordered_map<std::string, std::string>> toolCalls;
+
+			std::vector<PyObject*> list_result;
+
+			Py_ssize_t size = PyList_Size(result);
+			for (Py_ssize_t i = 0; i < size; ++i)
+			{
+				PyObject* item = PyList_GetItem(result, i);
+				list_result.push_back(item);
+			}
+
+			for (PyObject* item : list_result)
+			{
+				if (item && PyDict_Check(item))
+				{
+					std::unordered_map<std::string, std::string> dict_result;
+					PyObject* key;
+					PyObject* value;
+					Py_ssize_t pos = 0;
+
+					while (PyDict_Next(item, &pos, &key, &value))
+					{
+						if (PyUnicode_Check(key))
+						{
+							std::string cpp_key = PyUnicode_AsUTF8(key);
+							if (PyUnicode_Check(value))
+							{
+								dict_result[cpp_key] = PyUnicode_AsUTF8(value);
+							}
+							else if (PyLong_Check(value))
+							{
+								dict_result[cpp_key] = std::to_string(PyLong_AsLong(value));
+							}
+							else if (PyFloat_Check(value))
+							{
+								dict_result[cpp_key] = std::to_string(PyFloat_AsDouble(value));
+							}
+						}
+					}
+
+					toolCalls.push_back(dict_result);
+				}
+			}
+
+			std::string output = "{";
+			int i = 0;
+
+			for (std::unordered_map<std::string, std::string> toolCall : toolCalls)
+			{
+				std::string toolCallID = toolCall["tool_call_id"];
+				std::string functionName = toolCall["function_name"];
+				std::vector<std::string> params;
+
+				for (auto& [key, value] : toolCall)
+				{
+					if (key.substr(0, 3) == "arg")
+						params.push_back(value);
+				}
+
+				std::string callToolOutput = EditorActions::ExecuteEntityAction(functionName, params);
+
+
+				output += "\"" + toolCallID + "\": \"" + callToolOutput + "\"";
+
+				if (i != toolCalls.size() - 1)
+					output += ",";
+
+				i++;
+			}
+
+			output += "}";
+
+			EG_CORE_INFO(output);
+
+			if (toolCalls.size() > 0)
+			{
+				args = PyTuple_Pack(3, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()), PyUnicode_FromString(output.c_str()));
+
+				if (args == nullptr)
+				{
+					PyErr_Print();
+					EG_CORE_ERROR("Failed to create args object");
+					PyGILState_Release(gstate);
+					return false;
+				}
+
+				result = PyObject_CallObject(m_SubmitToolOutputs, args);
+
+				if (result == nullptr)
+				{
+					PyErr_Print();
+					EG_CORE_ERROR("Failed to call submit_tool_outputs function");
+					PyGILState_Release(gstate);
+					return false;
+				}
+			}
+
+			WaitForCompletion(threadID);
+		}
 	}
 
 
