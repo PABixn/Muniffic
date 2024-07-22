@@ -18,7 +18,8 @@
 #include "Engine/Resources/ResourceDatabase.h"
 
 
-namespace eg {
+namespace eg
+{
 
 	struct Component
 	{

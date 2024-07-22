@@ -114,11 +114,13 @@ def get_tool_call(thread_id, run_id):
 
         params = json.loads(tool.function.arguments)
 
+        i = 0
         for key, value in params.items():
-            resulted["arg"] = value
+            resulted["arg%d" % i] = value
+            i += 1
 
         result.append(resulted)
-
+        
     return result
 
 

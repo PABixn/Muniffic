@@ -674,7 +674,7 @@ namespace eg {
 							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT_AND_VALUES);
 					}
 
-					if (entity.GetParent().has_value())
+					if (entity.GetParent().has_value())	
 					{
 						if (ImGui::MenuItem(entity.GetInheritableComponent<T>()->isInherited == false ?
 							"Inherit from parent" :

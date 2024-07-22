@@ -340,7 +340,7 @@ namespace eg
 					}
 				}
 
-				std::string output = "";
+				std::string output = "{";
 				int i = 0;
 
 				for (std::unordered_map<std::string, std::string> toolCall : toolCalls)
@@ -351,13 +351,14 @@ namespace eg
 
 					for (auto& [key, value] : toolCall)
 					{
-						if(key == "arg")
+						if(key.substr(0, 3) == "arg")
 							params.push_back(value);
 					}
 
 					std::string callToolOutput = EditorActions::ExecuteEntityAction(functionName, params);
 
-					output += "{\"" + toolCallID + "\": \"" + callToolOutput + "\"}";
+
+					output += "\"" + toolCallID + "\": \"" + callToolOutput + "\"";
 
 					if (i != toolCalls.size() - 1)
 						output += ",";
@@ -365,28 +366,31 @@ namespace eg
 					i++;
 				}
 
-				output += "";
+				output += "}";
 
 				EG_CORE_INFO(output);
 
-				args = PyTuple_Pack(3, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()), PyUnicode_FromString(output.c_str()));
-
-				if (args == nullptr)
+				if (toolCalls.size() > 0)
 				{
-					PyErr_Print();
-					EG_CORE_ERROR("Failed to create args object");
-					PyGILState_Release(gstate);
-					return false;
-				}
+					args = PyTuple_Pack(3, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()), PyUnicode_FromString(output.c_str()));
 
-				result = PyObject_CallObject(m_SubmitToolOutputs, args);
+					if (args == nullptr)
+					{
+						PyErr_Print();
+						EG_CORE_ERROR("Failed to create args object");
+						PyGILState_Release(gstate);
+						return false;
+					}
 
-				if (result == nullptr)
-				{
-					PyErr_Print();
-					EG_CORE_ERROR("Failed to call submit_tool_outputs function");
-					PyGILState_Release(gstate);
-					return false;
+					result = PyObject_CallObject(m_SubmitToolOutputs, args);
+
+					if (result == nullptr)
+					{
+						PyErr_Print();
+						EG_CORE_ERROR("Failed to call submit_tool_outputs function");
+						PyGILState_Release(gstate);
+						return false;
+					}
 				}
 
 				args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()));

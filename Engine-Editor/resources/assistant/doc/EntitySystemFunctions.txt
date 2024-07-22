@@ -2,18 +2,570 @@
   {
     "type": "function",
     "function": {
-      "name": "CreateEntity",
-      "description": "Creates an entity with given name",
+      "name": "GetUUID",
+      "description": "Returns UUID of given entity",
       "parameters": {
         "type": "object",
         "properties": {
           "entityName": {
             "type": "string",
-            "description": "Name of the entity"
+            "description": "Name of the entity."
           }
         },
         "required": [
           "entityName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "GetAllEntities",
+      "description": "Returns names of all entities in scene.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "ChangeName",
+      "description": "Changes name of given entity.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          }
+        },
+        "required": [
+          "entityName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "CreateEntity",
+      "description": "Creates entity with given name.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          }
+        },
+        "required": [
+          "entityName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "DeleteEntity",
+      "description": "Deletes given entity.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          }
+        },
+        "required": [
+          "entityName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "GetAnyChildren",
+      "description": "Returns names of all children of given entity.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          }
+        },
+        "required": [
+          "entityName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "GetChildren",
+      "description": "Returns names of direct (first level) children of given entity.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          }
+        },
+        "required": [
+          "entityName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "GetParent",
+      "description": "Returns name of given entity\u0027s parent.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          }
+        },
+        "required": [
+          "entityName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "SetParent",
+      "description": "Sets parent of given entity.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity which parent should be changed."
+          },
+          "parentName": {
+            "type": "string",
+            "description": "Name of the entity that should be parent of the given entity."
+          }
+        },
+        "required": [
+          "entityName",
+          "parentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "IsChild",
+      "description": "Return true if the first entity is direct (first level) child of the second entity and false otherwise.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "childName": {
+            "type": "string",
+            "description": "Name of the child entity."
+          },
+          "parentName": {
+            "type": "string",
+            "description": "Name of the parent entity."
+          }
+        },
+        "required": [
+          "childName",
+          "parentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "IsChildOfAny",
+      "description": "Returns true if the first entity is any level child of the second entity and false otherwise.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "childName": {
+            "type": "string",
+            "description": "Name of the child entity."
+          },
+          "parentName": {
+            "type": "string",
+            "description": "Name of the parent entity."
+          }
+        },
+        "required": [
+          "childName",
+          "parentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "AddComponent",
+      "description": "Adds specific component to given entity.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          },
+          "componentName": {
+            "type": "string",
+            "description": "Name of the component to add to given entity.",
+            "enum": [
+                        "SpriteRendererComponent",
+                        "CircleRendererComponent",
+                        "CameraComponent",
+                        "ScriptComponent",
+                        "RigidBody2DComponent",
+                        "BoxCollider2DComponent",
+                        "CircleCollider2DComponent",
+                        "TextComponent",
+                        "AnimatorComponent",
+                        "AudioSourceComponent"
+                    ]
+          }
+        },
+        "required": [
+          "entityName",
+          "componentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "RemoveComponent",
+      "description": "Removes specific component from given entity.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          },
+          "componentName": {
+            "type": "string",
+            "description": "Name of the component to remove from given entity.",
+            "enum": [
+                        "SpriteRendererComponent",
+                        "CircleRendererComponent",
+                        "CameraComponent",
+                        "ScriptComponent",
+                        "RigidBody2DComponent",
+                        "BoxCollider2DComponent",
+                        "CircleCollider2DComponent",
+                        "TextComponent",
+                        "AnimatorComponent",
+                        "AudioSourceComponent"
+                    ]
+          }
+        },
+        "required": [
+          "entityName",
+          "componentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "HasComponent",
+      "description": "Returns true if given entity has specific component and false otherwise.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          },
+          "componentName": {
+            "type": "string",
+            "description": "Name of the component.",
+            "enum": [
+                        "TransformComponent",
+                        "SpriteRendererComponent",
+                        "CircleRendererComponent",
+                        "CameraComponent",
+                        "ScriptComponent",
+                        "RigidBody2DComponent",
+                        "BoxCollider2DComponent",
+                        "CircleCollider2DComponent",
+                        "TextComponent",
+                        "AnimatorComponent",
+                        "AudioSourceComponent"
+                    ]
+          }
+        },
+        "required": [
+          "entityName",
+          "componentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "InheritComponentInChildren",
+      "description": "Inherits specific component in all of entity\u0027s children.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          },
+          "componentName": {
+            "type": "string",
+            "description": "Name of the component that should be inherited in children.",
+            "enum": [
+                        "TransformComponent",
+                        "SpriteRendererComponent",
+                        "CircleRendererComponent",
+                        "CameraComponent",
+                        "ScriptComponent",
+                        "RigidBody2DComponent",
+                        "BoxCollider2DComponent",
+                        "CircleCollider2DComponent",
+                        "TextComponent",
+                        "AnimatorComponent",
+                        "AudioSourceComponent"
+                    ]
+          }
+        },
+        "required": [
+          "entityName",
+          "componentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "InheritComponentFromParent",
+      "description": "Inherits specific component from the parent of given entity and also inherits it in all of entity\u0027s children.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          },
+          "componentName": {
+            "type": "string",
+            "description": "Name of the component that should be inherited.",
+            "enum": [
+                        "TransformComponent",
+                        "SpriteRendererComponent",
+                        "CircleRendererComponent",
+                        "CameraComponent",
+                        "ScriptComponent",
+                        "RigidBody2DComponent",
+                        "BoxCollider2DComponent",
+                        "CircleCollider2DComponent",
+                        "TextComponent",
+                        "AnimatorComponent",
+                        "AudioSourceComponent"
+                    ]
+          }
+        },
+        "required": [
+          "entityName",
+          "componentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "CopyComponentToChildren",
+      "description": "Copies specific component to all of given entity\u0027s children.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          },
+          "componentName": {
+            "type": "string",
+            "description": "Name of the component that should be copied to entity\u0027s children.",
+            "enum": [
+                        "SpriteRendererComponent",
+                        "CircleRendererComponent",
+                        "CameraComponent",
+                        "ScriptComponent",
+                        "RigidBody2DComponent",
+                        "BoxCollider2DComponent",
+                        "CircleCollider2DComponent",
+                        "TextComponent",
+                        "AnimatorComponent",
+                        "AudioSourceComponent"
+                    ]
+          }
+        },
+        "required": [
+          "entityName",
+          "componentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "CopyComponentValuesToChildren",
+      "description": "Copies specific component\u0027s values to all of given entity\u0027s children. ",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          },
+          "componentName": {
+            "type": "string",
+            "description": "Name of the component which values should be copied to entity\u0027s children.",
+            "enum": [
+                        "TransformComponent",
+                        "SpriteRendererComponent",
+                        "CircleRendererComponent",
+                        "CameraComponent",
+                        "ScriptComponent",
+                        "RigidBody2DComponent",
+                        "BoxCollider2DComponent",
+                        "CircleCollider2DComponent",
+                        "TextComponent",
+                        "AnimatorComponent",
+                        "AudioSourceComponent"
+                    ]
+          }
+        },
+        "required": [
+          "entityName",
+          "componentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "CopyComponentWithValuesToChildren",
+      "description": "Copies specific component and it\u0027s values to all of given entity\u0027s children.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          },
+          "componentName": {
+            "type": "string",
+            "description": "Name of the component that should be copied to entity\u0027s children along with it\u0027s values."
+          }
+        },
+        "required": [
+          "entityName",
+          "componentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "IsInheritedFromParent",
+      "description": "Returns true if specific component is inherited from given entity\u0027s parent and false otherwise.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          },
+          "componentName": {
+            "type": "string",
+            "description": "Name of the component.",
+            "enum": [
+                        "TransformComponent",
+                        "SpriteRendererComponent",
+                        "CircleRendererComponent",
+                        "CameraComponent",
+                        "ScriptComponent",
+                        "RigidBody2DComponent",
+                        "BoxCollider2DComponent",
+                        "CircleCollider2DComponent",
+                        "TextComponent",
+                        "AnimatorComponent",
+                        "AudioSourceComponent"
+                    ]
+          }
+        },
+        "required": [
+          "entityName",
+          "componentName"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "IsInheritedInChildren",
+      "description": "Returns true if specific component is inherited in given entity\u0027s children and false otherwise.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          },
+          "componentName": {
+            "type": "string",
+            "description": "Name of the entity.",
+            "enum": [
+                        "TransformComponent",
+                        "SpriteRendererComponent",
+                        "CircleRendererComponent",
+                        "CameraComponent",
+                        "ScriptComponent",
+                        "RigidBody2DComponent",
+                        "BoxCollider2DComponent",
+                        "CircleCollider2DComponent",
+                        "TextComponent",
+                        "AnimatorComponent",
+                        "AudioSourceComponent"
+                    ]
+          }
+        },
+        "required": [
+          "entityName",
+          "componentName"
         ]
       }
     }
