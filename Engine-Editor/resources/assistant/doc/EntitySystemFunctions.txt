@@ -1,4 +1,23 @@
 [
+{
+    "type": "function",
+    "function": {
+      "name": "Exists",
+      "description": "Returns true if entity with given name exists and false otherwise.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Name of the entity."
+          }
+        },
+        "required": [
+          "entityName"
+        ]
+      }
+    }
+  },
   {
     "type": "function",
     "function": {
@@ -76,7 +95,7 @@
     "type": "function",
     "function": {
       "name": "DeleteEntity",
-      "description": "Deletes given entity.",
+      "description": "Deletes given entity and all it's children.",
       "parameters": {
         "type": "object",
         "properties": {

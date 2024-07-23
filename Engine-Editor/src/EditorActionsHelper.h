@@ -13,6 +13,32 @@ namespace eg
 			AddComponent, RemoveComponent, HasComponent, InheritComponentInChildren, InheritComponentFromParent, CopyComponentToChildren, RemoveComponentFromChildren, CopyComponentValuesToChildren, CopyComponentWithValuesToChildren, IsInheritedFromParent, IsInheritedInChildren
 		};
 
+		static bool CanConvertToFloat(const std::string& str)
+		{
+			try
+			{
+				std::stof(str);
+				return true;
+			}
+			catch (const std::exception&)
+			{
+				return false;
+			}
+		}
+
+		static bool CanConvertToInteger(const std::string& str)
+		{
+			try
+			{
+				std::stoi(str);
+				return true;
+			}
+			catch (const std::exception&)
+			{
+				return false;
+			}
+		}
+
 		static bool ExecuteComponentAction(ComponentAction action, std::string componentString, Entity e, Ref<Scene> scene)
 		{
 			switch (action)

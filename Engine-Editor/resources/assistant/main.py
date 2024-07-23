@@ -81,7 +81,7 @@ def wait_for_completion(thread_id, run_id):
         run = client.beta.threads.runs.retrieve(
             thread_id=thread_id,
             run_id=run_id)
-
+        
         if run.status == "completed":
             return run.status
         elif run.status == "failed":
