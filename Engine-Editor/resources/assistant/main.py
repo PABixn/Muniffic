@@ -74,7 +74,6 @@ def initiate_run(assistant_id, thread_id, instructions=None):
 
 
 def wait_for_completion(thread_id, run_id):
-    is_first_stage = True
     load_dotenv()
     client = openai.OpenAI()
     while True:
@@ -86,11 +85,11 @@ def wait_for_completion(thread_id, run_id):
             return run.status
         elif run.status == "failed":
             return run.status
-        elif run.status == "requires_action" and is_first_stage:
-            is_first_stage = False
-            take_required_action(thread_id, run_id)
-        elif run.status == "requires_action" and not is_first_stage:
-            return run.status
+        elif run.status == "requires_action":
+            if contains_first_stage_function(thread_id, run_id):
+                take_required_action(thread_id, run_id)
+            else:
+                return run.status
         elif run.status == "cancelled":
             return run.status
         elif run.status == "expired":
@@ -146,6 +145,20 @@ def submit_tool_outputs(thread_id, run_id, output):
         print("Failed to submit tool outputs:", e)
 
 
+def contains_first_stage_function(thread_id, run_id):
+    load_dotenv()
+    client = openai.OpenAI()
+    run = client.beta.threads.runs.retrieve(
+        thread_id=thread_id,
+        run_id=run_id)
+
+    for tool in run.required_action.submit_tool_outputs.tool_calls:
+        if tool.function.name == "LoadEntitySystemFunctions":
+            return True
+
+    return False
+
+
 def take_required_action(thread_id, run_id):
     load_dotenv()
     client = openai.OpenAI()
@@ -156,12 +169,12 @@ def take_required_action(thread_id, run_id):
         thread_id=thread_id,
         run_id=run_id)
 
+    print(run.required_action.submit_tool_outputs.tool_calls)
+
     for tool in run.required_action.submit_tool_outputs.tool_calls:
         if tool.function.name == "LoadEntitySystemFunctions":
             output = load_entity_system_functions()
             tool_outputs.append({"tool_call_id": tool.id, "output": output})
-        else:
-            print(tool.json)
 
     if tool_outputs:
         try:

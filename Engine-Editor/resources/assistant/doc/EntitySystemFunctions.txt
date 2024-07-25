@@ -41,7 +41,7 @@
     "type": "function",
     "function": {
       "name": "GetAllEntities",
-      "description": "Returns names of all entities in scene.",
+      "description": "Returns names of all entities along with their UUIDs in scene.",
       "parameters": {
         "type": "object",
         "properties": {},
@@ -589,6 +589,74 @@
         "required": [
           "entityName",
           "componentName"
+        ]
+      }
+    }
+  },
+{
+    "type": "function",
+    "function": {
+      "name": "GetTransformComponent",
+      "description": "Returns all properties of the transform component which is used to specify entity\u0027s position, rotation and scale.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to get the transform component from.",
+            "example": "6370029969853740667"
+          }
+        },
+        "required": [
+          "entityUUID"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "SetTransformComponent",
+      "description": "Sets properties of the transform component.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to set the transform component for.",
+            "example": "6370029969853740667"
+          },
+          "propertyName": {
+            "type": "string",
+            "description": "Name of the property to change.",
+            "enum": [
+              "Position",
+              "Rotation",
+              "Scale"
+            ]
+          },
+          "X-value": {
+            "type": "number",
+            "description": "X value of given property.",
+            "example": "20.4"
+          },
+          "Y-value": {
+            "type": "number",
+            "description": "Y value of given property.",
+            "example": "3.1"
+          },
+          "Z-value": {
+            "type": "number",
+            "description": "Z value of given property.",
+            "example": "-2.5"
+          }
+        },
+        "required": [
+          "entityUUID",
+          "propertyName",
+          "X-value",
+          "Y-value",
+          "Z-value"
         ]
       }
     }

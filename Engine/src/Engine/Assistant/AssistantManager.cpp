@@ -364,14 +364,23 @@ namespace eg
 				std::string functionName = toolCall["function_name"];
 				std::vector<std::string> params;
 
-				for (auto& [key, value] : toolCall)
+				std::vector<std::string> arg_keys;
+				for (const auto& [key, value] : toolCall)
 				{
 					if (key.substr(0, 3) == "arg")
-						params.push_back(value);
+					{
+						arg_keys.push_back(key);
+					}
+				}
+
+				std::sort(arg_keys.begin(), arg_keys.end());
+
+				for (const auto& key : arg_keys)
+				{
+					params.push_back(toolCall[key]);
 				}
 
 				std::string callToolOutput = EditorActions::ExecuteEntityAction(functionName, params);
-
 
 				output += "\"" + toolCallID + "\": \"" + callToolOutput + "\"";
 

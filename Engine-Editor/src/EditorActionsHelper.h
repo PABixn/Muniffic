@@ -39,6 +39,19 @@ namespace eg
 			}
 		}
 
+		static bool CanConvertToUUID(const std::string& str)
+		{
+			try
+			{
+				std::stoll(str);
+				return true;
+			}
+			catch (const std::exception&)
+			{
+				return false;
+			}
+		}
+
 		static bool ExecuteComponentAction(ComponentAction action, std::string componentString, Entity e, Ref<Scene> scene)
 		{
 			switch (action)
@@ -73,6 +86,9 @@ namespace eg
 
 		static bool AddComponent(std::string componentString, Entity e, Ref<Scene> scene)
 		{
+			if (componentString == "TransformComponent")
+				return true;
+
 			if (componentString == "SpriteRendererComponent")
 				Commands::ExecuteCommand<Commands::AddComponentCommand<SpriteRendererComponent>>(Commands::CommandArgs("", e, scene, e));
 			else if (componentString == "CircleRendererComponent")
@@ -133,7 +149,9 @@ namespace eg
 
 		static bool HasComponent(std::string componentString, Entity e, Ref<Scene> scene)
 		{
-			if (componentString == "SpriteRendererComponent")
+			if(componentString == "TransformComponent")
+				return e.HasComponent<TransformComponent>();
+			else if (componentString == "SpriteRendererComponent")
 				return e.HasComponent<SpriteRendererComponent>();
 			else if (componentString == "CircleRendererComponent")
 				return e.HasComponent<CircleRendererComponent>();
@@ -163,7 +181,9 @@ namespace eg
 
 		static bool InheritComponentInChildren(std::string componentString, Entity e, Ref<Scene> scene)
 		{
-			if (componentString == "SpriteRendererComponent")
+			if(componentString == "TransformComponent")
+				Commands::ExecuteInheritComponentCommand<TransformComponent>(e, scene, e.GetInheritableComponent<TransformComponent>()->isInheritedInChildren);
+			else if (componentString == "SpriteRendererComponent")
 				Commands::ExecuteInheritComponentCommand<SpriteRendererComponent>(e, scene, e.GetInheritableComponent<SpriteRendererComponent>()->isInheritedInChildren);
 			else if (componentString == "CircleRendererComponent")
 				Commands::ExecuteInheritComponentCommand<CircleRendererComponent>(e, scene, e.GetInheritableComponent<CircleRendererComponent>()->isInheritedInChildren);
@@ -193,7 +213,9 @@ namespace eg
 
 		static bool InheritComponentFromParent(std::string componentString, Entity e, Ref<Scene> scene)
 		{
-			if (componentString == "SpriteRendererComponent")
+			if(componentString == "TransformComponent")
+				Commands::ExecuteInheritComponentCommand<TransformComponent>(e, scene, e.GetInheritableComponent<TransformComponent>()->isInherited, true);
+			else if (componentString == "SpriteRendererComponent")
 				Commands::ExecuteInheritComponentCommand<SpriteRendererComponent>(e, scene, e.GetInheritableComponent<SpriteRendererComponent>()->isInherited, true);
 			else if (componentString == "CircleRendererComponent")
 				Commands::ExecuteInheritComponentCommand<CircleRendererComponent>(e, scene, e.GetInheritableComponent<CircleRendererComponent>()->isInherited, true);
@@ -223,6 +245,9 @@ namespace eg
 
 		static bool CopyComponentToChildren(std::string componentString, Entity e, Ref<Scene> scene)
 		{
+			if (componentString == "TransformComponent")
+				return true;
+
 			if (componentString == "SpriteRendererComponent")
 				Commands::ExecuteManageComponentInheritanceCommand<SpriteRendererComponent>(e, scene, Commands::InheritanceCommandType::COPY_COMPONENT);
 			else if (componentString == "CircleRendererComponent")
@@ -283,7 +308,9 @@ namespace eg
 
 		static bool CopyComponentValuesToChildren(std::string componentString, Entity e, Ref<Scene> scene)
 		{
-			if (componentString == "SpriteRendererComponent")
+			if(componentString == "TransformComponent")
+				Commands::ExecuteManageComponentInheritanceCommand<TransformComponent>(e, scene, Commands::InheritanceCommandType::COPY_COMPONENT_VALUES);
+			else if (componentString == "SpriteRendererComponent")
 				Commands::ExecuteManageComponentInheritanceCommand<SpriteRendererComponent>(e, scene, Commands::InheritanceCommandType::COPY_COMPONENT_VALUES);
 			else if (componentString == "CircleRendererComponent")
 				Commands::ExecuteManageComponentInheritanceCommand<CircleRendererComponent>(e, scene, Commands::InheritanceCommandType::COPY_COMPONENT_VALUES);
@@ -313,6 +340,9 @@ namespace eg
 
 		static bool CopyComponentWithValuesToChildren(std::string componentString, Entity e, Ref<Scene> scene)
 		{
+			if (componentString == "TransformComponent")
+				return true;
+
 			if (componentString == "SpriteRendererComponent")
 				Commands::ExecuteManageComponentInheritanceCommand<SpriteRendererComponent>(e, scene, Commands::InheritanceCommandType::COPY_COMPONENT_AND_VALUES);
 			else if (componentString == "CircleRendererComponent")
@@ -343,7 +373,9 @@ namespace eg
 
 		static bool IsInheritedFromParent(std::string componentString, Entity e, Ref<Scene> scene)
 		{
-			if (componentString == "SpriteRendererComponent")
+			if(componentString == "TransformComponent")
+				return e.GetInheritableComponent<TransformComponent>()->isInherited;
+			else if (componentString == "SpriteRendererComponent")
 				return e.GetInheritableComponent<SpriteRendererComponent>()->isInherited;
 			else if (componentString == "CircleRendererComponent")
 				return e.GetInheritableComponent<CircleRendererComponent>()->isInherited;
@@ -373,7 +405,9 @@ namespace eg
 
 		static bool IsInheritedInChildren(std::string componentString, Entity e, Ref<Scene> scene)
 		{
-			if (componentString == "SpriteRendererComponent")
+			if(componentString == "TransformComponent")
+				return e.GetInheritableComponent<TransformComponent>()->isInheritedInChildren;
+			else if (componentString == "SpriteRendererComponent")
 				return e.GetInheritableComponent<SpriteRendererComponent>()->isInheritedInChildren;
 			else if (componentString == "CircleRendererComponent")
 				return e.GetInheritableComponent<CircleRendererComponent>()->isInheritedInChildren;

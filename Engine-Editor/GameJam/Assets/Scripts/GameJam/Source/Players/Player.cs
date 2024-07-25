@@ -22,7 +22,7 @@ namespace Game
         public RigidBody2DComponent rigidBody;
 
         public void InitPlayer(float speed, float damage, float attackCooldown, float health)
-        {
+        {   
             direction = new Vector2(1,0);
             velocity = Vector2.Zero;
             friction = 10f;

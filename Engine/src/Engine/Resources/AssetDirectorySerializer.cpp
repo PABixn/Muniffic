@@ -14,7 +14,7 @@ namespace eg
 
 		if (!std::filesystem::exists(metadata))
 		{
-			EG_CORE_WARN("Asset Directory Cache does not exist, creating new one");
+			EG_CORE_WARN("Asset Directory Cache does not exist, creating new one.");
 
 			UUID rootUUID = UUID();
 			AssetDirectory* root = new AssetDirectory(rootUUID, "Assets", 0);

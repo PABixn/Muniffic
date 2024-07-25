@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JSONGenerator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d33e59359f6c7e8b6168e676dd26c101341bf7c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4d014da5469dc20c6bcc717fc7b278d73b9a783")]
 [assembly: System.Reflection.AssemblyProductAttribute("JSONGenerator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JSONGenerator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
