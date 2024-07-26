@@ -617,7 +617,7 @@
     "type": "function",
     "function": {
       "name": "SetTransformComponent",
-      "description": "Sets properties of the transform component.",
+      "description": "Sets properties of the transform component which is used to specify entity\u0027s position, rotation and scale.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -657,6 +657,511 @@
           "X-value",
           "Y-value",
           "Z-value"
+        ]
+      }
+    }
+  },
+{
+    "type": "function",
+    "function": {
+      "name": "GetCameraComponent",
+      "description": "Returns all properties of camera component.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to get camera component from.",
+            "example": "6370029969853740667"
+          }
+        },
+        "required": [
+          "entityUUID"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "SetCameraComponent",
+      "description": "Sets properties of the camera component.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to set camera component for.",
+            "example": "6370029969853740667"
+          },
+          "propertyName": {
+            "type": "string",
+            "description": "Name of the property to change.",
+            "enum": [
+              "Primary",
+              "FixedAspectRatio",
+              "ProjectionType",
+              "OrthographicSize",
+              "OrthographicNearClip",
+              "OrthographicFarClip",
+              "PerspectiveVerticalFOV",
+              "PerspectiveNearClip",
+              "PerspectiveFarClip"
+            ]
+          },
+          "propertyValue": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Used for specifying ProjectionType",
+                "enum": [
+                  "Orthographic",
+                  "Perspective"
+                ]
+              },
+              {
+                "type": "number",
+                "description": "Used for specifying OrthographicSize, OrthographicNearClip, OrthographicFarClip, PerspectiveVerticalFOV, PerspectiveNearClip, PerspectiveFarClip"
+              },
+              {
+                "type": "boolean",
+                "description": "Used for specifying Primary and FixedAspectRatio",
+                "enum": [
+                  "true",
+                  "false"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "propertyName",
+          "propertyValue",
+          "entityUUID"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "GetSpriteRendererComponent",
+      "description": "Returns all properties of the sprite renderer component which is used to make entity display something (color or texture).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to get the component from.",
+            "example": "6370029969853740667"
+          }
+        },
+        "required": [
+          "entityUUID"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "SetSpriteRendererComponent",
+      "description": "Sets properties of the sprite renderer component which is used to make entity display something (color or texture).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to set the component for.",
+            "example": "6370029969853740667"
+          },
+          "propertyName": {
+            "type": "string",
+            "description": "Name of the property to change.",
+            "enum": [
+              "TilingFactor",
+              "Color",
+              "Texture"
+            ]
+          },
+          "propertyValue": {
+            "type": "number",
+            "description": "Used for specifying tiling factor (0-100, float), texture UUID, color R value (0-255, integer) (in RGBA format)"
+          },
+          "G-value": {
+            "type": "number",
+            "description": "Optional parameter used for specifying color G value (in RGBA format), only necessary when changing Color property",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "B-value": {
+            "type": "number",
+            "description": "Optional parameter used for specifying color B value (in RGBA format), only necessary when changing Color property",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "A-value": {
+            "type": "number",
+            "description": "Optional parameter used for specifying color A value (in RGBA format), only necessary when changing Color property",
+            "minimum": 0,
+            "maximum": 255
+          }
+        },
+        "required": [
+          "entityUUID",
+          "propertyName",
+          "propertyValue"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "GetCircleRendererComponent",
+      "description": "Returns all properties of the circle renderer component which is used to make entity display something in circle shape (color).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to get the component from.",
+            "example": "6370029969853740667"
+          }
+        },
+        "required": [
+          "entityUUID"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "SetCircleRendererComponent",
+      "description": "Sets properties of the circle renderer component which is used to make entity display something in circle shape (color).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to set the component for.",
+            "example": "6370029969853740667"
+          },
+          "propertyName": {
+            "type": "string",
+            "description": "Name of the property to change.",
+            "enum": [
+              "Thickness",
+              "Fade",
+              "Color"
+            ]
+          },
+          "propertyValue": {
+            "type": "number",
+            "description": "Used for specifying thickness (0-1, float), fade, color R value (0-255, integer) (in RGBA format)"
+          },
+          "G-value": {
+            "type": "number",
+            "description": "Optional parameter used for specifying color G value (in RGBA format), only necessary when changing Color property",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "B-value": {
+            "type": "number",
+            "description": "Optional parameter used for specifying color B value (in RGBA format), only necessary when changing Color property",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "A-value": {
+            "type": "number",
+            "description": "Optional parameter used for specifying color A value (in RGBA format), only necessary when changing Color property",
+            "minimum": 0,
+            "maximum": 255
+          }
+        },
+        "required": [
+          "entityUUID",
+          "propertyName",
+          "propertyValue"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "GetRigidBody2DComponent",
+      "description": "Returns all properties of rigid body 2d component which is used to make entity affected by the physics world and is neccessary for the colliders to work.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to get the component from.",
+            "example": "6370029969853740667"
+          }
+        },
+        "required": [
+          "entityUUID"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "SetRigidBody2DComponent",
+      "description": "Sets properties of rigidbody 2d component which is used to make entity affected by the physics world and is neccessary for the colliders to work. FixedRotations prevents entity from rotating due to physical forces.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to set the component for.",
+            "example": "6370029969853740667"
+          },
+          "propertyName": {
+            "type": "string",
+            "description": "Name of the property to change.",
+            "enum": [
+              "FixedRotation",
+              "Type"
+            ]
+          },
+          "propertyValue": {
+            "oneOf": [
+              {
+                "type": "boolean",
+                "description": "Used for FixedRotation which fixes rotation of the entity (prevents it from moving).",
+                "enum": [
+                  "true",
+                  "false"
+                ]
+              },
+              {
+                "type": "string",
+                "description": "Used for Type",
+                "enum": [
+                  "Static",
+                  "Dynamic",
+                  "Kinematic"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "entityUUID",
+          "propertyName",
+          "propertyValue"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "GetBoxCollider2DComponent",
+      "description": "Returns all properties of the box collider 2d component which is used to add a box collider to the entity to make it able to collide with other colliders.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to get the component from.",
+            "example": "6370029969853740667"
+          }
+        },
+        "required": [
+          "entityUUID"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "SetBoxCollider2DComponent",
+      "description": "Sets properties of the box collider 2d component which is used to add a box collider to the entity to make it able to collide with other colliders.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to set the component for.",
+            "example": "6370029969853740667"
+          },
+          "propertyName": {
+            "type": "string",
+            "description": "Name of the property to change.",
+            "enum": [
+              "Offset",
+              "Size",
+              "Density",
+              "Friction",
+              "Restitution",
+              "RestitutionThreshold"
+            ]
+          },
+          "propertyValue": {
+            "type": "number",
+            "description": "Used for specifying offset X value, size X value, density, friction, restitution, restitution threshold"
+          },
+          "Y-value": {
+            "type": "number",
+            "description": "Optional parameter used for specifying offset Y value and size Y value"
+          }
+        },
+        "required": [
+          "entityUUID",
+          "propertyName",
+          "propertyValue"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "GetCircleCollider2DComponent",
+      "description": "Returns all properties of the circle collider 2d component which is used to add a circle collider to the entity to make it able to collide with other colliders.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to get the component from.",
+            "example": "6370029969853740667"
+          }
+        },
+        "required": [
+          "entityUUID"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "SetCircleCollider2DComponent",
+      "description": "Sets properties of the circle collider 2d component which is used to add a circle collider to the entity to make it able to collide with other colliders.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to set the component for.",
+            "example": "6370029969853740667"
+          },
+          "propertyName": {
+            "type": "string",
+            "description": "Name of the property to change.",
+            "enum": [
+              "Offset",
+              "Radius",
+              "Density",
+              "Friction",
+              "Restitution",
+              "RestitutionThreshold"
+            ]
+          },
+          "propertyValue": {
+            "type": "number",
+            "description": "Used for specifying offset X value, radius, density, friction, restitution, restitution threshold"
+          },
+          "Y-value": {
+            "type": "number",
+            "description": "Optional parameter used for specifying offset Y value"
+          }
+        },
+        "required": [
+          "entityUUID",
+          "propertyName",
+          "propertyValue"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "GetTextComponent",
+      "description": "Returns all properties of the text component which is used to make entity display text.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to get the component from.",
+            "example": "6370029969853740667"
+          }
+        },
+        "required": [
+          "entityUUID"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "SetTextComponent",
+      "description": "Sets properties of the text component which is used to make entity display text.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entityUUID": {
+            "type": "string",
+            "description": "UUID of the entity to set the component for.",
+            "example": "6370029969853740667"
+          },
+          "propertyName": {
+            "type": "string",
+            "description": "Name of the property to change.",
+            "enum": [
+              "Text",
+              "Font",
+              "Color",
+              "Kerning",
+              "LineSpacing"
+            ]
+          },
+          "propertyValue": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Used for specifying text (what text should be displayed)"
+              },
+              {
+                "type": "number",
+                "description": "Used for specifying color R value (0-255, integer), kerning, line spacing"
+              }
+            ],
+            "G-value": {
+            "type": "number",
+            "description": "Optional parameter used for specifying color G value (in RGBA format), only necessary when changing Color property",
+            "minimum": 0,
+            "maximum": 255
+            },
+            "B-value": {
+              "type": "number",
+              "description": "Optional parameter used for specifying color B value (in RGBA format), only necessary when changing Color property",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "A-value": {
+              "type": "number",
+              "description": "Optional parameter used for specifying color A value (in RGBA format), only necessary when changing Color property",
+              "minimum": 0,
+              "maximum": 255
+            }
+          }
+        },
+        "required": [
+          "entityUUID",
+          "propertyName",
+          "propertyValue"
         ]
       }
     }

@@ -413,29 +413,45 @@ namespace eg
 
 			if (params[1] == "Primary")
 			{
-				if (ComponentHelper::CanConvertToInteger(params[2]) != false)
+				if (params[2] == "true" || params[2] == "True")
 				{
 					bool primary = camera.Primary;
-					camera.Primary = std::stoi(params[2]);
+					camera.Primary = true;
+					Commands::ExecuteRawValueCommand(&camera.Primary, primary, "Assistant-CameraComponent-Primary");
+
+					return "Success";
+				}
+				else if (params[2] == "false" || params[2] == "False")
+				{
+					bool primary = camera.Primary;
+					camera.Primary = false;
 					Commands::ExecuteRawValueCommand(&camera.Primary, primary, "Assistant-CameraComponent-Primary");
 
 					return "Success";
 				}
 				else
-					return "Parameter is not integer.";
+					return "Invalid value.";
 			}
 			else if (params[1] == "FixedAspectRatio")
 			{
-				if (ComponentHelper::CanConvertToInteger(params[2]) != false)
+				if (params[2] == "true" || params[2] == "True")
 				{
 					bool fixedAspectRatio = camera.FixedAspectRatio;
-					camera.FixedAspectRatio = std::stoi(params[2]);
+					camera.FixedAspectRatio = true;
+					Commands::ExecuteRawValueCommand(&camera.FixedAspectRatio, fixedAspectRatio, "Assistant-CameraComponent-FixedAspectRatio");
+
+					return "Success";
+				}
+				else if (params[2] == "false" || params[2] == "False")
+				{
+					bool fixedAspectRatio = camera.FixedAspectRatio;
+					camera.FixedAspectRatio = false;
 					Commands::ExecuteRawValueCommand(&camera.FixedAspectRatio, fixedAspectRatio, "Assistant-CameraComponent-FixedAspectRatio");
 
 					return "Success";
 				}
 				else
-					return "Parameter is not integer.";
+					return "Invalid value.";
 			}
 			else if (params[1] == "ProjectionType")
 			{
@@ -640,7 +656,7 @@ namespace eg
 
 			return "None action was taken.";
 		}
-		else if (actionName == "CircleRendererComponent")
+		else if (actionName == "GetCircleRendererComponent")
 		{
 			if (!ComponentHelper::CanConvertToUUID(params[0]))
 				return "First parameter is not UUID.";
@@ -754,14 +770,24 @@ namespace eg
 
 			if (params[1] == "FixedRotation")
 			{
-				if(ComponentHelper::CanConvertToInteger(params[2]) == false)
-					return "Parameter is not integer.";
+				if(params[2] == "true" || params[2] == "True")
+				{
+					bool fixedRotation = rigidBody2D.FixedRotation;
+					rigidBody2D.FixedRotation = true;
+					Commands::ExecuteRawValueCommand(&rigidBody2D.FixedRotation, fixedRotation, "Assistant-RigidBody2DComponent-FixedRotation");
 
-				bool fixedRotation = rigidBody2D.FixedRotation;
-				rigidBody2D.FixedRotation = std::stoi(params[2]);
-				Commands::ExecuteRawValueCommand(&rigidBody2D.FixedRotation, fixedRotation, "Assistant-RigidBody2DComponent-FixedRotation");
+					return "Success";
+				}
+				else if (params[2] == "false" || params[2] == "False")
+				{
+					bool fixedRotation = rigidBody2D.FixedRotation;
+					rigidBody2D.FixedRotation = false;
+					Commands::ExecuteRawValueCommand(&rigidBody2D.FixedRotation, fixedRotation, "Assistant-RigidBody2DComponent-FixedRotation");
 
-				return "Success";
+					return "Success";
+				}
+				else
+					return "Invalid value.";
 			}
 			else if(params[1] == "Type")
 			{
