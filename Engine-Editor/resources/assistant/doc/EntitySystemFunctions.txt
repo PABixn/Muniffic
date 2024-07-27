@@ -7,13 +7,13 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           }
         },
         "required": [
-          "entityName"
+          "entityUUID"
         ]
       }
     }
@@ -26,7 +26,7 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
             "description": "Name of the entity."
           }
@@ -57,17 +57,17 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "newName": {
             "type": "string",
-            "description": "New name of the entity."
+            "description": "New UUID of the entity."
           }
         },
         "required": [
-          "entityName"
+          "entityUUID"
         ]
       }
     }
@@ -80,13 +80,13 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           }
         },
         "required": [
-          "entityName"
+          "entityUUID"
         ]
       }
     }
@@ -99,13 +99,13 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           }
         },
         "required": [
-          "entityName"
+          "entityUUID"
         ]
       }
     }
@@ -118,13 +118,13 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           }
         },
         "required": [
-          "entityName"
+          "entityUUID"
         ]
       }
     }
@@ -137,13 +137,13 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           }
         },
         "required": [
-          "entityName"
+          "entityUUID"
         ]
       }
     }
@@ -156,13 +156,13 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           }
         },
         "required": [
-          "entityName"
+          "entityUUID"
         ]
       }
     }
@@ -175,18 +175,18 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity which parent should be changed."
+            "description": "UUID of the entity which parent should be changed."
           },
-          "parentName": {
+          "parentUUID": {
             "type": "string",
-            "description": "Name of the entity that should be parent of the given entity."
+            "description": "UUID of the entity that should be parent of the given entity."
           }
         },
         "required": [
-          "entityName",
-          "parentName"
+          "entityUUID",
+          "parentUUID"
         ]
       }
     }
@@ -199,18 +199,18 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "childName": {
+          "childUUID": {
             "type": "string",
-            "description": "Name of the child entity."
+            "description": "UUID of the child entity."
           },
-          "parentName": {
+          "parentUUID": {
             "type": "string",
-            "description": "Name of the parent entity."
+            "description": "UUID of the parent entity."
           }
         },
         "required": [
-          "childName",
-          "parentName"
+          "childUUID",
+          "parentUUID"
         ]
       }
     }
@@ -223,18 +223,18 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "childName": {
+          "childUUID": {
             "type": "string",
-            "description": "Name of the child entity."
+            "description": "UUID of the child entity."
           },
           "parentName": {
             "type": "string",
-            "description": "Name of the parent entity."
+            "description": "UUID of the parent entity."
           }
         },
         "required": [
-          "childName",
-          "parentName"
+          "childUUID",
+          "parentUUID"
         ]
       }
     }
@@ -247,9 +247,9 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "componentName": {
             "type": "string",
@@ -269,7 +269,7 @@
           }
         },
         "required": [
-          "entityName",
+          "entityUUID",
           "componentName"
         ]
       }
@@ -283,9 +283,9 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "componentName": {
             "type": "string",
@@ -305,7 +305,7 @@
           }
         },
         "required": [
-          "entityName",
+          "entityUUID",
           "componentName"
         ]
       }
@@ -319,9 +319,9 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "componentName": {
             "type": "string",
@@ -342,7 +342,7 @@
           }
         },
         "required": [
-          "entityName",
+          "entityUUID",
           "componentName"
         ]
       }
@@ -356,9 +356,9 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "componentName": {
             "type": "string",
@@ -379,7 +379,7 @@
           }
         },
         "required": [
-          "entityName",
+          "entityUUID",
           "componentName"
         ]
       }
@@ -393,9 +393,9 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "componentName": {
             "type": "string",
@@ -416,7 +416,7 @@
           }
         },
         "required": [
-          "entityName",
+          "entityUUID",
           "componentName"
         ]
       }
@@ -430,9 +430,9 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "componentName": {
             "type": "string",
@@ -452,7 +452,7 @@
           }
         },
         "required": [
-          "entityName",
+          "entityUUID",
           "componentName"
         ]
       }
@@ -466,9 +466,9 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "componentName": {
             "type": "string",
@@ -489,7 +489,7 @@
           }
         },
         "required": [
-          "entityName",
+          "entityUUID",
           "componentName"
         ]
       }
@@ -503,9 +503,9 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "componentName": {
             "type": "string",
@@ -513,7 +513,7 @@
           }
         },
         "required": [
-          "entityName",
+          "entityUUID",
           "componentName"
         ]
       }
@@ -527,9 +527,9 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "componentName": {
             "type": "string",
@@ -550,7 +550,7 @@
           }
         },
         "required": [
-          "entityName",
+          "entityUUID",
           "componentName"
         ]
       }
@@ -564,13 +564,13 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityName": {
+          "entityUUID": {
             "type": "string",
-            "description": "Name of the entity."
+            "description": "UUID of the entity."
           },
           "componentName": {
             "type": "string",
-            "description": "Name of the entity.",
+            "description": "UUID of the entity.",
             "enum": [
                         "TransformComponent",
                         "SpriteRendererComponent",
@@ -587,7 +587,7 @@
           }
         },
         "required": [
-          "entityName",
+          "entityUUID",
           "componentName"
         ]
       }

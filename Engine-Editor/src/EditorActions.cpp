@@ -19,7 +19,10 @@ namespace eg
 		}
 		else if (actionName == "Exists")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
 				return "false";
@@ -39,10 +42,13 @@ namespace eg
 		}
 		else if (actionName == "ChangeName")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			std::string& tag = entity.GetComponent<TagComponent>().Tag;
 			std::string name = tag;
@@ -60,10 +66,13 @@ namespace eg
 		}
 		else if (actionName == "DeleteEntity")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Scene, *m_SelectedEntity));
 
@@ -71,10 +80,13 @@ namespace eg
 		}
 		else if (actionName == "GetAnyChildren")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			auto children = entity.GetAnyChildren();
 			std::string childrenNames = "";
@@ -86,10 +98,13 @@ namespace eg
 		}
 		else if (actionName == "GetChildren")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			auto children = entity.GetChildren();
 			std::string childrenNames = "";
@@ -101,10 +116,13 @@ namespace eg
 		}
 		else if (actionName == "GetParent")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			std::optional<Entity> parent = entity.GetParent();
 
@@ -115,20 +133,27 @@ namespace eg
 		}
 		else if (actionName == "SetParent")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			std::optional<Entity> parent;
 
-			if(params[1] == "" || params[1] == "NULL")
+			if(params[1] == "" || params[1] == "NULL" || params[1] == "null" || params[1] == "0")
 				parent = std::nullopt;
 			else
 			{
-				parent = m_Scene->FindEntityByName(params[1]);
-				if (parent.value() == Entity())
-					return "Parent with name " + params[1] + " not found";
+				if (!ComponentHelper::CanConvertToUUID(params[1]))
+					return "Second parameter is not UUID.";
+
+				parent = m_Scene->GetEntityByUUID(std::stoll(params[1]));
+
+				if (parent == Entity())
+					return "Entity with UUID " + params[1] + " not found";
 			}
 			
 			Commands::ExecuteChangeParentCommand(entity, parent, m_Scene);
@@ -137,15 +162,21 @@ namespace eg
 		}
 		else if (actionName == "IsChild")
 		{
-			Entity child = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity child = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (child == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
-			Entity entity = m_Scene->FindEntityByName(params[1]);
+			if (!ComponentHelper::CanConvertToUUID(params[1]))
+				return "Second parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[1]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[1] + " not found";
+				return "Entity with UUID " + params[1] + " not found";
 
 			if(entity.IsChild(child))
 				return "true";
@@ -154,15 +185,21 @@ namespace eg
 		}
 		else if(actionName == "IsChildOfAny")
 		{
-			Entity child = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity child = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (child == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
-			Entity entity = m_Scene->FindEntityByName(params[1]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "Second parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[1] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if(entity.IsChildOfAny(child))
 				return "true";
@@ -171,10 +208,13 @@ namespace eg
 		}
 		else if (actionName == "AddComponent")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if(ComponentHelper::AddComponent(params[1], entity, m_Scene))
 				return "Success";
@@ -183,10 +223,13 @@ namespace eg
 		}
 		else if(actionName == "RemoveComponent")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if(ComponentHelper::RemoveComponent(params[1], entity, m_Scene))
 				return "Success";
@@ -195,10 +238,13 @@ namespace eg
 		}
 		else if (actionName == "HasComponent")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if(ComponentHelper::HasComponent(params[1], entity, m_Scene))
 				return "true";
@@ -207,10 +253,13 @@ namespace eg
 		}
 		else if (actionName == "InheritComponentInChildren")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::InheritComponentInChildren, params[1], entity, m_Scene))
 				return "Success";
@@ -219,10 +268,13 @@ namespace eg
 		}
 		else if (actionName == "InheritComponentFromParent")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::InheritComponentFromParent, params[1], entity, m_Scene))
 				return "Success";
@@ -231,10 +283,13 @@ namespace eg
 		}
 		else if (actionName == "CopyComponentToChildren")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::CopyComponentToChildren, params[1], entity, m_Scene))
 				return "Success";
@@ -243,10 +298,13 @@ namespace eg
 		}
 		else if (actionName == "CopyComponentValuesToChildren")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::CopyComponentValuesToChildren, params[1], entity, m_Scene))
 				return "Success";
@@ -255,10 +313,13 @@ namespace eg
 		}
 		else if (actionName == "CopyComponentWithValuesToChildren")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if (ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::CopyComponentWithValuesToChildren, params[1], entity, m_Scene))
 				return "Success";
@@ -267,10 +328,13 @@ namespace eg
 		}
 		else if (actionName == "IsInheritedFromParent")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if (ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::IsInheritedFromParent, params[1], entity, m_Scene))
 				return "Success";
@@ -279,10 +343,13 @@ namespace eg
 		}
 		else if (actionName == "IsInheritedInChildren")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (!ComponentHelper::CanConvertToUUID(params[0]))
+				return "First parameter is not UUID.";
+
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with UUID " + params[0] + " not found";
 
 			if (ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::IsInheritedInChildren, params[1], entity, m_Scene))
 				return "Success";
