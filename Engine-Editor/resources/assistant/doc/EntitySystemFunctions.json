@@ -80,13 +80,13 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "entityUUID": {
+          "entityName": {
             "type": "string",
-            "description": "UUID of the entity."
+            "description": "Name of the entity."
           }
         },
         "required": [
-          "entityUUID"
+          "entityName"
         ]
       }
     }

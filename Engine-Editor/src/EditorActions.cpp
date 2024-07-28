@@ -62,7 +62,7 @@ namespace eg
 		{
 			Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs(params[0], {}, m_Scene, *m_SelectedEntity));
 
-			return "Success";
+			return "Entity created";
 		}
 		else if (actionName == "DeleteEntity")
 		{
@@ -76,7 +76,7 @@ namespace eg
 
 			Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Scene, *m_SelectedEntity));
 
-			return "Success";
+			return "Entity removed";
 		}
 		else if (actionName == "GetAnyChildren")
 		{
@@ -645,10 +645,10 @@ namespace eg
 			SpriteRendererComponent& spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
 
 			std::string spriteRendererString = "Color: R: "
-				+ std::to_string(spriteRenderer.Color.r) + " G: "
-				+ std::to_string(spriteRenderer.Color.g) + " B: "
-				+ std::to_string(spriteRenderer.Color.b) + " A: "
-				+ std::to_string(spriteRenderer.Color.a) + " Texture: "
+				+ std::to_string(spriteRenderer.Color.x * 255) + " G: "
+				+ std::to_string(spriteRenderer.Color.y * 255) + " B: "
+				+ std::to_string(spriteRenderer.Color.z * 255) + " A: "
+				+ std::to_string(spriteRenderer.Color.w * 255) + " Texture: "
 				+ spriteRenderer.Texture->GetPath() + "TextureUUID: "
 				+ std::to_string(spriteRenderer.TextureUUID) + " TilingFactor: "
 				+ std::to_string(spriteRenderer.TilingFactor);
@@ -690,10 +690,10 @@ namespace eg
 					return "Parameter is not float.";
 
 				glm::vec4 color = spriteRenderer.Color;
-				spriteRenderer.Color.r = std::stof(params[2]);
-				spriteRenderer.Color.g = std::stof(params[3]);
-				spriteRenderer.Color.b = std::stof(params[4]);
-				spriteRenderer.Color.a = std::stof(params[5]);
+				spriteRenderer.Color.x = std::stof(params[2]) / 255;
+				spriteRenderer.Color.y = std::stof(params[3]) / 255;
+				spriteRenderer.Color.z = std::stof(params[4]) / 255;
+				spriteRenderer.Color.w = std::stof(params[5]) / 255;
 
 				Commands::ExecuteRawValueCommand<glm::vec4, SpriteRendererComponent>(&spriteRenderer.Color, color, entity, "Assistant-SpriteRendererComponent-Color");
 
@@ -736,10 +736,10 @@ namespace eg
 			CircleRendererComponent& circleRenderer = entity.GetComponent<CircleRendererComponent>();
 
 			std::string circleRendererString = "Color: R: "
-				+ std::to_string(circleRenderer.Color.r) + " G: "
-				+ std::to_string(circleRenderer.Color.g) + " B: "
-				+ std::to_string(circleRenderer.Color.b) + " A: "
-				+ std::to_string(circleRenderer.Color.a) + " Fade: "
+				+ std::to_string(circleRenderer.Color.x * 255) + " G: "
+				+ std::to_string(circleRenderer.Color.y * 255) + " B: "
+				+ std::to_string(circleRenderer.Color.z * 255) + " A: "
+				+ std::to_string(circleRenderer.Color.w * 255) + " Fade: "
 				+ std::to_string(circleRenderer.Fade) + " Thickness: "
 				+ std::to_string(circleRenderer.Thickness);
 
@@ -791,10 +791,10 @@ namespace eg
 					return "Parameter is not float.";
 
 				glm::vec4 color = circleRenderer.Color;
-				circleRenderer.Color.r = std::stof(params[2]);
-				circleRenderer.Color.g = std::stof(params[3]);
-				circleRenderer.Color.b = std::stof(params[4]);
-				circleRenderer.Color.a = std::stof(params[5]);
+				circleRenderer.Color.x = std::stof(params[2]) / 255;
+				circleRenderer.Color.y = std::stof(params[3]) / 255;
+				circleRenderer.Color.z = std::stof(params[4]) / 255;
+				circleRenderer.Color.w = std::stof(params[5]) / 255;
 
 				Commands::ExecuteRawValueCommand<glm::vec4, CircleRendererComponent>(&circleRenderer.Color, color, entity, "Assistant-CircleRendererComponent-Color");
 
@@ -1124,10 +1124,10 @@ namespace eg
 
 			std::string textString = "Text: " + text.TextString + " Font: " +
 				ResourceDatabase::GetResourcePath(text.FontAsset).string() + " Color: R: " +
-				std::to_string(text.Color.r) + " G: " +
-				std::to_string(text.Color.g) + " B: " +
-				std::to_string(text.Color.b) + " A: " +
-				std::to_string(text.Color.a) + " Kerning: " +
+				std::to_string(text.Color.x * 255) + " G: " +
+				std::to_string(text.Color.y * 255) + " B: " +
+				std::to_string(text.Color.z * 255) + " A: " +
+				std::to_string(text.Color.w * 255) + " Kerning: " +
 				std::to_string(text.Kerning) + " LineSpacing: " +
 				std::to_string(text.LineSpacing);
 
@@ -1177,10 +1177,10 @@ namespace eg
 					return "Parameter is not float.";
 
 				glm::vec4 color = text.Color;
-				text.Color.r = std::stof(params[2]);
-				text.Color.g = std::stof(params[3]);
-				text.Color.b = std::stof(params[4]);
-				text.Color.a = std::stof(params[5]);
+				text.Color.x = std::stof(params[2]) / 255;
+				text.Color.y = std::stof(params[3]) / 255;
+				text.Color.z = std::stof(params[4]) / 255;
+				text.Color.w = std::stof(params[5]) / 255;
 
 				Commands::ExecuteRawValueCommand<glm::vec4, TextComponent>(&text.Color, color, entity, "Assistant-TextComponent-Color");
 
