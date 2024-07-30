@@ -104,6 +104,8 @@ namespace eg {
 		void InvokeOnUpdate(float ts);
 		void InvokeOn2DCollisionEnter(InternalCollision2DEvent collision);
 		void InvokeOn2DCollisionExit(InternalCollision2DEvent collision);
+		void InvokeOnKeyPress(int keycode);
+		void InvokeOnKeyRelease(int keycode);
 		
 		Ref<ScriptClass> GetScriptClass() const { return m_ScriptClass; }
 
@@ -144,6 +146,8 @@ namespace eg {
 		MonoMethod* m_OnUpdateMethod = nullptr;
 		MonoMethod* m_OnCollisionEnterMethod = nullptr;
 		MonoMethod* m_OnCollisionExitMethod = nullptr;
+		MonoMethod* m_OnKeyPress = nullptr;
+		MonoMethod* m_OnKeyRelease = nullptr;
 		inline static char s_FieldValueBuffer[16];
 
 		friend class ScriptEngine;
@@ -174,6 +178,7 @@ namespace eg {
 
 		static Scene* GetSceneContext();
 		static Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid, std::string name);
+		static std::vector<Ref<ScriptInstance>> GetAllScriptInstances();
 		static std::vector<Ref<ScriptInstance>> GetEntityScriptInstances(UUID uuid);
 
 		static Ref<ScriptClass> GetEntityClass(const std::string& name);

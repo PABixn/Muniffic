@@ -7,13 +7,16 @@
 namespace eg
 {
 	class Input {
+		private:
+			static void key_callback(auto window, int key, int scancode, int action, int mods);
 		public:
-		static bool IsKeyPressed(KeyCode keycode);
+			static void Init();
+			static bool IsKeyPressed(KeyCode keycode);
 
-		static bool IsMouseButtonPressed(MouseCode button);
-		static float GetMouseX();
-		static float GetMouseY();
-		static std::pair<float, float> GetMousePositon();
+			static bool IsMouseButtonPressed(MouseCode button);
+			static float GetMouseX();
+			static float GetMouseY();
+			static std::pair<float, float> GetMousePositon();
 	};
 
 }

@@ -794,6 +794,7 @@ namespace eg
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
 
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
+			Input::Init();
 		}
 		else
 		{

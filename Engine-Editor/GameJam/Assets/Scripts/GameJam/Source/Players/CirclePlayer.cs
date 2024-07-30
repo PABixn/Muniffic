@@ -48,6 +48,11 @@ namespace Game
             collision.otherEntity.GetComponent<SpriteRendererComponent>().color = Color.brown;
         }
 
+        public void OnKeyPress(KeyCode keyCode)
+        {
+            DebugConsole.Log("Key pressed "+keyCode, DebugConsole.LogType.Info);
+        }
+
         public override void OnUpdate(float ts)
         {
             lastJump += ts;

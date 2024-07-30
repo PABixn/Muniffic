@@ -441,6 +441,15 @@ namespace eg
 		return s_Data->SceneContext;
 	}
 
+	std::vector<Ref<ScriptInstance>> ScriptEngine::GetAllScriptInstances()
+	{
+		std::vector<Ref<ScriptInstance>> result;
+		for (auto& [key, value] : s_Data->EntityInstances)
+			for (auto& [key, value] : value)
+				result.push_back(value);
+		return result;
+	}
+
 	std::vector<Ref<ScriptInstance>> ScriptEngine::GetEntityScriptInstances(UUID uuid)
 	{
 		std::vector<Ref<ScriptInstance>> result;
@@ -516,6 +525,8 @@ namespace eg
 		m_OnUpdateMethod = m_ScriptClass->GetMethod("OnUpdate", 1);
 		m_OnCollisionEnterMethod = m_ScriptClass->GetMethod("OnCollisionEnter", 1);
 		m_OnCollisionExitMethod = m_ScriptClass->GetMethod("OnCollisionExit", 1);
+		m_OnKeyPress = m_ScriptClass->GetMethod("OnKeyPress", 1);
+		m_OnKeyRelease = m_ScriptClass->GetMethod("OnKeyRelease", 1);
 
 		{
 			UUID uuid = entity.GetUUID();
@@ -563,6 +574,24 @@ namespace eg
 			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
 			void* arg = args;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionExitMethod, &arg);
+		}
+	}
+
+	void ScriptInstance::InvokeOnKeyPress(int keycode)
+	{
+		if (m_OnKeyPress)
+		{
+			void* args = &keycode;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnKeyPress, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnKeyRelease(int keycode)
+	{
+		if (m_OnKeyRelease)
+		{
+			void* args = &keycode;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnKeyRelease, &args);
 		}
 	}
 
