@@ -23,6 +23,8 @@ namespace eg
 
 	bool ResourceSerializer::DeserializeResourceCache()
 	{
+
+
 		AssetDirectorySerializer::DeserializeAssetDirectoryCache();
 
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
@@ -184,7 +186,10 @@ namespace eg
 		}
 
 		if (ResourceDatabase::GetFontResourceDataCache().size() > 0)
+		{
 			Font::SetDefaultFont(ResourceDatabase::GetFontResourceDataCache().begin()->first);
+			ResourceDatabase::LoadRuntimeResource(Font::GetDefaultFontUUID(), ResourceType::Font);
+		}
 		else
 			Font::LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
 
