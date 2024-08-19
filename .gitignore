@@ -2,9 +2,15 @@
 **/bin/
 bin-int/
 Intermediates/
+x64/
+Engine/Engine/
+Engine-Editor/Engine-Editor/
 
 # Muniffic files
 *.log
+
+# ImGui 
+imgui.ini
 
 # Visual Studio files and folder
 .vs/
@@ -18,3 +24,16 @@ Intermediates/
 Engine/vendor/VulkanSDK
 Engine-Editor/assets/cache
 scripts/__pycache__
+
+# Git & other
+.git/
+.github/
+.idea/
+.vscode/
+
+# CMake
+CMakeFiles/
+**/CMakeFiles/
+**.cmake
+**.dir/
+!Dependencies.cmake

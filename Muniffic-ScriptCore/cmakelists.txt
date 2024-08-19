@@ -1,0 +1,62 @@
+# Muniffic-ScriptCore/CMakeLists.txt
+
+cmake_minimum_required(VERSION 3.16)
+
+
+find_program(CMAKE_CSharp_COMPILER
+    NAMES csc
+    HINTS 
+        "$ENV{ProgramFiles}/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/Roslyn"
+        "$ENV{ProgramFiles}/Microsoft Visual Studio/2022/Professional/MSBuild/Current/Bin/Roslyn"
+        "$ENV{ProgramFiles}/Microsoft Visual Studio/2022/Enterprise/MSBuild/Current/Bin/Roslyn"
+)
+
+if(CMAKE_CSharp_COMPILER)
+    message(STATUS "C# compiler found: ${CMAKE_CSharp_COMPILER}")
+else()
+    message(FATAL_ERROR "C# compiler not found")
+endif()
+
+project(Muniffic-ScriptCore LANGUAGES CSharp)
+
+add_library(Muniffic-ScriptCore SHARED)
+
+# .NET Framework version
+set_target_properties(Muniffic-ScriptCore PROPERTIES
+    VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.7.2"
+)
+
+# Output directories
+set_target_properties(Muniffic-ScriptCore PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../Engine-Editor/Resources/Scripts"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../Engine-Editor/Resources/Scripts"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../Engine-Editor/Resources/Scripts"
+    OBJECT_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../Engine-Editor/Resources/Scripts/Intermediates"
+)
+file(GLOB_RECURSE MUNIFFIC_SCRIPTCORE_SOURCE "Source/*.cs")
+file(GLOB_RECURSE MUNIFFIC_SCRIPTCORE_PROPERTIES "Properties/*.cs")
+# Source files
+target_sources(Muniffic-ScriptCore PRIVATE
+    ${MUNIFFIC_SCRIPTCORE_SOURCE}
+    ${MUNIFFIC_SCRIPTCORE_PROPERTIES}
+)
+
+# Configurations
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set_target_properties(Muniffic-ScriptCore PROPERTIES
+        VS_DOTNET_DEBUG_INFORMATION "pdbonly"  # Generates debug symbols
+        VS_DOTNET_OPTIMIZE "false"             # No optimization
+    )
+
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_target_properties(Muniffic-ScriptCore PROPERTIES
+        VS_DOTNET_DEBUG_INFORMATION "pdbonly"  # Default debug symbols
+        VS_DOTNET_OPTIMIZE "true"              # Enable optimization
+    )
+
+elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
+    set_target_properties(Muniffic-ScriptCore PROPERTIES
+        VS_DOTNET_DEBUG_INFORMATION "none"     # No debug symbols
+        VS_DOTNET_OPTIMIZE "true"              # Full optimization
+    )
+endif()
