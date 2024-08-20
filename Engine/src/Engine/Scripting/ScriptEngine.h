@@ -106,6 +106,9 @@ namespace eg {
 		void InvokeOn2DCollisionExit(InternalCollision2DEvent collision);
 		void InvokeOnKeyPress(int keycode);
 		void InvokeOnKeyRelease(int keycode);
+		void InvokeOnMouseButtonPress(int button);
+		void InvokeOnMouseButtonRelease(int button);
+		void InvokeOnScroll(double xOffset, double yOffset);
 		
 		Ref<ScriptClass> GetScriptClass() const { return m_ScriptClass; }
 
@@ -148,6 +151,9 @@ namespace eg {
 		MonoMethod* m_OnCollisionExitMethod = nullptr;
 		MonoMethod* m_OnKeyPress = nullptr;
 		MonoMethod* m_OnKeyRelease = nullptr;
+		MonoMethod* m_OnMouseButtonPress = nullptr;
+		MonoMethod* m_OnMouseButtonRelease = nullptr;
+		MonoMethod* m_OnScroll = nullptr;
 		inline static char s_FieldValueBuffer[16];
 
 		friend class ScriptEngine;

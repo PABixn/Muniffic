@@ -433,6 +433,10 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Input_IsKeyDown(KeyCode keyCode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string Input_GetClipboardContent();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetClipboardContent(string content);
         #endregion
 
         #region TextComponent

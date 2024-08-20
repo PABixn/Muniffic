@@ -527,6 +527,9 @@ namespace eg
 		m_OnCollisionExitMethod = m_ScriptClass->GetMethod("OnCollisionExit", 1);
 		m_OnKeyPress = m_ScriptClass->GetMethod("OnKeyPress", 1);
 		m_OnKeyRelease = m_ScriptClass->GetMethod("OnKeyRelease", 1);
+		m_OnMouseButtonPress = m_ScriptClass->GetMethod("OnMouseButtonPress", 1);
+		m_OnMouseButtonRelease = m_ScriptClass->GetMethod("OnMouseButtonRelease", 1);
+		m_OnScroll = m_ScriptClass->GetMethod("OnScroll", 1);
 
 		{
 			UUID uuid = entity.GetUUID();
@@ -592,6 +595,34 @@ namespace eg
 		{
 			void* args = &keycode;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnKeyRelease, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnMouseButtonPress(int button)
+	{
+		if (m_OnMouseButtonPress)
+		{
+			void* args = &button;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnMouseButtonPress, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnMouseButtonRelease(int button)
+	{
+		if (m_OnMouseButtonRelease)
+		{
+			void* args = &button;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnMouseButtonRelease, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnScroll(double xOffset, double yOffset)
+	{
+		if (m_OnScroll)
+		{
+			float offsets[] = { (float)xOffset, (float)yOffset };
+			void* args = &offsets;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnMouseButtonRelease, &args);
 		}
 	}
 

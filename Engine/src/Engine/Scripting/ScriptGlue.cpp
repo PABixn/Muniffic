@@ -1891,6 +1891,16 @@ namespace eg
 	{
 		return Input::IsKeyPressed(keycode);
 	}
+
+	static MonoString* Input_GetClipboardContent()
+	{
+		return ScriptEngine::CreateString(Input::GetClipboardContent());
+	}
+
+	static void Input_SetClipboardContent(MonoString* content)
+	{
+		Input::SetClipboardContent(Utils::MonoStringToString(content).data());
+	}
 #pragma endregion
 
 #pragma region Script
@@ -2076,6 +2086,8 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(Audio_SetVolume);
 
 		EG_ADD_INTERNAL_CALL(Input_IsKeyDown);
+		EG_ADD_INTERNAL_CALL(Input_GetClipboardContent);
+		EG_ADD_INTERNAL_CALL(Input_SetClipboardContent);
 	}
 
 	template <typename... Component>

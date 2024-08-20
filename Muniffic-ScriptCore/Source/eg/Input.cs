@@ -17,5 +17,13 @@ namespace eg
         {
             return InternalCalls.Input_IsKeyDown(key);
         }
+        public static string GetClipboardContent()
+        {
+            return InternalCalls.Input_GetClipboardContent();
+        }
+        public static void SetClipboardContent(string content)
+        {
+            InternalCalls.Input_SetClipboardContent(content);
+        }
     }
 }
