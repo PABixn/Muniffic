@@ -886,6 +886,7 @@ namespace eg {
 
 					if (del){
 						component.Scripts.erase(std::find(component.Scripts.begin(), component.Scripts.end(), scriptUUID));
+						AssetDirectoryManager::removeAsset(ResourceDatabase::GetResourceParentDirectory(scriptUUID), scriptUUID);
 
 						if (open) {
 							ImGui::TreePop();

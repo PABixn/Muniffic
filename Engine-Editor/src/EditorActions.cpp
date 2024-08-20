@@ -755,6 +755,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params[0] + " not found";
 
+			if(entity.HasComponent<CircleRendererComponent>() == false)
+				return "Entity does not have CircleRendererComponent.";
+
 			CircleRendererComponent& circleRenderer = entity.GetComponent<CircleRendererComponent>();
 
 			if (params[1] == "Thickness")
@@ -787,6 +790,10 @@ namespace eg
 					return "Parameter is not float.";
 				if(ComponentHelper::CanConvertToFloat(params[4]) == false)
 					return "Parameter is not float.";
+
+				if(params.size() < 6)
+					params[5] = "255";
+
 				if(ComponentHelper::CanConvertToFloat(params[5]) == false)
 					return "Parameter is not float.";
 

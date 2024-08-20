@@ -314,10 +314,10 @@ namespace eg
 		}
 		else if (resourceType == ResourceType::Script)
 		{
-			if (ResourceSerializer::SpriteAtlasResourceDataCache.find(uuid) != ResourceSerializer::SpriteAtlasResourceDataCache.end())
+			if (ResourceSerializer::ScriptResourceDataCache.find(uuid) != ResourceSerializer::ScriptResourceDataCache.end())
 			{
-				delete ResourceSerializer::SpriteAtlasResourceDataCache.at(uuid);
-				ResourceSerializer::SpriteAtlasResourceDataCache.erase(uuid);
+				delete ResourceSerializer::ScriptResourceDataCache.at(uuid);
+				ResourceSerializer::ScriptResourceDataCache.erase(uuid);
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
@@ -328,6 +328,8 @@ namespace eg
 				EG_CORE_ERROR("Cannot delete default font");
 				return;
 			}
+
+			AssetDirectoryManager::removeAsset(ResourceSerializer::FontResourceDataCache[uuid]->ParentDirectory, uuid, deleteFile);
 
 			FontResourceData* data = ResourceSerializer::FontResourceDataCache[uuid];
 
@@ -342,8 +344,6 @@ namespace eg
 
 			delete data;
 		}
-
-
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported for deletion");
