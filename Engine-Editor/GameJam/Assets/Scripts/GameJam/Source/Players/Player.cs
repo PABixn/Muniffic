@@ -10,7 +10,9 @@ namespace Game
 {
     public abstract class Player : DefaultBehaviour
     {
+        //this is acceleration impulse strength
         public float speed;
+        //it is acceleration not velocity
         public Vector2 velocity;
         public bool isGrounded;
         public float friction;
@@ -25,15 +27,17 @@ namespace Game
         {
             direction = Vector2.Zero;
             velocity = Vector2.Zero;
-            friction = 0.8f;
+
             this.isGrounded = true;
             transform = GetComponent<TransformComponent>();
             rigidBody = GetComponent<RigidBody2DComponent>();
-
+            //These values should be set in the editor
             this.damage = damage;
             this.speed = speed;
             this.attackCooldown = attackCooldown;
             this.health = health;
+            //Should be set in the editor
+            friction = 0.8f;
         }
 
         public abstract void OnCreate();
@@ -43,6 +47,7 @@ namespace Game
         {
             velocity = Vector2.Zero;
 
+            //these if's override each other
             if (Input.IsKeyDown(KeyCode.S) && Math.Abs(velocity.Y) <= 10f)
             {
                 direction = new Vector2(0, -1);
@@ -61,9 +66,10 @@ namespace Game
 
             if (rigidBody != null)
             {
+                //Movement calculations should be doen differently
                 rigidBody.ApplyLinearImpulse(velocity * ts, true);
 
-                if(isGrounded)
+                if (isGrounded)
                     rigidBody.ApplyLinearImpulse(new Vector2(rigidBody.linearVelocity.X * -1 * friction * ts, 0), true);
             }
         }

@@ -29,6 +29,7 @@ namespace Game
             ProjectileSpeed = 1.0f;
         }
 
+        //Looks goods
         void Attack()
         {
             if (attackType == AttackType.Ranged)
@@ -70,7 +71,7 @@ namespace Game
 
         void SwitchForm(Stage stage)
         {
-            if (stage==Stage.Square)
+            if (stage == Stage.Square)
             {
                 Speed = 3.0f;
                 Health = 500;
@@ -79,7 +80,8 @@ namespace Game
                 attackType = AttackType.Melee;
                 ProjectileSpeed = 7.0f;
             }
-            else if (stage == Stage.Triangle) {
+            else if (stage == Stage.Triangle)
+            {
                 Speed = 2.0f;
                 Health = 800;
                 Damage = 40;
@@ -97,7 +99,7 @@ namespace Game
         void OnUpdate(float ts)
         {
             LastTimeUltUsed += ts;
-            if (LastTimeUltUsed >= 20.0f && Math.Abs(playerTransform.translation.X - Transform.translation.X) <150)
+            if (LastTimeUltUsed >= 20.0f && Math.Abs(playerTransform.translation.X - Transform.translation.X) < 150)
             {
                 Ultimate();
                 LastTimeUltUsed = 0.0f;

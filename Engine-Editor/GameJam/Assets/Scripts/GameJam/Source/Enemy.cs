@@ -26,14 +26,15 @@ namespace Game
         {
             Console.WriteLine("Enemy created! - " + entity.ID);
             playerEntity = Entity.FindEntityByName("Player");
-            if(playerEntity != null)
+            if (playerEntity != null)
             {
                 playerTransform = playerEntity.GetComponent<TransformComponent>();
             }
             Transform = GetComponent<TransformComponent>();
         }
-        protected void OnUpdate(float ts) {
-
+        protected void OnUpdate(float ts)
+        {
+            //Should be moved the the specific enemies
             if (attackType == AttackType.Ranged)
             {
                 if (Math.Abs(playerTransform.translation.X - Transform.translation.X) <= 150 && Math.Abs(playerTransform.translation.X - Transform.translation.X) > 50)
@@ -52,7 +53,7 @@ namespace Game
                 {
                     Direction.X = rnd.Next(-1, 1);
                 };
-                
+
             }
             else if (attackType == AttackType.Melee)
             {
@@ -65,13 +66,13 @@ namespace Game
                     Direction.X = rnd.Next(-1, 1);
                 }
             }
-            
 
-            if(Direction.X > 0)
+
+            if (Direction.X > 0)
             {
                 Velocity.X = Speed;
             }
-            else if(Direction.X < 0)
+            else if (Direction.X < 0)
             {
                 Velocity.X = -Speed;
             }
@@ -79,11 +80,11 @@ namespace Game
             {
                 Velocity.X = 0f;
             }
-            if(Direction.Y > 0)
+            if (Direction.Y > 0)
             {
                 Velocity.Y = Speed;
             }
-            else if(Direction.Y < 0)
+            else if (Direction.Y < 0)
             {
                 Velocity.Y = -Speed;
             }
@@ -91,7 +92,7 @@ namespace Game
             {
                 Velocity.Y = 0f;
             }
-            
+
             Transform.translation += new Vector3(Velocity.X, Velocity.Y, 0) * ts;
         }
 

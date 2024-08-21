@@ -30,7 +30,7 @@ namespace Game
             vector.NormalizeTo(ProjectileSpeed);
             projectiles.Add(new Projectile(Transform.translation.XY, vector, this.Damage, ProjectileType.Normal));
         }
-
+        //Each projectile should update itself
         void UpdateProjectilesPosition(float ts)
         {
             foreach (var projectile in projectiles)
@@ -41,7 +41,9 @@ namespace Game
 
         void OnUpdate(float ts)
         {
+            //Contents of the base.OnUpdate function should be written in specific enemies
             base.OnUpdate(ts);
+            //Each projectile should update itself
             UpdateProjectilesPosition(ts);
         }
     }

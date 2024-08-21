@@ -1,0 +1,26 @@
+Resources:
+  - UUID: 4641017705192003699
+    ParentDirectory: 4766252472221097665
+    ResourceName: Player.Quest
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 1172285517226286934
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.Player
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 8428311161421509370
+    ParentDirectory: 4766252472221097665
+    ResourceName: Hello
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 7706555741926686336
+    ParentDirectory: 4766252472221097665
+    ResourceName: adfa
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 3685085408964477476
+    ParentDirectory: 4766252472221097665
+    ResourceName: dafadfafa
+    Extension: .cs
+    IsEnabled: true

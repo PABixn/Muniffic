@@ -34,9 +34,11 @@ namespace Game
             rigidBody.AwakeRuntimeBody();
         }
 
+        //Should be OnUpdate
         public void UpdatePosition(float ts)
         {
             rigidBody.linearVelocity = Velocity;
         }
+
     }
 }

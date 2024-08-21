@@ -19,6 +19,7 @@ namespace Game
 
         public override void OnCreate()
         {
+            //shouldn't be in base Player
             base.InitPlayer(10, 100, 2, 800);
 
             projectiles = new List<Projectile>();
@@ -32,20 +33,23 @@ namespace Game
         {
             lastShot += ts;
 
+            //shouldn't be in base Player
             base.UpdatePosition(ts);
 
-            if(lastShot >= attackCooldown && Input.IsKeyDown(KeyCode.Space))
+            if (lastShot >= attackCooldown && Input.IsKeyDown(KeyCode.Space))
             {
                 lastShot = 0;
+                //Make this more readable
                 projectiles.Add(new Projectile(new Vector2(transform.translation.X + collideSize.X * direction.X + 0.1f * direction.X, transform.translation.Y), Vector2.NormalizeTo(direction, shotSpeed), (int)damage, ProjectileType.Normal));
             }
 
             UpdateProjectiles(ts);
         }
 
+        //Each projectile should handle itself it should be done in Player
         private void UpdateProjectiles(float ts)
         {
-            foreach(Projectile projectile in projectiles)
+            foreach (Projectile projectile in projectiles)
             {
                 projectile.UpdatePosition(ts);
             }

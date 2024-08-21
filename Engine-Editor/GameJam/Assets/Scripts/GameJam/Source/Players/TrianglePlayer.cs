@@ -18,6 +18,7 @@ namespace Game
         public BoxCollider2DComponent playerCollider;
         public BoxCollider2DComponent floorCollider;
 
+        //Write Triangle Player from Scratch
         public override void OnCreate()
         {
             base.InitPlayer(15, 80, 2, 250);

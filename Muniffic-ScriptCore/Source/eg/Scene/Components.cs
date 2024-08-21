@@ -577,6 +577,30 @@ namespace eg
         return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
     }
 
+        public bool CollidesWithAny(List<long> entityIDs)
+        {
+            foreach(long entityID in entityIDs)
+            {
+                if (CollidesWith(entityID))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool CollidesWithAny(List<Entity> entities)
+        {
+            foreach(Entity entity in entities)
+            {
+                if (CollidesWith(entity))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     bool CollidesWithEntitiesSide(Entity entity, Side side)
     {
         if (entity == null)

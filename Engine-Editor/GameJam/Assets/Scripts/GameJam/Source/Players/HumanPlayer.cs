@@ -17,7 +17,7 @@ namespace Game
         public Vector2 collideSize;
         public BoxCollider2DComponent playerCollider;
         public BoxCollider2DComponent floorCollider;
-
+        //I should write HumanPlayer from scratch
         public override void OnCreate()
         {
             base.InitPlayer(10f, 50f, 0.5f, 300f);
