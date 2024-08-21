@@ -22,7 +22,7 @@ namespace eg
     /// Base class for all components.
     /// </summary>
     public abstract class Component
-    { 
+    {
         /// <summary>
         /// Reference to entity the component is attached to.
         /// </summary>
@@ -458,9 +458,10 @@ namespace eg
         }
     }
 
-    public enum Side {
-            LEFT = 0, RIGHT, TOP, BOTTOM
-        }
+    public enum Side
+    {
+        LEFT = 0, RIGHT, TOP, BOTTOM
+    }
 
     public class BoxCollider2DComponent : Component
     {
@@ -516,6 +517,12 @@ namespace eg
             set => InternalCalls.BoxCollider2DComponent_SetRestitutionThreshold(Entity.ID, ref value);
         }
 
+        public bool isSensor
+        {
+            get => InternalCalls.BoxCollider2DComponent_IsSensor(Entity.ID);
+            set => InternalCalls.BoxCollider2DComponent_SetSensor(Entity.ID, ref value);
+        }
+
         public bool CollidesWith(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, other.ID);
@@ -555,7 +562,7 @@ namespace eg
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithTopEdge(Entity.ID, other.ID);
         }
-        
+
         public bool CollidesWithLeftEdge(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithLeftEdge(Entity.ID, other.ID);
@@ -570,16 +577,16 @@ namespace eg
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithBoxCoords(Entity.ID, ref center, ref size);
         }
-        
-        
-    public bool CollidesWith(long entityID)
-    {
-        return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
-    }
+
+
+        public bool CollidesWith(long entityID)
+        {
+            return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
+        }
 
         public bool CollidesWithAny(List<long> entityIDs)
         {
-            foreach(long entityID in entityIDs)
+            foreach (long entityID in entityIDs)
             {
                 if (CollidesWith(entityID))
                 {
@@ -591,7 +598,7 @@ namespace eg
 
         public bool CollidesWithAny(List<Entity> entities)
         {
-            foreach(Entity entity in entities)
+            foreach (Entity entity in entities)
             {
                 if (CollidesWith(entity))
                 {
@@ -601,12 +608,18 @@ namespace eg
             return false;
         }
 
-    bool CollidesWithEntitiesSide(Entity entity, Side side)
-    {
-        if (entity == null)
+
+        public bool CollidesWith(ulong entityID)
         {
-            return false;
+            return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
         }
+
+        bool CollidesWithEntitiesSide(Entity entity, Side side)
+        {
+            if (entity == null)
+            {
+                return false;
+            }
 
             switch (side)
             {
@@ -620,19 +633,19 @@ namespace eg
                     return this.CollidesWithBottomEdge(entity);
             }
 
-        return false;
-    }
-
-    bool CollidesWithEntity(string entityName)
-    {
-        Entity entity = Entity.FindEntityByName(entityName);
-        if (entity == null)
-        {
             return false;
         }
 
-        return CollidesWith(entity);
-    }
+        bool CollidesWithEntity(string entityName)
+        {
+            Entity entity = Entity.FindEntityByName(entityName);
+            if (entity == null)
+            {
+                return false;
+            }
+
+            return CollidesWith(entity);
+        }
     }
 
     public class CircleCollider2DComponent : Component
@@ -671,6 +684,11 @@ namespace eg
         {
             get => InternalCalls.CircleCollider2DComponent_GetRadius(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetRadius(Entity.ID, ref value);
+        }
+        public bool isSensor
+        {
+            get => InternalCalls.CircleCollider2DComponent_IsSensor(Entity.ID);
+            set => InternalCalls.CircleCollider2DComponent_SetSensor(Entity.ID, ref value);
         }
 
         public bool CollidesWith(Entity other)
@@ -722,25 +740,25 @@ namespace eg
 
         public bool CollidesWithEntitySide(long entityID, Side side)
         {
-           Entity entity = Entity.FindEntityByID(entityID);
-           if (entity == null)
-           {
-               return false;
-           }
+            Entity entity = Entity.FindEntityByID(entityID);
+            if (entity == null)
+            {
+                return false;
+            }
 
-           switch (side)
-           {
-               case Side.LEFT:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, entity.ID);
-               case Side.RIGHT:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, entity.ID);
-               case Side.TOP:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, entity.ID);
-               case Side.BOTTOM:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, entity.ID);
-               default:
-                   return false;
-           }
+            switch (side)
+            {
+                case Side.LEFT:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, entity.ID);
+                case Side.RIGHT:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, entity.ID);
+                case Side.TOP:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, entity.ID);
+                case Side.BOTTOM:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, entity.ID);
+                default:
+                    return false;
+            }
         }
 
         public bool CollidesWithEntitiesLeftEdge(Entity other)
