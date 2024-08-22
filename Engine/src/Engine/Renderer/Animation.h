@@ -38,6 +38,7 @@ namespace eg {
 		void SetFrameRate(float frameRate);
 		void SetName(const std::string& name);
 		void SetID(const UUID& id);
+		void Save();
 		//void SetFrameSize(int frameSize);
 
 		void RemoveFrame(int index);

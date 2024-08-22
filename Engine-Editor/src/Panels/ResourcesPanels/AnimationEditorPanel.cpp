@@ -56,95 +56,6 @@ namespace eg {
 		if(!m_PlayAnimation)
 			DrawFramePreview(m_Anim->GetFrame(0),true);
 
-		/*for (auto anim : m_Anim->GetFrames()) {
-			auto minCoords = anim.SubTexture.get()->GetMin();
-			auto maxCoords = anim.SubTexture.get()->GetMax();;
-			SubTexture2D* imageSubTexture = anim.SubTexture.get();
-			float width = anim.FrameDuration * 100;
-
-			ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-			ImVec2 rectMin = ImVec2(cursorPos.x, cursorPos.y);
-			ImVec2 rectMax = ImVec2(cursorPos.x + 20, cursorPos.y + 40);
-
-			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + 20 * anim.FrameDuration, cursorPos.y + 40), IM_COL32(207, 159, 255, 255));
-			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y));
-			ImGui::InvisibleButton(("rectBtn" + std::to_string(i)).c_str(), ImVec2(20, 40));
-
-			//DrawAnimationPreview(anim);
-
-			ImGui::Image((ImTextureID)imageSubTexture->GetTexture()->GetRendererID(), ImVec2(300, 300), ImVec2(minCoords.x, maxCoords.y), ImVec2(maxCoords.x, minCoords.y));
-
-			if (!m_PlayAnimation) {
-				if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-					if (clickedFrame < 0) {
-						clickedFrame = i;
-					}
-					else if (clickedFrame == i) {
-						isDisplayed = !isDisplayed;
-					}
-
-					displayedAnim = anim;
-					clickedFrame = i;
-				}
-
-				if (isDisplayed) {
-					DrawFramePreview(displayedAnim);
-					ImGui::GetWindowDrawList()->AddRectFilled(rectMin, rectMax, IM_COL32(107, 159, 255, 255));
-				}
-
-				// Handle dragging and duplicating frame
-				if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
-					if (!isDragging) {
-						isDragging = true;
-						initialMousePos = ImGui::GetMousePos();
-						initialRectPos = rectMin;
-					}
-					else {
-						ImVec2 currentMousePos = ImGui::GetMousePos();
-						//if (currentMousePos.x - initialMousePos.x > 20) {
-							// Duplicate frame
-							anim.FrameDuration += 1;
-							// Draw new rectangle representing the extended frame
-							ImVec2 newRectMin = ImVec2(rectMax.x + 2, rectMin.y);
-							ImVec2 newRectMax = ImVec2(newRectMin.x + 20, rectMin.y + 40);
-							ImGui::GetWindowDrawList()->AddRectFilled(newRectMin, newRectMax, IM_COL32(107, 159, 255, 255));
-							isDragging = false;
-						//}
-					}
-				}
-			}
-
-			if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-				ImGui::OpenPopup("KeyframesOptions");
-
-			if (ImGui::BeginPopupContextItem("KeyframesOptions")) {
-				if (!anim.isKeyFrame) {
-					if (ImGui::MenuItem("Add keyframe")) {
-						anim.isKeyFrame = true;
-					}
-				}
-				else if(anim.isKeyFrame) {
-					if (ImGui::MenuItem("Remove keyframe")) {
-						anim.isKeyFrame = false;
-					}
-				}
-				ImGui::EndPopup();
-			}
-
-			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + 22, cursorPos.y));
-
-			if (ImGui::IsMouseDragging(ImGuiMouseButton_Left) && ImGui::IsMouseHoveringRect(cursorPos, ImVec2(cursorPos.x + 20, cursorPos.y + 40))) {
-				m_ShowLongerFrame = true;
-			}
-			
-			if (m_ShowLongerFrame) {
-				ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + 20, cursorPos.y + 40), IM_COL32(107, 159, 255, 255));
-				anim.FrameDuration += 1;
-				ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + 22, cursorPos.y));
-			}
-			i++;
-		}*/
-
 		ImGui::BeginChild("Animation timeline", ImVec2(ImGui::GetWindowSize().x, 100), true);
 		for (float i = ImGui::GetWindowPos().x + 6; i < ImGui::GetWindowPos().x + ImGui::GetWindowSize().x; i += 22.0f) {
 			ImGui::GetWindowDrawList()->AddLine(ImVec2(i, ImGui::GetWindowPos().y), ImVec2(i, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y ), IM_COL32(255, 255, 255, 255), 0.8f);
@@ -185,7 +96,7 @@ namespace eg {
 					}
 				}
 
-				if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
+				if (ImGui::IsItemClicked(ImGuiMouseButton_Right && m_FramesToSwap.size() == 2)) {
 					ImGui::OpenPopup("AnimationOptions");
 				}
 			}
@@ -235,6 +146,7 @@ namespace eg {
 
 		//ImGui::SetCursorPos(ImVec2(15, ImGui::GetWindowHeight() - 100));
 		if (ImGui::Button("Save")) {
+			m_Anim->Save();
 			ShowAnimationEditorPanel(false);
 			m_FramesData.clear();
 			m_Anim = nullptr;

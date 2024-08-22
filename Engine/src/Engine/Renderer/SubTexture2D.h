@@ -32,6 +32,8 @@ namespace eg {
 		const glm::vec2& GetMinImGuiCoords() const { return { m_TexCoords[0].x, m_TexCoords[2].y }; }
 		const glm::vec2& GetMaxImGuiCoords() const { return { m_TexCoords[2].x, m_TexCoords[0].y }; }
 
+		const UUID& GetId() const { return m_Id; }
+
 		inline void SetTexCoords(int index, glm::vec2 coords) { if(index < 4) m_TexCoords[index] = coords; };
 		inline void SetTexture(const Ref<Texture2D>& texture) { m_Texture = texture; };
 		static Ref<SubTexture2D> CreateFromCoords(const Ref<Texture2D>& texture, const glm::vec2& coords, const glm::vec2& cellSize, const glm::vec2& spriteSize = { 1, 1 });

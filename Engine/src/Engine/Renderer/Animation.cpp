@@ -141,6 +141,19 @@ namespace eg
 		m_AnimationID = id;
 	}
 
+	void Animation::Save() {
+		AnimationResourceData* animData = (AnimationResourceData*)ResourceDatabase::GetResourceData(m_AnimationID);
+		animData->FrameRate = m_frameRate;
+		animData->FrameCount = m_frames.size();
+		animData->Loop = m_loop;
+		animData->Durations.clear();
+		animData->Frames.clear();
+		for(auto& frame : m_frames) {
+			animData->Durations.push_back(frame.FrameDuration);
+			animData->Frames.push_back(frame.SubTexture->GetId());
+		}
+	}
+
 	void Animation::ClearFrames()
 	{
 		m_frames.clear();

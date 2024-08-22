@@ -58,10 +58,10 @@ namespace eg
 	struct AnimationResourceData : public ResourceData
 	{
 		float FrameRate;
-		int FrameDuration;
 		int FrameCount;
 		bool Loop;
 		std::vector<UUID> Frames;
+		std::vector<int> Durations;
 	};
 
 	struct SubTextureResourceData : public ResourceData

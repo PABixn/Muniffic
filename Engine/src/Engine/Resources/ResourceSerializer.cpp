@@ -241,8 +241,7 @@ namespace eg
 				data->Extension = resource["Extension"].as<std::string>();
 				data->FrameRate = resource["FrameRate"].as<float>();
 				data->FrameCount = resource["FrameCount"].as<int>();
-				if(resource["FrameDuration"])
-					data->FrameDuration = resource["FrameDuration"].as<int>();
+				//if(resource["FrameDuration"])
 				data->Loop = resource["Loop"].as<bool>();
 
 				auto frames = resource["Frames"];
@@ -250,6 +249,12 @@ namespace eg
 				{
 					data->Frames.push_back(frame.as<int64_t>());
 				}
+				auto durations = resource["Durations"];
+				for (auto duration : durations)
+				{
+					data->Durations.push_back(duration.as<int>());
+				}
+
 
 				CacheAnimation(uuid, data);
 			}
@@ -400,11 +405,16 @@ namespace eg
 			animationOut << YAML::Key << "FrameRate" << YAML::Value << value->FrameRate;
 			animationOut << YAML::Key << "FrameCount" << YAML::Value << value->FrameCount;
 			animationOut << YAML::Key << "Loop" << YAML::Value << value->Loop;
-			animationOut << YAML::Key << "FrameDuration" << YAML::Value << value->FrameDuration;
+			//animationOut << YAML::Key << "FrameDuration" << YAML::Value << value->FrameDuration;
 			animationOut << YAML::Key << "Frames" << YAML::Value << YAML::BeginSeq;
 			for (auto& frame : value->Frames)
 			{
 				animationOut << frame;
+			}
+			animationOut << YAML::EndSeq;
+			animationOut << YAML::Key << "Durations" << YAML::Value << YAML::BeginSeq;
+			for (auto& duration : value->Durations) {
+				animationOut << duration;
 			}
 			animationOut << YAML::EndSeq;
 			animationOut << YAML::EndMap;
