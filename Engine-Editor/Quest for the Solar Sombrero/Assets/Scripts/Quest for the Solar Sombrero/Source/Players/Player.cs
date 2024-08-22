@@ -40,17 +40,16 @@ namespace Quest
 
         public void OnUpdate(float ts)
         {
+            if(collider == null) return;
             updateTimers(ts);
             Vector2 velocity = Vector2.Zero;
             if (Input.IsKeyDown(KeyCode.A) && !Input.IsKeyDown(KeyCode.D))
             {
-                velocity = new Vector2(1, 0);
-                Console.WriteLine("A", DebugConsole.LogType.Info);
+                velocity = new Vector2(-1, 0);
             }
             if (Input.IsKeyDown(KeyCode.D) && !Input.IsKeyDown(KeyCode.A))
             {
-                velocity = new Vector2(-1, 0);
-                Console.WriteLine("D", DebugConsole.LogType.Info);
+                velocity = new Vector2(1, 0);
             }
 
             //Should be moved to fixed update
@@ -59,10 +58,21 @@ namespace Quest
             if (rigidBody != null)
             {
                 //should be moved to fixed update
-                float movement = MovementMethods.calcMovement(maxSpeed, rigidBody.linearVelocity.X, acceleration, decceleration, 1);
-                Console.WriteLine("Movement: " + movement, DebugConsole.LogType.Info);
-                rigidBody.ApplyLinearImpulse(velocity * movement, true);
+                Run(velocity);
             }
+        }
+
+        private void Run(Vector2 velocity)
+        {
+            float targetSpeed = velocity.X * maxSpeed;
+
+            float accelRate = (Math.Abs(targetSpeed) > 0.01f) ? acceleration : decceleration;
+
+            float speedDif = targetSpeed - rigidBody.linearVelocity.X;
+
+            float movement = (float)speedDif * accelRate;
+            
+            rigidBody.ApplyLinearImpulse(Vector2.Right * movement);
         }
 
         private void Jump()
@@ -102,10 +112,9 @@ namespace Quest
             }
         }
 
-        //not implemented
         private bool isGrounded()
         {
-            return false;//GroundCheck.IsGrounded(groundCheck);
+            return GroundCheck.IsGrounded(collider);
         }
     }
     

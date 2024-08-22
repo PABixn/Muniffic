@@ -11,6 +11,13 @@ namespace eg
         public float X, Y, Z;
 
         public static Vector3 Zero = new Vector3(0f, 0f, 0f);
+        public static Vector3 One = new Vector3(1f, 1f, 1f);
+        public static Vector3 Right = new Vector3(1f, 0f, 0f);
+        public static Vector3 Left = new Vector3(-1f, 0f, 0f);
+        public static Vector3 Up = new Vector3(0f, 1f, 0f);
+        public static Vector3 Down = new Vector3(0f, -1f, 0f);
+        public static Vector3 Forward = new Vector3(0f, 0f, 1f);
+        public static Vector3 Backward = new Vector3(0f, 0f, -1f);
 
         public Vector3(Vector3 vec)
         {

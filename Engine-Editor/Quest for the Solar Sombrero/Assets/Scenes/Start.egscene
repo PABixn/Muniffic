@@ -25,7 +25,7 @@ Entities:
       Offset: [0, 0]
       Size: [0.5, 0.5]
       Density: 1
-      Friction: 0.5
+      Friction: 0
       Restitution: 0
       RestitutionThreshold: 0.5
       IsInherited: false
@@ -36,7 +36,7 @@ Entities:
     TagComponent:
       Tag: Floor
     TransformComponent:
-      Translation: [10.715517, -1.20879459, 0]
+      Translation: [11.3199997, -1.20879459, 0]
       Rotation: [0, -0, 0]
       Scale: [10.8000002, 1, 1]
       IsInherited: true
@@ -55,7 +55,7 @@ Entities:
       Offset: [0, 0]
       Size: [0.5, 0.5]
       Density: 1
-      Friction: 0.5
+      Friction: 0
       Restitution: 0
       RestitutionThreshold: 0.5
       IsInherited: false
@@ -97,7 +97,7 @@ Entities:
       Offset: [0, 0]
       Size: [0.5, 0.5]
       Density: 1
-      Friction: 0.5
+      Friction: 0
       Restitution: 0
       RestitutionThreshold: 0.5
       IsInherited: false
@@ -132,7 +132,7 @@ Entities:
     TagComponent:
       Tag: Player
     TransformComponent:
-      Translation: [-4.75168037, -0.984999955, 0]
+      Translation: [5.40500069, -0.982758641, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
@@ -158,7 +158,7 @@ Entities:
       Offset: [0, 0]
       Size: [0.5, 0.5]
       Density: 1
-      Friction: 0.5
+      Friction: 0
       Restitution: 0
       RestitutionThreshold: 0.5
       IsInherited: false
@@ -169,9 +169,9 @@ Entities:
     TagComponent:
       Tag: GroundCheck
     TransformComponent:
-      Translation: [-4.75, -1.48000002, 0]
+      Translation: [-6.05000019, -1.60000002, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [0.800000012, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     RigidBody2DComponent:
@@ -181,7 +181,7 @@ Entities:
       IsInheritedInChildren: false
     BoxCollider2DComponent:
       Offset: [0, 0]
-      Size: [0.5, 0.0500000007]
+      Size: [0.5, 0.5]
       Density: 1
       Friction: 0.5
       Restitution: 0

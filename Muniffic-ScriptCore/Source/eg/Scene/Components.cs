@@ -578,12 +578,6 @@ namespace eg
             return InternalCalls.BoxCollider2DComponent_CollidesWithBoxCoords(Entity.ID, ref center, ref size);
         }
 
-
-        public bool CollidesWith(long entityID)
-        {
-            return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
-        }
-
         public bool CollidesWithAny(List<long> entityIDs)
         {
             foreach (long entityID in entityIDs)
@@ -609,7 +603,7 @@ namespace eg
         }
 
 
-        public bool CollidesWith(ulong entityID)
+        public bool CollidesWith(long entityID)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
         }

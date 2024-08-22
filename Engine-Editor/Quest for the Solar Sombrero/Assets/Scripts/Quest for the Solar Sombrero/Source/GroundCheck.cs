@@ -14,7 +14,15 @@ namespace Quest.Source
         {
             List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
 
-            return groundCheck.CollidesWithAny(entities);
+            foreach (Entity entity in entities)
+            {
+                if (groundCheck.CollidesWithTopEdge(entity))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
