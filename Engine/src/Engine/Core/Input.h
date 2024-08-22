@@ -8,7 +8,7 @@ namespace eg
 {
 	class Input {
 		private:
-			static GLFWwindow* GetWindow();
+			static auto GetWindow();
 		public:
 			static void KeyCallback(int key, int action);
 			static void MouseCallback(int button, int action);

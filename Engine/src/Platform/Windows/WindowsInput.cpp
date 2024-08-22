@@ -6,7 +6,7 @@
 #include "Platform/Windows/WindowsWindow.h"
 
 namespace eg {
-	GLFWwindow* Input::GetWindow()
+	auto Input::GetWindow()
 	{
 		return static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 	}
