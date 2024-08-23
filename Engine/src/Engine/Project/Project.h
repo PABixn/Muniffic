@@ -8,11 +8,10 @@ namespace eg {
 	struct ProjectConfig
 	{
 		std::string Name = "Untitiled";
-
-		std::filesystem::path StartScene = "Untitled.scene";
-		std::filesystem::path AssetDirectory = "assets";
-		std::filesystem::path SceneDirectory = "scenes";
-		std::filesystem::path ScriptModulePath = "scripts";
+		std::filesystem::path StartScene = "Untitled.egscene";
+		std::filesystem::path AssetDirectory = "Assets";
+		std::filesystem::path SceneDirectory = "Scenes";
+		std::filesystem::path ScriptModulePath = "Scripts/Binaries/Game.dll";
 	};
 
 	class Project
@@ -43,6 +42,7 @@ namespace eg {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_ProjectDirectory; 
 		}
+
 
 		static const std::string GetProjectName()
 		{

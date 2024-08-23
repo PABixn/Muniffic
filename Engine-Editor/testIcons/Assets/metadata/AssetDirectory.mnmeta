@@ -1,0 +1,16 @@
+Root: 6223344278835236624
+Directories:
+  - UUID: 6223344278835236624
+    Name: testIcons/Assets/Scenes
+    Parent: 5708722405135880770
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 1155563935496156782
+    Name: testIcons/Assets/Scripts
+    Parent: 5708722405135880770
+    Subdirectories:
+      []
+    Assets:
+      []

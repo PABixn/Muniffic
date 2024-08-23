@@ -16,7 +16,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Engine/Project/ProjectSerializer.h"
 #include "Engine/Project/RecentProjectSerializer.h"
-
+#include "Engine/Project/ScriptSerializer.h"
 
 namespace eg
 
@@ -47,6 +47,7 @@ namespace eg
 			EG_ERROR("Failed to initialize resource system.");
 			return;
 		}
+		m_WelcomePanel->InitWelcomingPanel();
 
 		EG_PROFILE_FUNCTION();
 		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");
@@ -93,6 +94,7 @@ namespace eg
 
 		if (m_ViewportFocused)
 			m_Camera.OnUpdate(ts);
+
 
 		m_EditorCamera.OnUpdate(ts);
 		m_SceneHierarchyPanel.Update(ts);
@@ -820,22 +822,40 @@ namespace eg
 
 	void EditorLayer::NewProject()
 	{
-		std::string scenesFolder = m_NameNewProjectPanel->projectName + "/Assets/Scenes";
-		std::string scriptsFolder = m_NameNewProjectPanel->projectName + "/Assets/Scripts";
-		std::filesystem::path saveDir = m_NameNewProjectPanel->projectName + "/" + m_NameNewProjectPanel->projectName + ".mnproj";
-		rps.Serialize(saveDir.string(), "recentProjectSerializer.txt");
+
+
+
+		std::filesystem::path saveDir = m_NameNewProjectPanel->projectName + "\\" + m_NameNewProjectPanel->projectName + ".mnproj";
+		std::filesystem::path absolutePath = std::filesystem::absolute(saveDir);
+
+
+
+		std::string scriptsFolder = m_NameNewProjectPanel->projectName + "\\Assets\\Scripts";
+		std::string scenesFolder = m_NameNewProjectPanel->projectName + "\\Assets\\Scenes";
+
+		
+		rps.Serialize(absolutePath.string(), "recentProjectSerializer.txt");
+
+
 		Project::New();
-		Commands::ExecuteCreateDirectoryCommand(scenesFolder, s_Font);
 		Commands::ExecuteCreateDirectoryCommand(scriptsFolder, s_Font);
+		Commands::ExecuteCreateDirectoryCommand(scenesFolder, s_Font);
 		Project::SetProjectName(m_NameNewProjectPanel->projectName);
-		Project::SetAssetDirectory("Assets");
+		//Project::SetScriptModulePath("Scripts");
 		Project::SetScenesDirectory("Scenes");
-		Project::SetScriptModulePath("Scripts");
-		//Commands::ExecuteMoveDirectoryCommand(s_Font, "testName");
-		Project::Save(saveDir);
+		
 		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 		m_ContentBrowserPanel->InitPanels();
 		m_AddResourcePanel = CreateScope<AddResourcePanel>();
+
+		Project::Save(absolutePath);
+		NewScene();
+		m_ActiveScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
+		Save();
+		OpenScene(m_ActiveScenePath);
+
+		
+		ScriptSerializer::Serialize(scriptsFolder, m_NameNewProjectPanel->projectName);
 		ConsolePanel::Log("File: EditorLayer.cpp - New project created", ConsolePanel::LogType::Info);
 	}
 

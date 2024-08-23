@@ -1,0 +1,16 @@
+Root: 4937459732240739536
+Directories:
+  - UUID: 4937459732240739536
+    Name: chuj5\Assets\Scripts
+    Parent: 9135393297098304513
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 9082686385341875503
+    Name: chuj5\Assets\Scenes
+    Parent: 9135393297098304513
+    Subdirectories:
+      []
+    Assets:
+      []

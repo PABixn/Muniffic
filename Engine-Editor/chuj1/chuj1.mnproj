@@ -1,0 +1,6 @@
+Project:
+  Name: chuj1
+  StartScene: Untitled.egscene
+  AssetDirectory: Assets
+  SceneDirectory: Scenes
+  ScriptModulePath: Scripts/Binaries/Game.dll

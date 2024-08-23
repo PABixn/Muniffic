@@ -19,9 +19,11 @@ namespace eg
 		bool IsShown() { return m_Show; }
 		bool isNewProjectCreated() { return m_NewProjectCreated; }
 		std::string& getSelectedProject() { return m_SelectedProject; }
+		void InitWelcomingPanel();
 
 	protected:
 		Ref<Texture2D> m_DirectoryIcon;
+		Ref<Texture2D> m_NewProjectIcon;
 		bool m_NewProjectCreated;
 		bool m_Show;
 		std::string m_SelectedProject;
