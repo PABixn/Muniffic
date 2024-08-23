@@ -1,18 +1,19 @@
-﻿using System;
+﻿using eg;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Quest.Source
+namespace Quest
 {
-    internal class HealthComponent
+    public class HealthComponent : DefaultBehaviour
     {
         public int health = 100;
         public int maxHealth = 100;
 
-        public HealthComponent(int maxHealth) { 
-            this.maxHealth = maxHealth;
+        public void OnCreate()
+        {
             health = maxHealth;
         }
 
@@ -23,6 +24,8 @@ namespace Quest.Source
             {
                 health = 0;
             }
+            if(health > 0)
+                Console.WriteLine("Health: " + health);
         }
 
         public void Heal(int healAmount)
@@ -32,6 +35,11 @@ namespace Quest.Source
             {
                 health = maxHealth;
             }
+        }
+
+        public bool IsDead()
+        {
+            return health <= 0;
         }
     }
 }

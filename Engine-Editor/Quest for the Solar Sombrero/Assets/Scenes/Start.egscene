@@ -1,5 +1,45 @@
 Scene: Untitled
 Entities:
+  - Entity: 2867261700114692662
+    Name: Cube
+    Parent: 2510527735149491064
+    TagComponent:
+      Tag: Enemy1
+    TransformComponent:
+      Translation: [-2.87819099, -0.391707838, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [0.491640866, 0.224206567, 0.617760658, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 4877711545859120731
+          ScriptFields:
+            []
+        - ScriptUUID: 5035350043813170676
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: true
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
   - Entity: 4991946199883190057
     Name: Cube
     Parent: 5624161485600518
@@ -147,6 +187,9 @@ Entities:
         - ScriptUUID: 1172285517226286934
           ScriptFields:
             []
+        - ScriptUUID: 9149549715020659870
+          ScriptFields:
+            []
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:
@@ -203,3 +246,55 @@ Entities:
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
+  - Entity: 2510527735149491064
+    Name: Cube
+    Children:
+      - 2867261700114692662
+    TagComponent:
+      Tag: Enemies
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 8152010986628180932
+    Name: Cube
+    Parent: 2510527735149491064
+    TagComponent:
+      Tag: Enemy1
+    TransformComponent:
+      Translation: [-9.97993279, 0.5893085, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [0.491640866, 0.224206567, 0.617760658, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 4877711545859120731
+          ScriptFields:
+            []
+        - ScriptUUID: 5035350043813170676
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: true
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false

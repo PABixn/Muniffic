@@ -4,6 +4,16 @@ Resources:
     ResourceName: Player.Quest
     Extension: .cs
     IsEnabled: true
+  - UUID: 4877711545859120731
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.BaseEnemy
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 9149549715020659870
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.HealthComponent
+    Extension: .cs
+    IsEnabled: true
   - UUID: 1172285517226286934
     ParentDirectory: 4766252472221097665
     ResourceName: Quest.Player
@@ -17,6 +27,11 @@ Resources:
   - UUID: 7706555741926686336
     ParentDirectory: 4766252472221097665
     ResourceName: adfa
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 5035350043813170676
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.HealthComponent
     Extension: .cs
     IsEnabled: true
   - UUID: 3685085408964477476
