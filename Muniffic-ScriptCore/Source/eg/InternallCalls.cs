@@ -63,7 +63,7 @@ namespace eg
         internal extern static long Entity_FindEntityByName(string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static object Entity_GetScriptInstance(long UUID);
+        internal extern static object Entity_GetScriptInstance(long UUID, string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Entity_HasComponent(long ID, Type componentType);
@@ -187,7 +187,7 @@ namespace eg
         internal extern static bool AnimatorComponent_CanTransition(long UUID, string from, string to);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool AnimatorComponent_CanTransitionByIndex(long UUID, int from, int to);
-        
+
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static string AnimatorComponent_GetCurrentAnimation(long UUID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
