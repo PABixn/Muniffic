@@ -822,27 +822,26 @@ namespace eg
 
 	void EditorLayer::NewProject()
 	{
-
-
-
 		std::filesystem::path saveDir = m_NameNewProjectPanel->projectName + "\\" + m_NameNewProjectPanel->projectName + ".mnproj";
 		std::filesystem::path absolutePath = std::filesystem::absolute(saveDir);
 
-
-
 		std::string scriptsFolder = m_NameNewProjectPanel->projectName + "\\Assets\\Scripts";
 		std::string scenesFolder = m_NameNewProjectPanel->projectName + "\\Assets\\Scenes";
-
 		
 		rps.Serialize(absolutePath.string(), "recentProjectSerializer.txt");
 
-
 		Project::New();
-		Commands::ExecuteCreateDirectoryCommand(scriptsFolder, s_Font);
-		Commands::ExecuteCreateDirectoryCommand(scenesFolder, s_Font);
+
 		Project::SetProjectName(m_NameNewProjectPanel->projectName);
-		//Project::SetScriptModulePath("Scripts");
 		Project::SetScenesDirectory("Scenes");
+		Project::SetProjectDirectory(absolutePath.parent_path());
+
+		std::filesystem::path dir = Project::GetProjectDirectory();
+
+		UUID rootUUID = UUID();
+		AssetDirectory* root = new AssetDirectory(rootUUID, "Assets", 0);
+
+		AssetDirectoryManager::initDefault(rootUUID);
 		
 		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 		m_ContentBrowserPanel->InitPanels();

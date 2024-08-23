@@ -1,15 +1,64 @@
-Root: 4937459732240739536
+Root: 4852790315850833541
 Directories:
-  - UUID: 4937459732240739536
-    Name: chuj5\Assets\Scripts
-    Parent: 9135393297098304513
+  - UUID: 7096025017725853597
+    Name: Textures
+    Parent: 4852790315850833541
     Subdirectories:
       []
     Assets:
       []
-  - UUID: 9082686385341875503
-    Name: chuj5\Assets\Scenes
-    Parent: 9135393297098304513
+  - UUID: 2358837142487231552
+    Name: SpriteAtlas
+    Parent: 4852790315850833541
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 4641695398523956728
+    Name: Audio
+    Parent: 4852790315850833541
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 8588074348967968120
+    Name: SubTextures
+    Parent: 4852790315850833541
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 4452599477113980596
+    Name: Shaders
+    Parent: 4852790315850833541
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 7782849520912102812
+    Name: Animations
+    Parent: 4852790315850833541
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 7788313195429641894
+    Name: Scripts
+    Parent: 4852790315850833541
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 5525614221064804094
+    Name: Fonts
+    Parent: 4852790315850833541
+    Subdirectories:
+      []
+    Assets:
+      - 6301196584551680240
+  - UUID: 2679427867341818069
+    Name: Scenes
+    Parent: 4852790315850833541
     Subdirectories:
       []
     Assets:

@@ -1,5 +1,5 @@
 RecentProjects:
-  Projects0: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\chuj2\chuj2.mnproj
-  Projects1: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\chuj3\chuj3.mnproj
-  Projects2: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\chuuj4\chuuj4.mnproj
-  Projects3: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\chuj5\chuj5.mnproj
+  Projects0: C:\Muniffic\Engine-Editor\chuj2\chuj2.mnproj
+  Projects1: C:\Muniffic\Engine-Editor\chuj3\chuj3.mnproj
+  Projects2: C:\Muniffic\Engine-Editor\chuj4\chuj4.mnproj
+  Projects3: C:\Muniffic\Engine-Editor\chuj5\chuj5.mnproj

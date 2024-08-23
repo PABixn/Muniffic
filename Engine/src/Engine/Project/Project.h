@@ -43,6 +43,10 @@ namespace eg {
 			return s_ActiveProject->m_ProjectDirectory; 
 		}
 
+		static void SetProjectDirectory(const std::filesystem::path& newDirectory) {
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			s_ActiveProject->m_ProjectDirectory = newDirectory;
+		}
 
 		static const std::string GetProjectName()
 		{
