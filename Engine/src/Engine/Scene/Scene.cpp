@@ -85,7 +85,7 @@ namespace eg {
 		auto& srcSceneRegistry = other->m_Registry;
 		auto& dstSceneRegistry = scene->m_Registry;
 		auto idView = srcSceneRegistry.view<IDComponent>();
-
+		EG_CORE_INFO("Entities count: {0}", idView.size());
 		// Copy entities
 		for(auto entity : idView)
 		{
@@ -93,7 +93,13 @@ namespace eg {
 			const auto& tag = srcSceneRegistry.get<TagComponent>(entity).Tag;
 			Entity newEntity = scene->CreateEntityWithID(uuid, tag);
 			enttMap[uuid] = (entt::entity)newEntity;
-			scene->m_EntityInfoMap[uuid] = other->m_EntityInfoMap[uuid];
+			//Copy the values of the entity info not the pointer
+			EntityInfo* info = new EntityInfo(other->m_EntityInfoMap[uuid]->m_Parent);
+			for (auto child : other->m_EntityInfoMap[uuid]->m_Children)
+			{
+				info->m_Children.push_back(child);
+			}
+			scene->m_EntityInfoMap[uuid] = info;
 		}
 
 		// Copy components (except IDComponent and TagComponent)

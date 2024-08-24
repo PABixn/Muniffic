@@ -87,6 +87,7 @@ namespace eg {
 		int m_StepFrames = 0;
 
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
+		//Change to shared_ptr if doesn't couse any problems
 		std::unordered_map<UUID, EntityInfo*> m_EntityInfoMap;
 
 		friend class Entity;
