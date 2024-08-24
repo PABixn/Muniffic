@@ -139,6 +139,8 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static float CircleRendererComponent_GetThickness(long UUID);
+        #endregion
+
         #region Animator
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void AnimatorComponent_PlayAnimation(long UUID, string animationName);
@@ -196,6 +198,10 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void CameraComponent_SetFixedAspectRatio(long UUID, ref bool isFixedAspectRatio);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void CameraComponent_SetPerspectiveFarClip(long UUID, ref float isFixedAspectRatio);
+        #endregion
 
         #region SceneCamera
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -253,114 +259,7 @@ namespace eg
         internal extern static void CircleRendererComponent_SetFade(long UUID, ref float fade);
         #endregion
 
-        #region Animator
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_PlayAnimation(long UUID, string animationName);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_StopAnimation(long UUID);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_UpdateAnimation(long UUID, float dt);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_ChangeAnimation(long UUID, string animation);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_PauseAnimation(long UUID);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_SetSpeed(long UUID, float speed);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static float AnimatorComponent_GetSpeed(long UUID);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_AddAnimation(long UUID, string animationName);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_RemoveAnimation(long UUID, string animationName);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_RemoveLastAnimation(long UUID);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_Transition(long UUID, string to);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_TransitionByIndex(long UUID, int to);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_AddTransition(long UUID, string from, string to);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_AddTransitionByIndex(long UUID, int from, int to);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_RemoveTransition(long UUID, string from, string to);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_RemoveTransitionByIndex(long UUID, int from, int to);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool AnimatorComponent_CanTransition(long UUID, string from, string to);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool AnimatorComponent_CanTransitionByIndex(long UUID, int from, int to);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static string AnimatorComponent_GetCurrentAnimation(long UUID);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void AnimatorComponent_SetCurrentAnimation(long UUID, string animationName);
-
-        #endregion
-
-        #region Camera
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool CameraComponent_IsPrimary(long UUID);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetPrimary(long UUID, ref bool isPrimary);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool CameraComponent_IsFixedAspectRatio(long UUID);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetFixedAspectRatio(long UUID, ref bool isFixedAspectRatio);
-
-        #region SceneCamera
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetOrthographic(long UUID, ref float size, ref float nearClip, ref float farClip);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetPerspective(long UUID, ref float verticalFov, ref float nearClip, ref float farClip);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static CameraComponent.ProjectionType CameraComponent_GetProjectionType(long UUID);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetProjectionType(long UUID, CameraComponent.ProjectionType type);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static float CameraComponent_GetOrthographicSize(long UUID);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetOrthographicSize(long UUID, ref float size);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static float CameraComponent_GetOrthographicNearClip(long UUID);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetOrthographicNearClip(long UUID, ref float nearClip);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static float CameraComponent_GetOrthographicFarClip(long UUID);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetOrthographicFarClip(long UUID, ref float farClip);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static float CameraComponent_GetPerspectiveVerticalFOV(long UUID);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetPerspectiveVerticalFOV(long UUID, ref float verticalFov);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static float CameraComponent_GetPerspectiveNearClip(long UUID);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetPerspectiveNearClip(long UUID, ref float nearClip);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static float CameraComponent_GetPerspectiveFarClip(long UUID);
-
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void CameraComponent_SetPerspectiveFarClip(long UUID, ref float farClip);
-        #endregion
-        #endregion
 
         #region RigidBody2D
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
