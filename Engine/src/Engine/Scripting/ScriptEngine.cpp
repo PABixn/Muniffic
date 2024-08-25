@@ -129,7 +129,7 @@ namespace eg
 	{
 		s_Data = new ScriptEngineData();
 		InitMono();
-		bool status = LoadAssembly("Resources/Scripts/Muniffic-ScriptCore.dll");
+		bool status = LoadAssembly("Resources/Scripts/Debug/Muniffic-ScriptCore.dll");
 		if (!status)
 		{
 			EG_CORE_ERROR("Failed to load core assembly!");

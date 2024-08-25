@@ -20,13 +20,13 @@ endif()
 
 # Output directories for binaries and object files
 set_target_properties(msdf-atlas-gen PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/msdf-atlas-gen"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/msdf-atlas-gen"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/msdf-atlas-gen"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/msdf-atlas-gen-bin"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/msdf-atlas-gen-bin"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/msdf-atlas-gen-bin"
     OUTPUT_NAME "msdf-atlas-gen"
 )
 
-target_link_directories(msdf-atlas-gen INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/msdf-atlas-gen/msdf-atlas-gen/${CMAKE_BUILD_TYPE}")
+target_link_directories(msdf-atlas-gen INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/msdf-atlas-gen/msdf-atlas-gen-bin/${CMAKE_BUILD_TYPE}")
 
 # Source files
 file(GLOB_RECURSE MSDF-ATLAS-GEN_SOURCE "msdf-atlas-gen/*.h" "msdf-atlas-gen/*.hpp" "msdf-atlas-gen/*.cpp")
