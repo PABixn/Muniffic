@@ -6,3 +6,10 @@ Resources:
     Width: 1920
     Height: 1080
     Channels: 3
+  - UUID: 2846203103008134750
+    ParentDirectory: 5388550653062504436
+    ResourceName: execution1
+    Extension: .png
+    Width: 1920
+    Height: 1080
+    Channels: 3

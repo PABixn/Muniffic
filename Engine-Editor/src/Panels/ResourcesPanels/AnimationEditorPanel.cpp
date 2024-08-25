@@ -48,17 +48,17 @@ namespace eg {
 			}
 		}
 
-		if(m_PlayAnimation)
+		if (m_PlayAnimation)
 			DrawAnimationPreview();
 
 		ImGui::PopStyleColor(3);
 
-		if(!m_PlayAnimation)
-			DrawFramePreview(m_Anim->GetFrame(0),true);
+		if (!m_PlayAnimation)
+			DrawFramePreview(m_Anim->GetFrame(0), true);
 
 		ImGui::BeginChild("Animation timeline", ImVec2(ImGui::GetWindowSize().x, 100), true);
 		for (float i = ImGui::GetWindowPos().x + 6; i < ImGui::GetWindowPos().x + ImGui::GetWindowSize().x; i += 22.0f) {
-			ImGui::GetWindowDrawList()->AddLine(ImVec2(i, ImGui::GetWindowPos().y), ImVec2(i, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y ), IM_COL32(255, 255, 255, 255), 0.8f);
+			ImGui::GetWindowDrawList()->AddLine(ImVec2(i, ImGui::GetWindowPos().y), ImVec2(i, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y), IM_COL32(255, 255, 255, 255), 0.8f);
 		}
 
 		int i = 0;
@@ -96,8 +96,9 @@ namespace eg {
 					}
 				}
 
-				if (ImGui::IsItemClicked(ImGuiMouseButton_Right && m_FramesToSwap.size() == 2)) {
+				if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
 					ImGui::OpenPopup("AnimationOptions");
+					m_ClickedFrame = i;
 				}
 			}
 
@@ -117,7 +118,13 @@ namespace eg {
 		}
 
 		if (ImGui::BeginPopup("AnimationOptions")) {
-			if (m_FramesToSwap.size() == 2) {
+			if (m_FramesToSwap.size() != 2){
+				if (ImGui::MenuItem("Remove frame")) {
+					m_FramesData.erase(m_FramesData.begin() + m_ClickedFrame);
+					SetFrames();
+				}
+			}
+			else{
 				if(ImGui::MenuItem("Swap frames")){
 					auto anim1 = m_FramesToSwap.begin();
 					m_FramesData[anim1->first] = m_FramesToSwap.rbegin()->second;

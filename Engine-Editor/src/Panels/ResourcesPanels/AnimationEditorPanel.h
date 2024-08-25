@@ -24,5 +24,6 @@ namespace eg {
 		Ref<Texture2D> m_PlayIcon;
 		Ref<Texture2D> m_StopIcon;
 		std::vector<Animation::FrameData> m_FramesData;
+		int m_ClickedFrame;
 	};
 }
