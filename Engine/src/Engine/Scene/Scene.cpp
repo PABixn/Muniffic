@@ -127,6 +127,7 @@ namespace eg
 	{
 		if (entity.GetParent().has_value())
 			entity.GetParent().value().RemoveChild(entity);
+		m_PhysicsWorld->DestroyBody((b2Body *)entity.GetComponent<RigidBody2DComponent>().RuntimeBody);
 		m_EntityMap.erase(entity.GetUUID());
 		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
