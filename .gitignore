@@ -40,7 +40,7 @@ Engine-Editor/SandboxProject/Assets/Scripts/obj/
 **.csproj
 
 # Directories
-Engine/vendor/VulkanSDK/
+Engine/vendor/VulkanSDK
 Engine-Editor/assets/cache/
 scripts/__pycache__/
 
