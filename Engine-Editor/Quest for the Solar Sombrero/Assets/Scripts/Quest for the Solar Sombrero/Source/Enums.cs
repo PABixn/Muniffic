@@ -10,4 +10,28 @@ namespace Quest
     {
         LEFT, RIGHT, UP, DOWN, NONE
     }
+
+    public enum BulletType
+    {
+        PLAYER, ENEMY
+    }
+
+    public enum EnemyType
+    {
+        TRIANGLE, SQUARE, CIRCLE
+    }
+
+    public enum PlayerType
+    {
+        CIRCLE, SQUARE, TRIANGLE, BASE
+    }
+
+    public enum EntityType
+    {
+        PLAYER_BASE, PLAYER_CIRCLE, PLAYER_TRIANGLE, PLAYER_SQUARE, 
+        ENEMY_TRIANGLE, ENEMY_SQUARE, ENEMY_CIRCLE, 
+        BULLET, STATIC
+    }
 }
+
+

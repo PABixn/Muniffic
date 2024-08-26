@@ -1,5 +1,4 @@
 ﻿using eg;
-using Quest.Source;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +56,7 @@ namespace Quest
 
         public void OnUpdate(float ts)
         {
-            if(collider == null) return;
+            /*if(collider == null) return;
             if(healthComponent == null) healthComponent = entity.As<HealthComponent>();
 
             updateTimers(ts);
@@ -82,7 +81,7 @@ namespace Quest
                 //should be moved to fixed update
                 Run(direction);
             }
-            Attack();
+            Attack();*/
         }
 
         private void Run(Vector2 velocity)
@@ -146,7 +145,6 @@ namespace Quest
             enemiesInRange.Clear();
             foreach (Entity enemy in Entity.FindEntityByName("Enemies").GetChildren())
             {
-                Console.WriteLine("Enemy: " + enemy.name);
                 if (enemy.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxCenter, attackBoxSize))
                 {
                     enemiesInRange.Add(enemy);

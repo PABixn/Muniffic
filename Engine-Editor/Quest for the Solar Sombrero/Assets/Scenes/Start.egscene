@@ -2,10 +2,11 @@ Scene: Untitled
 Entities:
   - Entity: 8368933347146579139
     Name: Cube
+    Parent: 2510527735149491064
     TagComponent:
       Tag: Enemy1
     TransformComponent:
-      Translation: [0.419999987, -0.689999998, -0.350860596]
+      Translation: [-2.57999992, -0.689999998, -0.350860596]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
@@ -189,6 +190,12 @@ Entities:
         - ScriptUUID: 9149549715020659870
           ScriptFields:
             []
+        - ScriptUUID: 2768869208488879096
+          ScriptFields:
+            []
+        - ScriptUUID: 1504585863291838179
+          ScriptFields:
+            []
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:
@@ -247,6 +254,8 @@ Entities:
       IsInheritedInChildren: true
   - Entity: 2510527735149491064
     Name: Cube
+    Children:
+      - 8368933347146579139
     TagComponent:
       Tag: Enemies
     TransformComponent:

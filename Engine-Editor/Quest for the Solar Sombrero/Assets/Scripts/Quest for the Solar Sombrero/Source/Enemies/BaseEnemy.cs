@@ -1,5 +1,4 @@
 ﻿using eg;
-using Quest.Source;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +31,7 @@ namespace Quest
         #endregion
 
         private Entity player;
-        private Player playerScript;
+        private HealthComponent playerHealthComponent;
 
         public void OnCreate()
         {
@@ -48,7 +47,7 @@ namespace Quest
         public void OnUpdate(float ts)
         {
             if (healthComponent == null) healthComponent = entity.As<HealthComponent>();
-            if (playerScript == null) playerScript = player.As<Player>();
+            if (playerHealthComponent == null) playerHealthComponent = player.As<HealthComponent>();
             UpdateTimers(ts);
             Move();
             Attack();
@@ -63,7 +62,7 @@ namespace Quest
         {
             if (IsPlayerInRange())
             {
-                playerScript.healthComponent.TakeDamage(damage);
+                playerHealthComponent.TakeDamage(damage);
                 attackTimer = 0;
             }
         }
@@ -83,7 +82,7 @@ namespace Quest
                     return;
                 }
             }
-            else if ((GroundCheckMiddle() && !GroundCheckLeft() && GroundCheckRight() && direction.X < 0) || (GroundCheckMiddle() && GroundCheckLeft() && !GroundCheckRight() && direction.X > 0))
+            else if ((GroundCheckMiddle()  && GroundCheckRight() && (WallCheckLeft()|| !GroundCheckLeft()) && direction.X < 0) || (GroundCheckMiddle() && GroundCheckLeft() && (WallCheckRight() || !GroundCheckRight()) && direction.X > 0))
             {
                 direction.X *= -1;
             }
