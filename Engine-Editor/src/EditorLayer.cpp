@@ -85,8 +85,9 @@ namespace eg
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
-
 		EG_PROFILE_FUNCTION();
+		if (!m_ActiveScene->GetRegistry().valid(m_HoveredEntity))
+			m_HoveredEntity = Entity({});
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
