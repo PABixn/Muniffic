@@ -67,7 +67,7 @@ namespace eg {
 					DrawEntityNode(entity);
 				});
 
-			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered() || !m_Context->GetRegistry().valid(m_SelectionContext))
 			{
 				m_SelectionContext = {};
 			}
