@@ -7,56 +7,47 @@ using System.Threading.Tasks;
 
 namespace Quest
 {
-    internal class BaseEnemy : DefaultBehaviour
+    public class BaseEnemy : DefaultBehaviour
     {
+        public int enemyType = 0;
         public HealthComponent healthComponent;
 
         private EntityTypeComponent entityTypeComponent;
 
-        private RigidBody2DComponent rigidBody;
-        private BoxCollider2DComponent collider;
-        private TransformComponent transform;
+        private EnemyMeleeAttackComponent meleeAttackComponent;
 
-        public int damage = 10;
-        public int sightRange = 10;
-        public int attackRange = 1;
+        public int BasEnemyHealth { get; private set; } = 300;
+        public int SquarEnemyHealth { get; private set; } = 800;
+        public int CirclEnemyHealth { get; private set; } = 400;
+        public int TrianglEnemyHealth { get; private set; } = 250;
 
-        public float attackCooldown = 1;
-        private float attackTimer = 0;
+        public float BasEnemySpeedMultiplier { get; private set; } = 1;
+        public float SquarEnemySpeedMultiplier { get; private set; } = 0.5f;
+        public float CirclEnemySpeedMultiplier { get; private set; } = 1;
+        public float TrianglEnemySpeedMultiplier { get; private set; } = 1.5f;
 
-        #region Momvement
-        public float speed = 5f;
-        public float acceleration = 0.5f;
-        public float decceleration = 0.5f;
-
-        public Vector2 direction = Vector2.Zero;
-        #endregion
+        
 
         private Entity player;
-        private HealthComponent playerHealthComponent;
         private Player playerScript;
 
         public void OnCreate()
         {
-            direction = Vector2.Right;
-
-
             player = Entity.FindEntityByName("Player");
-            collider = GetComponent<BoxCollider2DComponent>();
-            transform = GetComponent<TransformComponent>();
-            rigidBody = GetComponent<RigidBody2DComponent>();
+            meleeAttackComponent = new EnemyMeleeAttackComponent(entity, new List<EntityType> { EntityType.PLAYER_CIRCLE, EntityType.PLAYER_BASE, EntityType.PLAYER_SQUARE, EntityType.PLAYER_TRIANGLE }, "PlayerWrapper");
         }
 
         public void OnUpdate(float ts)
         {
-            if (healthComponent == null) healthComponent = entity.As<HealthComponent>();
-            if (playerHealthComponent == null) playerHealthComponent = player.As<HealthComponent>();
             if (playerScript == null) playerScript = player.As<Player>();
+            if (healthComponent == null) healthComponent = entity.As<HealthComponent>();
             if(entityTypeComponent == null) entityTypeComponent = entity.As<EntityTypeComponent>();
-            if(entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.ENEMY_SQUARE;
-            UpdateTimers(ts);
-            Move();
-            Attack();
+            if (entityTypeComponent.entityType == EntityType.NONE)
+            {
+                entityTypeComponent.entityType = IntToEntityType(enemyType);
+                SwitchEnemyType(IntToEnemyType(enemyType));
+            }
+            meleeAttackComponent.Update(ts);
 
             if (healthComponent.IsDead())
             {
@@ -64,161 +55,80 @@ namespace Quest
             }
         }
 
-        public void Attack()
+        private EnemyType IntToEnemyType(int type)
         {
-            if (IsPlayerInRange())
+            switch (type)
             {
-                playerHealthComponent.TakeDamage(damage);
-                attackTimer = 0;
+                case 0:
+                    return EnemyType.SQUARE;
+                case 1:
+                    return EnemyType.CIRCLE;
+                case 2:
+                    return EnemyType.TRIANGLE;
+                default:
+                    return EnemyType.SQUARE;
             }
         }
 
-
-        public void Move()
+        private EntityType IntToEntityType(int type)
         {
-            if (IsPlayerInRange())
+            switch (type)
             {
-                return;
-            }
-            if(IsPlayerInSight())
-            {
-                TurnTowardPlayer();
-                if(!GroundCheckLeft() && !GroundCheckRight())
-                {
-                    return;
-                }
-            }
-            else if ((GroundCheckMiddle()  && GroundCheckRight() && (WallCheckLeft()|| !GroundCheckLeft()) && direction.X < 0) || (GroundCheckMiddle() && GroundCheckLeft() && (WallCheckRight() || !GroundCheckRight()) && direction.X > 0))
-            {
-                direction.X *= -1;
-            }
-
-
-            float targetSpeed = direction.X * speed;
-
-            float accelRate = (Math.Abs(targetSpeed) > 0.01f) ? acceleration : decceleration;
-
-            float speedDif = targetSpeed - rigidBody.linearVelocity.X;
-
-            float movement = (float)speedDif * accelRate;
-
-            rigidBody.ApplyLinearImpulse(Vector2.Right * movement);
-        }
-
-        private bool IsPlayerInSight()
-        {
-            Vector2 edgeStartPoint = new Vector2(transform.translation.X - sightRange, transform.translation.Y);
-            Vector2 edgeEndpoint = new Vector2(transform.translation.X + sightRange, transform.translation.Y);
-            return player.GetComponent<BoxCollider2DComponent>().CollidesWithEdge(edgeStartPoint, edgeEndpoint);
-        }
-
-        private bool IsPlayerInRange()
-        {
-            Vector2 edgeStartPoint = new Vector2(transform.translation.X, transform.translation.Y);
-            Vector2 edgeEndPoint = new Vector2(transform.translation.X + attackRange * direction.X, transform.translation.Y);
-            return player.GetComponent<BoxCollider2DComponent>().CollidesWithEdge(edgeStartPoint, edgeEndPoint);
-        }
-
-        public void TurnTowardPlayer()
-        {
-            if (player.GetComponent<TransformComponent>().translation.X < transform.translation.X)
-            {
-                direction = Vector2.Left;
-            }
-            else
-            {
-                direction = Vector2.Right;
+                case 0:
+                    return EntityType.ENEMY_SQUARE;
+                case 1:
+                    return EntityType.ENEMY_CIRCLE;
+                case 2:
+                    return EntityType.ENEMY_TRIANGLE;
+                default:
+                    return EntityType.ENEMY_SQUARE;
             }
         }
 
-        public void UpdateTimers(float ts)
+        private void SwitchEnemyType(EnemyType type)
         {
-            attackTimer += ts;
-        }
-
-        public bool GroundCheckMiddle()
-        {
-            List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
-
-            foreach (Entity entity in entities)
+            switch (type)
             {
-                BoxCollider2DComponent groundCollider = entity.GetComponent<BoxCollider2DComponent>();
-                if (groundCollider.CollidesWithBox(new Vector2(transform.translation.X, transform.translation.Y - collider.size.Y), new Vector2(0.1f, 0.1f)))
-                {
-                    return true;
-                }
+                case EnemyType.SQUARE:
+                    InitSquareEnemy();
+                    break;
+                case EnemyType.CIRCLE:
+                    InitCircleEnemy();
+                    break;
+                case EnemyType.TRIANGLE:
+                    InitTriangleEnemy();
+                    break;
+                default:
+                    InitSquareEnemy();
+                    break;
             }
-
-            return false;
         }
 
-        public bool GroundCheckRight()
+        private void InitSquareEnemy()
         {
-            List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
-
-            foreach (Entity entity in entities)
-            {
-                BoxCollider2DComponent groundCollider = entity.GetComponent<BoxCollider2DComponent>();
-                if (groundCollider.CollidesWithBox(new Vector2(transform.translation.X + collider.size.X / 2, transform.translation.Y - collider.size.Y), new Vector2(0.1f, 0.1f)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            enemyType = 0;
+            healthComponent.maxHealth = SquarEnemyHealth;
+            healthComponent.SetHealth(SquarEnemyHealth);
         }
 
-        public bool GroundCheckLeft()
+        private void InitCircleEnemy()
         {
-            List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
-
-            foreach (Entity entity in entities)
-            {
-                BoxCollider2DComponent groundCollider = entity.GetComponent<BoxCollider2DComponent>();
-                if (groundCollider.CollidesWithBox(new Vector2(transform.translation.X - collider.size.X / 2, transform.translation.Y - collider.size.Y), new Vector2(0.1f, 0.1f)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            enemyType = 1;
+            healthComponent.maxHealth = CirclEnemyHealth;
+            healthComponent.SetHealth(CirclEnemyHealth);
         }
 
-        public bool WallCheckLeft()
+        private void InitTriangleEnemy()
         {
-            List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
-
-            foreach (Entity entity in entities)
-            {
-                BoxCollider2DComponent groundCollider = entity.GetComponent<BoxCollider2DComponent>();
-                if (groundCollider.CollidesWithBox(new Vector2(transform.translation.X - collider.size.X, transform.translation.Y + collider.size.Y), new Vector2(0.1f, 0.1f)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            enemyType = 2;
+            healthComponent.maxHealth = TrianglEnemyHealth;
+            healthComponent.SetHealth(TrianglEnemyHealth);
         }
 
-        public bool WallCheckRight()
-        {
-            List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
-
-            foreach (Entity entity in entities)
-            {
-                BoxCollider2DComponent groundCollider = entity.GetComponent<BoxCollider2DComponent>();
-                if (groundCollider.CollidesWithBox(new Vector2(transform.translation.X + collider.size.X, transform.translation.Y + collider.size.Y), new Vector2(0.1f, 0.1f)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
         private void Die()
         {
             Entity.Destroy(entity);
-            playerScript.SwitchPlayerType(PlayerType.SQUARE);
+            playerScript.SwitchPlayerType(IntToEnemyType(enemyType));
         }
     };
 }

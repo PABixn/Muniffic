@@ -1,0 +1,10 @@
+^D:\PROGGRAMMING\C++\OPENGL\MUNIFFIC\CMAKEFILES\8DE17209739B398400D73835409A60A4\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/proggramming/c++/OpenGL/Muniffic -BD:/proggramming/c++/OpenGL/Muniffic --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/proggramming/c++/OpenGL/Muniffic/Muniffic.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

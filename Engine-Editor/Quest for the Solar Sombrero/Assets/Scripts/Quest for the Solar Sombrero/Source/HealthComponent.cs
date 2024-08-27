@@ -9,7 +9,7 @@ namespace Quest
 {
     public class HealthComponent : DefaultBehaviour
     {
-        private int health = 100;
+        public int health = 100;
         public int maxHealth = 100;
 
         public void OnCreate()

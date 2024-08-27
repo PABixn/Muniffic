@@ -18,7 +18,7 @@ namespace Quest
 
     public enum EnemyType
     {
-        TRIANGLE, SQUARE, CIRCLE
+        TRIANGLE, SQUARE, CIRCLE, NONE
     }
 
     public enum PlayerType

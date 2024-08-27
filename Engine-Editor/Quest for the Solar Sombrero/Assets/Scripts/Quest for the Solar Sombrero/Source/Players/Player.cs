@@ -86,6 +86,22 @@ namespace Quest
             }
         }
 
+        public void SwitchPlayerType(EnemyType enemyType)
+        {
+            switch (enemyType)
+            {
+                case EnemyType.SQUARE:
+                    SwitchPlayerType(PlayerType.SQUARE);
+                    break;
+                case EnemyType.CIRCLE:
+                    SwitchPlayerType(PlayerType.CIRCLE);
+                    break;
+                case EnemyType.TRIANGLE:
+                    SwitchPlayerType(PlayerType.TRIANGLE);
+                    break;
+            }
+        }
+
         private void InitBasePlayer()
         {
             playerType = PlayerType.BASE;

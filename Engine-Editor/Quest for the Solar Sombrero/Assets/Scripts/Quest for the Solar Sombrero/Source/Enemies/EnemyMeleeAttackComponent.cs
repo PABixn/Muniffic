@@ -2,30 +2,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Quest
 {
-    public class MeleeAttackComponent
+    internal class EnemyMeleeAttackComponent
     {
         private bool Enabled = true;
 
-        private AttackBoxComponent attackBoxComponent;
+        private EnemyAttackBoxComponent attackBoxComponent;
         public string attackTargetParentName = "Enemies";
         public List<EntityType> attackTargetTypes = new List<EntityType> { EntityType.ENEMY_SQUARE };
 
         private float attackCooldown = 0.5f;
         private float attackTimer = 0f;
-        private int damage = 1000;
+        private int damage = 10;
 
         private TransformComponent transform;
         private BoxCollider2DComponent collider;
 
         Entity entity;
 
-        public MeleeAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName = "Enemies")
+        public EnemyMeleeAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName = "Enemies")
         {
             this.entity = entity;
             this.attackTargetParentName = attackTargetParentName;
@@ -37,7 +36,7 @@ namespace Quest
         public void Update(float ts)
         {
             if (collider == null || !Enabled) return;
-            if(attackBoxComponent == null) attackBoxComponent = entity.As<AttackBoxComponent>();
+            if (attackBoxComponent == null) attackBoxComponent = entity.As<EnemyAttackBoxComponent>();
             attackTimer += ts;
 
             if (attackTimer >= attackCooldown && Input.IsKeyDown(KeyCode.R))
