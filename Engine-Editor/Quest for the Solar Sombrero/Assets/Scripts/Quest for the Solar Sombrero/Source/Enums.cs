@@ -23,14 +23,14 @@ namespace Quest
 
     public enum PlayerType
     {
-        CIRCLE, SQUARE, TRIANGLE, BASE
+        CIRCLE, SQUARE, TRIANGLE, BASE, NONE
     }
 
     public enum EntityType
     {
         PLAYER_BASE, PLAYER_CIRCLE, PLAYER_TRIANGLE, PLAYER_SQUARE, 
         ENEMY_TRIANGLE, ENEMY_SQUARE, ENEMY_CIRCLE, 
-        BULLET, STATIC
+        BULLET, STATIC, NONE
     }
 }
 

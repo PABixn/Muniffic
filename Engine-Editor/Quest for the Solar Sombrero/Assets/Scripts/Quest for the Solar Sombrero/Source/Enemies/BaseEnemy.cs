@@ -11,6 +11,8 @@ namespace Quest
     {
         public HealthComponent healthComponent;
 
+        private EntityTypeComponent entityTypeComponent;
+
         private RigidBody2DComponent rigidBody;
         private BoxCollider2DComponent collider;
         private TransformComponent transform;
@@ -32,13 +34,14 @@ namespace Quest
 
         private Entity player;
         private HealthComponent playerHealthComponent;
+        private Player playerScript;
 
         public void OnCreate()
         {
             direction = Vector2.Right;
-            player = Entity.FindEntityByName("Player");
-            
 
+
+            player = Entity.FindEntityByName("Player");
             collider = GetComponent<BoxCollider2DComponent>();
             transform = GetComponent<TransformComponent>();
             rigidBody = GetComponent<RigidBody2DComponent>();
@@ -48,6 +51,9 @@ namespace Quest
         {
             if (healthComponent == null) healthComponent = entity.As<HealthComponent>();
             if (playerHealthComponent == null) playerHealthComponent = player.As<HealthComponent>();
+            if (playerScript == null) playerScript = player.As<Player>();
+            if(entityTypeComponent == null) entityTypeComponent = entity.As<EntityTypeComponent>();
+            if(entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.ENEMY_SQUARE;
             UpdateTimers(ts);
             Move();
             Attack();
@@ -212,6 +218,7 @@ namespace Quest
         private void Die()
         {
             Entity.Destroy(entity);
+            playerScript.SwitchPlayerType(PlayerType.SQUARE);
         }
     };
 }

@@ -16,6 +16,8 @@ namespace Quest
         public float acceleration = 1f;
         public float decceleration = 1f;
 
+        private float multiplier = 1.0f;
+
         public void OnCreate()
         {
             rigidBody = entity.GetComponent<RigidBody2DComponent>();
@@ -34,7 +36,7 @@ namespace Quest
                 direction = new Vector2(1, 0);
             }
 
-            float targetSpeed = direction.X * maxSpeed;
+            float targetSpeed = direction.X * maxSpeed * multiplier;
 
             float accelRate = (Math.Abs(targetSpeed) > 0.01f) ? acceleration : decceleration;
 
@@ -43,6 +45,11 @@ namespace Quest
             float movement = (float)speedDif * accelRate;
 
             rigidBody.ApplyLinearImpulse(Vector2.Right * movement);
+        }
+
+        public void SetMultiplier(float multiplier)
+        {
+            this.multiplier = multiplier;
         }
     }
 }

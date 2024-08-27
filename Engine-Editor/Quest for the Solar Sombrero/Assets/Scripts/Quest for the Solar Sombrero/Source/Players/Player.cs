@@ -10,165 +10,143 @@ namespace Quest
     public class Player : DefaultBehaviour
     {
 
-        RigidBody2DComponent rigidBody;
-        BoxCollider2DComponent collider;
-        TransformComponent transform;
+        private SpriteRendererComponent spriteRendererComponent;
 
-        public HealthComponent healthComponent;
+        private HealthComponent healthComponent;
 
-        public BoxCollider2DComponent groundCheck;
+        private AttackBoxComponent attackBoxComponent;
 
-        private Vector2 direction = Vector2.Zero;
-        public float maxSpeed = 10f;
-        public float acceleration = 1f;
-        public float decceleration = 1f;
+        private MeleeAttackComponent meleeAttackComponent;
 
-        public bool shouldJump = false;
-        public float jumpForce = 10f;
-        public float coyoteTime = 0.1f;
-        private float coyoteTimer = 0f;
-        public float jumpBuffer = 0.1f;
-        private float jumpBufferTimer = 0f;
+        private JumpComponent jumpComponent;
 
-        private List<Entity> enemies = new List<Entity>();
-        private List<Entity> enemiesInRange = new List<Entity>();
+        private RunComponent runComponent;
 
-        private Vector2 attackDirecton = Vector2.Right;
-        public Vector2 attackBoxSize = new Vector2(1, 1);
-        public Vector2 attackBoxOffset = new Vector2(1, 0);
-        public Vector2 attackBoxCenter;
+        private EntityTypeComponent entityTypeComponent;
 
-        private float attackCooldown = 0.5f;
-        private float attackTimer = 0f;
-        private int damage = 10;
+        private PlayerType playerType = PlayerType.NONE;
+
+        public int BasePlayerHealth { get; private set; } = 300;
+        public int SquarePlayerHealth { get; private set; } = 800;
+        public int CirclePlayerHealth { get; private set; } = 400;
+        public int TrianglePlayerHealth { get; private set; } = 250;
+
+        public float BasePlayerSpeedMultiplier { get; private set; } = 1;
+        public float SquarePlayerSpeedMultiplier { get; private set; } = 0.5f;
+        public float CirclePlayerSpeedMultiplier { get; private set; } = 1;
+        public float TrianglePlayerSpeedMultiplier { get; private set; } = 1.5f;
+
+        public float BasePlayerJumpForceMultiplier { get; private set; } = 0.8f;
+        public float SquarePlayerJumpForceMultiplier { get; private set; } = 0;
+        public float CirclePlayerJumpForceMultiplier { get; private set; } = 2.0f;
+        public float TrianglePlayerJumpForceMultiplier { get; private set; } = 1;
+
+        private List<EntityType> BasePlayerTargets = new List<EntityType> { EntityType.ENEMY_SQUARE, EntityType.ENEMY_CIRCLE, EntityType.ENEMY_TRIANGLE };
+        private List<EntityType> SquarePlayerTargets = new List<EntityType> { EntityType.ENEMY_CIRCLE };
+        private List<EntityType> CirclePlayerTargets = new List<EntityType> { EntityType.ENEMY_TRIANGLE };
+        private List<EntityType> TrianglePlayerTargets = new List<EntityType> { EntityType.ENEMY_SQUARE };
 
         public void OnCreate()
         {
-
-            transform = GetComponent<TransformComponent>();
-            rigidBody = GetComponent<RigidBody2DComponent>();
-            collider = GetComponent<BoxCollider2DComponent>();
-            
-
-            groundCheck = Entity.FindEntityByName("GroundCheck").GetComponent<BoxCollider2DComponent>();
-
+            spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
+            meleeAttackComponent = new MeleeAttackComponent(entity, BasePlayerTargets, "Enemies");
         }
 
         public void OnUpdate(float ts)
         {
-            /*if(collider == null) return;
-            if(healthComponent == null) healthComponent = entity.As<HealthComponent>();
-
-            updateTimers(ts);
-            UpdateAttackBox();
-            direction = Vector2.Zero;
-            if (Input.IsKeyDown(KeyCode.A) && !Input.IsKeyDown(KeyCode.D))
-            {
-                direction = new Vector2(-1, 0);
-                attackDirecton = new Vector2(-1, 0);
-            }
-            if (Input.IsKeyDown(KeyCode.D) && !Input.IsKeyDown(KeyCode.A))
-            {
-                direction = new Vector2(1, 0);
-                attackDirecton = new Vector2(1, 0);
-            }
-
-            //Should be moved to fixed update
-            Jump();
-
-            if (rigidBody != null)
-            {
-                //should be moved to fixed update
-                Run(direction);
-            }
-            Attack();*/
-        }
-
-        private void Run(Vector2 velocity)
-        {
-            float targetSpeed = velocity.X * maxSpeed;
-
-            float accelRate = (Math.Abs(targetSpeed) > 0.01f) ? acceleration : decceleration;
-
-            float speedDif = targetSpeed - rigidBody.linearVelocity.X;
-
-            float movement = (float)speedDif * accelRate;
             
-            rigidBody.ApplyLinearImpulse(Vector2.Right * movement);
+            if (entityTypeComponent == null) entityTypeComponent = entity.As<EntityTypeComponent>();
+            if(healthComponent == null) healthComponent = entity.As<HealthComponent>();
+            if(attackBoxComponent == null) attackBoxComponent = entity.As<AttackBoxComponent>();
+            if(jumpComponent == null) jumpComponent = entity.As<JumpComponent>();
+            if(runComponent == null) runComponent = entity.As<RunComponent>();
+            if(entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.PLAYER_BASE;
+            if(playerType == PlayerType.NONE) SwitchPlayerType(PlayerType.BASE);
+
+
+            meleeAttackComponent.Update(ts);
         }
 
-        private void Jump()
+        public void SwitchPlayerType(PlayerType playerType)
         {
-            if (rigidBody == null) return;
-
-            if(coyoteTimer > 0 && jumpBufferTimer > 0)
+            switch (playerType)
             {
-                rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.X, jumpForce);
-                jumpBufferTimer = 0;
-                shouldJump = false;
-            }
-            if(!Input.IsKeyDown(KeyCode.Space) && rigidBody.linearVelocity.Y > 0.0f)
-            {
-                rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.X, rigidBody.linearVelocity.Y * 0.5f);
-                coyoteTimer = 0;
+                case PlayerType.BASE:
+                    InitBasePlayer();
+                    break;
+                case PlayerType.SQUARE:
+                    InitSquarePlayer();
+                    break;
+                case PlayerType.CIRCLE:
+                    InitCirclePlayer();
+                    break;
+                case PlayerType.TRIANGLE:
+                    InitTrianglePlayer();
+                    break;
             }
         }
 
-        private void updateTimers(float ts)
+        private void InitBasePlayer()
         {
-            if(isGrounded()){
-                coyoteTimer = coyoteTime;
-            }
-            else
-            {
-                coyoteTimer -= ts;
-            }
+            playerType = PlayerType.BASE;
+            healthComponent.maxHealth = BasePlayerHealth;
+            healthComponent.SetHealth(BasePlayerHealth);
+            attackBoxComponent.attackBoxSize = new Vector2(1, 1);
+            attackBoxComponent.attackBoxCenter = new Vector2(1, 0);
+            meleeAttackComponent.attackTargetTypes = BasePlayerTargets;
+            meleeAttackComponent.attackTargetParentName = "Enemies";
+            runComponent.SetMultiplier(BasePlayerSpeedMultiplier);
+            jumpComponent.SetMultiplier(BasePlayerJumpForceMultiplier);
+            jumpComponent.Enable();
 
-            if(Input.IsKeyDown(KeyCode.Space))
-            {
-                jumpBufferTimer = jumpBuffer;
-            }
-            else
-            {
-                jumpBufferTimer -= ts;
-            }
-            attackTimer += ts;
+            spriteRendererComponent.color = new Color(1, 1, 1, 1);
         }
 
-        private bool isGrounded()
+        private void InitSquarePlayer()
         {
-            return GroundCheck.IsGrounded(collider);
+            playerType = PlayerType.SQUARE;
+            healthComponent.maxHealth = SquarePlayerHealth;
+            healthComponent.SetHealth(SquarePlayerHealth);
+            attackBoxComponent.attackBoxSize = new Vector2(1, 1);
+            attackBoxComponent.attackBoxCenter = new Vector2(1, 0);
+            runComponent.SetMultiplier(SquarePlayerSpeedMultiplier);
+            jumpComponent.Disable();
+            meleeAttackComponent.Disable();
+
+            spriteRendererComponent.color = new Color(1, 0, 0, 1);
         }
 
-        private void getEnemiesInRange()
+        private void InitCirclePlayer()
         {
-            enemiesInRange.Clear();
-            foreach (Entity enemy in Entity.FindEntityByName("Enemies").GetChildren())
-            {
-                if (enemy.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxCenter, attackBoxSize))
-                {
-                    enemiesInRange.Add(enemy);
-                }
-            }
+            playerType = PlayerType.CIRCLE;
+            healthComponent.maxHealth = CirclePlayerHealth;
+            healthComponent.SetHealth(CirclePlayerHealth);
+            attackBoxComponent.attackBoxSize = new Vector2(1, 1);
+            attackBoxComponent.attackBoxCenter = new Vector2(1, 0);
+            runComponent.SetMultiplier(CirclePlayerSpeedMultiplier);
+            jumpComponent.SetMultiplier(CirclePlayerJumpForceMultiplier);
+            jumpComponent.Enable();
+            meleeAttackComponent.Disable();
+
+            spriteRendererComponent.color = new Color(0, 1, 0, 1);
         }
 
-        private void UpdateAttackBox()
+        private void InitTrianglePlayer()
         {
-            attackBoxCenter = new Vector2(transform.translation.X + attackBoxOffset.X * attackDirecton.X, transform.translation.Y + attackBoxOffset.Y);
-        }
+            playerType = PlayerType.TRIANGLE;
+            healthComponent.maxHealth = TrianglePlayerHealth;
+            healthComponent.SetHealth(TrianglePlayerHealth);
+            attackBoxComponent.attackBoxSize = new Vector2(1, 1);
+            attackBoxComponent.attackBoxCenter = new Vector2(1, 0);
+            meleeAttackComponent.attackTargetTypes = TrianglePlayerTargets;
+            meleeAttackComponent.attackTargetParentName = "Enemies";
+            runComponent.SetMultiplier(TrianglePlayerSpeedMultiplier);
+            jumpComponent.SetMultiplier(TrianglePlayerJumpForceMultiplier);
+            jumpComponent.Enable();
 
-        private void Attack()
-        {
-            if(attackTimer >= attackCooldown && Input.IsKeyDown(KeyCode.R))
-            {
-                getEnemiesInRange();
-                foreach(Entity enemy in enemiesInRange)
-                {
-                    enemy.As<BaseEnemy>().healthComponent.TakeDamage(damage);
-                }
-                attackTimer = 0;
-            }
+            spriteRendererComponent.color = new Color(0, 0, 1, 1);
         }
+        
     }
     
 }

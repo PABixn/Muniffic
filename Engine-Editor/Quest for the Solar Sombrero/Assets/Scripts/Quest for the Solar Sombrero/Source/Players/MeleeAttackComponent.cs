@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Quest
 {
-    public class MeleeAttackComponent : DefaultBehaviour
+    public class MeleeAttackComponent
     {
+        private bool Enabled = true;
 
-        private Vector2 attackDirecton = Vector2.Right;
-        public Vector2 attackBoxSize = new Vector2(1, 1);
-        public Vector2 attackBoxOffset = new Vector2(1, 0);
-        public Vector2 attackBoxCenter;
+        private AttackBoxComponent attackBoxComponent;
+        public string attackTargetParentName = "Enemies";
+        public List<EntityType> attackTargetTypes = new List<EntityType> { EntityType.ENEMY_SQUARE };
 
         private float attackCooldown = 0.5f;
         private float attackTimer = 0f;
@@ -23,34 +23,44 @@ namespace Quest
         private TransformComponent transform;
         private BoxCollider2DComponent collider;
 
-        public void OnCreate()
+        Entity entity;
+
+        public MeleeAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName = "Enemies")
         {
+            this.entity = entity;
+            this.attackTargetParentName = attackTargetParentName;
+            this.attackTargetTypes = attackTargetTypes;
             transform = entity.GetComponent<TransformComponent>();
             collider = entity.GetComponent<BoxCollider2DComponent>();
         }
 
-        public void OnUpdate(float ts)
+        public void Update(float ts)
         {
-            if (collider == null) return;
+            if (collider == null || !Enabled) return;
+            if(attackBoxComponent == null) attackBoxComponent = entity.As<AttackBoxComponent>();
             attackTimer += ts;
-            attackBoxCenter = new Vector2(transform.translation.X + attackBoxOffset.X * attackDirecton.X, transform.translation.Y + attackBoxOffset.Y);
 
             if (attackTimer >= attackCooldown && Input.IsKeyDown(KeyCode.R))
             {
-                List<Entity> enemiesInRange = new List<Entity>();
-                foreach (Entity enemy in Entity.FindEntityByName("Enemies").GetChildren())
+                foreach (Entity e in Entity.FindEntityByName(attackTargetParentName).GetChildren())
                 {
-                    if (enemy.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxCenter, attackBoxSize))
+                    if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.attackBoxCenter, attackBoxComponent.attackBoxSize) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
                     {
-                        enemiesInRange.Add(enemy);
+                        e.As<HealthComponent>().TakeDamage(damage);
                     }
-                }
-                foreach (Entity enemy in enemiesInRange)
-                {
-                    enemy.As<BaseEnemy>().healthComponent.TakeDamage(damage);
                 }
                 attackTimer = 0;
             }
+        }
+
+        public void Enable()
+        {
+            Enabled = true;
+        }
+
+        public void Disable()
+        {
+            Enabled = false;
         }
     }
 }

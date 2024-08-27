@@ -9,6 +9,8 @@ namespace Quest
 {
     public class JumpComponent : DefaultBehaviour
     {
+        private bool Enabled = true;
+
         public bool shouldJump = false;
         public float jumpForce = 10f;
         public float coyoteTime = 0.1f;
@@ -19,6 +21,8 @@ namespace Quest
         private RigidBody2DComponent rigidBody;
         private BoxCollider2DComponent collider;
 
+        private float multiplier = 1.0f;
+
         public void OnCreate()
         {
             rigidBody = entity.GetComponent<RigidBody2DComponent>();
@@ -27,7 +31,7 @@ namespace Quest
 
         public void OnUpdate(float ts)
         {
-            if(rigidBody == null || collider == null) return;
+            if(rigidBody == null || collider == null || !Enabled) return;
             if (isGrounded())
             {
                 coyoteTimer = coyoteTime;
@@ -48,7 +52,7 @@ namespace Quest
 
             if (coyoteTimer > 0 && jumpBufferTimer > 0)
             {
-                rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.X, jumpForce);
+                rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.X, jumpForce * multiplier);
                 jumpBufferTimer = 0;
                 shouldJump = false;
             }
@@ -62,6 +66,21 @@ namespace Quest
         private bool isGrounded()
         {
             return GroundCheck.IsGrounded(collider);
+        }
+
+        public void SetMultiplier(float multiplier)
+        {
+            this.multiplier = multiplier;
+        }
+
+        public void Enable()
+        {
+            Enabled = true;
+        }
+
+        public void Disable()
+        {
+            Enabled = false;
         }
     }
 }

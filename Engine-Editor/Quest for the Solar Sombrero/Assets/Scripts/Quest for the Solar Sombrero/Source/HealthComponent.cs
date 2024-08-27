@@ -9,7 +9,7 @@ namespace Quest
 {
     public class HealthComponent : DefaultBehaviour
     {
-        public int health = 100;
+        private int health = 100;
         public int maxHealth = 100;
 
         public void OnCreate()
@@ -40,6 +40,20 @@ namespace Quest
         public bool IsDead()
         {
             return health <= 0;
+        }
+
+        public void SetHealth(int newHealth)
+        {
+            health = newHealth;
+            if(health > maxHealth)
+            {
+                health = maxHealth;
+            }
+        }
+
+        public int GetHealth()
+        {
+            return health;
         }
     }
 }
