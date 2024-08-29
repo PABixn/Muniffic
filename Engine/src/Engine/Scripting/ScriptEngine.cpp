@@ -425,7 +425,7 @@ namespace eg
 		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
 		{
 			for (auto& [key, value] : s_Data->EntityInstances.at(entityID))
-				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()))
+				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()) && s_Data->SceneContext->EntityExists(entityID))
 					value->InvokeOnUpdate(ts);
 			/*Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
 			instance->InvokeOnUpdate(ts);*/
