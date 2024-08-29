@@ -38,6 +38,10 @@ namespace Quest
             {
                 attackBox = entity.As<EnemyAttackBoxComponent>();
             }
+            if(attackBox.isEnemyinRange(player))
+            {
+                return;
+            }
             if (IsPlayerInSight())
             {
                 TurnTowardPlayer();

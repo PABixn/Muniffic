@@ -27,5 +27,10 @@ namespace Quest
         {
             attackBoxCenter = new Vector2(transform.translation.X + (attackBoxOffset.X + attackBox.size.X), transform.translation.Y + attackBoxOffset.Y);
         }
+
+        public bool isEnemyinRange(Entity e)
+        {
+            return e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxCenter, attackBoxSize);
+        }
     }
 }

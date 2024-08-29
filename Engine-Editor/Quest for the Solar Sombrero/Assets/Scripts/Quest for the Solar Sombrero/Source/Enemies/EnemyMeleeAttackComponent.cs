@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Quest
 {
-    internal class EnemyMeleeAttackComponent
+    public class EnemyMeleeAttackComponent
     {
         private bool Enabled = true;
 
@@ -39,11 +39,11 @@ namespace Quest
             if (attackBoxComponent == null) attackBoxComponent = entity.As<EnemyAttackBoxComponent>();
             attackTimer += ts;
 
-            if (attackTimer >= attackCooldown && Input.IsKeyDown(KeyCode.R))
+            if (attackTimer >= attackCooldown)
             {
                 foreach (Entity e in Entity.FindEntityByName(attackTargetParentName).GetChildren())
                 {
-                    if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.attackBoxCenter, attackBoxComponent.attackBoxSize) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
+                    if (attackBoxComponent.isEnemyinRange(e) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
                     {
                         e.As<HealthComponent>().TakeDamage(damage);
                     }
@@ -75,6 +75,18 @@ namespace Quest
         public void SetAttackTargetTypes(List<EntityType> attackTargetTypes)
         {
             this.attackTargetTypes = attackTargetTypes;
+        }
+
+        public bool isPlayerInRange()
+        {
+            foreach (Entity e in Entity.FindEntityByName(attackTargetParentName).GetChildren())
+            {
+                if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.attackBoxCenter, attackBoxComponent.attackBoxSize) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -51,10 +51,10 @@ namespace Quest
         public float CirclePlayerAttackSpeed { get; private set; } = 0.2f;
         public float TrianglePlayerAttackSpeed { get; private set; } = 1f;
 
-        public float BasePlayerKnockbackForce { get; private set; } = 0;
-        public float SquarePlayerKnockbackForce { get; private set; } = 10;
-        public float CirclePlayerKnockbackForce { get; private set; } = 1;
-        public float TrianglePlayerKnockbackForce { get; private set; } = 5;
+        public int BasePlayerKnockbackForce = 0;
+        public int SquarePlayerKnockbackForce { get; private set; } = 100;
+        public int CirclePlayerKnockbackForce { get; private set; } = 10;
+        public int TrianglePlayerKnockbackForce { get; private set; } = 50;
 
 
         private List<EntityType> BasePlayerTargets = new List<EntityType> { EntityType.ENEMY_SQUARE, EntityType.ENEMY_CIRCLE, EntityType.ENEMY_TRIANGLE };
@@ -129,6 +129,7 @@ namespace Quest
             meleeAttackComponent.attackTargetParentName = "Enemies";
             meleeAttackComponent.SetDamage(BasePlayerAttackDamage);
             meleeAttackComponent.SetCooldown(BasePlayerAttackSpeed);
+            meleeAttackComponent.SetKnockbackForce(BasePlayerKnockbackForce);
             runComponent.SetMultiplier(BasePlayerSpeedMultiplier);
             jumpComponent.SetMultiplier(BasePlayerJumpForceMultiplier);
             jumpComponent.Enable();
@@ -176,6 +177,7 @@ namespace Quest
             meleeAttackComponent.attackTargetParentName = "Enemies";
             meleeAttackComponent.SetDamage(TrianglePlayerAttackDamage);
             meleeAttackComponent.SetCooldown(TrianglePlayerAttackSpeed);
+            meleeAttackComponent.SetKnockbackForce(TrianglePlayerKnockbackForce);
             runComponent.SetMultiplier(TrianglePlayerSpeedMultiplier);
             jumpComponent.SetMultiplier(TrianglePlayerJumpForceMultiplier);
             jumpComponent.Enable();

@@ -18,7 +18,7 @@ namespace Quest
 
         private float attackCooldown = 0.5f;
         private float attackTimer = 0f;
-        private int damage = 1000;
+        public int damage = 10;
 
         private int knockbackForce = 1000;
 
@@ -61,7 +61,7 @@ namespace Quest
             RigidBody2DComponent rb = e.GetComponent<RigidBody2DComponent>();
             TransformComponent eTransform = e.GetComponent<TransformComponent>();
             if(rb == null) return;
-            Vector2 direction = eTransform.translation.XY - attackBox.attackBoxCenter;
+            Vector2 direction = eTransform.translation.XY - transform.translation.XY;
             direction.NormalizeTo(knockbackForce);
             rb.ApplyLinearImpulse(direction);
         }

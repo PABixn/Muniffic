@@ -130,5 +130,10 @@ namespace Quest
             Entity.Destroy(entity);
             playerScript.SwitchPlayerType(IntToEnemyType(enemyType));
         }
+
+        public EnemyMeleeAttackComponent getMeleeAttackComponent()
+        {
+            return meleeAttackComponent;
+        }
     };
 }
