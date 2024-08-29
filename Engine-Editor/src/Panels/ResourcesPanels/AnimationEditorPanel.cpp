@@ -72,6 +72,8 @@ namespace eg {
 
 			if (m_FramesToSwap.find(i) != m_FramesToSwap.end())
 				ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), IM_COL32(65, 51, 122, 255));
+			else if(isDragging && draggingIndex == i)
+				ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), IM_COL32(255, 105, 180, 255));
 			else
 				ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), IM_COL32(194, 239, 235, 255));
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y));
@@ -79,7 +81,7 @@ namespace eg {
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + rectWidth + 2, cursorPos.y));
 
 			if (!m_PlayAnimation) {
-				if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+				if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !m_Resize && !m_Move) {
 					if (clickedFrame < 0) {
 						clickedFrame = i;
 					}
@@ -142,12 +144,12 @@ namespace eg {
 
 		if (isDragging && draggingIndex != -1) {
 			int deltaX = ImGui::GetIO().MouseDelta.x;
-			if (m_Selection) {
+			if (m_Resize) {
 				m_FramesData[draggingIndex].FrameDuration += deltaX/2;
 				m_FramesData[draggingIndex].FrameDuration = std::max(1, m_FramesData[draggingIndex].FrameDuration);
 				SetFrames();
 			}
-			else {
+			else if (m_Move) {
 				float estNewIndex = draggingIndex + (float)deltaX / 2;
 				int newIndex = (int)(round(estNewIndex));
 				newIndex = std::clamp(newIndex, 0, static_cast<int>(m_FramesData.size()) - 1);
@@ -159,14 +161,6 @@ namespace eg {
 					draggingIndex = newIndex;
 					SetFrames();
 				}
-				/*int indexDelta = deltaX / 3;
-				for (int j=draggingIndex; j < indexDelta+draggingIndex && j< m_FramesData.size()-1; j++) {
-					if(j==m_FramesData.size()) break;
-					Animation::FrameData temp = m_FramesData[j];
-					m_FramesData[j] = m_FramesData[j + 1];
-					m_FramesData[j+1] = temp;
-				}
-				SetFrames();*/
 			}
 		}
 
@@ -178,12 +172,16 @@ namespace eg {
 
 		ImGui::DragInt("Frame Rate %f:", m_Anim->GetFrameRatePtr(), 1.0f, 1.0f, 500);
 
-		if (ImGui::ImageButton((ImTextureID)(m_Selection ? m_LenghtSelectedIcon->GetRendererID() : m_LenghtIcon->GetRendererID()), ImVec2(50, 50),ImVec2(0,0), ImVec2(1,1),0)) {
-			m_Selection = !m_Selection;
+		if (ImGui::ImageButton((ImTextureID)(m_Resize ? m_LenghtSelectedIcon->GetRendererID() : m_LenghtIcon->GetRendererID()), ImVec2(50, 50),ImVec2(0,0), ImVec2(1,1),0)) {
+			if(m_Move)
+				m_Move = false;
+			m_Resize = !m_Resize;
 		}
 		ImGui::SameLine();
-		if(ImGui::ImageButton((ImTextureID)(m_Selection == false ? m_MoveSelectedIcon->GetRendererID() : m_MoveIcon->GetRendererID()), ImVec2(50, 50), ImVec2(0, 0), ImVec2(1, 1), 0)){
-			m_Selection = !m_Selection;
+		if(ImGui::ImageButton((ImTextureID)(m_Move ? m_MoveSelectedIcon->GetRendererID() : m_MoveIcon->GetRendererID()), ImVec2(50, 50), ImVec2(0, 0), ImVec2(1, 1), 0)){
+			if(m_Resize)
+				m_Resize = false;
+			m_Move = !m_Move;
 		}
 
 		//ImGui::SetCursorPos(ImVec2(15, ImGui::GetWindowHeight() - 100));

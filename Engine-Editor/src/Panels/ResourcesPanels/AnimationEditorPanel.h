@@ -18,7 +18,8 @@ namespace eg {
 		bool m_PlayAnimation;
 		bool m_ShowLongerFrame = false;
 		bool m_ShowInitialFrame = true;
-		bool m_Selection = true;
+		bool m_Resize = false;
+		bool m_Move = false;
 		std::map<int, Animation::FrameData> m_FramesToSwap;
 		Ref<Animation> m_Anim;
 		Ref<Texture2D> m_PlayIcon;
