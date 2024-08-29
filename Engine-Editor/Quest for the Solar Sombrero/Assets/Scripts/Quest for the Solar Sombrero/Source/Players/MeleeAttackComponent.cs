@@ -20,6 +20,8 @@ namespace Quest
         private float attackTimer = 0f;
         private int damage = 1000;
 
+        private int knockbackForce = 1000;
+
         private TransformComponent transform;
         private BoxCollider2DComponent collider;
 
@@ -47,10 +49,21 @@ namespace Quest
                     if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.attackBoxCenter, attackBoxComponent.attackBoxSize) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
                     {
                         e.As<HealthComponent>().TakeDamage(damage);
+                        nockback(e, attackBoxComponent);
                     }
                 }
                 attackTimer = 0;
             }
+        }
+
+        private void nockback(Entity e, AttackBoxComponent attackBox)
+        {
+            RigidBody2DComponent rb = e.GetComponent<RigidBody2DComponent>();
+            TransformComponent eTransform = e.GetComponent<TransformComponent>();
+            if(rb == null) return;
+            Vector2 direction = eTransform.translation.XY - attackBox.attackBoxCenter;
+            direction.NormalizeTo(knockbackForce);
+            rb.ApplyLinearImpulse(direction);
         }
 
         public void Enable()
@@ -76,6 +89,11 @@ namespace Quest
         public void SetAttackTargetTypes(List<EntityType> attackTargetTypes)
         {
             this.attackTargetTypes = attackTargetTypes;
+        }
+
+        public void SetKnockbackForce(int force)
+        {
+            knockbackForce = force;
         }
     }
 }

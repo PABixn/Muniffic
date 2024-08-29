@@ -33,7 +33,7 @@ namespace Quest
             {
                 attackDirecton = new Vector2(1, 0);
             }
-            attackBoxCenter = new Vector2(transform.translation.X + (attackBoxOffset.X + attackBox.size.X), transform.translation.Y + attackBoxOffset.Y);
+            attackBoxCenter = new Vector2(transform.translation.X + (attackBoxOffset.X + attackBox.size.X) * attackDirecton.X, transform.translation.Y + attackBoxOffset.Y);
         }
     }
 }

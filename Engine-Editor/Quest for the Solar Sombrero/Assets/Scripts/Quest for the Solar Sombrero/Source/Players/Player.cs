@@ -41,6 +41,22 @@ namespace Quest
         public float CirclePlayerJumpForceMultiplier { get; private set; } = 2.0f;
         public float TrianglePlayerJumpForceMultiplier { get; private set; } = 1;
 
+        public int BasePlayerAttackDamage { get; private set; } = 50;
+        public int SquarePlayerAttackDamage { get; private set; } = 100;
+        public int CirclePlayerAttackDamage { get; private set; } = 20;
+        public int TrianglePlayerAttackDamage { get; private set; } = 80;
+
+        public float BasePlayerAttackSpeed { get; private set; } = 0.5f;
+        public float SquarePlayerAttackSpeed { get; private set; } = 2;
+        public float CirclePlayerAttackSpeed { get; private set; } = 0.2f;
+        public float TrianglePlayerAttackSpeed { get; private set; } = 1f;
+
+        public float BasePlayerKnockbackForce { get; private set; } = 0;
+        public float SquarePlayerKnockbackForce { get; private set; } = 10;
+        public float CirclePlayerKnockbackForce { get; private set; } = 1;
+        public float TrianglePlayerKnockbackForce { get; private set; } = 5;
+
+
         private List<EntityType> BasePlayerTargets = new List<EntityType> { EntityType.ENEMY_SQUARE, EntityType.ENEMY_CIRCLE, EntityType.ENEMY_TRIANGLE };
         private List<EntityType> SquarePlayerTargets = new List<EntityType> { EntityType.ENEMY_CIRCLE };
         private List<EntityType> CirclePlayerTargets = new List<EntityType> { EntityType.ENEMY_TRIANGLE };
@@ -111,6 +127,8 @@ namespace Quest
             attackBoxComponent.attackBoxCenter = new Vector2(1, 0);
             meleeAttackComponent.attackTargetTypes = BasePlayerTargets;
             meleeAttackComponent.attackTargetParentName = "Enemies";
+            meleeAttackComponent.SetDamage(BasePlayerAttackDamage);
+            meleeAttackComponent.SetCooldown(BasePlayerAttackSpeed);
             runComponent.SetMultiplier(BasePlayerSpeedMultiplier);
             jumpComponent.SetMultiplier(BasePlayerJumpForceMultiplier);
             jumpComponent.Enable();
@@ -156,6 +174,8 @@ namespace Quest
             attackBoxComponent.attackBoxCenter = new Vector2(1, 0);
             meleeAttackComponent.attackTargetTypes = TrianglePlayerTargets;
             meleeAttackComponent.attackTargetParentName = "Enemies";
+            meleeAttackComponent.SetDamage(TrianglePlayerAttackDamage);
+            meleeAttackComponent.SetCooldown(TrianglePlayerAttackSpeed);
             runComponent.SetMultiplier(TrianglePlayerSpeedMultiplier);
             jumpComponent.SetMultiplier(TrianglePlayerJumpForceMultiplier);
             jumpComponent.Enable();
