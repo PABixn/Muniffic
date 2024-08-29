@@ -15,6 +15,10 @@ namespace eg {
 		m_Anim = Animation::Create(asset);
 		m_PlayIcon = Texture2D::Create("resources/icons/PlayButton.png");
 		m_StopIcon = Texture2D::Create("resources/icons/StopButton.png");
+		m_LenghtIcon = Texture2D::Create("resources/icons/animationEditorPanel/lengthChangeIcon.png");
+		m_LenghtSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/lengthChangeSelectedIcon.png");
+		m_MoveIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveIcon.png");
+		m_MoveSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveSelectedIcon.png");
 
 		for (auto& anim : m_Anim->GetFrames()) {
 			m_FramesData.emplace_back(anim);
@@ -138,9 +142,32 @@ namespace eg {
 
 		if (isDragging && draggingIndex != -1) {
 			int deltaX = ImGui::GetIO().MouseDelta.x;
-			m_FramesData[draggingIndex].FrameDuration += deltaX/2;
-			m_FramesData[draggingIndex].FrameDuration = std::max(1, m_FramesData[draggingIndex].FrameDuration);
-			SetFrames();
+			if (m_Selection) {
+				m_FramesData[draggingIndex].FrameDuration += deltaX/2;
+				m_FramesData[draggingIndex].FrameDuration = std::max(1, m_FramesData[draggingIndex].FrameDuration);
+				SetFrames();
+			}
+			else {
+				float estNewIndex = draggingIndex + (float)deltaX / 2;
+				int newIndex = (int)(round(estNewIndex));
+				newIndex = std::clamp(newIndex, 0, static_cast<int>(m_FramesData.size()) - 1);
+
+				if (newIndex != draggingIndex) {
+					Animation::FrameData temp = m_FramesData[draggingIndex];
+					m_FramesData.erase(m_FramesData.begin() + draggingIndex);
+					m_FramesData.insert(m_FramesData.begin() + newIndex, temp);
+					draggingIndex = newIndex;
+					SetFrames();
+				}
+				/*int indexDelta = deltaX / 3;
+				for (int j=draggingIndex; j < indexDelta+draggingIndex && j< m_FramesData.size()-1; j++) {
+					if(j==m_FramesData.size()) break;
+					Animation::FrameData temp = m_FramesData[j];
+					m_FramesData[j] = m_FramesData[j + 1];
+					m_FramesData[j+1] = temp;
+				}
+				SetFrames();*/
+			}
 		}
 
 		ImGui::EndChild();
@@ -150,6 +177,14 @@ namespace eg {
 		}
 
 		ImGui::DragInt("Frame Rate %f:", m_Anim->GetFrameRatePtr(), 1.0f, 1.0f, 500);
+
+		if (ImGui::ImageButton((ImTextureID)(m_Selection ? m_LenghtSelectedIcon->GetRendererID() : m_LenghtIcon->GetRendererID()), ImVec2(50, 50),ImVec2(0,0), ImVec2(1,1),0)) {
+			m_Selection = !m_Selection;
+		}
+		ImGui::SameLine();
+		if(ImGui::ImageButton((ImTextureID)(m_Selection == false ? m_MoveSelectedIcon->GetRendererID() : m_MoveIcon->GetRendererID()), ImVec2(50, 50), ImVec2(0, 0), ImVec2(1, 1), 0)){
+			m_Selection = !m_Selection;
+		}
 
 		//ImGui::SetCursorPos(ImVec2(15, ImGui::GetWindowHeight() - 100));
 		if (ImGui::Button("Save")) {
@@ -166,24 +201,6 @@ namespace eg {
 		}
 		ImGui::End();
 			
-	}
-
-	void AnimationEditorPanel::Menu(Animation::FrameData anim) {
-		ImGui::OpenPopup("KeyframesOptions");
-
-		if (ImGui::BeginPopupContextItem("KeyframesOptions")) {
-			if (!anim.isKeyFrame) {
-				if (ImGui::MenuItem("Add keyframe")) {
-					anim.isKeyFrame = true;
-				}
-			}
-			else {
-				if (ImGui::MenuItem("Remove keyframe")) {
-					anim.isKeyFrame = false;
-				}
-			}
-			ImGui::EndPopup();
-		}
 	}
 
 	void AnimationEditorPanel::DrawFramePreview(Animation::FrameData anim,bool addSpace) {
