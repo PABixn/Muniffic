@@ -81,7 +81,7 @@ namespace eg {
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + rectWidth + 2, cursorPos.y));
 
 			if (!m_PlayAnimation) {
-				if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !m_Resize && !m_Move) {
+				if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
 					if (clickedFrame < 0) {
 						clickedFrame = i;
 					}
@@ -94,11 +94,16 @@ namespace eg {
 					}
 					displayedAnim = anim;
 					clickedFrame = i;
-					if (m_FramesToSwap.size() < 2 && m_FramesToSwap.find(i) == m_FramesToSwap.end()) {
-						m_FramesToSwap.insert({ i,anim });
+					if (!m_Resize && !m_Move) {
+						if (m_FramesToSwap.size() < 2 && m_FramesToSwap.find(i) == m_FramesToSwap.end()) {
+							m_FramesToSwap.insert({ i,anim });
+						}
+						else if (m_FramesToSwap.find(i) != m_FramesToSwap.end()) {
+							m_FramesToSwap.erase(i);
+						}
 					}
-					else if (m_FramesToSwap.find(i) != m_FramesToSwap.end()) {
-						m_FramesToSwap.erase(i);
+					else if (m_Move || m_Resize) {
+						m_FramesToSwap.clear();
 					}
 				}
 
