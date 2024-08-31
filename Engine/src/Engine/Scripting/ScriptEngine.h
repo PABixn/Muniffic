@@ -136,6 +136,7 @@ namespace eg {
 		bool SetFieldValueInternal(const std::string& name, const void* value);
 	private:
 		UUID m_UUID;
+		UUID m_EntityUUID;
 		Ref<ScriptClass> m_ScriptClass;
 
 		MonoObject* m_Instance = nullptr;
