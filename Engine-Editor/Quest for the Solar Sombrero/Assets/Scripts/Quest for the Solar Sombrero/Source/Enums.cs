@@ -32,6 +32,11 @@ namespace Quest
         ENEMY_TRIANGLE, ENEMY_SQUARE, ENEMY_CIRCLE, 
         BULLET, STATIC, NONE
     }
+
+    public enum EffectType
+    {
+        NONE, BURN, SLOW, POISON, ARMOR, SPEED, JUMP, HEAL, SUN_RESIST
+    }
 }
 
 

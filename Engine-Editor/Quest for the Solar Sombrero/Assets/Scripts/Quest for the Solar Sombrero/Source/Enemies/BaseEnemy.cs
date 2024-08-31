@@ -16,15 +16,25 @@ namespace Quest
 
         private EnemyMeleeAttackComponent meleeAttackComponent;
 
-        public int BasEnemyHealth { get; private set; } = 300;
         public int SquarEnemyHealth { get; private set; } = 800;
         public int CirclEnemyHealth { get; private set; } = 400;
         public int TrianglEnemyHealth { get; private set; } = 250;
 
-        public float BasEnemySpeedMultiplier { get; private set; } = 1;
         public float SquarEnemySpeedMultiplier { get; private set; } = 0.5f;
         public float CirclEnemySpeedMultiplier { get; private set; } = 1;
         public float TrianglEnemySpeedMultiplier { get; private set; } = 1.5f;
+
+        public int SquareEnemyAttackDamage { get; private set; } = 100;
+        public int CircleEnemyAttackDamage { get; private set; } = 20;
+        public int TriangleEnemyAttackDamage { get; private set; } = 80;
+
+        public float SquareEnemyAttackSpeed { get; private set; } = 2;
+        public float CircleEnemyAttackSpeed { get; private set; } = 0.2f;
+        public float TriangleEnemyAttackSpeed { get; private set; } = 1f;
+
+        public int SquareEnemyKnockbackForce { get; private set; } = 100;
+        public int CircleEnemyKnockbackForce { get; private set; } = 10;
+        public int TriangleEnemyKnockbackForce { get; private set; } = 50;
 
         
 
@@ -109,6 +119,9 @@ namespace Quest
             enemyType = 0;
             healthComponent.maxHealth = SquarEnemyHealth;
             healthComponent.SetHealth(SquarEnemyHealth);
+            meleeAttackComponent.SetDamage(SquareEnemyAttackDamage);
+            meleeAttackComponent.SetCooldown(SquareEnemyAttackSpeed);
+            meleeAttackComponent.setKnockback(SquareEnemyKnockbackForce);
         }
 
         private void InitCircleEnemy()
@@ -116,6 +129,9 @@ namespace Quest
             enemyType = 1;
             healthComponent.maxHealth = CirclEnemyHealth;
             healthComponent.SetHealth(CirclEnemyHealth);
+            meleeAttackComponent.SetDamage(CircleEnemyAttackDamage);
+            meleeAttackComponent.SetCooldown(CircleEnemyAttackSpeed);
+            meleeAttackComponent.setKnockback(CircleEnemyKnockbackForce);
         }
 
         private void InitTriangleEnemy()
@@ -123,6 +139,9 @@ namespace Quest
             enemyType = 2;
             healthComponent.maxHealth = TrianglEnemyHealth;
             healthComponent.SetHealth(TrianglEnemyHealth);
+            meleeAttackComponent.SetDamage(TriangleEnemyAttackDamage);
+            meleeAttackComponent.SetCooldown(TriangleEnemyAttackSpeed);
+            meleeAttackComponent.setKnockback(TriangleEnemyKnockbackForce);
         }
 
         private void Die()
