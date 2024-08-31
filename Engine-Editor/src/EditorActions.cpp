@@ -10,19 +10,25 @@ namespace eg
 	{
 		if (actionName == "GetUUID")
 		{
-			Entity entity = m_Scene->FindEntityByName(params[0]);
+			if (params.size() < 1)
+				return "No entity name provided.";
+
+			Entity entity = m_Scene->FindEntityByName(params.at(0));
 
 			if (entity == Entity())
-				return "Entity with name " + params[0] + " not found";
+				return "Entity with name " + params.at(0) + " not found";
 
 			return std::to_string(entity.GetUUID());
 		}
 		else if (actionName == "Exists")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
 				return "false";
@@ -42,17 +48,22 @@ namespace eg
 		}
 		else if (actionName == "ChangeName")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity name provided.";
+			else if(params.size() < 2)
+				return "No new name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			std::string& tag = entity.GetComponent<TagComponent>().Tag;
 			std::string name = tag;
-			tag = params[1];
+			tag = params.at(1);
 
 			Commands::ExecuteRawValueCommand(&tag, name, "Assistant-TagComponent-Tag");
 
@@ -60,19 +71,25 @@ namespace eg
 		}
 		else if (actionName == "CreateEntity")
 		{
-			Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs(params[0], {}, m_Scene, *m_SelectedEntity));
+			if (params.size() < 1)
+				return "No entity name provided.";
+
+			Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs(params.at(0), {}, m_Scene, *m_SelectedEntity));
 
 			return "Entity created";
 		}
 		else if (actionName == "DeleteEntity")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Scene, *m_SelectedEntity));
 
@@ -80,13 +97,16 @@ namespace eg
 		}
 		else if (actionName == "GetAnyChildren")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			auto children = entity.GetAnyChildren();
 			std::string childrenNames = "";
@@ -98,13 +118,16 @@ namespace eg
 		}
 		else if (actionName == "GetChildren")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			auto children = entity.GetChildren();
 			std::string childrenNames = "";
@@ -116,13 +139,16 @@ namespace eg
 		}
 		else if (actionName == "GetParent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			std::optional<Entity> parent = entity.GetParent();
 
@@ -133,27 +159,32 @@ namespace eg
 		}
 		else if (actionName == "SetParent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No parent UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			std::optional<Entity> parent;
 
-			if(params[1] == "" || params[1] == "NULL" || params[1] == "null" || params[1] == "0")
+			if(params.at(1) == "" || params.at(1) == "NULL" || params.at(1) == "null" || params.at(1) == "0")
 				parent = std::nullopt;
 			else
 			{
-				if (!ComponentHelper::CanConvertToUUID(params[1]))
+				if (!ComponentHelper::CanConvertToUUID(params.at(1)))
 					return "Second parameter is not UUID.";
 
-				parent = m_Scene->GetEntityByUUID(std::stoll(params[1]));
+				parent = m_Scene->GetEntityByUUID(std::stoll(params.at(1)));
 
 				if (parent == Entity())
-					return "Entity with UUID " + params[1] + " not found";
+					return "Entity with UUID " + params.at(1) + " not found";
 			}
 			
 			Commands::ExecuteChangeParentCommand(entity, parent, m_Scene);
@@ -162,21 +193,26 @@ namespace eg
 		}
 		else if (actionName == "IsChild")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No child entity UUID provided.";
+			else if (params.size() < 2)
+				return "No parent entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity child = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity child = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (child == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if (!ComponentHelper::CanConvertToUUID(params[1]))
+			if (!ComponentHelper::CanConvertToUUID(params.at(1)))
 				return "Second parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[1]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(1)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[1] + " not found";
+				return "Entity with UUID " + params.at(1) + " not found";
 
 			if(entity.IsChild(child))
 				return "true";
@@ -185,21 +221,26 @@ namespace eg
 		}
 		else if(actionName == "IsChildOfAny")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No child entity UUID provided.";
+			else if(params.size() < 2)
+				return "No parent entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity child = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity child = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (child == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (!ComponentHelper::CanConvertToUUID(params.at(1)))
 				return "Second parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(1)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(1) + " not found";
 
 			if(entity.IsChildOfAny(child))
 				return "true";
@@ -208,150 +249,200 @@ namespace eg
 		}
 		else if (actionName == "AddComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No component name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if(ComponentHelper::AddComponent(params[1], entity, m_Scene))
+			if(ComponentHelper::AddComponent(params.at(1), entity, m_Scene))
 				return "Success";
 			else
 				return "Failed";
 		}
 		else if(actionName == "RemoveComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No component name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if(ComponentHelper::RemoveComponent(params[1], entity, m_Scene))
+			if(ComponentHelper::RemoveComponent(params.at(1), entity, m_Scene))
 				return "Success";
 			else
 				return "Failed";
 		}
 		else if (actionName == "HasComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No component name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if(ComponentHelper::HasComponent(params[1], entity, m_Scene))
+			if(ComponentHelper::HasComponent(params.at(1), entity, m_Scene))
 				return "true";
 			else
 				return "false";
 		}
 		else if (actionName == "InheritComponentInChildren")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No component name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::InheritComponentInChildren, params[1], entity, m_Scene))
+			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::InheritComponentInChildren, params.at(1), entity, m_Scene))
 				return "Success";
 			else
 				return "Failed";
 		}
 		else if (actionName == "InheritComponentFromParent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No component name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::InheritComponentFromParent, params[1], entity, m_Scene))
+			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::InheritComponentFromParent, params.at(1), entity, m_Scene))
 				return "Success";
 			else
 				return "Failed";
 		}
 		else if (actionName == "CopyComponentToChildren")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No component name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::CopyComponentToChildren, params[1], entity, m_Scene))
+			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::CopyComponentToChildren, params.at(1), entity, m_Scene))
 				return "Success";
 			else
 				return "Failed";
 		}
 		else if (actionName == "CopyComponentValuesToChildren")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No component name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::CopyComponentValuesToChildren, params[1], entity, m_Scene))
+			if(ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::CopyComponentValuesToChildren, params.at(1), entity, m_Scene))
 				return "Success";
 			else
 				return "Failed";
 		}
 		else if (actionName == "CopyComponentWithValuesToChildren")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No component name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if (ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::CopyComponentWithValuesToChildren, params[1], entity, m_Scene))
+			if (ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::CopyComponentWithValuesToChildren, params.at(1), entity, m_Scene))
 				return "Success";
 			else
 				return "Failed";
 		}
 		else if (actionName == "IsInheritedFromParent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No component name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if (ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::IsInheritedFromParent, params[1], entity, m_Scene))
+			if (ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::IsInheritedFromParent, params.at(1), entity, m_Scene))
 				return "Success";
 			else
 				return "Failed";
 		}
 		else if (actionName == "IsInheritedInChildren")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if (params.size() < 1)
+				return "No entity UUID provided.";
+			else if (params.size() < 2)
+				return "No component name provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
-			if (ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::IsInheritedInChildren, params[1], entity, m_Scene))
+			if (ComponentHelper::ExecuteComponentAction(ComponentHelper::ComponentAction::IsInheritedInChildren, params.at(1), entity, m_Scene))
 				return "Success";
 			else
 				return "Failed";
@@ -364,13 +455,16 @@ namespace eg
 	{
 		if (actionName == "GetTransformComponent")
 		{
-			if(!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+
+			if(!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			TransformComponent& transform = entity.GetComponent<TransformComponent>();
 
@@ -389,47 +483,54 @@ namespace eg
 		}
 		else if (actionName == "SetTransformComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+			else if(params.size() < 2)
+				return "No property name provided.";
+			else if(params.size() < 5)
+				return "No values provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			TransformComponent& transform = entity.GetComponent<TransformComponent>();
 
-			if(ComponentHelper::CanConvertToFloat(params[2]) == false)
+			if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 				return "Parameter is not float.";
 
-			if (ComponentHelper::CanConvertToFloat(params[3]) == false)
+			if (ComponentHelper::CanConvertToFloat(params.at(3)) == false)
 				return "Parameter is not float.";
 
-			if (ComponentHelper::CanConvertToFloat(params[4]) == false)
+			if (ComponentHelper::CanConvertToFloat(params.at(4)) == false)
 				return "Parameter is not float.";
 
-			if (params[1] == "Position")
+			if (params.at(1) == "Position")
 			{
 				glm::vec3 position = transform.Translation;
-				glm::vec3 newPosition = glm::vec3(std::stof(params[2]), std::stof(params[3]), std::stof(params[4]));
+				glm::vec3 newPosition = glm::vec3(std::stof(params.at(2)), std::stof(params.at(3)), std::stof(params.at(4)));
 				transform.Translation = newPosition;
 				Commands::ExecuteRawValueCommand<glm::vec3, TransformComponent>(&transform.Translation, position, entity, "Assistant-TransformComponent-Position");
 
 				return "Success";
 			}
-			else if (params[1] == "Rotation")
+			else if (params.at(1) == "Rotation")
 			{
 				glm::vec3 rotation = transform.Rotation;
-				glm::vec3 newRotation = glm::vec3(std::stof(params[2]), std::stof(params[3]), std::stof(params[4]));
+				glm::vec3 newRotation = glm::vec3(std::stof(params.at(2)), std::stof(params.at(3)), std::stof(params.at(4)));
 				transform.Rotation = newRotation;
 				Commands::ExecuteRawValueCommand<glm::vec3, TransformComponent>(&transform.Rotation, rotation, entity, "Assistant-TransformComponent-Rotation");
 
 				return "Success";
 			}
-			else if (params[1] == "Scale")
+			else if (params.at(1) == "Scale")
 			{
 				glm::vec3 scale = transform.Scale;
-				glm::vec3 newScale = glm::vec3(std::stof(params[2]), std::stof(params[3]), std::stof(params[4]));
+				glm::vec3 newScale = glm::vec3(std::stof(params.at(2)), std::stof(params.at(3)), std::stof(params.at(4)));
 				transform.Scale = newScale;
 				Commands::ExecuteRawValueCommand<glm::vec3, TransformComponent>(&transform.Scale, scale, entity, "Assistant-TransformComponent-Scale");
 
@@ -442,13 +543,16 @@ namespace eg
 		}
 		else if (actionName == "GetCameraComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			CameraComponent& camera = entity.GetComponent<CameraComponent>();
 
@@ -467,20 +571,27 @@ namespace eg
 		}
 		else if (actionName == "SetCameraComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+			else if(params.size() < 2)
+				return "No property name provided.";
+			else if(params.size() < 3)
+				return "No value provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			CameraComponent& camera = entity.GetComponent<CameraComponent>();
 			SceneCamera& sceneCamera = camera.Camera;
 
-			if (params[1] == "Primary")
+			if (params.at(1) == "Primary")
 			{
-				if (params[2] == "true" || params[2] == "True")
+				if (params.at(2) == "true" || params.at(2) == "True")
 				{
 					bool primary = camera.Primary;
 					camera.Primary = true;
@@ -488,7 +599,7 @@ namespace eg
 
 					return "Success";
 				}
-				else if (params[2] == "false" || params[2] == "False")
+				else if (params.at(2) == "false" || params.at(2) == "False")
 				{
 					bool primary = camera.Primary;
 					camera.Primary = false;
@@ -499,9 +610,9 @@ namespace eg
 				else
 					return "Invalid value.";
 			}
-			else if (params[1] == "FixedAspectRatio")
+			else if (params.at(1) == "FixedAspectRatio")
 			{
-				if (params[2] == "true" || params[2] == "True")
+				if (params.at(2) == "true" || params.at(2) == "True")
 				{
 					bool fixedAspectRatio = camera.FixedAspectRatio;
 					camera.FixedAspectRatio = true;
@@ -509,7 +620,7 @@ namespace eg
 
 					return "Success";
 				}
-				else if (params[2] == "false" || params[2] == "False")
+				else if (params.at(2) == "false" || params.at(2) == "False")
 				{
 					bool fixedAspectRatio = camera.FixedAspectRatio;
 					camera.FixedAspectRatio = false;
@@ -520,9 +631,9 @@ namespace eg
 				else
 					return "Invalid value.";
 			}
-			else if (params[1] == "ProjectionType")
+			else if (params.at(1) == "ProjectionType")
 			{
-				if (params[2] == "Orthographic")
+				if (params.at(2) == "Orthographic")
 				{
 					Commands::ExecuteValueCommand<SceneCamera::ProjectionType>([&sceneCamera](SceneCamera::ProjectionType projectionType)
 						{
@@ -531,7 +642,7 @@ namespace eg
 
 					return "Success";
 				}
-				else if (params[2] == "Perspective")
+				else if (params.at(2) == "Perspective")
 				{
 					Commands::ExecuteValueCommand<SceneCamera::ProjectionType>([&sceneCamera](SceneCamera::ProjectionType projectionType)
 						{
@@ -543,84 +654,84 @@ namespace eg
 				else
 					return "Invalid value.";
 			}
-			else if (params[1] == "OrthographicSize")
+			else if (params.at(1) == "OrthographicSize")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) != false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) != false)
 				{
 					Commands::ExecuteValueCommand<float>([&sceneCamera](float size)
 						{
 							sceneCamera.SetOrthographicSize(size);
-						}, std::stof(params[2]), sceneCamera.GetOrthographicSize(), "Assistant-CameraComponent-OrthographicSize");
+						}, std::stof(params.at(2)), sceneCamera.GetOrthographicSize(), "Assistant-CameraComponent-OrthographicSize");
 
 					return "Success";
 				}
 				else
 					return "Parameter is not float.";
 			}
-			else if (params[1] == "OrthographicNearClip")
+			else if (params.at(1) == "OrthographicNearClip")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) != false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) != false)
 				{
 					Commands::ExecuteValueCommand<float>([&sceneCamera](float nearClip)
 						{
 							sceneCamera.SetOrthographicNearClip(nearClip);
-						}, std::stof(params[2]), sceneCamera.GetOrthographicNearClip(), "Assistant-CameraComponent-OrthographicNearClip");
+						}, std::stof(params.at(2)), sceneCamera.GetOrthographicNearClip(), "Assistant-CameraComponent-OrthographicNearClip");
 
 					return "Success";
 				}
 				else
 					return "Parameter is not float.";
 			}
-			else if (params[1] == "OrthographicFarClip")
+			else if (params.at(1) == "OrthographicFarClip")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) != false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) != false)
 				{
 					Commands::ExecuteValueCommand<float>([&sceneCamera](float farClip)
 						{
 							sceneCamera.SetOrthographicFarClip(farClip);
-						}, std::stof(params[2]), sceneCamera.GetOrthographicFarClip(), "Assistant-CameraComponent-OrthographicFarClip");
+						}, std::stof(params.at(2)), sceneCamera.GetOrthographicFarClip(), "Assistant-CameraComponent-OrthographicFarClip");
 
 					return "Success";
 				}
 				else
 					return "Parameter is not float.";
 			}
-			else if (params[1] == "PerspectiveVerticalFOV")
+			else if (params.at(1) == "PerspectiveVerticalFOV")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) != false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) != false)
 				{
 					Commands::ExecuteValueCommand<float>([&sceneCamera](float verticalFOV)
 						{
 							sceneCamera.SetPerspectiveVerticalFOV(verticalFOV);
-						}, std::stof(params[2]), sceneCamera.GetPerspectiveVerticalFOV(), "Assistant-CameraComponent-PerspectiveVerticalFOV");
+						}, std::stof(params.at(2)), sceneCamera.GetPerspectiveVerticalFOV(), "Assistant-CameraComponent-PerspectiveVerticalFOV");
 
 					return "Success";
 				}
 				else
 					return "Parameter is not float.";
 			}
-			else if (params[1] == "PerspectiveNearClip")
+			else if (params.at(1) == "PerspectiveNearClip")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) != false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) != false)
 				{
 					Commands::ExecuteValueCommand<float>([&sceneCamera](float nearClip)
 						{
 							sceneCamera.SetPerspectiveNearClip(nearClip);
-						}, std::stof(params[2]), sceneCamera.GetPerspectiveNearClip(), "Assistant-CameraComponent-PerspectiveNearClip");
+						}, std::stof(params.at(2)), sceneCamera.GetPerspectiveNearClip(), "Assistant-CameraComponent-PerspectiveNearClip");
 
 					return "Success";
 				}
 				else
 					return "Parameter is not float.";
 			}
-			else if (params[1] == "PerspectiveFarClip")
+			else if (params.at(1) == "PerspectiveFarClip")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) != false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) != false)
 				{
 					Commands::ExecuteValueCommand<float>([&sceneCamera](float farClip)
 						{
 							sceneCamera.SetPerspectiveFarClip(farClip);
-						}, std::stof(params[2]), sceneCamera.GetPerspectiveFarClip(), "Assistant-CameraComponent-PerspectiveFarClip");
+						}, std::stof(params.at(2)), sceneCamera.GetPerspectiveFarClip(), "Assistant-CameraComponent-PerspectiveFarClip");
 
 					return "Success";
 				}
@@ -634,13 +745,16 @@ namespace eg
 		}
 		else if (actionName == "GetSpriteRendererComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			SpriteRendererComponent& spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
 
@@ -657,58 +771,73 @@ namespace eg
 		}
 		else if (actionName == "SetSpriteRendererComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+			else if(params.size() < 2)
+				return "No property name provided.";
+			else if(params.size() < 3)
+				return "No value provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			SpriteRendererComponent& spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
 
-			if (params[1] == "TilingFactor")
+			if (params.at(1) == "TilingFactor")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float factor = spriteRenderer.TilingFactor;
-				spriteRenderer.TilingFactor = std::stof(params[2]);
+				spriteRenderer.TilingFactor = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&spriteRenderer.TilingFactor, factor, entity, "Assistant-SpriteRendererComponent-TilingFactor");
 
 				return "Success";
 			}
-			else if (params[1] == "Color")
+			else if (params.at(1) == "Color")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
-					return "Parameter is not float.";
-				if(ComponentHelper::CanConvertToFloat(params[3]) == false)
-					return "Parameter is not float.";
-				if(ComponentHelper::CanConvertToFloat(params[4]) == false)
-					return "Parameter is not float.";
-				if(ComponentHelper::CanConvertToFloat(params[5]) == false)
-					return "Parameter is not float.";
+				if(params.size() < 4)
+					return "No G value provided.";
+				else if(params.size() < 5)
+					return "No B value provided.";
+				else if(params.size() < 6)
+					return "No A value provided.";
+
+
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
+					return "R value is not float.";
+				if(ComponentHelper::CanConvertToFloat(params.at(3)) == false)
+					return "G value is not float.";
+				if(ComponentHelper::CanConvertToFloat(params.at(4)) == false)
+					return "B value is not float.";
+				if(ComponentHelper::CanConvertToFloat(params.at(5)) == false)
+					return "A value is not float.";
 
 				glm::vec4 color = spriteRenderer.Color;
-				spriteRenderer.Color.x = std::stof(params[2]) / 255;
-				spriteRenderer.Color.y = std::stof(params[3]) / 255;
-				spriteRenderer.Color.z = std::stof(params[4]) / 255;
-				spriteRenderer.Color.w = std::stof(params[5]) / 255;
+				spriteRenderer.Color.x = std::stof(params.at(2)) / 255;
+				spriteRenderer.Color.y = std::stof(params.at(3)) / 255;
+				spriteRenderer.Color.z = std::stof(params.at(4)) / 255;
+				spriteRenderer.Color.w = std::stof(params.at(5)) / 255;
 
 				Commands::ExecuteRawValueCommand<glm::vec4, SpriteRendererComponent>(&spriteRenderer.Color, color, entity, "Assistant-SpriteRendererComponent-Color");
 
 				return "Success";
 			}
-			else if (params[1] == "Texture")
+			else if (params.at(1) == "Texture")
 			{
-				if(ComponentHelper::CanConvertToInteger(params[2]) == false)
+				if(ComponentHelper::CanConvertToInteger(params.at(2)) == false)
 					return "Parameter is not integer.";
 
-				Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(std::stoi(params[2]));
+				Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(std::stoi(params.at(2)));
 
 				if (texture->IsLoaded())
 				{
-					spriteRenderer.TextureUUID = std::stoi(params[2]);
+					spriteRenderer.TextureUUID = std::stoi(params.at(2));
 					Ref<Texture2D> oldTexture = spriteRenderer.Texture;
 					spriteRenderer.Texture = texture;
 					Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&spriteRenderer.Texture, oldTexture, entity, "Assistant-SpriteRendererComponent-Texture");
@@ -725,13 +854,16 @@ namespace eg
 		}
 		else if (actionName == "GetCircleRendererComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			CircleRendererComponent& circleRenderer = entity.GetComponent<CircleRendererComponent>();
 
@@ -747,61 +879,71 @@ namespace eg
 		}
 		else if (actionName == "SetCircleRendererComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+			else if(params.size() < 2)
+				return "No property name provided.";
+			else if(params.size() < 3)
+				return "No value provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			if(entity.HasComponent<CircleRendererComponent>() == false)
 				return "Entity does not have CircleRendererComponent.";
 
 			CircleRendererComponent& circleRenderer = entity.GetComponent<CircleRendererComponent>();
 
-			if (params[1] == "Thickness")
+			if (params.at(1) == "Thickness")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float thickness = circleRenderer.Thickness;
-				circleRenderer.Thickness = std::stof(params[2]);
+				circleRenderer.Thickness = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&circleRenderer.Thickness, thickness, entity, "Assistant-CircleRendererComponent-Thickness");
 
 				return "Success";
 			}
-			else if (params[1] == "Fade")
+			else if (params.at(1) == "Fade")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float fade = circleRenderer.Fade;
-				circleRenderer.Fade = std::stof(params[2]);
+				circleRenderer.Fade = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&circleRenderer.Fade, fade, entity, "Assistant-CircleRendererComponent-Fade");
 
 				return "Success";
 			}
-			else if (params[1] == "Color")
+			else if (params.at(1) == "Color")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
-					return "Parameter is not float.";
-				if(ComponentHelper::CanConvertToFloat(params[3]) == false)
-					return "Parameter is not float.";
-				if(ComponentHelper::CanConvertToFloat(params[4]) == false)
-					return "Parameter is not float.";
+				if(params.size() < 4)
+					return "No G value provided.";
+				else if(params.size() < 5)
+					return "No B value provided.";
+				else if(params.size() < 6)
+					return "No A value provided.";
 
-				if(params.size() < 6)
-					params[5] = "255";
-
-				if(ComponentHelper::CanConvertToFloat(params[5]) == false)
-					return "Parameter is not float.";
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
+					return "R value is not float.";
+				if(ComponentHelper::CanConvertToFloat(params.at(3)) == false)
+					return "G value is not float.";
+				if(ComponentHelper::CanConvertToFloat(params.at(4)) == false)
+					return "B value is not float.";
+				if(ComponentHelper::CanConvertToFloat(params.at(5)) == false)
+					return "A value is not float.";
 
 				glm::vec4 color = circleRenderer.Color;
-				circleRenderer.Color.x = std::stof(params[2]) / 255;
-				circleRenderer.Color.y = std::stof(params[3]) / 255;
-				circleRenderer.Color.z = std::stof(params[4]) / 255;
-				circleRenderer.Color.w = std::stof(params[5]) / 255;
+				circleRenderer.Color.x = std::stof(params.at(2)) / 255;
+				circleRenderer.Color.y = std::stof(params.at(3)) / 255;
+				circleRenderer.Color.z = std::stof(params.at(4)) / 255;
+				circleRenderer.Color.w = std::stof(params.at(5)) / 255;
 
 				Commands::ExecuteRawValueCommand<glm::vec4, CircleRendererComponent>(&circleRenderer.Color, color, entity, "Assistant-CircleRendererComponent-Color");
 
@@ -814,13 +956,16 @@ namespace eg
 		}
 		else if (actionName == "GetRigidBody2DComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			RigidBody2DComponent& rigidBody2D = entity.GetComponent<RigidBody2DComponent>();
 
@@ -832,19 +977,26 @@ namespace eg
 		}
 		else if (actionName == "SetRigidBody2DComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+			else if(params.size() < 2)
+				return "No property name provided.";
+			else if(params.size() < 3)
+				return "No value provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			RigidBody2DComponent& rigidBody2D = entity.GetComponent<RigidBody2DComponent>();
 
-			if (params[1] == "FixedRotation")
+			if (params.at(1) == "FixedRotation")
 			{
-				if(params[2] == "true" || params[2] == "True")
+				if(params.at(2) == "true" || params.at(2) == "True")
 				{
 					bool fixedRotation = rigidBody2D.FixedRotation;
 					rigidBody2D.FixedRotation = true;
@@ -852,7 +1004,7 @@ namespace eg
 
 					return "Success";
 				}
-				else if (params[2] == "false" || params[2] == "False")
+				else if (params.at(2) == "false" || params.at(2) == "False")
 				{
 					bool fixedRotation = rigidBody2D.FixedRotation;
 					rigidBody2D.FixedRotation = false;
@@ -863,9 +1015,9 @@ namespace eg
 				else
 					return "Invalid value.";
 			}
-			else if(params[1] == "Type")
+			else if(params.at(1) == "Type")
 			{
-				if (params[2] == "Static")
+				if (params.at(2) == "Static")
 				{
 					RigidBody2DComponent::BodyType type = rigidBody2D.Type;
 					rigidBody2D.Type = RigidBody2DComponent::BodyType::Static;
@@ -873,7 +1025,7 @@ namespace eg
 
 					return "Success";
 				}
-				else if (params[2] == "Dynamic")
+				else if (params.at(2) == "Dynamic")
 				{
 					RigidBody2DComponent::BodyType type = rigidBody2D.Type;
 					rigidBody2D.Type = RigidBody2DComponent::BodyType::Dynamic;
@@ -881,7 +1033,7 @@ namespace eg
 
 					return "Success";
 				}
-				else if (params[2] == "Kinematic")
+				else if (params.at(2) == "Kinematic")
 				{
 					RigidBody2DComponent::BodyType type = rigidBody2D.Type;
 					rigidBody2D.Type = RigidBody2DComponent::BodyType::Kinematic;
@@ -899,13 +1051,16 @@ namespace eg
 		}
 		else if (actionName == "GetBoxCollider2DComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			BoxCollider2DComponent& boxCollider2D = entity.GetComponent<BoxCollider2DComponent>();
 
@@ -923,84 +1078,97 @@ namespace eg
 		}
 		else if (actionName == "SetBoxCollider2DComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+			else if(params.size() < 2)
+				return "No property name provided.";
+			else if(params.size() < 3)
+				return "No value provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			BoxCollider2DComponent& boxCollider2D = entity.GetComponent<BoxCollider2DComponent>();
 
-			if (params[1] == "Offset")
+			if (params.at(1) == "Offset")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if(params.size() < 4)
+					return "No Y value provided.";
+
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
-				if(ComponentHelper::CanConvertToFloat(params[3]) == false)
+				if(ComponentHelper::CanConvertToFloat(params.at(3)) == false)
 					return "Parameter is not float.";
 
 				glm::vec2 offset = boxCollider2D.Offset;
-				glm::vec2 newOffset = glm::vec2(std::stof(params[2]), std::stof(params[3]));
+				glm::vec2 newOffset = glm::vec2(std::stof(params.at(2)), std::stof(params.at(3)));
 				boxCollider2D.Offset = newOffset;
 				Commands::ExecuteRawValueCommand<glm::vec2, BoxCollider2DComponent>(&boxCollider2D.Offset, offset, entity, "Assistant-BoxCollider2DComponent-Offset");
 
 				return "Success";
 			}
-			else if (params[1] == "Size")
+			else if (params.at(1) == "Size")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if(params.size() < 4)
+					return "No Y value provided.";
+
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
-				if(ComponentHelper::CanConvertToFloat(params[3]) == false)
+				if(ComponentHelper::CanConvertToFloat(params.at(3)) == false)
 					return "Parameter is not float.";
 
 				glm::vec2 size = boxCollider2D.Size;
-				glm::vec2 newSize = glm::vec2(std::stof(params[2]), std::stof(params[3]));
+				glm::vec2 newSize = glm::vec2(std::stof(params.at(2)), std::stof(params.at(3)));
 				boxCollider2D.Size = newSize;
 				Commands::ExecuteRawValueCommand<glm::vec2, BoxCollider2DComponent>(&boxCollider2D.Size, size, entity, "Assistant-BoxCollider2DComponent-Size");
 
 				return "Success";
 			}
-			else if (params[1] == "Density")
+			else if (params.at(1) == "Density")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float density = boxCollider2D.Density;
-				boxCollider2D.Density = std::stof(params[2]);
+				boxCollider2D.Density = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&boxCollider2D.Density, density, entity, "Assistant-BoxCollider2DComponent-Density");
 
 				return "Success";
 			}
-			else if (params[1] == "Friction")
+			else if (params.at(1) == "Friction")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float friction = boxCollider2D.Friction;
-				boxCollider2D.Friction = std::stof(params[2]);
+				boxCollider2D.Friction = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&boxCollider2D.Friction, friction, entity, "Assistant-BoxCollider2DComponent-Friction");
 
 				return "Success";
 			}
-			else if (params[1] == "Restitution")
+			else if (params.at(1) == "Restitution")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float restitution = boxCollider2D.Restitution;
-				boxCollider2D.Restitution = std::stof(params[2]);
+				boxCollider2D.Restitution = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&boxCollider2D.Restitution, restitution, entity, "Assistant-BoxCollider2DComponent-Restitution");
 
 				return "Success";
 			}
-			else if (params[1] == "RestitutionThreshold")
+			else if (params.at(1) == "RestitutionThreshold")
 			{
-				if(ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float restitutionThreshold = boxCollider2D.RestitutionThreshold;
-				boxCollider2D.RestitutionThreshold = std::stof(params[2]);
+				boxCollider2D.RestitutionThreshold = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&boxCollider2D.RestitutionThreshold, restitutionThreshold, entity, "Assistant-BoxCollider2DComponent-RestitutionThreshold");
 
 				return "Success";
@@ -1012,13 +1180,16 @@ namespace eg
 		}
 		else if (actionName == "GetCircleCollider2DComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			CircleCollider2DComponent& circleCollider2D = entity.GetComponent<CircleCollider2DComponent>();
 
@@ -1035,81 +1206,91 @@ namespace eg
 		}
 		else if (actionName == "SetCircleCollider2DComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+			else if(params.size() < 2)
+				return "No property name provided.";
+			else if(params.size() < 3)
+				return "No value provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			CircleCollider2DComponent& circleCollider2D = entity.GetComponent<CircleCollider2DComponent>();
 
-			if (params[1] == "Offset")
+			if (params.at(1) == "Offset")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if (params.size() < 4)
+					return "No Y value provided.";
+
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
-				if (ComponentHelper::CanConvertToFloat(params[3]) == false)
+				if (ComponentHelper::CanConvertToFloat(params.at(3)) == false)
 					return "Parameter is not float.";
 
 				glm::vec2 offset = circleCollider2D.Offset;
-				glm::vec2 newOffset = glm::vec2(std::stof(params[2]), std::stof(params[3]));
+				glm::vec2 newOffset = glm::vec2(std::stof(params.at(2)), std::stof(params.at(3)));
 				circleCollider2D.Offset = newOffset;
 				Commands::ExecuteRawValueCommand<glm::vec2, CircleCollider2DComponent>(&circleCollider2D.Offset, offset, entity, "Assistant-CircleCollider2DComponent-Offset");
 
 				return "Success";
 			}
-			else if (params[1] == "Radius")
+			else if (params.at(1) == "Radius")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float radius = circleCollider2D.Radius;
-				circleCollider2D.Radius = std::stof(params[2]);
+				circleCollider2D.Radius = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&circleCollider2D.Radius, radius, entity, "Assistant-CircleCollider2DComponent-Radius");
 
 				return "Success";
 			}
-			else if (params[1] == "Density")
+			else if (params.at(1) == "Density")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float density = circleCollider2D.Density;
-				circleCollider2D.Density = std::stof(params[2]);
+				circleCollider2D.Density = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&circleCollider2D.Density, density, entity, "Assistant-CircleCollider2DComponent-Density");
 
 				return "Success";
 			}
-			else if (params[1] == "Friction")
+			else if (params.at(1) == "Friction")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float friction = circleCollider2D.Friction;
-				circleCollider2D.Friction = std::stof(params[2]);
+				circleCollider2D.Friction = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&circleCollider2D.Friction, friction, entity, "Assistant-CircleCollider2DComponent-Friction");
 
 				return "Success";
 			}
-			else if (params[1] == "Restitution")
+			else if (params.at(1) == "Restitution")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float restitution = circleCollider2D.Restitution;
-				circleCollider2D.Restitution = std::stof(params[2]);
+				circleCollider2D.Restitution = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&circleCollider2D.Restitution, restitution, entity, "Assistant-CircleCollider2DComponent-Restitution");
 
 				return "Success";
 			}
-			else if (params[1] == "RestitutionThreshold")
+			else if (params.at(1) == "RestitutionThreshold")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float restitutionThreshold = circleCollider2D.RestitutionThreshold;
-				circleCollider2D.RestitutionThreshold = std::stof(params[2]);
+				circleCollider2D.RestitutionThreshold = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&circleCollider2D.RestitutionThreshold, restitutionThreshold, entity, "Assistant-CircleCollider2DComponent-RestitutionThreshold");
 
 				return "Success";
@@ -1119,13 +1300,16 @@ namespace eg
 		}
 		else if (actionName == "GetTextComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			TextComponent& text = entity.GetComponent<TextComponent>();
 
@@ -1142,75 +1326,89 @@ namespace eg
 		}
 		else if (actionName == "SetTextComponent")
 		{
-			if (!ComponentHelper::CanConvertToUUID(params[0]))
+			if(params.size() < 1)
+				return "No entity UUID provided.";
+			else if(params.size() < 2)
+				return "No property name provided.";
+			else if(params.size() < 3)
+				return "No value provided.";
+
+			if (!ComponentHelper::CanConvertToUUID(params.at(0)))
 				return "First parameter is not UUID.";
 
-			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params[0]));
+			Entity entity = m_Scene->GetEntityByUUID(std::stoll(params.at(0)));
 
 			if (entity == Entity())
-				return "Entity with UUID " + params[0] + " not found";
+				return "Entity with UUID " + params.at(0) + " not found";
 
 			TextComponent& text = entity.GetComponent<TextComponent>();
 
-			if (params[1] == "Text")
+			if (params.at(1) == "Text")
 			{
 				std::string oldText = text.TextString;
-				text.TextString = params[2];
+				text.TextString = params.at(2);
 				Commands::ExecuteRawValueCommand<std::string, TextComponent>(&text.TextString, oldText, entity, "Assistant-TextComponent-Text");
 
 				return "Success";
 			}
-			else if (params[1] == "Font")
+			else if (params.at(1) == "Font")
 			{
-				if (ComponentHelper::CanConvertToInteger(params[2]) == false)
+				if (ComponentHelper::CanConvertToInteger(params.at(2)) == false)
 					return "Parameter is not integer.";
 
 				UUID oldFont = text.FontAsset;
-				text.FontAsset = std::stoi(params[2]);
+				text.FontAsset = std::stoi(params.at(2));
 				text.RuntimeFont = ResourceDatabase::GetFontRuntimeResource(text.FontAsset);
 				Commands::ExecuteRawValueCommand<UUID, TextComponent>(&text.FontAsset, oldFont, entity, "Assistant-TextComponent-Font");
 
 				return "Success";
 			}
-			else if (params[1] == "Color")
+			else if (params.at(1) == "Color")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) == false)
-					return "Parameter is not float.";
-				if (ComponentHelper::CanConvertToFloat(params[3]) == false)
-					return "Parameter is not float.";
-				if (ComponentHelper::CanConvertToFloat(params[4]) == false)
-					return "Parameter is not float.";
-				if (ComponentHelper::CanConvertToFloat(params[5]) == false)
-					return "Parameter is not float.";
+				if (params.size() < 4)
+					return "No G value provided.";
+				else if (params.size() < 5)
+					return "No B value provided.";
+				else if (params.size() < 6)
+					return "No A value provided.";
+
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
+					return "R value is not float.";
+				if (ComponentHelper::CanConvertToFloat(params.at(3)) == false)
+					return "G value is not float.";
+				if (ComponentHelper::CanConvertToFloat(params.at(4)) == false)
+					return "B value is not float.";
+				if (ComponentHelper::CanConvertToFloat(params.at(5)) == false)
+					return "A value is not float.";
 
 				glm::vec4 color = text.Color;
-				text.Color.x = std::stof(params[2]) / 255;
-				text.Color.y = std::stof(params[3]) / 255;
-				text.Color.z = std::stof(params[4]) / 255;
-				text.Color.w = std::stof(params[5]) / 255;
+				text.Color.x = std::stof(params.at(2)) / 255;
+				text.Color.y = std::stof(params.at(3)) / 255;
+				text.Color.z = std::stof(params.at(4)) / 255;
+				text.Color.w = std::stof(params.at(5)) / 255;
 
 				Commands::ExecuteRawValueCommand<glm::vec4, TextComponent>(&text.Color, color, entity, "Assistant-TextComponent-Color");
 
 				return "Success";
 			}
-			else if (params[1] == "Kerning")
+			else if (params.at(1) == "Kerning")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float kerning = text.Kerning;
-				text.Kerning = std::stof(params[2]);
+				text.Kerning = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, TextComponent>(&text.Kerning, kerning, entity, "Assistant-TextComponent-Kerning");
 
 				return "Success";
 			}
-			else if (params[1] == "LineSpacing")
+			else if (params.at(1) == "LineSpacing")
 			{
-				if (ComponentHelper::CanConvertToFloat(params[2]) == false)
+				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "Parameter is not float.";
 
 				float lineSpacing = text.LineSpacing;
-				text.LineSpacing = std::stof(params[2]);
+				text.LineSpacing = std::stof(params.at(2));
 				Commands::ExecuteRawValueCommand<float, TextComponent>(&text.LineSpacing, lineSpacing, entity, "Assistant-TextComponent-LineSpacing");
 
 				return "Success";

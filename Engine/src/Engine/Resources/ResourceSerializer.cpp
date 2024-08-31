@@ -23,8 +23,6 @@ namespace eg
 
 	bool ResourceSerializer::DeserializeResourceCache()
 	{
-
-
 		AssetDirectorySerializer::DeserializeAssetDirectoryCache();
 
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
