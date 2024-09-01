@@ -99,7 +99,7 @@ namespace eg {
 	{
 	public:
 		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity, UUID uuid);
-
+		~ScriptInstance();
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
 		void InvokeOn2DCollisionEnter(InternalCollision2DEvent collision);
@@ -139,6 +139,7 @@ namespace eg {
 		UUID m_EntityUUID;
 		Ref<ScriptClass> m_ScriptClass;
 
+		uint32_t m_InstanceHandle = 0;
 		MonoObject* m_Instance = nullptr;
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreateMethod = nullptr;
