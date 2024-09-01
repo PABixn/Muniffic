@@ -167,5 +167,10 @@ namespace Quest
 
             return false;
         }
+
+        public void SetMultiplier(float multiplier)
+        {
+            this.multiplier = multiplier;
+        }
     }
 }

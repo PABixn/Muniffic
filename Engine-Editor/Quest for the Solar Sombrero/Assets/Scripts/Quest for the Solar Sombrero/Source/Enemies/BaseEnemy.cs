@@ -16,6 +16,8 @@ namespace Quest
 
         private EnemyMeleeAttackComponent meleeAttackComponent;
 
+        private EnemyRunComponent enemyRunComponent;
+
         public int SquarEnemyHealth { get; private set; } = 800;
         public int CirclEnemyHealth { get; private set; } = 400;
         public int TrianglEnemyHealth { get; private set; } = 250;
@@ -52,6 +54,7 @@ namespace Quest
             if (playerScript == null) playerScript = player.As<Player>();
             if (healthComponent == null) healthComponent = entity.As<HealthComponent>();
             if(entityTypeComponent == null) entityTypeComponent = entity.As<EntityTypeComponent>();
+            if (enemyRunComponent == null) enemyRunComponent = entity.As<EnemyRunComponent>();
             if (entityTypeComponent.entityType == EntityType.NONE)
             {
                 entityTypeComponent.entityType = IntToEntityType(enemyType);
@@ -122,6 +125,7 @@ namespace Quest
             meleeAttackComponent.SetDamage(SquareEnemyAttackDamage);
             meleeAttackComponent.SetCooldown(SquareEnemyAttackSpeed);
             meleeAttackComponent.setKnockback(SquareEnemyKnockbackForce);
+            enemyRunComponent.SetMultiplier(SquarEnemySpeedMultiplier);
         }
 
         private void InitCircleEnemy()
@@ -132,6 +136,7 @@ namespace Quest
             meleeAttackComponent.SetDamage(CircleEnemyAttackDamage);
             meleeAttackComponent.SetCooldown(CircleEnemyAttackSpeed);
             meleeAttackComponent.setKnockback(CircleEnemyKnockbackForce);
+            enemyRunComponent.SetMultiplier(CirclEnemySpeedMultiplier);
         }
 
         private void InitTriangleEnemy()
@@ -142,6 +147,7 @@ namespace Quest
             meleeAttackComponent.SetDamage(TriangleEnemyAttackDamage);
             meleeAttackComponent.SetCooldown(TriangleEnemyAttackSpeed);
             meleeAttackComponent.setKnockback(TriangleEnemyKnockbackForce);
+            enemyRunComponent.SetMultiplier(TrianglEnemySpeedMultiplier);
         }
 
         private void Die()

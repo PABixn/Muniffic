@@ -24,8 +24,6 @@ namespace Quest
             {
                 health = 0;
             }
-            if(health > 0)
-                Console.WriteLine("Health: " + health);
         }
 
         public void Heal(int healAmount)

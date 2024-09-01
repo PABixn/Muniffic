@@ -131,6 +131,8 @@ namespace eg {
 
 		UUID GetUUID() const { return m_UUID; }
 
+		UUID GetEntityUUID() const { return m_EntityUUID; }
+
 	private:
 		bool GetFieldValueInternal(const std::string& name, void* buffer);
 		bool SetFieldValueInternal(const std::string& name, const void* value);

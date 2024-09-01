@@ -424,9 +424,13 @@ namespace eg
 		UUID entityID = entity.GetUUID();
 		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
 		{
+			//For some reason, the Enemy tries to call the script instance of the player, which doesn't exist
 			for (auto& [key, value] : s_Data->EntityInstances.at(entityID))
-				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()) && s_Data->SceneContext->EntityExists(entityID))
+				if (ResourceDatabase::IsScriptEnabled(value->GetUUID()) && s_Data->SceneContext->EntityExists(entityID) && entityID == value->GetEntityUUID())
+				{
+					std::string scriptName = value->GetScriptClass()->GetNamespace() + "." + value->GetScriptClass()->GetName();
 					value->InvokeOnUpdate(ts);
+				}
 			/*Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
 			instance->InvokeOnUpdate(ts);*/
 		}
