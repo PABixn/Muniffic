@@ -482,6 +482,7 @@ namespace eg
 	MonoObject *ScriptEngine::InstantiateClass(MonoClass *monoClass)
 	{
 		MonoObject *object = mono_object_new(s_Data->AppDomain, monoClass);
+		
 		mono_runtime_object_init(object);
 		return object;
 	}
@@ -512,6 +513,7 @@ namespace eg
 		: m_ScriptClass(scriptClass)
 	{
 		m_Instance = m_ScriptClass->Instantiate();
+		m_InstanceHandle = mono_gchandle_new(m_Instance, true);
 
 		m_UUID = uuid;
 		m_EntityUUID = entity.GetUUID();
@@ -527,6 +529,11 @@ namespace eg
 			void *arg = &uuid;
 			m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &arg);
 		}
+	}
+
+	ScriptInstance::~ScriptInstance()
+	{
+		mono_gchandle_free(m_InstanceHandle);
 	}
 
 	MonoString* ScriptEngine::CreateString(const char* string)
