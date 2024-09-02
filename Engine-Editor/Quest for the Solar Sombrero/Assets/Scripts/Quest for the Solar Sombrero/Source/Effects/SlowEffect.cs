@@ -7,41 +7,39 @@ using System.Threading.Tasks;
 
 namespace Quest
 {
-    internal class ArmorEffect : Effect
+    internal class SlowEffect : Effect
     {
-        private int armorValue;
-        private float duration = 30;
+
+        private float additionalMultiplier;
+        private float duration;
         private float timeElapsed;
         private Entity entity;
 
-        public ArmorEffect(int armorValue)
+        public SlowEffect(float additionalMultiplier)
         {
-            this.armorValue = armorValue;
+            this.additionalMultiplier = additionalMultiplier;
+            duration = 10;
         }
 
-        public ArmorEffect(int armorValue, float duration)
+        public SlowEffect(float additionalMultiplier, float duration)
         {
-            this.armorValue = armorValue;
-            this.duration = duration;
-        }
-        public void SetDuration(float duration)
-        {
+            this.additionalMultiplier = additionalMultiplier;
             this.duration = duration;
         }
 
         public void ApplyEffect()
         {
-            entity.As<HealthComponent>().SetArmor(armorValue);
+            entity.As<RunComponent>().SetMultiplier(entity.As<RunComponent>().GetMultiplier() - additionalMultiplier);
         }
 
         public EffectType GetEffectType()
         {
-            return EffectType.ARMOR;
+            return EffectType.SPEED;
         }
 
         public void RemoveEffect()
         {
-            entity.As<HealthComponent>().SetArmor(0);
+            entity.As<RunComponent>().SetMultiplier(entity.As<RunComponent>().GetMultiplier() + additionalMultiplier);
         }
 
         public void SetEntity(Entity entity)
@@ -52,12 +50,10 @@ namespace Quest
         public void UpdateEffect(float ts)
         {
             timeElapsed += ts;
-            if(timeElapsed >= duration)
+            if (timeElapsed >= duration)
             {
                 entity.As<EffectsComponent>().RemoveEffect(GetEffectType());
             }
         }
-
-
     }
 }

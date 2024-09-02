@@ -18,6 +18,8 @@ namespace Quest
 
         private MeleeAttackComponent meleeAttackComponent;
 
+        private ShootAttackComponent shootAttackComponent;
+
         private JumpComponent jumpComponent;
 
         private RunComponent runComponent;
@@ -66,6 +68,7 @@ namespace Quest
         {
             spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
             meleeAttackComponent = new MeleeAttackComponent(entity, BasePlayerTargets, "Enemies");
+            shootAttackComponent = new ShootAttackComponent(entity, BasePlayerTargets, "Enemies");
         }
 
         public void OnUpdate(float ts)
@@ -81,6 +84,7 @@ namespace Quest
 
 
             meleeAttackComponent.Update(ts);
+            shootAttackComponent.Update(ts);
         }
 
         public void SwitchPlayerType(PlayerType playerType)
@@ -144,6 +148,11 @@ namespace Quest
             healthComponent.SetHealth(SquarePlayerHealth);
             attackBoxComponent.attackBoxSize = new Vector2(1, 1);
             attackBoxComponent.attackBoxCenter = new Vector2(1, 0);
+            shootAttackComponent.SetAttackTargetTypes(SquarePlayerTargets);
+            shootAttackComponent.SetAttackTargetParentName("Enemies");
+            shootAttackComponent.SetDamage(SquarePlayerAttackDamage);
+            shootAttackComponent.SetCooldown(SquarePlayerAttackSpeed);
+            shootAttackComponent.SetRange(10);
             runComponent.SetMultiplier(SquarePlayerSpeedMultiplier);
             jumpComponent.Disable();
             meleeAttackComponent.Disable();
@@ -158,6 +167,11 @@ namespace Quest
             healthComponent.SetHealth(CirclePlayerHealth);
             attackBoxComponent.attackBoxSize = new Vector2(1, 1);
             attackBoxComponent.attackBoxCenter = new Vector2(1, 0);
+            shootAttackComponent.SetAttackTargetTypes(CirclePlayerTargets);
+            shootAttackComponent.SetAttackTargetParentName("Enemies");
+            shootAttackComponent.SetDamage(CirclePlayerAttackDamage);
+            shootAttackComponent.SetCooldown(CirclePlayerAttackSpeed);
+            shootAttackComponent.SetRange(10);
             runComponent.SetMultiplier(CirclePlayerSpeedMultiplier);
             jumpComponent.SetMultiplier(CirclePlayerJumpForceMultiplier);
             jumpComponent.Enable();
@@ -185,6 +199,75 @@ namespace Quest
             spriteRendererComponent.color = new Color(0, 0, 1, 1);
         }
         
+        public void SetDamageMultiplier(float multiplier)
+        {
+            switch(playerType)
+            {
+                case PlayerType.BASE:
+                    meleeAttackComponent.SetMultiplier(multiplier);
+                    break;
+                case PlayerType.SQUARE:
+                    shootAttackComponent.SetMultiplier(multiplier);
+                    break;
+                case PlayerType.CIRCLE:
+                    shootAttackComponent.SetMultiplier(multiplier);
+                    break;
+                case PlayerType.TRIANGLE:
+                    meleeAttackComponent.SetMultiplier(multiplier);
+                    break;
+            }
+        }
+
+        public float GetDamageMultiplier()
+        {
+            switch(playerType)
+            {
+                case PlayerType.BASE:
+                    return BasePlayerAttackDamage;
+                case PlayerType.SQUARE:
+                    return SquarePlayerAttackDamage;
+                case PlayerType.CIRCLE:
+                    return CirclePlayerAttackDamage;
+                case PlayerType.TRIANGLE:
+                    return TrianglePlayerAttackDamage;
+            }
+            return 1;
+        }
+
+        public void SetAttackSpeedMultiplier(float multiplier)
+        {
+            switch(playerType)
+            {
+                case PlayerType.BASE:
+                    meleeAttackComponent.SetCooldown(multiplier);
+                    break;
+                case PlayerType.SQUARE:
+                    shootAttackComponent.SetCooldown(multiplier);
+                    break;
+                case PlayerType.CIRCLE:
+                    shootAttackComponent.SetCooldown(multiplier);
+                    break;
+                case PlayerType.TRIANGLE:
+                    meleeAttackComponent.SetCooldown(multiplier);
+                    break;
+            }
+        }
+
+        public float GetAttackSpeedMultiplier()
+        {
+               switch(playerType)
+            {
+                case PlayerType.BASE:
+                    return BasePlayerAttackSpeed;
+                case PlayerType.SQUARE:
+                    return SquarePlayerAttackSpeed;
+                case PlayerType.CIRCLE:
+                    return CirclePlayerAttackSpeed;
+                case PlayerType.TRIANGLE:
+                    return TrianglePlayerAttackSpeed;
+            }
+            return 1;
+        }
     }
     
 }

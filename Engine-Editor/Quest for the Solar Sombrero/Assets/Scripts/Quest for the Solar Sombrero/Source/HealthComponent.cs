@@ -11,6 +11,7 @@ namespace Quest
     {
         public int health = 100;
         public int maxHealth = 100;
+        private int armor = 0;
 
         public void OnCreate()
         {
@@ -19,6 +20,7 @@ namespace Quest
 
         public void TakeDamage(int damage)
         {
+            damage = damage * (100 - armor) / 100;
             health -= damage;
             if (health < 0)
             {
@@ -52,6 +54,11 @@ namespace Quest
         public int GetHealth()
         {
             return health;
+        }
+
+        public void SetArmor(int newArmor)
+        {
+            armor = newArmor;
         }
     }
 }

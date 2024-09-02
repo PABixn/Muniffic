@@ -35,7 +35,7 @@ namespace Quest
 
     public enum EffectType
     {
-        NONE, BURN, SLOW, POISON, ARMOR, SPEED, JUMP, HEAL, SUN_RESIST
+        NONE, BURN, SLOW, POISON, ARMOR, SPEED, JUMP, HEAL, SUN_RESIST, DAMAGE_BOOST
     }
 }
 

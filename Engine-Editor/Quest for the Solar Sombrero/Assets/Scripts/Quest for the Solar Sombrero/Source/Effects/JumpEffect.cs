@@ -5,13 +5,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Quest.Source.Effects
+namespace Quest
 {
     internal class JumpEffect : Effect
     {
+        private float additionalMultiplier;
+        private float duration = 10;
+        private float timeElapsed;
+        private Entity entity;
+
+        public JumpEffect(float additionalMultiplier)
+        {
+            this.additionalMultiplier = additionalMultiplier;
+        }
+
+        public JumpEffect(float additionalMultiplier, float duration)
+        {
+            this.additionalMultiplier = additionalMultiplier;
+            this.duration = duration;
+        }
+
         public void ApplyEffect()
         {
-            throw new NotImplementedException();
+            entity.As<JumpComponent>().SetMultiplier(entity.As<JumpComponent>().GetMultiplier() + additionalMultiplier);
         }
 
         public EffectType GetEffectType()
@@ -21,17 +37,21 @@ namespace Quest.Source.Effects
 
         public void RemoveEffect()
         {
-            throw new NotImplementedException();
+            entity.As<JumpComponent>().SetMultiplier(entity.As<JumpComponent>().GetMultiplier() - additionalMultiplier);
         }
 
         public void SetEntity(Entity entity)
         {
-            throw new NotImplementedException();
+            this.entity = entity;
         }
 
         public void UpdateEffect(float ts)
         {
-            throw new NotImplementedException();
+            timeElapsed += ts;
+            if (timeElapsed >= duration)
+            {
+                entity.As<EffectsComponent>().RemoveEffect(GetEffectType());
+            }
         }
     }
 }

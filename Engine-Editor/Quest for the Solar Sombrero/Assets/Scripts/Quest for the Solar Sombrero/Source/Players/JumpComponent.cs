@@ -68,6 +68,11 @@ namespace Quest
             return GroundCheck.IsGrounded(collider);
         }
 
+        public float GetMultiplier()
+        {
+            return multiplier;
+        }
+
         public void SetMultiplier(float multiplier)
         {
             this.multiplier = multiplier;

@@ -47,6 +47,11 @@ namespace Quest
             rigidBody.ApplyLinearImpulse(Vector2.Right * movement);
         }
 
+        public float GetMultiplier()
+        {
+            return multiplier;
+        }
+
         public void SetMultiplier(float multiplier)
         {
             this.multiplier = multiplier;

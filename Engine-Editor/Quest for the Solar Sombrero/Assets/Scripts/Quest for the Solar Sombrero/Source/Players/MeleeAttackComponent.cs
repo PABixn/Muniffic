@@ -20,6 +20,8 @@ namespace Quest
         private float attackTimer = 0f;
         public int damage = 10;
 
+        private float multiplier = 1.0f;
+
         private int knockbackForce = 1000;
 
         private TransformComponent transform;
@@ -48,7 +50,7 @@ namespace Quest
                 {
                     if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.attackBoxCenter, attackBoxComponent.attackBoxSize) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
                     {
-                        e.As<HealthComponent>().TakeDamage(damage);
+                        e.As<HealthComponent>().TakeDamage((int)(damage * multiplier));
                         nockback(e, attackBoxComponent);
                     }
                 }
@@ -94,6 +96,16 @@ namespace Quest
         public void SetKnockbackForce(int force)
         {
             knockbackForce = force;
+        }
+
+        public void SetMultiplier(float multiplier)
+        {
+            this.multiplier = multiplier;
+        }
+
+        public float GetMultiplier()
+        {
+            return multiplier;
         }
     }
 }

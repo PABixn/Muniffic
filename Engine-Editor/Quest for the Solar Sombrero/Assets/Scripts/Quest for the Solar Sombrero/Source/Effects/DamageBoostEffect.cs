@@ -7,41 +7,38 @@ using System.Threading.Tasks;
 
 namespace Quest
 {
-    internal class ArmorEffect : Effect
+    public class DamageBoostEffect : Effect
     {
-        private int armorValue;
+        private float additionalMultiplier;
+        private float originalMultiplier;
         private float duration = 30;
         private float timeElapsed;
         private Entity entity;
 
-        public ArmorEffect(int armorValue)
+        public DamageBoostEffect(float additionalMultiplier)
         {
-            this.armorValue = armorValue;
+            this.additionalMultiplier = additionalMultiplier;
         }
 
-        public ArmorEffect(int armorValue, float duration)
+        public DamageBoostEffect(float additionalMultiplier, float duration)
         {
-            this.armorValue = armorValue;
-            this.duration = duration;
-        }
-        public void SetDuration(float duration)
-        {
+            this.additionalMultiplier = additionalMultiplier;
             this.duration = duration;
         }
 
         public void ApplyEffect()
         {
-            entity.As<HealthComponent>().SetArmor(armorValue);
+            entity.As<Player>().SetDamageMultiplier(entity.As<Player>().GetDamageMultiplier() + additionalMultiplier);
         }
 
         public EffectType GetEffectType()
         {
-            return EffectType.ARMOR;
+            return EffectType.DAMAGE_BOOST;
         }
 
         public void RemoveEffect()
         {
-            entity.As<HealthComponent>().SetArmor(0);
+            entity.As<Player>().SetDamageMultiplier(entity.As<Player>().GetDamageMultiplier() - additionalMultiplier);
         }
 
         public void SetEntity(Entity entity)
@@ -52,12 +49,10 @@ namespace Quest
         public void UpdateEffect(float ts)
         {
             timeElapsed += ts;
-            if(timeElapsed >= duration)
+            if (timeElapsed >= duration)
             {
                 entity.As<EffectsComponent>().RemoveEffect(GetEffectType());
             }
         }
-
-
     }
 }
