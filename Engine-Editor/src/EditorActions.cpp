@@ -806,7 +806,8 @@ namespace eg
 				else if(params.size() < 5)
 					return "No B value provided.";
 				else if(params.size() < 6)
-					return "No A value provided.";
+					params[5] = "255";
+					//return "No A value provided.";
 
 
 				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
@@ -928,7 +929,8 @@ namespace eg
 				else if(params.size() < 5)
 					return "No B value provided.";
 				else if(params.size() < 6)
-					return "No A value provided.";
+					params[5] = "255";
+					//return "No A value provided.";
 
 				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "R value is not float.";
@@ -1370,7 +1372,8 @@ namespace eg
 				else if (params.size() < 5)
 					return "No B value provided.";
 				else if (params.size() < 6)
-					return "No A value provided.";
+					params[5] = "255";
+					//return "No A value provided.";
 
 				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
 					return "R value is not float.";

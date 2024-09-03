@@ -38,6 +38,83 @@ namespace eg
 		assistantManager->WaitForCompletion(threadID);
 	}
 
+	void RenderYourMessage(const std::string& message) {
+		float padding = 10.0f; // Padding around text inside the bubble
+		float rightMargin = 15.0f; // Margin from the right side of the window
+		float maxBubbleWidth = ImGui::GetWindowSize().x * 0.6f; // 60% of the window width
+
+		// Set wrap position for text
+		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + maxBubbleWidth - padding * 2);
+
+		// Calculate text size with wrapping enabled
+		ImVec2 textSize = ImGui::CalcTextSize(message.c_str(), nullptr, false, maxBubbleWidth - padding * 2);
+		ImGui::PopTextWrapPos(); // Reset wrap position
+
+		float bubbleWidth = textSize.x + padding * 2; // Adjust bubble width if text is smaller than max width
+		float bubbleHeight = textSize.y + padding * 2; // Adjust bubble height for wrapped text
+
+		// Get the current window width
+		float windowWidth = ImGui::GetWindowSize().x;
+
+		// Calculate the start position for right-aligned text with a margin from the right
+		ImGui::SetCursorPosX(windowWidth - bubbleWidth - rightMargin);
+		ImGui::BeginGroup(); // Start a group to align text and rectangle together
+
+		// Draw the bubble background
+		ImGui::GetWindowDrawList()->AddRectFilled(
+			ImGui::GetCursorScreenPos(),
+			ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth, ImGui::GetCursorScreenPos().y + bubbleHeight),
+			IM_COL32(64, 54, 89, 255), 5.0f // Background color and corner rounding
+		);
+
+		// Add some padding before the text
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
+
+		// Render the text with wrapping
+		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
+		ImGui::TextUnformatted(message.c_str());
+		ImGui::PopTextWrapPos();
+
+		ImGui::EndGroup(); // End the group
+	}
+
+	// Function to render other's message (left-aligned)
+	void RenderOtherMessage(const std::string& message) {
+		float padding = 10.0f; // Padding around text inside the bubble
+		float maxBubbleWidth = ImGui::GetWindowSize().x * 0.6f; // 60% of the window width
+
+		// Set wrap position for text
+		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + maxBubbleWidth - padding * 2);
+
+		// Calculate text size with wrapping enabled
+		ImVec2 textSize = ImGui::CalcTextSize(message.c_str(), nullptr, false, maxBubbleWidth - padding * 2);
+		ImGui::PopTextWrapPos(); // Reset wrap position
+
+		float bubbleWidth = textSize.x + padding * 2; // Adjust bubble width if text is smaller than max width
+		float bubbleHeight = textSize.y + padding * 2; // Adjust bubble height for wrapped text
+
+		ImGui::BeginGroup(); // Start a group to align text and rectangle together
+
+		// Draw the bubble background
+		ImGui::GetWindowDrawList()->AddRectFilled(
+			ImGui::GetCursorScreenPos(),
+			ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth, ImGui::GetCursorScreenPos().y + bubbleHeight),
+			IM_COL32(64, 54, 89, 255), 5.0f // Background color and corner rounding
+		);
+
+		// Add some padding before the text
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
+
+		// Render the text with wrapping
+		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
+		ImGui::TextUnformatted(message.c_str());
+		ImGui::PopTextWrapPos();
+
+		ImGui::EndGroup(); // End the group
+	}
+
 	void AssistantPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Assistant Panel");
@@ -51,19 +128,12 @@ namespace eg
 
 		for (Message* msg : assistantManager->GetMessages(threadID))
 		{
-			std::string role = msg->role + ": ";
-
-			if (msg->role == "assistant")
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
+			if(msg->role == "assistant")
+				RenderOtherMessage(msg->content);
 			else
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.0f, 1.0f));
-
-			ImGui::Button(role.c_str());
-			ImGui::PopStyleColor();
-			ImGui::SameLine();
-			ImGui::Markdown(msg->content.c_str(), msg->content.length(), mdConfig);
-
+				RenderYourMessage(msg->content);
 			lastMessageRole = msg->role;
+			ImGui::NewLine();
 		}
 
 		if (lastMessageRole == "user")
