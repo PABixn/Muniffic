@@ -89,3 +89,8 @@ Resources:
     ResourceName: Quest.Fire
     Extension: .cs
     IsEnabled: true
+  - UUID: 1133101926664154372
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.Mushroom
+    Extension: .cs
+    IsEnabled: true

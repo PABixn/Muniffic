@@ -30,6 +30,7 @@ namespace Quest
             if (other.name == "Player")
             {
                 other.As<HealthComponent>().Heal(healPercentage);
+                Entity.Destroy(entity);
             }
         }
     }

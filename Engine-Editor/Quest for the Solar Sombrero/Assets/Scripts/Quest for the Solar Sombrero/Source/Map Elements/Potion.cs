@@ -28,6 +28,7 @@ namespace Quest
                 return;
             }
             collision.otherEntity.As<EffectsComponent>().ApplyEffect(new DamageBoostEffect(damageMultiplier, duration));
+            Entity.Destroy(entity);
         }
     }
 }
