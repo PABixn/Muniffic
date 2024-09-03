@@ -7,30 +7,32 @@ using System.Threading.Tasks;
 
 namespace Quest
 {
-    internal class ShootAttackComponent
+    internal class EnemyShootAttackComponent
     {
         private int damage = 10;
         private float multiplier = 1.0f;
         private float range = 10;
         private float cooldown = 1.0f;
         private float cooldownTimer = 0.0f;
+        private int knockback = 0;
         private Entity entity;
 
         List<EntityType> attackTargetTypes = new List<EntityType>();
-        string attackTargetParentName = "Enemies";
 
         private TransformComponent transform;
-        private AttackBoxComponent attackBoxComponent;
+        private EnemyAttackBoxComponent enemyAttackBoxComponent;
 
         List<Bullet> bullets = new List<Bullet>();
 
-        public ShootAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName = "Enemies")
+        private Entity player;
+
+        public EnemyShootAttackComponent(Entity entity, List<EntityType> attackTargetTypes)
         {
             this.entity = entity;
             this.attackTargetTypes = attackTargetTypes;
-            this.attackTargetParentName = attackTargetParentName;
             transform = entity.GetComponent<TransformComponent>();
-            attackBoxComponent = entity.As<AttackBoxComponent>();
+            enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
+            player = Entity.FindEntityByName("Player");
         }
 
         public void OnUpdate(float ts)
@@ -39,25 +41,19 @@ namespace Quest
             foreach (Bullet bullet in bullets)
             {
                 bullet.OnUpdate(ts);
-                if(bullet.ShouldDestroy())
+                if (bullet.ShouldDestroy())
                 {
                     bullet.Destroy();
                     bullets.Remove(bullet);
                 }
             }
-            if (cooldownTimer >= cooldown && Input.IsKeyDown(KeyCode.R))
+            if (cooldownTimer >= cooldown && enemyAttackBoxComponent.isEnemyinRange(player))
             {
-                foreach (Entity e in Entity.FindEntityByName(attackTargetParentName).GetChildren())
-                {
-                    if (e.GetComponent<BoxCollider2DComponent>().CollidesWith(entity) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
-                    {
-                        Bullet bullet = new Bullet(transform.translation.XY, attackBoxComponent.attackDirecton, damage, 50, attackTargetTypes, attackTargetParentName);
-                        bullets.Add(bullet);
-                    }
-                }
+                Bullet bullet = new Bullet(transform.translation.XY, enemyAttackBoxComponent.attackDirecton, damage, 50, attackTargetTypes, "PlayerWrapper");
+                bullets.Add(bullet);
                 cooldownTimer = 0;
             }
-            
+
         }
 
         public void SetEntity(Entity entity)
@@ -115,15 +111,14 @@ namespace Quest
             this.attackTargetTypes = attackTargetTypes;
         }
 
+        public void SetKnockback(int knockback)
+        {
+            this.knockback = knockback;
+        }
+
         public List<EntityType> GetAttackTargetTypes()
         {
             return attackTargetTypes;
         }
-
-        public void SetAttackTargetParentName(string attackTargetParentName)
-        {
-            this.attackTargetParentName = attackTargetParentName;
-        }
-
     }
 }

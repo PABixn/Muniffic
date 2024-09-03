@@ -16,6 +16,8 @@ namespace Quest
 
         private EnemyMeleeAttackComponent meleeAttackComponent;
 
+        private EnemyShootAttackComponent shootAttackComponent;
+
         private EnemyRunComponent enemyRunComponent;
 
         public int SquarEnemyHealth { get; private set; } = 800;
@@ -122,9 +124,9 @@ namespace Quest
             enemyType = 0;
             healthComponent.maxHealth = SquarEnemyHealth;
             healthComponent.SetHealth(SquarEnemyHealth);
-            meleeAttackComponent.SetDamage(SquareEnemyAttackDamage);
-            meleeAttackComponent.SetCooldown(SquareEnemyAttackSpeed);
-            meleeAttackComponent.setKnockback(SquareEnemyKnockbackForce);
+            shootAttackComponent.SetDamage(SquareEnemyAttackDamage);
+            shootAttackComponent.SetCooldown(SquareEnemyAttackSpeed);
+            shootAttackComponent.SetKnockback(SquareEnemyKnockbackForce);
             enemyRunComponent.SetMultiplier(SquarEnemySpeedMultiplier);
         }
 
@@ -133,9 +135,9 @@ namespace Quest
             enemyType = 1;
             healthComponent.maxHealth = CirclEnemyHealth;
             healthComponent.SetHealth(CirclEnemyHealth);
-            meleeAttackComponent.SetDamage(CircleEnemyAttackDamage);
-            meleeAttackComponent.SetCooldown(CircleEnemyAttackSpeed);
-            meleeAttackComponent.setKnockback(CircleEnemyKnockbackForce);
+            shootAttackComponent.SetDamage(CircleEnemyAttackDamage);
+            shootAttackComponent.SetCooldown(CircleEnemyAttackSpeed);
+            shootAttackComponent.SetKnockback(CircleEnemyKnockbackForce);
             enemyRunComponent.SetMultiplier(CirclEnemySpeedMultiplier);
         }
 
