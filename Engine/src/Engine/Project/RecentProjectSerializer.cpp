@@ -2,6 +2,7 @@
 #include "RecentProjectSerializer.h"
 
 #include <fstream>
+#include <filesystem>
 #include "yaml-cpp/yaml.h"
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
 
@@ -12,19 +13,33 @@ namespace eg
 		Deserialize("recentProjectSerializer.txt");
 	}
 
-	bool RecentProjectSerializer::Serialize(const std::string& test, const std::string& path)
+	void RecentProjectSerializer::DeleteProject(int id) {
+		int cwel = m_ProjectList[id].find_last_of("\\");
+		std::string toDelete = m_ProjectList[id].erase(cwel);
+		std::filesystem::remove_all(toDelete);
+		m_ProjectList.erase(m_ProjectList.begin() + id);
+		Serialize("", "recentProjectSerializer.txt");
+	}
+
+	bool RecentProjectSerializer::Serialize(const std::string& projectName, const std::string& path)
 	{
 		bool present = false;
-		for (auto project : m_ProjectList) {
-			if (project == test) {
-				present = true;
-				break;
+		if (projectName != "")
+		{
+			for (auto project : m_ProjectList) {
+				if (project == projectName) {
+					present = true;
+					break;
+				}
 			}
 		}
-		if (!present) {
-			m_ProjectList.push_back(test);
-			if (m_ProjectList.size() > 4) m_ProjectList.erase(m_ProjectList.begin());
-
+		if (!present)
+		{
+			if (projectName != "")
+			{
+				m_ProjectList.push_back(projectName);
+				if (m_ProjectList.size() > 4) m_ProjectList.erase(m_ProjectList.begin());
+			}
 			YAML::Emitter out;
 			{
 				out << YAML::BeginMap; // Root
@@ -40,7 +55,7 @@ namespace eg
 						}
 					}
 					else {
-						out << YAML::Key << "Projects0" << YAML::Value << test;
+						out << YAML::Key << "Projects0" << YAML::Value << projectName;
 					}
 					out << YAML::EndMap; // Project
 				}
@@ -78,18 +93,16 @@ namespace eg
 		int i = 0;
 		for (auto project : projectNode) {
 			std::string name = "Projects" + std::to_string(i);
-			i++;
-			m_ProjectList.push_back(projectNode[name].as<std::string>());
-			if (m_ProjectList.size() > 4) m_ProjectList.erase(m_ProjectList.begin());
+			if (projectNode[name].as<std::string>() != "") {
+				i++;
+
+				m_ProjectList.push_back(projectNode[name].as<std::string>());
+				if (m_ProjectList.size() > 4) m_ProjectList.erase(m_ProjectList.begin());
+			}
 		}
 
-
-		//config.Name = projectNode["Name"].as<std::string>();
-		/*config.StartScene = projectNode["StartScene"].as<std::string>();
-		config.AssetDirectory = projectNode["AssetDirectory"].as<std::string>();
-		config.SceneDirectory = projectNode["SceneDirectory"].as<std::string>();
-		config.ScriptModulePath = projectNode["ScriptModulePath"].as<std::string>();*/
 		ConsolePanel::Log("File: RecentProjectSerializer.cpp - Successfully loaded: " + path, ConsolePanel::LogType::Info);
 		return true;
 	}
+	
 }

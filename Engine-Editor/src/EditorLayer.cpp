@@ -28,7 +28,7 @@ namespace eg
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
 		rps = RecentProjectSerializer();
-		m_WelcomePanel = CreateScope<WelcomingPanel>(rps.getProjectList());
+		m_WelcomePanel = CreateScope<WelcomingPanel>(rps.getProjectList(), rps);
 		m_NameNewProjectPanel = CreateScope<NameNewProjectPanel>();
 		m_NameNewProjectPanel->ShowWindow(s_Font);
 
@@ -172,10 +172,10 @@ namespace eg
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-		if (m_WelcomePanel->IsShown()) {
+		/*if (m_WelcomePanel->IsShown()) {
 			dockspace_flags |= ImGuiDockNodeFlags_AutoHideTabBar;
 			dockspace_flags |= ImGuiDockNodeFlags_NoSplit;
-		}
+		}*/
 
 		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
 		// because it would be confusing to have two docking targets within each others.
@@ -846,6 +846,8 @@ namespace eg
 		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 		m_ContentBrowserPanel->InitPanels();
 		m_AddResourcePanel = CreateScope<AddResourcePanel>();
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
 
 		Project::Save(absolutePath);
 		NewScene();
@@ -882,6 +884,7 @@ namespace eg
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 			m_ContentBrowserPanel->InitPanels();
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
+			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		}

@@ -5,6 +5,7 @@
 #include "Imgui/imgui.h"
 #include "../Commands/Commands.h"
 #include "Engine/Renderer/Texture.h"
+#include "Engine/Project/RecentProjectSerializer.h"
 
 
 namespace eg
@@ -13,7 +14,7 @@ namespace eg
 	{
 	public:
 		WelcomingPanel();
-		WelcomingPanel(std::vector<std::string>);
+		WelcomingPanel(std::vector<std::string>, RecentProjectSerializer);
 		void OnImGuiRender();
 		void ShowWindow(UUID directoryUUID);
 		bool IsShown() { return m_Show; }
@@ -22,8 +23,10 @@ namespace eg
 		void InitWelcomingPanel();
 
 	protected:
+		RecentProjectSerializer m_Rps;
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_NewProjectIcon;
+		Ref<Texture2D> m_DeleteProjectIcon;
 		bool m_NewProjectCreated;
 		bool m_Show;
 		std::string m_SelectedProject;

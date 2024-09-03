@@ -184,6 +184,7 @@ namespace eg {
 
 		//Storage for runtime
 		void* RuntimeBody = nullptr;
+		float GravityMultiplier = 1.1f;
 
 		RigidBody2DComponent() = default;
 		RigidBody2DComponent(const RigidBody2DComponent&) = default;

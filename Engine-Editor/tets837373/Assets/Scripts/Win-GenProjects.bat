@@ -1,3 +1,3 @@
 @echo off
-cd chuj5\Assets\Scripts
+cd tets837373\Assets\Scripts
 call ..\..\..\..\vendor\premake\bin\premake5.exe vs2022

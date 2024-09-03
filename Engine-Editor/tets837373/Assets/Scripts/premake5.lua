@@ -1,6 +1,6 @@
 local MunifficRootDir = "../../../../"
 include(MunifficRootDir .. "vendor/premake/premake_customization/solution_items.lua")
-workspace "chuj5"
+workspace "tets837373"
 architecture "x86_64"
 startproject "Game"
 configurations
@@ -14,7 +14,7 @@ flags
 "MultiProcessorCompile"
 }
 project "Game"
-location "chuj5"
+location "tets837373"
 kind "SharedLib"
 language "C#"
 dotnetframework "4.7.2"
@@ -22,8 +22,8 @@ targetdir("Binaries")
 objdir("Intermediates")
 files
 {
-"chuj5/Source/**.cs",
-"chuj5/Properties/**.cs",
+"tets837373/Source/**.cs",
+"tets837373/Properties/**.cs",
 }
 links
 {
