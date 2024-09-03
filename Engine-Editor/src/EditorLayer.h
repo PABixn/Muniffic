@@ -7,6 +7,8 @@
 #include "Panels/AddResourcePanel.h"
 #include "Panels/ProjectDirectoryPanel.h"
 #include "Panels/ConsolePanel.h"
+#include "Panels/WelcomingPanel.h"
+#include "Panels/NameNewProjectPanel.h"
 
 
 namespace eg {
@@ -108,8 +110,9 @@ namespace eg {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
-		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
+		Scope<WelcomingPanel> m_WelcomePanel;
+		Scope<NameNewProjectPanel> m_NameNewProjectPanel;
 		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;

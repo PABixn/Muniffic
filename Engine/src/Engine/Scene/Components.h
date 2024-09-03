@@ -8,6 +8,7 @@
 #include "Engine/Renderer/SubTexture2D.h"
 #include "Engine/Renderer/Animator.h"
 #include "Engine/Renderer/Font.h"
+#include "Engine/Audio/BasicAudio.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/exponential.hpp"
@@ -15,7 +16,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
 #include "Engine/Resources/ResourceDatabase.h"
-
 
 
 namespace eg {
@@ -98,8 +98,6 @@ namespace eg {
 
 	struct AnimatorComponent : Component
 	{
-		Ref<Animator> Animator2D;
-
 		AnimatorComponent()
 		{
 			Animator2D = CreateRef<Animator>();
@@ -107,6 +105,8 @@ namespace eg {
 		AnimatorComponent(const AnimatorComponent&) = default;
 		AnimatorComponent(const Ref<Animator>& animator)
 			: Animator2D(animator) {}
+
+		Ref<Animator> Animator2D;
 	};
 
 	struct CircleRendererComponent: Component
@@ -184,6 +184,7 @@ namespace eg {
 
 		//Storage for runtime
 		void* RuntimeBody = nullptr;
+		float GravityMultiplier = 1.1f;
 
 		RigidBody2DComponent() = default;
 		RigidBody2DComponent(const RigidBody2DComponent&) = default;
@@ -240,6 +241,20 @@ namespace eg {
 		float LineSpacing = 0.0f;
 	};
 
+	struct AudioSourceComponent : Component
+	{
+		AudioSourceComponent()
+		{
+			Audio = CreateRef<BasicAudio>();
+		};
+		AudioSourceComponent(const AudioSourceComponent&) = default;
+		AudioSourceComponent(const Ref<BasicAudio>& audio)
+			: Audio(audio) {}
+
+		Ref<BasicAudio> Audio;
+		UUID AudioUUID = 0;
+	};
+
 	template<typename... Component>
 	struct ComponentGroup
 	{
@@ -249,12 +264,12 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		RigidBody2DComponent, BoxCollider2DComponent,
-		CircleCollider2DComponent, TextComponent>;
+		CircleCollider2DComponent, TextComponent, AnimatorComponent, AudioSourceComponent>;
 
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
-		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
+		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent,
 		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent,
-		AnimatorComponent>;
+		AnimatorComponent, AudioSourceComponent>;
 }

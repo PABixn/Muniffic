@@ -89,6 +89,10 @@ namespace eg
 		AssetDirectory* shaders = new AssetDirectory(UUID(), "Shaders", rootUUID);
 
 		AssetDirectory* scripts = new AssetDirectory(UUID(), "Scripts", rootUUID);
+		
+		AssetDirectory* audio = new AssetDirectory(UUID(), "Audio", rootUUID);
+
+		AssetDirectory* scenes = new AssetDirectory(UUID(), "Scenes", rootUUID);
 	}
 
 	bool AssetDirectoryManager::moveAssetDirectory(UUID assetDirectoryUUID, UUID newParentUUID)

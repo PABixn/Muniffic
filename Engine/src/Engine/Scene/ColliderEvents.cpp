@@ -15,6 +15,10 @@ namespace eg
 		collision.entityA = entityA;
 		collision.entityB = entityB;
 
+		collision.friction = contact->GetFriction();
+		collision.restitution = contact->GetRestitution();
+		collision.tangentSpeed = contact->GetTangentSpeed();
+
 		glm::vec2 contactPoints = { contact->GetManifold()->localPoint.x, contact->GetManifold()->localPoint.y };
 
 		collision.contactPoints = contactPoints;
@@ -38,11 +42,15 @@ namespace eg
 		collision.entityA = entityA;
 		collision.entityB = entityB;
 
+		collision.friction = contact->GetFriction();
+		collision.restitution = contact->GetRestitution();
+		collision.tangentSpeed = contact->GetTangentSpeed();
+
 		glm::vec2 contactPoints = { contact->GetManifold()->localPoint.x, contact->GetManifold()->localPoint.y };
 
 		collision.contactPoints = contactPoints;
 
-		EG_CORE_TRACE("Collision between {0} and {1} at {2}, {3}", entityA, entityB, contactPoints.x, contactPoints.y);
+		//EG_CORE_TRACE("Collision between {0} and {1} at {2}, {3}", entityA, entityB, contactPoints.x, contactPoints.y);
 
 		for(auto& scriptInstance : ScriptEngine::GetEntityScriptInstances(entityA))
 			scriptInstance->InvokeOn2DCollisionExit(collision);
@@ -50,15 +58,4 @@ namespace eg
 		for(auto& scriptInstance : ScriptEngine::GetEntityScriptInstances(entityB))
 			scriptInstance->InvokeOn2DCollisionExit(collision);
 	}
-
-	void ContactListener::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
-	{
-		
-	}
-
-	void ContactListener::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
-	{
-		
-	}
-
 }

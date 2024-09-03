@@ -45,3 +45,4 @@ class PythonConfiguration:
 
 if __name__ == "__main__":
     PythonConfiguration.Validate()
+input("zak")

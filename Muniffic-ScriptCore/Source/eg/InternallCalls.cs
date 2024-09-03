@@ -282,6 +282,12 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_SetFixedRotation(long iD, ref bool fixedRotation);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetGravityMultiplier(long iD, float newMultiplier);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float RigidBody2DComponent_GetGravityMultiplier(long iD);
         #endregion
 
         #region BoxCollider2D

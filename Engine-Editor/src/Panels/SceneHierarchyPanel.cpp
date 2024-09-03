@@ -748,6 +748,7 @@ namespace eg {
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
+			DisplayAddComponentEntry<AudioSourceComponent>("Audio Source");
 			DisplayAddComponentEntry<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D");
 			DisplayAddComponentEntry<AnimatorComponent>("Animator");
 
@@ -1288,6 +1289,7 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<RigidBody2DComponent::BodyType, RigidBody2DComponent>(&component.Type, type, entity, "RigidBody2DComponent-Body Type", true);
 			});
 			/*
+			float* GravityMultiplier = &component.GravityMultiplier;
 			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
 			{
 				for (int i = 0; i < 2; i++)

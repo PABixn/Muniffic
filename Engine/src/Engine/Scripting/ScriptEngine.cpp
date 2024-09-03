@@ -549,7 +549,7 @@ namespace eg
 		if (m_OnCollisionEnterMethod)
 		{
 			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
-			Collision2D* args = new Collision2D(uuid, collision.contactPoints);
+			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
 			void* arg = args;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionEnterMethod, &arg);
 		}
@@ -560,7 +560,7 @@ namespace eg
 		if (m_OnCollisionExitMethod)
 		{
 			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
-			Collision2D* args = new Collision2D(uuid, collision.contactPoints);
+			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
 			void* arg = args;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionExitMethod, &arg);
 		}

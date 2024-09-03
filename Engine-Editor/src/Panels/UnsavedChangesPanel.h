@@ -10,7 +10,7 @@ namespace eg {
 	{
 	public:
 		UnsavedChangesPanel();
-		~UnsavedChangesPanel() {};
+		~UnsavedChangesPanel() = default;
 		void SetUnsavedChangesPanelRender(bool val);
 		bool GetUnsavedChangesPanelRender();
 		void OnImGuiRender();

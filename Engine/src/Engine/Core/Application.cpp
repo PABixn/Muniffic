@@ -85,14 +85,6 @@ namespace eg
 
 			ExecuteMainThreadQueue();
 
-			if (!m_Minimized)
-			{
-				{
-					EG_PROFILE_SCOPE("LayerStack OnUpdate");
-					for (Layer *layer : m_LayerStack)
-						layer->OnUpdate(timestep);
-				}
-			}
 
 			m_ImGuiLayer->Begin();
 			{
@@ -102,6 +94,16 @@ namespace eg
 			}
 
 			m_ImGuiLayer->End();
+
+
+			if (!m_Minimized)
+			{
+				{
+					EG_PROFILE_SCOPE("LayerStack OnUpdate");
+					for (Layer *layer : m_LayerStack)
+						layer->OnUpdate(timestep);
+				}
+			}
 
 			m_Window->OnUpdate();
 		}

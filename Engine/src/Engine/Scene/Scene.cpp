@@ -18,7 +18,13 @@
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_circle_shape.h>
 
+#include <Mmsystem.h>
+#include <mciapi.h>
+#pragma comment(lib, "Winmm.lib")
+
 namespace eg {
+	bool EvaluateSceneAudio = true;
+
 	Scene::Scene()
 	{
 	}
@@ -141,29 +147,66 @@ namespace eg {
 				ScriptEngine::OnCreateEntity(e);
 			}
 		}
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
+				ASourceView.get<AudioSourceComponent>(f).Audio->LoadCurrentAudio();
+				if (ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart()) {
+					ASourceView.get<AudioSourceComponent>(f).Audio->Play();
+				}
+			}
+		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		OnPhysics2DStop();
 		m_IsRunning = false;
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
 
+
+				ASourceView.get<AudioSourceComponent>(f).Audio->Stop();
+
+			}
+		}
 		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart()
 	{
 		OnPhysics2DStart();
+		// Audio
+		if (EvaluateSceneAudio) {
+				auto ASourceView = m_Registry.view<AudioSourceComponent>();
+				for (auto f : ASourceView)
+				{
+					ASourceView.get<AudioSourceComponent>(f).Audio->LoadCurrentAudio();
+					if (ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart()) {
+						ASourceView.get<AudioSourceComponent>(f).Audio->Play();
+					}
+				}
+		}
 	}
 
 	void Scene::OnSimulationStop()
 	{
 		OnPhysics2DStop();
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
+				
+
+					ASourceView.get<AudioSourceComponent>(f).Audio->Stop();
+				
+			}
+		}
 	}
 
-	
-
-	
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
@@ -205,18 +248,16 @@ namespace eg {
 				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 				auto view = m_Registry.view<RigidBody2DComponent>();
+				for (auto e : view)
 				{
-					for (auto e : view)
-					{
-						Entity entity{ e, this };
-						auto& rb = entity.GetComponent<RigidBody2DComponent>();
-						auto& transform = entity.GetComponent<TransformComponent>();
-						auto* body = (b2Body*)rb.RuntimeBody;
+					Entity entity{ e, this };
+					auto& rb = entity.GetComponent<RigidBody2DComponent>();
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto* body = (b2Body*)rb.RuntimeBody;
 
-						transform.Translation.x = body->GetPosition().x;
-						transform.Translation.y = body->GetPosition().y;
-						transform.Rotation.z = body->GetAngle();
-					}
+					transform.Translation.x = body->GetPosition().x;
+					transform.Translation.y = body->GetPosition().y;
+					transform.Rotation.z = body->GetAngle();
 				}
 			}
 		}
@@ -313,6 +354,7 @@ namespace eg {
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
+		
 		if (!m_IsPaused || m_StepFrames-- > 0)
 			// Physics
 		{
@@ -564,8 +606,11 @@ namespace eg {
 		{
 			Entity e{ entity, this };
 			auto& transform = e.GetComponent<TransformComponent>();
+			auto& rb = e.GetComponent<RigidBody2DComponent>();
 
 			b2Body* body = (b2Body*)StartRuntimeBody(e);
+			body->SetGravityScale(rb.GravityMultiplier);
+
 
 			if (e.HasComponent<BoxCollider2DComponent>())
 			{
@@ -680,6 +725,10 @@ namespace eg {
 
 	template<>
 	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<AudioSourceComponent>(Entity entity, AudioSourceComponent& component)
 	{
 	}
 

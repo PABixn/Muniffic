@@ -18,6 +18,7 @@ namespace eg {
 	public:
 		Editor(ApplicationSpecification spec)
 			: Application(spec) {
+			//PushLayer(new WelcomeLayer());
 			PushLayer(new EditorLayer());
 			ChangeNameWithCurrentProject(true);
 			TCHAR buffer[MAX_PATH] = { 0 };
@@ -41,11 +42,13 @@ namespace eg {
 
 			glfwSetWindowIcon((GLFWwindow*)this->GetWindow().GetNativeWindow(), 1, images);
 			stbi_image_free(images[0].pixels);
+			//ChangeNameWithCurrentProject(true);
 		};
 
 		~Editor() {}
 
-		void OnUpdate() {}
+		void OnUpdate() {
+		}
 		bool OnWindowClose(WindowCloseEvent& e);
 	};
 }
