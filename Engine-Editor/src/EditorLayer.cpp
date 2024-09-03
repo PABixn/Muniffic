@@ -48,6 +48,17 @@ namespace eg
 		m_IconSimulate = Texture2D::Create("resources/icons/SimulateButton.png");
 		m_IconStop = Texture2D::Create("resources/icons/StopButton.png");
 		m_IconStep = Texture2D::Create("resources/icons/StepButton.png");
+		m_LogoIcon = Texture2D::Create("resources/icons/logo.png");
+
+		auto& io = ImGui::GetIO();
+		m_Poppins_Regular_Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf",16.8f,NULL,io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_Poppins_Regular_Font != nullptr);
+		m_Poppins_Medium_Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf",20.0f,NULL,io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_Poppins_Medium_Font != nullptr);
+		m_Poppins_SemiBold_Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf",20.0f,NULL,io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_Poppins_SemiBold_Font != nullptr);
+		m_Poppins_ExtraBold_Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf",20.0f,NULL,io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_Poppins_ExtraBold_Font != nullptr);
 
 		FrameBufferSpecification fbSpec;
 		fbSpec.Attachments = {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth};
@@ -200,6 +211,7 @@ namespace eg
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
 		ImGui::PopStyleVar();
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1529f, 0.1333f, 0.2000f, 1.0f));
 
 		if (opt_fullscreen)
 			ImGui::PopStyleVar(2);
@@ -216,7 +228,16 @@ namespace eg
 		}
 
 		style.WindowMinSize.x = minWinSizeX;
+		
 
+
+		style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0, 0, 0, 0);
+		style.Colors[ImGuiCol_HeaderActive] = ImVec4(0, 0, 0, 0);
+		style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
+
+		ImGui::Image((ImTextureID)m_LogoIcon,ImVec2(30,30));
+		ImGui::PushFont(m_Poppins_SemiBold_Font);
+		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(198, 187, 226,255));
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -256,8 +277,16 @@ namespace eg
 				ImGui::EndMenu();
 			}
 
+			if(ImGui::MenuItem("Game Objects")){}
+			if(ImGui::MenuItem("Components")){}
+			if(ImGui::MenuItem("Window")){}
+			if(ImGui::MenuItem("Help")){}
+
 			ImGui::EndMenuBar();
 		}
+		ImGui::PopStyleColor(2);
+		ImGui::PopFont();
+
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();

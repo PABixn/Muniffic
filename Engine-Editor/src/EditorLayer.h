@@ -64,7 +64,13 @@ namespace eg {
 		Ref<VertexArray> m_VA;
 		Ref<Texture2D> m_Texture;
 		Ref<Texture2D> m_IconPlay, m_IconStop, m_IconPause, m_IconSimulate, m_IconStep;
+		Ref<Texture2D> m_LogoIcon;
 		Ref<FrameBuffer> m_FrameBuffer;
+
+		ImFont* m_Poppins_Regular_Font;
+		ImFont* m_Poppins_Medium_Font;
+		ImFont* m_Poppins_SemiBold_Font;
+		ImFont* m_Poppins_ExtraBold_Font;
 
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_RuntimeScene;
