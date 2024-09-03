@@ -30,16 +30,34 @@ namespace eg
 		m_ScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/script_icon_white.png");
 		m_NativeScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/nativescript_icon_white.png");
 		m_CustomIcon = Texture2D::Create("resources/icons/addResourcePanel/custom_icon_white.png");
+
+		auto& io = ImGui::GetIO();
+		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsLightFont != NULL);
+		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsMediumFont != NULL);
 	}
 	void AddResourcePanel::OnImGuiRender()
 	{
 		if (!m_showResourcePanel)
 			return;
 				int size = 800;
+				ImGuiStyle& style = ImGui::GetStyle();
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2((size * 0.05), 20));
+				ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.125f, 0.102f, 0.188f, 1.0f));
+				style.WindowRounding = 12.0f;
+
 				ImGui::Begin("Resource Loader",nullptr,ImGuiWindowFlags_NoDecoration);
+
 				ImGui::SetWindowSize(ImVec2(size, 550));
+				ImGui::PushFont(m_PoppinsMediumFont);
 				TextCenteredOnLine("Resource Loader");
+				ImGui::PopFont();
+				ImGui::PushFont(m_PoppinsLightFont);
+				
+				style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0, 0, 0, 0);
+				style.Colors[ImGuiCol_ButtonActive] = ImVec4(0, 0, 0, 0);
+
 				if (PositionButtonWithTheSameWidth("Animation",4,1, 150,50))
 				{
 					bool resourceChosen = ChooseNewResource("Image (*.png)\0*.png\0");
@@ -87,13 +105,19 @@ namespace eg
 				{
 					bool resourceChosen = ChooseNewResource("Custom (*.custom)\0*.custom\0");
 				}
+
+				style.Colors[ImGuiCol_Button] = ImVec4(0.204f, 0.145f, 0.278f, 1.0f);
+				style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
+				style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
+
 				if(ButtonCenteredOnLine("Cancel", 150, 50, true))
 				{
 					m_showResourcePanel = false;
 				}
-
+				ImGui::PopFont();
 				ImGui::End();
 				ImGui::PopStyleVar();
+				ImGui::PopStyleColor();
 
 		m_ImagePanel->OnImGuiRender();
 		m_AnimationPanel->OnImGuiRender();
@@ -148,7 +172,7 @@ namespace eg
 	void AddResourcePanel::TextCenteredOnLine(const char* label, float alignment) {
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 40));
 		float oldSize = ImGui::GetFont()->Scale;
-		ImGui::GetFont()->Scale *= 2;
+		//ImGui::GetFont()->Scale *= 2;
 		ImGui::PushFont(ImGui::GetFont());
 
 		float windowWidth = ImGui::GetWindowSize().x;
@@ -156,7 +180,7 @@ namespace eg
 
 		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
 		ImGui::Text(label);
-		ImGui::GetFont()->Scale = oldSize;
+		//ImGui::GetFont()->Scale = oldSize;
 		ImGui::PopFont();;
 		ImGui::PopStyleVar();
 		
