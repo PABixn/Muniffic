@@ -12,11 +12,13 @@ namespace eg
 		~AssistantPanel();
 		void OnImGuiRender();
 		void RunMessage();
-		void DrawTextWithBackground(Message* msg, const ImVec4& bg_color);
+		void RenderUserMessage(const std::string& message);
+		void RenderAssistantMessage(const std::string& message);
 
 	private:
 		static char buffer[1024];
 		std::string threadID;
 		AssistantManager* assistantManager;
+		std::string assistantRespondingAnimation;
 	};
 }
