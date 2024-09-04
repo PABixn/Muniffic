@@ -62,7 +62,8 @@ namespace Quest
                 entityTypeComponent.entityType = IntToEntityType(enemyType);
                 SwitchEnemyType(IntToEnemyType(enemyType));
             }
-            meleeAttackComponent.Update(ts);
+            //meleeAttackComponent.Update(ts);
+            //shootAttackComponent.Update(ts);
 
             if (healthComponent.IsDead())
             {
@@ -124,9 +125,9 @@ namespace Quest
             enemyType = 0;
             healthComponent.maxHealth = SquarEnemyHealth;
             healthComponent.SetHealth(SquarEnemyHealth);
-            shootAttackComponent.SetDamage(SquareEnemyAttackDamage);
-            shootAttackComponent.SetCooldown(SquareEnemyAttackSpeed);
-            shootAttackComponent.SetKnockback(SquareEnemyKnockbackForce);
+            //shootAttackComponent.SetDamage(SquareEnemyAttackDamage);
+            //shootAttackComponent.SetCooldown(SquareEnemyAttackSpeed);
+            //shootAttackComponent.SetKnockback(SquareEnemyKnockbackForce);
             enemyRunComponent.SetMultiplier(SquarEnemySpeedMultiplier);
         }
 

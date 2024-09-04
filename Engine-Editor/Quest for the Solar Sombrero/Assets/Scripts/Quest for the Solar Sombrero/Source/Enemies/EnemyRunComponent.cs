@@ -86,6 +86,8 @@ namespace Quest
             {
                 direction = Vector2.Right;
             }
+            if (attackBox != null)
+                attackBox.attackDirecton = direction;
         }
 
         public bool GroundCheckMiddle()

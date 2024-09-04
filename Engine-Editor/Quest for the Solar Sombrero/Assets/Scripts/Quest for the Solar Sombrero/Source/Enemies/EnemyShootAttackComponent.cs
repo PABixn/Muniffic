@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Quest
 {
-    internal class EnemyShootAttackComponent
+    public class EnemyShootAttackComponent
     {
         private int damage = 10;
         private float multiplier = 1.0f;
@@ -35,7 +35,7 @@ namespace Quest
             player = Entity.FindEntityByName("Player");
         }
 
-        public void OnUpdate(float ts)
+        public void Update(float ts)
         {
             cooldownTimer += ts;
             foreach (Bullet bullet in bullets)
@@ -51,6 +51,7 @@ namespace Quest
             {
                 Bullet bullet = new Bullet(transform.translation.XY, enemyAttackBoxComponent.attackDirecton, damage, 50, attackTargetTypes, "PlayerWrapper");
                 bullets.Add(bullet);
+                bullet.SetKnockBack(knockback);
                 cooldownTimer = 0;
             }
 
@@ -59,11 +60,6 @@ namespace Quest
         public void SetEntity(Entity entity)
         {
             this.entity = entity;
-        }
-
-        public void Update(float ts)
-        {
-            cooldown -= 1;
         }
 
         public void SetMultiplier(float multiplier)
