@@ -235,7 +235,8 @@ namespace eg
 		style.Colors[ImGuiCol_HeaderActive] = ImVec4(0, 0, 0, 0);
 		style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
 
-		ImGui::Image((ImTextureID)m_LogoIcon,ImVec2(30,30));
+		//ImGui::Image((ImTextureID)m_LogoIcon->GetRendererID(),ImVec2(30,30));
+		//ImGui::SameLine();
 		ImGui::PushFont(m_Poppins_SemiBold_Font);
 		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(198, 187, 226,255));
 		if (ImGui::BeginMenuBar())
@@ -416,6 +417,7 @@ namespace eg
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0.0f, 2.0f});
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{0.0f, 0.0f});
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.0f, 0.0f, 0.0f, 0.0f});
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.19f, 0.16f, 0.27f, 1.0f));
 		auto &colors = ImGui::GetStyle().Colors;
 		auto &buttonHovered = colors[ImGuiCol_ButtonHovered];
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f});
@@ -430,8 +432,10 @@ namespace eg
 		if (!toolbarEnabled)
 			tintColor.w = 0.5f;
 
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 0));
 		float size = ImGui::GetWindowHeight() - 4.0f;
-		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+		auto regionX = ImGui::GetWindowContentRegionMax().x * 0.5f;
+		ImGui::SetCursorPosX((regionX)-(size)-5);
 		bool hasPlayButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play;
 		bool hasSimulateButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate;
 		bool hasPauseButton = m_SceneState != SceneState::Edit;
@@ -488,8 +492,8 @@ namespace eg
 				}
 			}
 		}
-		ImGui::PopStyleVar(2);
-		ImGui::PopStyleColor(3);
+		ImGui::PopStyleVar(3);
+		ImGui::PopStyleColor(4);
 		ImGui::End();
 	}
 
