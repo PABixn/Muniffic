@@ -127,7 +127,11 @@ namespace eg
 	{
 		if (entity.GetParent().has_value())
 			entity.GetParent().value().RemoveChild(entity);
-		m_PhysicsWorld->DestroyBody((b2Body *)entity.GetComponent<RigidBody2DComponent>().RuntimeBody);
+		if (entity.HasComponent<RigidBody2DComponent>()) 
+		{
+			b2Body* entityBody = (b2Body*)entity.GetComponent<RigidBody2DComponent>().RuntimeBody;
+			m_PhysicsWorld->DestroyBody(entityBody);
+		}
 		m_EntityMap.erase(entity.GetUUID());
 		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
@@ -219,6 +223,7 @@ namespace eg
 
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
+		m_EntitiesToDestroy.clear();
 		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
 			// Update Native scripts
@@ -264,6 +269,11 @@ namespace eg
 						transform.Rotation.z = body->GetAngle();
 					}
 				}
+			}
+
+			for (Entity entity : m_EntitiesToDestroy)
+			{
+				DestroyEntity(entity);
 			}
 		}
 
@@ -473,6 +483,11 @@ namespace eg
 		// X: red
 		// y: green
 		// z: blue
+	}
+
+	void Scene::AddEntityToDestroy(Entity entity)
+	{
+		m_EntitiesToDestroy.push_back(entity  );
 	}
 
 	Entity Scene::DuplicateEntity(Entity entity)

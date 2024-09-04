@@ -437,7 +437,7 @@ namespace eg
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
-		scene->DestroyEntity(e);
+		scene->AddEntityToDestroy(e);
 	}
 
 	static MonoString *Entity_GetName(UUID uuid)
