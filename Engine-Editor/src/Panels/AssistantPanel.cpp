@@ -45,7 +45,6 @@ namespace eg
 		float maxBubbleWidth = ImGui::GetWindowSize().x * 0.6f;
 
 		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + maxBubbleWidth - padding * 2);
-
 		ImVec2 textSize = ImGui::CalcTextSize(message.c_str(), nullptr, false, maxBubbleWidth - padding * 2);
 		ImGui::PopTextWrapPos();
 
@@ -74,6 +73,10 @@ namespace eg
 	}
 
 	void AssistantPanel::RenderAssistantMessage(const std::string& message) {
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
+		drawList->ChannelsSplit(2);
+		drawList->ChannelsSetCurrent(1);
+
 		float padding = 10.0f;
 		float maxBubbleWidth = ImGui::GetWindowSize().x * 0.6f;
 
@@ -91,11 +94,7 @@ namespace eg
 
 		ImGui::BeginGroup();
 
-		ImGui::GetWindowDrawList()->AddRectFilled(
-			ImGui::GetCursorScreenPos(),
-			ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth, ImGui::GetCursorScreenPos().y + bubbleHeight),
-			IM_COL32(64, 54, 89, 255), 10.0f
-		);
+		ImVec2 initialCursorPos = ImGui::GetCursorScreenPos();
 
 		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
 
@@ -161,7 +160,19 @@ namespace eg
 		//ImGui::Text(message.c_str());
 		//ImGui::PopTextWrapPos();
 
+		drawList->ChannelsSetCurrent(0);
+
+		ImGui::GetWindowDrawList()->AddRectFilled(
+			initialCursorPos,
+			ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth, ImGui::GetCursorScreenPos().y + padding),
+			IM_COL32(64, 54, 89, 255), 10.0f
+		);
+
+		drawList->ChannelsMerge();
+
 		ImGui::EndGroup();
+
+		ImGui::NewLine();
 	}
 
 	void AssistantPanel::OnImGuiRender()
