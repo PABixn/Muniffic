@@ -28,6 +28,7 @@ namespace eg {
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_ImageIcon;
+		ImFont* m_PoppinsRegularFont;
 		Scope<DeleteFilePanel> m_DeleteFilePanel;
 		Scope<RenameFolderPanel> m_RenameFolderPanel;
 		Scope<RenameResourcePanel> m_RenameResourcePanel;

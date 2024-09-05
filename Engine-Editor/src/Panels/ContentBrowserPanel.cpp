@@ -14,9 +14,12 @@ namespace eg
 	ContentBrowserPanel::ContentBrowserPanel()
 	: m_BaseDirectory(AssetDirectoryManager::getRootDirectoryUUID()), m_CurrentDirectory(m_BaseDirectory)
 	{
-		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
+		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
+		auto& io = ImGui::GetIO();
+		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsRegularFont != nullptr);
 	}
 
 	void ContentBrowserPanel::InitPanels()
