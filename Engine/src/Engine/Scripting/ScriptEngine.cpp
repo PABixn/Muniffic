@@ -507,7 +507,7 @@ namespace eg
 	{
 		MonoObject *exception = nullptr;
 		return mono_runtime_invoke(method, instance, params, &exception);
-	}
+    	}
 
 	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity, UUID uuid)
 		: m_ScriptClass(scriptClass)

@@ -30,7 +30,7 @@ namespace Quest
     {
         PLAYER_BASE, PLAYER_CIRCLE, PLAYER_TRIANGLE, PLAYER_SQUARE, 
         ENEMY_TRIANGLE, ENEMY_SQUARE, ENEMY_CIRCLE, 
-        BULLET, STATIC, NONE
+        BULLET, STATIC, BOOST,NONE
     }
 
     public enum EffectType

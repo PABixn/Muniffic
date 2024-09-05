@@ -15,6 +15,7 @@ namespace Quest
         private float cooldown = 1.0f;
         private float cooldownTimer = 0.0f;
         private int knockback = 0;
+        private int bulletSpeed = 3;
         private Entity entity;
 
         List<EntityType> attackTargetTypes = new List<EntityType>();
@@ -31,12 +32,16 @@ namespace Quest
             this.entity = entity;
             this.attackTargetTypes = attackTargetTypes;
             transform = entity.GetComponent<TransformComponent>();
-            enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
+            
             player = Entity.FindEntityByName("Player");
         }
 
         public void Update(float ts)
         {
+            if(enemyAttackBoxComponent == null)
+            {
+                enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
+            }
             cooldownTimer += ts;
             foreach (Bullet bullet in bullets)
             {
@@ -49,7 +54,7 @@ namespace Quest
             }
             if (cooldownTimer >= cooldown && enemyAttackBoxComponent.isEnemyinRange(player))
             {
-                Bullet bullet = new Bullet(transform.translation.XY, enemyAttackBoxComponent.attackDirecton, damage, 50, attackTargetTypes, "PlayerWrapper");
+                Bullet bullet = new Bullet(transform.translation.XY, enemyAttackBoxComponent.attackDirecton, damage, bulletSpeed, attackTargetTypes, "PlayerWrapper");
                 bullets.Add(bullet);
                 bullet.SetKnockBack(knockback);
                 cooldownTimer = 0;

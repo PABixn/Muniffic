@@ -14,6 +14,7 @@ namespace Quest
         private float range = 10;
         private float cooldown = 1.0f;
         private float cooldownTimer = 0.0f;
+        private int bulletSpeed = 1;
         private Entity entity;
 
         List<EntityType> attackTargetTypes = new List<EntityType>();
@@ -33,7 +34,7 @@ namespace Quest
             attackBoxComponent = entity.As<AttackBoxComponent>();
         }
 
-        public void OnUpdate(float ts)
+        public void Update(float ts)
         {
             cooldownTimer += ts;
             foreach (Bullet bullet in bullets)
@@ -47,14 +48,9 @@ namespace Quest
             }
             if (cooldownTimer >= cooldown && Input.IsKeyDown(KeyCode.R))
             {
-                foreach (Entity e in Entity.FindEntityByName(attackTargetParentName).GetChildren())
-                {
-                    if (e.GetComponent<BoxCollider2DComponent>().CollidesWith(entity) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
-                    {
-                        Bullet bullet = new Bullet(transform.translation.XY, attackBoxComponent.attackDirecton, damage, 50, attackTargetTypes, attackTargetParentName);
-                        bullets.Add(bullet);
-                    }
-                }
+                Console.WriteLine("Direction: " + attackBoxComponent.attackDirecton.X);
+                Bullet bullet = new Bullet(transform.translation.XY, attackBoxComponent.attackDirecton, damage, bulletSpeed, attackTargetTypes, attackTargetParentName);
+                bullets.Add(bullet);
                 cooldownTimer = 0;
             }
             
@@ -63,11 +59,6 @@ namespace Quest
         public void SetEntity(Entity entity)
         {
             this.entity = entity;
-        }
-
-        public void Update(float ts)
-        {
-            cooldown -= 1;
         }
 
         public void SetMultiplier(float multiplier)

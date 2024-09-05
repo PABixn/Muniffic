@@ -1,4 +1,4 @@
-﻿using eg;
+﻿ using eg;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace Quest
     {
         private Vector2 direction;
         private float speed;
-        private float lifeTime;
+        private float lifeTime = 10;
         private float lifeTimer;
         private List<EntityType> entitiesToHurt;
         private string attackParentString = "Enemies";
@@ -22,6 +22,7 @@ namespace Quest
         private RigidBody2DComponent rigidBody;
         private TransformComponent transform;
         private BoxCollider2DComponent collider;
+        private SpriteRendererComponent spriteRenderer;
         Entity entity;
 
         private bool shouldDestroy = false;
@@ -38,6 +39,8 @@ namespace Quest
             transform = entity.GetComponent<TransformComponent>();
             transform.translation = new Vector3(direction, 0);
             transform.scale = new Vector3(0.1f, 0.1f, 0.5f);
+            spriteRenderer = entity.AddComponent<SpriteRendererComponent>();
+            spriteRenderer.color = Color.white;
             collider = entity.AddComponent<BoxCollider2DComponent>();
             rigidBody = entity.AddComponent<RigidBody2DComponent>();
             rigidBody.type = RigidBody2DComponent.BodyType.Kinematic;
@@ -72,7 +75,11 @@ namespace Quest
                 }
             }
 
-            rigidBody.linearVelocity = direction * speed;
+            if (GroundCheck.IsGrounded(collider))
+            {
+                shouldDestroy = true;
+            }
+            
         }
         private void nockback(Entity e)
         {

@@ -49,6 +49,7 @@ namespace Quest
         {
             player = Entity.FindEntityByName("Player");
             meleeAttackComponent = new EnemyMeleeAttackComponent(entity, new List<EntityType> { EntityType.PLAYER_CIRCLE, EntityType.PLAYER_BASE, EntityType.PLAYER_SQUARE, EntityType.PLAYER_TRIANGLE }, "PlayerWrapper");
+            shootAttackComponent = new EnemyShootAttackComponent(entity ,new List<EntityType> { EntityType.PLAYER_CIRCLE, EntityType.PLAYER_BASE, EntityType.PLAYER_SQUARE, EntityType.PLAYER_TRIANGLE });
         }
 
         public void OnUpdate(float ts)
@@ -62,8 +63,8 @@ namespace Quest
                 entityTypeComponent.entityType = IntToEntityType(enemyType);
                 SwitchEnemyType(IntToEnemyType(enemyType));
             }
-            //meleeAttackComponent.Update(ts);
-            //shootAttackComponent.Update(ts);
+            meleeAttackComponent.Update(ts);
+            shootAttackComponent.Update(ts);
 
             if (healthComponent.IsDead())
             {
@@ -125,9 +126,9 @@ namespace Quest
             enemyType = 0;
             healthComponent.maxHealth = SquarEnemyHealth;
             healthComponent.SetHealth(SquarEnemyHealth);
-            //shootAttackComponent.SetDamage(SquareEnemyAttackDamage);
-            //shootAttackComponent.SetCooldown(SquareEnemyAttackSpeed);
-            //shootAttackComponent.SetKnockback(SquareEnemyKnockbackForce);
+            shootAttackComponent.SetDamage(SquareEnemyAttackDamage);
+            shootAttackComponent.SetCooldown(SquareEnemyAttackSpeed);
+            shootAttackComponent.SetKnockback(SquareEnemyKnockbackForce);
             enemyRunComponent.SetMultiplier(SquarEnemySpeedMultiplier);
         }
 
