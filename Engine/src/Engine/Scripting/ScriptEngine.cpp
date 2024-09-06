@@ -425,7 +425,7 @@ namespace eg
 		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
 		{
 			for (auto& [key, value] : s_Data->EntityInstances.at(entityID))
-				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()))
+				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()) && s_Data->SceneContext->EntityExists(entityID))
 					value->InvokeOnUpdate(ts);
 			/*Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
 			instance->InvokeOnUpdate(ts);*/
@@ -510,6 +510,7 @@ namespace eg
 		m_Instance = m_ScriptClass->Instantiate();
 
 		m_UUID = uuid;
+		m_EntityUUID = entity.GetUUID();
 
 		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
 		m_OnCreateMethod = m_ScriptClass->GetMethod("OnCreate", 0);
@@ -548,8 +549,8 @@ namespace eg
 	{
 		if (m_OnCollisionEnterMethod)
 		{
-			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
-			Collision2D* args = new Collision2D(uuid, collision.contactPoints);
+			UUID uuid = m_EntityUUID == collision.entityA ? collision.entityB : collision.entityA;
+			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
 			void* arg = args;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionEnterMethod, &arg);
 		}
@@ -559,8 +560,8 @@ namespace eg
 	{
 		if (m_OnCollisionExitMethod)
 		{
-			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
-			Collision2D* args = new Collision2D(uuid, collision.contactPoints);
+			UUID uuid = m_EntityUUID == collision.entityA ? collision.entityB : collision.entityA;
+			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
 			void* arg = args;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionExitMethod, &arg);
 		}

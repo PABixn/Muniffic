@@ -1082,16 +1082,16 @@ namespace eg
 		switch (side)
 		{
 		case Side::TOP:
-			edge.SetTwoSided(b2Vec2(-collider.Size.x / 2.0f, +collider.Size.y / 2.0f), b2Vec2(+collider.Size.x / 2.0f, +collider.Size.y / 2.0f));
+			edge.SetTwoSided(b2Vec2(-collider.Size.x, +collider.Size.y), b2Vec2(+collider.Size.x, +collider.Size.y));
 			break;
 		case Side::BOTTOM:
-			edge.SetTwoSided(b2Vec2(-collider.Size.x / 2.0f, -collider.Size.y / 2.0f), b2Vec2(+collider.Size.x / 2.0, -collider.Size.y / 2.0f));
+			edge.SetTwoSided(b2Vec2(-collider.Size.x, -collider.Size.y), b2Vec2(+collider.Size.x, -collider.Size.y));
 			break;
 		case Side::LEFT:
-			edge.SetTwoSided(b2Vec2(-collider.Size.x / 2.0f, -collider.Size.y / 2.0f), b2Vec2(-collider.Size.x / 2.0f, +collider.Size.y / 2.0f));
+			edge.SetTwoSided(b2Vec2(-collider.Size.x, -collider.Size.y), b2Vec2(-collider.Size.x, +collider.Size.y));
 			break;
 		case Side::RIGHT:
-			edge.SetTwoSided(b2Vec2(+collider.Size.x / 2.0f, -collider.Size.y / 2.0f), b2Vec2(+collider.Size.x / 2.0f, +collider.Size.y / 2.0f));
+			edge.SetTwoSided(b2Vec2(+collider.Size.x, -collider.Size.y), b2Vec2(+collider.Size.x, +collider.Size.y));
 			break;
 		}
 
@@ -1129,16 +1129,16 @@ namespace eg
 
 		if(entityB.HasComponent<BoxCollider2DComponent>())
 		{
-			const auto& colliderB = entityA.GetComponent<BoxCollider2DComponent>();
-			const auto& rigidBody = entityA.GetComponent<RigidBody2DComponent>();
-			const auto& bodyB = (b2Body*)rigidBody.RuntimeBody;
+			const auto& colliderB = entityB.GetComponent<BoxCollider2DComponent>();
+			const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+			const auto& bodyB = (b2Body*)rigidBodyB.RuntimeBody;
 			return b2TestOverlap(GetShapeFromBoxCollider2DComponent(colliderA), 0, GetShapeFromBoxCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
 		}
 		else if(entityB.HasComponent<CircleCollider2DComponent>())
 		{
-			const auto& colliderB = entityA.GetComponent<CircleCollider2DComponent>();
-			const auto& rigidBody = entityA.GetComponent<RigidBody2DComponent>();
-			const auto& bodyB = (b2Body*)rigidBody.RuntimeBody;
+			const auto& colliderB = entityB.GetComponent<CircleCollider2DComponent>();
+			const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+			const auto& bodyB = (b2Body*)rigidBodyB.RuntimeBody;
 			return b2TestOverlap(GetShapeFromBoxCollider2DComponent(colliderA), 0, GetShapeFromCircleCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
 		}
 
@@ -1156,7 +1156,7 @@ namespace eg
 			return false;
 
 		const auto& collider = entityA.GetComponent<BoxCollider2DComponent>();
-		const auto& otherCollider = entityB.GetComponent<BoxCollider2DComponent>();
+		const auto& colliderB = entityB.GetComponent<BoxCollider2DComponent>();
 		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
 		const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
 
@@ -1166,7 +1166,7 @@ namespace eg
 		EG_CORE_ASSERT(bodyA, "Body A in BoxCollider2DComponent_CollidesWithBox is null");
 		EG_CORE_ASSERT(bodyB, "Body B in BoxCollider2DComponent_CollidesWithBox is null");
 
-		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(collider), 0, GetShapeFromBoxCollider2DComponent(otherCollider), 0, bodyA->GetTransform(), bodyB->GetTransform());
+		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(collider), 0, GetShapeFromBoxCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithPoint(UUID uuid, glm::vec2 *point)
@@ -1178,7 +1178,7 @@ namespace eg
 		if(!entityA || !entityA.HasComponent<BoxCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>())
 			return false;
 
-		const auto& collider = entityA.GetComponent<BoxCollider2DComponent>();
+		const auto& colliderA = entityA.GetComponent<BoxCollider2DComponent>();
 		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
 		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
 
@@ -1187,7 +1187,7 @@ namespace eg
 		b2PolygonShape pointShape;
 		pointShape.SetAsBox(0.0001f, 0.0001f, b2Vec2(0, 0), 0);
 
-		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(collider), 0, &pointShape, 0, bodyA->GetTransform(), b2Transform(b2Vec2(point->x, point->y), b2Rot(0)));
+		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(colliderA), 0, &pointShape, 0, bodyA->GetTransform(), b2Transform(b2Vec2(point->x, point->y), b2Rot(0)));
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithCircle(UUID uuid, UUID other)
@@ -1201,7 +1201,7 @@ namespace eg
 			return false;
 
 		const auto& colliderA = entityA.GetComponent<BoxCollider2DComponent>();
-		const auto& rigidBodyA = entityB.GetComponent<RigidBody2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
 		const auto& colliderB = entityB.GetComponent<CircleCollider2DComponent>();
 		const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
 
@@ -1234,9 +1234,11 @@ namespace eg
 			return false;
 
 		const auto& colliderA = entityA.GetComponent<BoxCollider2DComponent>();
-		const auto& rigidBodyA = entityB.GetComponent<RigidBody2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
 		const auto& colliderB = entityB.GetComponent<BoxCollider2DComponent>();
 		const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+
+		const auto& transformB = entityB.GetComponent<TransformComponent>();
 
 		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
 		b2Body* bodyB = (b2Body*)rigidBodyB.RuntimeBody;
@@ -1245,6 +1247,11 @@ namespace eg
 		EG_CORE_ASSERT(bodyB, "Body B in BoxCollider2DComponent_CollidesWithEdge is null");
 
 		b2EdgeShape edge = Getb2EdgeShapeFromBox(colliderB, scene, side);
+
+		edge.m_vertex1.x *= transformB.Scale.x;
+		edge.m_vertex1.y *= transformB.Scale.y;
+		edge.m_vertex2.x *= transformB.Scale.x;
+		edge.m_vertex2.y *= transformB.Scale.y;
 
 		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(colliderA), 0, &edge, 0, bodyA->GetTransform(), bodyB->GetTransform());
 	}
@@ -1771,6 +1778,122 @@ namespace eg
 #pragma endregion
 
 #pragma region Input
+	#pragma region Audio
+		static std::filesystem::path Audio_GetPath(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->GetPath();
+		}
+
+		static void Audio_SetPath(UUID entityID, std::filesystem::path val)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->SetPath(val);
+		}
+
+		static bool Audio_Play(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->Play();
+		}
+
+		static bool* Audio_IsLoopedPtr(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->IsLoopedPtr();
+		}
+
+		static bool Audio_IsLooped(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->IsLooped();
+		}
+
+		static bool* Audio_IsPlayingFromStartPtr(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->IsPlayingFromStartPtr();
+		}
+
+		static bool Audio_IsPlayingFromStart(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->IsPlayingFromStart();
+		}
+
+		static void Audio_SetIsLooped(UUID entityID, bool isLooped)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->SetIsLooped(isLooped);
+		}
+
+		static void Audio_SetIsPlayingFromStart(UUID entityID, bool isPlayingFromStart)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->SetIsPlayingFromStart(isPlayingFromStart);
+		}
+
+		static std::string Audio_GetFileName(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->GetFileName();
+		}
+
+		static void Audio_LoadCurrentAudio(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->LoadCurrentAudio();
+		}
+
+		static void Audio_OpenAudio(UUID entityID, std::string path)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->OpenAudio(path);
+		}
+
+		static void Audio_Stop(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->Stop();
+		}
+
+		static float Audio_GetVolume(UUID entityID) 
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->GetVolume();
+		}
+
+		static float* Audio_GetVolumePtr(UUID entityID)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			return entity.GetComponent<AudioSourceComponent>().Audio->GetVolumePtr();
+		}
+
+		static void Audio_SetVolume(UUID entityID, float newVolume)
+		{
+			Scene* scene = ScriptEngine::GetSceneContext();
+			Entity entity = scene->GetEntityByUUID(entityID);
+			entity.GetComponent<AudioSourceComponent>().Audio->SetVolume(newVolume);
+		}
+
+	#pragma endregion
+
+	#pragma region Input
 	static bool Input_IsKeyDown(KeyCode keycode)
 	{
 		return Input::IsKeyPressed(keycode);
@@ -1941,6 +2064,23 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(TextComponent_SetKerning);
 		EG_ADD_INTERNAL_CALL(TextComponent_GetLineSpacing);
 		EG_ADD_INTERNAL_CALL(TextComponent_SetLineSpacing);
+
+		EG_ADD_INTERNAL_CALL(Audio_GetPath);
+		EG_ADD_INTERNAL_CALL(Audio_SetPath);
+		EG_ADD_INTERNAL_CALL(Audio_Play);
+		EG_ADD_INTERNAL_CALL(Audio_IsLoopedPtr);
+		EG_ADD_INTERNAL_CALL(Audio_IsLooped);
+		EG_ADD_INTERNAL_CALL(Audio_IsPlayingFromStartPtr);
+		EG_ADD_INTERNAL_CALL(Audio_IsPlayingFromStart);
+		EG_ADD_INTERNAL_CALL(Audio_SetIsLooped);
+		EG_ADD_INTERNAL_CALL(Audio_SetIsPlayingFromStart);
+		EG_ADD_INTERNAL_CALL(Audio_GetFileName);
+		EG_ADD_INTERNAL_CALL(Audio_LoadCurrentAudio);
+		EG_ADD_INTERNAL_CALL(Audio_OpenAudio);
+		EG_ADD_INTERNAL_CALL(Audio_Stop);
+		EG_ADD_INTERNAL_CALL(Audio_GetVolume);
+		EG_ADD_INTERNAL_CALL(Audio_GetVolumePtr);
+		EG_ADD_INTERNAL_CALL(Audio_SetVolume);
 
 		EG_ADD_INTERNAL_CALL(Input_IsKeyDown);
 	}

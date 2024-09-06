@@ -40,12 +40,12 @@ namespace Game
 
         public void OnCollisionEnter(Collision2D collision)
         {
-            DebugConsole.Log("Collision enter: " + collision.otherEntity.name + "    X: " + collision.contactPoints.X + "    Y: " + collision.contactPoints.Y, DebugConsole.LogType.Error);
+            collision.otherEntity.GetComponent<SpriteRendererComponent>().color = Color.blueViolet;
         }
 
         public void OnCollisionExit(Collision2D collision)
         {
-            DebugConsole.Log("Collision exit: " + collision.otherEntity.ID + "    X: " + collision.contactPoints.X + "    Y: " + collision.contactPoints.Y, DebugConsole.LogType.Error);
+            collision.otherEntity.GetComponent<SpriteRendererComponent>().color = Color.brown;
         }
 
         public override void OnUpdate(float ts)

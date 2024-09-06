@@ -10,19 +10,20 @@ namespace eg
 	public:
 		void BeginContact(b2Contact* contact) override;
 		void EndContact(b2Contact* contact) override;
-		void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override;
-		void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override;
 	};
 
 	struct Collision2D
 	{
 	public:
-		Collision2D(UUID otherEntity, glm::vec2 contactPoints)
-			: otherEntity(otherEntity), contactPoints(contactPoints) {}
+		Collision2D(UUID otherEntity, glm::vec2 contactPoints, float friction, float restitution, float tangentSpeed)
+			: otherEntity(otherEntity), contactPoints(contactPoints), friction(friction), restitution(restitution), tangentSpeed(tangentSpeed) {}
 
 
 		UUID otherEntity;
 		glm::vec2 contactPoints;
+		float friction;
+		float restitution;
+		float tangentSpeed;
 	};
 
 	struct InternalCollision2DEvent
@@ -30,5 +31,8 @@ namespace eg
 		UUID entityA;
 		UUID entityB;
 		glm::vec2 contactPoints;
+		float friction;
+		float restitution;
+		float tangentSpeed;
 	};
 }
