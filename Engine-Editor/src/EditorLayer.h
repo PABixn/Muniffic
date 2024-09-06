@@ -39,6 +39,9 @@ namespace eg {
 		void SaveAs();
 		void Save();
 
+		bool CreateCmakelists(const std::filesystem::path path); // path to where the .mnproj is (assumes the Assets/Scripts is a subdirectory)
+		bool CompileCustomScripts(const std::filesystem::path& path); //returns true if successful, path to where the cmakelists.txt are (path should end with Assets/Scripts)
+
 		void NewProject();
 		bool OpenProject();
 		void OpenProject(const std::filesystem::path& path);
@@ -113,6 +116,7 @@ namespace eg {
 		Scope<AddResourcePanel> m_AddResourcePanel;
 		Scope<WelcomingPanel> m_WelcomePanel;
 		Scope<NameNewProjectPanel> m_NameNewProjectPanel;
+		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
 		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;

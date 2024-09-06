@@ -1,5 +1,5 @@
 RecentProjects:
-  Projects0: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\test19\test19.mnproj
-  Projects1: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\GameJam\Game.mnproj
-  Projects2: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\test21\test21.mnproj
-  Projects3: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\tets837373\tets837373.mnproj
+  Projects0: C:\Users\Natal\Documents\muniffic\Muniffic\Engine-Editor\a\a.mnproj
+  Projects1: C:\Users\Natal\Documents\muniffic\Muniffic\Engine-Editor\nya\nya.mnproj
+  Projects2: C:\Users\Natal\Documents\muniffic\Muniffic\Engine-Editor\ywuik\ywuik.mnproj
+  Projects3: C:\Users\Natal\Documents\muniffic\Muniffic\Engine-Editor\j\j.mnproj

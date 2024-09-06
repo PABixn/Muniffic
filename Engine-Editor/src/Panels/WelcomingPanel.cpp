@@ -8,8 +8,8 @@ namespace eg
 {	
 
 	WelcomingPanel::WelcomingPanel() {}
-	WelcomingPanel::WelcomingPanel(std::vector<std::string> list, RecentProjectSerializer rps)
-		: m_Show(true), m_DirectoryUUID(0), m_ProjectList(list), m_Rps(rps)
+	WelcomingPanel::WelcomingPanel(std::vector<std::string> list, RecentProjectSerializer m_RecentProjectSerializer)
+		: m_Show(true), m_DirectoryUUID(0), m_ProjectList(list), m_Rps(m_RecentProjectSerializer)
 	{
 		m_NewProjectCreated = false;
 		m_SelectedProject = "";
