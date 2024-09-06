@@ -21,7 +21,9 @@ namespace eg
 		}
 
 		threadID = assistantManager->CreateThread();
+
 		assistantRespondingAnimation = ".";
+		m_IconCopy = Texture2D::Create("resources/icons/copyCode.png");
 	}
 
 	AssistantPanel::~AssistantPanel()
@@ -72,13 +74,86 @@ namespace eg
 		ImGui::EndGroup();
 	}
 
+	std::string AssistantPanel::GetLanguageSymbol(std::string language)
+	{
+		if(language == "csharp")
+			return "C#";
+		else if(language == "cpp")
+			return "C++";
+		else if (language == "python")
+			return "Python";
+		else if (language == "javascript")
+			return "JavaScript";
+		else if (language == "java")
+			return "Java";
+		else if (language == "ruby")
+			return "Ruby";
+		else if (language == "php")
+			return "PHP";
+		else if (language == "swift")
+			return "Swift";
+		else if (language == "kotlin")
+			return "Kotlin";
+		else if (language == "typescript")
+			return "TypeScript";
+		else if (language == "go")
+			return "Go";
+		else if (language == "rust")
+			return "Rust";
+		else if (language == "scala")
+			return "Scala";
+		else if (language == "r")
+			return "R";
+		else if (language == "perl")
+			return "Perl";
+		else if (language == "lua")
+			return "Lua";
+		else if (language == "haskell")
+			return "Haskell";
+		else if (language == "elixir")
+			return "Elixir";
+		else if (language == "clojure")
+			return "Clojure";
+		else if (language == "fsharp")
+			return "F#";
+		else if (language == "erlang")
+			return "Erlang";
+		else if (language == "dart")
+			return "Dart";
+		else if (language == "crystal")
+			return "Crystal";
+		else if (language == "cobol")
+			return "COBOL";
+		else if (language == "bash")
+			return "Bash";
+		else if (language == "assembly")
+			return "Assembly";
+		else if (language == "powershell")
+			return "PowerShell";
+		else if (language == "sql")
+			return "SQL";
+		else if (language == "html")
+			return "HTML";
+		else if (language == "css")
+			return "CSS";
+		else if (language == "xml")
+			return "XML";
+		else if (language == "json")
+			return "JSON";
+		else if (language == "yaml")
+			return "YAML";
+		else if (language == "markdown")
+			return "Markdown";
+	}
+
 	void AssistantPanel::RenderAssistantMessage(const std::string& message) {
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
-		drawList->ChannelsSplit(2);
-		drawList->ChannelsSetCurrent(1);
+		drawList->ChannelsSplit(3);
+		drawList->ChannelsSetCurrent(2);
 
 		float padding = 10.0f;
 		float maxBubbleWidth = ImGui::GetWindowSize().x * 0.6f;
+		float codeToolbarHeight = 30.0f;
 
 		std::stringstream stream(message);
 		std::string line, language, msg = "";
@@ -110,18 +185,53 @@ namespace eg
 					ImVec2 codeSize = ImGui::CalcTextSize(msg.c_str(), nullptr, false, bubbleWidth - padding * 4);
 					float codeHeight = codeSize.y + padding * 2;
 					float codeWidth = codeSize.x + padding * 2;
+					float iconSize = codeToolbarHeight - padding * 1.5;
+
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding * 2.5);
+
+					ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + bubbleWidth - padding * 2 - iconSize * 2);
+					if (ImGui::ImageButton((ImTextureID)m_IconCopy->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1), 0))
+					{
+						ImGui::LogToClipboard();
+						ImGui::LogText(msg.c_str());
+						ImGui::LogFinish();
+					}
+
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - iconSize);
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding * 2.5);
+					ImGui::Text(GetLanguageSymbol(language).c_str());
+
+					drawList->ChannelsSetCurrent(1);
 
 					ImGui::GetWindowDrawList()->AddRectFilled(
-						ImVec2(ImGui::GetCursorScreenPos().x + padding, ImGui::GetCursorScreenPos().y + padding * 2),
-						ImVec2(ImGui::GetCursorScreenPos().x + codeWidth + padding, ImGui::GetCursorScreenPos().y + codeHeight + padding * 2),
-						IM_COL32(18, 14, 28, 255), 10.0f
+						ImVec2(cursorPos.x + padding, cursorPos.y),
+						ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth - padding, ImGui::GetCursorScreenPos().y + padding * 2 + codeToolbarHeight),
+						IM_COL32(32, 26, 48, 255), 10.0f, ImDrawFlags_RoundCornersTop
 					);
+
+					drawList->ChannelsSetCurrent(2);
+
+					cursorPos = ImGui::GetCursorScreenPos();
+
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding * 2);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding * 2);
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding * 3);
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
 					ImGui::Text(msg.c_str());
 					ImGui::PopTextWrapPos();
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding * 2);
+
+					drawList->ChannelsSetCurrent(1);
+
+					ImGui::GetWindowDrawList()->AddRectFilled(
+						ImVec2(cursorPos.x + padding, cursorPos.y),
+						ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth - padding, ImGui::GetCursorScreenPos().y + padding),
+						IM_COL32(18, 14, 28, 255), 10.0f, ImDrawFlags_RoundCornersBottom
+					);
+
+					drawList->ChannelsSetCurrent(2);
+
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding * 4);
 					msg = "";
 
 					insideCode = false;
