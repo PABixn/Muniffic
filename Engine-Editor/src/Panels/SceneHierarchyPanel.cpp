@@ -46,7 +46,6 @@ namespace eg {
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
-		//kys1
 		ImGui::Begin("Scene Hierarchy");
 		ImGui::PopStyleVar();
 		static std::string search;
@@ -150,7 +149,6 @@ namespace eg {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool forceDraw)
 	{
-		//kys2
 		if (!entity.IsDrawable() || (entity.GetParent().has_value() && forceDraw == false))
 			return;
 		
