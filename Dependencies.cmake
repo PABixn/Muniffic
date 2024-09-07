@@ -1,7 +1,5 @@
 # Get Vulkan SDK path from environment variable
 set(VULKAN_SDK $ENV{VULKAN_SDK})
-message("vulkan:")
-message(VULKAN_SDK)
 
 # Include directories
 set(IncludeDir_stb_image "${CMAKE_SOURCE_DIR}/Engine/vendor/stb_image")

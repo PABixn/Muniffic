@@ -27,6 +27,8 @@ namespace eg {
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
+		int CompileCustomScripts(); 
+		//bool CompileCustomScripts(const std::filesystem::path& path, const std::string& projectName); //returns true if successful, path to where the cmakelists.txt are (path should end with Assets/Scripts)
 
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
@@ -40,7 +42,6 @@ namespace eg {
 		void Save();
 
 		bool CreateCmakelists(const std::filesystem::path path); // path to where the .mnproj is (assumes the Assets/Scripts is a subdirectory)
-		bool CompileCustomScripts(const std::filesystem::path& path); //returns true if successful, path to where the cmakelists.txt are (path should end with Assets/Scripts)
 
 		void NewProject();
 		bool OpenProject();
@@ -62,6 +63,8 @@ namespace eg {
 		//UI Panels
 		void UI_Toolbar();
 	private:
+		Ref<Project> m_CurrentProject;
+		std::filesystem::path m_CustomScriptsDirectory; //absolute
 		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;
 		OrthographicCameraController m_Camera;

@@ -825,7 +825,7 @@ namespace eg
 	bool EditorLayer::CreateCmakelists(const std::filesystem::path path)
 	{
 		std::filesystem::path pathToScripts(path.string() + "\\Assets\\Scripts");
-
+		m_CustomScriptsDirectory = pathToScripts;
 		std::filesystem::path cmakeFilePath = pathToScripts / "CMakeLists.txt";
 
 		if(std::filesystem::exists(cmakeFilePath) && std::filesystem::is_regular_file(cmakeFilePath)) return true;
@@ -847,10 +847,12 @@ namespace eg
 		return true;
 	}
 
-	//nya1
-	bool EditorLayer::CompileCustomScripts(const std::filesystem::path& path)
+	int EditorLayer::CompileCustomScripts()
 	{
-		return false;
+		std::filesystem::path projectDirectory =  m_CurrentProject->GetProjectDirectory() / "Assets" / "Scripts";
+		const std::string& projectName = m_CurrentProject->GetProjectName();
+		std::string command = "cd " + projectDirectory.string() + " && cmake -DPROJECT_NAME=" + projectName + " . && cmake --build .";
+		return system(command.c_str());
 	}
 
 	void EditorLayer::NewProject()
@@ -915,7 +917,7 @@ namespace eg
 
 	void EditorLayer::OpenProject(const std::filesystem::path& path)
 	{
-		if (Project::Load(path))
+		if (m_CurrentProject = Project::Load(path))
 		{
 			ScriptEngine::Init();
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());

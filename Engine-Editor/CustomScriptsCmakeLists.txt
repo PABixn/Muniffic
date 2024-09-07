@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.8)
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
-set(PROJECT_NAME "Example" CACHE STRING "name of project")
+add_subdirectory("${CMAKE_BINARY_DIR}/../../../../Muniffic-ScriptCore" "${CMAKE_BINARY_DIR}/../../../../Muniffic-ScriptCore")
+#set(PROJECT_NAME "Example" CACHE STRING "name of project")
 project(${PROJECT_NAME} LANGUAGES CSharp)
 
 # Define configurations

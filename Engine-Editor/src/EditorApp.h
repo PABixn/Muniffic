@@ -47,6 +47,8 @@ namespace eg {
 
 		~Editor() {}
 
+		EditorLayer* GetEditorLayer() { return static_cast<EditorLayer*>(GetFirstLayer()); }
+
 		void OnUpdate() {
 		}
 		bool OnWindowClose(WindowCloseEvent& e);

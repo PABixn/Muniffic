@@ -834,8 +834,30 @@ namespace eg {
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
-			//zna1
 				ImGui::Unindent();
+				static int result;
+				if (PrettyButton("Compile Scripts"))
+				{
+					EditorLayer* editorLayer = static_cast<EditorLayer*>(Application::Get().GetFirstLayer());
+					result =  (editorLayer->CompileCustomScripts());
+					ImGui::OpenPopup("Cmake compilation completed");
+					//zna1
+				}
+				bool open = true;
+				if (ImGui::BeginPopupModal("Cmake compilation completed", &open))
+				{
+					if (result == 0)
+					{
+						ImGui::Text("cmake compilation success");
+					}
+					else
+					{
+						ImGui::Text("cmake compilation failed");
+					}
+					if (ImGui::Button("OK"))
+						ImGui::CloseCurrentPopup();
+					ImGui::EndPopup();
+				}
 				if (PrettyButton("Add Script"))
 				{
 					ScriptResourceData* data = new ScriptResourceData();
