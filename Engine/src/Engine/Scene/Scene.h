@@ -6,6 +6,7 @@
 
 #include "../../../vendor/entt/include/entt.hpp"
 #include "EntityInfo.h"
+#include "vector"
 
 class b2World;
 
@@ -39,6 +40,8 @@ namespace eg {
 		void RenderScene(EditorCamera& camera);
 
 		void RenderAxis();
+
+		void AddEntityToDestroy(Entity entity);
 
 		Entity DuplicateEntity(Entity entity);
 
@@ -78,6 +81,7 @@ namespace eg {
 
 	private:
 		entt::registry m_Registry;
+		std::vector<Entity> m_EntitiesToDestroy;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
 		b2World* m_PhysicsWorld = nullptr;
