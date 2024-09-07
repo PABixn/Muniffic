@@ -899,5 +899,4 @@ namespace eg
 	{
 		m_AddResourcePanel = nullptr;
 	}
-
 }

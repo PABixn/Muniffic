@@ -44,7 +44,7 @@ namespace eg
 				int size = 800;
 				ImGuiStyle& style = ImGui::GetStyle();
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2((size * 0.05), 20));
-				ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.125f, 0.102f, 0.188f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_WindowBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 				style.WindowRounding = 12.0f;
 
 				ImGui::Begin("Resource Loader",nullptr,ImGuiWindowFlags_NoDecoration);
@@ -54,6 +54,10 @@ namespace eg
 				TextCenteredOnLine("Resource Loader");
 				ImGui::PopFont();
 				ImGui::PushFont(m_PoppinsLightFont);
+
+				auto btnColor = style.Colors[ImGuiCol_Button];
+				auto btnColorHovered = style.Colors[ImGuiCol_ButtonHovered];
+				auto btnColorActive = style.Colors[ImGuiCol_ButtonActive];
 				
 				style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0, 0, 0, 0);
 				style.Colors[ImGuiCol_ButtonActive] = ImVec4(0, 0, 0, 0);
@@ -106,9 +110,9 @@ namespace eg
 					bool resourceChosen = ChooseNewResource("Custom (*.custom)\0*.custom\0");
 				}
 
-				style.Colors[ImGuiCol_Button] = ImVec4(0.204f, 0.145f, 0.278f, 1.0f);
-				style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-				style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
+				style.Colors[ImGuiCol_Button] = static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade;
+				style.Colors[ImGuiCol_ButtonHovered] = static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade;
+				style.Colors[ImGuiCol_ButtonActive] = static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade;
 
 				if(ButtonCenteredOnLine("Cancel", 150, 50, true))
 				{
@@ -118,6 +122,9 @@ namespace eg
 				ImGui::End();
 				ImGui::PopStyleVar();
 				ImGui::PopStyleColor();
+				style.Colors[ImGuiCol_Button] = btnColor;
+				style.Colors[ImGuiCol_ButtonHovered] = btnColorHovered;
+				style.Colors[ImGuiCol_ButtonActive] = btnColorActive;
 
 		m_ImagePanel->OnImGuiRender();
 		m_AnimationPanel->OnImGuiRender();

@@ -338,6 +338,8 @@ namespace eg
 
 	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path &filepath)
 	{
+		if (!std::filesystem::exists(filepath)) return false;
+
 		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath.string(), s_Data->EnableDebugging);
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 
