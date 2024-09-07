@@ -191,7 +191,9 @@ namespace eg
 
 					ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 
-					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + bubbleWidth - padding * 2 - iconSize * 2);
+					float iconCenterY = codeToolbarHeight / 2 - iconSize / 2;
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + iconCenterY / 2);
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + bubbleWidth - padding * 2 - iconSize);
 					if (ImGui::ImageButton((ImTextureID)m_IconCopy->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1), 0))
 					{
 						ImGui::LogToClipboard();
@@ -199,7 +201,7 @@ namespace eg
 						ImGui::LogFinish();
 					}
 
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - iconSize);
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - iconSize - iconCenterY / 2);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding * 2.5);
 					ImGui::Text(GetLanguageSymbol(language).c_str());
 
@@ -265,10 +267,6 @@ namespace eg
 			ImGui::Text(msg.c_str());
 			ImGui::PopTextWrapPos();
 		}
-
-		//ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-		//ImGui::Text(message.c_str());
-		//ImGui::PopTextWrapPos();
 
 		drawList->ChannelsSetCurrent(0);
 
