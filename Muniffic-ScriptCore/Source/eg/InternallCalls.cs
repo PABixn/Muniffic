@@ -355,7 +355,7 @@ namespace eg
         internal extern static void RigidBody2DComponent_SetMassData(long iD, float massData);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static float RigidBody2DComponent_GetMassData(long iD);
+        internal extern static Vector2 RigidBody2DComponent_GetPosition(long iD);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static B2transform RigidBody2DComponent_GetTransform(long iD);
@@ -363,8 +363,8 @@ namespace eg
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_SetTransform(long iD, B2transform transform);
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static ref Entity RigidBody2DComponent_GetUserData(long iD);
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+       // internal extern static ref Entity RigidBody2DComponent_GetUserData(long iD);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static Vector2 RigidBody2DComponent_GetWorldPoint(long iD);
