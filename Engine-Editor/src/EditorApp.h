@@ -20,7 +20,7 @@ namespace eg {
 			: Application(spec) {
 			//PushLayer(new WelcomeLayer());
 			PushLayer(new EditorLayer());
-			ChangeNameWithCurrentProject(true);
+			//ChangeNameWithCurrentProject(true);
 			TCHAR buffer[MAX_PATH] = { 0 };
 			GetModuleFileName(NULL, buffer, MAX_PATH);
 			std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");

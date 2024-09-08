@@ -840,20 +840,13 @@ namespace eg {
 				{
 					EditorLayer* editorLayer = static_cast<EditorLayer*>(Application::Get().GetFirstLayer());
 					result =  (editorLayer->CompileCustomScripts());
-					ImGui::OpenPopup("Cmake compilation completed");
+					ImGui::OpenPopup("Compilation");
 					//zna1
 				}
 				bool open = true;
-				if (ImGui::BeginPopupModal("Cmake compilation completed", &open))
+				if (ImGui::BeginPopupModal("Compilation", &open))
 				{
-					if (result == "")
-					{
-						ImGui::Text("cmake compilation success");
-					}
-					else
-					{
-						ImGui::Text("cmake compilation failed");
-					}
+					ImGui::Text(result.c_str());
 					if (ImGui::Button("OK"))
 						ImGui::CloseCurrentPopup();
 					ImGui::EndPopup();

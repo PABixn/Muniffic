@@ -664,7 +664,7 @@ namespace eg
 		if (m_SceneState == SceneState::Play)
 		{
 			Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+ 			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
 			Renderer2D::BeginScene(camera, cameraEntity.GetComponent<TransformComponent>().GetTransform());
 		}
 		else
@@ -852,10 +852,11 @@ namespace eg
 		std::filesystem::path projectDirectory =  m_CurrentProject->GetProjectDirectory() / "Assets" / "Scripts";
 		const std::string& projectName = m_CurrentProject->GetProjectName();
 		std::string command = "cd " + projectDirectory.string() + " && cmake -DPROJECT_NAME=" + projectName + " . && cmake --build .";
-		if(system(command.c_str())!=0) return "bad";
+		if(system(command.c_str())!=0) return "Compilation failed. Look into console for more information.";
 		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetScriptModulePath();
 		ScriptEngine::ReloadAssembly();
-		return "gut";
+		EG_TRACE("Compilation of Custom Scripts succeded");
+		return "Compilation succeded.";
 	}
 
 	void EditorLayer::NewProject()

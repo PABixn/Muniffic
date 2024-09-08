@@ -1,2 +1,0 @@
-RecentProjects:
-  Projects0: C:\Users\Natal\Documents\muniffic\Muniffic\Engine-Editor\scriptsTest1\scriptsTest1.mnproj

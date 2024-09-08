@@ -11,6 +11,7 @@ Engine-Editor/SandboxProject/Assets/Scripts/obj/
 
 # Muniffic files
 *.log
+recentProjectSerializer.txt
 
 # Dependancies
 	#Box2D
