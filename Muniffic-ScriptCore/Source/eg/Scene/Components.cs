@@ -523,7 +523,7 @@ namespace eg
         public float massData
         {
           get => InternalCalls.RigidBody2DComponent_GetMassData(Entity.ID);
-          set => InternalCalls.RigidBody2DComponent_SetMassData(Entity.ID);
+          set => InternalCalls.RigidBody2DComponent_SetMassData(Entity.ID, value);
         }
 
         public Vector2 position 
@@ -537,10 +537,7 @@ namespace eg
           set => InternalCalls.RigidBody2DComponent_SetTransform(Entity.ID, value);
         }
 
-        public ref Entity userData
-        {
-          get => InternalCalls.RigidBody2DComponent_GetUserData(Entity.ID);
-        }
+
 
         public Vector2 worldPoint
         {
@@ -564,7 +561,13 @@ namespace eg
             set => InternalCalls.RigidBody2DComponent_SetBullet(Entity.ID, value);
         }
 
+       // public ref Entity GetUserData()
+        //{
+         //   return InternalCalls.RigidBody2DComponent_GetUserData(Entity.ID);
+        //}
+        
 
+        
         public void ApplyForce(Vector2 force, Vector2 point, bool wake = true)
         {
             InternalCalls.RigidBody2DComponent_ApplyForce(Entity.ID, ref force, ref point, wake);
