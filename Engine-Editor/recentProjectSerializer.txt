@@ -1,5 +1,2 @@
 RecentProjects:
-  Projects0: C:\Users\Natal\Documents\muniffic\Muniffic\Engine-Editor\silli\silli.mnproj
-  Projects1: C:\Users\Natal\Documents\muniffic\Muniffic\Engine-Editor\yey\yey.mnproj
-  Projects2: C:\Users\Natal\Documents\muniffic\Muniffic\Engine-Editor\SILLI\SILLI.mnproj
-  Projects3: C:\Users\Natal\Documents\muniffic\Muniffic\Engine-Editor\scriptsTest\scriptsTest.mnproj
+  Projects0: C:\Users\Natal\Documents\muniffic\Muniffic\Engine-Editor\scriptsTest1\scriptsTest1.mnproj

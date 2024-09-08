@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 2186560154126675254
+  - Entity: 1004005650343287416
     Name: Cube
     TagComponent:
       Tag: Empty Entity

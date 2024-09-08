@@ -1,0 +1,72 @@
+Root: 7619096241519753591
+Directories:
+  - UUID: 8887814005727677591
+    Name: Scripts
+    Parent: 7619096241519753591
+    Subdirectories:
+      - 5248574285546488103
+    Assets:
+      []
+  - UUID: 7358705182432713128
+    Name: Textures
+    Parent: 7619096241519753591
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 8609589388191074901
+    Name: SubTextures
+    Parent: 7619096241519753591
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 8395900051833273178
+    Name: Shaders
+    Parent: 7619096241519753591
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 2541791861195846162
+    Name: SpriteAtlas
+    Parent: 7619096241519753591
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 2212479431139070818
+    Name: Animations
+    Parent: 7619096241519753591
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 6314693392155355732
+    Name: Fonts
+    Parent: 7619096241519753591
+    Subdirectories:
+      []
+    Assets:
+      - 2090572749303013142
+  - UUID: 5248574285546488103
+    Name: Source
+    Parent: 8887814005727677591
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 4257980450282948350
+    Name: Audio
+    Parent: 7619096241519753591
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 2411879243086902028
+    Name: Scenes
+    Parent: 7619096241519753591
+    Subdirectories:
+      []
+    Assets:
+      []

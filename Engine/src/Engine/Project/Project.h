@@ -11,7 +11,7 @@ namespace eg {
 		std::filesystem::path StartScene = "Untitled.egscene";
 		std::filesystem::path AssetDirectory = "Assets";
 		std::filesystem::path SceneDirectory = "Scenes";
-		std::filesystem::path ScriptModulePath = "Scripts/Binaries/Game.dll";
+		std::filesystem::path ScriptModulePath = "Scripts/Binaries/";
 	};
 
 	class Project
@@ -87,9 +87,9 @@ namespace eg {
 			s_ActiveProject->m_Config.SceneDirectory = newDirectory;
 		}
 
-		static const std::filesystem::path& GetScriptModulePath() {
+		static const std::filesystem::path GetScriptModulePath() {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
-			return s_ActiveProject->m_Config.ScriptModulePath; 
+			return  s_ActiveProject->m_Config.ScriptModulePath / (s_ActiveProject->m_Config.Name + ".dll");
 		}
 
 		static void SetScriptModulePath(const std::filesystem::path& newDirectory) {

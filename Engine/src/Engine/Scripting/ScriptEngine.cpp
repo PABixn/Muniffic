@@ -135,7 +135,7 @@ namespace eg
 			EG_CORE_ERROR("Failed to load core assembly!");
 			return;
 		}
-		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
+		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetScriptModulePath();
 		status = LoadAppAssembly(scriptModulePath);
 		if (!status)
 		{
