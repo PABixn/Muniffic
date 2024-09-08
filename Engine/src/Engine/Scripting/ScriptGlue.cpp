@@ -10,7 +10,6 @@
 #include "mono/metadata/object.h"
 #include "mono/metadata/reflection.h"
 
-#include "../Engine-Editor/src/Commands/Commands.h"
 #include <mono/metadata/appdomain.h>
 
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
@@ -1074,6 +1073,32 @@ namespace eg
 		entity.GetComponent<BoxCollider2DComponent>().RestitutionThreshold = restitutionThreshold;
 	}
 
+	static bool BoxCollider2DComponent_IsSensor(UUID uuid)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<BoxCollider2DComponent>().IsSensor;
+	}
+
+	//TODO: Implement creating a new fixture for the box collider
+	static void BoxCollider2DComponent_SetSensor(UUID uuid, bool isSensor)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		auto& bc = entity.GetComponent<BoxCollider2DComponent>();
+		bc.IsSensor = isSensor;
+
+		if(!entity.HasComponent<RigidBody2DComponent>())
+			return;
+
+		const auto &rb2d = entity.GetComponent<RigidBody2DComponent>();
+		const auto& transform = entity.GetComponent<TransformComponent>();
+
+		Utils::RecreateFixture(rb2d, bc, transform);
+	}
+
 	static const b2EdgeShape& Getb2EdgeShapeFromBox(const BoxCollider2DComponent& collider, Scene* scene, Side side)
 	{
 		EG_PROFILE_FUNCTION();
@@ -1443,6 +1468,32 @@ namespace eg
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CircleCollider2DComponent>().RestitutionThreshold = restitutionThreshold;
+	}
+
+	static bool CircleCollider2DComponent_IsSensor(UUID uuid)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<CircleCollider2DComponent>().IsSensor;
+	}
+
+	//TODO: Implement creating a new fixture for the circle collider
+	static void CircleCollider2DComponent_SetSensor(UUID uuid, bool isSensor)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene *scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		auto& cc = entity.GetComponent<CircleCollider2DComponent>();
+		cc.IsSensor = isSensor;
+
+		if(!entity.HasComponent<RigidBody2DComponent>())
+			return;
+
+		const auto& rb = entity.GetComponent<RigidBody2DComponent>();
+		const auto& transform = entity.GetComponent<TransformComponent>();
+
+		Utils::RecreateFixture(rb, cc, transform);
 	}
 
 	static bool CircleCollider2DComponent_CollidesWith(UUID uuid, UUID other)
@@ -2079,6 +2130,8 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetRestitution);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetRestitutionThreshold);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetRestitutionThreshold);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_IsSensor);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetSensor);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_CollidesWith);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_CollidesWithBox);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_CollidesWithPoint);
@@ -2103,6 +2156,8 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_SetRestitution);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_GetRestitutionThreshold);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_SetRestitutionThreshold);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_IsSensor);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_SetSensor);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWith);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithCircle);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithPoint);
