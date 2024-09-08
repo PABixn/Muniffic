@@ -422,8 +422,13 @@ namespace eg {
 				ImGui::EndDragDropTarget();
 			}
 
-			
-			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+			m_Context->m_Registry.each([&](auto entityID)
+				{
+					Entity entity{ entityID, m_Context.get() };
+					DrawEntityNode(entity);
+				});
+
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered() || !m_Context->GetRegistry().valid(m_SelectionContext))
 			{
 				m_SelectionContext = {};
 			}

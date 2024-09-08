@@ -294,6 +294,7 @@ namespace eg {
 			out << YAML::Key << "RestitutionThreshold" << YAML::Value << bc.RestitutionThreshold;
 			out << YAML::Key << "IsInherited" << YAML::Value << bc.isInherited;
 			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << bc.isInheritedInChildren;
+			out << YAML::Key << "IsSensor" << YAML::Value << bc.IsSensor;
 			out << YAML::EndMap; // BoxCollider2DComponent
 		}
 
@@ -310,6 +311,7 @@ namespace eg {
 			out << YAML::Key << "RestitutionThreshold" << YAML::Value << cc.RestitutionThreshold;
 			out << YAML::Key << "IsInherited" << YAML::Value << cc.isInherited;
 			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << cc.isInheritedInChildren;
+			out << YAML::Key << "IsSensor" << YAML::Value << cc.IsSensor;
 			out << YAML::EndMap; // CircleCollider2DComponent
 		}
 
@@ -670,6 +672,8 @@ namespace eg {
 					bc.Friction = boxCollider2DComponent["Friction"].as<float>();
 					bc.Restitution = boxCollider2DComponent["Restitution"].as<float>();
 					bc.RestitutionThreshold = boxCollider2DComponent["RestitutionThreshold"].as<float>();
+					if(boxCollider2DComponent["IsSensor"])
+						bc.IsSensor = boxCollider2DComponent["IsSensor"].as<bool>();
 
 					if(boxCollider2DComponent["IsInherited"])
 						bc.isInherited = boxCollider2DComponent["IsInherited"].as<bool>();
@@ -687,6 +691,8 @@ namespace eg {
 					cc.Friction = circleCollider2DComponent["Friction"].as<float>();
 					cc.Restitution = circleCollider2DComponent["Restitution"].as<float>();
 					cc.RestitutionThreshold = circleCollider2DComponent["RestitutionThreshold"].as<float>();
+					if(circleCollider2DComponent["IsSensor"])
+						cc.IsSensor = circleCollider2DComponent["IsSensor"].as<bool>();
 
 					if(circleCollider2DComponent["IsInherited"])
 						cc.isInherited = circleCollider2DComponent["IsInherited"].as<bool>();
