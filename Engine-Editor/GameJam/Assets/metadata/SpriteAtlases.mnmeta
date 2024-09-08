@@ -1,2 +1,64 @@
 Resources:
-  []
+  - UUID: 5888714431366952978
+    ParentDirectory: 6903827892183295655
+    ResourceName: double_girl
+    Extension: .spriteatlas
+    Width: 1919
+    Height: 1047
+    Channels: 4
+    Sprites:
+      []
+  - UUID: 5293946085646119850
+    ParentDirectory: 6903827892183295655
+    ResourceName: blue_boy
+    Extension: .spriteatlas
+    Width: 1920
+    Height: 1080
+    Channels: 4
+    Sprites:
+      - 1823514424318895694
+  - UUID: 4861071637507380614
+    ParentDirectory: 6903827892183295655
+    ResourceName: desperate_girl
+    Extension: .spriteatlas
+    Width: 1920
+    Height: 1080
+    Channels: 4
+    Sprites:
+      []
+  - UUID: 851817904676949062
+    ParentDirectory: 6903827892183295655
+    ResourceName: sus_girl
+    Extension: .spriteatlas
+    Width: 1920
+    Height: 1080
+    Channels: 4
+    Sprites:
+      []
+  - UUID: 8799216112340029022
+    ParentDirectory: 6903827892183295655
+    ResourceName: girl_with_heart
+    Extension: .spriteatlas
+    Width: 1920
+    Height: 1080
+    Channels: 4
+    Sprites:
+      []
+  - UUID: 8368229286557484278
+    ParentDirectory: 6903827892183295655
+    ResourceName: dead_girl
+    Extension: .spriteatlas
+    Width: 1920
+    Height: 1080
+    Channels: 4
+    Sprites:
+      []
+  - UUID: 8655332356667470773
+    ParentDirectory: 6903827892183295655
+    ResourceName: dead_heart_girl
+    Extension: .spriteatlas
+    Width: 1920
+    Height: 1080
+    Channels: 4
+    Sprites:
+      []

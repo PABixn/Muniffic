@@ -1,2 +1,11 @@
 Resources:
-  []
+  - UUID: 1823514424318895694
+    ParentDirectory: 3026753407213625090
+    ResourceName: blue_boy0
+    Extension: ""
+    Texture: 5367499494676534865
+    TexCoords:
+      - [0, 0]
+      - [1, 0]
+      - [1, 1]
+      - [0, 1]

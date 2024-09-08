@@ -1,2 +1,11 @@
 Resources:
-  []
+  - UUID: 3257965947837148062
+    ParentDirectory: -8686812532832218501
+    ResourceName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore0
+    Extension: ""
+    Texture: 5471553183538401854
+    TexCoords:
+      - [0, 0]
+      - [1, 0]
+      - [1, 1]
+      - [0, 1]

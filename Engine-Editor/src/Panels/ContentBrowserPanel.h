@@ -24,15 +24,18 @@ namespace eg {
 	private:
 		UUID m_BaseDirectory;
 		UUID m_CurrentDirectory;
-		void DrawCenteredText(const std::string& text, const float& cellSize);
+		//void DrawCenteredText(const std::string& text, const float& cellSize);
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_ImageIcon;
+		Ref<Texture2D> m_PlusIcon;
+		Ref<Texture2D> m_ArrowIcon;
 		ImFont* m_PoppinsRegularFont;
 		Scope<DeleteFilePanel> m_DeleteFilePanel;
 		Scope<RenameFolderPanel> m_RenameFolderPanel;
 		Scope<RenameResourcePanel> m_RenameResourcePanel;
 		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel;
 		Scope<CreateDirectoryPanel> m_CreateDirectoryPanel;
+
 	};
 }

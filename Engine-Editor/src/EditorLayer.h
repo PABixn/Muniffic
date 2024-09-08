@@ -132,7 +132,12 @@ namespace eg {
 		UnsavedChangesPanel* m_UnsavedChangesPanel;
 		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
 		
-
+	//styles
+	public:
+		ImVec4 m_LightTextShade = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
+		ImVec4 m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
+		ImVec4 m_LightShade = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
+		ImVec4 m_NormalShade = ImVec4(0.192f,0.157f,0.267f,1.0f);
 	};
 
 }

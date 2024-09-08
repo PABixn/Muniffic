@@ -1,2 +1,10 @@
 Resources:
-  []
+  - UUID: 1923243149448827639
+    ParentDirectory: -5823828235932176346
+    ResourceName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
+    Extension: .spriteatlas
+    Width: 604
+    Height: 569
+    Channels: 3
+    Sprites:
+      - 3257965947837148062

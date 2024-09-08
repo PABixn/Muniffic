@@ -233,12 +233,12 @@ namespace eg
 
 		style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0, 0, 0, 0);
 		style.Colors[ImGuiCol_HeaderActive] = ImVec4(0, 0, 0, 0);
-		style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
+		style.Colors[ImGuiCol_TextDisabled] = m_LightTextShade;
 
 		//ImGui::Image((ImTextureID)m_LogoIcon->GetRendererID(),ImVec2(30,30));
 		//ImGui::SameLine();
 		ImGui::PushFont(m_Poppins_SemiBold_Font);
-		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(198, 187, 226,255));
+		ImGui::PushStyleColor(ImGuiCol_Text, m_LightTextShade);
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -417,7 +417,7 @@ namespace eg
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0.0f, 2.0f});
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{0.0f, 0.0f});
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.0f, 0.0f, 0.0f, 0.0f});
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.19f, 0.16f, 0.27f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, m_NormalShade);
 		auto &colors = ImGui::GetStyle().Colors;
 		auto &buttonHovered = colors[ImGuiCol_ButtonHovered];
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f});

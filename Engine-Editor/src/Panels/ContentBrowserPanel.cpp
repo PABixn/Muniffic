@@ -16,6 +16,8 @@ namespace eg
 	{
 		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
+		m_PlusIcon = Texture2D::Create("resources/icons/contentBrowser/PlusIcon.png");
+		m_ArrowIcon = Texture2D::Create("resources/icons/contentBrowser/ArrowIcon.png");
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
 		auto& io = ImGui::GetIO();
 		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
@@ -33,12 +35,15 @@ namespace eg
 
 	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)
 	{
-		static float thumbnailSize = 128.0f;
+		static float thumbnailSize = 100.0f;
 
 		ImGui::PushID(name.c_str());
+
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+
 		ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
+		ImGui::PushFont(m_PoppinsRegularFont);
 		if (ImGui::BeginPopupContextItem("FileOptions"))
 		{
 			if (ImGui::MenuItem("Delete"))
@@ -71,6 +76,7 @@ namespace eg
 
 		ImGui::NextColumn();
 
+		ImGui::PopFont();
 		ImGui::PopID();
 	}
 
@@ -90,15 +96,44 @@ namespace eg
 		if (m_CreateDirectoryPanel->IsShown())
 			m_CreateDirectoryPanel->OnImGuiRender();
 
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::Begin("Content Browser");
 
+		ImGuiStyle& style = ImGui::GetStyle();
+		auto btnColor = style.Colors[ImGuiCol_Button];
+		auto btnColorHovered = style.Colors[ImGuiCol_ButtonHovered];
+		auto btnColorActive = style.Colors[ImGuiCol_ButtonActive];
+
+		style.Colors[ImGuiCol_Button] = ImVec4(0, 0, 0, 0);
+		style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0, 0, 0, 0);
+		style.Colors[ImGuiCol_ButtonActive] = ImVec4(0, 0, 0, 0);
+		ImGui::PushFont(m_PoppinsRegularFont);
+
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
+		
+
 		if (m_CurrentDirectory != AssetDirectoryManager::getRootDirectoryUUID()) {
-			if (ImGui::Button("<-"))
+
+			drawList->ChannelsSplit(2);
+			drawList->ChannelsSetCurrent(1);
+			if (ImGui::ImageButton((ImTextureID)m_ArrowIcon->GetRendererID(), { 30, 30 }))
 			{
 				UUID oldPath = m_CurrentDirectory;
 				m_CurrentDirectory = AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory);
 				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
+			drawList->ChannelsSetCurrent(0);
+			ImVec2 buttonPos = ImGui::GetItemRectMin();
+			ImVec2 buttonSize = ImGui::GetItemRectSize();
+
+			ImVec2 buttonCenter = ImVec2(buttonPos.x + buttonSize.x * 0.5f, buttonPos.y + buttonSize.y * 0.5f);
+
+			if (ImGui::IsItemHovered() || ImGui::IsItemActive()) {
+				drawList->AddCircleFilled(buttonCenter, 20.0f, ImGui::ColorConvertFloat4ToU32(
+					static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade
+				));
+			}
+			drawList->ChannelsMerge();
 
 			if (ImGui::BeginDragDropTarget())
 			{
@@ -116,13 +151,28 @@ namespace eg
 				ImGui::EndDragDropTarget();
 			}
 		}
+		
 
 		ImGui::SameLine();
-
-		if(ImGui::Button("+"))
+		drawList->ChannelsSplit(2);
+		drawList->ChannelsSetCurrent(1);
+		if(ImGui::ImageButton((ImTextureID)m_PlusIcon->GetRendererID(), ImVec2(30,30)))
 		{
 			ImGui::OpenPopup("CreateNewResource");
 		}
+
+		drawList->ChannelsSetCurrent(0);
+		ImVec2 buttonPos = ImGui::GetItemRectMin();
+		ImVec2 buttonSize = ImGui::GetItemRectSize();
+
+		ImVec2 buttonCenter = ImVec2(buttonPos.x + buttonSize.x * 0.5f, buttonPos.y + buttonSize.y * 0.5f);
+
+		if (ImGui::IsItemHovered() || ImGui::IsItemActive()) {
+			drawList->AddCircleFilled(buttonCenter, 20.0f, ImGui::ColorConvertFloat4ToU32(
+				static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade
+			));
+		}
+		drawList->ChannelsMerge();
 
 		if (ImGui::BeginPopup("CreateNewResource"))
 		{
@@ -139,8 +189,8 @@ namespace eg
 		static char buffer[256];
 		ImGui::InputText("##Filter", buffer, 256);
 
-		static float padding = 16.0f;
-		static float thumbnailSize = 128.0f;
+		static float padding = 25.0f;
+		static float thumbnailSize = 100.0f;
 		float cellSize = thumbnailSize + padding;
 
 		float panelWidth = ImGui::GetContentRegionAvail().x;
@@ -232,13 +282,17 @@ namespace eg
 
 		float size = thumbnailSize, offset = padding;
 
-		if(ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512))
-			Commands::ExecuteRawValueCommand(&thumbnailSize, size, std::string("ContentBrowserPanel-Thumbnail Size"));
+		/*if (ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512))
+			Commands::ExecuteRawValueCommand(&thumbnailSize, size, std::string("ContentBrowserPanel-Thumbnail Size"));*/
 			
-		if(ImGui::SliderFloat("Padding", &padding, 0, 32))
-			Commands::ExecuteRawValueCommand(&padding, offset, std::string("ContentBrowserPanel-Padding"));
-
+		/*if (ImGui::SliderFloat("Padding", &padding, 0, 32))
+			Commands::ExecuteRawValueCommand(&padding, offset, std::string("ContentBrowserPanel-Padding"));*/
+		ImGui::PopFont();
 		ImGui::End();
+		ImGui::PopStyleColor();
+		style.Colors[ImGuiCol_Button] = btnColor;
+		style.Colors[ImGuiCol_ButtonHovered] = btnColorHovered;
+		style.Colors[ImGuiCol_ButtonActive] = btnColorActive;
 	}
 
 }
