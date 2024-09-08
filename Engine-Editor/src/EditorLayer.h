@@ -27,7 +27,7 @@ namespace eg {
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
-		int CompileCustomScripts(); 
+		const std::string CompileCustomScripts(); 
 		//bool CompileCustomScripts(const std::filesystem::path& path, const std::string& projectName); //returns true if successful, path to where the cmakelists.txt are (path should end with Assets/Scripts)
 
 	private:

@@ -835,7 +835,7 @@ namespace eg {
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
 				ImGui::Unindent();
-				static int result;
+				static std::string result;
 				if (PrettyButton("Compile Scripts"))
 				{
 					EditorLayer* editorLayer = static_cast<EditorLayer*>(Application::Get().GetFirstLayer());
@@ -846,7 +846,7 @@ namespace eg {
 				bool open = true;
 				if (ImGui::BeginPopupModal("Cmake compilation completed", &open))
 				{
-					if (result == 0)
+					if (result == "")
 					{
 						ImGui::Text("cmake compilation success");
 					}

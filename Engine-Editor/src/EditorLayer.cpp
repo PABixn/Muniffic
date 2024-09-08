@@ -847,12 +847,15 @@ namespace eg
 		return true;
 	}
 
-	int EditorLayer::CompileCustomScripts()
+	const std::string EditorLayer::CompileCustomScripts()
 	{
 		std::filesystem::path projectDirectory =  m_CurrentProject->GetProjectDirectory() / "Assets" / "Scripts";
 		const std::string& projectName = m_CurrentProject->GetProjectName();
 		std::string command = "cd " + projectDirectory.string() + " && cmake -DPROJECT_NAME=" + projectName + " . && cmake --build .";
-		return system(command.c_str());
+		if(system(command.c_str())!=0) return "bad";
+		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
+		ScriptEngine::ReloadAssembly();
+		return "gut";
 	}
 
 	void EditorLayer::NewProject()
