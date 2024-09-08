@@ -430,9 +430,32 @@ namespace eg
         #endregion
 
         #region Input
-
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool Input_IsKeyDown(KeyCode keyCode);
+        internal extern static string Input_GetClipboardContent();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetClipboardContent(string content);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string Input_GetKeyName(KeyCode keycode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsKeyPressed(KeyCode keycode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsKeyReleased(KeyCode keycode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsMouseButtonPressed(MouseCode button);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsMouseButtonReleased(MouseCode button);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsCursorOnWindow();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float Input_GetCursorPositonX();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float Input_GetCursorPositonY();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetCursorMode(int mode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetStickyKeysEnabled(bool enable);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetStickyMouseButtonsEnabled(bool enable);
         #endregion
 
         #region TextComponent

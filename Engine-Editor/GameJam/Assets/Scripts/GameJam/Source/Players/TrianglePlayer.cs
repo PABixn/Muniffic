@@ -44,7 +44,7 @@ namespace Game
                 lastJump = 0f;
             }
 
-            if (Input.IsKeyDown(KeyCode.W) && isGrounded)
+            if (Input.IsKeyPressed(KeyCode.W) && isGrounded)
             {
                 rigidBody.ApplyLinearImpulse(new Vector2(0, jumpForce * 10));
                 isGrounded = false;

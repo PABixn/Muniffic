@@ -34,7 +34,7 @@ namespace Game
 
             base.UpdatePosition(ts);
 
-            if(lastShot >= attackCooldown && Input.IsKeyDown(KeyCode.Space))
+            if(lastShot >= attackCooldown && Input.IsKeyPressed(KeyCode.Space))
             {
                 lastShot = 0;
                 projectiles.Add(new Projectile(new Vector2(transform.translation.X + collideSize.X * direction.X + 0.1f * direction.X, transform.translation.Y), Vector2.NormalizeTo(direction, shotSpeed), (int)damage, ProjectileType.Normal));
