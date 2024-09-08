@@ -17,14 +17,9 @@ namespace eg {
 	}
 
 	Application* CreateApplication(ApplicationCommandLineArgs args) {
-		//m_WelcomingPanel = CreateScope<WelcomingPanel>();
 		ApplicationSpecification spec;
 		spec.Name = "Editor";
 		spec.CommandLineArgs = args;
-		//Welcome welcome = new Welcome(spec);
-
-		//if(Welcome)
-		//return new Welcome(spec);
 
 		return new Editor(spec);
 	};

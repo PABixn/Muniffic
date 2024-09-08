@@ -130,7 +130,8 @@ namespace eg
 		case SceneState::Play:
 		{
 			// Update
-			m_RuntimeScene->OnUpdateRuntime(ts);
+
+			m_RuntimeScene->OnUpdateRuntime(ts, oldTime);
 
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
