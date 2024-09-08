@@ -995,24 +995,28 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Restitution, restitution, entity, "BoxCollider2DComponent-Restitution");
 			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
+			if (ImGui::Checkbox("Is Sensor", &component.IsSensor))
+				Commands::ExecuteRawValueCommand<bool, BoxCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "BoxCollider2DComponent-Is Sensor");
 		}, m_Context);
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [entity](auto& component) {
 			float radius = component.Radius, density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset;
 
-			if(ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
+			if (ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
 				Commands::ExecuteRawValueCommand<glm::vec2, CircleCollider2DComponent>(&component.Offset, offset, entity, "CircleCollider2DComponent-Offset");
-			if(ImGui::DragFloat("Radius", &component.Radius, 0.1f))
+			if (ImGui::DragFloat("Radius", &component.Radius, 0.1f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Radius, radius, entity, "CircleCollider2DComponent-Radius");
-			if(ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
+			if (ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Density, density, entity, "CircleCollider2DComponent-Density");
-			if(ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
+			if (ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Friction, friction, entity, "CircleCollider2DComponent-Friction");
-			if(ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
+			if (ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Restitution, restitution, entity, "CircleCollider2DComponent-Restitution");
-			if(ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
+			if (ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
+			if (ImGui::Checkbox("Is Sensor", &component.IsSensor))
+				Commands::ExecuteRawValueCommand<bool, CircleCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "CircleCollider2DComponent-Is Sensor");
 			}, m_Context);
 
 		DrawComponent<TextComponent>("Text Renderer", entity, [entity](auto& component)

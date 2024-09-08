@@ -596,6 +596,7 @@ namespace eg {
 			fixtureDef.restitution = bc.Restitution;
 			fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
 			fixtureDef.userData.pointer = entity.GetUUID();
+			fixtureDef.isSensor = bc.IsSensor;
 
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			bc.RuntimeFixture = fixture;
@@ -616,6 +617,7 @@ namespace eg {
 			fixtureDef.restitution = cc.Restitution;
 			fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
 			fixtureDef.userData.pointer = entity.GetUUID();
+			fixtureDef.isSensor = cc.IsSensor;
 
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			cc.RuntimeFixture = fixture;
@@ -671,6 +673,7 @@ namespace eg {
 				fixtureDef.restitution = bc.Restitution;
 				fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
 				fixtureDef.userData.pointer = e.GetUUID();
+				fixtureDef.isSensor = bc.IsSensor;
 
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				bc.RuntimeFixture = fixture;
@@ -691,6 +694,7 @@ namespace eg {
 				fixtureDef.restitution = cc.Restitution;
 				fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
 				fixtureDef.userData.pointer = e.GetUUID();
+				fixtureDef.isSensor = cc.IsSensor;
 				
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				cc.RuntimeFixture = fixture;
