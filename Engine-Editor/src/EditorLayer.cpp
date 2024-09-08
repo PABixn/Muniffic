@@ -871,6 +871,7 @@ namespace eg
 		Project::New();
 
 		Project::SetProjectName(m_NameNewProjectPanel->projectName);
+		Application::Get().ChangeNameWithCurrentProject(true);
 		Project::SetScenesDirectory("Scenes");
 		Project::SetProjectDirectory(absolutePath.parent_path());
 
@@ -931,6 +932,8 @@ namespace eg
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 			m_ContentBrowserPanel->InitPanels();
+			Application::Get().ChangeNameWithCurrentProject(true);
+
 
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		}
