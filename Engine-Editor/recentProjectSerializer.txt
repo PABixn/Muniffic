@@ -1,0 +1,4 @@
+RecentProjects:
+  Projects0: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\GameJam\Game.mnproj
+  Projects1: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\test21\test21.mnproj
+  Projects2: C:\Users\macie\Documents\GitHub\Muniffic\Engine-Editor\tets837373\tets837373.mnproj

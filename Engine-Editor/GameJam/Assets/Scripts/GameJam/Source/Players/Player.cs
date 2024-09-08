@@ -14,6 +14,7 @@ namespace Game
         public Vector2 velocity;
         public bool isGrounded;
         public float friction;
+        public float gravityMultiplier;
         public float damage;
         public float attackCooldown;
         public float health;
@@ -26,6 +27,7 @@ namespace Game
             direction = Vector2.Zero;
             velocity = Vector2.Zero;
             friction = 0.8f;
+            gravityMultiplier = 0.5f;
             this.isGrounded = true;
             transform = GetComponent<TransformComponent>();
             rigidBody = GetComponent<RigidBody2DComponent>();

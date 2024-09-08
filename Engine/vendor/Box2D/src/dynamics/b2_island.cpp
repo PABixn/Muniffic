@@ -210,6 +210,7 @@ void b2Island::Solve(b2Profile* profile, const b2TimeStep& step, const b2Vec2& g
 			// Integrate velocities.
 			v += h * b->m_invMass * (b->m_gravityScale * b->m_mass * gravity + b->m_force);
 			w += h * b->m_invI * b->m_torque;
+			
 
 			// Apply damping.
 			// ODE: dv/dt + c * v = 0

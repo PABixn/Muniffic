@@ -919,7 +919,7 @@ namespace eg
 
 		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		b2Vec2 velocity = b2Vec2(linearVelocity->x, linearVelocity->y);
+		b2Vec2 velocity = b2Vec2(linearVelocity->x, linearVelocity->y*0);
 		body->SetLinearVelocity(velocity);
 	}
 
@@ -975,6 +975,390 @@ namespace eg
 
 		entity.GetComponent<RigidBody2DComponent>().FixedRotation = fixedRotation;
 	}
+
+	static void RigidBody2DComponent_SetGravityMultiplier(UUID entityID, float newMultiplier)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EG_CORE_ASSERT(entity);
+
+		entity.GetComponent<RigidBody2DComponent>().GravityMultiplier = newMultiplier;
+	}
+
+	static float RigidBody2DComponent_GetGravityMultiplier(UUID entityID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EG_CORE_ASSERT(entity);
+
+		return entity.GetComponent<RigidBody2DComponent>().GravityMultiplier;
+	}
+
+	static void RigidBody2DComponent_ApplyForce(UUID uuid, glm::vec2* force, glm::vec2* point, bool wake)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->ApplyForce(b2Vec2(force->x, force->y), b2Vec2(point->x, point->y), wake);
+	}
+
+	static void RigidBody2DComponent_ApplyForceToCenter(UUID uuid, glm::vec2* force, bool wake)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->ApplyForceToCenter(b2Vec2(force->x, force->y), wake);
+	}
+
+	static void RigidBody2DComponent_ApplyTorque(UUID uuid,float torque, bool wake)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->ApplyTorque(torque, wake);
+	}
+
+	static void RigidBody2DComponent_SetEnabled(UUID uuid, bool enabled)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetEnabled(enabled);
+	}
+
+	static bool RigidBody2DComponent_IsEnabled(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->IsEnabled();
+	}
+
+	static void RigidBody2DComponent_SetSleepingAllowed(UUID uuid, bool allowed)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetSleepingAllowed(allowed);
+	}
+
+	static bool RigidBody2DComponent_IsSleepingAllowed(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->IsSleepingAllowed();
+	}
+
+	static float RigidBody2DComponent_GetAngularDamping(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetAngularDamping();
+	}
+
+	static void RigidBody2DComponent_SetAngularDamping(UUID uuid, float angularDamping)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetAngularDamping(angularDamping);
+	}
+
+	static void RigidBody2DComponent_SetAngularVelocity(UUID uuid, float velocity)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetAngularVelocity(velocity);
+	}
+
+	static float RigidBody2DComponent_GetAngularVelocity(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetAngularVelocity();
+	}
+
+	static b2ContactEdge* RigidBody2DComponent_GetContactList(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetContactList();
+	}
+
+	static b2JointEdge* RigidBody2DComponent_GetJointList(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetJointList();
+	}
+
+	static float RigidBody2DComponent_GetLinearDamping(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetLinearDamping();
+	}
+
+	static void RigidBody2DComponent_SetLinearDamping(UUID uuid, float linearDamping)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetLinearDamping(linearDamping);
+	}
+
+	static b2Vec2 RigidBody2DComponent_GetLocalPoint(UUID uuid, const b2Vec2& worldPoint)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetLocalPoint(worldPoint);
+	}
+
+	static b2Vec2 RigidBody2DComponent_GetLocalVector(UUID uuid, const b2Vec2& worldVector)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetLocalVector(worldVector);
+	}
+
+	static float RigidBody2DComponent_GetMass(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetMass();
+	}
+
+	static void RigidBody2DComponent_GetMassData(UUID uuid, b2MassData* massData)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->GetMassData(massData);
+	}
+
+	static void RigidBody2DComponent_SetMassData(UUID uuid, b2MassData* massData )
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetMassData(massData);
+	}
+
+	static b2Vec2 RigidBody2DComponent_GetPosition(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetPosition();
+	}
+
+	static b2Transform RigidBody2DComponent_GetTransform(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetTransform();
+	}
+
+	static void RigidBody2DComponent_SetTransform(UUID uuid, b2Vec2& position, float angle)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetTransform(position, angle);
+	}
+
+	static b2BodyUserData RigidBody2DComponent_GetUserData(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetUserData();
+	}
+
+	static b2Vec2 RigidBody2DComponent_GetWorldPoint(UUID uuid, const b2Vec2& localPoint)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetWorldPoint(localPoint);
+	}
+
+	static b2Vec2 RigidBody2DComponent_GetWorldVector(UUID uuid, const b2Vec2& localVector)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->GetWorldVector(localVector);
+	}
+
+	static bool RigidBody2DComponent_IsAwake(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->IsAwake();
+	}
+
+	static bool RigidBody2DComponent_IsBullet(UUID uuid)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		return body->IsBullet();
+	}
+
+	static void RigidBody2DComponent_SetAwake(UUID uuid, bool awake)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetAwake(awake);
+	}
+
+	static void RigidBody2DComponent_SetBullet(UUID uuid, bool bullet)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->SetBullet(bullet);
+	}
+
+
+
+
 #pragma endregion
 
 #pragma region BoxCollider2D
@@ -2066,6 +2450,39 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetType);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_IsFixedRotation);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetFixedRotation);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetGravityMultiplier);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetGravityMultiplier);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyForce);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyForceToCenter);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_ApplyTorque);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetEnabled);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_IsEnabled);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetSleepingAllowed);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_IsSleepingAllowed);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetAngularDamping);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetAngularDamping);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetAngularVelocity);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetAngularVelocity);
+
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetContactList);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetJointList);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetLinearDamping);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetLinearDamping);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetLocalPoint);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetLocalVector);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetMass);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetMassData);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetMassData);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetPosition);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetTransform);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetTransform);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetUserData);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetWorldPoint);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetWorldVector);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_IsAwake);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetAwake);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_IsBullet);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetBullet);
 
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetOffset);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetOffset);

@@ -12,6 +12,7 @@ namespace eg {
 	Ref<Project> Project::New()
 	{
 		s_ActiveProject = CreateRef<Project>();
+
 		ConsolePanel::Log("File: Project.cpp - Project created successfully", ConsolePanel::LogType::Info);
 		return s_ActiveProject;
 	}
