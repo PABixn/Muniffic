@@ -114,6 +114,7 @@ namespace eg {
 		glm::vec4 Color { 1.0f, 1.0f, 1.0f, 1.0f };
 		float Thickness = 1.0f;
 		float Fade = 0.005f;
+		bool isSensor = false;
 
 		CircleRendererComponent() = default;
 		CircleRendererComponent(const CircleRendererComponent&) = default;
@@ -204,6 +205,8 @@ namespace eg {
 		float Restitution = 0.0f;
 		float RestitutionThreshold = 0.5f;
 
+		bool IsSensor = false;
+
 		void* RuntimeFixture = nullptr;
 		
 		BoxCollider2DComponent() = default;
@@ -219,6 +222,8 @@ namespace eg {
 		float Friction = 0.5f;
 		float Restitution = 0.0f;
 		float RestitutionThreshold = 0.5f;
+
+		bool IsSensor = false;
 
 		//Storage for runtime
 		void* RuntimeFixture = nullptr;
