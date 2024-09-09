@@ -462,6 +462,7 @@ namespace eg
 	static void TransformComponent_GetTranslation(UUID uuid, glm::vec3 *outTranslation)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
 		*outTranslation = entity.GetComponent<TransformComponent>().Translation;
 	}
@@ -469,13 +470,21 @@ namespace eg
 	static void TransformComponent_SetTranslation(UUID uuid, glm::vec3 *translation)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
-		entity.GetComponent<TransformComponent>().Translation = *translation;
+		if (entity.HasComponent<RigidBody2DComponent>() && scene->IsRunning())
+		{
+			RigidBody2DComponent& rb = entity.GetComponent<RigidBody2DComponent>();
+			((b2Body*)rb.RuntimeBody)->SetTransform({ translation->x, translation->y }, ((b2Body*)rb.RuntimeBody)->GetAngle());
+		}
+		else 
+			entity.GetComponent<TransformComponent>().Translation = *translation;
 	}
 
 	static void TransformComponent_GetRotation(UUID uuid, glm::vec3 *outRotation)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
 		*outRotation = entity.GetComponent<TransformComponent>().Rotation;
 	}
@@ -483,13 +492,21 @@ namespace eg
 	static void TransformComponent_SetRotation(UUID uuid, glm::vec3 *rotation)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
-		entity.GetComponent<TransformComponent>().Rotation = *rotation;
+		if (entity.HasComponent<RigidBody2DComponent>() && scene->IsRunning())
+		{
+			RigidBody2DComponent& rb = entity.GetComponent<RigidBody2DComponent>();
+			((b2Body*)rb.RuntimeBody)->SetTransform({ ((b2Body*)rb.RuntimeBody)->GetPosition().x, ((b2Body*)rb.RuntimeBody)->GetPosition().y }, glm::radians(rotation->z));
+		}
+		else
+			entity.GetComponent<TransformComponent>().Rotation = *rotation;
 	}
 
 	static void TransformComponent_GetScale(UUID uuid, glm::vec3 *outScale)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
 		*outScale = entity.GetComponent<TransformComponent>().Scale;
 	}
@@ -497,8 +514,32 @@ namespace eg
 	static void TransformComponent_SetScale(UUID uuid, glm::vec3 *scale)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
-		entity.GetComponent<TransformComponent>().Scale = *scale;
+		if (entity.HasComponent<RigidBody2DComponent>() && scene->IsRunning())
+		{
+			if (entity.HasComponent<BoxCollider2DComponent>()) {
+				RigidBody2DComponent& rb = entity.GetComponent<RigidBody2DComponent>();
+				((b2Body*)rb.RuntimeBody)->DestroyFixture(((b2Body*)rb.RuntimeBody)->GetFixtureList());
+				b2FixtureDef fixtureDef;
+				b2PolygonShape shape;
+				shape.SetAsBox(scale->x / 2.0f, scale->y / 2.0f);
+				fixtureDef.shape = &shape;
+				((b2Body*)rb.RuntimeBody)->CreateFixture(&fixtureDef);
+			}
+			else if (entity.HasComponent<CircleCollider2DComponent>()) {
+				RigidBody2DComponent& rb = entity.GetComponent<RigidBody2DComponent>();
+				((b2Body*)rb.RuntimeBody)->DestroyFixture(((b2Body*)rb.RuntimeBody)->GetFixtureList());
+				b2FixtureDef fixtureDef;
+				b2CircleShape shape;
+				shape.m_radius = scale->x / 2.0f;
+				fixtureDef.shape = &shape;
+				((b2Body*)rb.RuntimeBody)->CreateFixture(&fixtureDef);
+			}
+		}
+		else {
+			entity.GetComponent<TransformComponent>().Scale = *scale;
+		}
 	}
 
 #pragma endregion

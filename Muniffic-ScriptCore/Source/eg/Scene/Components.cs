@@ -579,7 +579,7 @@ namespace eg
         }
 
 
-        public bool CollidesWith(ulong entityID)
+        public bool CollidesWith(long entityID)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
         }
