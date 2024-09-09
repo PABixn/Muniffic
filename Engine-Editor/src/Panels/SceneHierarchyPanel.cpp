@@ -422,11 +422,7 @@ namespace eg {
 				ImGui::EndDragDropTarget();
 			}
 
-			m_Context->m_Registry.each([&](auto entityID)
-				{
-					Entity entity{ entityID, m_Context.get() };
-					DrawEntityNode(entity);
-				});
+
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered() || !m_Context->GetRegistry().valid(m_SelectionContext))
 			{
@@ -1352,7 +1348,7 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
 			if (ImGui::Checkbox("Is Sensor", &component.IsSensor))
 				Commands::ExecuteRawValueCommand<bool, BoxCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "BoxCollider2DComponent-Is Sensor");
-		}, m_Context);
+		}, m_Context, ComponentIcons::BoxColliderIcon);
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [entity](auto& component) {
 			float radius = component.Radius, density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
@@ -1370,7 +1366,7 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Restitution, restitution, entity, "CircleCollider2DComponent-Restitution");
 			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
-			if (DrawComponentPropertyFloat("Is Sensor", &component.IsSensor))
+			if (DrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
 				Commands::ExecuteRawValueCommand<bool, CircleCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "CircleCollider2DComponent-Is Sensor");
 			}, m_Context, ComponentIcons::CircleColliderIcon);
 

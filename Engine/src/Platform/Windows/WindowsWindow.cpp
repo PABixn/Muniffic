@@ -116,6 +116,7 @@ namespace eg
 				}
 			}
 			Input::MouseCallback(button, action);
+
 		});
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) {

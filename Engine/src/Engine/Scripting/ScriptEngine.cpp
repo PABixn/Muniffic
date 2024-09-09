@@ -447,6 +447,7 @@ namespace eg
 
 	std::vector<Ref<ScriptInstance>> ScriptEngine::GetAllScriptInstances()
 	{
+		if (s_Data == nullptr) return std::vector<Ref<ScriptInstance>>();
 		std::vector<Ref<ScriptInstance>> result;
 		for (auto& [key, value] : s_Data->EntityInstances)
 			for (auto& [key, value] : value)
