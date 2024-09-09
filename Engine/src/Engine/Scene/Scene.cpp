@@ -131,7 +131,7 @@ namespace eg {
 	{
 		if (entity.GetParent().has_value())
 			entity.GetParent().value().RemoveChild(entity);
-		if (entity.HasComponent<RigidBody2DComponent>()) 
+		if (m_IsRunning && entity.HasComponent<RigidBody2DComponent>())
 		{
 			b2Body* entityBody = (b2Body*)entity.GetComponent<RigidBody2DComponent>().RuntimeBody;
 			m_PhysicsWorld->DestroyBody(entityBody);
