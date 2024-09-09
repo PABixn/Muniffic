@@ -24,6 +24,8 @@ namespace eg
 
 		assistantRespondingAnimation = ".";
 		m_IconCopy = Texture2D::Create("resources/icons/copyCode.png");
+
+		//assistantManager->InitVoiceAssistant();
 	}
 
 	AssistantPanel::~AssistantPanel()
@@ -146,7 +148,7 @@ namespace eg
 			return "Markdown";
 	}
 
-	void AssistantPanel::RenderAssistantMessage(const std::string& message) {
+	void AssistantPanel::RenderAssistantMessage(const std::string& message, int id) {
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
 		drawList->ChannelsSplit(3);
 		drawList->ChannelsSetCurrent(2);
@@ -154,6 +156,7 @@ namespace eg
 		float padding = 10.0f;
 		float maxBubbleWidth = ImGui::GetWindowSize().x * 0.6f;
 		float codeToolbarHeight = 30.0f;
+		int buttonIndex = 1;
 
 		std::stringstream stream(message);
 		std::string line, language, msg = "";
@@ -194,13 +197,14 @@ namespace eg
 					float iconCenterY = codeToolbarHeight / 2 - iconSize / 2;
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + iconCenterY / 2);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + bubbleWidth - padding * 2 - iconSize);
-					if (ImGui::ImageButton((ImTextureID)m_IconCopy->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1), 0))
+
+					if (ImGui::ImageButton((std::to_string(id) + std::to_string(buttonIndex)).c_str(), (ImTextureID)m_IconCopy->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1)))
 					{
 						ImGui::LogToClipboard();
 						ImGui::LogText(msg.c_str());
 						ImGui::LogFinish();
 					}
-
+					buttonIndex++;
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - iconSize - iconCenterY / 2);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding * 2.5);
 					ImGui::Text(GetLanguageSymbol(language).c_str());
@@ -297,7 +301,7 @@ namespace eg
 		for (Message* msg : assistantManager->GetMessages(threadID))
 		{
 			if(msg->role == "assistant")
-				RenderAssistantMessage(msg->content);
+				RenderAssistantMessage(msg->content, msg->id);
 			else
 				RenderUserMessage(msg->content);
 			lastMessageRole = msg->role;
@@ -325,10 +329,12 @@ namespace eg
 
 		ImGui::Separator();
 
+		ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
+
 		ImGui::Text("Message:");
 		ImGui::SameLine();
-		ImGui::InputTextMultiline("##", buffer, 1024);
-
+		ImGui::InputTextMultiline("##", buffer, 1024, {ImGui::GetWindowSize().x * 0.5f, 80}, ImGuiInputTextFlags_Wrapped);
+		ImGui::SameLine();
 		if (ImGui::Button("Send"))
 		{
 			std::thread t(DoMessage, assistantManager, threadID, buffer);

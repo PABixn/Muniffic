@@ -15,6 +15,26 @@ namespace eg
 		Init();
 	}
 
+	void AssistantManager::InitVoiceAssistant()
+	{
+		//PyEval_InitThreads();
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
+		PyObject* result = PyObject_CallObject(m_startVoiceAssistant, nullptr);
+
+		if (result == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to call startVoiceAssistant function");
+		}
+
+		std::string text = PyUnicode_AsUTF8(result);
+
+		EG_CORE_ERROR(text);
+
+		PyGILState_Release(gstate);
+	}
+
 	void AssistantManager::Init()
 	{
 		Py_Initialize();
@@ -46,11 +66,25 @@ namespace eg
 			EG_CORE_ERROR("Failed to append path to sysPath");
 		}
 
-		m_pModule = PyImport_ImportModule("main");
+		m_pModule = PyImport_ImportModule("assistant");
 
 		if (m_pModule == nullptr)
 		{
 			EG_CORE_ERROR("Failed to load Python module");
+		}
+
+		m_voiceAssistantModule = PyImport_ImportModule("voiceAssistant");
+
+		if (m_voiceAssistantModule == nullptr)
+		{
+			EG_CORE_ERROR("Failed to load Python module");
+		}
+
+		m_startVoiceAssistant = PyObject_GetAttrString(m_voiceAssistantModule, "StartVoiceAssistant");
+
+		if (m_startVoiceAssistant == nullptr)
+		{
+			EG_CORE_ERROR("Failed to load Python functions");
 		}
 
 		m_CreateAssistant = PyObject_GetAttrString(m_pModule, "create_assistant");
@@ -267,6 +301,7 @@ namespace eg
 			Message* messageObj = new Message();
 			messageObj->role = "assistant";
 			messageObj->content = message;
+			messageObj->id = m_Threads.at(threadID)->messages.size();
 			
 			m_Threads.at(threadID)->messages.push_back(messageObj);
 

@@ -14,7 +14,7 @@ namespace eg
 		void OnImGuiRender();
 		void RunMessage();
 		void RenderUserMessage(const std::string& message);
-		void RenderAssistantMessage(const std::string& message);
+		void RenderAssistantMessage(const std::string& message, int id = 0);
 		std::string GetLanguageSymbol(std::string language);
 
 	private:
