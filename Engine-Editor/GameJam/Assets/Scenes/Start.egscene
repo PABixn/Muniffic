@@ -29,12 +29,13 @@ Entities:
     RigidBody2DComponent:
       Body Type: Dynamic
       FixedRotation: false
+      GravityMultiplier: 1.0
       IsInherited: false
       IsInheritedInChildren: false
     CircleCollider2DComponent:
       Offset: [0, 0]
       Radius: 0.5
-      Density: 1
+      Density: 1.0
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
@@ -59,6 +60,7 @@ Entities:
     RigidBody2DComponent:
       Body Type: Static
       FixedRotation: false
+      GravityMultiplier: 1.0
       IsInherited: false
       IsInheritedInChildren: false
     BoxCollider2DComponent:

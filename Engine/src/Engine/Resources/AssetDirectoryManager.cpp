@@ -91,6 +91,8 @@ namespace eg
 		AssetDirectory* scripts = new AssetDirectory(UUID(), "Scripts", rootUUID);
 		
 		AssetDirectory* audio = new AssetDirectory(UUID(), "Audio", rootUUID);
+
+		AssetDirectory* scenes = new AssetDirectory(UUID(), "Scenes", rootUUID);
 	}
 
 	bool AssetDirectoryManager::moveAssetDirectory(UUID assetDirectoryUUID, UUID newParentUUID)

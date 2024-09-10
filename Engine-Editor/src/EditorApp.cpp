@@ -4,7 +4,6 @@
 #include "Engine/Resources/ResourceSerializer.h"
 
 namespace eg {
-
 	bool Editor::OnWindowClose(WindowCloseEvent& e)
 	{
 		if (GetIsSaved())
@@ -19,7 +18,7 @@ namespace eg {
 
 	Application* CreateApplication(ApplicationCommandLineArgs args) {
 		ApplicationSpecification spec;
-		spec.Name = "Muniffic editor";
+		spec.Name = "Editor";
 		spec.CommandLineArgs = args;
 
 		return new Editor(spec);

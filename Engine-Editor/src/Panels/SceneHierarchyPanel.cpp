@@ -951,6 +951,7 @@ namespace eg {
 		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [entity](auto& component) {
 			const char* bodyTypeString[] = { "Static", "Dynamic", "Kinematic"};
 			const char* currentBodyTypeString = bodyTypeString[(int)component.Type];
+			float* GravityMultiplier = &component.GravityMultiplier;
 			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
 			{
 				for (int i = 0; i < 2; i++)
@@ -973,6 +974,9 @@ namespace eg {
 
 			if(ImGui::Checkbox("Fixed Rotation", &component.FixedRotation))
 				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");
+
+			if (ImGui::DragFloat("Gravity multiplier", &component.GravityMultiplier, 0.1f))
+				Commands::ExecuteRawValueCommand<float, RigidBody2DComponent>(&component.GravityMultiplier, component.GravityMultiplier, entity, "RigidBody2DComponent-Gravity Multiplier");
 		}, m_Context);
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [entity](auto& component) {
