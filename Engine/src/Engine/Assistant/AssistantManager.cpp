@@ -18,6 +18,24 @@ namespace eg
 		Init();
 	}
 
+	void AssistantManager::SpeakText(std::string text)
+	{
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
+		PyObject* args = PyTuple_Pack(1, PyUnicode_FromString(text.c_str()));
+
+		if (args == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to create args object");
+		}
+
+		PyObject_CallObject(m_SpeakText, args);
+
+		PyGILState_Release(gstate);
+	
+	}
+
 	void AssistantManager::StartListening()
 	{
 		IsVoiceAssistantListening = true;
@@ -89,8 +107,9 @@ namespace eg
 		}
 
 		m_startVoiceAssistant = PyObject_GetAttrString(m_voiceAssistantModule, "StartVoiceAssistant");
+		m_SpeakText = PyObject_GetAttrString(m_voiceAssistantModule, "SpeakText");
 
-		if (m_startVoiceAssistant == nullptr)
+		if (m_startVoiceAssistant == nullptr && m_SpeakText == nullptr)
 		{
 			EG_CORE_ERROR("Failed to load Python functions");
 		}
@@ -310,6 +329,9 @@ namespace eg
 			messageObj->role = "assistant";
 			messageObj->content = message;
 			messageObj->id = m_Threads.at(threadID)->messages.size();
+
+			std::thread t([this, messageObj] { SpeakText(messageObj->content); });
+			t.detach();
 			
 			m_Threads.at(threadID)->messages.push_back(messageObj);
 

@@ -37,6 +37,7 @@ namespace eg
 		bool CheckIfAssistantExists(std::string assistantID);
 		bool TakeAction(std::string threadID, std::string runID, PyGILState_STATE gstate);
 
+		void SpeakText(std::string text);
 
 		std::vector<Message*> SetAssistantID(std::string assistantID) { m_AssistantID = assistantID; }
 		std::string GetAssistantID() { return m_AssistantID; }
@@ -60,6 +61,7 @@ namespace eg
 	private:
 		PyObject* m_voiceAssistantModule;
 		PyObject* m_startVoiceAssistant;
+		PyObject* m_SpeakText;
 		PyObject* m_pModule;
 		PyObject* m_CreateAssistant;
 		PyObject* m_CreateThread;

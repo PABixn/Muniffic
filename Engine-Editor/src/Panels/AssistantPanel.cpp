@@ -24,6 +24,7 @@ namespace eg
 
 		assistantRespondingAnimation = ".";
 		m_IconCopy = Texture2D::Create("resources/icons/copyCode.png");
+		m_IconSend = Texture2D::Create("resources/icons/sendIcon.png");
 	}
 
 	AssistantPanel::~AssistantPanel()
@@ -287,7 +288,7 @@ namespace eg
 
 	void AssistantPanel::OnImGuiRender()
 	{
-		if (assistantManager->GetVoiceAssistantListening() == false)
+		if (!assistantManager->GetVoiceAssistantListening())
 		{
 			std::thread t([this] { assistantManager->StartListening(); });
 			t.detach();
@@ -304,18 +305,24 @@ namespace eg
 		ImGui::Begin("Assistant Panel");
 
 		ImGui::Text("This is your conversation with Bob.");
-		ImGui::Text("Thread ID : % s", threadID.c_str());
+		ImGui::Text("Thread ID : %s", threadID.c_str());
 
 		ImGui::Separator();
+
+		float inputAreaHeight = 100.0f;
+		float availableHeight = ImGui::GetWindowSize().y - inputAreaHeight - ImGui::GetCursorPosY();
+
+		ImGui::BeginChild("Messages", ImVec2(ImGui::GetWindowSize().x, availableHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
 
 		std::string lastMessageRole = "";
 
 		for (Message* msg : assistantManager->GetMessages(threadID))
 		{
-			if(msg->role == "assistant")
+			if (msg->role == "assistant")
 				RenderAssistantMessage(msg->content, msg->id);
 			else
 				RenderUserMessage(msg->content);
+
 			lastMessageRole = msg->role;
 			ImGui::NewLine();
 		}
@@ -339,23 +346,38 @@ namespace eg
 			ImGui::NewLine();
 		}
 
-		ImGui::Separator();
+		ImGui::EndChild();
 
-		ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
+		ImGui::SetCursorPosY(ImGui::GetWindowSize().y - inputAreaHeight + 10);
 
-		ImGui::Text("Message:");
-		ImGui::SameLine();
-		ImGui::InputTextMultiline("##", buffer, 1024, {ImGui::GetWindowSize().x * 0.5f, 80}, ImGuiInputTextFlags_Wrapped);
-		ImGui::SameLine();
-		if (ImGui::Button("Send"))
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.21f, 0.35f, 1.00f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.20f, 0.20f, 0.25f, 1.00f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 0.30f, 1.00f));
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.0f, 4.0f)); 
+
+		if (ImGui::InputTextWithHint("##", "Message", buffer, 1024, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			std::thread t(DoMessage, assistantManager, threadID, buffer);
 			t.detach();
-			//RunMessage();
+		}
+
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(4);
+
+		ImGui::SameLine();
+
+		if (ImGui::ImageButton((ImTextureID)m_IconSend->GetRendererID(), {25, 25}, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		{
+			std::thread t(DoMessage, assistantManager, threadID, buffer);
+			t.detach();
 		}
 
 		ImGui::End();
 	}
+
 
 	void AssistantPanel::RunMessage()
 	{

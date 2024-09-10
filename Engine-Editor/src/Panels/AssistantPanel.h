@@ -23,5 +23,6 @@ namespace eg
 		AssistantManager* assistantManager;
 		std::string assistantRespondingAnimation;
 		Ref<Texture2D> m_IconCopy;
+		Ref<Texture2D> m_IconSend;
 	};
 }
