@@ -19,3 +19,4 @@ Engine/vendor/VulkanSDK
 Engine-Editor/assets/cache
 scripts/__pycache__
 Engine-Editor/.env
+Engine-Editor/recentProjectSerializer.txt

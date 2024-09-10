@@ -198,14 +198,16 @@ namespace eg {
 		static MonoObject* GetManagedInstance(UUID uuid, std::string name);
 
 		static MonoString* CreateString(const char* string);
+
+		static bool IsInitialized() { return s_Initialized; }
 	private:
+		static bool s_Initialized;
+
 		static void InitMono();
 		static void ShutdownMono();
 
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
 		static void LoadAssemblyClasses();
-
-		
 
 		friend class ScriptClass;
 		friend class ScriptGlue;
