@@ -1,28 +1,5 @@
 Scene: Untitled
 Entities:
-  - Entity: 330940551939291055
-    Name: Cube
-    Parent: 7990639098455319860
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-  - Entity: 6014809457287997170
-    Name: Cube
-    Children:
-      - 7990639098455319860
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
   - Entity: 7990639098455319860
     Name: Cube
     Parent: 6014809457287997170
@@ -59,3 +36,31 @@ Entities:
         []
       IsInherited: false
       IsInheritedInChildren: false
+  - Entity: 6014809457287997170
+    Name: Cube
+    Children:
+      - 7990639098455319860
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    ScriptComponent:
+      Scripts:
+        []
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 330940551939291055
+    Name: Cube
+    Parent: 7990639098455319860
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true

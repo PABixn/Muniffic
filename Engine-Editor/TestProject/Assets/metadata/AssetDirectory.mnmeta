@@ -1,7 +1,7 @@
 Root: 3993699339961639355
 Directories:
-  - UUID: 2255863918961144099
-    Name: Animations
+  - UUID: 1001100438501557267
+    Name: Textures
     Parent: 3993699339961639355
     Subdirectories:
       []
@@ -14,8 +14,8 @@ Directories:
       []
     Assets:
       []
-  - UUID: 1001100438501557267
-    Name: Textures
+  - UUID: 2255863918961144099
+    Name: Animations
     Parent: 3993699339961639355
     Subdirectories:
       []
@@ -35,18 +35,18 @@ Directories:
       []
     Assets:
       []
-  - UUID: 1312313305716661149
-    Name: Scripts
-    Parent: 3993699339961639355
-    Subdirectories:
-      - 2006251206258290432
-    Assets:
-      []
   - UUID: 3778398312777148989
     Name: Shaders
     Parent: 3993699339961639355
     Subdirectories:
       []
+    Assets:
+      []
+  - UUID: 1312313305716661149
+    Name: Scripts
+    Parent: 3993699339961639355
+    Subdirectories:
+      - 2006251206258290432
     Assets:
       []
   - UUID: 2006251206258290432
@@ -56,15 +56,15 @@ Directories:
       []
     Assets:
       []
-  - UUID: 477757120414017665
-    Name: Scenes
+  - UUID: 8638831680266049153
+    Name: Audio
     Parent: 3993699339961639355
     Subdirectories:
       []
     Assets:
       []
-  - UUID: 8638831680266049153
-    Name: Audio
+  - UUID: 477757120414017665
+    Name: Scenes
     Parent: 3993699339961639355
     Subdirectories:
       []
