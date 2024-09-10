@@ -43,6 +43,7 @@ namespace eg {
 
 		auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 
+		spriteRendererComponent.TextureUUID = component->TextureUUID;
 		spriteRendererComponent.Color = component->Color;
 		spriteRendererComponent.Texture = component->Texture;
 		spriteRendererComponent.TilingFactor = component->TilingFactor;
@@ -59,6 +60,7 @@ namespace eg {
 
 		auto& spriteRendererSTComponent = entity.GetComponent<SpriteRendererSTComponent>();
 
+		spriteRendererSTComponent.SubTextureUUID = component->SubTextureUUID;
 		spriteRendererSTComponent.Color = component->Color;
 		spriteRendererSTComponent.SubTexture = component->SubTexture;
 		spriteRendererSTComponent.TilingFactor = component->TilingFactor;
@@ -193,6 +195,17 @@ namespace eg {
 		textComponent.isInherited = component->isInherited;
 		textComponent.isInheritedInChildren = component->isInheritedInChildren;
 		ConsolePanel::Log("File: Entity.cpp - Text component set successfully", ConsolePanel::LogType::Info);
+	}
+
+	template<>
+	void Entity::SetComponent<AudioSourceComponent>(Entity& entity, AudioSourceComponent* component)
+	{
+		if (!entity.HasComponent<AudioSourceComponent>())
+			entity.AddComponent<AudioSourceComponent>();
+
+		auto& audioSourceComponent = entity.GetComponent<AudioSourceComponent>();
+
+		audioSourceComponent.Audio = component->Audio;
 	}
 
 	template<>

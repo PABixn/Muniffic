@@ -1,22 +1,2 @@
 Resources:
-  - UUID: 4945266446678609586
-    ParentDirectory: 5388550653062504436
-    ResourceName: execution
-    Extension: .png
-    Width: 1920
-    Height: 1080
-    Channels: 3
-  - UUID: 4911963235498027270
-    ParentDirectory: 5388550653062504436
-    ResourceName: An_23_trained_art
-    Extension: .png
-    Width: 1920
-    Height: 1182
-    Channels: 4
-  - UUID: 2846203103008134750
-    ParentDirectory: 5388550653062504436
-    ResourceName: execution1
-    Extension: .png
-    Width: 1920
-    Height: 1080
-    Channels: 3
+  []

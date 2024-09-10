@@ -425,7 +425,7 @@ namespace eg
 		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
 		{
 			for (auto& [key, value] : s_Data->EntityInstances.at(entityID))
-				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()))
+				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()) && s_Data->SceneContext->EntityExists(entityID))
 					value->InvokeOnUpdate(ts);
 			/*Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
 			instance->InvokeOnUpdate(ts);*/
@@ -439,6 +439,15 @@ namespace eg
 	Scene *ScriptEngine::GetSceneContext()
 	{
 		return s_Data->SceneContext;
+	}
+
+	std::vector<Ref<ScriptInstance>> ScriptEngine::GetAllScriptInstances()
+	{
+		std::vector<Ref<ScriptInstance>> result;
+		for (auto& [key, value] : s_Data->EntityInstances)
+			for (auto& [key, value] : value)
+				result.push_back(value);
+		return result;
 	}
 
 	std::vector<Ref<ScriptInstance>> ScriptEngine::GetEntityScriptInstances(UUID uuid)
@@ -478,6 +487,7 @@ namespace eg
 	MonoObject *ScriptEngine::InstantiateClass(MonoClass *monoClass)
 	{
 		MonoObject *object = mono_object_new(s_Data->AppDomain, monoClass);
+		
 		mono_runtime_object_init(object);
 		return object;
 	}
@@ -508,20 +518,32 @@ namespace eg
 		: m_ScriptClass(scriptClass)
 	{
 		m_Instance = m_ScriptClass->Instantiate();
+		m_InstanceHandle = mono_gchandle_new(m_Instance, true);
 
 		m_UUID = uuid;
+		m_EntityUUID = entity.GetUUID();
 
 		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
 		m_OnCreateMethod = m_ScriptClass->GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = m_ScriptClass->GetMethod("OnUpdate", 1);
 		m_OnCollisionEnterMethod = m_ScriptClass->GetMethod("OnCollisionEnter", 1);
 		m_OnCollisionExitMethod = m_ScriptClass->GetMethod("OnCollisionExit", 1);
+		m_OnKeyPress = m_ScriptClass->GetMethod("OnKeyPress", 1);
+		m_OnKeyRelease = m_ScriptClass->GetMethod("OnKeyRelease", 1);
+		m_OnMouseButtonPress = m_ScriptClass->GetMethod("OnMouseButtonPress", 1);
+		m_OnMouseButtonRelease = m_ScriptClass->GetMethod("OnMouseButtonRelease", 1);
+		m_OnScroll = m_ScriptClass->GetMethod("OnScroll", 1);
 
 		{
 			UUID uuid = entity.GetUUID();
 			void *arg = &uuid;
 			m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &arg);
 		}
+	}
+
+	ScriptInstance::~ScriptInstance()
+	{
+		mono_gchandle_free(m_InstanceHandle);
 	}
 
 	MonoString* ScriptEngine::CreateString(const char* string)
@@ -548,8 +570,8 @@ namespace eg
 	{
 		if (m_OnCollisionEnterMethod)
 		{
-			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
-			Collision2D* args = new Collision2D(uuid, collision.contactPoints);
+			UUID uuid = m_EntityUUID == collision.entityA ? collision.entityB : collision.entityA;
+			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
 			void* arg = args;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionEnterMethod, &arg);
 		}
@@ -559,10 +581,56 @@ namespace eg
 	{
 		if (m_OnCollisionExitMethod)
 		{
-			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
-			Collision2D* args = new Collision2D(uuid, collision.contactPoints);
+			UUID uuid = m_EntityUUID == collision.entityA ? collision.entityB : collision.entityA;
+			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
 			void* arg = args;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionExitMethod, &arg);
+		}
+	}
+
+	void ScriptInstance::InvokeOnKeyPress(int keycode)
+	{
+		if (m_OnKeyPress)
+		{
+			void* args = &keycode;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnKeyPress, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnKeyRelease(int keycode)
+	{
+		if (m_OnKeyRelease)
+		{
+			void* args = &keycode;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnKeyRelease, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnMouseButtonPress(int button)
+	{
+		if (m_OnMouseButtonPress)
+		{
+			void* args = &button;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnMouseButtonPress, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnMouseButtonRelease(int button)
+	{
+		if (m_OnMouseButtonRelease)
+		{
+			void* args = &button;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnMouseButtonRelease, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnScroll(double xOffset, double yOffset)
+	{
+		if (m_OnScroll)
+		{
+			float offsets[] = { (float)xOffset, (float)yOffset };
+			void* args = &offsets;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnMouseButtonRelease, &args);
 		}
 	}
 

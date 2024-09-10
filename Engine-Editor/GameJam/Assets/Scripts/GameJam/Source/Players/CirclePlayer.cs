@@ -40,12 +40,12 @@ namespace Game
 
         public void OnCollisionEnter(Collision2D collision)
         {
-            DebugConsole.Log("Collision enter: " + collision.otherEntity.name + "    X: " + collision.contactPoints.X + "    Y: " + collision.contactPoints.Y, DebugConsole.LogType.Error);
+            collision.otherEntity.GetComponent<SpriteRendererComponent>().color = Color.blueViolet;
         }
 
         public void OnCollisionExit(Collision2D collision)
         {
-            DebugConsole.Log("Collision exit: " + collision.otherEntity.ID + "    X: " + collision.contactPoints.X + "    Y: " + collision.contactPoints.Y, DebugConsole.LogType.Error);
+            collision.otherEntity.GetComponent<SpriteRendererComponent>().color = Color.brown;
         }
 
         public override void OnUpdate(float ts)
@@ -62,12 +62,12 @@ namespace Game
                 lastJump = 0f;
             }
 
-            if(Input.IsKeyDown(KeyCode.W) && isGrounded)
+            if(Input.IsKeyPressed(KeyCode.W) && isGrounded)
             {
                 rigidBody.ApplyLinearImpulse(new Vector2(0, jumpForce * 10));
                 isGrounded = false;
             }
-            if (lastShot >= attackCooldown && Input.IsKeyDown(KeyCode.Space))
+            if (lastShot >= attackCooldown && Input.IsKeyPressed(KeyCode.Space))
             {
                 lastShot = 0;
                 projectiles.Add(new Projectile(new Vector2(transform.translation.X + collideSize * direction.X + 0.1f * direction.X, transform.translation.Y), Vector2.NormalizeTo(direction, shotSpeed), (int)damage, ProjectileType.Normal));

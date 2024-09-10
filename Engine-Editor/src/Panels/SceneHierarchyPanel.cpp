@@ -422,8 +422,13 @@ namespace eg {
 				ImGui::EndDragDropTarget();
 			}
 
-			
-			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+			m_Context->m_Registry.each([&](auto entityID)
+				{
+					Entity entity{ entityID, m_Context.get() };
+					DrawEntityNode(entity);
+				});
+
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered() || !m_Context->GetRegistry().valid(m_SelectionContext))
 			{
 				m_SelectionContext = {};
 			}
@@ -748,6 +753,7 @@ namespace eg {
 			DisplayAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DisplayAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DisplayAddComponentEntry<TextComponent>("Text Component");
+			DisplayAddComponentEntry<AudioSourceComponent>("Audio Source");
 			DisplayAddComponentEntry<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D");
 			DisplayAddComponentEntry<AnimatorComponent>("Animator");
 
@@ -1328,6 +1334,8 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Restitution, restitution, entity, "BoxCollider2DComponent-Restitution");
 			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
+			if (IDrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
+				Commands::ExecuteRawValueCommand<bool, BoxCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "BoxCollider2DComponent-Is Sensor");
 		}, m_Context, ComponentIcons::BoxColliderIcon);
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [entity](auto& component) {
@@ -1346,6 +1354,8 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Restitution, restitution, entity, "CircleCollider2DComponent-Restitution");
 			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
+			if (DrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
+				Commands::ExecuteRawValueCommand<bool, CircleCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "CircleCollider2DComponent-Is Sensor");
 			}, m_Context, ComponentIcons::CircleColliderIcon);
 
 		DrawComponent<TextComponent>("Text Renderer", entity, [entity](auto& component)
@@ -1629,4 +1639,29 @@ namespace eg {
 		
 	}
 
+
+		DrawComponent<AudioSourceComponent>("Audio Source", entity, [](auto& component)
+		{
+			//BasicAudio audioSource = component.Audio;
+			if (component.Audio->GetPath() != "") {
+				if(ImGui::Button(component.Audio->GetFileName().c_str(), { 100.0f, 0.0f })) component.Audio->Play();
+			}
+			else ImGui::Button("Audio", { 100.0f, 0.0f });
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+				{
+					const int64_t* uuid = (const int64_t*)payload->Data;
+					component.AudioUUID = *uuid;
+					component.Audio->SetPath(ResourceDatabase::GetResourcePath(*uuid));
+				}
+				ImGui::EndDragDropTarget();
+			}
+			
+			ImGui::Checkbox("Loop", component.Audio->IsLoopedPtr());
+			ImGui::Checkbox("Playing from start", component.Audio->IsPlayingFromStartPtr());
+			ImGui::SliderFloat("Volume", component.Audio->GetVolumePtr(), 0, 10);
+		}, m_Context);
+	}
 }

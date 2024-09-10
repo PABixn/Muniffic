@@ -63,7 +63,7 @@ namespace eg
         internal extern static long Entity_FindEntityByName(string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static object Entity_GetScriptInstance(long UUID);
+        internal extern static object Entity_GetScriptInstance(long UUID, string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Entity_HasComponent(long ID, Type componentType);
@@ -187,7 +187,7 @@ namespace eg
         internal extern static bool AnimatorComponent_CanTransition(long UUID, string from, string to);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool AnimatorComponent_CanTransitionByIndex(long UUID, int from, int to);
-        
+
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static string AnimatorComponent_GetCurrentAnimation(long UUID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -323,7 +323,13 @@ namespace eg
         internal extern static void BoxCollider2DComponent_SetRestitutionThreshold(long entityID, ref float restitutionThreshold);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool BoxCollider2DComponent_CollidesWith(long entityID, long otherEntityID);
+        internal extern static bool BoxCollider2DComponent_IsSensor(ulong entityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void BoxCollider2DComponent_SetSensor(ulong entityID, ref bool isSensor);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_CollidesWith(ulong entityID, ulong otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool BoxCollider2DComponent_CollidesWithCircle(long entityID, long otherEntityID);
@@ -395,7 +401,13 @@ namespace eg
         internal extern static void CircleCollider2DComponent_SetRestitutionThreshold(long entityID, ref float restitutionThreshold);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool CircleCollider2DComponent_CollidesWith(long entityID, long otherEntityID);
+        internal extern static bool CircleCollider2DComponent_IsSensor(ulong entityID);
+
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        internal extern static void CircleCollider2DComponent_SetSensor(ulong entityID, ref bool isSensor);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool CircleCollider2DComponent_CollidesWith(ulong entityID, ulong otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool CircleCollider2DComponent_CollidesWithBox(long entityID, long otherEntity);
@@ -430,9 +442,32 @@ namespace eg
         #endregion
 
         #region Input
-
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool Input_IsKeyDown(KeyCode keyCode);
+        internal extern static string Input_GetClipboardContent();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetClipboardContent(string content);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string Input_GetKeyName(KeyCode keycode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsKeyPressed(KeyCode keycode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsKeyReleased(KeyCode keycode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsMouseButtonPressed(MouseCode button);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsMouseButtonReleased(MouseCode button);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsCursorOnWindow();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float Input_GetCursorPositonX();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float Input_GetCursorPositonY();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetCursorMode(int mode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetStickyKeysEnabled(bool enable);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetStickyMouseButtonsEnabled(bool enable);
         #endregion
 
         #region TextComponent

@@ -8,6 +8,7 @@
 #include "Engine/Renderer/SubTexture2D.h"
 #include "Engine/Renderer/Animator.h"
 #include "Engine/Renderer/Font.h"
+#include "Engine/Audio/BasicAudio.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/exponential.hpp"
@@ -15,7 +16,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
 #include "Engine/Resources/ResourceDatabase.h"
-
 
 
 namespace eg {
@@ -98,8 +98,6 @@ namespace eg {
 
 	struct AnimatorComponent : Component
 	{
-		Ref<Animator> Animator2D;
-
 		AnimatorComponent()
 		{
 			Animator2D = CreateRef<Animator>();
@@ -108,6 +106,8 @@ namespace eg {
 			: Animator2D(animator.Animator2D) {};
 		AnimatorComponent(const Ref<Animator>& animator)
 			: Animator2D(animator) {}
+
+		Ref<Animator> Animator2D;
 	};
 
 	struct CircleRendererComponent: Component
@@ -115,6 +115,7 @@ namespace eg {
 		glm::vec4 Color { 1.0f, 1.0f, 1.0f, 1.0f };
 		float Thickness = 1.0f;
 		float Fade = 0.005f;
+		bool isSensor = false;
 
 		CircleRendererComponent() = default;
 		CircleRendererComponent(const CircleRendererComponent&) = default;
@@ -204,6 +205,8 @@ namespace eg {
 		float Restitution = 0.0f;
 		float RestitutionThreshold = 0.5f;
 
+		bool IsSensor = false;
+
 		void* RuntimeFixture = nullptr;
 		
 		BoxCollider2DComponent() = default;
@@ -219,6 +222,8 @@ namespace eg {
 		float Friction = 0.5f;
 		float Restitution = 0.0f;
 		float RestitutionThreshold = 0.5f;
+
+		bool IsSensor = false;
 
 		//Storage for runtime
 		void* RuntimeFixture = nullptr;
@@ -241,6 +246,20 @@ namespace eg {
 		float LineSpacing = 0.0f;
 	};
 
+	struct AudioSourceComponent : Component
+	{
+		AudioSourceComponent()
+		{
+			Audio = CreateRef<BasicAudio>();
+		};
+		AudioSourceComponent(const AudioSourceComponent&) = default;
+		AudioSourceComponent(const Ref<BasicAudio>& audio)
+			: Audio(audio) {}
+
+		Ref<BasicAudio> Audio;
+		UUID AudioUUID = 0;
+	};
+
 	template<typename... Component>
 	struct ComponentGroup
 	{
@@ -250,12 +269,12 @@ namespace eg {
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		RigidBody2DComponent, BoxCollider2DComponent,
-		CircleCollider2DComponent, TextComponent>;
+		CircleCollider2DComponent, TextComponent, AnimatorComponent, AudioSourceComponent>;
 
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
-		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, 
+		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent,
 		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent,
-		AnimatorComponent>;
+		AnimatorComponent, AudioSourceComponent>;
 }

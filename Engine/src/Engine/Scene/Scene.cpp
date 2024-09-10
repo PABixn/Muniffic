@@ -18,7 +18,13 @@
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_circle_shape.h>
 
+#include <Mmsystem.h>
+#include <mciapi.h>
+#pragma comment(lib, "Winmm.lib")
+
 namespace eg {
+	bool EvaluateSceneAudio = true;
+
 	Scene::Scene()
 	{
 	}
@@ -79,7 +85,7 @@ namespace eg {
 		auto& srcSceneRegistry = other->m_Registry;
 		auto& dstSceneRegistry = scene->m_Registry;
 		auto idView = srcSceneRegistry.view<IDComponent>();
-
+		EG_CORE_INFO("Entities count: {0}", idView.size());
 		// Copy entities
 		for(auto entity : idView)
 		{
@@ -87,7 +93,13 @@ namespace eg {
 			const auto& tag = srcSceneRegistry.get<TagComponent>(entity).Tag;
 			Entity newEntity = scene->CreateEntityWithID(uuid, tag);
 			enttMap[uuid] = (entt::entity)newEntity;
-			scene->m_EntityInfoMap[uuid] = other->m_EntityInfoMap[uuid];
+			//Copy the values of the entity info not the pointer
+			EntityInfo* info = new EntityInfo(other->m_EntityInfoMap[uuid]->m_Parent);
+			for (auto child : other->m_EntityInfoMap[uuid]->m_Children)
+			{
+				info->m_Children.push_back(child);
+			}
+			scene->m_EntityInfoMap[uuid] = info;
 		}
 
 		// Copy components (except IDComponent and TagComponent)
@@ -119,6 +131,11 @@ namespace eg {
 	{
 		if (entity.GetParent().has_value())
 			entity.GetParent().value().RemoveChild(entity);
+		if (entity.HasComponent<RigidBody2DComponent>()) 
+		{
+			b2Body* entityBody = (b2Body*)entity.GetComponent<RigidBody2DComponent>().RuntimeBody;
+			m_PhysicsWorld->DestroyBody(entityBody);
+		}
 		m_EntityMap.erase(entity.GetUUID());
 		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
@@ -141,29 +158,66 @@ namespace eg {
 				ScriptEngine::OnCreateEntity(e);
 			}
 		}
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
+				ASourceView.get<AudioSourceComponent>(f).Audio->LoadCurrentAudio();
+				if (ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart()) {
+					ASourceView.get<AudioSourceComponent>(f).Audio->Play();
+				}
+			}
+		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		OnPhysics2DStop();
 		m_IsRunning = false;
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
 
+
+				ASourceView.get<AudioSourceComponent>(f).Audio->Stop();
+
+			}
+		}
 		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart()
 	{
 		OnPhysics2DStart();
+		// Audio
+		if (EvaluateSceneAudio) {
+				auto ASourceView = m_Registry.view<AudioSourceComponent>();
+				for (auto f : ASourceView)
+				{
+					ASourceView.get<AudioSourceComponent>(f).Audio->LoadCurrentAudio();
+					if (ASourceView.get<AudioSourceComponent>(f).Audio->IsPlayingFromStart()) {
+						ASourceView.get<AudioSourceComponent>(f).Audio->Play();
+					}
+				}
+		}
 	}
 
 	void Scene::OnSimulationStop()
 	{
 		OnPhysics2DStop();
+		if (EvaluateSceneAudio) {
+			auto ASourceView = m_Registry.view<AudioSourceComponent>();
+			for (auto f : ASourceView)
+			{
+				
+
+					ASourceView.get<AudioSourceComponent>(f).Audio->Stop();
+				
+			}
+		}
 	}
 
-	
-
-	
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
@@ -172,6 +226,7 @@ namespace eg {
 
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
+		m_EntitiesToDestroy.clear();
 		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
 			// Update Native scripts
@@ -218,6 +273,11 @@ namespace eg {
 						transform.Rotation.z = body->GetAngle();
 					}
 				}
+			}
+
+			for (Entity entity : m_EntitiesToDestroy)
+			{
+				DestroyEntity(entity);
 			}
 		}
 
@@ -313,6 +373,7 @@ namespace eg {
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
+		
 		if (!m_IsPaused || m_StepFrames-- > 0)
 			// Physics
 		{
@@ -431,6 +492,11 @@ namespace eg {
 		
 	}
 
+	void Scene::AddEntityToDestroy(Entity entity)
+	{
+		m_EntitiesToDestroy.push_back(entity  );
+	}
+
 	Entity Scene::DuplicateEntity(Entity entity)
 	{
 		std::string name = entity.GetName();
@@ -508,6 +574,7 @@ namespace eg {
 			fixtureDef.restitution = bc.Restitution;
 			fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
 			fixtureDef.userData.pointer = entity.GetUUID();
+			fixtureDef.isSensor = bc.IsSensor;
 
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			bc.RuntimeFixture = fixture;
@@ -528,6 +595,7 @@ namespace eg {
 			fixtureDef.restitution = cc.Restitution;
 			fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
 			fixtureDef.userData.pointer = entity.GetUUID();
+			fixtureDef.isSensor = cc.IsSensor;
 
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			cc.RuntimeFixture = fixture;
@@ -580,6 +648,7 @@ namespace eg {
 				fixtureDef.restitution = bc.Restitution;
 				fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
 				fixtureDef.userData.pointer = e.GetUUID();
+				fixtureDef.isSensor = bc.IsSensor;
 
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				bc.RuntimeFixture = fixture;
@@ -600,6 +669,7 @@ namespace eg {
 				fixtureDef.restitution = cc.Restitution;
 				fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
 				fixtureDef.userData.pointer = e.GetUUID();
+				fixtureDef.isSensor = cc.IsSensor;
 				
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				cc.RuntimeFixture = fixture;
@@ -680,6 +750,10 @@ namespace eg {
 
 	template<>
 	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<AudioSourceComponent>(Entity entity, AudioSourceComponent& component)
 	{
 	}
 

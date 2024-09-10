@@ -43,17 +43,17 @@ namespace Game
         {
             velocity = Vector2.Zero;
 
-            if (Input.IsKeyDown(KeyCode.S) && Math.Abs(velocity.Y) <= 10f)
+            if (Input.IsKeyPressed(KeyCode.S) && Math.Abs(velocity.Y) <= 10f)
             {
                 direction = new Vector2(0, -1);
                 velocity.Y -= speed;
             }
-            if (Input.IsKeyDown(KeyCode.A) && velocity.X >= -10f)
+            if (Input.IsKeyPressed(KeyCode.A) && velocity.X >= -10f)
             {
                 direction = new Vector2(-1, 0);
                 velocity.X -= speed;
             }
-            if (Input.IsKeyDown(KeyCode.D) && velocity.X <= 10f)
+            if (Input.IsKeyPressed(KeyCode.D) && velocity.X <= 10f)
             {
                 direction = new Vector2(1, 0);
                 velocity.X += speed;

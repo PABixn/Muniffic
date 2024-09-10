@@ -42,9 +42,9 @@ namespace Game
 
         void OnUpdate(float ts)
         {
-            if (Input.IsKeyDown(KeyCode.Q))
+            if (Input.IsKeyPressed(KeyCode.Q))
                 zoom -= 1 / zoomSpeed * ts;
-            else if (Input.IsKeyDown(KeyCode.E))
+            else if (Input.IsKeyPressed(KeyCode.E))
                 zoom += 1 / zoomSpeed * ts;
 
             transform.translation = new Vector3(playerTransform.translation.X, playerTransform.translation.Y, 10 / zoom);

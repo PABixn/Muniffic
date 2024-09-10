@@ -29,6 +29,8 @@ namespace eg
 				return "Animations";
 			case ResourceType::Script:
 				return "Scripts";
+			case ResourceType::Audio:
+				return "Audio";
 			default:
 				return "None";
 			}
@@ -56,6 +58,8 @@ namespace eg
 				return ".script";
 			case ResourceType::NativeScript:
 				return ".nativescript";
+			case ResourceType::Audio:
+				return ".wav";
 			default:
 				return "";
 			}
@@ -81,6 +85,8 @@ namespace eg
 				return ResourceType::Script;
 			else if (extension == ".nativescript")
 				return ResourceType::NativeScript;
+			else if (extension == ".wav" || extension == ".mp3")
+				return ResourceType::Audio;
 			else
 				return ResourceType::None;
 		}
@@ -109,6 +115,8 @@ namespace eg
 				return baseDirectory / "Scripts.mnmeta";
 			case ResourceType::NativeScript:
 				return baseDirectory / "NativeScripts.mnmeta";
+			case ResourceType::Audio:
+				return baseDirectory / "Audio.mnmeta";
 			default:
 				return std::filesystem::path();
 			}

@@ -21,6 +21,7 @@ namespace eg {
 		static void CacheSpriteAtlas(UUID uuid, SpriteAtlasResourceData* data);
 		static void CacheFont(UUID uuid, FontResourceData* data);
 		static void CacheScript(UUID uuid, ScriptResourceData* data);
+		static void CacheAudio(UUID uuid, AudioResourceData* data);
 		static void SerializeResourceCache();
 		static bool DeserializeResourceCache();
 
@@ -31,6 +32,7 @@ namespace eg {
 		static std::unordered_map<UUID, SubTextureResourceData*> SubTextureResourceDataCache;
 		static std::unordered_map<UUID, FontResourceData*> FontResourceDataCache;
 		static std::unordered_map<UUID, ScriptResourceData*> ScriptResourceDataCache;
+		static std::unordered_map<UUID, AudioResourceData*> AudioResourceDataCache;
 		static std::unordered_map<UUID, ResourceType> ResourceTypeInfo;
 	};
 }
