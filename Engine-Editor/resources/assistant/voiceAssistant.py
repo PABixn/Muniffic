@@ -22,7 +22,7 @@ def StartVoiceAssistant():
 
                 print(MyText)
 
-                if MyText.lower() == "hello bob".lower():
+                if MyText.lower() == "hi bob".lower():
                     SpeakText("Hello, how can I help you?")
 
                     with sr.Microphone() as source:
@@ -39,8 +39,6 @@ def StartVoiceAssistant():
 
         except sr.RequestError as e:
             print("Could not request results")
-            return "erorr"
 
         except sr.UnknownValueError :
             print("Unknown error occurred")
-            return "error"

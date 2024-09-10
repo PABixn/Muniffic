@@ -12,11 +12,16 @@ namespace eg
 {
 	AssistantManager::AssistantManager()
 	{
+		IsVoiceAssistantListening = false;
+		newVoiceMessageAvailable = false;
+
 		Init();
 	}
 
-	void AssistantManager::InitVoiceAssistant()
+	void AssistantManager::StartListening()
 	{
+		IsVoiceAssistantListening = true;
+
 		//PyEval_InitThreads();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
@@ -30,9 +35,12 @@ namespace eg
 
 		std::string text = PyUnicode_AsUTF8(result);
 
-		EG_CORE_ERROR(text);
+		lastVoiceMessage = text;
+		newVoiceMessageAvailable = true;
 
 		PyGILState_Release(gstate);
+
+		IsVoiceAssistantListening = false;
 	}
 
 	void AssistantManager::Init()

@@ -28,7 +28,7 @@ namespace eg
 		void SaveAssistant();
 
 		void Init();
-		void InitVoiceAssistant();
+		void StartListening();
 		void CreateAssistant(std::string assistantName, std::string assistantInstructions);
 		std::string CreateThread();
 		void InitiateRun(std::string threadID);
@@ -42,11 +42,20 @@ namespace eg
 		std::string GetAssistantID() { return m_AssistantID; }
 		std::vector<Message*> GetMessages(std::string threadID) { return m_Threads.at(threadID)->messages; }
 
+		void SetVoiceAssistantListening(bool listening) { IsVoiceAssistantListening = listening; }
+		bool GetVoiceAssistantListening() { return IsVoiceAssistantListening; }
+
+		bool IsNewVoiceMessageAvailable() { return newVoiceMessageAvailable; }
+		std::string GetLastVoiceMessage() { newVoiceMessageAvailable = false; return lastVoiceMessage; }
+
 	private:
 		std::string m_AssistantName;
 		std::string m_AssistantInstructions;
 		std::string m_AssistantID;
 		std::unordered_map<std::string, Thread*> m_Threads;
+		bool newVoiceMessageAvailable;
+		std::string lastVoiceMessage;
+		bool IsVoiceAssistantListening;
 
 	private:
 		PyObject* m_voiceAssistantModule;

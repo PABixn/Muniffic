@@ -24,8 +24,6 @@ namespace eg
 
 		assistantRespondingAnimation = ".";
 		m_IconCopy = Texture2D::Create("resources/icons/copyCode.png");
-
-		//assistantManager->InitVoiceAssistant();
 	}
 
 	AssistantPanel::~AssistantPanel()
@@ -289,6 +287,20 @@ namespace eg
 
 	void AssistantPanel::OnImGuiRender()
 	{
+		if (assistantManager->GetVoiceAssistantListening() == false)
+		{
+			std::thread t([this] { assistantManager->StartListening(); });
+			t.detach();
+		}
+
+		if (assistantManager->IsNewVoiceMessageAvailable())
+		{
+			std::string message = assistantManager->GetLastVoiceMessage();
+			memcpy(buffer, message.data(), message.size());
+			std::thread t(DoMessage, assistantManager, threadID, buffer);
+			t.detach();
+		}
+
 		ImGui::Begin("Assistant Panel");
 
 		ImGui::Text("This is your conversation with Bob.");
