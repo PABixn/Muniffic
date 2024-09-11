@@ -24,5 +24,8 @@ namespace eg
 		std::string assistantRespondingAnimation;
 		Ref<Texture2D> m_IconCopy;
 		Ref<Texture2D> m_IconSend;
+		Ref<Texture2D> m_IconMicrophone;
+		Ref<Texture2D> m_IconMicrophoneOff;
+		bool m_isListening;
 	};
 }

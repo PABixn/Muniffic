@@ -25,6 +25,9 @@ namespace eg
 		assistantRespondingAnimation = ".";
 		m_IconCopy = Texture2D::Create("resources/icons/copyCode.png");
 		m_IconSend = Texture2D::Create("resources/icons/sendIcon.png");
+		m_IconMicrophone = Texture2D::Create("resources/icons/micIcon.png");
+		m_IconMicrophoneOff = Texture2D::Create("resources/icons/micOffIcon.png");
+		m_isListening = false;
 	}
 
 	AssistantPanel::~AssistantPanel()
@@ -197,12 +200,19 @@ namespace eg
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + iconCenterY / 2);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + bubbleWidth - padding * 2 - iconSize);
 
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 0.2));
+					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+
 					if (ImGui::ImageButton((std::to_string(id) + std::to_string(buttonIndex)).c_str(), (ImTextureID)m_IconCopy->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1)))
 					{
 						ImGui::LogToClipboard();
 						ImGui::LogText(msg.c_str());
 						ImGui::LogFinish();
 					}
+
+					ImGui::PopStyleColor(3);
+
 					buttonIndex++;
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - iconSize - iconCenterY / 2);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding * 2.5);
@@ -288,10 +298,22 @@ namespace eg
 
 	void AssistantPanel::OnImGuiRender()
 	{
-		if (!assistantManager->GetVoiceAssistantListening())
+		if (m_isListening)
 		{
-			std::thread t([this] { assistantManager->StartListening(); });
-			t.detach();
+			if (!assistantManager->GetVoiceAssistantListening())
+			{
+				std::thread t([this] { assistantManager->StartListening(); });
+				t.detach();
+			}
+		}
+		else
+		{
+			if (assistantManager->GetVoiceAssistantListening())
+			{
+				assistantManager->SetVoiceAssistantListening(false);
+				std::thread t([this] { assistantManager->StopListening(); });
+				t.detach();
+			}
 		}
 
 		if (assistantManager->IsNewVoiceMessageAvailable())
@@ -369,11 +391,24 @@ namespace eg
 
 		ImGui::SameLine();
 
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 0.5));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+
 		if (ImGui::ImageButton((ImTextureID)m_IconSend->GetRendererID(), {25, 25}, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
 			std::thread t(DoMessage, assistantManager, threadID, buffer);
 			t.detach();
 		}
+
+		ImGui::SameLine();
+
+		if (ImGui::ImageButton(m_isListening ? (ImTextureID)m_IconMicrophone->GetRendererID() : (ImTextureID)m_IconMicrophoneOff->GetRendererID(), { 25, 25 }, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		{
+			m_isListening = !m_isListening;
+		}
+
+		ImGui::PopStyleColor(3);
 
 		ImGui::End();
 	}

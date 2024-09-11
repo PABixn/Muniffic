@@ -29,6 +29,7 @@ namespace eg
 
 		void Init();
 		void StartListening();
+		void StopListening();
 		void CreateAssistant(std::string assistantName, std::string assistantInstructions);
 		std::string CreateThread();
 		void InitiateRun(std::string threadID);
@@ -61,6 +62,7 @@ namespace eg
 	private:
 		PyObject* m_voiceAssistantModule;
 		PyObject* m_startVoiceAssistant;
+		PyObject* m_stopVoiceAssistant;
 		PyObject* m_SpeakText;
 		PyObject* m_pModule;
 		PyObject* m_CreateAssistant;

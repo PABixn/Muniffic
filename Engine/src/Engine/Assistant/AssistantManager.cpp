@@ -36,6 +36,15 @@ namespace eg
 	
 	}
 
+	void AssistantManager::StopListening()
+	{
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
+		PyObject_CallObject(m_stopVoiceAssistant, nullptr);
+
+		PyGILState_Release(gstate);
+	}
+
 	void AssistantManager::StartListening()
 	{
 		IsVoiceAssistantListening = true;
@@ -51,14 +60,18 @@ namespace eg
 			EG_CORE_ERROR("Failed to call startVoiceAssistant function");
 		}
 
+		if (!PyUnicode_Check(result))
+		{
+			PyGILState_Release(gstate);
+			IsVoiceAssistantListening = false;
+			EG_CORE_ERROR("Failed to get voice message");
+			return;
+		}
+
 		std::string text = PyUnicode_AsUTF8(result);
 
 		lastVoiceMessage = text;
 		newVoiceMessageAvailable = true;
-
-		PyGILState_Release(gstate);
-
-		IsVoiceAssistantListening = false;
 	}
 
 	void AssistantManager::Init()
@@ -107,9 +120,10 @@ namespace eg
 		}
 
 		m_startVoiceAssistant = PyObject_GetAttrString(m_voiceAssistantModule, "StartVoiceAssistant");
+		m_stopVoiceAssistant = PyObject_GetAttrString(m_voiceAssistantModule, "StopVoiceAssistant");
 		m_SpeakText = PyObject_GetAttrString(m_voiceAssistantModule, "SpeakText");
 
-		if (m_startVoiceAssistant == nullptr && m_SpeakText == nullptr)
+		if (m_startVoiceAssistant == nullptr && m_SpeakText == nullptr && m_stopVoiceAssistant == nullptr)
 		{
 			EG_CORE_ERROR("Failed to load Python functions");
 		}

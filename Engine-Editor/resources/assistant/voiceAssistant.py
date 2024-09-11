@@ -1,16 +1,22 @@
 import speech_recognition as sr
 import pyttsx3
 
+shouldListen = False
+
 def SpeakText(command):
     engine = pyttsx3.init()
     engine.say(command)
     engine.runAndWait()
 
+def StopVoiceAssistant():
+    global shouldListen
+    shouldListen = False
+
 def StartVoiceAssistant():
     r = sr.Recognizer()
-
-    while (1):
-
+    global shouldListen
+    shouldListen = True
+    while (shouldListen):
         try:
             with sr.Microphone() as source2:
                 r.adjust_for_ambient_noise(source2, duration=0.2)
@@ -41,4 +47,4 @@ def StartVoiceAssistant():
             print("Could not request results")
 
         except sr.UnknownValueError :
-            print("Unknown error occurred")
+            print("Heard nothing")
