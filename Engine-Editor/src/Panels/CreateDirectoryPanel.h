@@ -18,5 +18,6 @@ namespace eg
 	protected:
 		bool m_Show;
 		UUID m_DirectoryUUID;
+		ImFont* m_PoppinsRegularFont;
 	};
 }

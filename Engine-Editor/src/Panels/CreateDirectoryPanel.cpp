@@ -1,6 +1,5 @@
 #include "CreateDirectoryPanel.h"
 
-
 namespace eg
 {
 	CreateDirectoryPanel::CreateDirectoryPanel()

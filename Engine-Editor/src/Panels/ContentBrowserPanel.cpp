@@ -30,7 +30,6 @@ namespace eg
 		m_RenameFolderPanel = CreateScope<RenameFolderPanel>();
 		m_DeleteDirectoryPanel = CreateScope<DeleteDirectoryPanel>();
 		m_RenameResourcePanel = CreateScope<RenameResourcePanel>();
-		m_CreateDirectoryPanel = CreateScope<CreateDirectoryPanel>();
 	}
 
 	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)
@@ -92,9 +91,6 @@ namespace eg
 
 		if (m_RenameResourcePanel->IsShown())
 			m_RenameResourcePanel->OnImGuiRender();
-
-		if (m_CreateDirectoryPanel->IsShown())
-			m_CreateDirectoryPanel->OnImGuiRender();
 
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::Begin("Content Browser");
@@ -174,15 +170,63 @@ namespace eg
 		}
 		drawList->ChannelsMerge();
 
+		bool isClicked = false;
 		if (ImGui::BeginPopup("CreateNewResource"))
 		{
 			if (ImGui::MenuItem("Create Folder"))
 			{
-				m_CreateDirectoryPanel->ShowWindow(m_CurrentDirectory);
-				//AssetDirectory* newDirectory = new AssetDirectory(UUID(), "New Folder", m_CurrentDirectory);
+				isClicked = true;
 			}
 			ImGui::EndPopup();
 		}
+		if (isClicked) {
+			ImGui::OpenPopup("CreateNewDirectory");
+			isClicked = false;
+		}
+			
+		bool open = true;
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding,10.f);
+		if (ImGui::BeginPopupModal("CreateNewDirectory",NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
+			
+			ImVec2 spacing = style.ItemSpacing;
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
+			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
+			ImGui::PushStyleColor(ImGuiCol_FrameBgActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
+			ImGui::PushStyleColor(ImGuiCol_Button, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade);
+
+			style.ItemSpacing = ImVec2(20.f,10.f);
+
+			ImGui::Text("Enter new folder name");
+			static char buffer[256] = "New Folder";
+
+			ImGui::InputText("##FolderName", buffer, 256);
+
+			style.ItemSpacing = ImVec2(10.f, 10.f);
+			if (ImGui::Button("Create directory"))
+			{
+				Commands::ExecuteCreateDirectoryCommand(buffer, m_CurrentDirectory);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			style.ItemSpacing = spacing;
+
+			ImGui::PopStyleColor(6);
+			ImGui::PopStyleVar(2);
+			ImGui::EndPopup();
+		}
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 
 		ImGui::SameLine();
 

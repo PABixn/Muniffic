@@ -67,10 +67,10 @@ namespace eg {
 		Ref<Texture2D> m_LogoIcon;
 		Ref<FrameBuffer> m_FrameBuffer;
 
-		ImFont* m_Poppins_Regular_Font;
-		ImFont* m_Poppins_Medium_Font;
-		ImFont* m_Poppins_SemiBold_Font;
-		ImFont* m_Poppins_ExtraBold_Font;
+		ImFont* m_PoppinsRegularFont;
+		ImFont* m_PoppinsMediumFont;
+		ImFont* m_PoppinsSemiBoldFont;
+		ImFont* m_PoppinsExtraBoldFont;
 
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_RuntimeScene;
@@ -116,8 +116,7 @@ namespace eg {
 		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
-		RenameResourcePanel* m_RenameResourcePanel;
-		CreateDirectoryPanel* m_CreateDirectoryPanel;*/
+		RenameResourcePanel* m_RenameResourcePanel;*/
 		Scope<ConsolePanel> m_ConsolePanel;
 
 		enum class SceneState

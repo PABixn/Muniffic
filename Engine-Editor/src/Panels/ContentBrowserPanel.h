@@ -6,7 +6,6 @@
 #include "RenameFolderPanel.h"
 #include "DeleteDirectoryPanel.h"
 #include "RenameResourcePanel.h"
-#include "CreateDirectoryPanel.h"
 
 namespace eg {
 	
@@ -35,7 +34,6 @@ namespace eg {
 		Scope<RenameFolderPanel> m_RenameFolderPanel;
 		Scope<RenameResourcePanel> m_RenameResourcePanel;
 		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel;
-		Scope<CreateDirectoryPanel> m_CreateDirectoryPanel;
 
 	};
 }
