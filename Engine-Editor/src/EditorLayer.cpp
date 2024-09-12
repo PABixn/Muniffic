@@ -30,7 +30,7 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
-		
+		ImGui::StyleColorsDark();
 
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;

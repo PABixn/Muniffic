@@ -96,13 +96,13 @@ namespace eg
 		ImGui::Begin("Content Browser");
 
 		ImGuiStyle& style = ImGui::GetStyle();
-		auto btnColor = style.Colors[ImGuiCol_Button];
+		/*auto btnColor = style.Colors[ImGuiCol_Button];
 		auto btnColorHovered = style.Colors[ImGuiCol_ButtonHovered];
 		auto btnColorActive = style.Colors[ImGuiCol_ButtonActive];
 
 		style.Colors[ImGuiCol_Button] = ImVec4(0, 0, 0, 0);
 		style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0, 0, 0, 0);
-		style.Colors[ImGuiCol_ButtonActive] = ImVec4(0, 0, 0, 0);
+		style.Colors[ImGuiCol_ButtonActive] = ImVec4(0, 0, 0, 0);*/
 		ImGui::PushFont(m_PoppinsRegularFont);
 
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -185,7 +185,7 @@ namespace eg
 		}
 			
 		bool open = true;
-		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
+		//ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding,10.f);
 		if (ImGui::BeginPopupModal("CreateNewDirectory",NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
 			
@@ -197,12 +197,13 @@ namespace eg
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 			ImGui::PushStyleColor(ImGuiCol_FrameBgActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
-			ImGui::PushStyleColor(ImGuiCol_Button, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
+			/*ImGui::PushStyleColor(ImGuiCol_Button, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade);*/
 
 			style.ItemSpacing = ImVec2(20.f,10.f);
 
+			ImVec4 buttonColor = style.Colors[ImGuiCol_Button];
 			ImGui::Text("Enter new folder name");
 			static char buffer[256] = "New Folder";
 
@@ -221,11 +222,11 @@ namespace eg
 			}
 			style.ItemSpacing = spacing;
 
-			ImGui::PopStyleColor(6);
+			ImGui::PopStyleColor(3);
 			ImGui::PopStyleVar(2);
 			ImGui::EndPopup();
 		}
-		ImGui::PopStyleColor();
+		//ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 
 		ImGui::SameLine();
@@ -334,9 +335,9 @@ namespace eg
 		ImGui::PopFont();
 		ImGui::End();
 		ImGui::PopStyleColor();
-		style.Colors[ImGuiCol_Button] = btnColor;
+		/*style.Colors[ImGuiCol_Button] = btnColor;
 		style.Colors[ImGuiCol_ButtonHovered] = btnColorHovered;
-		style.Colors[ImGuiCol_ButtonActive] = btnColorActive;
+		style.Colors[ImGuiCol_ButtonActive] = btnColorActive;*/
 	}
 
 }
