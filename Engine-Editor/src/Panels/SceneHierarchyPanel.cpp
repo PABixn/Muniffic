@@ -422,12 +422,6 @@ namespace eg {
 				ImGui::EndDragDropTarget();
 			}
 
-			m_Context->m_Registry.each([&](auto entityID)
-				{
-					Entity entity{ entityID, m_Context.get() };
-					DrawEntityNode(entity);
-				});
-
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered() || !m_Context->GetRegistry().valid(m_SelectionContext))
 			{
 				m_SelectionContext = {};
@@ -1334,7 +1328,7 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Restitution, restitution, entity, "BoxCollider2DComponent-Restitution");
 			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
-			if (IDrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
+			if (DrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
 				Commands::ExecuteRawValueCommand<bool, BoxCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "BoxCollider2DComponent-Is Sensor");
 		}, m_Context, ComponentIcons::BoxColliderIcon);
 
@@ -1636,8 +1630,6 @@ namespace eg {
 					}
 				}
 			}, m_Context, ComponentIcons::AnimatorIcon);
-		
-	}
 
 
 		DrawComponent<AudioSourceComponent>("Audio Source", entity, [](auto& component)
@@ -1662,6 +1654,6 @@ namespace eg {
 			ImGui::Checkbox("Loop", component.Audio->IsLoopedPtr());
 			ImGui::Checkbox("Playing from start", component.Audio->IsPlayingFromStartPtr());
 			ImGui::SliderFloat("Volume", component.Audio->GetVolumePtr(), 0, 10);
-		}, m_Context);
+		}, m_Context, ComponentIcons::AnimatorIcon);
 	}
 }

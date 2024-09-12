@@ -37,6 +37,15 @@ namespace eg {
 		MonoClassField* ClassField = nullptr;
 	};
 
+	struct ScriptMethod
+	{
+		ScriptMethod() = default;
+		ScriptMethod(const std::string& name, MonoMethod* method);
+
+		std::string Name;
+		MonoMethod* Method = nullptr;
+	};
+
 	// ScriptField + data storage
 	struct ScriptFieldInstance
 	{
@@ -82,13 +91,14 @@ namespace eg {
 		inline const std::string& GetNamespace() const { return m_ClassNamespace; }
 
 		const std::unordered_map<std::string, ScriptField>& GetFields() const { return m_Fields; }
-
+		const std::unordered_map<std::string, ScriptMethod>& GetMethods() const { return m_Methods; }
 		
 	private:
 		std::string m_ClassNamespace;
 		std::string m_ClassName;
 
 		std::unordered_map<std::string, ScriptField> m_Fields;
+		std::unordered_map<std::string, ScriptMethod> m_Methods;
 
 		MonoClass* m_Class;
 
@@ -163,6 +173,7 @@ namespace eg {
 	};
 
 	using ScriptFieldMap = std::unordered_map<std::string, ScriptFieldInstance>;
+	using ScriptMethodMap = std::unordered_map<std::string, ScriptMethod>;
 
 	class ScriptEngine
 	{
@@ -192,6 +203,10 @@ namespace eg {
 		static Ref<ScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<ScriptClass>>& GetEnityClasses();
 		static ScriptFieldMap& GetScriptFieldMap(Entity uuid);
+		static const ScriptMethodMap& GetScriptMethodMap(const std::string& className);
+		static const std::unordered_map<std::string,ScriptMethodMap>& GetAllScriptMethodMaps();
+
+		static bool isMethodInternal(const std::string& methodName);
 
 		static MonoImage* GetCoreAssemblyImage();
 
@@ -214,7 +229,7 @@ namespace eg {
 
 	namespace Utils
 	{
-		inline const char* ScriptFieldTypeToString(ScriptFieldType type)
+		inline const char*ScriptFieldTypeToString(ScriptFieldType type)
 		{
 			switch (type)
 			{

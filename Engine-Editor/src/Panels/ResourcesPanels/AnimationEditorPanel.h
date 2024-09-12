@@ -13,9 +13,10 @@ namespace eg {
 		void SetFrames();
 	private:
 		void ShowAnimationEditorPanel(bool show) { m_ShowAnimationEditorPanel = show; };
+		void ResetData();
 	private:
 		bool m_ShowAnimationEditorPanel = false;
-		bool m_PlayAnimation;
+		bool m_PlayAnimation = false;
 		bool m_ShowLongerFrame = false;
 		bool m_ShowInitialFrame = true;
 		bool m_Resize = false;

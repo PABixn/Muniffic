@@ -4,7 +4,7 @@
 #include "Engine/Renderer/SubTexture2D.h"
 #include "vector"
 #include "unordered_map"
-
+#include "functional"
 namespace eg {
 	
 	class Animation {
@@ -12,7 +12,6 @@ namespace eg {
 		struct FrameData {
 			Ref<SubTexture2D> SubTexture;
 			int FrameDuration;
-			//float FramePosition;
 			bool isKeyFrame;
 		};
 		//Do not use constructors, use Animation::Create instead

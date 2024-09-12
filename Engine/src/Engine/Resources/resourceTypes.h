@@ -10,6 +10,7 @@ namespace eg
 	enum class ResourceType
 	{
 		Animation,
+		Frame,
 		Audio,
 		SpriteAtlas,
 		SubTexture,
@@ -66,7 +67,13 @@ namespace eg
 		int FrameCount;
 		bool Loop;
 		std::vector<UUID> Frames;
-		std::vector<int> Durations;
+	};
+
+	struct FrameResourceData : public ResourceData
+	{
+		UUID SubTexture;
+		int Duration;
+		UUID Method;
 	};
 
 	struct SubTextureResourceData : public ResourceData
@@ -75,9 +82,17 @@ namespace eg
 		UUID Texture;
 	};
 
+	struct MethodResourceData
+	{
+		std::string ClassName;
+		std::string MethodName;
+		std::vector<std::pair<std::string, ScriptFieldType>> Parameters;
+	};
+
 	struct ScriptResourceData : public ResourceData
 	{
 		bool IsEnabled = true;
+		std::unordered_map<std::string, MethodResourceData> Methods;
 	};
 
 	struct FontResourceData : public ResourceData

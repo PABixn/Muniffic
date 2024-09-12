@@ -60,9 +60,9 @@ namespace eg
 		anim->m_loop = animData->Loop;
 		anim->m_frame = 0;
 
-		for (auto& frame : animData->Frames)
+		for (int i = 0; i<animData->Frames.size(); i++)
 		{
-			if (!anim->AddFrame(FrameData(SubTexture2D::Create(frame),1.0f)).SubTexture)
+			if (!anim->AddFrame(FrameData(SubTexture2D::Create(animData->Frames[i]), 1)).SubTexture)
 				return nullptr;
 		}
 		return anim;
@@ -146,10 +146,8 @@ namespace eg
 		animData->FrameRate = m_frameRate;
 		animData->FrameCount = m_frames.size();
 		animData->Loop = m_loop;
-		animData->Durations.clear();
 		animData->Frames.clear();
 		for(auto& frame : m_frames) {
-			animData->Durations.push_back(frame.FrameDuration);
 			animData->Frames.push_back(frame.SubTexture->GetId());
 		}
 	}

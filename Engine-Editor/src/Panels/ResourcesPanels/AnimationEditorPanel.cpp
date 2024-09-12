@@ -1,6 +1,6 @@
 #include "AnimationEditorPanel.h"
 #include "Imgui/imgui.h"
-
+#include "Engine/Scripting/ScriptEngine.h"
 namespace eg {
 	static bool isDisplayed = false;
 	static Animation::FrameData displayedAnim;
@@ -11,6 +11,7 @@ namespace eg {
 	//static ImVec2 initialRectPos;
 
 	bool AnimationEditorPanel::OpenAnimationEditorPanel(UUID asset) {
+		ResetData();
 		ShowAnimationEditorPanel(true);
 		m_Anim = Animation::Create(asset);
 		m_PlayIcon = Texture2D::Create("resources/icons/PlayButton.png");
@@ -19,7 +20,14 @@ namespace eg {
 		m_LenghtSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/lengthChangeSelectedIcon.png");
 		m_MoveIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveIcon.png");
 		m_MoveSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveSelectedIcon.png");
-
+		const auto& scriptMethods = ScriptEngine::GetAllScriptMethodMaps();
+		for (auto& [key, value] : scriptMethods) {
+			EG_CORE_TRACE("{0} class methods", key);
+			for (auto& [key2, value2] : value) {
+				if(!ScriptEngine::isMethodInternal(key2))
+					EG_CORE_TRACE("name: {0}", key2);
+			}
+		}
 		for (auto& anim : m_Anim->GetFrames()) {
 			m_FramesData.emplace_back(anim);
 		}
@@ -134,6 +142,9 @@ namespace eg {
 					m_FramesData.erase(m_FramesData.begin() + m_ClickedFrame);
 					SetFrames();
 				}
+				if (ImGui::MenuItem("Add function call")) {
+					ImGui::OpenPopup("FunctionCall");
+				}
 			}
 			else{
 				if(ImGui::MenuItem("Swap frames")){
@@ -143,6 +154,32 @@ namespace eg {
 					SetFrames();
 					m_FramesToSwap.clear();
 				}
+			}
+			ImGui::EndPopup();
+		}
+
+
+		if (ImGui::BeginPopup("FunctionCall")) {
+			ImGui::Text("Function name:");
+			static char functionName[128];
+			ImGui::InputText("##functionName", functionName, 128);
+			bool opened = ImGui::TreeNodeEx("Available Function calls:", ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow);
+			if (opened)
+			{
+					const auto& scriptMethods = ScriptEngine::GetAllScriptMethodMaps();
+					for (auto& [key, value] : scriptMethods) {
+						bool openedClass = ImGui::TreeNodeEx(key.c_str(), ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow);
+						if (!openedClass)
+							continue;
+						for (auto& [key2, value2] : value) {
+							if(!ScriptEngine::isMethodInternal(key2))
+								if (ImGui::Button(key2.c_str()))
+								{
+									//TODO: save function call to frame
+								}
+					}
+				}
+				ImGui::TreePop();
 			}
 			ImGui::EndPopup();
 		}
@@ -195,7 +232,6 @@ namespace eg {
 			ShowAnimationEditorPanel(false);
 			m_FramesData.clear();
 			m_Anim = nullptr;
-			
 		}
 		if (ImGui::Button("Close")) {
 			ShowAnimationEditorPanel(false);
@@ -256,5 +292,22 @@ namespace eg {
 		}
 
 		m_Anim->SetFrame(0);
+	}
+	void AnimationEditorPanel::ResetData()
+	{
+		m_FramesToSwap.clear();
+		m_FramesData.clear();
+		m_Anim = nullptr;
+		m_PlayAnimation = false;
+		m_ShowLongerFrame = false;
+		m_ShowInitialFrame = true;
+		m_Resize = false;
+		m_Move = false;
+		m_ClickedFrame = -1;
+		clickedFrame = -1;
+		isDisplayed = false;
+		displayedAnim = {};
+		isDragging = false;
+		draggingIndex = -1;
 	}
 }

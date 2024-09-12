@@ -131,22 +131,41 @@ namespace eg
 
 	void ResourceDatabase::SetResourceData(UUID uuid, ResourceType resourceType, void* data)
 	{
-		if (resourceType == ResourceType::Image)
-			ResourceSerializer::TextureResourceDataCache[uuid] = (TextureResourceData*)data;
-		else if(resourceType == ResourceType::SubTexture)
-			ResourceSerializer::SubTextureResourceDataCache[uuid] = (SubTextureResourceData*)data;
-		else if (resourceType == ResourceType::Animation)
+		switch (resourceType)
+		{
+		case eg::ResourceType::Animation:
 			ResourceSerializer::AnimationResourceDataCache[uuid] = (AnimationResourceData*)data;
-		else if(resourceType == ResourceType::SpriteAtlas)
-			ResourceSerializer::SpriteAtlasResourceDataCache[uuid] = (SpriteAtlasResourceData*)data;
-		else if(resourceType == ResourceType::Font)
-			ResourceSerializer::FontResourceDataCache[uuid] = (FontResourceData*)data;
-		else if(resourceType == ResourceType::Script)
-			ResourceSerializer::ScriptResourceDataCache[uuid] = (ScriptResourceData*)data;
-		else if(resourceType == ResourceType::Audio)
+			break;
+		case eg::ResourceType::Frame:
+			ResourceSerializer::FrameResourceDataCache[uuid] = (FrameResourceData*)data;
+			break;
+		case eg::ResourceType::Audio:
 			ResourceSerializer::AudioResourceDataCache[uuid] = (AudioResourceData*)data;
-		else
+			break;
+		case eg::ResourceType::SpriteAtlas:
+			ResourceSerializer::SpriteAtlasResourceDataCache[uuid] = (SpriteAtlasResourceData*)data;
+			break;
+		case eg::ResourceType::SubTexture:
+			ResourceSerializer::SubTextureResourceDataCache[uuid] = (SubTextureResourceData*)data;
+			break;
+		case eg::ResourceType::Font:
+			ResourceSerializer::FontResourceDataCache[uuid] = (FontResourceData*)data;
+			break;
+		case eg::ResourceType::Image:
+			ResourceSerializer::TextureResourceDataCache[uuid] = (TextureResourceData*)data;
+			break;
+		case eg::ResourceType::Script:
+			ResourceSerializer::ScriptResourceDataCache[uuid] = (ScriptResourceData*)data;
+			break;
+		case eg::ResourceType::Text:
+		case eg::ResourceType::Shader:
+		case eg::ResourceType::NativeScript:
+		case eg::ResourceType::None:
+		case eg::ResourceType::Custom:
+		default:
 			EG_CORE_ERROR("Resource type not supported");
+			break;
+		}
 	}
 
 	ResourceType ResourceDatabase::GetResourceType(UUID uuid)
