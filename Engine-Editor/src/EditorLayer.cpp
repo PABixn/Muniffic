@@ -51,7 +51,7 @@ namespace eg
 		m_LogoIcon = Texture2D::Create("resources/icons/logo.png");
 
 		auto& io = ImGui::GetIO();
-		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf",16.8f,NULL,io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf",18.0f,NULL,io.Fonts->GetGlyphRangesDefault());
 		IM_ASSERT(m_PoppinsRegularFont != nullptr);
 		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf",20.0f,NULL,io.Fonts->GetGlyphRangesDefault());
 		IM_ASSERT(m_PoppinsMediumFont != nullptr);
@@ -59,6 +59,8 @@ namespace eg
 		IM_ASSERT(m_PoppinsSemiBoldFont != nullptr);
 		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf",20.0f,NULL,io.Fonts->GetGlyphRangesDefault());
 		IM_ASSERT(m_PoppinsExtraBoldFont != nullptr);
+
+		io.FontDefault = m_PoppinsRegularFont;
 
 		FrameBufferSpecification fbSpec;
 		fbSpec.Attachments = {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth};

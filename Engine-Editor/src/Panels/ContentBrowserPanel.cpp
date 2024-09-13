@@ -39,10 +39,9 @@ namespace eg
 		ImGui::PushID(name.c_str());
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-
 		ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
-		ImGui::PushFont(m_PoppinsRegularFont);
+		//ImGui::PushFont(m_PoppinsRegularFont);
 		if (ImGui::BeginPopupContextItem("FileOptions"))
 		{
 			if (ImGui::MenuItem("Delete"))
@@ -69,13 +68,12 @@ namespace eg
 			ImGui::EndDragDropSource();
 		}
 
-		ImGui::PopStyleColor();
-
 		ImGui::TextWrapped(name.c_str());
 
 		ImGui::NextColumn();
 
-		ImGui::PopFont();
+		ImGui::PopStyleColor();
+		//ImGui::PopFont();
 		ImGui::PopID();
 	}
 
@@ -92,26 +90,26 @@ namespace eg
 		if (m_RenameResourcePanel->IsShown())
 			m_RenameResourcePanel->OnImGuiRender();
 
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::Begin("Content Browser");
 
 		ImGuiStyle& style = ImGui::GetStyle();
-		/*auto btnColor = style.Colors[ImGuiCol_Button];
+		auto btnColor = style.Colors[ImGuiCol_Button];
 		auto btnColorHovered = style.Colors[ImGuiCol_ButtonHovered];
 		auto btnColorActive = style.Colors[ImGuiCol_ButtonActive];
 
-		style.Colors[ImGuiCol_Button] = ImVec4(0, 0, 0, 0);
-		style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0, 0, 0, 0);
-		style.Colors[ImGuiCol_ButtonActive] = ImVec4(0, 0, 0, 0);*/
 		ImGui::PushFont(m_PoppinsRegularFont);
 
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
-		
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
 		if (m_CurrentDirectory != AssetDirectoryManager::getRootDirectoryUUID()) {
 
 			drawList->ChannelsSplit(2);
 			drawList->ChannelsSetCurrent(1);
+
 			if (ImGui::ImageButton((ImTextureID)m_ArrowIcon->GetRendererID(), { 30, 30 }))
 			{
 				UUID oldPath = m_CurrentDirectory;
@@ -147,7 +145,6 @@ namespace eg
 				ImGui::EndDragDropTarget();
 			}
 		}
-		
 
 		ImGui::SameLine();
 		drawList->ChannelsSplit(2);
@@ -169,6 +166,7 @@ namespace eg
 			));
 		}
 		drawList->ChannelsMerge();
+		ImGui::PopStyleColor(3);
 
 		bool isClicked = false;
 		if (ImGui::BeginPopup("CreateNewResource"))
@@ -183,9 +181,9 @@ namespace eg
 			ImGui::OpenPopup("CreateNewDirectory");
 			isClicked = false;
 		}
-			
+
 		bool open = true;
-		//ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding,10.f);
 		if (ImGui::BeginPopupModal("CreateNewDirectory",NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
 			
@@ -193,13 +191,6 @@ namespace eg
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
-
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
-			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
-			ImGui::PushStyleColor(ImGuiCol_FrameBgActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
-			/*ImGui::PushStyleColor(ImGuiCol_Button, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade);*/
 
 			style.ItemSpacing = ImVec2(20.f,10.f);
 
@@ -222,13 +213,11 @@ namespace eg
 			}
 			style.ItemSpacing = spacing;
 
-			ImGui::PopStyleColor(3);
 			ImGui::PopStyleVar(2);
 			ImGui::EndPopup();
 		}
-		//ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
-
+		ImGui::PopStyleColor();
 		ImGui::SameLine();
 
 		static char buffer[256];
@@ -327,17 +316,8 @@ namespace eg
 
 		float size = thumbnailSize, offset = padding;
 
-		/*if (ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512))
-			Commands::ExecuteRawValueCommand(&thumbnailSize, size, std::string("ContentBrowserPanel-Thumbnail Size"));*/
-			
-		/*if (ImGui::SliderFloat("Padding", &padding, 0, 32))
-			Commands::ExecuteRawValueCommand(&padding, offset, std::string("ContentBrowserPanel-Padding"));*/
 		ImGui::PopFont();
 		ImGui::End();
-		ImGui::PopStyleColor();
-		/*style.Colors[ImGuiCol_Button] = btnColor;
-		style.Colors[ImGuiCol_ButtonHovered] = btnColorHovered;
-		style.Colors[ImGuiCol_ButtonActive] = btnColorActive;*/
 	}
 
 }
