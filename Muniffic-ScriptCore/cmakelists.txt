@@ -22,9 +22,9 @@ project(Muniffic-ScriptCore LANGUAGES CSharp)
 add_library(Muniffic-ScriptCore SHARED)
 
 # .NET Framework version
-set_target_properties(Muniffic-ScriptCore PROPERTIES
-    VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.7.2"
-)
+#set_target_properties(Muniffic-ScriptCore PROPERTIES
+#    VS_DOTNET_TARGET_FRAMEWORK_VERSION "v4.7.2"
+#)
 
 # Output directories
 set_target_properties(Muniffic-ScriptCore PROPERTIES

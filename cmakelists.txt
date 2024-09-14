@@ -45,7 +45,7 @@ add_subdirectory(Engine)
 add_subdirectory(Muniffic-ScriptCore)
 
 # TODO: un-hardcode this :3
-add_subdirectory(Engine-Editor/SandboxProject/Assets/Scripts)
+# add_subdirectory(Engine-Editor/SandboxProject/Assets/Scripts)
 
 add_subdirectory(Engine-Editor)
 
