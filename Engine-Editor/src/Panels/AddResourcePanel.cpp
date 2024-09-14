@@ -31,11 +31,11 @@ namespace eg
 		m_NativeScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/nativescript_icon_white.png");
 		m_CustomIcon = Texture2D::Create("resources/icons/addResourcePanel/custom_icon_white.png");
 
-		auto& io = ImGui::GetIO();
+		/*auto& io = ImGui::GetIO();
 		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, NULL, io.Fonts->GetGlyphRangesDefault());
 		IM_ASSERT(m_PoppinsLightFont != NULL);
 		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsMediumFont != NULL);
+		IM_ASSERT(m_PoppinsMediumFont != NULL);*/
 	}
 	void AddResourcePanel::OnImGuiRender()
 	{
@@ -50,10 +50,10 @@ namespace eg
 				ImGui::Begin("Resource Loader",nullptr,ImGuiWindowFlags_NoDecoration);
 
 				ImGui::SetWindowSize(ImVec2(size, 550));
-				ImGui::PushFont(m_PoppinsMediumFont);
+				//ImGui::PushFont(m_PoppinsMediumFont);
 				TextCenteredOnLine("Resource Loader");
-				ImGui::PopFont();
-				ImGui::PushFont(m_PoppinsLightFont);
+				//ImGui::PopFont();
+				//ImGui::PushFont(m_PoppinsLightFont);
 
 				auto btnColor = style.Colors[ImGuiCol_Button];
 				auto btnColorHovered = style.Colors[ImGuiCol_ButtonHovered];
@@ -118,7 +118,7 @@ namespace eg
 				{
 					m_showResourcePanel = false;
 				}
-				ImGui::PopFont();
+				//ImGui::PopFont();
 				ImGui::End();
 				ImGui::PopStyleVar();
 				ImGui::PopStyleColor();
