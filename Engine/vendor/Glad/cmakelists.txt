@@ -1,0 +1,61 @@
+# Glad/CMakeLists.txt
+
+cmake_minimum_required(VERSION 3.16)
+project(Glad LANGUAGES C)
+
+add_library(Glad STATIC)
+
+if(MSVC)
+    target_compile_options(Glad PRIVATE /w)
+else()
+    target_compile_options(Glad PRIVATE -w)
+endif()
+
+# Output directories for binaries and object files
+set_target_properties(Glad PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Glad"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Glad"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Glad"
+    OUTPUT_NAME "Glad"
+)
+
+# Source files
+target_sources(Glad PRIVATE
+    "include/glad/glad.h"
+    "include/KHR/khrplatform.h"
+    "src/glad.c"
+)
+
+# Include directories
+target_include_directories(Glad PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+# Platform
+if(UNIX AND NOT APPLE) # Linux
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    set(CMAKE_SYSTEM_VERSION "latest")
+
+elseif(APPLE) # macOS
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+elseif(WIN32) # Windows
+    set(CMAKE_SYSTEM_VERSION "latest")
+endif()
+
+# Build configurations
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(Glad PRIVATE GLAD_DEBUG)
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
+
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2")
+
+elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
+    set(CMAKE_C_FLAGS_DIST "${CMAKE_C_FLAGS_DIST} -O3 -DNDEBUG")
+endif()
+
+if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug-AS")
+    target_compile_options(Glad PRIVATE /RTC- /INCREMENTAL:NO) # NoRuntimeChecks, NoIncrementalLink
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
+endif()

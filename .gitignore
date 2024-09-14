@@ -2,12 +2,40 @@
 **/bin/
 bin-int/
 Intermediates/
+x64/
+Engine/Engine/
+Engine-Editor/Engine-Editor/
+Engine-Editor/resources/Scripts/Debug/
+Engine-Editor/SandboxProject/Assets/Scripts/Binaries/
+Engine-Editor/SandboxProject/Assets/Scripts/obj/
 
 # Muniffic files
 *.log
+recentProjectSerializer.txt
+Engine-Editor/assets/cache
+Engine-Editor/.env
 
-# Visual Studio files and folder
-.vs/
+# Dependancies
+	#Box2D
+	Engine/vendor/Box2D/Box2D/
+
+	#GLFW
+	Engine/vendor/GLFW/GLFW/
+
+	#Glad
+	Engine/vendor/Glad/Glad/
+
+	# ImGui 
+	Engine/vendor/Imgui/ImGui/
+	imgui.ini
+
+	#msdf-atlas-gen
+	Engine/vendor/msdf-atlas-gen/msdf-atlas-gen-bin/
+
+	#Yaml-cpp
+	Engine/vendor/yaml-cpp/yamp-cpp/
+
+# Visual Studio
 **.sln
 **.vcxproj
 **.vcxproj.filters
@@ -16,6 +44,19 @@ Intermediates/
 
 # Directories
 Engine/vendor/VulkanSDK
-Engine-Editor/assets/cache
-scripts/__pycache__
-Engine-Editor/.env
+Engine-Editor/assets/cache/
+scripts/__pycache__/
+
+# IDE configurations
+.idea/
+.vscode/
+.vs/
+
+# CMake
+CMakeFiles/
+**/CMakeFiles/
+**.cmake
+**.dir/
+!Dependencies.cmake
+CMakeCache.txt
+

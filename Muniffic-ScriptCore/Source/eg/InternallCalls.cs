@@ -282,6 +282,12 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_SetFixedRotation(long iD, ref bool fixedRotation);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetGravityMultiplier(long iD, float newMultiplier);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float RigidBody2DComponent_GetGravityMultiplier(long iD);
         #endregion
 
         #region BoxCollider2D
@@ -323,13 +329,13 @@ namespace eg
         internal extern static void BoxCollider2DComponent_SetRestitutionThreshold(long entityID, ref float restitutionThreshold);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool BoxCollider2DComponent_IsSensor(ulong entityID);
+        internal extern static bool BoxCollider2DComponent_IsSensor(long entityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void BoxCollider2DComponent_SetSensor(ulong entityID, ref bool isSensor);
+        internal extern static void BoxCollider2DComponent_SetSensor(long entityID, ref bool isSensor);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool BoxCollider2DComponent_CollidesWith(ulong entityID, ulong otherEntityID);
+        internal extern static bool BoxCollider2DComponent_CollidesWith(long entityID, long otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool BoxCollider2DComponent_CollidesWithCircle(long entityID, long otherEntityID);
@@ -401,13 +407,13 @@ namespace eg
         internal extern static void CircleCollider2DComponent_SetRestitutionThreshold(long entityID, ref float restitutionThreshold);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool CircleCollider2DComponent_IsSensor(ulong entityID);
+        internal extern static bool CircleCollider2DComponent_IsSensor(long entityID);
 
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
-        internal extern static void CircleCollider2DComponent_SetSensor(ulong entityID, ref bool isSensor);
+        internal extern static void CircleCollider2DComponent_SetSensor(long entityID, ref bool isSensor);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool CircleCollider2DComponent_CollidesWith(ulong entityID, ulong otherEntityID);
+        internal extern static bool CircleCollider2DComponent_CollidesWith(long entityID, long otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool CircleCollider2DComponent_CollidesWithBox(long entityID, long otherEntity);

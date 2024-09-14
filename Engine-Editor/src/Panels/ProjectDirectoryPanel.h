@@ -13,6 +13,6 @@ namespace eg {
 		std::string m_SearchedName;
 		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
 
-		void drawDirectoryTreeNode(const std::filesystem::path& path);
+		void DrawDirectoryTreeNode(const std::filesystem::path& path);
 	};
 }

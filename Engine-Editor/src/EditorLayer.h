@@ -7,6 +7,8 @@
 #include "Panels/AddResourcePanel.h"
 #include "Panels/ProjectDirectoryPanel.h"
 #include "Panels/ConsolePanel.h"
+#include "Panels/WelcomingPanel.h"
+#include "Panels/NameNewProjectPanel.h"
 
 
 namespace eg {
@@ -25,6 +27,8 @@ namespace eg {
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
+		const std::string CompileCustomScripts(); 
+		//bool CompileCustomScripts(const std::filesystem::path& path, const std::string& projectName); //returns true if successful, path to where the cmakelists.txt are (path should end with Assets/Scripts)
 
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
@@ -36,6 +40,8 @@ namespace eg {
 		void OpenScene(const std::filesystem::path& path);
 		void SaveAs();
 		void Save();
+
+		bool CreateCmakelists(const std::filesystem::path path); // path to where the .mnproj is (assumes the Assets/Scripts is a subdirectory)
 
 		void NewProject();
 		bool OpenProject();
@@ -57,6 +63,8 @@ namespace eg {
 		//UI Panels
 		void UI_Toolbar();
 	private:
+		Ref<Project> m_CurrentProject;
+		std::filesystem::path m_CustomScriptsDirectory; //absolute
 		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;
 		OrthographicCameraController m_Camera;
@@ -108,8 +116,10 @@ namespace eg {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
-		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
+		Scope<WelcomingPanel> m_WelcomePanel;
+		Scope<NameNewProjectPanel> m_NameNewProjectPanel;
+		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
 		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;

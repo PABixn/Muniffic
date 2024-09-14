@@ -1,0 +1,66 @@
+# Engine-Editor/CMakeLists.txt
+include(../Dependencies.cmake)
+cmake_minimum_required(VERSION 3.16)
+project(Engine-Editor LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:DebugDLL>")
+
+# Output directories for target and object files
+set(TARGET_DIR "${CMAKE_CURRENT_BINARY_DIR}/Engine-Editor")
+set(OBJECT_DIR "${CMAKE_CURRENT_BINARY_DIR}/Engine-Editor")
+
+# Source files
+file(GLOB_RECURSE SOURCES "src/*.h" "src/*.cpp")
+
+add_executable(Engine-Editor ${SOURCES})
+
+set_target_properties(Engine-Editor PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${TARGET_DIR}
+    ARCHIVE_OUTPUT_DIRECTORY ${TARGET_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${TARGET_DIR}
+    OBJECT_OUTPUT_DIRECTORY ${OBJECT_DIR}
+)
+
+# Include directories
+target_include_directories(Engine-Editor PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/../Engine/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../Engine/vendor/spdlog/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../Engine/vendor"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${IncludeDir_filewatch}"
+    "${IncludeDir_glm}"
+    "${IncludeDir_stb_image}"
+    "${IncludeDir_ImGuizmo}"
+    "${IncludeDir_ImGui}"
+)
+# Link libraries
+target_link_libraries(Engine-Editor PRIVATE Engine)
+target_link_libraries(Engine-Editor PRIVATE ImGui)
+
+# Platform-specific settings for Windows
+if(WIN32)
+    target_compile_definitions(Engine-Editor PRIVATE "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING")
+    set(CMAKE_SYSTEM_VERSION "latest")
+endif()
+
+# Configuration-specific settings
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(Engine-Editor PRIVATE "EG_DEBUG")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${TARGET_DIR})
+    set(CMAKE_OBJECT_OUTPUT_DIRECTORY_DEBUG ${OBJECT_DIR})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${TARGET_DIR})
+    target_compile_options(Engine-Editor PRIVATE /Zi /Od)
+
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_definitions(Engine-Editor PRIVATE "EG_RELEASE")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+    target_compile_options(Engine-Editor PRIVATE /O2)
+    
+elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
+    target_compile_definitions(Engine-Editor PRIVATE "EG_DIST")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+    target_compile_options(Engine-Editor PRIVATE /O2)
+endif()

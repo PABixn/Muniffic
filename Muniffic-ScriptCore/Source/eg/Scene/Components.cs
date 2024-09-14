@@ -419,6 +419,13 @@ namespace eg
             set => InternalCalls.RigidBody2DComponent_SetType(Entity.ID, value);
         }
 
+        //GravityMultiplier
+        public float GravityMultiplier 
+        {
+            get => InternalCalls.RigidBody2DComponent_GetGravityMultiplier(Entity.ID);
+            set => InternalCalls.RigidBody2DComponent_SetGravityMultiplier(Entity.ID, value);
+        }
+
         /// <summary>
         /// Initializes the runtime body of the RigidBody2D component.
         /// </summary>
@@ -579,7 +586,7 @@ namespace eg
         }
 
 
-        public bool CollidesWith(ulong entityID)
+        public bool CollidesWith(long entityID)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
         }

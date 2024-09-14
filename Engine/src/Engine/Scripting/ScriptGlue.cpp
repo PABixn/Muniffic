@@ -918,7 +918,7 @@ namespace eg
 
 		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		b2Vec2 velocity = b2Vec2(linearVelocity->x, linearVelocity->y);
+		b2Vec2 velocity = b2Vec2(linearVelocity->x, linearVelocity->y*0);
 		body->SetLinearVelocity(velocity);
 	}
 
@@ -974,6 +974,65 @@ namespace eg
 
 		entity.GetComponent<RigidBody2DComponent>().FixedRotation = fixedRotation;
 	}
+
+	static void RigidBody2DComponent_SetGravityMultiplier(UUID entityID, float newMultiplier)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EG_CORE_ASSERT(entity);
+
+		entity.GetComponent<RigidBody2DComponent>().GravityMultiplier = newMultiplier;
+	}
+
+	static float RigidBody2DComponent_GetGravityMultiplier(UUID entityID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EG_CORE_ASSERT(entity);
+
+		return entity.GetComponent<RigidBody2DComponent>().GravityMultiplier;
+	}
+
+	static void RigidBody2DComponent_ApplyForce(UUID uuid, glm::vec2* force, glm::vec2* point, bool wake)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->ApplyForce(b2Vec2(force->x, force->y), b2Vec2(point->x, point->y), wake);
+	}
+
+	static void RigidBody2DComponent_ApplyForceToCenter(UUID uuid, glm::vec2* force, bool wake)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->ApplyForceToCenter(b2Vec2(force->x, force->y), wake);
+	}
+
+	static void RigidBody2DComponent_ApplyTorque(UUID uuid,float torque, bool wake)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EG_CORE_ASSERT(scene, "No scene context!");
+		Entity entity = scene->GetEntityByUUID(uuid);
+		EG_CORE_ASSERT(entity, "Entity does not exist!");
+
+		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+		body->ApplyTorque(torque, wake);
+	}
+
+
+
 #pragma endregion
 
 #pragma region BoxCollider2D
@@ -2117,6 +2176,8 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetType);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_IsFixedRotation);
 		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetFixedRotation);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_GetGravityMultiplier);
+		EG_ADD_INTERNAL_CALL(RigidBody2DComponent_SetGravityMultiplier);
 
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_GetOffset);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_SetOffset);

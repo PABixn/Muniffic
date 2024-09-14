@@ -260,18 +260,16 @@ namespace eg {
 				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 				auto view = m_Registry.view<RigidBody2DComponent>();
+				for (auto e : view)
 				{
-					for (auto e : view)
-					{
-						Entity entity{ e, this };
-						auto& rb = entity.GetComponent<RigidBody2DComponent>();
-						auto& transform = entity.GetComponent<TransformComponent>();
-						auto* body = (b2Body*)rb.RuntimeBody;
+					Entity entity{ e, this };
+					auto& rb = entity.GetComponent<RigidBody2DComponent>();
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto* body = (b2Body*)rb.RuntimeBody;
 
-						transform.Translation.x = body->GetPosition().x;
-						transform.Translation.y = body->GetPosition().y;
-						transform.Rotation.z = body->GetAngle();
-					}
+					transform.Translation.x = body->GetPosition().x;
+					transform.Translation.y = body->GetPosition().y;
+					transform.Rotation.z = body->GetAngle();
 				}
 			}
 
@@ -632,8 +630,11 @@ namespace eg {
 		{
 			Entity e{ entity, this };
 			auto& transform = e.GetComponent<TransformComponent>();
+			auto& rb = e.GetComponent<RigidBody2DComponent>();
 
 			b2Body* body = (b2Body*)StartRuntimeBody(e);
+			body->SetGravityScale(rb.GravityMultiplier);
+
 
 			if (e.HasComponent<BoxCollider2DComponent>())
 			{

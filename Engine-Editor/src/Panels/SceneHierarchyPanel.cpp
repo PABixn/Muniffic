@@ -57,7 +57,7 @@ namespace eg {
 			return ImGui::GetContentRegionAvail().x * WidthOfProperty - 4.f;
 		}
 	}
-
+	
 	static void PropertyLabel(const char* label) {
 		ImGui::SameLine();
 		bool s = ImGui::TextWrappedWithLineLimit(label, 1);
@@ -76,7 +76,7 @@ namespace eg {
 	static bool PrettyButton(const char* label, bool fullWidth = false) {
 		if (fullWidth)
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(50, 7));
-		else
+		else 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(15, 7));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
 		float size = ImGui::CalcTextSize(label).x + ImGui::GetStyle().FramePadding.x * 2.0f + 20;
@@ -109,7 +109,7 @@ namespace eg {
 		auto boldFont = io.Fonts->Fonts[0];
 
 		ImGui::PushID(label.c_str());
-		float columnsWidth = ImGui::GetContentRegionAvail().x * WidthOfProperty - 68.f;
+		float columnsWidth = ImGui::GetContentRegionAvail().x * WidthOfProperty-68.f;
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
 		ImGui::PushMultiItemsWidths(3, columnsWidth);
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
@@ -243,7 +243,7 @@ namespace eg {
 
 	static void DrawComponentPropertyFileReference(const char* label, UUID& uuid, std::function<void(int64_t* what)> fun) {
 		ComponentPropertyBeforeDraw(label);
-		ImGui::Button((uuid == 0) ? "none" : ResourceDatabase::GetResourceName(uuid).c_str(), { CalculatePreferedComponentPropertyWidth(label), 0 });
+		ImGui::Button((uuid == 0)? "none": ResourceDatabase::GetResourceName(uuid).c_str(), {CalculatePreferedComponentPropertyWidth(label), 0});
 		if (ImGui::BeginDragDropTarget())
 		{
 
@@ -300,18 +300,18 @@ namespace eg {
 		//See ComponentIcon enum (SceneHierarchyPanel.h)
 		m_ComponentIcons = std::vector<Ref<Texture2D>>();
 		std::string IconPath = "resources/icons/hierarchyPanel/Components/";
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "ComponentIcon.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Transform.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Camera.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Script.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "SpriteRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "SubTexRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "CircleRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "RigidBody.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "BoxCol.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "CircleCol.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "TextRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Animator.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"ComponentIcon.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"Transform.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"Camera.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"Script.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"SpriteRen.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"SubTexRen.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"CircleRen.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"RigidBody.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"BoxCol.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"CircleCol.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"TextRen.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"Animator.png"));
 		m_Context = scene;
 		m_SelectionContext = {};
 		m_ImagePanel = CreateRef<ImagePanel>();
@@ -320,7 +320,7 @@ namespace eg {
 		m_PuzzleIcon = Texture2D::Create("resources/icons/hierarchyPanel/puzzle.png");
 	}
 
-	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity) {
+	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity) {                                 
 		bool searched = false, childsearched = false;
 		std::string silli = entity.GetName();
 		EntityDisplayInfo currentEntityDisplayInfo = EntityDisplayInfo();
@@ -376,9 +376,9 @@ namespace eg {
 		float paddingTop = 10.f;
 		float paddingLeft = 15.f;
 		float rightAndLeftFreeSpace = 110.f;
-		ImGui::SetCursorPosX(rightAndLeftFreeSpace / 4 - paddingLeft + 3.f);
+		ImGui::SetCursorPosX(rightAndLeftFreeSpace / 4 - paddingLeft +3.f);
 		ImGui::SetCursorPosY(45.f);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingLeft / 2 + 3.f, paddingTop / 2));
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingLeft/2 +3.f, paddingTop/2));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 30.f);
 		if (ImGui::Button("+")) {
 			Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Entity", {}, m_Context, m_SelectionContext));
@@ -389,10 +389,10 @@ namespace eg {
 		//search bar
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingLeft, paddingTop));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 30.f);
-		ImGui::PushItemWidth(ImGui::GetWindowWidth() - rightAndLeftFreeSpace);
-		ImGui::SetCursorPosX(rightAndLeftFreeSpace / 2);
+		ImGui::PushItemWidth(ImGui::GetWindowWidth()-rightAndLeftFreeSpace);
+		ImGui::SetCursorPosX(rightAndLeftFreeSpace/2);
 		ImGui::SetCursorPosY(40.f);
-		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount() == 2) {
+		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount()==2) {
 			Search();
 		}
 		for (EntityDisplayInfo e : m_ListOfEntityDisplayed) {
@@ -404,8 +404,8 @@ namespace eg {
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
 		if (m_Search == "") {
-			ImGui::SetCursorPosX((rightAndLeftFreeSpace / 2) + paddingLeft);
-			ImGui::SetCursorPosY(40.f + paddingTop);
+			ImGui::SetCursorPosX((rightAndLeftFreeSpace/2)+paddingLeft);
+			ImGui::SetCursorPosY(40.f+paddingTop);
 			ImGui::Text("search");
 			ImGui::NewLine();
 		}
@@ -440,7 +440,7 @@ namespace eg {
 				ImGui::EndPopup();
 			}
 		}
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f)); 
 		ImGui::Begin("Properties");
 		ImGui::PopStyleVar();
 		if (m_SelectionContext)
@@ -448,9 +448,9 @@ namespace eg {
 			DrawComponents(m_SelectionContext);
 		}
 		ImGui::End();
-		if (m_PreviewAbsoluteImagePath != "") {
+		if (m_PreviewAbsoluteImagePath != "" ) {
 			ImGui::Begin("Preview");
-			static GLuint my_opengl_texture;
+			static GLuint my_opengl_texture; 
 			static unsigned char* image = nullptr;
 			for (const std::pair<UUID, TextureResourceData*>& pairOfUUIDAndData : ResourceDatabase::GetTextureResourceDataCache()) {
 				auto CacheImageData = (pairOfUUIDAndData.second);
@@ -472,12 +472,12 @@ namespace eg {
 					}
 					if (image)
 					{
-						auto s = ImGui::GetWindowWidth();
-						std::string absImgName = m_PreviewAbsoluteImagePath.filename().string();
-						ImGui::TextWrapped(add("file: ", absImgName.c_str(), ""));
-						if (ImGui::Button("open")) {
-							std::string path = m_PreviewAbsoluteImagePath.string();
-							ShellExecuteA(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+						auto s = ImGui::GetWindowWidth(); 
+						std::string absImgName = m_PreviewAbsoluteImagePath.filename().string(); 
+						ImGui::TextWrapped(add("file: ", absImgName.c_str(), "")); 
+						if (ImGui::Button("open")) { 
+							std::string path = m_PreviewAbsoluteImagePath.string(); 
+							ShellExecuteA(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT); 
 						}
 						ImGui::TextWrapped(add("size: ", std::to_string(CacheImageData->Width).c_str(), add(" x ", std::to_string(CacheImageData->Height).c_str(), "")));
 						ImGui::TextWrapped(add("scale of preview: ", (std::to_string(std::round(s / CacheImageData->Width * 100.0) / 100.0)).substr(0, 4).c_str(), ""));
@@ -513,13 +513,13 @@ namespace eg {
 		{
 			if (m_SelectionContext.HasComponent<AnimatorComponent>())
 			{
-				if (!m_Context->IsRunning()) {
+				if (!m_Context->IsRunning()){
 					for (Ref<Animation> an : m_PreviewedAnimations)
 					{
 						an->Update(dt, m_SelectionContext.GetComponent<AnimatorComponent>().Animator2D->GetSpeed());
 					}
 				}
-
+				
 			}
 		}
 	}
@@ -578,7 +578,7 @@ namespace eg {
 			if (ImGui::MenuItem("Delete Entity"))
 				Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Context, m_SelectionContext));
 
-			if (ImGui::MenuItem("Create Child Entity"))
+			if(ImGui::MenuItem("Create Child Entity"))
 				Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Child Entity", {}, m_Context, m_SelectionContext, entity));
 
 			ImGui::EndPopup();
@@ -587,7 +587,7 @@ namespace eg {
 		if (opened)
 		{
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-			if (entityDisplayInfo.res >= searchRes::thisSearched)
+			if (entityDisplayInfo.res>=searchRes::thisSearched)
 			{
 				if (entity.Exists())
 				{
@@ -628,9 +628,9 @@ namespace eg {
 			Ref<Texture2D> iconID = m_ComponentIcons[iconOrType];
 
 			bool open;
-			if (entity.GetChildren().size() > 0 && entity.GetInheritableComponent<T>()->isInheritedInChildren)
-				open = ImGui::CustomTreeNodeWithPicEx((void*)typeid(T).hash_code(), (treeNodeFlags | ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(iconID->GetRendererID()));
-			else
+			if(entity.GetChildren().size() > 0 && entity.GetInheritableComponent<T>()->isInheritedInChildren)
+				open = ImGui::CustomTreeNodeWithPicEx((void*)typeid(T).hash_code(), (treeNodeFlags| ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(iconID->GetRendererID()));
+			else	
 				open = ImGui::CustomTreeNodeWithPicEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(iconID->GetRendererID()));
 			ImGui::PopStyleVar();
 			if (!(name == std::string("Transform") && !(entity.GetChildren().size() > 0 || entity.GetParent().has_value()))) {
@@ -641,7 +641,7 @@ namespace eg {
 				}
 			}
 
-
+			
 			if (ImGui::BeginPopup("ComponentSettings"))
 			{
 				if (name != std::string("Transform"))
@@ -659,16 +659,16 @@ namespace eg {
 							"Stop inheriting component in children"))
 							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInheritedInChildren);
 
-						if (ImGui::MenuItem("Copy to children"))
+						if(ImGui::MenuItem("Copy to children"))
 							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT);
 
-						if (ImGui::MenuItem("Remove from children"))
+						if(ImGui::MenuItem("Remove from children"))
 							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT, true);
 
-						if (ImGui::MenuItem("Copy values to children"))
+						if(ImGui::MenuItem("Copy values to children"))
 							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT_VALUES);
 
-						if (ImGui::MenuItem("Copy component with values to children"))
+						if(ImGui::MenuItem("Copy component with values to children"))
 							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT_AND_VALUES);
 					}
 
@@ -680,10 +680,10 @@ namespace eg {
 							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInherited, true);
 					}
 				}
-
+					
 				ImGui::EndPopup();
 			}
-
+			
 
 			if (open)
 			{
@@ -712,17 +712,17 @@ namespace eg {
 	{
 		if (entity.HasComponent<TagComponent>())
 		{
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 7));
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10,7));
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
-			ImGui::SetCursorPos({ ImGui::GetCursorPosX() + 40, ImGui::GetCursorPosY() + 20 });
-			ImGui::Image((ImTextureID)m_PuzzleIcon->GetRendererID(), { 30,30 });
+			ImGui::SetCursorPos({ImGui::GetCursorPosX() + 40, ImGui::GetCursorPosY()+20});
+			ImGui::Image((ImTextureID)m_PuzzleIcon->GetRendererID(), {30,30});
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 120);
 			ImGui::SameLine();
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX()+10);
 			auto& tag = entity.GetComponent<TagComponent>().Tag;
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
-			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
+			std::strncpy(buffer, tag.c_str(), sizeof(buffer)); 
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer), ImGuiInputTextFlags_Wrapped))
 			{
 				tag = std::string(buffer);
@@ -736,7 +736,7 @@ namespace eg {
 		ImGui::PushItemWidth(-1);
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
-
+		
 		if (PrettyButton("Add Component"))
 			ImGui::OpenPopup("AddComponent");
 		if (ImGui::BeginPopup("AddComponent"))
@@ -760,11 +760,11 @@ namespace eg {
 		ImGui::PopItemWidth();
 
 		DrawComponent<TransformComponent>("Transform", entity, [entity](auto& component)
-		{
-			DrawVec3Control(entity, "Translation", component.Translation, 0.0f, 100.f, true);
-			DrawVec3Control(entity, "Rotation", component.Rotation);
-			DrawVec3Control(entity, "Scale", component.Scale, 1.0f);
-		}, m_Context, ComponentIcons::TransformIcon);
+			{
+				DrawVec3Control(entity, "Translation", component.Translation, 0.0f, 100.f, true);
+				DrawVec3Control(entity, "Rotation", component.Rotation);
+				DrawVec3Control(entity, "Scale", component.Scale, 1.0f);
+			}, m_Context, ComponentIcons::TransformIcon);
 
 		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component) {
 			auto& camera = component.Camera;
@@ -786,23 +786,23 @@ namespace eg {
 				if (DrawComponentPropertyFloat("Vertical FOV", &perspectiveVerticalFov))
 					//camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
 					Commands::ExecuteValueCommand<float>([&camera](float verticalFov)
-				{
-					camera.SetPerspectiveVerticalFOV(glm::radians(verticalFov));
-				}, perspectiveVerticalFov, glm::degrees(camera.GetPerspectiveVerticalFOV()), "CameraComponent-Vertical FOV");
+						{
+							camera.SetPerspectiveVerticalFOV(glm::radians(verticalFov));
+						}, perspectiveVerticalFov, glm::degrees(camera.GetPerspectiveVerticalFOV()), "CameraComponent-Vertical FOV");
 
 				float perspectiveNear = camera.GetPerspectiveNearClip();
 				if (DrawComponentPropertyFloat("Near", &perspectiveNear))
 					Commands::ExecuteValueCommand<float>([&camera](float nearClip)
-				{
-					camera.SetPerspectiveNearClip(nearClip);
-				}, perspectiveNear, camera.GetPerspectiveNearClip(), "CameraComponent-Near");
+						{
+							camera.SetPerspectiveNearClip(nearClip);
+						}, perspectiveNear, camera.GetPerspectiveNearClip(), "CameraComponent-Near");
 
 				float perspectiveFar = camera.GetPerspectiveFarClip();
 				if (DrawComponentPropertyFloat("Far", &perspectiveFar))
 					Commands::ExecuteValueCommand<float>([&camera](float farClip)
-				{
-					camera.SetPerspectiveFarClip(farClip);
-				}, perspectiveFar, camera.GetPerspectiveFarClip(), "CameraComponent-Far");
+						{
+							camera.SetPerspectiveFarClip(farClip);
+						}, perspectiveFar, camera.GetPerspectiveFarClip(), "CameraComponent-Far");
 			}
 
 			if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
@@ -810,486 +810,493 @@ namespace eg {
 				float size = camera.GetOrthographicSize();
 				if (DrawComponentPropertyFloat("Size", &size))
 					Commands::ExecuteValueCommand<float>([&camera](float size)
-				{
-					camera.SetOrthographicSize(size);
-				}, size, camera.GetOrthographicSize(), "CameraComponent-Size");
+						{
+							camera.SetOrthographicSize(size);
+						}, size, camera.GetOrthographicSize(), "CameraComponent-Size");
 
 				float nearClip = camera.GetOrthographicNearClip();
 				if (DrawComponentPropertyFloat("Near", &nearClip))
 					Commands::ExecuteValueCommand<float>([&camera](float nearClip)
-				{
-					camera.SetOrthographicNearClip(nearClip);
-				}, nearClip, camera.GetOrthographicNearClip(), "CameraComponent-Near");
+						{
+							camera.SetOrthographicNearClip(nearClip);
+						}, nearClip, camera.GetOrthographicNearClip(), "CameraComponent-Near");
 
 				float farClip = camera.GetOrthographicFarClip();
 				if (DrawComponentPropertyFloat("Far", &farClip))
 					Commands::ExecuteValueCommand<float>([&camera](float farClip)
-				{
-					camera.SetOrthographicFarClip(farClip);
-				}, farClip, camera.GetOrthographicFarClip(), "CameraComponent-Far");
+						{
+							camera.SetOrthographicFarClip(farClip);
+						}, farClip, camera.GetOrthographicFarClip(), "CameraComponent-Far");
 
-				if (DrawComponentPropertyCheckbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
+				if(DrawComponentPropertyCheckbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
 					Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
 			}
-		}, m_Context, ComponentIcons::CameraIcon);
+			}, m_Context, ComponentIcons::CameraIcon);
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
-		{
-			ImGui::Unindent();
-			static std::string result;
-			bool open = true;
-			if (ImGui::BeginPopupModal("Compilation", &open))
 			{
-				ImGui::Text(result.c_str());
-				if (ImGui::Button("OK"))
-					ImGui::CloseCurrentPopup();
-				ImGui::EndPopup();
-			}
-			if (PrettyButton("Add Script"))
-			{
-				ScriptResourceData* data = new ScriptResourceData();
-				data->ResourceName = "";
-				data->Extension = ".cs";
-				data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Script);
-				data->Type = ResourceType::Script;
-
-				UUID uuid = ResourceDatabase::AddResource(AssetDirectoryManager::getDirectoryPath(data->ParentDirectory), data, ResourceType::Script);
-				component.Scripts.push_back(uuid);
-			}
-			static std::vector<char*> buffers;
-
-			int i = 0;
-			int j = 0;
-
-			for (UUID scriptUUID : component.Scripts)
-			{
-				ImGui::PushID("Scr" + j);
-				ScriptResourceData* data = (ScriptResourceData*)ResourceDatabase::GetResourceData(scriptUUID);
-				std::string& scriptName = data->ResourceName;
-				ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow;
-				ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
-				ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 1.f, 1.f, 0.05f));
-				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,4 });
-				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.f);
-
-				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
-				float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-				bool open = ImGui::TreeNodeEx((void*)(uint64_t)scriptUUID, flags, scriptName.c_str());
-				ImGui::SameLine(contentRegionAvailable.x - lineHeight);
-
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.f, 1.f, 1.f, 0.0f));
-				bool del = ImGui::Button("X", ImVec2{ lineHeight,lineHeight });
-				ImGui::PopStyleColor();
-
-				ImGui::PopStyleVar();
-				ImGui::PopStyleVar();
-				ImGui::PopStyleColor();
-
-				//ImGui::Separator();
-
-				if (del) {
-					component.Scripts.erase(std::find(component.Scripts.begin(), component.Scripts.end(), scriptUUID));
-
-					if (open) {
-						ImGui::TreePop();
-						ImGui::Indent();
-					}
-
-					ImGui::PopID();
-					return;
-				}
-
-				if (open)
+				ImGui::Unindent();
+				static std::string result;
+				if (PrettyButton("Compile Scripts"))
 				{
-					bool scriptExists = ScriptEngine::EntityClassExists(scriptName);
+					EditorLayer* editorLayer = static_cast<EditorLayer*>(Application::Get().GetFirstLayer());
+					result =  (editorLayer->CompileCustomScripts());
+					ImGui::OpenPopup("Compilation");
+					//zna1
+				}
+				bool open = true;
+				if (ImGui::BeginPopupModal("Compilation", &open))
+				{
+					ImGui::Text(result.c_str());
+					if (ImGui::Button("OK"))
+						ImGui::CloseCurrentPopup();
+					ImGui::EndPopup();
+				}
+				if (PrettyButton("Add Script"))
+				{
+					ScriptResourceData* data = new ScriptResourceData();
+					data->ResourceName = "";
+					data->Extension = ".cs";
+					data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Script);
+					data->Type = ResourceType::Script;
 
-					if (buffers.size() <= i)
-					{
-						char* buffer = new char[256];
-						buffers.push_back(buffer);
-					}
+					UUID uuid = ResourceDatabase::AddResource(AssetDirectoryManager::getDirectoryPath(data->ParentDirectory), data, ResourceType::Script);
+					component.Scripts.push_back(uuid);
+				}
+				static std::vector<char*> buffers;
 
-					char* buffer = buffers.at(i);
+				int i = 0;
+				int j = 0;
 
-					memset(buffer, 0, 256);
-					strcpy_s(buffer, 256, scriptName.c_str());
+				for (UUID scriptUUID : component.Scripts)
+				{
+					ImGui::PushID("Scr" + j);
+					ScriptResourceData* data = (ScriptResourceData*)ResourceDatabase::GetResourceData(scriptUUID);
+					std::string& scriptName = data->ResourceName;
+					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow;
+					ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 1.f, 1.f, 0.05f));
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,4 });
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.f);
 
-					i++;
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
+					float lineHeight = GImGui->Font->FontSize+ GImGui->Style.FramePadding.y * 2.0f;
+					bool open = ImGui::TreeNodeEx((void*)(uint64_t)scriptUUID, flags, scriptName.c_str());
+					ImGui::SameLine(contentRegionAvailable.x - lineHeight);
 
-					UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.f, 1.f, 1.f, 0.0f));
+					bool del = ImGui::Button("X", ImVec2{ lineHeight,lineHeight });
+					ImGui::PopStyleColor();
 
-					if (DrawComponentPropertyInputText(std::string("Class " + std::to_string(i)).c_str(), buffer, 256))
-					{
-						scriptName = std::string(buffer);
-						ImGui::TreePop();
-						ImGui::Indent();
+					ImGui::PopStyleVar();
+					ImGui::PopStyleVar();
+					ImGui::PopStyleColor();
+					
+					//ImGui::Separator();
+
+					if (del){
+						component.Scripts.erase(std::find(component.Scripts.begin(), component.Scripts.end(), scriptUUID));
+
+						if (open) {
+							ImGui::TreePop();
+							ImGui::Indent();
+						}
+						
 						ImGui::PopID();
 						return;
 					}
 
-
-					//DrawComponentPropertyCheckbox("Enabled", &data->IsEnabled);
-
-					//Fields
-
-					bool sceneRunning = scene->IsRunning();
-
-					if (sceneRunning)
+					if (open)
 					{
-						//If Scene running
-						Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID(), scriptName);
-						if (scriptInstance)
+						bool scriptExists = ScriptEngine::EntityClassExists(scriptName);
+
+						if (buffers.size() <= i)
 						{
-							const auto& fields = scriptInstance->GetScriptClass()->GetFields();
-							for (const auto& [name, field] : fields)
-							{
-								//float a = 5.0f;
-								//ImGui::DragFloat(name.c_str(), &a, 0.1f);
-								switch (field.Type)
-								{
-								case ScriptFieldType::Float:
-								{
-									float value = scriptInstance->GetFieldValue<float>(name);
-									if (DrawComponentPropertyFloat(name.c_str(), &value, 0.1f))
-										scriptInstance->SetFieldValue<float>(name, value);
-									break;
-								}
-								case ScriptFieldType::Int32:
-								{
-									int value = scriptInstance->GetFieldValue<int>(name);
-									if (DrawComponentPropertyInt(name.c_str(), &value, 1.0f))
-										scriptInstance->SetFieldValue<int>(name, value);
-									break;
-								}
-								case ScriptFieldType::Bool:
-								{
-									bool value = scriptInstance->GetFieldValue<bool>(name);
-									if (DrawComponentPropertyCheckbox(name.c_str(), &value))
-										scriptInstance->SetFieldValue<bool>(name, value);
-									break;
-								}
-								case ScriptFieldType::String:
-								{
-									//td::string value = scriptInstance->GetFieldValue<std::string>(name);
-									//har buffer[256];
-									//emset(buffer, 0, sizeof(buffer));
-									//trcpy(buffer, value.c_str());
-									//f(ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
-									//	scriptInstance->SetFieldValue<std::string>(name, std::string(buffer));
-									//reak;
-								}
-								case ScriptFieldType::Vector2:
-								{
-									glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
-									if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
-										scriptInstance->SetFieldValue<glm::vec2>(name, value);
-									break;
-								}
-								case ScriptFieldType::Vector3:
-								{
-									glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
-									if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
-										scriptInstance->SetFieldValue<glm::vec3>(name, value);
-									break;
-								}
-								case ScriptFieldType::Vector4:
-								{
-									glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
-									if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
-										scriptInstance->SetFieldValue<glm::vec4>(name, value);
-									break;
-								}
-								default:
-									break;
-								}
-							};
+							char* buffer = new char[256];
+							buffers.push_back(buffer);
 						}
-					}
-					else
-					{
-						if (scriptExists)
+
+						char* buffer = buffers.at(i);
+
+						memset(buffer, 0, 256);
+						strcpy_s(buffer, 256, scriptName.c_str());
+
+						i++;
+
+						UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.0f,0.0f,1.0f }, !scriptExists);
+
+						if (DrawComponentPropertyInputText(std::string("Class " + std::to_string(i)).c_str(), buffer, 256))
 						{
-							Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(scriptName);
-							const auto& fields = entityClass->GetFields();
+							scriptName = std::string(buffer);
+							ImGui::TreePop();
+							ImGui::Indent();
+							ImGui::PopID();
+							return;
+						}
 
-							auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
 
-							for (const auto& [name, field] : fields)
+						//DrawComponentPropertyCheckbox("Enabled", &data->IsEnabled);
+
+						//Fields
+
+						bool sceneRunning = scene->IsRunning();
+
+						if (sceneRunning)
+						{
+							//If Scene running
+							Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID(), scriptName);
+							if (scriptInstance)
 							{
-								if (entityFields.find(name) != entityFields.end())
+								const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+								for (const auto& [name, field] : fields)
 								{
-									//zna2
-									// Field has been set in editor
-									ScriptFieldInstance& scriptField = entityFields.at(name);
+									//float a = 5.0f;
+									//ImGui::DragFloat(name.c_str(), &a, 0.1f);
 									switch (field.Type)
 									{
 									case ScriptFieldType::Float:
 									{
-										float data = scriptField.GetValue<float>();
-										if (DrawComponentPropertyFloat(name.c_str(), &data, 0.1f))
-										{
-											scriptField.SetValue(data);
-										}
+										float value = scriptInstance->GetFieldValue<float>(name);
+										if (DrawComponentPropertyFloat(name.c_str(), &value, 0.1f))
+											scriptInstance->SetFieldValue<float>(name, value);
 										break;
 									}
 									case ScriptFieldType::Int32:
 									{
-										int data = scriptField.GetValue<int>();
-										if (DrawComponentPropertyInt(name.c_str(), &data, 1.0f))
-										{
-											scriptField.SetValue(data);
-										}
+										int value = scriptInstance->GetFieldValue<int>(name);
+										if (DrawComponentPropertyInt(name.c_str(), &value, 1.0f))
+											scriptInstance->SetFieldValue<int>(name, value);
 										break;
 									}
 									case ScriptFieldType::Bool:
 									{
-										bool data = scriptField.GetValue<bool>();
-										if (DrawComponentPropertyCheckbox(name.c_str(), &data))
-										{
-											scriptField.SetValue(data);
-										}
+										bool value = scriptInstance->GetFieldValue<bool>(name);
+										if (DrawComponentPropertyCheckbox(name.c_str(), &value))
+											scriptInstance->SetFieldValue<bool>(name, value);
 										break;
 									}
 									case ScriptFieldType::String:
 									{
-										//std::string data = scriptField.GetValue<std::string>();
-										//char* buffer[256];
-										//memset(buffer, 0, sizeof(buffer));
-										//strcpy(buffer, data.c_str());
-										//if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
-										//{
-										//	scriptField.SetValue(std::string(buffer));
-										//}
-										//break;
+										//td::string value = scriptInstance->GetFieldValue<std::string>(name);
+										//har buffer[256];
+										//emset(buffer, 0, sizeof(buffer));
+										//trcpy(buffer, value.c_str());
+										//f(ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+										//	scriptInstance->SetFieldValue<std::string>(name, std::string(buffer));
+										//reak;
 									}
 									case ScriptFieldType::Vector2:
 									{
-										glm::vec2 data = scriptField.GetValue<glm::vec2>();
-										if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
-										{
-											scriptField.SetValue(data);
-										}
+										glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
+										if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
+											scriptInstance->SetFieldValue<glm::vec2>(name, value);
 										break;
 									}
 									case ScriptFieldType::Vector3:
 									{
-										glm::vec3 data = scriptField.GetValue<glm::vec3>();
-										if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
-										{
-											scriptField.SetValue(data);
-										}
+										glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
+										if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
+											scriptInstance->SetFieldValue<glm::vec3>(name, value);
 										break;
 									}
 									case ScriptFieldType::Vector4:
 									{
-										glm::vec4 data = scriptField.GetValue<glm::vec4>();
-										if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
-										{
-											scriptField.SetValue(data);
-										}
+										glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
+										if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
+											scriptInstance->SetFieldValue<glm::vec4>(name, value);
 										break;
 									}
-									}
-								}
-								else {
-									// Display control to set it
-									switch (field.Type)
-									{
-									case ScriptFieldType::Float:
-									{
-										float data = 0.0f;
-										if (DrawComponentPropertyFloat(name.c_str(), &data))
-										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<float>(data);
-											float a = fieldInstance.GetValue<float>();
-										}
+									default:
 										break;
 									}
-									case ScriptFieldType::Int32:
+								};
+							}
+						}
+						else
+						{
+							if (scriptExists)
+							{
+								Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(scriptName);
+								const auto& fields = entityClass->GetFields();
+
+								auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
+
+								for (const auto& [name, field] : fields)
+								{
+									if (entityFields.find(name) != entityFields.end())
 									{
-										int data = 0;
-										if (DrawComponentPropertyInt(name.c_str(), &data))
+										//zna2
+										// Field has been set in editor
+										ScriptFieldInstance& scriptField = entityFields.at(name);
+										switch (field.Type)
 										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<int>(data);
-										}
-										break;
-									}
-									case ScriptFieldType::Bool:
-									{
-										bool data = false;
-										if (DrawComponentPropertyCheckbox(name.c_str(), &data))
+										case ScriptFieldType::Float:
 										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<bool>(data);
+											float data = scriptField.GetValue<float>();
+											if (DrawComponentPropertyFloat(name.c_str(), &data, 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
 										}
-										break;
-									}
-									case ScriptFieldType::String:
-									{
-										//std::string data = "";
-										//char buffer[256];
-										//memset(buffer, 0, sizeof(buffer));
-										//strcpy(buffer, data.c_str());
-										//if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
-										//{
-										//	ScriptFieldInstance& fieldInstance = entityFields[name];
-										//	fieldInstance.Field = field;
-										//	fieldInstance.SetValue<std::string>(std::string(buffer));
-										//}
-										//break;
-									}
-									case ScriptFieldType::Vector2:
-									{
-										glm::vec2 data = glm::vec2(0.0f);
-										if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+										case ScriptFieldType::Int32:
 										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<glm::vec2>(data);
+											int data = scriptField.GetValue<int>();
+											if (DrawComponentPropertyInt(name.c_str(), &data, 1.0f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
 										}
-										break;
-									}
-									case ScriptFieldType::Vector3:
-									{
-										glm::vec3 data = glm::vec3(0.0f);
-										if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+										case ScriptFieldType::Bool:
 										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<glm::vec3>(data);
+											bool data = scriptField.GetValue<bool>();
+											if (DrawComponentPropertyCheckbox(name.c_str(), &data))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
 										}
-										break;
-									}
-									case ScriptFieldType::Vector4:
-									{
-										glm::vec4 data = glm::vec4(0.0f);
-										if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+										case ScriptFieldType::String:
 										{
-											ScriptFieldInstance& fieldInstance = entityFields[name];
-											fieldInstance.Field = field;
-											fieldInstance.SetValue<glm::vec4>(data);
+											//std::string data = scriptField.GetValue<std::string>();
+											//char* buffer[256];
+											//memset(buffer, 0, sizeof(buffer));
+											//strcpy(buffer, data.c_str());
+											//if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+											//{
+											//	scriptField.SetValue(std::string(buffer));
+											//}
+											//break;
 										}
-										break;
+										case ScriptFieldType::Vector2:
+										{
+											glm::vec2 data = scriptField.GetValue<glm::vec2>();
+											if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector3:
+										{
+											glm::vec3 data = scriptField.GetValue<glm::vec3>();
+											if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector4:
+										{
+											glm::vec4 data = scriptField.GetValue<glm::vec4>();
+											if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										}
 									}
+									else {
+										// Display control to set it
+										switch (field.Type)
+										{
+										case ScriptFieldType::Float:
+										{
+											float data = 0.0f;
+											if (DrawComponentPropertyFloat(name.c_str(), &data))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<float>(data);
+												float a = fieldInstance.GetValue<float>();
+											}
+											break;
+										}
+										case ScriptFieldType::Int32:
+										{
+											int data = 0;
+											if (DrawComponentPropertyInt(name.c_str(), &data))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<int>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Bool:
+										{
+											bool data = false;
+											if (DrawComponentPropertyCheckbox(name.c_str(), &data))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<bool>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::String:
+										{
+											//std::string data = "";
+											//char buffer[256];
+											//memset(buffer, 0, sizeof(buffer));
+											//strcpy(buffer, data.c_str());
+											//if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+											//{
+											//	ScriptFieldInstance& fieldInstance = entityFields[name];
+											//	fieldInstance.Field = field;
+											//	fieldInstance.SetValue<std::string>(std::string(buffer));
+											//}
+											//break;
+										}
+										case ScriptFieldType::Vector2:
+										{
+											glm::vec2 data = glm::vec2(0.0f);
+											if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<glm::vec2>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector3:
+										{
+											glm::vec3 data = glm::vec3(0.0f);
+											if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<glm::vec3>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector4:
+										{
+											glm::vec4 data = glm::vec4(0.0f);
+											if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<glm::vec4>(data);
+											}
+											break;
+										}
+										}
 									}
 								}
 							}
 						}
+
+						ImGui::TreePop();
 					}
 
-					ImGui::TreePop();
+					ImGui::PopID();
+					j++;
 				}
+				ImGui::Indent();
 
-				ImGui::PopID();
-				j++;
-			}
-			ImGui::Indent();
-
-		}, m_Context, ComponentIcons::ScriptIcon);
+			}, m_Context, ComponentIcons::ScriptIcon);
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)
-		{
-			glm::vec4 color = component.Color;
+			{
+				glm::vec4 color = component.Color;
 
-			if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
-				Commands::ExecuteRawValueCommand<glm::vec4, SpriteRendererComponent>(&component.Color, color, entity, "SpriteRendererComponent-Color");
+				if(DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand<glm::vec4, SpriteRendererComponent>(&component.Color, color, entity, "SpriteRendererComponent-Color");
 
-			DrawComponentPropertyFileReference("Texture", component.TextureUUID, [&component, &entity](int64_t* what) {
-				Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
-				if (texture->IsLoaded())
-				{
-					component.TextureUUID = *what;
-					Ref<Texture2D> oldTexture = component.Texture;
-					component.Texture = texture;
-					Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
-				}
-				else
-					EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what));
-			});
-			float factor = component.TilingFactor;
-			if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
-				Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
-
-		}, m_Context, ComponentIcons::SpriteRendererIcon);
+				DrawComponentPropertyFileReference("Texture", component.TextureUUID, [&component, &entity](int64_t* what) {
+					Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
+					if (texture->IsLoaded())
+					{
+						component.TextureUUID = *what;
+						Ref<Texture2D> oldTexture = component.Texture;
+						component.Texture = texture;
+						Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
+					}
+					else
+						EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what));
+				});
+				float factor = component.TilingFactor;
+				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
+					Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
+				
+			}, m_Context, ComponentIcons::SpriteRendererIcon);
 
 		DrawComponent<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D", entity, [](auto& component)
-		{
-			glm::vec4 color = component.Color;
+			{
+				glm::vec4 color = component.Color;
 
-			if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
-				Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
-			DrawComponentPropertyFileReference("Texture", component.SubTextureUUID, [&component](int64_t* what) {
-				Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
+				if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
+				DrawComponentPropertyFileReference("Texture", component.SubTextureUUID, [&component](int64_t* what) {
+					Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
 
-				if (texture->IsLoaded())
+					if (texture->IsLoaded())
+					{
+						Ref<Texture2D> oldTexture = component.SubTexture->GetTexture();
+						component.SubTexture->SetTexture(texture);
+						Ref<Texture2D> newTexture = component.SubTexture->GetTexture();
+						component.SubTextureUUID = *what;
+						Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
+					}
+					else
+						EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what));
+				});
+
+				glm::vec2 minCoords = component.SubTexture->GetCoords(0);
+				if (DrawComponentPropertyFloat2("Min coords", (float*)component.SubTexture->GetCoordsPtr(0), 0.01f, 0.0f, 1.0f))
 				{
-					Ref<Texture2D> oldTexture = component.SubTexture->GetTexture();
-					component.SubTexture->SetTexture(texture);
-					Ref<Texture2D> newTexture = component.SubTexture->GetTexture();
-					component.SubTextureUUID = *what;
-					Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
+					glm::vec2 newCoords = component.SubTexture->GetCoords(0);
+					std::vector<glm::vec2> oldCoords = { minCoords, component.SubTexture->GetCoords(1),component.SubTexture->GetCoords(3) };
+					std::vector<glm::vec2> newCoordsVec = { newCoords, { component.SubTexture->GetCoords(2).x, newCoords.y }, { newCoords.x, component.SubTexture->GetCoords(2).y } };
+					component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
+					component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
+					Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+						{
+							component.SubTexture->SetTexCoords(0, coords[0]);
+							component.SubTexture->SetTexCoords(1, coords[1]);
+							component.SubTexture->SetTexCoords(3, coords[2]);
+						}, newCoordsVec, oldCoords, "SpriteRendererComponent-MinTexCoords", true);
 				}
-				else
-					EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what));
-			});
-
-			glm::vec2 minCoords = component.SubTexture->GetCoords(0);
-			if (DrawComponentPropertyFloat2("Min coords", (float*)component.SubTexture->GetCoordsPtr(0), 0.01f, 0.0f, 1.0f))
-			{
-				glm::vec2 newCoords = component.SubTexture->GetCoords(0);
-				std::vector<glm::vec2> oldCoords = { minCoords, component.SubTexture->GetCoords(1),component.SubTexture->GetCoords(3) };
-				std::vector<glm::vec2> newCoordsVec = { newCoords, { component.SubTexture->GetCoords(2).x, newCoords.y }, { newCoords.x, component.SubTexture->GetCoords(2).y } };
-				component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
-				component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
-				Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+				glm::vec2 maxCoords = component.SubTexture->GetCoords(2);
+				if (DrawComponentPropertyFloat2("Max coords", (float*)component.SubTexture->GetCoordsPtr(2), 0.01f, 0.0f, 1.0f))
 				{
-					component.SubTexture->SetTexCoords(0, coords[0]);
-					component.SubTexture->SetTexCoords(1, coords[1]);
-					component.SubTexture->SetTexCoords(3, coords[2]);
-				}, newCoordsVec, oldCoords, "SpriteRendererComponent-MinTexCoords", true);
-			}
-			glm::vec2 maxCoords = component.SubTexture->GetCoords(2);
-			if (DrawComponentPropertyFloat2("Max coords", (float*)component.SubTexture->GetCoordsPtr(2), 0.01f, 0.0f, 1.0f))
-			{
-				glm::vec2 newCoords = component.SubTexture->GetCoords(2);
-				std::vector<glm::vec2> oldCoords = { component.SubTexture->GetCoords(1), maxCoords, component.SubTexture->GetCoords(3) };
-				std::vector<glm::vec2> newCoordsVec = { { newCoords.x, component.SubTexture->GetCoords(0).x }, newCoords, { component.SubTexture->GetCoords(0).x ,newCoords.y } };
-				component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
-				component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
-				Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
-				{
-					component.SubTexture->SetTexCoords(1, coords[0]);
-					component.SubTexture->SetTexCoords(2, coords[1]);
-					component.SubTexture->SetTexCoords(3, coords[2]);
-				}, newCoordsVec, oldCoords, "SpriteRendererComponent-MaxTexCoords", true);
-			}
+					glm::vec2 newCoords = component.SubTexture->GetCoords(2);
+					std::vector<glm::vec2> oldCoords = { component.SubTexture->GetCoords(1), maxCoords, component.SubTexture->GetCoords(3) };
+					std::vector<glm::vec2> newCoordsVec = { { newCoords.x, component.SubTexture->GetCoords(0).x }, newCoords, { component.SubTexture->GetCoords(0).x ,newCoords.y } };
+					component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
+					component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
+					Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+						{
+							component.SubTexture->SetTexCoords(1, coords[0]);
+							component.SubTexture->SetTexCoords(2, coords[1]);
+							component.SubTexture->SetTexCoords(3, coords[2]);
+						}, newCoordsVec, oldCoords, "SpriteRendererComponent-MaxTexCoords", true);
+				}
 
-			float factor = component.TilingFactor;
-			if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
-				Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
+				float factor = component.TilingFactor;
+				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
+					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
 
-		}, m_Context, ComponentIcons::SubTextureRendererIcon);
+			}, m_Context, ComponentIcons::SubTextureRendererIcon);
 
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [entity](auto& component)
-		{
-			float thickness = component.Thickness, fade = component.Fade;
-			glm::vec4 color = component.Color;
-			if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
-				Commands::ExecuteRawValueCommand<glm::vec4, CircleRendererComponent>(&component.Color, color, entity, "CircleRendererComponent-Color");
+			{
+				float thickness = component.Thickness, fade = component.Fade;
+				glm::vec4 color = component.Color;
+				if(DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand<glm::vec4, CircleRendererComponent>(&component.Color, color, entity, "CircleRendererComponent-Color");
 
-			if (DrawComponentPropertyFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Thickness, thickness, entity, "CircleRendererComponent-Thickness");
-			if (DrawComponentPropertyFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
-				Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Fade, fade, entity, "CircleRendererComponent-Fade");
-		}, m_Context, ComponentIcons::CircleRendererIcon);
+				if(DrawComponentPropertyFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
+					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Thickness, thickness, entity, "CircleRendererComponent-Thickness");
+				if(DrawComponentPropertyFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
+					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Fade, fade, entity, "CircleRendererComponent-Fade");
+			}, m_Context, ComponentIcons::CircleRendererIcon);
 
 		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [entity](auto& component) {
-			const char* bodyTypeString[] = { "Static", "Dynamic", "Kinematic" };
+			const char* bodyTypeString[] = { "Static", "Dynamic", "Kinematic"};
 			const char* currentBodyTypeString = bodyTypeString[(int)component.Type];
 
 			DrawComponentPropertyCombo("BodyType", std::vector<const char*>(bodyTypeString, bodyTypeString + sizeof bodyTypeString / sizeof bodyTypeString[0]), (int)component.Type, [&component, &entity](int number) {
@@ -1319,7 +1326,7 @@ namespace eg {
 				ImGui::EndCombo();
 			}
 			*/
-			if (DrawComponentPropertyCheckbox("Fixed Rotation", &component.FixedRotation))
+			if(DrawComponentPropertyCheckbox("Fixed Rotation", &component.FixedRotation))
 				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");
 		}, m_Context, ComponentIcons::RigidBodyIcon);
 
@@ -1327,17 +1334,17 @@ namespace eg {
 			float density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset, size = component.Size;
 
-			if (DrawComponentPropertyFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
+			if(DrawComponentPropertyFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
 				Commands::ExecuteRawValueCommand<glm::vec2, BoxCollider2DComponent>(&component.Offset, offset, entity, "BoxCollider2DComponent-Offset");
-			if (DrawComponentPropertyFloat2("Size", glm::value_ptr(component.Size), 0.1f))
+			if(DrawComponentPropertyFloat2("Size", glm::value_ptr(component.Size), 0.1f))
 				Commands::ExecuteRawValueCommand<glm::vec2, BoxCollider2DComponent>(&component.Size, size, entity, "BoxCollider2DComponent-Size");
-			if (DrawComponentPropertyFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Density, density, entity, "BoxCollider2DComponent-Density");
-			if (DrawComponentPropertyFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Friction, friction, entity, "BoxCollider2DComponent-Friction");
-			if (DrawComponentPropertyFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Restitution, restitution, entity, "BoxCollider2DComponent-Restitution");
-			if (DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
+			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
 			if (ImGui::Checkbox("Is Sensor", &component.IsSensor))
 				Commands::ExecuteRawValueCommand<bool, BoxCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "BoxCollider2DComponent-Is Sensor");
@@ -1347,301 +1354,301 @@ namespace eg {
 			float radius = component.Radius, density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset;
 
-			if (DrawComponentPropertyFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
+			if(DrawComponentPropertyFloat2("Offset", glm::value_ptr(component.Offset), 0.1f))
 				Commands::ExecuteRawValueCommand<glm::vec2, CircleCollider2DComponent>(&component.Offset, offset, entity, "CircleCollider2DComponent-Offset");
-			if (DrawComponentPropertyFloat("Radius", &component.Radius, 0.1f))
+			if(DrawComponentPropertyFloat("Radius", &component.Radius, 0.1f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Radius, radius, entity, "CircleCollider2DComponent-Radius");
-			if (DrawComponentPropertyFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Density, density, entity, "CircleCollider2DComponent-Density");
-			if (DrawComponentPropertyFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Friction, friction, entity, "CircleCollider2DComponent-Friction");
-			if (DrawComponentPropertyFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
+			if(DrawComponentPropertyFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Restitution, restitution, entity, "CircleCollider2DComponent-Restitution");
-			if (DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
+			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
 			if (DrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
 				Commands::ExecuteRawValueCommand<bool, CircleCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "CircleCollider2DComponent-Is Sensor");
-		}, m_Context, ComponentIcons::CircleColliderIcon);
+			}, m_Context, ComponentIcons::CircleColliderIcon);
 
 		DrawComponent<TextComponent>("Text Renderer", entity, [entity](auto& component)
-		{
-			float kerning = component.Kerning, lineSpacing = component.LineSpacing;
-			glm::vec4 color = component.Color;
-
-			if (DrawComponentPropertyInputText("Text String", &component.TextString))
-				Commands::ExecuteRawValueCommand<std::string, TextComponent>(&component.TextString, component.TextString, entity, "TextComponent-Text String");
-
-			std::string selectedFontName = "OpenSans-Regular";
-
-			if (ResourceDatabase::FindResourceData(component.FontAsset, ResourceType::Font))
-				selectedFontName = ResourceDatabase::GetResourceName(component.FontAsset);
-
-			ComponentPropertyBeforeDraw("Font");
-			if (ImGui::BeginCombo("", selectedFontName.c_str(), ImGuiComboFlags_None))
 			{
-				for (const auto& [uuid, font] : ResourceDatabase::GetFontResourceDataCache())
+				float kerning = component.Kerning, lineSpacing = component.LineSpacing;
+				glm::vec4 color = component.Color;
+
+				if(DrawComponentPropertyInputText("Text String", &component.TextString))
+					Commands::ExecuteRawValueCommand<std::string, TextComponent>(&component.TextString, component.TextString, entity, "TextComponent-Text String");
+
+				std::string selectedFontName = "OpenSans-Regular";
+
+				if(ResourceDatabase::FindResourceData(component.FontAsset, ResourceType::Font))
+					selectedFontName = ResourceDatabase::GetResourceName(component.FontAsset);
+
+				ComponentPropertyBeforeDraw("Font");
+				if (ImGui::BeginCombo("", selectedFontName.c_str(), ImGuiComboFlags_None))
 				{
-					std::string name = ResourceDatabase::GetResourceName(uuid);
-					bool isSelected = component.FontAsset == uuid;
-					if (ImGui::Selectable(name.c_str(), isSelected))
+					for (const auto& [uuid, font] : ResourceDatabase::GetFontResourceDataCache())
 					{
-						UUID oldFont = component.FontAsset;
-						component.FontAsset = uuid;
-						component.RuntimeFont = ResourceDatabase::GetFontRuntimeResource(uuid);
-						Commands::ExecuteRawValueCommand<UUID, TextComponent>(&component.FontAsset, oldFont, entity, "TextComponent-Font", true);
+						std::string name = ResourceDatabase::GetResourceName(uuid);
+						bool isSelected = component.FontAsset == uuid;
+						if (ImGui::Selectable(name.c_str(), isSelected))
+						{
+							UUID oldFont = component.FontAsset;
+							component.FontAsset = uuid;
+							component.RuntimeFont = ResourceDatabase::GetFontRuntimeResource(uuid);
+							Commands::ExecuteRawValueCommand<UUID, TextComponent>(&component.FontAsset, oldFont, entity, "TextComponent-Font", true);
+						}
+
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
 					}
 
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
+					ImGui::EndCombo();
 				}
-
-				ImGui::EndCombo();
-			}
-			ComponentPropertyAfterDraw("Font");
-			if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
-				Commands::ExecuteRawValueCommand<glm::vec4, TextComponent>(&component.Color, color, entity, "TextComponent-Color");
-			if (DrawComponentPropertyFloat("Kerning", &component.Kerning, 0.025f))
-				Commands::ExecuteRawValueCommand<float, TextComponent>(&component.Kerning, kerning, entity, "TextComponent-Kerning");
-			if (DrawComponentPropertyFloat("Line Spacing", &component.LineSpacing, 0.025f))
-				Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing");
-		}, m_Context, ComponentIcons::TextRendererIcon);
+				ComponentPropertyAfterDraw("Font");
+				if(DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand<glm::vec4, TextComponent>(&component.Color, color, entity, "TextComponent-Color");
+				if(DrawComponentPropertyFloat("Kerning", &component.Kerning, 0.025f))
+					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.Kerning, kerning, entity, "TextComponent-Kerning");
+				if(DrawComponentPropertyFloat("Line Spacing", &component.LineSpacing, 0.025f))
+					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing");
+			}, m_Context, ComponentIcons::TextRendererIcon);
 
 		DrawComponent<AnimatorComponent>("Animator", entity, [entity, this](auto& component)
-		{
+			{
 			bool ShowAnimationPreview = !(m_Context->IsRunning());
-			if (PrettyButton("Add Animation", true))
-			{
-				std::string name = "Animation" + std::to_string(component.Animator2D->GetAnimations()->size());
-				component.Animator2D->AddAnimationWithName(name);
-				Commands::ExecuteVectorCommand<Ref<Animation>>({ component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, CreateRef<Animation>() });
-			}
-			const Ref<std::vector<Ref<Animation>>> animations = component.Animator2D->GetAnimations();
-			if (animations->size() > 0)
-			{
-
-				float speed = component.Animator2D->GetSpeed();
-				if (DrawComponentPropertyFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f))
+				if (PrettyButton("Add Animation", true))
 				{
-					Commands::ExecuteRawValueCommand<float>(component.Animator2D->GetSpeedPtr(), speed, "AnimatorComponent-Speed");
+					std::string name = "Animation" + std::to_string(component.Animator2D->GetAnimations()->size());
+					component.Animator2D->AddAnimationWithName(name);
+					Commands::ExecuteVectorCommand<Ref<Animation>>({ component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, CreateRef<Animation>() });
 				}
-				if (!ShowAnimationPreview)
+				const Ref<std::vector<Ref<Animation>>> animations = component.Animator2D->GetAnimations();
+				if (animations->size() > 0)
 				{
-					if (component.Animator2D->GetCurrentAnimation() != nullptr && animations->size() > 0)
+
+					float speed = component.Animator2D->GetSpeed();
+					if (DrawComponentPropertyFloat("Speed", component.Animator2D->GetSpeedPtr(), 0.1f, 0.0f, 10.0f))
 					{
-						ImGui::TextWithLineLimitAndToolTipV(std::string("Current Animation: " + component.Animator2D->GetCurrentAnimation()->GetName()).c_str(), 1, 0);
-						if (component.Animator2D->GetCurrentAnimation()->GetFrame())
-						{
-							Ref<SubTexture2D> subtexture = component.Animator2D->GetCurrentAnimation()->GetFrame();
-							ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
-							ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
-							ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
-						}
+						Commands::ExecuteRawValueCommand<float>(component.Animator2D->GetSpeedPtr(), speed, "AnimatorComponent-Speed");
 					}
-				}
-
-				//ImGui::Text("Animations:");
-				int i = 0;
-				size_t index = -1;
-				for (auto animation : *animations)
-				{
-
-					ImGui::PushID("Anim" + i);
-					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 1.f, 1.f, 0.05f));
-					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,4 });
-					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.f);
-					bool opened = ImGui::TreeNodeEx(animation->GetName().c_str(), ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow);
-					ImGui::PopStyleVar();
-					ImGui::PopStyleVar();
-					ImGui::PopStyleColor();
-					if (opened)
+					if (!ShowAnimationPreview)
 					{
-						if (animation->GetFrameCount() != 0)
+						if (component.Animator2D->GetCurrentAnimation() != nullptr && animations->size() > 0)
 						{
-							if ((std::find(m_PreviewedAnimations.begin(), m_PreviewedAnimations.end(), animation) == m_PreviewedAnimations.end()) && animation->IsPlayingPtr())
+							ImGui::TextWithLineLimitAndToolTipV(std::string("Current Animation: "+component.Animator2D->GetCurrentAnimation()->GetName()).c_str(),1, 0);
+							if (component.Animator2D->GetCurrentAnimation()->GetFrame())
 							{
-								m_PreviewedAnimations.push_back(animation);
-							}
-							if (ShowAnimationPreview && animation->GetFrame())
-							{
-								ImGui::Columns(2, 0, false);
-								ImGui::SetColumnWidth(0, 100.f);
-								Ref<SubTexture2D> subtexture = animation->GetFrame();
+								Ref<SubTexture2D> subtexture = component.Animator2D->GetCurrentAnimation()->GetFrame();
 								ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
 								ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
-								ImGui::Image((void*)(intptr_t)animation->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
-								ImGui::NextColumn();
-
-							}
-							//ImGui::Text("Frame rate: %d", animation->GetFrameRate());
-							DrawComponentPropertyCheckbox("Looped", animation->IsLoopedPtr());
-							DrawComponentPropertyCheckbox("Playing", animation->IsPlayingPtr());
-						}
-						ImGui::PushID("Frames" + i);
-						std::string h;
-						if (animation->GetFrameCount() != 0)
-						{
-							h = "Frames (";
-							h += std::to_string(animation->GetFrames().size());
-							h += ")";
-						}
-						else
-						{
-							h = "Drop Animation here";
-						}
-						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 8,4 });
-						ImGui::Button(h.c_str());
-						ImGui::PopStyleVar();
-						if (ImGui::BeginDragDropTarget())
-						{
-							uint64_t* uuid;
-
-							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
-							{
-								uuid = (uint64_t*)payload->Data;
-
-								Ref<Animation> animation = Animation::Create(*uuid);
-								if (animation)
-								{
-									Ref<Animation> oldAnim = component.Animator2D->GetAnimation(i);
-									component.Animator2D->SetAnimation(i, animation);
-									Ref<Animation> newAnim = component.Animator2D->GetAnimation(i);
-									Commands::ExecuteRefValueCommand<Animation>(newAnim, oldAnim, "AnimatorComponent-ChangeAnimation", true);
-								}
-								else
-									EG_WARN("Could not load animation from {0}", ResourceDatabase::GetResourcePath(*uuid));
-							}
-							ImGui::EndDragDropTarget();
-						}
-						/* {
-							for (int j = 0; j < animation->GetFrames().size(); j++)
-							{
-								ImGui::PushID("Frame:" + j);
-								//TODO: Display the name of the frame and the texture of the frame
-								ImGui::Text("Frame: %d", j);
-								ImGui::PopID();
-							}
-							ImGui::TreePop();
-						}*/
-						if (ImGui::Button("Delete"))
-						{
-							index = std::find((*animations).begin(), (*animations).end(), animation) - (*animations).begin();
-						}
-						if (ShowAnimationPreview && animation->GetFrame())
-						{
-							ImGui::EndColumns();
-						}
-						ImGui::PopID();
-						//TODO: Playing the animation if the animation is looped play non-stop else play once and show button on top to play again
-						// 
-						//TODO: Display the animation properties if someone wants to change the animation properties show the popup window which will ask if the user wants to change the properties in the scene or in the prefab
-						//ImGui::PopID();
-						ImGui::TreePop();
-					}
-					else if (std::find(m_PreviewedAnimations.begin(), m_PreviewedAnimations.end(), animation) != m_PreviewedAnimations.end()) {
-						m_PreviewedAnimations.erase(std::find(m_PreviewedAnimations.begin(), m_PreviewedAnimations.end(), animation));
-					}
-					ImGui::PopID();
-					i++;
-				}
-				ImGui::Separator();
-				if (index != -1)
-				{
-					Commands::ExecuteVectorCommand<Ref<Animation>>({ animations, Commands::VectorCommandType::ADD_AT, Commands::VectorCommandType::REMOVE_AT, animations->at(index) ,nullptr, index });
-					component.Animator2D->RemoveAnimation(index);
-					if (animations->size() < 2)
-					{
-						component.Animator2D->GetTransitions()->clear();
-					}
-				}
-				if (animations->size() >= 2)
-				{
-					Ref<std::vector<std::pair<size_t, size_t>>> transitions = component.Animator2D->GetTransitions();
-					if (PrettyButton("Add Transition", true))
-					{
-						ImGui::OpenPopup("AddTransition");
-					}
-					if (ImGui::BeginPopup("AddTransition"))
-					{
-						for (size_t i = 0; i < animations->size(); i++)
-						{
-							for (size_t j = 0; j < animations->size(); j++)
-							{
-								std::pair<size_t, size_t> transition = std::make_pair(i, j);
-								auto hasTransition = std::find(transitions->begin(), transitions->end(), transition);
-								if (i != j && hasTransition == transitions->end())
-								{
-									std::string name = animations->at(i)->GetName() + " to " + animations->at(j)->GetName();
-									if (ImGui::Button(name.c_str()))
-									{
-										component.Animator2D->AddTransition(transition);
-										Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, transition, transition });
-										ImGui::CloseCurrentPopup();
-									}
-								}
+								ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
 							}
 						}
-						if (ImGui::Button("Cancel"))
-						{
-							ImGui::CloseCurrentPopup();
-						}
-						ImGui::EndPopup();
 					}
-					if (transitions->size() > 0)
+				
+					//ImGui::Text("Animations:");
+					int i = 0;
+					size_t index = -1;
+					for (auto animation : *animations)
 					{
-						ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 1.f, 1.f, 0.05f));
+						
+						ImGui::PushID("Anim" + i);
+						ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f,1.f, 1.f, 0.05f));
 						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,4 });
 						ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.f);
-						bool opened = ImGui::TreeNodeEx("Transitions", ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow);
+						bool opened = ImGui::TreeNodeEx(animation->GetName().c_str(), ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow );
 						ImGui::PopStyleVar();
 						ImGui::PopStyleVar();
 						ImGui::PopStyleColor();
 						if (opened)
 						{
-							int i = 0;
-							for (const auto& transition : *transitions)
+							if (animation->GetFrameCount() != 0)
 							{
-								ImGui::PushID(i);
-								std::string s = "Transition from ";
-								s += animations->at(transition.first)->GetName().c_str();
-								s += " to ";
-								s += animations->at(transition.second)->GetName().c_str();
-								float r = ImGui::GetContentRegionMax().x - ImGui::GetCursorPosX();
-								ImGui::PushTextWrapPos(r);
-								if (ImGui::TextWithLineLimitV(s.c_str(), 1, 0) && ImGui::IsItemHovered()) {
-									ImGui::BeginTooltip();
-									ImGui::PushTextWrapPos(r);
-									ImGui::TextWrapped(s.c_str());
-									ImGui::PopTextWrapPos();
-									ImGui::EndTooltip();
-								}
-								ImGui::PopTextWrapPos();
-								ImGui::SameLine();
-								if (ImGui::Button("..."))
+								if ((std::find(m_PreviewedAnimations.begin(), m_PreviewedAnimations.end(), animation) == m_PreviewedAnimations.end()) && animation->IsPlayingPtr())
 								{
-									ImGui::OpenPopup("##Transition Popup");
+									m_PreviewedAnimations.push_back(animation);
+								}
+								if (ShowAnimationPreview && animation->GetFrame())
+								{
+									ImGui::Columns(2, 0, false);
+									ImGui::SetColumnWidth(0, 100.f);
+									Ref<SubTexture2D> subtexture = animation->GetFrame();
+									ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
+									ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
+									ImGui::Image((void*)(intptr_t)animation->GetFrame()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
+									ImGui::NextColumn();
 
 								}
-								if (ImGui::BeginPopup("##Transition Popup"))
-								{
-									if (ImGui::MenuItem("Remove Transition"))
-									{
-										component.Animator2D->RemoveTransition(transition);
-										Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::ADD, Commands::VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE, transition, transition, 0, transition, transition });
-										ImGui::CloseCurrentPopup();
-									}
-									ImGui::EndPopup();
-								}
-
-								ImGui::PopID();
-								i++;
+								//ImGui::Text("Frame rate: %d", animation->GetFrameRate());
+								DrawComponentPropertyCheckbox("Looped", animation->IsLoopedPtr());
+								DrawComponentPropertyCheckbox("Playing", animation->IsPlayingPtr());
 							}
+							ImGui::PushID("Frames" + i);
+							std::string h;
+							if (animation->GetFrameCount() != 0)
+							{
+								h = "Frames (";
+								h += std::to_string(animation->GetFrames().size());
+								h += ")";
+							}
+							else
+							{
+								h = "Drop Animation here";
+							}
+							ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 8,4 });
+							ImGui::Button(h.c_str());
+							ImGui::PopStyleVar();
+							if (ImGui::BeginDragDropTarget())
+							{
+								uint64_t* uuid;
+
+								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+								{
+									uuid = (uint64_t*)payload->Data;
+
+									Ref<Animation> animation = Animation::Create(*uuid);
+									if (animation)
+									{
+										Ref<Animation> oldAnim = component.Animator2D->GetAnimation(i);
+										component.Animator2D->SetAnimation(i, animation);
+										Ref<Animation> newAnim = component.Animator2D->GetAnimation(i);
+										Commands::ExecuteRefValueCommand<Animation>(newAnim, oldAnim, "AnimatorComponent-ChangeAnimation", true);
+									}
+									else
+										EG_WARN("Could not load animation from {0}", ResourceDatabase::GetResourcePath(*uuid));
+								}
+								ImGui::EndDragDropTarget();
+							}
+							/* {
+								for (int j = 0; j < animation->GetFrames().size(); j++)
+								{
+									ImGui::PushID("Frame:" + j);
+									//TODO: Display the name of the frame and the texture of the frame
+									ImGui::Text("Frame: %d", j);
+									ImGui::PopID();
+								}
+								ImGui::TreePop();
+							}*/
+							if (ImGui::Button("Delete"))
+							{
+								index = std::find((*animations).begin(), (*animations).end(), animation) - (*animations).begin();
+							}
+							if (ShowAnimationPreview && animation->GetFrame())
+							{
+								ImGui::EndColumns();
+							}
+							ImGui::PopID();
+							//TODO: Playing the animation if the animation is looped play non-stop else play once and show button on top to play again
+							// 
+							//TODO: Display the animation properties if someone wants to change the animation properties show the popup window which will ask if the user wants to change the properties in the scene or in the prefab
+							//ImGui::PopID();
 							ImGui::TreePop();
+						}
+						else if (std::find(m_PreviewedAnimations.begin(), m_PreviewedAnimations.end(), animation) != m_PreviewedAnimations.end()){
+							m_PreviewedAnimations.erase(std::find(m_PreviewedAnimations.begin(), m_PreviewedAnimations.end(), animation));
+						}
+						ImGui::PopID();
+						i++;
+					}
+					ImGui::Separator();
+					if (index !=-1)
+					{
+						Commands::ExecuteVectorCommand<Ref<Animation>>({ animations, Commands::VectorCommandType::ADD_AT, Commands::VectorCommandType::REMOVE_AT, animations->at(index) ,nullptr, index});
+						component.Animator2D->RemoveAnimation(index);
+						if (animations->size() < 2)
+						{
+							component.Animator2D->GetTransitions()->clear();
+						}
+					}
+					if (animations->size() >=2)
+					{
+						Ref<std::vector<std::pair<size_t, size_t>>> transitions = component.Animator2D->GetTransitions();
+						if (PrettyButton("Add Transition", true))
+						{
+							ImGui::OpenPopup("AddTransition");
+						}
+						if (ImGui::BeginPopup("AddTransition"))
+						{
+							for (size_t i = 0; i < animations->size(); i++)
+							{
+								for (size_t j = 0; j < animations->size(); j++)
+								{
+									std::pair<size_t, size_t> transition = std::make_pair(i, j);
+									auto hasTransition = std::find(transitions->begin(), transitions->end(), transition);
+									if (i != j && hasTransition == transitions->end())
+									{
+										std::string name = animations->at(i)->GetName() + " to " + animations->at(j)->GetName();
+										if (ImGui::Button(name.c_str()))
+										{
+											component.Animator2D->AddTransition(transition);
+											Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, transition, transition });
+											ImGui::CloseCurrentPopup();
+										}
+									}
+								}
+							}
+							if (ImGui::Button("Cancel"))
+							{
+								ImGui::CloseCurrentPopup();
+							}
+							ImGui::EndPopup();
+						}
+						if (transitions->size() > 0)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 1.f, 1.f, 0.05f));
+							ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,4 });
+							ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.f);
+							bool opened = ImGui::TreeNodeEx("Transitions", ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow);
+							ImGui::PopStyleVar();
+							ImGui::PopStyleVar();
+							ImGui::PopStyleColor();
+							if (opened)
+							{
+								int i = 0;
+								for (const auto& transition : *transitions)
+								{
+									ImGui::PushID(i);
+									std::string s = "Transition from ";
+									s += animations->at(transition.first)->GetName().c_str();
+									s += " to ";
+									s += animations->at(transition.second)->GetName().c_str();
+									float r = ImGui::GetContentRegionMax().x - ImGui::GetCursorPosX();
+									ImGui::PushTextWrapPos(r);
+									if (ImGui::TextWithLineLimitV(s.c_str(), 1, 0) && ImGui::IsItemHovered()) {
+										ImGui::BeginTooltip();
+										ImGui::PushTextWrapPos(r);
+										ImGui::TextWrapped(s.c_str());
+										ImGui::PopTextWrapPos();
+										ImGui::EndTooltip();
+									}
+									ImGui::PopTextWrapPos();
+									ImGui::SameLine();
+									if (ImGui::Button("..."))
+									{
+										ImGui::OpenPopup("##Transition Popup");
+
+									}
+									if (ImGui::BeginPopup("##Transition Popup"))
+									{
+										if (ImGui::MenuItem("Remove Transition"))
+										{
+											component.Animator2D->RemoveTransition(transition);
+											Commands::ExecuteVectorCommand<std::pair<size_t, size_t>>({ component.Animator2D->GetTransitions(), Commands::VectorCommandType::ADD, Commands::VectorCommandType::DELETE_FIRST_ENTRY_BY_VALUE, transition, transition, 0, transition, transition });
+											ImGui::CloseCurrentPopup();
+										}
+										ImGui::EndPopup();
+									}
+
+									ImGui::PopID();
+									i++;
+								}
+								ImGui::TreePop();
+							}
 						}
 					}
 				}
-			}
-		}, m_Context, ComponentIcons::AnimatorIcon);
-
+			}, m_Context, ComponentIcons::AnimatorIcon);
+		
 	}
 
 }

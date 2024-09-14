@@ -8,11 +8,10 @@ namespace eg {
 	struct ProjectConfig
 	{
 		std::string Name = "Untitiled";
-
-		std::filesystem::path StartScene = "Untitled.scene";
-		std::filesystem::path AssetDirectory = "assets";
-		std::filesystem::path SceneDirectory = "scenes";
-		std::filesystem::path ScriptModulePath = "scripts";
+		std::filesystem::path StartScene = "Untitled.egscene";
+		std::filesystem::path AssetDirectory = "Assets";
+		std::filesystem::path SceneDirectory = "Scenes";
+		std::filesystem::path ScriptModulePath = "Scripts/Binaries/";
 	};
 
 	class Project
@@ -33,17 +32,32 @@ namespace eg {
 			return s_ActiveProject->m_Config.AssetDirectory; 
 		}
 
+		static void SetAssetDirectory(const std::filesystem::path& newDirectory) {
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			s_ActiveProject->m_Config.AssetDirectory = newDirectory;
+		}
+
 		static const std::filesystem::path& GetProjectDirectory()
 		{
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_ProjectDirectory; 
 		}
 
+		static void SetProjectDirectory(const std::filesystem::path& newDirectory) {
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			s_ActiveProject->m_ProjectDirectory = newDirectory;
+		}
+
 		static const std::string GetProjectName()
 		{
-			return "Hello";
+			//return "Hello";
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_Config.Name; 
+		}
+
+		static void SetProjectName(const std::string& newName) {
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			s_ActiveProject->m_Config.Name = newName;
 		}
 
 		//TODO: Move this to AssetManager
@@ -68,9 +82,19 @@ namespace eg {
 			return s_ActiveProject->m_Config.SceneDirectory; 
 		}
 
-		static const std::filesystem::path& GetScriptModulePath() {
+		static void SetScenesDirectory(const std::filesystem::path& newDirectory) {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
-			return s_ActiveProject->m_Config.ScriptModulePath; 
+			s_ActiveProject->m_Config.SceneDirectory = newDirectory;
+		}
+
+		static const std::filesystem::path GetScriptModulePath() {
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			return  s_ActiveProject->m_Config.ScriptModulePath / (s_ActiveProject->m_Config.Name + ".dll");
+		}
+
+		static void SetScriptModulePath(const std::filesystem::path& newDirectory) {
+			EG_CORE_ASSERT(s_ActiveProject, "No active project");
+			s_ActiveProject->m_Config.ScriptModulePath = newDirectory;
 		}
 
 		static const std::filesystem::path& GetStartScene() {

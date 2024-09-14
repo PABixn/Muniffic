@@ -129,13 +129,13 @@ namespace eg
 	{
 		s_Data = new ScriptEngineData();
 		InitMono();
-		bool status = LoadAssembly("Resources/Scripts/Muniffic-ScriptCore.dll");
+		bool status = LoadAssembly("Resources/Scripts/Debug/Muniffic-ScriptCore.dll");
 		if (!status)
 		{
 			EG_CORE_ERROR("Failed to load core assembly!");
 			return;
 		}
-		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
+		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetScriptModulePath();
 		status = LoadAppAssembly(scriptModulePath);
 		if (!status)
 		{
@@ -168,6 +168,8 @@ namespace eg
 
 	void ScriptEngine::ShutdownMono()
 	{
+		if (s_Data == nullptr)return; //Means Mono hasn't been initialized yet (Closed app before choosing project)
+
 		// mono_domain_set(mono_get_root_domain(), false);
 
 		// mono_domain_unload(s_Data->AppDomain);
@@ -338,15 +340,14 @@ namespace eg
 
 	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path &filepath)
 	{
+		s_Data->AppAssemblyPath = filepath;
 		if (!std::filesystem::exists(filepath)) return false;
-
 		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath.string(), s_Data->EnableDebugging);
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 
 		if (!s_Data->AppAssembly)
 			return false;
 
-		s_Data->AppAssemblyPath = filepath;
 
 		s_Data->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(
 			filepath.string(),
@@ -362,7 +363,8 @@ namespace eg
 		mono_domain_unload(s_Data->AppDomain);
 
 		LoadAssembly(s_Data->CoreAssemblyPath);
-		LoadAppAssembly(s_Data->AppAssemblyPath);
+		std::filesystem::path fajlpath = s_Data->AppAssemblyPath;
+		LoadAppAssembly(fajlpath);
 		LoadAssemblyClasses();
 
 		ScriptGlue::RegisterComponents();
@@ -445,6 +447,7 @@ namespace eg
 
 	std::vector<Ref<ScriptInstance>> ScriptEngine::GetAllScriptInstances()
 	{
+		if (s_Data == nullptr) return std::vector<Ref<ScriptInstance>>();
 		std::vector<Ref<ScriptInstance>> result;
 		for (auto& [key, value] : s_Data->EntityInstances)
 			for (auto& [key, value] : value)
