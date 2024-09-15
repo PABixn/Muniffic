@@ -9,8 +9,8 @@ namespace Quest
 {
     internal class Mushroom : DefaultBehaviour
     {
-        public int SpeedBoostPercent = 25;
-        public int jumpBoostPercent = 15;
+        public float speedBoostValue = .350f;
+        public int jumpBoostPercent = 2;
         private float duration = 15f;
         private float timeElapsed;
         
@@ -28,7 +28,7 @@ namespace Quest
                 Console.WriteLine(collision.otherEntity.name);
                 return;
             }
-            collision.otherEntity.As<EffectsComponent>().ApplyEffect(new SpeedEffect(1 + SpeedBoostPercent / 100f, duration));
+            collision.otherEntity.As<EffectsComponent>().ApplyEffect(new SpeedEffect(speedBoostValue, duration));
             collision.otherEntity.As<EffectsComponent>().ApplyEffect(new JumpEffect(1 + jumpBoostPercent / 100f, duration));
             Entity.Destroy(entity);
         }

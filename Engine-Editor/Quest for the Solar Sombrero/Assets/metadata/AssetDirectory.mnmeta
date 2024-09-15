@@ -31,13 +31,9 @@ Directories:
       - 3759012749142916991
       - 5329499079054292996
       - 6798188576413419688
-  - UUID: 8473475877820406016
-    Name: Animations
-    Parent: 3258933074250438801
-    Subdirectories:
-      []
-    Assets:
-      []
+      - 2871114278602628459
+      - 3575382580301741380
+      - 8039694508198601716
   - UUID: 2253647538745825584
     Name: Textures
     Parent: 3258933074250438801
@@ -45,8 +41,15 @@ Directories:
       []
     Assets:
       []
-  - UUID: 3063201774446905331
-    Name: SpriteAtlas
+  - UUID: 8473475877820406016
+    Name: Animations
+    Parent: 3258933074250438801
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 6262736853240527659
+    Name: SubTextures
     Parent: 3258933074250438801
     Subdirectories:
       []
@@ -66,8 +69,8 @@ Directories:
       []
     Assets:
       - 664084084868187460
-  - UUID: 6262736853240527659
-    Name: SubTextures
+  - UUID: 3063201774446905331
+    Name: SpriteAtlas
     Parent: 3258933074250438801
     Subdirectories:
       []

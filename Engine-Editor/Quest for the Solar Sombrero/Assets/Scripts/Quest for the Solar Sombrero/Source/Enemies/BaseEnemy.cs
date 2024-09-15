@@ -36,7 +36,7 @@ namespace Quest
         public float CircleEnemyAttackSpeed { get; private set; } = 0.2f;
         public float TriangleEnemyAttackSpeed { get; private set; } = 1f;
 
-        public int SquareEnemyKnockbackForce { get; private set; } = 100;
+        public int SquareEnemyKnockbackForce { get; private set; } = 20;
         public int CircleEnemyKnockbackForce { get; private set; } = 10;
         public int TriangleEnemyKnockbackForce { get; private set; } = 50;
 

@@ -28,32 +28,33 @@ namespace Quest
 
         private PlayerType playerType = PlayerType.NONE;
 
-        public int BasePlayerHealth { get; private set; } = 300;
+        public int BasePlayerHealth { get; private set; } = 1000;
         public int SquarePlayerHealth { get; private set; } = 800;
         public int CirclePlayerHealth { get; private set; } = 400;
         public int TrianglePlayerHealth { get; private set; } = 250;
 
-        public float BasePlayerSpeedMultiplier { get; private set; } = 1;
+        public float BasePlayerSpeedMultiplier { get; private set; } = 0.9f;
         public float SquarePlayerSpeedMultiplier { get; private set; } = 0.5f;
         public float CirclePlayerSpeedMultiplier { get; private set; } = 1;
         public float TrianglePlayerSpeedMultiplier { get; private set; } = 1.5f;
 
-        public float BasePlayerJumpForceMultiplier { get; private set; } = 0.8f;
+        public float BasePlayerJumpForceMultiplier { get; private set; } = 0.9f;
         public float SquarePlayerJumpForceMultiplier { get; private set; } = 0;
         public float CirclePlayerJumpForceMultiplier { get; private set; } = 2.0f;
         public float TrianglePlayerJumpForceMultiplier { get; private set; } = 1;
 
-        public int BasePlayerAttackDamage { get; private set; } = 50;
+        public int BasePlayerAttackDamage { get; private set; } = 100;
         public int SquarePlayerAttackDamage { get; private set; } = 100;
         public int CirclePlayerAttackDamage { get; private set; } = 20;
         public int TrianglePlayerAttackDamage { get; private set; } = 80;
 
-        public float BasePlayerAttackSpeed { get; private set; } = 0.5f;
+        public float BasePlayerAttackSpeed { get; private set; } = 1;
         public float SquarePlayerAttackSpeed { get; private set; } = 2;
         public float CirclePlayerAttackSpeed { get; private set; } = 0.2f;
         public float TrianglePlayerAttackSpeed { get; private set; } = 1f;
 
-        public int BasePlayerKnockbackForce = 0;
+
+        public int BasePlayerKnockbackForce = 10;
         public int SquarePlayerKnockbackForce { get; private set; } = 100;
         public int CirclePlayerKnockbackForce { get; private set; } = 10;
         public int TrianglePlayerKnockbackForce { get; private set; } = 50;
