@@ -320,26 +320,96 @@ namespace eg
 			Ref<Texture2D> icon = m_DirectoryIcon;
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0,0,0,0));
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::PopStyleColor();
 
+			bool isDeleteClicked = false;
+			bool isRenameClicked = false;
 			if (ImGui::BeginPopupContextItem("DirectoryOptions"))
 			{
 				if (ImGui::MenuItem("Delete"))
 				{
-					m_DeleteDirectoryPanel->ShowWindow(directory);
+					isDeleteClicked = true;
+					/*m_DeleteDirectoryPanel->ShowWindow(directory);
 					ImGui::PopStyleColor();
 					ImGui::NextColumn();
 					ImGui::EndPopup();
 					ImGui::PopID();
-					break;
+					break;*/
 				}
 
 				if(ImGui::MenuItem("Rename"))
 				{
-					m_RenameFolderPanel->ShowWindow(directory);
+					isRenameClicked = true;
+					//m_RenameFolderPanel->ShowWindow(directory);
 				}
 
 				ImGui::EndPopup();
 			}
+
+			if (isDeleteClicked) {
+				ImGui::OpenPopup("DeleteFolder");
+				isDeleteClicked = false;
+			}
+			if (isRenameClicked) {
+				ImGui::OpenPopup("RenameFolder");
+				isRenameClicked = false;
+			}
+
+			ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+
+			if (ImGui::BeginPopupModal("DeleteFolder", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
+
+				ImVec2 spacing = style.ItemSpacing;
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+				style.ItemSpacing = ImVec2(10.f, 10.f);
+
+				ImGui::Text("Warning: You will not be able to restore files");
+
+				if (ImGui::Button("Delete directory AND ALL FILES from disk"))
+				{
+					Commands::ExecuteDeleteDirectoryCommand(directory);
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel"))
+				{
+					ImGui::CloseCurrentPopup();
+				}
+				style.ItemSpacing = spacing;
+				ImGui::PopStyleVar(2);
+				ImGui::EndPopup();
+			}
+
+			if (ImGui::BeginPopupModal("RenameFolder", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
+
+				ImVec2 spacing = style.ItemSpacing;
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+				style.ItemSpacing = ImVec2(10.f, 10.f);
+
+				ImGui::Text("Enter new folder name");
+				static char buffer[256] = "New folder name";
+				ImGui::InputText("##FolderName", buffer, 256);
+				if (ImGui::Button("Rename"))
+				{
+					Commands::ExecuteRenameDirectoryCommand(directory, buffer);
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel"))
+				{
+					ImGui::CloseCurrentPopup();
+				}
+				style.ItemSpacing = spacing;
+				ImGui::PopStyleVar(2);
+				ImGui::EndPopup();
+			}
+
+			ImGui::PopStyleVar(2);
+			ImGui::PopStyleColor();
 
 			if (ImGui::BeginDragDropSource())
 			{
@@ -364,8 +434,6 @@ namespace eg
 				}
 				ImGui::EndDragDropTarget();
 			}
-
-			ImGui::PopStyleColor();
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 				UUID oldPath = m_CurrentDirectory;
