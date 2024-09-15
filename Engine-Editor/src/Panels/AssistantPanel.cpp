@@ -322,16 +322,10 @@ namespace eg
 		{
 			std::string message = assistantManager->GetLastVoiceMessage();
 			memcpy(buffer, message.data(), message.size());
-			std::thread t(DoMessage, assistantManager, threadID, buffer);
-			t.detach();
+			RunMessage(buffer);
 		}
 
 		ImGui::Begin("Assistant Panel");
-
-		ImGui::Text("This is your conversation with Bob.");
-		ImGui::Text("Thread ID : %s", threadID.c_str());
-
-		ImGui::Separator();
 
 		float buttonSize = 25.0f;
 		float availableHeight = ImGui::GetWindowSize().y - buttonSize * 2 - ImGui::GetCursorPosY();
@@ -374,39 +368,76 @@ namespace eg
 
 		ImGui::SetCursorPosY(ImGui::GetWindowSize().y - buttonSize * 1.5);
 
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.21f, 0.35f, 1.00f));
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.20f, 0.20f, 0.25f, 1.00f));
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 0.30f, 1.00f));
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.0f, 4.0f)); 
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		ImVec2 inputSize = ImVec2(300, 30);
+
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.21f, 0.35f, 1.00f));
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 6.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
 
 		if (ImGui::InputTextWithHint("##", "Message", buffer, 1024, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			RunMessage(buffer);
 		}
 
-		ImGui::PopStyleVar(2);
-		ImGui::PopStyleColor(4);
+		bool isHovered = ImGui::IsItemHovered();
+		bool isActive = ImGui::IsItemActive();
+
+		if (isHovered || isActive) {
+			ImVec4 hoverColor = isHovered ? ImVec4(0.45f, 0.42f, 0.55f, 1.00f) : ImVec4(0.55f, 0.50f, 0.70f, 1.00f);
+			ImColor borderColor = ImColor(hoverColor);
+
+			float totalWidth = ImGui::CalcItemWidth();
+
+			draw_list->AddRect(pos, ImVec2(pos.x + totalWidth, pos.y + inputSize.y), borderColor, 8.0f, 0, 2.0f);
+		}
+
+		ImGui::PopStyleVar(3);
+		ImGui::PopStyleColor(2);
 
 		ImGui::SameLine();
 
+		pos = ImGui::GetCursorScreenPos();
+		ImVec2 center = ImVec2(pos.x + buttonSize * 0.5f, pos.y + buttonSize * 0.5f);
+
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 0.5));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
-		if (ImGui::ImageButton((ImTextureID)m_IconSend->GetRendererID(), {buttonSize, buttonSize}, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		if (ImGui::ImageButton((ImTextureID)m_IconSend->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
 			RunMessage(buffer);
 		}
 
+		if (ImGui::IsItemHovered())
+		{
+			float glow_radius = 1.0f;
+			ImVec4 glow_color = ImVec4(0.8f, 0.8f, 1.0f, 0.3f);
+
+			draw_list->AddCircleFilled(center, buttonSize * 0.5f + glow_radius, ImColor(glow_color), 32);
+		}
+
 		ImGui::SameLine();
 
-		if (ImGui::ImageButton(m_isMicrophoneAvailable ? m_isListening ? (ImTextureID)m_IconMicrophone->GetRendererID() : (ImTextureID)m_IconMicrophoneOff->GetRendererID() : (ImTextureID)m_IconMicrophoneUnavailable->GetRendererID(), { 25, 25 }, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		pos = ImGui::GetCursorScreenPos();
+		center = ImVec2(pos.x + buttonSize * 0.5f, pos.y + buttonSize * 0.5f);
+
+		if (ImGui::ImageButton(m_isMicrophoneAvailable ? m_isListening ? (ImTextureID)m_IconMicrophone->GetRendererID() : (ImTextureID)m_IconMicrophoneOff->GetRendererID() : (ImTextureID)m_IconMicrophoneUnavailable->GetRendererID(), { buttonSize, buttonSize }, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
 			if(m_isMicrophoneAvailable)
 				m_isListening = !m_isListening;
+		}
+
+		if (ImGui::IsItemHovered())
+		{
+			float glow_radius = 1.0f;
+			ImVec4 glow_color = ImVec4(0.8f, 0.8f, 1.0f, 0.5f);
+
+			draw_list->AddCircleFilled(center, buttonSize * 0.5f + glow_radius, ImColor(glow_color), 32);
 		}
 
 		if (!m_isMicrophoneAvailable && ImGui::IsItemHovered())

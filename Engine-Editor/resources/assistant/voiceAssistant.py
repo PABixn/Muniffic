@@ -4,9 +4,9 @@ import pyaudio
 
 shouldListen = False
 engine = pyttsx3.init()
+r = sr.Recognizer()
 
 def InitVoiceAssistant():
-    r = sr.Recognizer()
     global engine
     engine = pyttsx3.init()
     voices = engine.getProperty('voices')
@@ -16,29 +16,36 @@ def InitVoiceAssistant():
             engine.setProperty('voice', voice.id)
             break
 
-
 def CheckMicrophoneAvailable():
     audio = pyaudio.PyAudio()
+    is_available = False
 
     try:
         default_device_index = audio.get_default_input_device_info()
-        #print(f"Default microphone is available: {default_device_index['name']}")
+        if default_device_index:
+            print(f"Default microphone is available: {default_device_index['name']}")
+            is_available = True
     except IOError:
-        #print("No default microphone available.")
-        return False
-    finally:
-        audio.terminate()
+        print("Error: Could not access default microphone.")
 
     mic_list = sr.Microphone.list_microphone_names()
 
     if len(mic_list) > 0:
-        print("Available microphones:")
-        for index, microphone_name in enumerate(mic_list):
-            print(f"{index}: {microphone_name}")
-        return True
+        is_available = True
     else:
         print("No microphone available.")
-        return False
+
+    if is_available:
+        try:
+            stream = audio.open(format=pyaudio.paInt16, channels=1, rate=44100, input=True, frames_per_buffer=1024)
+            print("Microphone is functional.")
+            stream.close()
+        except Exception as e:
+            is_available = False
+
+    audio.terminate()
+
+    return is_available
 
 
 def SpeakText(command):
