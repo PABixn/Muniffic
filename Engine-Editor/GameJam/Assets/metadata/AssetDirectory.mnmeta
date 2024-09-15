@@ -1,12 +1,5 @@
 Root: 4415220485909902051
 Directories:
-  - UUID: 740602716317509739
-    Name: Shaders
-    Parent: 4415220485909902051
-    Subdirectories:
-      []
-    Assets:
-      []
   - UUID: 2293609554447130123
     Name: SubTextures
     Parent: 4415220485909902051
@@ -14,6 +7,13 @@ Directories:
       []
     Assets:
       - 8445089710411027499
+  - UUID: 740602716317509739
+    Name: Shaders
+    Parent: 4415220485909902051
+    Subdirectories:
+      []
+    Assets:
+      []
   - UUID: 1549463422698458353
     Name: Textures
     Parent: 4415220485909902051

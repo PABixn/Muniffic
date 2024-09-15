@@ -288,8 +288,11 @@ namespace eg
 		ImGui::PopStyleColor();
 		ImGui::SameLine();
 
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5.0f, 10.f));
 		static char buffer[256];
 		ImGui::InputText("##Filter", buffer, 256);
+		ImGui::PopStyleVar();
 
 		static float padding = 25.0f;
 		static float thumbnailSize = 100.0f;
