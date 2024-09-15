@@ -6,7 +6,7 @@ Entities:
     TagComponent:
       Tag: Floor
     TransformComponent:
-      Translation: [-0.0199999996, 2.51711702, 0]
+      Translation: [-0.0199997425, -4.43962193, 0]
       Rotation: [0, -0, 0]
       Scale: [10.8999996, 0.800000012, 1]
       IsInherited: true
@@ -43,8 +43,8 @@ Entities:
     TagComponent:
       Tag: WeightedVest
     TransformComponent:
-      Translation: [-15.4055471, 0.200000003, 0]
-      Rotation: [0, 0, 0]
+      Translation: [-15.4055471, 0.199999988, 0]
+      Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
@@ -174,7 +174,7 @@ Entities:
     TagComponent:
       Tag: Enemy1
     TransformComponent:
-      Translation: [-2.57999992, -0.689999998, -0.350860596]
+      Translation: [-2.57999992, -15.0644655, -0.350860596]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
@@ -224,9 +224,9 @@ Entities:
     TagComponent:
       Tag: Floor
     TransformComponent:
-      Translation: [-11, -0.980000019, 0]
+      Translation: [12.6400003, -8.60000038, 0]
       Rotation: [0, -0, 0]
-      Scale: [10.8000002, 1, 1]
+      Scale: [10.8000002, 0.300000012, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
@@ -262,9 +262,9 @@ Entities:
     TagComponent:
       Tag: Floor
     TransformComponent:
-      Translation: [11.6000004, -1.20879459, 0]
+      Translation: [-0.104317427, -10.7415657, 0]
       Rotation: [0, -0, 0]
-      Scale: [10.8000002, 1, 1]
+      Scale: [42.9000015, 0.300000012, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
@@ -312,8 +312,8 @@ Entities:
     TagComponent:
       Tag: Floor
     TransformComponent:
-      Translation: [0, -2, 0]
-      Rotation: [0, 0, 0]
+      Translation: [0, -16.2159386, 0]
+      Rotation: [0, -0, 0]
       Scale: [10.8000002, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
@@ -360,7 +360,7 @@ Entities:
         PerspectiveFOV: 0.769999981
         PerspectiveNear: 0.00999999978
         PerspectiveFar: 1000
-        OrthographicSize: 20
+        OrthographicSize: 25
         OrthographicNear: -1
         OrthographicFar: 1
       Primary: true
@@ -375,7 +375,7 @@ Entities:
     TagComponent:
       Tag: Player
     TransformComponent:
-      Translation: [5.40500069, -0.982758641, 0]
+      Translation: [18.9258728, -9.89151287, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
@@ -457,6 +457,7 @@ Entities:
       - 5060097751081874007
       - 1678218670688520052
       - 313044020897929461
+      - 1205427425295710581
     TagComponent:
       Tag: Ground
     TransformComponent:
@@ -477,3 +478,102 @@ Entities:
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
+  - Entity: 1205427425295710581
+    Name: Cube
+    Parent: 5624161485600518
+    TagComponent:
+      Tag: Floor
+    TransformComponent:
+      Translation: [-10.4598484, -8.60931969, 0]
+      Rotation: [0, -0, 0]
+      Scale: [12.1999998, 0.300000012, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 1248221058066509864
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 4574932424377538470
+    Name: Cube
+    TagComponent:
+      Tag: Lava
+    TransformComponent:
+      Translation: [1.89999998, -9.30000019, 0]
+      Rotation: [0, 0, 0]
+      Scale: [12.1000004, 0.300000012, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 5282286291382907278
+        - ScriptUUID: 7188692372317572120
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 7255644732617230814
+    Name: Cube
+    TagComponent:
+      Tag: HealthBar
+    TransformComponent:
+      Translation: [-22.6336937, 11.4043665, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 9069531838780582440
+      IsInherited: false
+      IsInheritedInChildren: false
+    TextComponent:
+      TextString: "Your Health:"
+      Color: [1, 1, 1, 1]
+      Kerning: 0
+      LineSpacing: 0
+      IsInherited: false
+      IsInheritedInChildren: false
+      Font: 664084084868187460

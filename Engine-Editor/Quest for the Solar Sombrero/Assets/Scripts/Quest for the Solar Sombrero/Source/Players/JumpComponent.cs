@@ -58,7 +58,7 @@ namespace Quest
             }
             if (!Input.IsKeyDown(KeyCode.Space) && rigidBody.linearVelocity.Y > 0.0f)
             {
-                rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.X, rigidBody.linearVelocity.Y * 0.5f);
+                rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.X, rigidBody.linearVelocity.Y * 0.3f);
                 coyoteTimer = 0;
             }
         }

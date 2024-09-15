@@ -38,7 +38,7 @@ namespace Quest
         public float CirclePlayerSpeedMultiplier { get; private set; } = 1;
         public float TrianglePlayerSpeedMultiplier { get; private set; } = 1.5f;
 
-        public float BasePlayerJumpForceMultiplier { get; private set; } = 0.9f;
+        public float BasePlayerJumpForceMultiplier { get; private set; } = 0.5f;
         public float SquarePlayerJumpForceMultiplier { get; private set; } = 0;
         public float CirclePlayerJumpForceMultiplier { get; private set; } = 2.0f;
         public float TrianglePlayerJumpForceMultiplier { get; private set; } = 1;
@@ -86,6 +86,17 @@ namespace Quest
 
             meleeAttackComponent.Update(ts);
             shootAttackComponent.Update(ts);
+
+            if (healthComponent.health == 0)
+            {
+                killPlayer();
+            }
+        }
+
+        public void killPlayer()
+        {
+            entity.GetComponent<SpriteRendererComponent>().color = Color.red;
+            runComponent.SetMultiplier(0);
         }
 
         public void SwitchPlayerType(PlayerType playerType)

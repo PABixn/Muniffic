@@ -129,7 +129,17 @@ Resources:
     ResourceName: Quest.EntityTypeComponent
     Extension: .cs
     IsEnabled: true
+  - UUID: 9069531838780582440
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.HealthBar
+    Extension: .cs
+    IsEnabled: true
   - UUID: 6798188576413419688
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 1248221058066509864
     ParentDirectory: 4766252472221097665
     ResourceName: Quest.EntityTypeComponent
     Extension: .cs
@@ -137,5 +147,15 @@ Resources:
   - UUID: 2871114278602628459
     ParentDirectory: 4766252472221097665
     ResourceName: Quest.WeightedVest
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 5282286291382907278
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.Lava
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 7188692372317572120
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EntityTypeComponent
     Extension: .cs
     IsEnabled: true

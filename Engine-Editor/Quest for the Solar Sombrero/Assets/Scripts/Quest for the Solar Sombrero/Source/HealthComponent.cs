@@ -28,6 +28,11 @@ namespace Quest
             }
         }
 
+        public void InstaKill()
+        {
+            health = 0;
+        }
+
         public void Heal(int healAmount)
         {
             health += healAmount;
