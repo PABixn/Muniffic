@@ -53,6 +53,6 @@ namespace eg
 		Ref<Animation> m_PreviewData = nullptr;
 		bool m_ShowAnimationPanel = false;
 		std::filesystem::path m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animation";
-		Animation::FrameData m_FrameData;
+		Ref<FrameData> m_FrameData;
 	};
 }

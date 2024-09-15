@@ -3,7 +3,7 @@
 #include "Engine/Scripting/ScriptEngine.h"
 namespace eg {
 	static bool isDisplayed = false;
-	static Animation::FrameData displayedAnim;
+	static Ref<FrameData> displayedFrame;
 	static int clickedFrame = -1; 
 	static bool isDragging = false;
 	static int draggingIndex = -1;
@@ -20,15 +20,8 @@ namespace eg {
 		m_LenghtSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/lengthChangeSelectedIcon.png");
 		m_MoveIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveIcon.png");
 		m_MoveSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveSelectedIcon.png");
-		const auto& scriptMethods = ScriptEngine::GetAllScriptMethodMaps();
-		for (auto& [key, value] : scriptMethods) {
-			EG_CORE_TRACE("{0} class methods", key);
-			for (auto& [key2, value2] : value) {
-				if(!ScriptEngine::isMethodInternal(key2))
-					EG_CORE_TRACE("name: {0}", key2);
-			}
-		}
-		for (auto& anim : m_Anim->GetFrames()) {
+
+		for (auto& anim : *(m_Anim->GetFrames())) {
 			m_FramesData.emplace_back(anim);
 		}
 		SetFrames();
@@ -74,9 +67,9 @@ namespace eg {
 		}
 
 		int i = 0;
-		for (auto anim : m_FramesData) {
+		for (auto frame : m_FramesData) {
 			ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-			float rectWidth = 20 * anim.FrameDuration + 2 * (anim.FrameDuration - 1);
+			float rectWidth = 20 * frame->GetFrameDuration() + 2 * (frame->GetFrameDuration() - 1);
 
 			if (m_FramesToSwap.find(i) != m_FramesToSwap.end())
 				ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), IM_COL32(65, 51, 122, 255));
@@ -100,11 +93,11 @@ namespace eg {
 					if (clickedFrame != i) {
 						//m_ShowInitialFrame = false;
 					}
-					displayedAnim = anim;
+					displayedFrame = frame;
 					clickedFrame = i;
 					if (!m_Resize && !m_Move) {
 						if (m_FramesToSwap.size() < 2 && m_FramesToSwap.find(i) == m_FramesToSwap.end()) {
-							m_FramesToSwap.insert({ i,anim });
+							m_FramesToSwap.insert({ i,frame });
 						}
 						else if (m_FramesToSwap.find(i) != m_FramesToSwap.end()) {
 							m_FramesToSwap.erase(i);
@@ -175,7 +168,9 @@ namespace eg {
 							if(!ScriptEngine::isMethodInternal(key2))
 								if (ImGui::Button(key2.c_str()))
 								{
-									//TODO: save function call to frame
+									m_FramesData[m_ClickedFrame]->SetFunctionCallName(key2);
+									m_FramesData[m_ClickedFrame]->SetClassName(key);
+									ImGui::CloseCurrentPopup();
 								}
 					}
 				}
@@ -187,20 +182,21 @@ namespace eg {
 		if (isDragging && draggingIndex != -1) {
 			int deltaX = ImGui::GetIO().MouseDelta.x;
 			if (m_Resize) {
-				m_FramesData[draggingIndex].FrameDuration += deltaX/2;
-				m_FramesData[draggingIndex].FrameDuration = std::max(1, m_FramesData[draggingIndex].FrameDuration);
+				float estNewDuration = std::max(1, m_FramesData[draggingIndex]->GetFrameDuration() + deltaX / 2);
+				m_FramesData[draggingIndex]->SetFrameDuration(estNewDuration);
 				SetFrames();
 			}
 			else if (m_Move) {
+				//wtf is this
 				float estNewIndex = draggingIndex + (float)deltaX / 2;
 				int newIndex = (int)(round(estNewIndex));
 				newIndex = std::clamp(newIndex, 0, static_cast<int>(m_FramesData.size()) - 1);
 
 				if (newIndex != draggingIndex) {
-					Animation::FrameData temp = m_FramesData[draggingIndex];
-					m_FramesData.erase(m_FramesData.begin() + draggingIndex);
-					m_FramesData.insert(m_FramesData.begin() + newIndex, temp);
-					draggingIndex = newIndex;
+					//Animation::FrameData temp = m_FramesData[draggingIndex];
+					//m_FramesData.erase(m_FramesData.begin() + draggingIndex);
+					//m_FramesData.insert(m_FramesData.begin() + newIndex, temp);
+					//draggingIndex = newIndex;
 					SetFrames();
 				}
 			}
@@ -209,7 +205,7 @@ namespace eg {
 		ImGui::EndChild();
 
 		if (!m_PlayAnimation && isDisplayed) {
-			DrawFramePreview(displayedAnim);
+			DrawFramePreview(displayedFrame);
 		}
 
 		ImGui::DragInt("Frame Rate %f:", m_Anim->GetFrameRatePtr(), 1.0f, 1.0f, 500);
@@ -242,13 +238,14 @@ namespace eg {
 			
 	}
 
-	void AnimationEditorPanel::DrawFramePreview(Animation::FrameData anim,bool addSpace) {
-		if (anim.SubTexture == nullptr) {
-			anim = m_Anim->GetFrames()[0];
+	void AnimationEditorPanel::DrawFramePreview(Ref<FrameData> frame,bool addSpace) {
+		Ref<SubTexture2D> subTexture = frame->GetSubTexture();
+		if (subTexture == nullptr) {
+			frame = (*m_Anim->GetFrames())[0];
 		}
-		auto minCoords = anim.SubTexture.get()->GetMin();
-		auto maxCoords = anim.SubTexture.get()->GetMax();
-		SubTexture2D* imageSubTexture = anim.SubTexture.get();
+		auto minCoords = subTexture.get()->GetMin();
+		auto maxCoords = subTexture.get()->GetMax();
+		SubTexture2D* imageSubTexture = subTexture.get();
 		float spaceY = ImGui::GetCursorPosY();
 		if (addSpace)
 			spaceY = ImGui::GetCursorPosY() + 330;
@@ -268,16 +265,17 @@ namespace eg {
 		ImGui::SetCursorPosY(100);
 		float spaceY = ImGui::GetCursorPos().y + 322;
 		int i = 0;
+		Ref<SubTexture2D> subTexture = m_Anim->GetFrame()->GetSubTexture();
 		if (m_Anim->GetFrameCount() > 0) {
 			ImGui::Image(
-				(void*)m_Anim->GetFrame().SubTexture->GetTexture()->GetRendererID(),
+				(void*)subTexture->GetTexture()->GetRendererID(),
 				ImVec2(300, 300),
 				ImVec2(
-					m_Anim->GetFrame().SubTexture->GetMin().x,
-					m_Anim->GetFrame().SubTexture->GetMax().y),
+					subTexture->GetMin().x,
+					subTexture->GetMax().y),
 				ImVec2(
-					m_Anim->GetFrame().SubTexture->GetMax().x,
-					m_Anim->GetFrame().SubTexture->GetMin().y)
+					subTexture->GetMax().x,
+					subTexture->GetMin().y)
 			);
 			
 		}
@@ -306,7 +304,7 @@ namespace eg {
 		m_ClickedFrame = -1;
 		clickedFrame = -1;
 		isDisplayed = false;
-		displayedAnim = {};
+		displayedFrame = CreateRef<FrameData>();
 		isDragging = false;
 		draggingIndex = -1;
 	}

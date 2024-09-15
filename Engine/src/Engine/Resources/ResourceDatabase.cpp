@@ -498,6 +498,21 @@ namespace eg
 		ResourceSerializer::CacheSubTexture(uuid, data);
 	}
 
+	void AddFrameResource(UUID uuid, const std::filesystem::path& originalResourcePath, FrameResourceData* data)
+	{
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Frame);
+
+		if (finalPath != originalResourcePath)
+		{
+			if (!std::filesystem::exists(finalPath.parent_path()))
+			{
+				std::filesystem::create_directories(finalPath.parent_path());
+			}
+		}
+
+		ResourceSerializer::CacheFrame(uuid, data);
+	}
+
 	void AddFontResourceData(UUID uuid, const std::filesystem::path& originalResourcePath, FontResourceData* data)
 	{
 		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Font);
@@ -722,6 +737,9 @@ namespace eg
 			break;
 		case ResourceType::SubTexture:
 			AddSubTextureResource(uuid, originalResourcePath, (SubTextureResourceData*)data);
+			break;
+		case ResourceType::Frame:
+			AddFrameResource(uuid, originalResourcePath, (FrameResourceData*)data);
 			break;
 		case ResourceType::Animation:
 			AddAnimationResource(uuid, originalResourcePath, (AnimationResourceData*)data);

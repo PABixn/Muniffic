@@ -4,6 +4,7 @@
 #include "Engine/Scene/Scene.h"
 #include "Engine/Scene/Entity.h"
 #include <Engine/Scene/ColliderEvents.h>
+#include "ScriptingTypes.h"
 
 extern "C" {
 	typedef struct _MonoClass MonoClass;
@@ -17,15 +18,7 @@ extern "C" {
 
 namespace eg {
 
-	enum class ScriptFieldType
-	{
-		None = 0,
-		Float, Vector2, Vector3, Vector4,
-		Int32, Int64, Bool, Double, Short, Byte, Char,
-		UByte, UInt32, UInt64, UShort, SByte,
-		String, Object, Void,
-		Entity//, TransformComponent, RigidBodyComponent
-	};
+	
 
 	struct ScriptField
 	{
@@ -205,6 +198,8 @@ namespace eg {
 		static ScriptFieldMap& GetScriptFieldMap(Entity uuid);
 		static const ScriptMethodMap& GetScriptMethodMap(const std::string& className);
 		static const std::unordered_map<std::string,ScriptMethodMap>& GetAllScriptMethodMaps();
+
+		static void CallMethod(UUID entityID, const std::string& className, const std::string& methodName, int parameterCount = 0,void** params = nullptr);
 
 		static bool isMethodInternal(const std::string& methodName);
 

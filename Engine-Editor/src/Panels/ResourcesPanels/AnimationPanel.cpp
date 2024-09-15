@@ -90,12 +90,12 @@ namespace eg {
 		for (auto frame : m_SelectedFrames) {
 			glm::vec2 min = { frame.second * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f - ((frame.first + 1) * (float)m_FrameHeight) / (float)m_TextureData->Height };
 			glm::vec2 max = { (frame.second + 1) * (float)m_FrameWidth / (float)m_TextureData->Width,1.0f - (frame.first * (float)m_FrameHeight) / (float)m_TextureData->Height };
-			m_FrameData.SubTexture = SubTexture2D::Create(m_PreviewOriginImage, min, max);
+			m_FrameData->SetSubTexture(SubTexture2D::Create(m_PreviewOriginImage, min, max));
 			if (std::find(m_KeyFrames.begin(), m_KeyFrames.end(), frame) != m_KeyFrames.end())
-				m_FrameData.isKeyFrame = true;
+				m_FrameData->SetIsKeyFrame(true);
 			else
-				m_FrameData.isKeyFrame = false;
-			m_FrameData.FrameDuration = 1;
+				m_FrameData->SetIsKeyFrame(false);
+			m_FrameData->SetFrameDuration(1);
 			m_PreviewData->AddFrame(m_FrameData);
 		}
 
@@ -328,16 +328,19 @@ namespace eg {
 			if (ImGui::InputText("Animation Name: ", buffer, sizeof(buffer)))
 				m_ResourceData->ResourceName = std::string(buffer);
 			ImGui::Text("Animation: %s", m_ResourceData->ResourceName.c_str());
-			if(m_PreviewData->GetFrameCount() > 0)
+			if (m_PreviewData->GetFrameCount() > 0)
+			{
+				Ref<SubTexture2D> subTexture = m_PreviewData->GetFrame()->GetSubTexture();
 				ImGui::Image(
-					(void*)m_PreviewData->GetFrame().SubTexture->GetTexture()->GetRendererID(),
-					ImVec2(m_BasePreviewWidth, m_BasePreviewHeight), 
-					{ 
-						m_PreviewData->GetFrame().SubTexture->GetMin().x , m_PreviewData->GetFrame().SubTexture->GetMax().y
-					}, 
+					(void*)subTexture->GetTexture()->GetRendererID(),
+					ImVec2(m_BasePreviewWidth, m_BasePreviewHeight),
 					{
-						m_PreviewData->GetFrame().SubTexture->GetMax().x , m_PreviewData->GetFrame().SubTexture->GetMin().y
+						subTexture->GetMin().x , subTexture->GetMax().y
+					},
+					{
+						subTexture->GetMax().x , subTexture->GetMin().y
 					});
+			}
 
 			/*char buffer2[512];
 			memset(buffer2, 0, sizeof(buffer2));
@@ -356,17 +359,27 @@ namespace eg {
 				m_TextureUUID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_TextureData, ResourceType::Image);
 				for (int i = 0; i < m_PreviewData->GetFrameCount(); i++)
 				{
+					Ref<SubTexture2D> subTexture = m_PreviewData->GetFrame(i)->GetSubTexture();
+
 					SubTextureResourceData* data = new SubTextureResourceData();
 					data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SubTexture);
 					data->Texture = m_TextureUUID;
 					data->ResourceName = m_ResourceData->ResourceName + std::to_string(i);
-					data->TexCoords[0] = m_PreviewData->GetFrame(i).SubTexture->GetMin();
-					data->TexCoords[1] = { m_PreviewData->GetFrame(i).SubTexture->GetMax().x, m_PreviewData->GetFrame(i).SubTexture->GetMin().y };
-					data->TexCoords[2] = m_PreviewData->GetFrame(i).SubTexture->GetMax();
-					data->TexCoords[3] = { m_PreviewData->GetFrame(i).SubTexture->GetMin().x, m_PreviewData->GetFrame(i).SubTexture->GetMax().y };
-					UUID uuid = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)data, ResourceType::SubTexture);
+					data->TexCoords[0] = subTexture->GetMin();
+					data->TexCoords[1] = { subTexture->GetMax().x, subTexture->GetMin().y };
+					data->TexCoords[2] = subTexture->GetMax();
+					data->TexCoords[3] = { subTexture->GetMin().x, subTexture->GetMax().y };
+
+					UUID subTextureUUID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)data, ResourceType::SubTexture);
+					saData->Sprites.push_back(subTextureUUID);
+
+					FrameResourceData* dataFrame = new FrameResourceData();
+					dataFrame->Duration = m_PreviewData->GetFrame(i)->GetFrameDuration();
+					dataFrame->SubTexture = subTextureUUID;
+					dataFrame->ClassName = m_PreviewData->GetFrame(i)->GetClassName();
+					dataFrame->FunctionCallName = m_PreviewData->GetFrame(i)->GetFunctionCallName();
+					UUID uuid = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)dataFrame, ResourceType::Frame);
 					m_ResourceData->Frames.push_back(uuid);
-					saData->Sprites.push_back(uuid);
 				}
 				
 				m_ResourceData->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Animation);
@@ -411,6 +424,6 @@ namespace eg {
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animation";
 		m_SelectedFrames.clear();
 		m_KeyFrames.clear();
-		m_FrameData = {};
+		m_FrameData = CreateRef<FrameData>();
 	}
 }

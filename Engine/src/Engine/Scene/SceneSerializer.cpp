@@ -632,8 +632,10 @@ namespace eg {
 						{
 							//TODO: if animation uses prefab
 							Ref<Animation> anim = Animation::Create(UUID(animation.as<int64_t>()));
-							if(anim)
+							if (anim) {
+								anim->SetEntityID(deserializedEntity.GetUUID());
 								ac.Animator2D->AddAnimation(anim);
+							}
 							//TODO: else load all data for animation from scene file
 						}
 					}

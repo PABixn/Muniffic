@@ -5,6 +5,7 @@
 #include "AssetDirectorySerializer.h"
 #include "ResourceUtils.h"
 #include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/Scripting/ScriptingTypes.h"
 #include <yaml-cpp/yaml.h>
 #include <fstream>
 #include <optional>

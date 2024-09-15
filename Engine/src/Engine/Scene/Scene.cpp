@@ -117,8 +117,8 @@ namespace eg {
 	{
 		Entity entity = { m_Registry.create(), this };
 		entity.AddComponent<IDComponent>(uuid);
-		entity.AddComponent<TransformComponent>();
-		auto& tag = entity.AddComponent<TagComponent>();
+		entity.AddComponent<TransformComponent>(uuid);
+		auto& tag = entity.AddComponent<TagComponent>(uuid);
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityMap[uuid] = (entt::entity)entity;
@@ -329,7 +329,7 @@ namespace eg {
 				for (auto entity : group)
 				{
 					auto [sprite, animator] = group.get<SpriteRendererSTComponent, AnimatorComponent>(entity);
-					sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame().SubTexture;
+					sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
 				}
 			}
 

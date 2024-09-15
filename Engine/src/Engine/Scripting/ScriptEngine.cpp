@@ -352,6 +352,19 @@ namespace eg
 		return s_Data->ScriptMethods;
 	}
 
+	void ScriptEngine::CallMethod(UUID entityID, const std::string& className, const std::string& methodName, int parameterCount, void** params)
+	{
+		Ref<ScriptInstance> instance = GetEntityScriptInstance(entityID, className);
+		if (instance)
+		{
+			MonoMethod* method = instance->GetScriptClass()->GetMethod(methodName, parameterCount);
+			//Switch if to Assert
+			if(method)
+				instance->GetScriptClass()->InvokeMethod(instance->GetManagedObject(), method, params);
+		}
+	
+	}
+
 	bool ScriptEngine::isMethodInternal(const std::string& methodName)
 	{
 		return std::find(s_InternallCallFunctions.begin(), s_InternallCallFunctions.end(), methodName) != s_InternallCallFunctions.end();

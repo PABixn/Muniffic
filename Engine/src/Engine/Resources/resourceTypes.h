@@ -4,6 +4,7 @@
 #include <filesystem>
 #include "Engine/Project/Project.h"
 #include "Engine/Core/UUID.h"
+#include "Engine/Scripting/ScriptingTypes.h"
 
 namespace eg
 {
@@ -73,7 +74,8 @@ namespace eg
 	{
 		UUID SubTexture;
 		int Duration;
-		UUID Method;
+		std::string ClassName;
+		std::string FunctionCallName;
 	};
 
 	struct SubTextureResourceData : public ResourceData

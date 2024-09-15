@@ -1418,12 +1418,12 @@ namespace eg {
 						if (component.Animator2D->GetCurrentAnimation() != nullptr && animations->size() > 0)
 						{
 							ImGui::TextWithLineLimitAndToolTipV(std::string("Current Animation: "+component.Animator2D->GetCurrentAnimation()->GetName()).c_str(),1, 0);
-							if (component.Animator2D->GetCurrentAnimation()->GetFrame().SubTexture)
+							if (component.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture())
 							{
-								Ref<SubTexture2D> subtexture = component.Animator2D->GetCurrentAnimation()->GetFrame().SubTexture;
+								Ref<SubTexture2D> subtexture = component.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
 								ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
 								ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
-								ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame().SubTexture->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
+								ImGui::Image((void*)(intptr_t)component.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
 							}
 						}
 					}
@@ -1450,14 +1450,14 @@ namespace eg {
 								{
 									m_PreviewedAnimations.push_back(animation);
 								}
-								if (ShowAnimationPreview && animation->GetFrame().SubTexture)
+								if (ShowAnimationPreview && animation->GetFrame()->GetSubTexture())
 								{
 									ImGui::Columns(2, 0, false);
 									ImGui::SetColumnWidth(0, 100.f);
-									Ref<SubTexture2D> subtexture = animation->GetFrame().SubTexture;
+									Ref<SubTexture2D> subtexture = animation->GetFrame()->GetSubTexture();
 									ImVec2 minCoords = { subtexture->GetMinImGuiCoords().x, subtexture->GetMinImGuiCoords().y };
 									ImVec2 maxCoords = { subtexture->GetMaxImGuiCoords().x, subtexture->GetMaxImGuiCoords().y };
-									ImGui::Image((void*)(intptr_t)animation->GetFrame().SubTexture->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
+									ImGui::Image((void*)(intptr_t)animation->GetFrame()->GetSubTexture()->GetTexture()->GetRendererID(), { 100.0f, 100.0f }, minCoords, maxCoords);
 									ImGui::NextColumn();
 
 								}
@@ -1470,7 +1470,7 @@ namespace eg {
 							if (animation->GetFrameCount() != 0)
 							{
 								h = "Frames (";
-								h += std::to_string(animation->GetFrames().size());
+								h += std::to_string(animation->GetFrames()->size());
 								h += ")";
 							}
 							else
@@ -1515,7 +1515,7 @@ namespace eg {
 							{
 								index = std::find((*animations).begin(), (*animations).end(), animation) - (*animations).begin();
 							}
-							if (ShowAnimationPreview && animation->GetFrame().SubTexture)
+							if (ShowAnimationPreview && animation->GetFrame()->GetSubTexture())
 							{
 								ImGui::EndColumns();
 							}

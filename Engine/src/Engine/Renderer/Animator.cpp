@@ -10,9 +10,11 @@ namespace eg {
 		m_Transitions = CreateRef<std::vector<std::pair<size_t, size_t>>>();
 	}
 
-	Animator::Animator(Ref<std::vector<Ref<Animation>>> animations, float speed)
-		:m_AnimationIndex(0), m_Animations(animations), m_Speed(speed)
+	Animator::Animator(Ref<std::vector<Ref<Animation>>> animations, float speed, UUID entityID)
+		:m_AnimationIndex(0), m_Animations(animations), m_Speed(speed), m_EntityID(entityID)
 	{
+		for(Ref<Animation> anim : *m_Animations)
+			anim->SetEntityID(m_EntityID);
 	}
 
 	void Animator::Play()
@@ -83,6 +85,7 @@ namespace eg {
 	void Animator::AddAnimation(Ref<Animation> animation)
 	{
 		EG_PROFILE_FUNCTION();
+		animation->SetEntityID(m_EntityID);
 		m_Animations->push_back(animation);
 	}
 
@@ -96,13 +99,17 @@ namespace eg {
 	void Animator::AddEmptyAnimation()
 	{
 		EG_PROFILE_FUNCTION();
-		m_Animations->push_back(Animation::Create());
+		Ref<Animation> anim = Animation::Create();
+		anim->SetEntityID(m_EntityID);
+		m_Animations->push_back(anim);
 	}
 
 	void Animator::AddAnimationWithName(const std::string& name)
 	{
 		EG_PROFILE_FUNCTION();
-		m_Animations->push_back(Animation::Create(name));
+		Ref<Animation> anim = Animation::Create();
+		anim->SetName(name);
+		m_Animations->push_back(anim);
 	}
 
 	void Animator::RemoveAnimation(size_t index)
