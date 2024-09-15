@@ -31,7 +31,7 @@ namespace eg
 		m_WelcomePanel = CreateScope<WelcomingPanel>(rps.getProjectList(), rps);
 		m_NameNewProjectPanel = CreateScope<NameNewProjectPanel>();
 		m_NameNewProjectPanel->ShowWindow(s_Font);
-
+		m_AnimationEditorPanel = CreateRef<AnimationEditorPanel>();
 	}
 
 	constexpr float AxisLength = 100000000.0f;

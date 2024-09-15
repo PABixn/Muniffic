@@ -745,12 +745,12 @@ namespace eg
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 7));
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
-			ImGui::SetCursorPos({ImGui::GetCursorPosX() + 40, ImGui::GetCursorPosY() + 20});
-			ImGui::Image((ImTextureID)m_PuzzleIcon->GetRendererID(), {30, 30});
+			ImGui::SetCursorPos({ ImGui::GetCursorPosX() + 40, ImGui::GetCursorPosY() + 20 });
+			ImGui::Image((ImTextureID)m_PuzzleIcon->GetRendererID(), { 30, 30 });
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 120);
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-			auto &tag = entity.GetComponent<TagComponent>().Tag;
+			auto& tag = entity.GetComponent<TagComponent>().Tag;
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
@@ -789,523 +789,523 @@ namespace eg
 
 		ImGui::PopItemWidth();
 
-		DrawComponent<TransformComponent>("Transform", entity, [entity](auto &component)
-										  {
+		DrawComponent<TransformComponent>("Transform", entity, [entity](auto& component)
+			{
 				DrawVec3Control(entity, "Translation", component.Translation, 0.0f, 100.f, true);
 				DrawVec3Control(entity, "Rotation", component.Rotation);
 				DrawVec3Control(entity, "Scale", component.Scale, 1.0f); }, m_Context, ComponentIcons::TransformIcon);
 
-		DrawComponent<CameraComponent>("Camera", entity, [entity](auto &component)
-									   {
-			auto& camera = component.Camera;
+		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component)
+			{
+				auto& camera = component.Camera;
 
-			if (DrawComponentPropertyCheckbox("Primary", &component.Primary))
-				Commands::ExecuteRawValueCommand<bool>(&component.Primary, !component.Primary, "CameraComponent-Primary");
+				if (DrawComponentPropertyCheckbox("Primary", &component.Primary))
+					Commands::ExecuteRawValueCommand<bool>(&component.Primary, !component.Primary, "CameraComponent-Primary");
 
-			const char* projectionTypeString[] = { "Perspective","Orthographic" };
-			DrawComponentPropertyCombo("Projection", std::vector<const char*>(projectionTypeString, projectionTypeString + sizeof projectionTypeString / sizeof projectionTypeString[0]), (int)camera.GetProjectionType(), [&camera](int number) {
-				Commands::ExecuteValueCommand<SceneCamera::ProjectionType>([&camera](SceneCamera::ProjectionType projectionType)
+				const char* projectionTypeString[] = { "Perspective","Orthographic" };
+				DrawComponentPropertyCombo("Projection", std::vector<const char*>(projectionTypeString, projectionTypeString + sizeof projectionTypeString / sizeof projectionTypeString[0]), (int)camera.GetProjectionType(), [&camera](int number) {
+					Commands::ExecuteValueCommand<SceneCamera::ProjectionType>([&camera](SceneCamera::ProjectionType projectionType)
+						{
+							camera.SetProjectionType(projectionType);
+						}, (SceneCamera::ProjectionType)number, camera.GetProjectionType(), "CameraComponent-ProjectionType", true);
+					});
+
+				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 				{
-					camera.SetProjectionType(projectionType);
-				}, (SceneCamera::ProjectionType)number, camera.GetProjectionType(), "CameraComponent-ProjectionType", true);
-			});
+					float perspectiveVerticalFov = glm::degrees(camera.GetPerspectiveVerticalFOV());
+					if (DrawComponentPropertyFloat("Vertical FOV", &perspectiveVerticalFov))
+						//camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
+						Commands::ExecuteValueCommand<float>([&camera](float verticalFov)
+							{
+								camera.SetPerspectiveVerticalFOV(glm::radians(verticalFov));
+							}, perspectiveVerticalFov, glm::degrees(camera.GetPerspectiveVerticalFOV()), "CameraComponent-Vertical FOV");
 
-			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
+					float perspectiveNear = camera.GetPerspectiveNearClip();
+					if (DrawComponentPropertyFloat("Near", &perspectiveNear))
+						Commands::ExecuteValueCommand<float>([&camera](float nearClip)
+							{
+								camera.SetPerspectiveNearClip(nearClip);
+							}, perspectiveNear, camera.GetPerspectiveNearClip(), "CameraComponent-Near");
+
+					float perspectiveFar = camera.GetPerspectiveFarClip();
+					if (DrawComponentPropertyFloat("Far", &perspectiveFar))
+						Commands::ExecuteValueCommand<float>([&camera](float farClip)
+							{
+								camera.SetPerspectiveFarClip(farClip);
+							}, perspectiveFar, camera.GetPerspectiveFarClip(), "CameraComponent-Far");
+				}
+
+				if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+				{
+					float size = camera.GetOrthographicSize();
+					if (DrawComponentPropertyFloat("Size", &size))
+						Commands::ExecuteValueCommand<float>([&camera](float size)
+							{
+								camera.SetOrthographicSize(size);
+							}, size, camera.GetOrthographicSize(), "CameraComponent-Size");
+
+					float nearClip = camera.GetOrthographicNearClip();
+					if (DrawComponentPropertyFloat("Near", &nearClip))
+						Commands::ExecuteValueCommand<float>([&camera](float nearClip)
+							{
+								camera.SetOrthographicNearClip(nearClip);
+							}, nearClip, camera.GetOrthographicNearClip(), "CameraComponent-Near");
+
+					float farClip = camera.GetOrthographicFarClip();
+					if (DrawComponentPropertyFloat("Far", &farClip))
+						Commands::ExecuteValueCommand<float>([&camera](float farClip)
+							{
+								camera.SetOrthographicFarClip(farClip);
+							}, farClip, camera.GetOrthographicFarClip(), "CameraComponent-Far");
+
+					if (DrawComponentPropertyCheckbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
+						Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
+				} }, m_Context, ComponentIcons::CameraIcon);
+
+		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
-				float perspectiveVerticalFov = glm::degrees(camera.GetPerspectiveVerticalFOV());
-				if (DrawComponentPropertyFloat("Vertical FOV", &perspectiveVerticalFov))
-					//camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
-					Commands::ExecuteValueCommand<float>([&camera](float verticalFov)
-						{
-							camera.SetPerspectiveVerticalFOV(glm::radians(verticalFov));
-						}, perspectiveVerticalFov, glm::degrees(camera.GetPerspectiveVerticalFOV()), "CameraComponent-Vertical FOV");
+				// zna1
+				ImGui::Unindent();
+				if (PrettyButton("Add Script"))
+				{
+					ScriptResourceData* data = new ScriptResourceData();
+					data->ResourceName = "";
+					data->Extension = ".cs";
+					data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Script);
+					data->Type = ResourceType::Script;
 
-				float perspectiveNear = camera.GetPerspectiveNearClip();
-				if (DrawComponentPropertyFloat("Near", &perspectiveNear))
-					Commands::ExecuteValueCommand<float>([&camera](float nearClip)
-						{
-							camera.SetPerspectiveNearClip(nearClip);
-						}, perspectiveNear, camera.GetPerspectiveNearClip(), "CameraComponent-Near");
+					UUID uuid = ResourceDatabase::AddResource(AssetDirectoryManager::getDirectoryPath(data->ParentDirectory), data, ResourceType::Script);
+					component.Scripts.push_back(uuid);
+				}
+				static std::vector<char*> buffers;
 
-				float perspectiveFar = camera.GetPerspectiveFarClip();
-				if (DrawComponentPropertyFloat("Far", &perspectiveFar))
-					Commands::ExecuteValueCommand<float>([&camera](float farClip)
-						{
-							camera.SetPerspectiveFarClip(farClip);
-						}, perspectiveFar, camera.GetPerspectiveFarClip(), "CameraComponent-Far");
-			}
+				int i = 0;
+				int j = 0;
 
-			if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+				for (UUID scriptUUID : component.Scripts)
+				{
+					ImGui::PushID("Scr" + j);
+					ScriptResourceData* data = (ScriptResourceData*)ResourceDatabase::GetResourceData(scriptUUID);
+					std::string& scriptName = data->ResourceName;
+					ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow;
+					ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 1.f, 1.f, 0.05f));
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0, 4 });
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.f);
+
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
+					float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+					bool open = ImGui::TreeNodeEx((void*)(int64_t)scriptUUID, flags, scriptName.c_str());
+					ImGui::SameLine(contentRegionAvailable.x - lineHeight);
+
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.f, 1.f, 1.f, 0.0f));
+					bool del = ImGui::Button("X", ImVec2{ lineHeight, lineHeight });
+					ImGui::PopStyleColor();
+
+					ImGui::PopStyleVar();
+					ImGui::PopStyleVar();
+					ImGui::PopStyleColor();
+
+					// ImGui::Separator();
+
+					if (del)
+					{
+						component.Scripts.erase(std::find(component.Scripts.begin(), component.Scripts.end(), scriptUUID));
+
+						if (open)
+						{
+							ImGui::TreePop();
+							ImGui::Indent();
+						}
+
+						ImGui::PopID();
+						return;
+					}
+
+					if (open)
+					{
+						bool scriptExists = ScriptEngine::EntityClassExists(scriptName);
+
+						if (buffers.size() <= i)
+						{
+							char* buffer = new char[256];
+							buffers.push_back(buffer);
+						}
+
+						char* buffer = buffers.at(i);
+
+						memset(buffer, 0, 256);
+						strcpy_s(buffer, 256, scriptName.c_str());
+
+						i++;
+
+						UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f }, !scriptExists);
+
+						if (DrawComponentPropertyInputText(std::string("Class " + std::to_string(i)).c_str(), buffer, 256))
+						{
+							scriptName = std::string(buffer);
+							ImGui::TreePop();
+							ImGui::Indent();
+							ImGui::PopID();
+							return;
+						}
+
+						// DrawComponentPropertyCheckbox("Enabled", &data->IsEnabled);
+
+						// Fields
+
+						bool sceneRunning = scene->IsRunning();
+
+						if (sceneRunning)
+						{
+							// If Scene running
+							Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID(), scriptName);
+							if (scriptInstance)
+							{
+								const auto& fields = scriptInstance->GetScriptClass()->GetFields();
+								for (const auto& [name, field] : fields)
+								{
+									// float a = 5.0f;
+									// ImGui::DragFloat(name.c_str(), &a, 0.1f);
+									switch (field.Type)
+									{
+									case ScriptFieldType::Float:
+									{
+										float value = scriptInstance->GetFieldValue<float>(name);
+										if (DrawComponentPropertyFloat(name.c_str(), &value, 0.1f))
+											scriptInstance->SetFieldValue<float>(name, value);
+										break;
+									}
+									case ScriptFieldType::Int32:
+									{
+										int value = scriptInstance->GetFieldValue<int>(name);
+										if (DrawComponentPropertyInt(name.c_str(), &value, 1.0f))
+											scriptInstance->SetFieldValue<int>(name, value);
+										break;
+									}
+									case ScriptFieldType::Bool:
+									{
+										bool value = scriptInstance->GetFieldValue<bool>(name);
+										if (DrawComponentPropertyCheckbox(name.c_str(), &value))
+											scriptInstance->SetFieldValue<bool>(name, value);
+										break;
+									}
+									case ScriptFieldType::String:
+									{
+										// td::string value = scriptInstance->GetFieldValue<std::string>(name);
+										// har buffer[256];
+										// emset(buffer, 0, sizeof(buffer));
+										// trcpy(buffer, value.c_str());
+										// f(ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+										//	scriptInstance->SetFieldValue<std::string>(name, std::string(buffer));
+										// reak;
+									}
+									case ScriptFieldType::Vector2:
+									{
+										glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
+										if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
+											scriptInstance->SetFieldValue<glm::vec2>(name, value);
+										break;
+									}
+									case ScriptFieldType::Vector3:
+									{
+										glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
+										if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
+											scriptInstance->SetFieldValue<glm::vec3>(name, value);
+										break;
+									}
+									case ScriptFieldType::Vector4:
+									{
+										glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
+										if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
+											scriptInstance->SetFieldValue<glm::vec4>(name, value);
+										break;
+									}
+									default:
+										break;
+									}
+								};
+							}
+						}
+						else
+						{
+							if (scriptExists)
+							{
+								Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(scriptName);
+								const auto& fields = entityClass->GetFields();
+
+								auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
+
+								for (const auto& [name, field] : fields)
+								{
+									if (entityFields.find(name) != entityFields.end())
+									{
+										// zna2
+										//  Field has been set in editor
+										ScriptFieldInstance& scriptField = entityFields.at(name);
+										switch (field.Type)
+										{
+										case ScriptFieldType::Float:
+										{
+											float data = scriptField.GetValue<float>();
+											if (DrawComponentPropertyFloat(name.c_str(), &data, 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Int32:
+										{
+											int data = scriptField.GetValue<int>();
+											if (DrawComponentPropertyInt(name.c_str(), &data, 1.0f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Bool:
+										{
+											bool data = scriptField.GetValue<bool>();
+											if (DrawComponentPropertyCheckbox(name.c_str(), &data))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										case ScriptFieldType::String:
+										{
+											// std::string data = scriptField.GetValue<std::string>();
+											// char* buffer[256];
+											// memset(buffer, 0, sizeof(buffer));
+											// strcpy(buffer, data.c_str());
+											// if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+											//{
+											//	scriptField.SetValue(std::string(buffer));
+											// }
+											// break;
+										}
+										case ScriptFieldType::Vector2:
+										{
+											glm::vec2 data = scriptField.GetValue<glm::vec2>();
+											if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector3:
+										{
+											glm::vec3 data = scriptField.GetValue<glm::vec3>();
+											if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector4:
+										{
+											glm::vec4 data = scriptField.GetValue<glm::vec4>();
+											if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												scriptField.SetValue(data);
+											}
+											break;
+										}
+										}
+									}
+									else
+									{
+										// Display control to set it
+										switch (field.Type)
+										{
+										case ScriptFieldType::Float:
+										{
+											float data = 0.0f;
+											if (DrawComponentPropertyFloat(name.c_str(), &data))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<float>(data);
+												float a = fieldInstance.GetValue<float>();
+											}
+											break;
+										}
+										case ScriptFieldType::Int32:
+										{
+											int data = 0;
+											if (DrawComponentPropertyInt(name.c_str(), &data))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<int>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Bool:
+										{
+											bool data = false;
+											if (DrawComponentPropertyCheckbox(name.c_str(), &data))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<bool>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::String:
+										{
+											// std::string data = "";
+											// char buffer[256];
+											// memset(buffer, 0, sizeof(buffer));
+											// strcpy(buffer, data.c_str());
+											// if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
+											//{
+											//	ScriptFieldInstance& fieldInstance = entityFields[name];
+											//	fieldInstance.Field = field;
+											//	fieldInstance.SetValue<std::string>(std::string(buffer));
+											// }
+											// break;
+										}
+										case ScriptFieldType::Vector2:
+										{
+											glm::vec2 data = glm::vec2(0.0f);
+											if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<glm::vec2>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector3:
+										{
+											glm::vec3 data = glm::vec3(0.0f);
+											if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<glm::vec3>(data);
+											}
+											break;
+										}
+										case ScriptFieldType::Vector4:
+										{
+											glm::vec4 data = glm::vec4(0.0f);
+											if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
+											{
+												ScriptFieldInstance& fieldInstance = entityFields[name];
+												fieldInstance.Field = field;
+												fieldInstance.SetValue<glm::vec4>(data);
+											}
+											break;
+										}
+										}
+									}
+								}
+							}
+						}
+
+						ImGui::TreePop();
+					}
+
+					ImGui::PopID();
+					j++;
+				}
+				ImGui::Indent();
+			},
+			m_Context, ComponentIcons::ScriptIcon);
+
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)
 			{
-				float size = camera.GetOrthographicSize();
-				if (DrawComponentPropertyFloat("Size", &size))
-					Commands::ExecuteValueCommand<float>([&camera](float size)
-						{
-							camera.SetOrthographicSize(size);
-						}, size, camera.GetOrthographicSize(), "CameraComponent-Size");
+				glm::vec4 color = component.Color;
 
-				float nearClip = camera.GetOrthographicNearClip();
-				if (DrawComponentPropertyFloat("Near", &nearClip))
-					Commands::ExecuteValueCommand<float>([&camera](float nearClip)
-						{
-							camera.SetOrthographicNearClip(nearClip);
-						}, nearClip, camera.GetOrthographicNearClip(), "CameraComponent-Near");
+				if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand<glm::vec4, SpriteRendererComponent>(&component.Color, color, entity, "SpriteRendererComponent-Color");
 
-				float farClip = camera.GetOrthographicFarClip();
-				if (DrawComponentPropertyFloat("Far", &farClip))
-					Commands::ExecuteValueCommand<float>([&camera](float farClip)
-						{
-							camera.SetOrthographicFarClip(farClip);
-						}, farClip, camera.GetOrthographicFarClip(), "CameraComponent-Far");
-
-				if(DrawComponentPropertyCheckbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
-					Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
-			} }, m_Context, ComponentIcons::CameraIcon);
-
-		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto &component) mutable
-									   {
-										   // zna1
-										   ImGui::Unindent();
-										   if (PrettyButton("Add Script"))
-										   {
-											   ScriptResourceData *data = new ScriptResourceData();
-											   data->ResourceName = "";
-											   data->Extension = ".cs";
-											   data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Script);
-											   data->Type = ResourceType::Script;
-
-											   UUID uuid = ResourceDatabase::AddResource(AssetDirectoryManager::getDirectoryPath(data->ParentDirectory), data, ResourceType::Script);
-											   component.Scripts.push_back(uuid);
-										   }
-										   static std::vector<char *> buffers;
-
-										   int i = 0;
-										   int j = 0;
-
-										   for (UUID scriptUUID : component.Scripts)
-										   {
-											   ImGui::PushID("Scr" + j);
-											   ScriptResourceData *data = (ScriptResourceData *)ResourceDatabase::GetResourceData(scriptUUID);
-											   std::string &scriptName = data->ResourceName;
-											   ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow;
-											   ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
-											   ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 1.f, 1.f, 0.05f));
-											   ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{0, 4});
-											   ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.f);
-
-											   ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10.f);
-											   float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-											   bool open = ImGui::TreeNodeEx((void *)(int64_t)scriptUUID, flags, scriptName.c_str());
-											   ImGui::SameLine(contentRegionAvailable.x - lineHeight);
-
-											   ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.f, 1.f, 1.f, 0.0f));
-											   bool del = ImGui::Button("X", ImVec2{lineHeight, lineHeight});
-											   ImGui::PopStyleColor();
-
-											   ImGui::PopStyleVar();
-											   ImGui::PopStyleVar();
-											   ImGui::PopStyleColor();
-
-											   // ImGui::Separator();
-
-											   if (del)
-											   {
-												   component.Scripts.erase(std::find(component.Scripts.begin(), component.Scripts.end(), scriptUUID));
-
-												   if (open)
-												   {
-													   ImGui::TreePop();
-													   ImGui::Indent();
-												   }
-
-												   ImGui::PopID();
-												   return;
-											   }
-
-											   if (open)
-											   {
-												   bool scriptExists = ScriptEngine::EntityClassExists(scriptName);
-
-												   if (buffers.size() <= i)
-												   {
-													   char *buffer = new char[256];
-													   buffers.push_back(buffer);
-												   }
-
-												   char *buffer = buffers.at(i);
-
-												   memset(buffer, 0, 256);
-												   strcpy_s(buffer, 256, scriptName.c_str());
-
-												   i++;
-
-												   UI::ScopedStyleColor styleColor(ImGuiCol_Text, ImVec4{1.0f, 0.0f, 0.0f, 1.0f}, !scriptExists);
-
-												   if (DrawComponentPropertyInputText(std::string("Class " + std::to_string(i)).c_str(), buffer, 256))
-												   {
-													   scriptName = std::string(buffer);
-													   ImGui::TreePop();
-													   ImGui::Indent();
-													   ImGui::PopID();
-													   return;
-												   }
-
-												   // DrawComponentPropertyCheckbox("Enabled", &data->IsEnabled);
-
-												   // Fields
-
-												   bool sceneRunning = scene->IsRunning();
-
-												   if (sceneRunning)
-												   {
-													   // If Scene running
-													   Ref<ScriptInstance> scriptInstance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID(), scriptName);
-													   if (scriptInstance)
-													   {
-														   const auto &fields = scriptInstance->GetScriptClass()->GetFields();
-														   for (const auto &[name, field] : fields)
-														   {
-															   // float a = 5.0f;
-															   // ImGui::DragFloat(name.c_str(), &a, 0.1f);
-															   switch (field.Type)
-															   {
-															   case ScriptFieldType::Float:
-															   {
-																   float value = scriptInstance->GetFieldValue<float>(name);
-																   if (DrawComponentPropertyFloat(name.c_str(), &value, 0.1f))
-																	   scriptInstance->SetFieldValue<float>(name, value);
-																   break;
-															   }
-															   case ScriptFieldType::Int32:
-															   {
-																   int value = scriptInstance->GetFieldValue<int>(name);
-																   if (DrawComponentPropertyInt(name.c_str(), &value, 1.0f))
-																	   scriptInstance->SetFieldValue<int>(name, value);
-																   break;
-															   }
-															   case ScriptFieldType::Bool:
-															   {
-																   bool value = scriptInstance->GetFieldValue<bool>(name);
-																   if (DrawComponentPropertyCheckbox(name.c_str(), &value))
-																	   scriptInstance->SetFieldValue<bool>(name, value);
-																   break;
-															   }
-															   case ScriptFieldType::String:
-															   {
-																   // td::string value = scriptInstance->GetFieldValue<std::string>(name);
-																   // har buffer[256];
-																   // emset(buffer, 0, sizeof(buffer));
-																   // trcpy(buffer, value.c_str());
-																   // f(ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
-																   //	scriptInstance->SetFieldValue<std::string>(name, std::string(buffer));
-																   // reak;
-															   }
-															   case ScriptFieldType::Vector2:
-															   {
-																   glm::vec2 value = scriptInstance->GetFieldValue<glm::vec2>(name);
-																   if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(value), 0.1f))
-																	   scriptInstance->SetFieldValue<glm::vec2>(name, value);
-																   break;
-															   }
-															   case ScriptFieldType::Vector3:
-															   {
-																   glm::vec3 value = scriptInstance->GetFieldValue<glm::vec3>(name);
-																   if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(value), 0.1f))
-																	   scriptInstance->SetFieldValue<glm::vec3>(name, value);
-																   break;
-															   }
-															   case ScriptFieldType::Vector4:
-															   {
-																   glm::vec4 value = scriptInstance->GetFieldValue<glm::vec4>(name);
-																   if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(value), 0.1f))
-																	   scriptInstance->SetFieldValue<glm::vec4>(name, value);
-																   break;
-															   }
-															   default:
-																   break;
-															   }
-														   };
-													   }
-												   }
-												   else
-												   {
-													   if (scriptExists)
-													   {
-														   Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(scriptName);
-														   const auto &fields = entityClass->GetFields();
-
-														   auto &entityFields = ScriptEngine::GetScriptFieldMap(entity);
-
-														   for (const auto &[name, field] : fields)
-														   {
-															   if (entityFields.find(name) != entityFields.end())
-															   {
-																   // zna2
-																   //  Field has been set in editor
-																   ScriptFieldInstance &scriptField = entityFields.at(name);
-																   switch (field.Type)
-																   {
-																   case ScriptFieldType::Float:
-																   {
-																	   float data = scriptField.GetValue<float>();
-																	   if (DrawComponentPropertyFloat(name.c_str(), &data, 0.1f))
-																	   {
-																		   scriptField.SetValue(data);
-																	   }
-																	   break;
-																   }
-																   case ScriptFieldType::Int32:
-																   {
-																	   int data = scriptField.GetValue<int>();
-																	   if (DrawComponentPropertyInt(name.c_str(), &data, 1.0f))
-																	   {
-																		   scriptField.SetValue(data);
-																	   }
-																	   break;
-																   }
-																   case ScriptFieldType::Bool:
-																   {
-																	   bool data = scriptField.GetValue<bool>();
-																	   if (DrawComponentPropertyCheckbox(name.c_str(), &data))
-																	   {
-																		   scriptField.SetValue(data);
-																	   }
-																	   break;
-																   }
-																   case ScriptFieldType::String:
-																   {
-																	   // std::string data = scriptField.GetValue<std::string>();
-																	   // char* buffer[256];
-																	   // memset(buffer, 0, sizeof(buffer));
-																	   // strcpy(buffer, data.c_str());
-																	   // if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
-																	   //{
-																	   //	scriptField.SetValue(std::string(buffer));
-																	   // }
-																	   // break;
-																   }
-																   case ScriptFieldType::Vector2:
-																   {
-																	   glm::vec2 data = scriptField.GetValue<glm::vec2>();
-																	   if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
-																	   {
-																		   scriptField.SetValue(data);
-																	   }
-																	   break;
-																   }
-																   case ScriptFieldType::Vector3:
-																   {
-																	   glm::vec3 data = scriptField.GetValue<glm::vec3>();
-																	   if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
-																	   {
-																		   scriptField.SetValue(data);
-																	   }
-																	   break;
-																   }
-																   case ScriptFieldType::Vector4:
-																   {
-																	   glm::vec4 data = scriptField.GetValue<glm::vec4>();
-																	   if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
-																	   {
-																		   scriptField.SetValue(data);
-																	   }
-																	   break;
-																   }
-																   }
-															   }
-															   else
-															   {
-																   // Display control to set it
-																   switch (field.Type)
-																   {
-																   case ScriptFieldType::Float:
-																   {
-																	   float data = 0.0f;
-																	   if (DrawComponentPropertyFloat(name.c_str(), &data))
-																	   {
-																		   ScriptFieldInstance &fieldInstance = entityFields[name];
-																		   fieldInstance.Field = field;
-																		   fieldInstance.SetValue<float>(data);
-																		   float a = fieldInstance.GetValue<float>();
-																	   }
-																	   break;
-																   }
-																   case ScriptFieldType::Int32:
-																   {
-																	   int data = 0;
-																	   if (DrawComponentPropertyInt(name.c_str(), &data))
-																	   {
-																		   ScriptFieldInstance &fieldInstance = entityFields[name];
-																		   fieldInstance.Field = field;
-																		   fieldInstance.SetValue<int>(data);
-																	   }
-																	   break;
-																   }
-																   case ScriptFieldType::Bool:
-																   {
-																	   bool data = false;
-																	   if (DrawComponentPropertyCheckbox(name.c_str(), &data))
-																	   {
-																		   ScriptFieldInstance &fieldInstance = entityFields[name];
-																		   fieldInstance.Field = field;
-																		   fieldInstance.SetValue<bool>(data);
-																	   }
-																	   break;
-																   }
-																   case ScriptFieldType::String:
-																   {
-																	   // std::string data = "";
-																	   // char buffer[256];
-																	   // memset(buffer, 0, sizeof(buffer));
-																	   // strcpy(buffer, data.c_str());
-																	   // if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer)))
-																	   //{
-																	   //	ScriptFieldInstance& fieldInstance = entityFields[name];
-																	   //	fieldInstance.Field = field;
-																	   //	fieldInstance.SetValue<std::string>(std::string(buffer));
-																	   // }
-																	   // break;
-																   }
-																   case ScriptFieldType::Vector2:
-																   {
-																	   glm::vec2 data = glm::vec2(0.0f);
-																	   if (DrawComponentPropertyFloat2(name.c_str(), glm::value_ptr(data), 0.1f))
-																	   {
-																		   ScriptFieldInstance &fieldInstance = entityFields[name];
-																		   fieldInstance.Field = field;
-																		   fieldInstance.SetValue<glm::vec2>(data);
-																	   }
-																	   break;
-																   }
-																   case ScriptFieldType::Vector3:
-																   {
-																	   glm::vec3 data = glm::vec3(0.0f);
-																	   if (DrawComponentPropertyFloat3(name.c_str(), glm::value_ptr(data), 0.1f))
-																	   {
-																		   ScriptFieldInstance &fieldInstance = entityFields[name];
-																		   fieldInstance.Field = field;
-																		   fieldInstance.SetValue<glm::vec3>(data);
-																	   }
-																	   break;
-																   }
-																   case ScriptFieldType::Vector4:
-																   {
-																	   glm::vec4 data = glm::vec4(0.0f);
-																	   if (DrawComponentPropertyFloat4(name.c_str(), glm::value_ptr(data), 0.1f))
-																	   {
-																		   ScriptFieldInstance &fieldInstance = entityFields[name];
-																		   fieldInstance.Field = field;
-																		   fieldInstance.SetValue<glm::vec4>(data);
-																	   }
-																	   break;
-																   }
-																   }
-															   }
-														   }
-													   }
-												   }
-
-												   ImGui::TreePop();
-											   }
-
-											   ImGui::PopID();
-											   j++;
-										   }
-										   ImGui::Indent();
-									   },
-									   m_Context, ComponentIcons::ScriptIcon);
-
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto &component)
-											   {
-												   glm::vec4 color = component.Color;
-
-												   if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
-													   Commands::ExecuteRawValueCommand<glm::vec4, SpriteRendererComponent>(&component.Color, color, entity, "SpriteRendererComponent-Color");
-
-												   DrawComponentPropertyFileReference("Texture", component.TextureUUID, [&component, &entity](int64_t *what)
-																					  {
-					Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
-					if (texture->IsLoaded())
+				DrawComponentPropertyFileReference("Texture", component.TextureUUID, [&component, &entity](int64_t* what)
 					{
-						component.TextureUUID = *what;
-						Ref<Texture2D> oldTexture = component.Texture;
-						component.Texture = texture;
-						Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
-					}
-					else
-						EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what)); });
-												   float factor = component.TilingFactor;
-												   if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
-													   Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
-											   },
-											   m_Context, ComponentIcons::SpriteRendererIcon);
+						Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
+						if (texture->IsLoaded())
+						{
+							component.TextureUUID = *what;
+							Ref<Texture2D> oldTexture = component.Texture;
+							component.Texture = texture;
+							Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
+						}
+						else
+							EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what)); });
+				float factor = component.TilingFactor;
+				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
+					Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
+			},
+			m_Context, ComponentIcons::SpriteRendererIcon);
 
-		DrawComponent<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D", entity, [](auto &component)
-												 {
-													 glm::vec4 color = component.Color;
+		DrawComponent<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D", entity, [](auto& component)
+			{
+				glm::vec4 color = component.Color;
 
-													 if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
-														 Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
-													 DrawComponentPropertyFileReference("Texture", component.SubTextureUUID, [&component](int64_t *what)
-																						{
-					Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
-
-					if (texture->IsLoaded())
+				if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
+					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
+				DrawComponentPropertyFileReference("Texture", component.SubTextureUUID, [&component](int64_t* what)
 					{
-						Ref<Texture2D> oldTexture = component.SubTexture->GetTexture();
-						component.SubTexture->SetTexture(texture);
-						Ref<Texture2D> newTexture = component.SubTexture->GetTexture();
-						component.SubTextureUUID = *what;
-						Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
-					}
-					else
-						EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what)); });
+						Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
 
-													 glm::vec2 minCoords = component.SubTexture->GetCoords(0);
-													 if (DrawComponentPropertyFloat2("Min coords", (float *)component.SubTexture->GetCoordsPtr(0), 0.01f, 0.0f, 1.0f))
-													 {
-														 glm::vec2 newCoords = component.SubTexture->GetCoords(0);
-														 std::vector<glm::vec2> oldCoords = {minCoords, component.SubTexture->GetCoords(1), component.SubTexture->GetCoords(3)};
-														 std::vector<glm::vec2> newCoordsVec = {newCoords, {component.SubTexture->GetCoords(2).x, newCoords.y}, {newCoords.x, component.SubTexture->GetCoords(2).y}};
-														 component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
-														 component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
-														 Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
-																											   {
+						if (texture->IsLoaded())
+						{
+							Ref<Texture2D> oldTexture = component.SubTexture->GetTexture();
+							component.SubTexture->SetTexture(texture);
+							Ref<Texture2D> newTexture = component.SubTexture->GetTexture();
+							component.SubTextureUUID = *what;
+							Commands::ExecuteRawValueCommand<Ref<Texture2D>>(&newTexture, oldTexture, "SpriteRendererComponent-Texture", true);
+						}
+						else
+							EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what)); });
+
+				glm::vec2 minCoords = component.SubTexture->GetCoords(0);
+				if (DrawComponentPropertyFloat2("Min coords", (float*)component.SubTexture->GetCoordsPtr(0), 0.01f, 0.0f, 1.0f))
+				{
+					glm::vec2 newCoords = component.SubTexture->GetCoords(0);
+					std::vector<glm::vec2> oldCoords = { minCoords, component.SubTexture->GetCoords(1), component.SubTexture->GetCoords(3) };
+					std::vector<glm::vec2> newCoordsVec = { newCoords, {component.SubTexture->GetCoords(2).x, newCoords.y}, {newCoords.x, component.SubTexture->GetCoords(2).y} };
+					component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
+					component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
+					Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+						{
 							component.SubTexture->SetTexCoords(0, coords[0]);
 							component.SubTexture->SetTexCoords(1, coords[1]);
 							component.SubTexture->SetTexCoords(3, coords[2]); }, newCoordsVec, oldCoords, "SpriteRendererComponent-MinTexCoords", true);
-													 }
-													 glm::vec2 maxCoords = component.SubTexture->GetCoords(2);
-													 if (DrawComponentPropertyFloat2("Max coords", (float *)component.SubTexture->GetCoordsPtr(2), 0.01f, 0.0f, 1.0f))
-													 {
-														 glm::vec2 newCoords = component.SubTexture->GetCoords(2);
-														 std::vector<glm::vec2> oldCoords = {component.SubTexture->GetCoords(1), maxCoords, component.SubTexture->GetCoords(3)};
-														 std::vector<glm::vec2> newCoordsVec = {{newCoords.x, component.SubTexture->GetCoords(0).x}, newCoords, {component.SubTexture->GetCoords(0).x, newCoords.y}};
-														 component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
-														 component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
-														 Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
-																											   {
+				}
+				glm::vec2 maxCoords = component.SubTexture->GetCoords(2);
+				if (DrawComponentPropertyFloat2("Max coords", (float*)component.SubTexture->GetCoordsPtr(2), 0.01f, 0.0f, 1.0f))
+				{
+					glm::vec2 newCoords = component.SubTexture->GetCoords(2);
+					std::vector<glm::vec2> oldCoords = { component.SubTexture->GetCoords(1), maxCoords, component.SubTexture->GetCoords(3) };
+					std::vector<glm::vec2> newCoordsVec = { {newCoords.x, component.SubTexture->GetCoords(0).x}, newCoords, {component.SubTexture->GetCoords(0).x, newCoords.y} };
+					component.SubTexture->SetTexCoords(1, newCoordsVec[1]);
+					component.SubTexture->SetTexCoords(3, newCoordsVec[2]);
+					Commands::ExecuteValueCommand<std::vector<glm::vec2>>([&component](std::vector<glm::vec2> coords)
+						{
 							component.SubTexture->SetTexCoords(1, coords[0]);
 							component.SubTexture->SetTexCoords(2, coords[1]);
 							component.SubTexture->SetTexCoords(3, coords[2]); }, newCoordsVec, oldCoords, "SpriteRendererComponent-MaxTexCoords", true);
-													 }
+				}
 
-													 float factor = component.TilingFactor;
-													 if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
-														 Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
-												 },
-												 m_Context, ComponentIcons::SubTextureRendererIcon);
+				float factor = component.TilingFactor;
+				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
+					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
+			},
+			m_Context, ComponentIcons::SubTextureRendererIcon);
 
-		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [entity](auto &component)
-											   {
+		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [entity](auto& component)
+			{
 				float thickness = component.Thickness, fade = component.Fade;
 				glm::vec4 color = component.Color;
-				if(DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
+				if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand<glm::vec4, CircleRendererComponent>(&component.Color, color, entity, "CircleRendererComponent-Color");
 
-				if(DrawComponentPropertyFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
+				if (DrawComponentPropertyFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
 					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Thickness, thickness, entity, "CircleRendererComponent-Thickness");
-				if(DrawComponentPropertyFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
+				if (DrawComponentPropertyFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
 					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Fade, fade, entity, "CircleRendererComponent-Fade"); }, m_Context, ComponentIcons::CircleRendererIcon);
 
 		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [entity](auto &component)
@@ -1337,7 +1337,7 @@ namespace eg
 				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");
 
 			if (ImGui::DragFloat("Gravity multiplier", &component.GravityMultiplier, 0.1f))
-				Commands::ExecuteRawValueCommand<float, RigidBody2DComponent>(&component.GravityMultiplier, component.GravityMultiplier, entity, "RigidBody2DComponent-Gravity Multiplier"); }, m_Context);
+				Commands::ExecuteRawValueCommand<float, RigidBody2DComponent>(&component.GravityMultiplier, component.GravityMultiplier, entity, "RigidBody2DComponent-Gravity Multiplier"); }, m_Context, ComponentIcons::RigidBodyIcon);
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [entity](auto &component)
 											  {
