@@ -1470,7 +1470,7 @@ namespace eg {
 							if (animation->GetFrameCount() != 0)
 							{
 								h = "Frames (";
-								h += std::to_string(animation->GetFrames()->size());
+								h += std::to_string(animation->GetFrames().size());
 								h += ")";
 							}
 							else

@@ -24,25 +24,25 @@ namespace eg
 		m_name = path;
 	}
 
-	/*Animation::Animation(Ref<std::vector<Ref<FrameData>>> frames, float frameRate, bool loop)
+	Animation::Animation(const std::vector<Ref<FrameData>>& frames, float frameRate, bool loop)
 		: m_frames(frames), m_frameRate(frameRate), m_loop(loop), m_playing(false), m_frame(0), m_AnimationID(UUID())
 	{
 	}
 
-	Animation::Animation(const UUID& id, Ref<std::vector<Ref<FrameData>>> frames, float frameRate, bool loop)
+	Animation::Animation(const UUID& id, const std::vector<Ref<FrameData>>& frames, float frameRate, bool loop)
 		: m_frames(frames), m_frameRate(frameRate), m_loop(loop), m_playing(false), m_frame(0), m_AnimationID(id)
 	{
-	}*/
+	}
 
 	Ref<Animation> Animation::Create(const std::string& path)
 	{
 		return CreateRef<Animation>(path);
 	}
 
-	/*Ref<Animation> Animation::Create(std::vector<Ref<FrameData>> frames, float frameRate, bool loop)
+	Ref<Animation> Animation::Create(const std::vector<Ref<FrameData>>& frames, float frameRate, bool loop)
 	{
 		return CreateRef<Animation>(frames, frameRate, loop);
-	}*/
+	}
 
 	Ref<Animation> Animation::Create(const UUID& id)
 	{
@@ -69,11 +69,11 @@ namespace eg
 	void Animation::Update(float dt, float speed)
 	{
 		EG_PROFILE_FUNCTION();
-		if (m_playing && m_frames->size() > 0)
+		if (m_playing && m_frames.size() > 0)
 		{
 			m_AnimationEnded = false;
 			m_frame += m_frameRate * speed * dt * (float)(1.0f/GetFrame()->GetFrameDuration());
-			if ((int)m_frame >= m_frames->size())
+			if ((int)m_frame >= m_frames.size())
 			{
 				m_AnimationEnded = true;
 				if (m_loop)
@@ -82,7 +82,7 @@ namespace eg
 				}
 				else
 				{
-					m_frame = m_frames->size() - 1;
+					m_frame = m_frames.size() - 1;
 					m_playing = false;
 				}
 			}
@@ -119,8 +119,8 @@ namespace eg
 	void Animation::SetFrame(int frame)
 	{
 		m_frame = frame;
-		if (m_frame >= m_frames->size())
-			m_frame = m_frames->size() - 1;
+		if (m_frame >= m_frames.size())
+			m_frame = m_frames.size() - 1;
 		if (m_frame < 0)
 			m_frame = 0;
 	}
@@ -143,9 +143,9 @@ namespace eg
 	void Animation::SetEntityID(const UUID& id)
 	{
 		m_EntityID = id;
-		for (auto& frame : *m_frames)
+		for (auto& frame : m_frames)
 		{
-			//frame->SetEntityID(id);
+			frame->SetEntityID(id);
 		}
 	}
 
@@ -153,10 +153,10 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		AnimationResourceData* animData = (AnimationResourceData*)ResourceDatabase::GetResourceData(m_AnimationID);
 		animData->FrameRate = m_frameRate;
-		animData->FrameCount = m_frames->size();
+		animData->FrameCount = m_frames.size();
 		animData->Loop = m_loop;
 		animData->Frames.clear();
-		for(auto& frame : *m_frames) {
+		for(auto& frame : m_frames) {
 			frame->Save();
 		}
 	}
@@ -164,15 +164,15 @@ namespace eg
 	void Animation::ClearFrames()
 	{
 		EG_PROFILE_FUNCTION();
-		m_frames->clear();
+		m_frames.clear();
 	}
 
 	void Animation::RemoveFrame(int index)
 	{
 		EG_PROFILE_FUNCTION();
-		if (index < m_frames->size())
+		if (index < m_frames.size())
 		{
-			m_frames->erase(m_frames->begin() + index);
+			m_frames.erase(m_frames.begin() + index);
 		}
 	}
 
@@ -181,21 +181,15 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		if (!frame->GetSubTexture())
 		return FrameData::Create();
-		m_frames->push_back(frame);
+		m_frames.push_back(frame);
 		return frame;
-	}
-
-	void Animation::AddFrames(const std::vector<Ref<SubTexture2D>>& frames)
-	{
-		EG_PROFILE_FUNCTION();
-		m_frames->insert(m_frames->end(), frames.begin(), frames.end());
 	}
 
 	const Ref<FrameData> Animation::GetFrame(int frame) const
 	{
 		EG_PROFILE_FUNCTION();
-		if (m_frames->size() > 0 && frame < m_frames->size() && frame >= 0)
-			return m_frames->at(frame);
+		if (m_frames.size() > 0 && frame < m_frames.size() && frame >= 0)
+			return m_frames.at(frame);
 		return FrameData::Create();
 	}
 
@@ -237,7 +231,7 @@ namespace eg
 		frame->isKeyFrame = isKeyFrame;
 		frame->ClassName = className;
 		frame->FunctionCallName = functionCallName;
-		//frame->Save();
+		frame->Save();
 		return frame;
 	}
 

@@ -53,15 +53,15 @@ namespace eg {
 		
 		//Do not use constructors, use Animation::Create instead
 		Animation();
-		//Animation(const UUID& id, Ref<std::vector<Ref<FrameData>>> frames, float frameRate = 1.0f, bool loop = true);
+		Animation(const UUID& id, const std::vector<Ref<FrameData>>& frames, float frameRate = 1.0f, bool loop = true);
 		Animation(const std::string& path);
 		Animation(const UUID&, const std::string& path);
-		//Animation(Ref<std::vector<Ref<FrameData>>> frames, float frameRate = 1.0f, bool loop = true);
+		Animation(const std::vector<Ref<FrameData>>& frames, float frameRate = 1.0f, bool loop = true);
 		~Animation() = default;
 
 		inline static Ref<Animation> Create() { return CreateRef<Animation>();};
 		static Ref<Animation> Create(const std::string& path);
-		static Ref<Animation> Create(std::vector<Ref<FrameData>> frames, float frameRate = 1.0f, bool loop = true);
+		static Ref<Animation> Create(const std::vector<Ref<FrameData>>& frames, float frameRate = 1.0f, bool loop = true);
 		static Ref<Animation> Create(const UUID& id);
 
 		void Update(float dt, float speed);
@@ -81,14 +81,13 @@ namespace eg {
 		void RemoveFrame(int index);
 		void ClearFrames();
 		Ref<FrameData> AddFrame(const Ref<FrameData>& frame);
-		void AddFrames(const std::vector<Ref<SubTexture2D>>& frames);
 
-		inline const Ref<std::vector<Ref<FrameData>>>& GetFrames() const { return m_frames; }
+		inline const std::vector<Ref<FrameData>>& GetFrames() const { return m_frames; }
 		const Ref<FrameData> GetFrame() const;
 		const Ref<FrameData> GetFrame(int frame) const;
 		inline float GetCurrentFrame() const { return m_frame; }
 		inline float* GetCurrentFramePtr() { return &m_frame; }
-		inline const float GetFrameCount() const { return m_frames->size(); }
+		inline const float GetFrameCount() const { return m_frames.size(); }
 		inline bool IsPlaying() const { return m_playing; }
 		inline bool* IsPlayingPtr() { return &m_playing; }
 		inline bool IsLooped() const { return m_loop; }
@@ -108,7 +107,7 @@ namespace eg {
 		bool m_AnimationEnded = false;
 		UUID m_AnimationID;
 		UUID m_EntityID;
-		Ref<std::vector<Ref<FrameData>>> m_frames;
+		std::vector<Ref<FrameData>> m_frames;
 
 		std::string m_name = "";
 	};

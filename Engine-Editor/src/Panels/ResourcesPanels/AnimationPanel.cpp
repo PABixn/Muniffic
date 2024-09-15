@@ -16,6 +16,7 @@ namespace eg {
 	bool AnimationPanel::OpenAnimationPanel(const std::filesystem::path& path)
 	{
 		ShowAnimationPanel(true);
+		m_FrameData = CreateRef<FrameData>();
 		EG_PROFILE_FUNCTION();
 		std::filesystem::path textureBasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animations";
 		bool resourceLoad = false;
@@ -88,15 +89,16 @@ namespace eg {
 
 		std::sort(m_SelectedFrames.begin(), m_SelectedFrames.end());
 		for (auto frame : m_SelectedFrames) {
+			Ref<FrameData> frameData = CreateRef<FrameData>();
 			glm::vec2 min = { frame.second * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f - ((frame.first + 1) * (float)m_FrameHeight) / (float)m_TextureData->Height };
 			glm::vec2 max = { (frame.second + 1) * (float)m_FrameWidth / (float)m_TextureData->Width,1.0f - (frame.first * (float)m_FrameHeight) / (float)m_TextureData->Height };
-			m_FrameData->SetSubTexture(SubTexture2D::Create(m_PreviewOriginImage, min, max));
+			frameData->SetSubTexture(SubTexture2D::Create(m_PreviewOriginImage, min, max));
 			if (std::find(m_KeyFrames.begin(), m_KeyFrames.end(), frame) != m_KeyFrames.end())
-				m_FrameData->SetIsKeyFrame(true);
+				frameData->SetIsKeyFrame(true);
 			else
-				m_FrameData->SetIsKeyFrame(false);
-			m_FrameData->SetFrameDuration(1);
-			m_PreviewData->AddFrame(m_FrameData);
+				frameData->SetIsKeyFrame(false);
+			frameData->SetFrameDuration(1);
+			m_PreviewData->AddFrame(frameData);
 		}
 
 		m_PreviewAspectRatio = (float)m_FrameWidth / (float)m_FrameHeight;
@@ -349,6 +351,8 @@ namespace eg {
 					m_ResourcePath = std::filesystem::path(std::string(buffer2));*/
 			if (ImGui::Button("Save"))
 			{
+				m_ResourceData->Frames.clear();	
+
 				SpriteAtlasResourceData* saData = new SpriteAtlasResourceData();
 				saData->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SpriteAtlas);
 				saData->ResourceName = m_ResourceData->ResourceName;
@@ -374,6 +378,7 @@ namespace eg {
 					saData->Sprites.push_back(subTextureUUID);
 
 					FrameResourceData* dataFrame = new FrameResourceData();
+					dataFrame->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Frame);
 					dataFrame->Duration = m_PreviewData->GetFrame(i)->GetFrameDuration();
 					dataFrame->SubTexture = subTextureUUID;
 					dataFrame->ClassName = m_PreviewData->GetFrame(i)->GetClassName();
@@ -424,6 +429,6 @@ namespace eg {
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animation";
 		m_SelectedFrames.clear();
 		m_KeyFrames.clear();
-		m_FrameData = CreateRef<FrameData>();
+		m_FrameData = nullptr;
 	}
 }

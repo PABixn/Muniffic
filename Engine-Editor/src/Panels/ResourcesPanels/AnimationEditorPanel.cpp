@@ -21,7 +21,7 @@ namespace eg {
 		m_MoveIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveIcon.png");
 		m_MoveSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveSelectedIcon.png");
 
-		for (auto& anim : *(m_Anim->GetFrames())) {
+		for (auto& anim : m_Anim->GetFrames()) {
 			m_FramesData.emplace_back(anim);
 		}
 		SetFrames();
@@ -241,7 +241,7 @@ namespace eg {
 	void AnimationEditorPanel::DrawFramePreview(Ref<FrameData> frame,bool addSpace) {
 		Ref<SubTexture2D> subTexture = frame->GetSubTexture();
 		if (subTexture == nullptr) {
-			frame = (*m_Anim->GetFrames())[0];
+			frame = m_Anim->GetFrames()[0];
 		}
 		auto minCoords = subTexture.get()->GetMin();
 		auto maxCoords = subTexture.get()->GetMax();
