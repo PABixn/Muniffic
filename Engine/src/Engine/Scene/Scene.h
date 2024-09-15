@@ -33,7 +33,7 @@ namespace eg {
 		void OnSimulationStop();
 
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
-		void OnUpdateRuntime(Timestep ts);
+		void OnUpdateRuntime(Timestep ts, std::chrono::steady_clock::time_point& oldTime);
 		void OnUpdateSimulation(Timestep ts, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
@@ -77,6 +77,9 @@ namespace eg {
 		void OnPhysics2DStart();
 		void OnPhysics2DStop();
 
+		void FixedUpdate();
+
+
 		void* StartRuntimeBody(Entity entity);
 
 	private:
@@ -89,6 +92,12 @@ namespace eg {
 		bool m_IsPaused = false;
 
 		int m_StepFrames = 0;
+
+		//fixedUpdate
+		std::chrono::time_point<std::chrono::high_resolution_clock> m_NewTime;
+		unsigned long m_Delta;
+		float m_TimePassed = 0;
+		float m_FixedFramerate = 1000.0f / 720.0f;
 
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 		//Change to shared_ptr if doesn't couse any problems

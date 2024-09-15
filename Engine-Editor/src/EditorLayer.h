@@ -8,43 +8,45 @@
 #include "Panels/ProjectDirectoryPanel.h"
 #include "Panels/ConsolePanel.h"
 #include "Panels/ResourcesPanels/AnimationEditorPanel.h"
+#include "Panels/WelcomingPanel.h"
+#include "Panels/NameNewProjectPanel.h"
 
-
-namespace eg {
+namespace eg
+{
 	class EditorLayer : public Layer
 	{
 	public:
 		EditorLayer();
-		virtual~EditorLayer() = default;
+		virtual ~EditorLayer() = default;
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 
 		virtual void OnUpdate(Timestep ts) override;
 		virtual void OnImGuiRender() override;
-		virtual void OnEvent(Event& e) override;
+		virtual void OnEvent(Event &e) override;
 
-		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
+		SceneHierarchyPanel *GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
 
 	private:
-		bool OnKeyPressed(KeyPressedEvent& e);
-		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+		bool OnKeyPressed(KeyPressedEvent &e);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent &e);
 		void OnOverlayRender();
 
 		void NewScene();
 		void OpenScene();
-		void OpenScene(const std::filesystem::path& path);
+		void OpenScene(const std::filesystem::path &path);
 		void SaveAs();
 		void Save();
 
 		void NewProject();
 		bool OpenProject();
-		void OpenProject(const std::filesystem::path& path);
+		void OpenProject(const std::filesystem::path &path);
 		void SaveProjectAs();
 		void SaveProject();
 
-		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
+		void SerializeScene(Ref<Scene> scene, const std::filesystem::path &path);
 
 		void OnScenePlay();
 		void OnSceneStop();
@@ -55,15 +57,16 @@ namespace eg {
 
 		void CloseAddResourcePanel();
 
-		//UI Panels
+		// UI Panels
 		void UI_Toolbar();
+
 	private:
 		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;
 		OrthographicCameraController m_Camera;
-		//Temp
+		// Temp
 		Ref<Shader> m_Shader;
-		glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+		glm::vec4 m_SquareColor = {0.2f, 0.3f, 0.8f, 1.0f};
 		Ref<VertexArray> m_VA;
 		Ref<Texture2D> m_Texture;
 		Ref<Texture2D> m_IconPlay, m_IconStop, m_IconPause, m_IconSimulate, m_IconStep;
@@ -85,11 +88,11 @@ namespace eg {
 
 		struct ProfileResult
 		{
-			const char* Name;
+			const char *Name;
 			float Time;
 		};
 
-		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
 		glm::vec2 m_ViewportBounds[2];
 
 		bool m_ViewportFocused = false;
@@ -106,11 +109,16 @@ namespace eg {
 		bool m_ShowAxis = true;
 		bool m_ShowGrid = true;
 
+		// Time for fixedUpdate loop
+		std::chrono::steady_clock::time_point oldTime = std::chrono::high_resolution_clock::now();
+		;
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
 		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
+		Scope<WelcomingPanel> m_WelcomePanel;
+		Scope<NameNewProjectPanel> m_NameNewProjectPanel;
 		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
 		RenameFolderPanel* m_RenameFolderPanel;
 		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
@@ -121,17 +129,19 @@ namespace eg {
 
 		enum class SceneState
 		{
-			Edit = 0, Play = 1, Simulate = 2
+			Edit = 0,
+			Play = 1,
+			Simulate = 2
 		};
 
 		SceneState m_SceneState = SceneState::Edit;
 
 		friend class AddResourcePanel;
-	public:
-		UnsavedChangesPanel* m_UnsavedChangesPanel;
-		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
-		Ref<AnimationEditorPanel> GetAnimationEditorPanel() { return m_AnimationEditorPanel; };
 
+	public:
+		UnsavedChangesPanel *m_UnsavedChangesPanel;
+		UnsavedChangesPanel *GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
+		Ref<AnimationEditorPanel> GetAnimationEditorPanel() { return m_AnimationEditorPanel; };
 	};
 
 }

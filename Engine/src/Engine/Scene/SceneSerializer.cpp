@@ -656,6 +656,7 @@ namespace eg {
 					auto& rb = deserializedEntity.AddComponent<RigidBody2DComponent>();
 					rb.Type = RigidBody2dBodyTypeFromString(rigidBody2DComponent["Body Type"].as<std::string>());
 					rb.FixedRotation = rigidBody2DComponent["FixedRotation"].as<bool>();
+					rb.GravityMultiplier = rigidBody2DComponent["GravityMultiplier"].as<float>();
 
 					if(rigidBody2DComponent["IsInherited"])
 						rb.isInherited = rigidBody2DComponent["IsInherited"].as<bool>();

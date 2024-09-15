@@ -74,12 +74,14 @@ namespace eg
 		bool AssemblyReloadPending = false;
 
 		bool EnableDebugging = false;
+		bool ScriptInstancesInitialized = false;
 
 		// Runtime
 		Scene *SceneContext = nullptr;
 	};
 
 	static ScriptEngineData *s_Data;
+	bool ScriptEngine::s_Initialized = false;
 
 	namespace Utils
 	{
@@ -150,6 +152,7 @@ namespace eg
 		ScriptGlue::RegisterFunctions();
 
 		s_Data->EntityClass = ScriptClass("eg", "DefaultBehaviour", true);
+		s_Initialized = true;
 	}
 
 	void ScriptEngine::Shutdown()
@@ -449,6 +452,7 @@ namespace eg
 	void ScriptEngine::OnRuntimeStop()
 	{
 		s_Data->SceneContext = nullptr;
+		s_Data->ScriptInstancesInitialized = false;
 		s_Data->EntityInstances.clear();
 	}
 
@@ -463,6 +467,9 @@ namespace eg
 		const auto &nsc = entity.GetComponent<ScriptComponent>();
 
 		s_Data->EntityInstances[uuid] = std::unordered_map<std::string, Ref<ScriptInstance>>();
+
+		if(!s_Data->ScriptInstancesInitialized)
+			s_Data->ScriptInstancesInitialized = true;
 
 		for (UUID scriptUUID : nsc.Scripts)
 		{
