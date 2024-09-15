@@ -26,10 +26,8 @@ namespace eg
 
 	void ContentBrowserPanel::InitPanels()
 	{
-		m_DeleteFilePanel = CreateScope<DeleteFilePanel>();
 		m_RenameFolderPanel = CreateScope<RenameFolderPanel>();
 		m_DeleteDirectoryPanel = CreateScope<DeleteDirectoryPanel>();
-		m_RenameResourcePanel = CreateScope<RenameResourcePanel>();
 	}
 
 	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)
@@ -37,30 +35,107 @@ namespace eg
 		static float thumbnailSize = 100.0f;
 
 		ImGui::PushID(name.c_str());
-
+		auto& style = ImGui::GetStyle();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+		ImGui::PopStyleColor();
 
-		//ImGui::PushFont(m_PoppinsRegularFont);
+		bool isDeleteClicked = false;
+		bool isRenameClicked = false;
 		if (ImGui::BeginPopupContextItem("FileOptions"))
 		{
 			if (ImGui::MenuItem("Delete"))
 			{
-				m_DeleteFilePanel->ShowWindow(key, type);
-				ImGui::PopStyleColor();
-				ImGui::NextColumn();
-				ImGui::EndPopup();
-				ImGui::PopID();
-				return;
+				isDeleteClicked = true;
 			}
 
 			if (ImGui::MenuItem("Rename"))
 			{
-				m_RenameResourcePanel->ShowWindow(key);
+				isRenameClicked = true;
 			}
 
 			ImGui::EndPopup();
 		}
+
+		if (isDeleteClicked) {
+			ImGui::OpenPopup("DeleteFile");
+			isDeleteClicked = false;
+		}
+
+		if (isRenameClicked) {
+			ImGui::OpenPopup("RenameFile");
+			isRenameClicked = false;
+		}
+
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+		if (ImGui::BeginPopupModal("DeleteFile", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
+
+			ImVec2 spacing = style.ItemSpacing;
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+			style.ItemSpacing = ImVec2(10.f, 10.f);
+
+			if (type == ResourceType::Font && key == Font::GetDefaultFontUUID())
+			{
+				ImGui::Text("Cannot delete default font");
+			}
+			else
+			{
+
+				ImGui::Text("Warning: Choose delete method");
+				if (ImGui::Button("Delete file from project"))
+				{
+					Commands::ExecuteDeleteResourceCommand(key, type, false);
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Delete file from disk"))
+				{
+					Commands::ExecuteDeleteResourceCommand(key, type, true);
+					ImGui::CloseCurrentPopup();
+				}
+				//ImGui::SameLine();
+			}
+
+			if (ImGui::Button("Cancel"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			style.ItemSpacing = spacing;
+			ImGui::PopStyleVar(2);
+			ImGui::EndPopup();
+		}
+
+		if (ImGui::BeginPopupModal("RenameFile", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
+
+			ImVec2 spacing = style.ItemSpacing;
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+			style.ItemSpacing = ImVec2(10.f, 10.f);
+
+			ImGui::Text("Enter new resource name");
+			static char buffer[256] = "New resource name";
+			ImGui::InputText("##ResourceName", buffer, 256);
+
+			if (ImGui::Button("Rename"))
+			{
+				Commands::ExecuteRenameResourceCommand(key, buffer);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			style.ItemSpacing = spacing;
+			ImGui::PopStyleVar(2);
+			ImGui::EndPopup();
+		}
+
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor();
 
 		if (ImGui::BeginDragDropSource())
 		{
@@ -72,23 +147,15 @@ namespace eg
 
 		ImGui::NextColumn();
 
-		ImGui::PopStyleColor();
-		//ImGui::PopFont();
 		ImGui::PopID();
 	}
 
 	void ContentBrowserPanel::OnImGuiRender() {
-		if (m_DeleteFilePanel->IsShown())
-			m_DeleteFilePanel->OnImGuiRender();
-
 		if (m_RenameFolderPanel->IsShown())
 			m_RenameFolderPanel->OnImGuiRender();
 
 		if (m_DeleteDirectoryPanel->IsShown())
 			m_DeleteDirectoryPanel->OnImGuiRender();
-
-		if (m_RenameResourcePanel->IsShown())
-			m_RenameResourcePanel->OnImGuiRender();
 
 		ImGui::Begin("Content Browser");
 
@@ -185,6 +252,7 @@ namespace eg
 		bool open = true;
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding,10.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
 		if (ImGui::BeginPopupModal("CreateNewDirectory",NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
 			
 			ImVec2 spacing = style.ItemSpacing;
@@ -216,7 +284,7 @@ namespace eg
 			ImGui::PopStyleVar(2);
 			ImGui::EndPopup();
 		}
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor();
 		ImGui::SameLine();
 

@@ -113,10 +113,8 @@ namespace eg {
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 		Scope<AddResourcePanel> m_AddResourcePanel;
-		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
-		RenameFolderPanel* m_RenameFolderPanel;
-		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
-		RenameResourcePanel* m_RenameResourcePanel;*/
+		/*RenameFolderPanel* m_RenameFolderPanel;
+		DeleteDirectoryPanel* m_DeleteDirectoryPanel;*/
 		Scope<ConsolePanel> m_ConsolePanel;
 
 		enum class SceneState

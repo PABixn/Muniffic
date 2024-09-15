@@ -2,10 +2,8 @@
 
 #include <filesystem>
 #include "Engine/Renderer/Texture.h"
-#include "DeleteFilePanel.h"
 #include "RenameFolderPanel.h"
 #include "DeleteDirectoryPanel.h"
-#include "RenameResourcePanel.h"
 
 namespace eg {
 	
@@ -30,10 +28,7 @@ namespace eg {
 		Ref<Texture2D> m_PlusIcon;
 		Ref<Texture2D> m_ArrowIcon;
 		ImFont* m_PoppinsRegularFont;
-		Scope<DeleteFilePanel> m_DeleteFilePanel;
 		Scope<RenameFolderPanel> m_RenameFolderPanel;
-		Scope<RenameResourcePanel> m_RenameResourcePanel;
 		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel;
-
 	};
 }
