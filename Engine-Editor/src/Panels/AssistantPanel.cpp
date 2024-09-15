@@ -27,7 +27,9 @@ namespace eg
 		m_IconSend = Texture2D::Create("resources/icons/sendIcon.png");
 		m_IconMicrophone = Texture2D::Create("resources/icons/micIcon.png");
 		m_IconMicrophoneOff = Texture2D::Create("resources/icons/micOffIcon.png");
+		m_IconMicrophoneUnavailable = Texture2D::Create("resources/icons/micUnavailableIcon.png");
 		m_isListening = false;
+		m_isMicrophoneAvailable = assistantManager->CheckMicrophoneAvailable();
 	}
 
 	AssistantPanel::~AssistantPanel()
@@ -331,10 +333,10 @@ namespace eg
 
 		ImGui::Separator();
 
-		float inputAreaHeight = 100.0f;
-		float availableHeight = ImGui::GetWindowSize().y - inputAreaHeight - ImGui::GetCursorPosY();
+		float buttonSize = 25.0f;
+		float availableHeight = ImGui::GetWindowSize().y - buttonSize * 2 - ImGui::GetCursorPosY();
 
-		ImGui::BeginChild("Messages", ImVec2(ImGui::GetWindowSize().x, availableHeight), true, ImGuiWindowFlags_HorizontalScrollbar);
+		ImGui::BeginChild("Messages", ImVec2(ImGui::GetWindowSize().x, availableHeight), false, ImGuiWindowFlags_HorizontalScrollbar);
 
 		std::string lastMessageRole = "";
 
@@ -370,7 +372,7 @@ namespace eg
 
 		ImGui::EndChild();
 
-		ImGui::SetCursorPosY(ImGui::GetWindowSize().y - inputAreaHeight + 10);
+		ImGui::SetCursorPosY(ImGui::GetWindowSize().y - buttonSize * 1.5);
 
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.21f, 0.35f, 1.00f));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.20f, 0.20f, 0.25f, 1.00f));
@@ -382,8 +384,7 @@ namespace eg
 
 		if (ImGui::InputTextWithHint("##", "Message", buffer, 1024, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			std::thread t(DoMessage, assistantManager, threadID, buffer);
-			t.detach();
+			RunMessage(buffer);
 		}
 
 		ImGui::PopStyleVar(2);
@@ -395,17 +396,24 @@ namespace eg
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 0.5));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
-		if (ImGui::ImageButton((ImTextureID)m_IconSend->GetRendererID(), {25, 25}, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		if (ImGui::ImageButton((ImTextureID)m_IconSend->GetRendererID(), {buttonSize, buttonSize}, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
-			std::thread t(DoMessage, assistantManager, threadID, buffer);
-			t.detach();
+			RunMessage(buffer);
 		}
 
 		ImGui::SameLine();
 
-		if (ImGui::ImageButton(m_isListening ? (ImTextureID)m_IconMicrophone->GetRendererID() : (ImTextureID)m_IconMicrophoneOff->GetRendererID(), { 25, 25 }, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		if (ImGui::ImageButton(m_isMicrophoneAvailable ? m_isListening ? (ImTextureID)m_IconMicrophone->GetRendererID() : (ImTextureID)m_IconMicrophoneOff->GetRendererID() : (ImTextureID)m_IconMicrophoneUnavailable->GetRendererID(), { 25, 25 }, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
-			m_isListening = !m_isListening;
+			if(m_isMicrophoneAvailable)
+				m_isListening = !m_isListening;
+		}
+
+		if (!m_isMicrophoneAvailable && ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::TextUnformatted("Microphone unavailable");
+			ImGui::EndTooltip();
 		}
 
 		ImGui::PopStyleColor(3);
@@ -413,12 +421,12 @@ namespace eg
 		ImGui::End();
 	}
 
-
-	void AssistantPanel::RunMessage()
+	void AssistantPanel::RunMessage(const std::string message)
 	{
-		assistantManager->AddMessage(threadID, buffer);
-		assistantManager->InitiateRun(threadID);
-		memset(buffer, 0, 1024);
-		assistantManager->WaitForCompletion(threadID);
+		if(message.empty())
+			return;
+
+		std::thread t(DoMessage, assistantManager, threadID, buffer);
+		t.detach();
 	}
 }

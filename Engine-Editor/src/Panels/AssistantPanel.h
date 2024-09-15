@@ -12,9 +12,9 @@ namespace eg
 		AssistantPanel();
 		~AssistantPanel();
 		void OnImGuiRender();
-		void RunMessage();
 		void RenderUserMessage(const std::string& message);
 		void RenderAssistantMessage(const std::string& message, int id = 0);
+		void RunMessage(const std::string message);
 		std::string GetLanguageSymbol(std::string language);
 
 	private:
@@ -26,6 +26,8 @@ namespace eg
 		Ref<Texture2D> m_IconSend;
 		Ref<Texture2D> m_IconMicrophone;
 		Ref<Texture2D> m_IconMicrophoneOff;
+		Ref<Texture2D> m_IconMicrophoneUnavailable;
 		bool m_isListening;
+		bool m_isMicrophoneAvailable;
 	};
 }

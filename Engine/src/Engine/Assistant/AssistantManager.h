@@ -30,6 +30,7 @@ namespace eg
 		void Init();
 		void StartListening();
 		void StopListening();
+		bool CheckMicrophoneAvailable();
 		void CreateAssistant(std::string assistantName, std::string assistantInstructions);
 		std::string CreateThread();
 		void InitiateRun(std::string threadID);
@@ -58,6 +59,7 @@ namespace eg
 		bool newVoiceMessageAvailable;
 		std::string lastVoiceMessage;
 		bool IsVoiceAssistantListening;
+		bool IsVoiceAsssistantInitialized;
 
 	private:
 		PyObject* m_voiceAssistantModule;
@@ -74,6 +76,8 @@ namespace eg
 		PyObject* m_CheckIfAssistantExists;
 		PyObject* m_GetToolCall;
 		PyObject* m_SubmitToolOutputs;
+		PyObject* m_InitVoiceAssistant;
+		PyObject* m_CheckMicrophoneAvailable;
 	};
 }
 

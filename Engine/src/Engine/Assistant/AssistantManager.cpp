@@ -14,6 +14,7 @@ namespace eg
 	{
 		IsVoiceAssistantListening = false;
 		newVoiceMessageAvailable = false;
+		IsVoiceAsssistantInitialized = false;
 
 		Init();
 	}
@@ -21,6 +22,12 @@ namespace eg
 	void AssistantManager::SpeakText(std::string text)
 	{
 		PyGILState_STATE gstate = PyGILState_Ensure();
+
+		if (!IsVoiceAsssistantInitialized)
+		{
+			PyObject_CallObject(m_InitVoiceAssistant, nullptr);
+			IsVoiceAsssistantInitialized = true;
+		}
 
 		PyObject* args = PyTuple_Pack(1, PyUnicode_FromString(text.c_str()));
 
@@ -36,6 +43,23 @@ namespace eg
 	
 	}
 
+	bool AssistantManager::CheckMicrophoneAvailable()
+	{
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
+		PyObject* result = PyObject_CallObject(m_CheckMicrophoneAvailable, nullptr);
+
+		if (result == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to call checkMicrophoneAvailable function");
+		}
+
+		PyGILState_Release(gstate);
+
+		return PyObject_IsTrue(result);
+	}
+
 	void AssistantManager::StopListening()
 	{
 		PyGILState_STATE gstate = PyGILState_Ensure();
@@ -49,7 +73,6 @@ namespace eg
 	{
 		IsVoiceAssistantListening = true;
 
-		//PyEval_InitThreads();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* result = PyObject_CallObject(m_startVoiceAssistant, nullptr);
@@ -122,8 +145,10 @@ namespace eg
 		m_startVoiceAssistant = PyObject_GetAttrString(m_voiceAssistantModule, "StartVoiceAssistant");
 		m_stopVoiceAssistant = PyObject_GetAttrString(m_voiceAssistantModule, "StopVoiceAssistant");
 		m_SpeakText = PyObject_GetAttrString(m_voiceAssistantModule, "SpeakText");
+		m_InitVoiceAssistant = PyObject_GetAttrString(m_voiceAssistantModule, "InitVoiceAssistant");
+		m_CheckMicrophoneAvailable = PyObject_GetAttrString(m_voiceAssistantModule, "CheckMicrophoneAvailable");
 
-		if (m_startVoiceAssistant == nullptr && m_SpeakText == nullptr && m_stopVoiceAssistant == nullptr)
+		if (m_startVoiceAssistant == nullptr && m_SpeakText == nullptr && m_stopVoiceAssistant == nullptr && m_InitVoiceAssistant == nullptr && m_CheckMicrophoneAvailable == nullptr)
 		{
 			EG_CORE_ERROR("Failed to load Python functions");
 		}

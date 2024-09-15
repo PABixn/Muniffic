@@ -64,9 +64,6 @@ namespace eg
 		}
 		else
 		{
-			// TODO: Show project selection dialog
-			// NewProject();
-			// NOTE: this is while we don't have a project selection dialog and possibility to create new project
 			if (!OpenProject())
 				Application::Get().Close();
 		}
@@ -171,8 +168,6 @@ namespace eg
 		bool opt_fullscreen = opt_fullscreen_persistant;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-		// because it would be confusing to have two docking targets within each others.
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 		if (opt_fullscreen)
 		{
@@ -186,15 +181,9 @@ namespace eg
 			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 		}
 
-		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ImGuiWindowFlags_NoBackground;
 
-		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-		// all active windows docked into it will lose their parent and become undocked.
-		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
 		ImGui::PopStyleVar();
@@ -493,109 +482,104 @@ namespace eg
 
 		switch (e.GetKeyCode())
 		{
-		case Key::Z:
-			{
-				if (controlPressed)
+			case Key::Z:
 				{
-					if(Commands::CanRevert(true))
-						Commands::GetCurrentCommand()->Undo();
-				}
+					if (controlPressed)
+					{
+						if(Commands::CanRevert(true))
+							Commands::GetCurrentCommand()->Undo();
+					}
 
-				break;
-			}
-			case Key::Y:
-			{
-				if (controlPressed)
+					break;
+				}
+				case Key::Y:
 				{
-					if (Commands::CanRevert(false))
-						Commands::GetCurrentCommand(1)->Redo();
-				}
+					if (controlPressed)
+					{
+						if (Commands::CanRevert(false))
+							Commands::GetCurrentCommand(1)->Redo();
+					}
 
-				break;
-			}
+					break;
+				}
 			
-		case Key::S:
-		{
-			if (controlPressed)
-				if (shiftPressed)
-					SaveAs();
-				else
-					Save();
-			break;
-		}
-		case Key::A:
-		{
-			if(controlPressed)
-				m_AddResourcePanel->showResourcePanel(true);
-		}
-		case Key::N:
-		{
-			if (controlPressed)
-				NewScene();
-			break;
-		}
-		case Key::O:
-		{
-			if (controlPressed)
-				OpenProject();
-			break;
-		}
-		// Commands
-		case Key::D:
-		{
-			if (controlPressed)
-				OnDuplicateEntity();
-			break;
-		}
-		// Gizmos
-		case Key::Q:
-		{
-			if (!ImGuizmo::IsUsing())
+			case Key::S:
+			{
+				if (controlPressed)
+					if (shiftPressed)
+						SaveAs();
+					else
+						Save();
+				break;
+			}
+			case Key::A:
+			{
+				if(controlPressed)
+					m_AddResourcePanel->showResourcePanel(true);
+			}
+			case Key::N:
+			{
+				if (controlPressed)
+					NewScene();
+				break;
+			}
+			case Key::O:
+			{
+				if (controlPressed)
+					OpenProject();
+				break;
+			}
+			// Commands
+			case Key::D:
+			{
+				if (controlPressed)
+					OnDuplicateEntity();
+				break;
+			}
+			// Gizmos
+			case Key::Q:
 			{
 				if (!ImGuizmo::IsUsing())
-					m_GizmoType = -1;
+				{
+					if (!ImGuizmo::IsUsing())
+						m_GizmoType = -1;
+					break;
+				}
 				break;
 			}
-			break;
-		}
-		case Key::W:
-		{
-			if (!ImGuizmo::IsUsing())
-				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-			break;
-		}
-		case Key::E:
-		{
-			if (!ImGuizmo::IsUsing())
-				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
-			break;
-		}
-		case Key::R:
-		{
-			if (control)
-				ScriptEngine::ReloadAssembly();
-			else if (!ImGuizmo::IsUsing())
-				m_GizmoType = ImGuizmo::OPERATION::SCALE;
-			break;
-		}
-		case Key::Delete:
-		{
-			if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0)
+			case Key::W:
 			{
-				Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-				if (selectedEntity)
-				{
-					m_SceneHierarchyPanel.SetSelectedEntity({});
-					Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", selectedEntity, m_ActiveScene, selectedEntity));
-				}
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
 			}
-			break;
-		}
-		case Key::Enter:
-		{
-			m_AssistantPanel->RunMessage();
-			break;
-		}
+			case Key::E:
+			{
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
+			}
+			case Key::R:
+			{
+				if (control)
+					ScriptEngine::ReloadAssembly();
+				else if (!ImGuizmo::IsUsing())
+					m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				break;
+			}
+			case Key::Delete:
+			{
+				if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0)
+				{
+					Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+					if (selectedEntity)
+					{
+						m_SceneHierarchyPanel.SetSelectedEntity({});
+						Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", selectedEntity, m_ActiveScene, selectedEntity));
+					}
+				}
+				break;
+			}
 		}
 
 		return false;
