@@ -12,7 +12,7 @@
 #include <yaml-cpp/yaml.h>
 #include <fstream>
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
-
+#include "box2d/b2_fixture.h"
 
 
 namespace eg {
@@ -411,7 +411,7 @@ namespace eg {
 		{
 			for (auto entity : entities)
 			{
-				uint64_t uuid = entity["Entity"].as<uint64_t>(); 
+				int64_t uuid = entity["Entity"].as<int64_t>(); 
 
 				std::string name;
 				auto tagComponent = entity["TagComponent"];

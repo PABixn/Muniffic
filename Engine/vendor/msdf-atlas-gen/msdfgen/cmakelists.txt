@@ -1,0 +1,51 @@
+# msdfgen/CMakeLists.txt
+
+project(msdfgen LANGUAGES CXX)
+add_subdirectory(freetype)
+
+# Add source files
+file(GLOB_RECURSE MSDFGEN_SOURCES
+    "core/*.h"
+    "core/*.hpp"
+    "core/*.cpp"
+    "ext/*.h"
+    "ext/*.hpp"
+    "ext/*.cpp"
+    "lib/*.cpp"
+    "include/*.h"
+)
+
+# Add msdfgen as a static library
+add_library(msdfgen STATIC ${MSDFGEN_SOURCES})
+
+# Include directories
+target_include_directories(msdfgen PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../freetype/include"
+)
+
+# Link freetype to msdfgen
+target_link_libraries(msdfgen PUBLIC freetype)
+
+# Define build flags
+target_compile_definitions(msdfgen PUBLIC MSDFGEN_USE_CPP11)
+
+# Platform-specific configurations for Windows
+if(WIN32)
+    target_compile_definitions(msdfgen PRIVATE "_CRT_SECURE_NO_WARNINGS")
+    set(CMAKE_SYSTEM_VERSION "latest")
+endif()
+
+# Set build configurations
+set_target_properties(msdfgen PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/msdfgen"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/msdfgen"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/msdfgen"
+)
+
+# Configurations for Debug, Release, and Dist builds
+target_compile_options(msdfgen PRIVATE
+    $<$<CONFIG:Debug>:-g>
+    $<$<CONFIG:Release>:-O2>
+    $<$<CONFIG:Dist>:-O3>
+)

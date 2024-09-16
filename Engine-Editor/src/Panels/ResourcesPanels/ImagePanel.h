@@ -15,6 +15,7 @@ namespace eg {
 
 		void OnImGuiRender();
 		bool OpenImagePanel(const std::filesystem::path& path);
+		void ShowImagePanel(bool value) { m_ShowImagePanel = value; }
 	private:
 		void ResetData();
 	private:

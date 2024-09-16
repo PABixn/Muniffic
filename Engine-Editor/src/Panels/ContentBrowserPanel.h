@@ -16,6 +16,7 @@ namespace eg {
 		~ContentBrowserPanel() = default;
 		void OnImGuiRender();
 		void RenderFile(UUID key, const std::string& name, ResourceType type);
+		friend class ProjectDirectoryPanel;
 		void InitPanels();
 
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }

@@ -31,7 +31,7 @@ Index of this file:
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
-
+#include "sstream"
 #include "imgui.h"
 #ifndef IMGUI_DISABLE
 
@@ -46,7 +46,7 @@ Index of this file:
 #else
 #include <stdint.h>     // intptr_t
 #endif
-
+#include "iostream"
 //-------------------------------------------------------------------------
 // Warnings
 //-------------------------------------------------------------------------
@@ -255,6 +255,127 @@ void ImGui::TextEx(const char* text, const char* text_end, ImGuiTextFlags flags)
     }
 }
 
+bool ImGui::TextWithLineLimitEx(const char* text, const int& lineLimit, const char* text_end_Arg, ImGuiTextFlags flags)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+    bool neededToBeShortened = false;
+    ImGuiContext& g = *GImGui;
+    char* text_end = (char*)text_end_Arg;
+    // Accept null ranges
+    if (text == text_end)
+        text = text_end = "";
+
+    // Calculate length
+    const char* text_begin = text;
+    if (text_end == NULL)
+        text_end =(char*) text + strlen(text); // FIXME-OPT
+
+    ImVec2 text_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
+    const float wrap_pos_x = window->DC.TextWrapPos;
+    const bool wrap_enabled = (wrap_pos_x >= 0.0f);
+    if (text_end - text <= 2000 || wrap_enabled)
+    {
+        // Common case
+        const float wrap_width = wrap_enabled ? CalcWrapWidthForPos(window->DC.CursorPos, wrap_pos_x) : 0.0f;
+        ImVec2 text_size = CalcTextSize(text_begin, text_end, false, wrap_width);
+
+        while (text_size.y>(lineLimit* g.FontSize))
+        {
+            neededToBeShortened = true;
+            text_end[-1] = '\0';
+            text_end[-2] = '-';
+            text_end = &text_end[-1];
+            text_size = CalcTextSize(text_begin, text_end, false, wrap_width);
+        }
+        //text_pos = ImVec2(text_pos.x+(ImGui::GetContentRegionAvail().x - text_size.x), text_pos.y);
+        ImRect bb(text_pos, text_pos + text_size);
+        ItemSize(text_size, 0.0f);
+        if (!ItemAdd(bb, 0))
+            return false;
+
+        // Render (we don't hide text after ## in this end-user function)
+        RenderTextWrapped(bb.Min, text_begin, text_end, wrap_width);
+        return neededToBeShortened;
+    }
+    else
+    {
+        // Long text!
+        // Perform manual coarse clipping to optimize for long multi-line text
+        // - From this point we will only compute the width of lines that are visible. Optimization only available when word-wrapping is disabled.
+        // - We also don't vertically center the text within the line full height, which is unlikely to matter because we are likely the biggest and only item on the line.
+        // - We use memchr(), pay attention that well optimized versions of those str/mem functions are much faster than a casually written loop.
+        const char* line = text;
+        const float line_height = GetTextLineHeight();
+        ImVec2 text_size(0, 0);
+
+        // Lines to skip (can't skip when logging text)
+        ImVec2 pos = text_pos;
+        if (!g.LogEnabled)
+        {
+            int lines_skippable = (int)((window->ClipRect.Min.y - text_pos.y) / line_height);
+            if (lines_skippable > 0)
+            {
+                int lines_skipped = 0;
+                while (line < text_end && lines_skipped < lines_skippable)
+                {
+                    const char* line_end = (const char*)memchr(line, '\n', text_end - line);
+                    if (!line_end)
+                        line_end = text_end;
+                    if ((flags & ImGuiTextFlags_NoWidthForLargeClippedText) == 0)
+                        text_size.x = ImMax(text_size.x, CalcTextSize(line, line_end).x);
+                    line = line_end + 1;
+                    lines_skipped++;
+                }
+                pos.y += lines_skipped * line_height;
+            }
+            return false;
+        }
+
+        // Lines to render
+        if (line < text_end)
+        {
+            ImRect line_rect(pos, pos + ImVec2(FLT_MAX, line_height));
+            while (line < text_end)
+            {
+                if (IsClippedEx(line_rect, 0))
+                    break;
+
+                const char* line_end = (const char*)memchr(line, '\n', text_end - line);
+                if (!line_end)
+                    line_end = text_end;
+                text_size.x = ImMax(text_size.x, CalcTextSize(line, line_end).x);
+                RenderText(pos, line, line_end, false);
+                line = line_end + 1;
+                line_rect.Min.y += line_height;
+                line_rect.Max.y += line_height;
+                pos.y += line_height;
+            }
+
+            // Count remaining lines
+            int lines_skipped = 0;
+            while (line < text_end)
+            {
+                const char* line_end = (const char*)memchr(line, '\n', text_end - line);
+                if (!line_end)
+                    line_end = text_end;
+                if ((flags & ImGuiTextFlags_NoWidthForLargeClippedText) == 0)
+                    text_size.x = ImMax(text_size.x, CalcTextSize(line, line_end).x);
+                line = line_end + 1;
+                lines_skipped++;
+            }
+            pos.y += lines_skipped * line_height;
+        }
+        text_size.y = (pos - text_pos).y;
+
+        ImRect bb(text_pos, text_pos + text_size);
+        ItemSize(text_size, 0.0f);
+        ItemAdd(bb, 0);
+        return false;
+    }
+}
+
 void ImGui::TextUnformatted(const char* text, const char* text_end)
 {
     TextEx(text, text_end, ImGuiTextFlags_NoWidthForLargeClippedText);
@@ -277,6 +398,37 @@ void ImGui::TextV(const char* fmt, va_list args)
     const char* text, *text_end;
     ImFormatStringToTempBufferV(&text, &text_end, fmt, args);
     TextEx(text, text_end, ImGuiTextFlags_NoWidthForLargeClippedText);
+}
+
+bool ImGui::TextWithLineLimitV(const char* fmt, const int& lineLimit,va_list args)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    const char* text, * text_end;
+    ImFormatStringToTempBufferV(&text, &text_end, fmt, args);
+    return TextWithLineLimitEx(text, lineLimit, text_end, ImGuiTextFlags_NoWidthForLargeClippedText);
+}
+
+bool ImGui::TextWithLineLimitAndToolTipV(const char* fmt, const int& lineLimit, va_list args)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    const char* text, * text_end;
+    ImFormatStringToTempBufferV(&text, &text_end, fmt, args);
+    if (TextWithLineLimitEx(text, lineLimit, text_end, ImGuiTextFlags_NoWidthForLargeClippedText))
+    {
+        if (IsItemHovered()) {
+            BeginTooltip();
+            TextWrappedV(text, args);
+            EndTooltip();
+        }
+        return true;
+    }
+    return false;
 }
 
 void ImGui::TextColored(const ImVec4& col, const char* fmt, ...)
@@ -318,6 +470,15 @@ void ImGui::TextWrapped(const char* fmt, ...)
     va_end(args);
 }
 
+bool ImGui::TextWrappedWithLineLimit(const char* fmt, const int& lines ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    bool res = TextWrappedWithLineLimitV(fmt,lines, args);
+    va_end(args);
+    return res;
+}
+
 void ImGui::TextWrappedV(const char* fmt, va_list args)
 {
     ImGuiContext& g = *GImGui;
@@ -327,6 +488,18 @@ void ImGui::TextWrappedV(const char* fmt, va_list args)
     TextV(fmt, args);
     if (need_backup)
         PopTextWrapPos();
+}
+
+bool ImGui::TextWrappedWithLineLimitV(const char* fmt,const int& lineLimit, va_list args)
+{
+    ImGuiContext& g = *GImGui;
+    const bool need_backup = (g.CurrentWindow->DC.TextWrapPos < 0.0f);  // Keep existing wrap position if one is already set
+    if (need_backup)
+        PushTextWrapPos(0.0f);
+    bool res = TextWithLineLimitV(fmt,lineLimit, args);
+    if (need_backup)
+        PopTextWrapPos();
+    return res;
 }
 
 void ImGui::LabelText(const char* label, const char* fmt, ...)
@@ -718,9 +891,58 @@ bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags
     return pressed;
 }
 
+bool ImGui::StylisedButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags, ImDrawFlags drawFlags)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+    const ImGuiID id = window->GetID(label);
+    const ImVec2 label_size = CalcTextSize(label, NULL, true);
+
+    ImVec2 pos = window->DC.CursorPos;
+    if ((flags & ImGuiButtonFlags_AlignTextBaseLine) && style.FramePadding.y < window->DC.CurrLineTextBaseOffset) // Try to vertically align buttons that are smaller/have no padding so that text baseline matches (bit hacky, since it shouldn't be a flag)
+        pos.y += window->DC.CurrLineTextBaseOffset - style.FramePadding.y;
+    ImVec2 size = CalcItemSize(size_arg, label_size.x + style.FramePadding.x * 2.0f, label_size.y + style.FramePadding.y * 2.0f);
+
+    const ImRect bb(pos, pos + size);
+    ItemSize(size, style.FramePadding.y);
+    if (!ItemAdd(bb, id))
+        return false;
+
+    if (g.LastItemData.InFlags & ImGuiItemFlags_ButtonRepeat)
+        flags |= ImGuiButtonFlags_Repeat;
+
+    bool hovered, held;
+    bool pressed = ButtonBehavior(bb, id, &hovered, &held, flags);
+
+    // Render
+    const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+    RenderNavHighlight(bb, id);
+    RenderFrameRounded(bb.Min, bb.Max, col, drawFlags,  true, style.FrameRounding);
+
+    if (g.LogEnabled)
+        LogSetNextTextDecoration("[", "]");
+    RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, NULL, &label_size, style.ButtonTextAlign, &bb);
+
+    // Automatically close popups
+    //if (pressed && !(flags & ImGuiButtonFlags_DontClosePopups) && (window->Flags & ImGuiWindowFlags_Popup))
+    //    CloseCurrentPopup();
+
+    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags);
+    return pressed;
+}
+
 bool ImGui::Button(const char* label, const ImVec2& size_arg)
 {
     return ButtonEx(label, size_arg, ImGuiButtonFlags_None);
+}
+
+bool ImGui::StylisedButton(const char* label, const ImVec2& size_arg, ImDrawFlags drawFlags)
+{
+    return StylisedButtonEx(label, size_arg, ImGuiButtonFlags_None, drawFlags);
 }
 
 // Small buttons fits within text without additional vertical spacing.
@@ -1109,6 +1331,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
     if (window->SkipItems)
         return false;
 
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
@@ -1121,6 +1344,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
     if (!ItemAdd(total_bb, id))
     {
         IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+        PopStyleVar();
         return false;
     }
 
@@ -1135,7 +1359,9 @@ bool ImGui::Checkbox(const char* label, bool* v)
     const ImRect check_bb(pos, pos + ImVec2(square_sz, square_sz));
     RenderNavHighlight(total_bb, id);
     RenderFrame(check_bb.Min, check_bb.Max, GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), true, style.FrameRounding);
+    PushStyleColor(ImGuiCol_CheckMark, ImVec4{ 1.f,1.f,1.f,.6f });
     ImU32 check_col = GetColorU32(ImGuiCol_CheckMark);
+    PopStyleColor();
     bool mixed_value = (g.LastItemData.InFlags & ImGuiItemFlags_MixedValue) != 0;
     if (mixed_value)
     {
@@ -1157,6 +1383,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
         RenderText(label_pos, label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+    PopStyleVar();
     return pressed;
 }
 
@@ -2320,7 +2547,7 @@ bool ImGui::DragBehavior(ImGuiID id, ImGuiDataType data_type, void* p_v, float v
 
 // Note: p_data, p_min and p_max are _pointers_ to a memory address holding the data. For a Drag widget, p_min and p_max are optional.
 // Read code of e.g. DragFloat(), DragInt() etc. or examples in 'Demo->Widgets->Data Types' to understand how to use this function directly.
-bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags)
+bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags, ImDrawFlags drawFlags)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -2330,11 +2557,19 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
     const float w = CalcItemWidth();
+    bool drawArrows = !(flags & ImGuiSliderFlags_NoArrows);
+    const float ArrowWidth = 13.f;
+
+    char value_buf[64];
+    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
+    if (ImGui::CalcTextSize(value_buf, value_buf_end).x > (w - 2 * (ArrowWidth)-6.f))
+        drawArrows = false;
 
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
-    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
+    ImRect frame_bb = ImRect(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
     const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
-
+    if (drawArrows)
+        frame_bb = ImRect(frame_bb.Min + ImVec2(ArrowWidth,0.f), frame_bb.Max - ImVec2(ArrowWidth,0.f));
     const bool temp_input_allowed = (flags & ImGuiSliderFlags_NoInput) == 0;
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, id, &frame_bb, temp_input_allowed ? ImGuiItemFlags_Inputable : 0))
@@ -2360,7 +2595,7 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
                 temp_input_is_active = true;
 
         // (Optional) simple click (without moving) turns Drag into an InputText
-        if (g.IO.ConfigDragClickToInputText && temp_input_allowed && !temp_input_is_active)
+        if (temp_input_allowed && !temp_input_is_active)
             if (g.ActiveId == id && hovered && g.IO.MouseReleased[0] && !IsMouseDragPastThreshold(0, g.IO.MouseDragThreshold * DRAG_MOUSE_THRESHOLD_FACTOR))
             {
                 g.NavActivateId = g.NavActivateInputId = id;
@@ -2380,29 +2615,182 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
     if (temp_input_is_active)
     {
         // Only clamp CTRL+Click input when ImGuiSliderFlags_AlwaysClamp is set
+        if (drawArrows)
+        {
+            frame_bb = ImRect(frame_bb.Min - ImVec2(ArrowWidth, 0.f), frame_bb.Max + ImVec2(ArrowWidth, 0.f));
+        }
         const bool is_clamp_input = (flags & ImGuiSliderFlags_AlwaysClamp) != 0 && (p_min == NULL || p_max == NULL || DataTypeCompare(data_type, p_min, p_max) < 0);
         return TempInputScalar(frame_bb, id, label, data_type, p_data, format, is_clamp_input ? p_min : NULL, is_clamp_input ? p_max : NULL);
     }
 
     // Draw frame
-    const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+    ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
     RenderNavHighlight(frame_bb, id);
-    RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding);
+    if (drawFlags) {
+        if (drawArrows)
+            RenderFrameRounded(frame_bb.Min, frame_bb.Max, frame_col, drawFlags, true, 0.f);
+        else
+            RenderFrameRounded(frame_bb.Min, frame_bb.Max, frame_col, drawFlags,true, style.FrameRounding);
+    }
+    else {
+        if (drawArrows)
+            RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, 0.f);
+        else
+            RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, style.FrameRounding);
+    }
+    //increase and decrease arrows
+    bool value_changed = false;
+    if (drawArrows)
+    {
+        ImRect leftArrow_bb = ImRect(ImVec2(frame_bb.Min.x - ArrowWidth, frame_bb.Min.y), ImVec2(frame_bb.Min.x, frame_bb.Max.y));
+        int ArrowID = id + 1;
+        PushID(ArrowID);
+        if (!ItemAdd(leftArrow_bb, ArrowID)) {
+            PopID();
+            return false;
+        }
+        bool hoveredArr, heldArr;
+        bool pressedArr = ButtonBehavior(leftArrow_bb, ArrowID, &hoveredArr, &heldArr);
+        frame_col = GetColorU32(g.ActiveId == ArrowID ? ImGuiCol_FrameBgActive : hoveredArr ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+        RenderFrameRounded(leftArrow_bb.Min, leftArrow_bb.Max, frame_col, ((drawFlags == ImDrawFlags_None) || !(drawFlags & ImDrawFlags_RoundCornersRight)) ? ImDrawFlags_RoundCornersLeft : ImDrawFlags_RoundCornersNone, false, g.Style.FrameRounding);
+        if (hovered || hoveredArr) {
+            const float ArrowHeight = leftArrow_bb.Max.y - leftArrow_bb.Min.y;
+            window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 5 / 8), leftArrow_bb.Min.y + (ArrowHeight / 4)));
+            window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 3 / 8), leftArrow_bb.Min.y + (ArrowHeight / 2)));
+            window->DrawList->PathLineTo(ImVec2(leftArrow_bb.Min.x + (ArrowWidth * 5 / 8), leftArrow_bb.Min.y + (ArrowHeight * 3 / 4)));
+            window->DrawList->PathStroke(GetColorU32(ImGuiCol_Text), false, 1.0f);
+        }
+        auto IncreaseDecreaseArrowBehavior = [&](const short plusMinus) {
 
+            static int HeldArrowID = 0;
+            static int CountFrameWhenHold = 0;
+            auto checkAndDoStuff = [&]() {
+                if (data_type == ImGuiDataType_Float) {
+                    float* floatData = (float*)p_data;
+                    float* floatMin = (float*)p_min;
+                    float* floatMax = (float*)p_max;
+                    if (*floatMax != *floatMin) {
+                        if ((((*floatData + (plusMinus * v_speed) > *floatMin)) && (*floatData + (plusMinus * v_speed) < *floatMax)))
+                        {
+                            *floatData += v_speed * plusMinus;
+                            ImGui::MarkItemEdited(ArrowID);
+                            value_changed = true;
+                        }
+                        else if ((*floatData != *floatMin && *floatData != *floatMax))
+                        {
+                            if (plusMinus > 0)
+                            {
+                                *floatData = *floatMax;
+                                ImGui::MarkItemEdited(ArrowID);
+                                value_changed = true;
+                            }
+                            else {
+                                *floatData = *floatMin;
+                                ImGui::MarkItemEdited(ArrowID);
+                                value_changed = true;
+
+                            }
+                        }
+                    }
+                    else {
+                        *floatData += v_speed * plusMinus;
+                        ImGui::MarkItemEdited(ArrowID);
+                        value_changed = true;
+                    }
+                }
+                else if (data_type == ImGuiDataType_S32) {
+                    int* intData = (int*)p_data;
+                    int* intMin = (int*)p_min;
+                    int* intMax = (int*)p_max;
+                    if (*intMax != *intMin) {
+                        if ((((*intData + (plusMinus * v_speed) > *intMin)) && (*intData + (plusMinus * v_speed) < *intMax)))
+                        {
+                            *intData += v_speed * plusMinus;
+                            ImGui::MarkItemEdited(ArrowID);
+                            value_changed = true;
+                        }
+                        else if ((*intData != *intMin && *intData != *intMax))
+                        {
+                            if (plusMinus > 0)
+                            {
+                                *intData = *intMax;
+                                ImGui::MarkItemEdited(ArrowID);
+                                value_changed = true;
+                            }
+                            else {
+                                *intData = *intMin;
+                                ImGui::MarkItemEdited(ArrowID);
+                                value_changed = true;
+
+                            }
+                        }
+                    }
+                    else {
+                        *intData += v_speed * plusMinus;
+                        ImGui::MarkItemEdited(ArrowID);
+                        value_changed = true;
+                    }
+                }
+            };
+            if (pressedArr)
+            {
+                HeldArrowID = 0;
+                CountFrameWhenHold = 0;
+                checkAndDoStuff();
+            }
+            else if (heldArr)
+            {
+                if (HeldArrowID != ArrowID)
+                {
+                    HeldArrowID = ArrowID;
+                }
+                CountFrameWhenHold++;
+                if (CountFrameWhenHold > 20)
+                {
+                    checkAndDoStuff();
+                }
+
+            }
+        };
+        IncreaseDecreaseArrowBehavior(-1);
+        PopID();
+
+        //right(increase) arrow
+        ImRect rightArrow_bb = ImRect(ImVec2(frame_bb.Max.x, frame_bb.Min.y), ImVec2(frame_bb.Max.x + ArrowWidth, frame_bb.Max.y));
+        ArrowID = id + 2;
+        PushID(ArrowID);
+        if (!ItemAdd(rightArrow_bb, ArrowID)) {
+            PopID();
+            return false;
+        }
+        pressedArr = ButtonBehavior(rightArrow_bb, ArrowID, &hoveredArr, &heldArr);
+        frame_col = GetColorU32(g.ActiveId == ArrowID ? ImGuiCol_FrameBgActive : hoveredArr ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+        RenderFrameRounded(rightArrow_bb.Min, rightArrow_bb.Max, frame_col, (drawFlags == ImDrawFlags_None || !(drawFlags & ImDrawFlags_RoundCornersLeft))?ImDrawFlags_RoundCornersRight : ImDrawFlags_RoundCornersNone, false, g.Style.FrameRounding);
+        if (hovered || hoveredArr) {
+            const float ArrowHeight = rightArrow_bb.Max.y - rightArrow_bb.Min.y;
+            window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 3 / 8), rightArrow_bb.Min.y + (ArrowHeight / 4)));
+            window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 5 / 8), rightArrow_bb.Min.y + (ArrowHeight / 2)));
+            window->DrawList->PathLineTo(ImVec2(rightArrow_bb.Min.x + (ArrowWidth * 3 / 8), rightArrow_bb.Min.y + (ArrowHeight * 3 / 4)));
+            window->DrawList->PathStroke(GetColorU32(ImGuiCol_Text), false, 1.0f);
+        }
+        IncreaseDecreaseArrowBehavior(1);
+        PopID();
+    }
+    
     // Drag behavior
-    const bool value_changed = DragBehavior(id, data_type, p_data, v_speed, p_min, p_max, format, flags);
-    if (value_changed)
-        MarkItemEdited(id);
+    if (!value_changed) {
+        value_changed = DragBehavior(id, data_type, p_data, v_speed, p_min, p_max, format, flags);
+        if (value_changed)
+            MarkItemEdited(id);
+    }
 
     // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
-    char value_buf[64];
-    const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
     if (g.LogEnabled)
         LogSetNextTextDecoration("{", "}");
     RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
 
     if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x + ArrowWidth, frame_bb.Min.y + style.FramePadding.y), label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags);
     return value_changed;
@@ -2446,6 +2834,10 @@ bool ImGui::DragScalarN(const char* label, ImGuiDataType data_type, void* p_data
 bool ImGui::DragFloat(const char* label, float* v, float v_speed, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
 {
     return DragScalar(label, ImGuiDataType_Float, v, v_speed, &v_min, &v_max, format, flags);
+}
+bool ImGui::DragFloatRounded(const char* label, float* v, float v_speed, float v_min, float v_max, const char* format, ImGuiSliderFlags flags, ImDrawFlags drawFlags)
+{
+    return DragScalar(label, ImGuiDataType_Float, v, v_speed, &v_min, &v_max, format, flags, drawFlags);
 }
 
 bool ImGui::DragFloat2(const char* label, float v[2], float v_speed, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
@@ -3961,19 +4353,17 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     const ImGuiStyle& style = g.Style;
 
     const bool RENDER_SELECTION_WHEN_INACTIVE = false;
-    const bool is_multiline = (flags & ImGuiInputTextFlags_Multiline) != 0;
     const bool is_readonly = (flags & ImGuiInputTextFlags_ReadOnly) != 0;
+    const bool is_multiline = false;
     const bool is_password = (flags & ImGuiInputTextFlags_Password) != 0;
     const bool is_undoable = (flags & ImGuiInputTextFlags_NoUndoRedo) == 0;
     const bool is_resizable = (flags & ImGuiInputTextFlags_CallbackResize) != 0;
     if (is_resizable)
         IM_ASSERT(callback != NULL); // Must provide a callback if you set the ImGuiInputTextFlags_CallbackResize flag!
 
-    if (is_multiline) // Open group before calling GetID() because groups tracks id created within their scope (including the scrollbar)
-        BeginGroup();
     const ImGuiID id = window->GetID(label);
-    const ImVec2 label_size = CalcTextSize(label, NULL, true);
-    const ImVec2 frame_size = CalcItemSize(size_arg, CalcItemWidth(), (is_multiline ? g.FontSize * 8.0f : label_size.y) + style.FramePadding.y * 2.0f); // Arbitrary default of 8 lines high for multi-line
+    const ImVec2 label_size = CalcTextSize(label, NULL, true, CalcItemWidth());
+    const ImVec2 frame_size = CalcItemSize(size_arg, CalcItemWidth(), (label_size.y) + style.FramePadding.y * 2.0f); // Arbitrary default of 8 lines high for multi-line
     const ImVec2 total_size = ImVec2(frame_size.x + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), frame_size.y);
 
     const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + frame_size);
@@ -3983,48 +4373,12 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     ImVec2 inner_size = frame_size;
     ImGuiItemStatusFlags item_status_flags = 0;
     ImGuiLastItemData item_data_backup;
-    if (is_multiline)
-    {
-        ImVec2 backup_pos = window->DC.CursorPos;
-        ItemSize(total_bb, style.FramePadding.y);
+    // Support for internal ImGuiInputTextFlags_MergedItem flag, which could be redesigned as an ItemFlags if needed (with test performed in ItemAdd)
+    ItemSize(total_bb, style.FramePadding.y);
+    if (!(flags & ImGuiInputTextFlags_MergedItem))
         if (!ItemAdd(total_bb, id, &frame_bb, ImGuiItemFlags_Inputable))
-        {
-            EndGroup();
             return false;
-        }
-        item_status_flags = g.LastItemData.StatusFlags;
-        item_data_backup = g.LastItemData;
-        window->DC.CursorPos = backup_pos;
-
-        // We reproduce the contents of BeginChildFrame() in order to provide 'label' so our window internal data are easier to read/debug.
-        // FIXME-NAV: Pressing NavActivate will trigger general child activation right before triggering our own below. Harmless but bizarre.
-        PushStyleColor(ImGuiCol_ChildBg, style.Colors[ImGuiCol_FrameBg]);
-        PushStyleVar(ImGuiStyleVar_ChildRounding, style.FrameRounding);
-        PushStyleVar(ImGuiStyleVar_ChildBorderSize, style.FrameBorderSize);
-        PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0)); // Ensure no clip rect so mouse hover can reach FramePadding edges
-        bool child_visible = BeginChildEx(label, id, frame_bb.GetSize(), true, ImGuiWindowFlags_NoMove);
-        PopStyleVar(3);
-        PopStyleColor();
-        if (!child_visible)
-        {
-            EndChild();
-            EndGroup();
-            return false;
-        }
-        draw_window = g.CurrentWindow; // Child window
-        draw_window->DC.NavLayersActiveMaskNext |= (1 << draw_window->DC.NavLayerCurrent); // This is to ensure that EndChild() will display a navigation highlight so we can "enter" into it.
-        draw_window->DC.CursorPos += style.FramePadding;
-        inner_size.x -= draw_window->ScrollbarSizes.x;
-    }
-    else
-    {
-        // Support for internal ImGuiInputTextFlags_MergedItem flag, which could be redesigned as an ItemFlags if needed (with test performed in ItemAdd)
-        ItemSize(total_bb, style.FramePadding.y);
-        if (!(flags & ImGuiInputTextFlags_MergedItem))
-            if (!ItemAdd(total_bb, id, &frame_bb, ImGuiItemFlags_Inputable))
-                return false;
-        item_status_flags = g.LastItemData.StatusFlags;
-    }
+    item_status_flags = g.LastItemData.StatusFlags;
     const bool hovered = ItemHoverable(frame_bb, id);
     if (hovered)
         g.MouseCursor = ImGuiMouseCursor_TextInput;
@@ -4851,7 +5205,6 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         LogSetNextTextDecoration("{", "}");
         LogRenderedText(&draw_pos, buf_display, buf_display_end);
     }
-
     if (label_size.x > 0)
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
@@ -5882,6 +6235,47 @@ bool ImGui::TreeNodeEx(const void* ptr_id, ImGuiTreeNodeFlags flags, const char*
     return is_open;
 }
 
+//custom tree node Ex 
+bool ImGui::CustomTreeNodeWithPicEx(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ImTextureID textureID, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    bool is_open = ImGui::CustomTreeNodeWithPicExV(ptr_id, flags, fmt,textureID, args);
+    va_end(args);
+    return is_open;
+}
+//custom tree node Ex for scene hierarchy panels' and content browsers' entities
+bool ImGui::CustomTreeNodeEx(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    bool is_open = ImGui::CustomTreeNodeExV(ptr_id, flags, fmt, args);
+    va_end(args);
+    return is_open;
+}
+//custom tree node ExV for scene hierarchy panels' and content browsers' entities
+bool ImGui::CustomTreeNodeExV(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, va_list args)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+    const char* label, * label_end;
+    ImFormatStringToTempBufferV(&label, &label_end, fmt, args);
+    return CustomTreeNodeBehavior(window->GetID(ptr_id), flags, label, label_end);
+}
+
+//
+bool ImGui::CustomTreeNodeWithPicExV(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ImTextureID textureID, va_list args)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    const char* label, * label_end;
+    ImFormatStringToTempBufferV(&label, &label_end, fmt, args);
+    return CustomTreeNodeWithPicBehavior(textureID,window->GetID(ptr_id), flags, label, label_end);
+}
+
 bool ImGui::TreeNodeExV(const char* str_id, ImGuiTreeNodeFlags flags, const char* fmt, va_list args)
 {
     ImGuiWindow* window = GetCurrentWindow();
@@ -5987,7 +6381,11 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         frame_bb.Max.x += IM_FLOOR(window->WindowPadding.x * 0.5f);
     }
 
-    const float text_offset_x = g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2);           // Collapser arrow width + Spacing
+    float text_offset_x = g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2);           // Collapser arrow width + Spacing
+    if (flags & ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow)
+    {
+        text_offset_x += 6.f;
+    }
     const float text_offset_y = ImMax(padding.y, window->DC.CurrLineTextBaseOffset);                    // Latch before ItemSize changes it
     const float text_width = g.FontSize + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f);  // Include collapser
     ImVec2 text_pos(window->DC.CursorPos.x + text_offset_x, window->DC.CursorPos.y + text_offset_y);
@@ -6099,6 +6497,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_ToggledSelection;
 
     // Render
+    //zna3
     const ImU32 text_col = GetColorU32(ImGuiCol_Text);
     ImGuiNavHighlightFlags nav_highlight_flags = ImGuiNavHighlightFlags_TypeThin;
     if (display_frame)
@@ -6109,6 +6508,8 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         RenderNavHighlight(frame_bb, id, nav_highlight_flags);
         if (flags & ImGuiTreeNodeFlags_Bullet)
             RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.60f, text_pos.y + g.FontSize * 0.5f), text_col);
+        else if (flags & ImGuiTreeNodeFlags_NoArrow) {
+        }
         else if (!is_leaf)
             RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Right, 1.0f);
         else // Leaf without bullet, left-adjusted text
@@ -6131,11 +6532,731 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         RenderNavHighlight(frame_bb, id, nav_highlight_flags);
         if (flags & ImGuiTreeNodeFlags_Bullet)
             RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.5f, text_pos.y + g.FontSize * 0.5f), text_col);
+        else if (flags & ImGuiTreeNodeFlags_NoArrow) {}
         else if (!is_leaf)
             RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Right, 0.70f);
         if (g.LogEnabled)
             LogSetNextTextDecoration(">", NULL);
         RenderText(text_pos, label, label_end, false);
+    }
+
+    if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+        TreePushOverrideID(id);
+    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
+    return is_open;
+}
+//small functions
+int ImGui::IndexOfCharWhereTheTextShouldBeCutToFit(const char* text, const char* textend, float size) {
+    if (CalcTextSize(text, textend).x <= size) {
+        return static_cast<int>(textend - text);
+    }
+    else {
+        const char* start = text;
+        const char* end = textend;
+
+        while (start < end) {
+            const char* mid = start + (end - start) / 2;
+            if (CalcTextSize(text, mid).x <= size)
+                start = mid + 1;
+            else
+                end = mid;
+        }
+
+        return static_cast<int>(start - text) - 1;
+    }
+}
+//tree nodes for hierarchy panels' and content browsers' entities
+//drawing icons ar const char* SVGs
+bool ImGui::CustomTreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* labelArg, const char* label_endArg)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+    const char* label;
+    char* mutable_str = nullptr;
+    const char* label_end;
+    float labelMaxWidth = GetWindowWidth() - 30 - (window->DC.TreeDepth * 20)-70;
+    //first call of editor rendering gives silly numbers
+    if (labelMaxWidth >100)
+    {
+        //if label is too long, we shorten it and give '...' at the end
+        if (CalcTextSize(labelArg).x >= labelMaxWidth)
+        {
+            int n = IndexOfCharWhereTheTextShouldBeCutToFit(labelArg, label_endArg, labelMaxWidth);
+            mutable_str = strdup(labelArg);
+
+            if (mutable_str != nullptr && n >= 0 && n < strlen(mutable_str)) {
+                mutable_str[n] = '\0';
+                mutable_str[n-1] = '.';
+                mutable_str[n-2] = '.';
+                mutable_str[n-3] = '.';
+                label_end = &mutable_str[n];
+                label = mutable_str;
+            }
+            else
+            {
+                label = labelArg;
+                label_end = label_endArg;
+            }
+            
+        }
+        else
+        {
+            label = labelArg;
+            label_end = label_endArg;
+        }
+    }
+    else
+    {
+        label = labelArg;
+        label_end = label_endArg;
+    }
+
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+    const bool display_frame = (flags & ImGuiTreeNodeFlags_Framed) != 0;
+    const ImVec2 padding = (display_frame || (flags & ImGuiTreeNodeFlags_FramePadding)) ? style.FramePadding : ImVec2(style.FramePadding.x, ImMin(window->DC.CurrLineTextBaseOffset, style.FramePadding.y));
+
+    if (!label_end)
+        label_end = FindRenderedTextEnd(label);
+    const ImVec2 label_size = CalcTextSize(label, label_end, false);
+
+    // We vertically grow up to current line height up the typical widget height.
+    const float frame_height = ImMax(ImMin(window->DC.CurrLineSize.y, g.FontSize + style.FramePadding.y * 2), label_size.y + padding.y * 2);
+    ImRect frame_bb;
+    frame_bb.Min.x = (flags & ImGuiTreeNodeFlags_SpanFullWidth) ? window->WorkRect.Min.x : window->DC.CursorPos.x;
+    frame_bb.Min.y = window->DC.CursorPos.y;
+    frame_bb.Max.x = window->WorkRect.Max.x;
+    frame_bb.Max.y = window->DC.CursorPos.y + frame_height;
+    if (display_frame)
+    {
+        // Framed header expand a little outside the default padding, to the edge of InnerClipRect
+        // (FIXME: May remove this at some point and make InnerClipRect align with WindowPadding.x instead of WindowPadding.x*0.5f)
+        frame_bb.Min.x -= IM_FLOOR(window->WindowPadding.x * 0.5f - 1.0f);
+        frame_bb.Max.x += IM_FLOOR(window->WindowPadding.x * 0.5f);
+    }
+
+    const float text_offset_x = g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2);           // Collapser arrow width + Spacing
+    const float text_offset_y = ImMax(padding.y, window->DC.CurrLineTextBaseOffset);                    // Latch before ItemSize changes it
+    const float text_width = g.FontSize + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f);  // Include collapser
+    ImVec2 text_pos(window->DC.CursorPos.x + text_offset_x+20, window->DC.CursorPos.y + text_offset_y);
+    ItemSize(ImVec2(text_width, frame_height), padding.y);
+
+    // For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
+    ImRect interact_bb = frame_bb;
+    if (!display_frame && (flags & (ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth)) == 0)
+        interact_bb.Max.x = frame_bb.Min.x + text_width + style.ItemSpacing.x * 2.0f;
+
+    // Store a flag for the current depth to tell if we will allow closing this node when navigating one of its child.
+    // For this purpose we essentially compare if g.NavIdIsAlive went from 0 to 1 between TreeNode() and TreePop().
+    // This is currently only support 32 level deep and we are fine with (1 << Depth) overflowing into a zero.
+    const bool is_leaf = (flags & ImGuiTreeNodeFlags_Leaf) != 0;
+    bool is_open = TreeNodeUpdateNextOpen(id, flags);
+    if (flags & ImGuiTreeNodeFlags_ForceOpen)
+    {
+        is_open = true;
+        TreeNodeSetOpen(id, true);
+    }
+    else if (flags & ImGuiTreeNodeFlags_ForceClose && !is_open)
+    {
+        is_open = false;
+        TreeNodeSetOpen(id, false);
+    }
+    if (is_open && !g.NavIdIsAlive && (flags & ImGuiTreeNodeFlags_NavLeftJumpsBackHere) && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+        window->DC.TreeJumpToParentOnPopMask |= (1 << window->DC.TreeDepth);
+
+    bool item_add = ItemAdd(interact_bb, id);
+    g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_HasDisplayRect;
+    g.LastItemData.DisplayRect = frame_bb;
+
+    if (!item_add)
+    {
+        if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+            TreePushOverrideID(id);
+        IMGUI_TEST_ENGINE_ITEM_INFO(g.LastItemData.ID, label, g.LastItemData.StatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
+        return is_open;
+    }
+
+    ImGuiButtonFlags button_flags = ImGuiTreeNodeFlags_None;
+    if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
+        button_flags |= ImGuiButtonFlags_AllowItemOverlap;
+    if (!is_leaf)
+        button_flags |= ImGuiButtonFlags_PressedOnDragDropHold;
+
+    // We allow clicking on the arrow section with keyboard modifiers held, in order to easily
+    // allow browsing a tree while preserving selection with code implementing multi-selection patterns.
+    // When clicking on the rest of the tree node we always disallow keyboard modifiers.
+    const float arrow_hit_x1 = (text_pos.x - text_offset_x) - style.TouchExtraPadding.x;
+    const float arrow_hit_x2 = (text_pos.x - text_offset_x) + (g.FontSize + padding.x * 2.0f) + style.TouchExtraPadding.x;
+    const bool is_mouse_x_over_arrow = (g.IO.MousePos.x >= arrow_hit_x1 && g.IO.MousePos.x < arrow_hit_x2);
+    if (window != g.HoveredWindow || !is_mouse_x_over_arrow)
+        button_flags |= ImGuiButtonFlags_NoKeyModifiers;
+
+    // Open behaviors can be altered with the _OpenOnArrow and _OnOnDoubleClick flags.
+    // Some alteration have subtle effects (e.g. toggle on MouseUp vs MouseDown events) due to requirements for multi-selection and drag and drop support.
+    // - Single-click on label = Toggle on MouseUp (default, when _OpenOnArrow=0)
+    // - Single-click on arrow = Toggle on MouseDown (when _OpenOnArrow=0)
+    // - Single-click on arrow = Toggle on MouseDown (when _OpenOnArrow=1)
+    // - Double-click on label = Toggle on MouseDoubleClick (when _OpenOnDoubleClick=1)
+    // - Double-click on arrow = Toggle on MouseDoubleClick (when _OpenOnDoubleClick=1 and _OpenOnArrow=0)
+    // It is rather standard that arrow click react on Down rather than Up.
+    // We set ImGuiButtonFlags_PressedOnClickRelease on OpenOnDoubleClick because we want the item to be active on the initial MouseDown in order for drag and drop to work.
+    if (is_mouse_x_over_arrow)
+        button_flags |= ImGuiButtonFlags_PressedOnClick;
+    else if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
+        button_flags |= ImGuiButtonFlags_PressedOnClickRelease | ImGuiButtonFlags_PressedOnDoubleClick;
+    else
+        button_flags |= ImGuiButtonFlags_PressedOnClickRelease;
+
+    bool selected = (flags & ImGuiTreeNodeFlags_Selected) != 0;
+    const bool was_selected = selected;
+
+    bool hovered, held;
+    bool pressed = ButtonBehavior(interact_bb, id, &hovered, &held, button_flags);
+    bool toggled = false;
+    if (!is_leaf)
+    {
+        if (pressed && g.DragDropHoldJustPressedId != id)
+        {
+            if ((flags & (ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) == 0 || (g.NavActivateId == id))
+                toggled = true;
+            if (flags & ImGuiTreeNodeFlags_OpenOnArrow)
+                toggled |= is_mouse_x_over_arrow && !g.NavDisableMouseHover; // Lightweight equivalent of IsMouseHoveringRect() since ButtonBehavior() already did the job
+            if ((flags & ImGuiTreeNodeFlags_OpenOnDoubleClick) && g.IO.MouseClickedCount[0] == 2)
+                toggled = true;
+        }
+        else if (pressed && g.DragDropHoldJustPressedId == id)
+        {
+            IM_ASSERT(button_flags & ImGuiButtonFlags_PressedOnDragDropHold);
+            if (!is_open) // When using Drag and Drop "hold to open" we keep the node highlighted after opening, but never close it again.
+                toggled = true;
+        }
+
+        if (g.NavId == id && g.NavMoveDir == ImGuiDir_Left && is_open)
+        {
+            toggled = true;
+            NavMoveRequestCancel();
+        }
+        if (g.NavId == id && g.NavMoveDir == ImGuiDir_Right && !is_open) // If there's something upcoming on the line we may want to give it the priority?
+        {
+            toggled = true;
+            NavMoveRequestCancel();
+        }
+
+        if (toggled)
+        {
+            is_open = !is_open;
+            window->DC.StateStorage->SetInt(id, is_open);
+            g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_ToggledOpen;
+        }
+    }
+    if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
+        SetItemAllowOverlap();
+    // Render
+    const ImU32 text_col = GetColorU32(ImGuiCol_Text);
+    ImGuiNavHighlightFlags nav_highlight_flags = ImGuiNavHighlightFlags_TypeThin;
+    if (hovered || selected)
+    {
+        const ImU32 bg_col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+        RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, false);
+    }
+    RenderNavHighlight(frame_bb, id, nav_highlight_flags);
+            //drawing hierarchy lines
+            static int childnumber;
+            static int lastTreeDepth;
+            static int lastFrame;
+            if (!lastFrame) {
+                lastFrame = ImGui::GetFrameCount();
+                lastTreeDepth = 0;
+            }
+            if (ImGui::GetFrameCount() != lastFrame) {
+                childnumber = 0;
+                lastFrame = ImGui::GetFrameCount();
+                lastTreeDepth = 0;
+            }
+        if (window->DC.TreeDepth > 0) {
+            if (lastTreeDepth > window->DC.TreeDepth) {
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (lastTreeDepth + 1)) - (2 * (lastTreeDepth - 1)), text_pos.y + g.FontSize * 0.5f - 40));
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (lastTreeDepth + 1)) - (2 * (lastTreeDepth - 1)), text_pos.y + g.FontSize * 0.5f));
+                window->DrawList->PathStroke(text_col, false, 2.0f);
+                lastTreeDepth = window->DC.TreeDepth;
+                childnumber = 0;
+            }
+            if (lastTreeDepth != window->DC.TreeDepth) {
+                lastTreeDepth = window->DC.TreeDepth;
+                childnumber = 0;
+            }
+            else
+            {
+                childnumber += 1;
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 40));
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 10));
+                window->DrawList->PathStroke(text_col, false, 2.0f);
+            }
+            window->DrawList->AddCircleFilled(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f), 3, text_col);
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 11, text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathStroke(text_col, false, 2.0f);
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 10));
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathStroke(text_col, false, 2.0f);
+            for (int i = 1; i < window->DC.TreeDepth; i++) {
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19*(i+1))-(2*(i-1)), text_pos.y + g.FontSize * 0.5f - 40));
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (i + 1)) - (2 * (i - 1)), text_pos.y + g.FontSize * 0.5f));
+                window->DrawList->PathStroke(text_col, false, 2.0f);
+            }
+        }
+        else
+        {
+            lastTreeDepth = 0;
+        }
+        //drawing icons
+        float start_x = text_pos.x - text_offset_x + padding.x;
+        float start_y = text_pos.y + g.FontSize * 0.15f;
+        float end_x = start_x + 15;
+        float end_y = start_y + 15;
+        ImVec2 translation(start_x, start_y);
+        ImVec2 scale;
+        ImDrawList* draw_list = window->DrawList;
+        static std::string path_data;
+        if (flags & ImGuiTreeNodeFlags_Entity)
+        {
+            scale = ImVec2((end_x - start_x) / 512, (end_y - start_y) / 512);
+            scale *= ImVec2(0.1, -0.1);
+            path_data = "M 0 0 c -206 -47 -385 -213 -451 -420 c -19 -62 -22 -98 -27 -307 l -4 -238 l -528 0 c -489 0 -531 -1 -581 -19 c -91 -31 -140 -61 -199 -120 c -69 -70 -106 -134 -131 -230 c -17 -68 -19 -114 -19 -558 l 0 -483 l 218 0 c 254 0 315 -10 440 -71 c 67 -32 102 -58 167 -122 c 69 -69 90 -97 128 -177 c 25 -52 51 -123 58 -158 c 16 -86 7 -250 -20 -332 c -50 -158 -175 -304 -322 -378 c -131 -66 -173 -73 -437 -79 l -232 -6 l 0 -486 c 0 -399 3 -497 15 -544 c 47 -182 180 -315 362 -362 c 47 -12 145 -15 544 -15 l 486 0 l 6 233 c 6 263 13 305 79 436 c 74 147 220 272 378 322 c 82 27 246 36 332 20 c 35 -7 106 -33 158 -58 c 178 -85 315 -259 355 -449 c 10 -48 15 -135 15 -286 l 0 -218 l 488 0 c 445 0 495 2 560 19 c 167 44 296 169 347 338 c 12 39 15 143 15 574 l 0 527 l 238 4 c 209 5 245 8 307 27 c 212 68 376 247 421 461 c 63 299 -121 611 -416 706 c -44 14 -105 19 -300 23 l -245 6 l -5 545 c -5 482 -7 550 -22 587 c -57 142 -159 244 -301 301 c -37 15 -105 17 -587 22 l -545 5 l -6 245 c -4 195 -9 256 -23 300 c -60 187 -205 332 -403 401 c -77 27 -226 34 -313 14 Z";
+
+        }
+        else if (flags & ImGuiTreeNodeFlags_DirectoryEntity) {
+            scale = ImVec2((end_x - start_x) / 512, (end_y - start_y) / 512);
+            scale *= ImVec2(0.13, -0.13);
+            translation += {-5,0};
+            path_data = "M 0 0 c -32 -14 -77 -37 -100 -53 c -54 -37 -122 -125 -150 -193 l -22 -55 l 0 -1380 l 0 -1380 l 34 -72 c 60 -128 181 -221 318 -243 c 79 -13 3468 -13 3547 0 c 135 22 252 110 317 237 l 34 67 l 0 1181 l 0 1180 l -32 66 c -60 120 -174 211 -301 238 c -37 8 -317 11 -925 11 l -872 0 l -210 210 l -210 210 l -685 0 l -685 0 l -58 -24 Z";
+            //path_data = "M 0 0 V 372 c 0 0 -1.9 45 40.8 45 s 305.5 -0.8 305.5 -0.8 s 42.7 -1.6 42.7 -38.6 s 0 -158.4 0 -158.4 s 3.8 -44.2 -59.8 -44.2 s -328.2 0 -328.2 0 L 77 213.6 z M 0 0 c 0 0 0 - 38.8 52 - 38.8 s 95 0 95 0 s 38 0.9 38 33.6 c 0 8.6 0 6 0 6 L 75 163.8 z";
+        }
+        else if (flags & ImGuiTreeNodeFlags_FileEntity) {
+            scale = ImVec2((end_x - start_x) / 100, (end_y - start_y) / 100);
+            //scale *= ImVec2(0.1, -0.1);
+            //path_data = "M 0 0 c -194 -41 -352 -179 -417 -368 l -23 -67 l 0 -2115 l 0 -2115 l 23 -66 c 57 -166 185 -294 350 -351 l 67 -23 l 505 0 l 1505 0 l 67 23 c 165 57 293 185 350 351 l 23 66 l 0 1660 l 0 1660 l -26 71 c -14 39 -43 96 -63 127 c -46 69 -1028 1002 -1119 1064 c -34 22 -91 52 -127 65 l -65 23 l -1005 2 c -553 0 -1023 -3 -1045 -7 Z M 0 0 l 3 -467 l 33 -67 c 38 -77 92 -130 171 -167 l 56 -26 l 498 -3 l 497 -3 l 0 -1553 c 0 -1744 6 -1611 -75 -1691 c -80 -81 39 -75 -1575 -75 c -1614 0 -1495 -6 -1575 75 c -82 81 -75 -112 -75 2185 c 0 2298 -7 2104 75 2185 c 77 77 20 73 1047 74 l 917 1 l 3 -468 Z";
+            path_data = "M 0 0 v 150.56 c 0,29.16 -23.64 52.79 -52.79 52.79 H 52.79 c -29.16 0 -52.79 -23.64 -52.79 -52.79 V 52.79 C 0 23.64 23.64 0 52.79 0 h 66.76 l 125.14 120.11 Z";
+        }
+        else {
+            scale = ImVec2((end_x - start_x) / 512, (end_y - start_y) / 512);
+            scale *= ImVec2(0.1, -0.1);
+            path_data = "M 0 0 c -206 -47 -385 -213 -451 -420 c -19 -62 -22 -98 -27 -307 l -4 -238 l -528 0 c -489 0 -531 -1 -581 -19 c -91 -31 -140 -61 -199 -120 c -69 -70 -106 -134 -131 -230 c -17 -68 -19 -114 -19 -558 l 0 -483 l 218 0 c 254 0 315 -10 440 -71 c 67 -32 102 -58 167 -122 c 69 -69 90 -97 128 -177 c 25 -52 51 -123 58 -158 c 16 -86 7 -250 -20 -332 c -50 -158 -175 -304 -322 -378 c -131 -66 -173 -73 -437 -79 l -232 -6 l 0 -486 c 0 -399 3 -497 15 -544 c 47 -182 180 -315 362 -362 c 47 -12 145 -15 544 -15 l 486 0 l 6 233 c 6 263 13 305 79 436 c 74 147 220 272 378 322 c 82 27 246 36 332 20 c 35 -7 106 -33 158 -58 c 178 -85 315 -259 355 -449 c 10 -48 15 -135 15 -286 l 0 -218 l 488 0 c 445 0 495 2 560 19 c 167 44 296 169 347 338 c 12 39 15 143 15 574 l 0 527 l 238 4 c 209 5 245 8 307 27 c 212 68 376 247 421 461 c 63 299 -121 611 -416 706 c -44 14 -105 19 -300 23 l -245 6 l -5 545 c -5 482 -7 550 -22 587 c -57 142 -159 244 -301 301 c -37 15 -105 17 -587 22 l -545 5 l -6 245 c -4 195 -9 256 -23 300 c -60 187 -205 332 -403 401 c -77 27 -226 34 -313 14 Z";
+        }
+
+        std::istringstream svgStringSteam = std::istringstream(path_data);
+        char command;
+        ImVec2 lastDraw;
+        auto drawingSVG = [&](std::istringstream& iss) {
+            while (iss >> command) {
+                switch (command) {
+                case 'M': {
+                    double x, y;
+                    iss >> x >> y;
+                    ImVec2 s(x, y);
+                    ImVec2 rr((s * scale) + translation);
+                    draw_list->PathLineTo(rr);
+                    draw_list->PathClear();
+                    draw_list->PathLineTo(ImVec2(x, y) + translation);
+                    lastDraw = rr;
+                    break;
+                }
+                case 'c':
+                case 'C': {
+                    double x1, y1, x2, y2, x, y;
+                    iss >> x1 >> y1 >> x2 >> y2 >> x >> y;
+                    ImVec2 h1(x1, y1);
+                    ImVec2 rrh1(((h1 * scale) + lastDraw));
+                    ImVec2 h2(x2, y2);
+                    ImVec2 rrh2(((h2 * scale) + lastDraw));
+                    ImVec2 s(x, y);
+                    ImVec2 rr(((s * scale) + lastDraw));
+                    draw_list->PathBezierCubicCurveTo(
+                        (rrh1),
+                        (rrh2),
+                        (rr)
+                    );
+                    lastDraw = rr;
+                    break;
+                }
+                case 's':
+                case 'S': {
+                    double x1, y1, x, y;
+                    iss >> x1 >> y1 >> x >> y;
+                    ImVec2 h1(x1, y1);
+                    ImVec2 rrh1(((h1 * scale) + lastDraw));
+                    ImVec2 s(x, y);
+                    ImVec2 rr(((s * scale) + lastDraw));
+                    draw_list->PathBezierQuadraticCurveTo(
+                        (rrh1),
+                        (rr)
+                    );
+                    lastDraw = rr;
+                    break;
+                }
+                case 'l':
+                case 'L': {
+                    double x, y;
+                    iss >> x >> y;
+                    ImVec2 s(x, y);
+                    ImVec2 rr(((s * scale) + lastDraw));
+                    draw_list->PathLineTo(rr);
+                    lastDraw = rr;
+                    break;
+                }
+                case 'v':
+                case 'V': {
+                    double x = 0, y;
+                    iss >> y;
+                    ImVec2 s(x, y);
+                    ImVec2 rr(((s * scale) + lastDraw));
+                    draw_list->PathLineTo(rr);
+                    lastDraw = rr;
+                    break;
+                }
+                case 'h':
+                case 'H': {
+                    double x, y=0;
+                    iss >> x;
+                    ImVec2 s(x, y);
+                    ImVec2 rr(((s * scale) + lastDraw));
+                    draw_list->PathLineTo(rr);
+                    lastDraw = rr;
+                    break;
+                }
+                case 'z':
+                case 'Z': {
+                    draw_list->PathFillConvex(text_col);
+                    break;
+                }
+                default:
+                    std::cerr << "Unknown command: " << command << std::endl;
+                    break;
+
+                }
+            }
+        };
+        drawingSVG(svgStringSteam);
+            //TODO: drawing an eye
+
+    if (g.LogEnabled)
+        LogSetNextTextDecoration(">", NULL);
+    RenderText(text_pos, label, label_end, false);
+    if (mutable_str!=nullptr)
+    {
+        free(mutable_str);
+    }
+    //drawing an arrow if the entity has children
+    if (flags & ImGuiTreeNodeFlags_EntityWithChildren) {
+        RenderArrow(window->DrawList, ImVec2(window->WorkRect.Max.x - 30, text_pos.y), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Left, 1.0f);
+    }
+
+
+
+    if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+        HierarchyPanelTreePushOverrideID(id);
+    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
+    return is_open;
+}
+
+//tree nodes for hierarchy panel's entities
+//drawing icons as images
+bool ImGui::CustomTreeNodeWithPicBehavior(ImTextureID textureID, ImGuiID id, ImGuiTreeNodeFlags flags, const char* labelArg, const char* label_endArg)
+{
+    //Image(textureID, { 50,50 });
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+    const char* label;
+    char* mutable_str = nullptr;
+    const char* label_end;
+    float labelMaxWidth = GetWindowWidth() - 30 - (window->DC.TreeDepth * 20) - 70;
+//first call of editor rendering gives silly numbers
+    if (labelMaxWidth > 100)
+    {
+        //if label is too long, we shorten it and give '...' at the end
+        if (CalcTextSize(labelArg).x >= labelMaxWidth)
+        {
+            int n = IndexOfCharWhereTheTextShouldBeCutToFit(labelArg, label_endArg, labelMaxWidth);
+            mutable_str = strdup(labelArg);
+
+            if (mutable_str != nullptr && n >= 0 && n < strlen(mutable_str)) {
+                mutable_str[n] = '\0';
+                mutable_str[n - 1] = '.';
+                mutable_str[n - 2] = '.';
+                mutable_str[n - 3] = '.';
+                //free(&mutable_str[n + 1]);
+                label_end = &mutable_str[n];
+                label = mutable_str;
+            }
+            else
+            {
+                label = labelArg;
+                label_end = label_endArg;
+            }
+
+        }
+        else
+        {
+            label = labelArg;
+            label_end = label_endArg;
+        }
+    }
+    else
+    {
+        label = labelArg;
+        label_end = label_endArg;
+    }
+
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+    const bool display_frame = (flags & ImGuiTreeNodeFlags_Framed) != 0;
+    const ImVec2 padding = (display_frame || (flags & ImGuiTreeNodeFlags_FramePadding)) ? style.FramePadding : ImVec2(style.FramePadding.x, ImMin(window->DC.CurrLineTextBaseOffset, style.FramePadding.y));
+
+    if (!label_end)
+        label_end = FindRenderedTextEnd(label);
+    const ImVec2 label_size = CalcTextSize(label, label_end, false);
+
+    // We vertically grow up to current line height up the typical widget height.
+    const float frame_height = ImMax(ImMin(window->DC.CurrLineSize.y, g.FontSize + style.FramePadding.y * 2), label_size.y + padding.y * 2);
+    ImRect frame_bb;
+    frame_bb.Min.x = (flags & ImGuiTreeNodeFlags_SpanFullWidth) ? window->WorkRect.Min.x : window->DC.CursorPos.x;
+    frame_bb.Min.y = window->DC.CursorPos.y;
+    frame_bb.Max.x = window->WorkRect.Max.x;
+    frame_bb.Max.y = window->DC.CursorPos.y + frame_height;
+    if (display_frame)
+    {
+        // Framed header expand a little outside the default padding, to the edge of InnerClipRect
+        // (FIXME: May remove this at some point and make InnerClipRect align with WindowPadding.x instead of WindowPadding.x*0.5f)
+        frame_bb.Min.x -= IM_FLOOR(window->WindowPadding.x * 0.5f - 1.0f);
+        frame_bb.Max.x += IM_FLOOR(window->WindowPadding.x * 0.5f);
+    }
+
+    const float text_offset_x = g.FontSize + (display_frame ? padding.x * 3 : padding.x * 2);           // Collapser arrow width + Spacing
+    const float text_offset_y = ImMax(padding.y, window->DC.CurrLineTextBaseOffset);                    // Latch before ItemSize changes it
+    const float text_width = g.FontSize + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f);  // Include collapser
+    ImVec2 text_pos;
+    if (flags & ImGuiTreeNodeFlags_PropertiesComponent)
+    {
+        text_pos = ImVec2(window->DC.CursorPos.x + text_offset_x+10, window->DC.CursorPos.y + text_offset_y);
+    }
+    else text_pos = ImVec2(window->DC.CursorPos.x + text_offset_x + 20, window->DC.CursorPos.y + text_offset_y);
+    ItemSize(ImVec2(text_width, frame_height), padding.y);
+
+    // For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
+    ImRect interact_bb = frame_bb;
+    if (!display_frame && (flags & (ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth)) == 0)
+        interact_bb.Max.x = frame_bb.Min.x + text_width + style.ItemSpacing.x * 2.0f;
+
+    // Store a flag for the current depth to tell if we will allow closing this node when navigating one of its child.
+    // For this purpose we essentially compare if g.NavIdIsAlive went from 0 to 1 between TreeNode() and TreePop().
+    // This is currently only support 32 level deep and we are fine with (1 << Depth) overflowing into a zero.
+    const bool is_leaf = (flags & ImGuiTreeNodeFlags_Leaf) != 0;
+    bool is_open = TreeNodeUpdateNextOpen(id, flags);
+    if (is_open && !g.NavIdIsAlive && (flags & ImGuiTreeNodeFlags_NavLeftJumpsBackHere) && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+        window->DC.TreeJumpToParentOnPopMask |= (1 << window->DC.TreeDepth);
+
+    bool item_add = ItemAdd(interact_bb, id);
+    g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_HasDisplayRect;
+    g.LastItemData.DisplayRect = frame_bb;
+
+    if (!item_add)
+    {
+        if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+            TreePushOverrideID(id);
+        IMGUI_TEST_ENGINE_ITEM_INFO(g.LastItemData.ID, label, g.LastItemData.StatusFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
+        return is_open;
+    }
+
+    ImGuiButtonFlags button_flags = ImGuiTreeNodeFlags_None;
+    if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
+        button_flags |= ImGuiButtonFlags_AllowItemOverlap;
+    if (!is_leaf)
+        button_flags |= ImGuiButtonFlags_PressedOnDragDropHold;
+
+    // We allow clicking on the arrow section with keyboard modifiers held, in order to easily
+    // allow browsing a tree while preserving selection with code implementing multi-selection patterns.
+    // When clicking on the rest of the tree node we always disallow keyboard modifiers.
+    const float arrow_hit_x1 = (text_pos.x - text_offset_x) - style.TouchExtraPadding.x;
+    const float arrow_hit_x2 = (text_pos.x - text_offset_x) + (g.FontSize + padding.x * 2.0f) + style.TouchExtraPadding.x;
+    const bool is_mouse_x_over_arrow = (g.IO.MousePos.x >= arrow_hit_x1 && g.IO.MousePos.x < arrow_hit_x2);
+    if (window != g.HoveredWindow || !is_mouse_x_over_arrow)
+        button_flags |= ImGuiButtonFlags_NoKeyModifiers;
+
+    // Open behaviors can be altered with the _OpenOnArrow and _OnOnDoubleClick flags.
+    // Some alteration have subtle effects (e.g. toggle on MouseUp vs MouseDown events) due to requirements for multi-selection and drag and drop support.
+    // - Single-click on label = Toggle on MouseUp (default, when _OpenOnArrow=0)
+    // - Single-click on arrow = Toggle on MouseDown (when _OpenOnArrow=0)
+    // - Single-click on arrow = Toggle on MouseDown (when _OpenOnArrow=1)
+    // - Double-click on label = Toggle on MouseDoubleClick (when _OpenOnDoubleClick=1)
+    // - Double-click on arrow = Toggle on MouseDoubleClick (when _OpenOnDoubleClick=1 and _OpenOnArrow=0)
+    // It is rather standard that arrow click react on Down rather than Up.
+    // We set ImGuiButtonFlags_PressedOnClickRelease on OpenOnDoubleClick because we want the item to be active on the initial MouseDown in order for drag and drop to work.
+    if (is_mouse_x_over_arrow)
+        button_flags |= ImGuiButtonFlags_PressedOnClick;
+    else if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
+        button_flags |= ImGuiButtonFlags_PressedOnClickRelease | ImGuiButtonFlags_PressedOnDoubleClick;
+    else
+        button_flags |= ImGuiButtonFlags_PressedOnClickRelease;
+
+    bool selected = (flags & ImGuiTreeNodeFlags_Selected) != 0;
+    const bool was_selected = selected;
+
+    bool hovered, held;
+    bool pressed = ButtonBehavior(interact_bb, id, &hovered, &held, button_flags);
+    if (pressed)
+    {
+        int s;
+        s = 0;
+    }
+    bool toggled = false;
+    if (!is_leaf)
+    {
+        if (pressed && g.DragDropHoldJustPressedId != id)
+        {
+            if ((flags & (ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) == 0 || (g.NavActivateId == id))
+                toggled = true;
+            if (flags & ImGuiTreeNodeFlags_OpenOnArrow)
+                toggled |= is_mouse_x_over_arrow && !g.NavDisableMouseHover; // Lightweight equivalent of IsMouseHoveringRect() since ButtonBehavior() already did the job
+            if ((flags & ImGuiTreeNodeFlags_OpenOnDoubleClick) && g.IO.MouseClickedCount[0] == 2)
+                toggled = true;
+        }
+        else if (pressed && g.DragDropHoldJustPressedId == id)
+        {
+            IM_ASSERT(button_flags & ImGuiButtonFlags_PressedOnDragDropHold);
+            if (!is_open) // When using Drag and Drop "hold to open" we keep the node highlighted after opening, but never close it again.
+                toggled = true;
+        }
+
+        if (g.NavId == id && g.NavMoveDir == ImGuiDir_Left && is_open)
+        {
+            toggled = true;
+            NavMoveRequestCancel();
+        }
+        if (g.NavId == id && g.NavMoveDir == ImGuiDir_Right && !is_open) // If there's something upcoming on the line we may want to give it the priority?
+        {
+            toggled = true;
+            NavMoveRequestCancel();
+        }
+
+        if (toggled)
+        {
+            is_open = !is_open;
+            window->DC.StateStorage->SetInt(id, is_open);
+            g.LastItemData.StatusFlags |= ImGuiItemStatusFlags_ToggledOpen;
+        }
+    }
+    if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
+        SetItemAllowOverlap();
+    // Render
+    const ImU32 text_col = GetColorU32(ImGuiCol_Text);
+    ImGuiNavHighlightFlags nav_highlight_flags = ImGuiNavHighlightFlags_TypeThin;
+    if (display_frame)
+    {
+        // Framed type
+        const ImU32 bg_col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+        RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, true, style.FrameRounding);
+        RenderNavHighlight(frame_bb, id, nav_highlight_flags);
+    }
+    if (hovered || selected)
+    {
+        const ImU32 bg_col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+        RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, false);
+    }
+    RenderNavHighlight(frame_bb, id, nav_highlight_flags);
+//drawing hierarchy lines
+    if (flags & ImGuiTreeNodeFlags_Entity)
+    {
+        static int childnumber;
+        static int lastTreeDepth;
+        static int lastFrame;
+        if (!lastFrame) {
+            lastFrame = ImGui::GetFrameCount();
+            lastTreeDepth = 0;
+        }
+        if (ImGui::GetFrameCount() != lastFrame) {
+            childnumber = 0;
+            lastFrame = ImGui::GetFrameCount();
+            lastTreeDepth = 0;
+        }
+        if (window->DC.TreeDepth > 0) {
+            if (lastTreeDepth > window->DC.TreeDepth) {
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (lastTreeDepth + 1)) - (2 * (lastTreeDepth - 1)), text_pos.y + g.FontSize * 0.5f - 40));
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (lastTreeDepth + 1)) - (2 * (lastTreeDepth - 1)), text_pos.y + g.FontSize * 0.5f));
+                window->DrawList->PathStroke(text_col, false, 2.0f);
+                lastTreeDepth = window->DC.TreeDepth;
+                childnumber = 0;
+            }
+            if (lastTreeDepth != window->DC.TreeDepth) {
+                lastTreeDepth = window->DC.TreeDepth;
+                childnumber = 0;
+            }
+            else
+            {
+                childnumber += 1;
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 40));
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 10));
+                window->DrawList->PathStroke(text_col, false, 2.0f);
+            }
+            window->DrawList->AddCircleFilled(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f), 3, text_col);
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 11, text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathStroke(text_col, false, 2.0f);
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f - 10));
+            window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - 17, text_pos.y + g.FontSize * 0.5f));
+            window->DrawList->PathStroke(text_col, false, 2.0f);
+            for (int i = 1; i < window->DC.TreeDepth; i++) {
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (i + 1)) - (2 * (i - 1)), text_pos.y + g.FontSize * 0.5f - 40));
+                window->DrawList->PathLineTo(ImVec2(text_pos.x - text_offset_x - (19 * (i + 1)) - (2 * (i - 1)), text_pos.y + g.FontSize * 0.5f));
+                window->DrawList->PathStroke(text_col, false, 2.0f);
+            }
+        }
+        else
+        {
+            lastTreeDepth = 0;
+        }
+
+    }
+//drawing icons
+    ImRect bb;
+    if (flags & ImGuiTreeNodeFlags_PropertiesComponent)
+        bb = ImRect(window->DC.CursorPos + ImVec2(13, -25), window->DC.CursorPos + ImVec2(28, -10));
+    else bb = ImRect(window->DC.CursorPos + ImVec2(15, -27), window->DC.CursorPos + ImVec2(35, -7));
+    window->DrawList->AddImage(textureID, bb.Min, bb.Max);
+
+    //TODO: drawing an eye
+
+    if (g.LogEnabled)
+        LogSetNextTextDecoration(">", NULL);
+    RenderText(text_pos, label, label_end, false);
+    if (mutable_str != nullptr)
+    {
+        free(mutable_str);
+    }
+    //drawing an arrow if the entity has children
+    if (flags & ImGuiTreeNodeFlags_EntityWithChildren) {
+        RenderArrow(window->DrawList, ImVec2(window->WorkRect.Max.x - 30, text_pos.y), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Left, 1.0f);
+    }
+    //zna3
+    //TODO: changing to a nice icon and adding a info when hovered over the image
+    if (flags & ImGuiTreeNodeFlags_CopyingToChildren)
+    {
+        ImVec2 xyOfStart(frame_bb.Max - ImVec2(2 * frame_height, frame_height) + ImVec2(-7.f + (frame_height / 4), (frame_height/8)));
+        ImVec2 xyOfEnd(frame_bb.Max - ImVec2(frame_height, 0.f) + ImVec2(-7.f, -(frame_height / 8)));
+        window->DrawList->AddImage(textureID, xyOfStart, ImVec2(xyOfEnd.x - (.25f * frame_height), xyOfEnd.y - (.25f * frame_height)));
+        window->DrawList->AddImage(textureID, ImVec2(xyOfEnd.x-(.5f * frame_height), xyOfEnd.y - (.5f * frame_height)), xyOfEnd);
+        if (hovered)
+        {
+            if (GetMousePos().x > xyOfStart.x && GetMousePos().x < xyOfEnd.x) {
+                ImGui::BeginTooltip();
+                ImGui::PushTextWrapPos(150.f);
+                ImGui::TextWrapped("This component is inherited in children");
+                ImGui::PopTextWrapPos();
+                ImGui::EndTooltip();
+            }
+        }
+
     }
 
     if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
@@ -6161,6 +7282,15 @@ void ImGui::TreePush(const void* ptr_id)
 }
 
 void ImGui::TreePushOverrideID(ImGuiID id)
+{
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = g.CurrentWindow;
+    Indent();
+    window->DC.TreeDepth++;
+    PushOverrideID(id);
+}
+
+void ImGui::HierarchyPanelTreePushOverrideID(ImGuiID id)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;

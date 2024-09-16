@@ -301,7 +301,29 @@ namespace eg {
 				
 			}
 			// Physics
-			
+			{
+				const int32_t velocityIterations = 6;
+				const int32_t positionIterations = 2;
+				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+
+				auto view = m_Registry.view<RigidBody2DComponent>();
+				for (auto e : view)
+				{
+					Entity entity{ e, this };
+					auto& rb = entity.GetComponent<RigidBody2DComponent>();
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto* body = (b2Body*)rb.RuntimeBody;
+
+					transform.Translation.x = body->GetPosition().x;
+					transform.Translation.y = body->GetPosition().y;
+					transform.Rotation.z = body->GetAngle();
+				}
+			}
+
+			for (Entity entity : m_EntitiesToDestroy)
+			{
+				DestroyEntity(entity);
+			}
 		}
 
 		// Render 2D

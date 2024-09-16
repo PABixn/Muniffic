@@ -11,7 +11,7 @@ namespace eg
 	}
 
 	 bool ScriptSerializer::Serialize(const std::string& path, const std::string& name)
-	{
+	{/*
 		std::ofstream myfile("..\\Engine-Editor\\" + path + "\\premake5.lua");
 		myfile << "local MunifficRootDir = \"../../../../\"\n";
 		myfile << "include(MunifficRootDir .. \"vendor/premake/premake_customization/solution_items.lua\")\n";
@@ -73,12 +73,12 @@ namespace eg
 		std::ofstream batFile("..\\Engine-Editor\\" + path + "\\Win-GenProjects.bat");
 		batFile << "@echo off\n";
 		batFile << "cd "+path+"\n";
-		batFile << "call ..\\..\\..\\..\\vendor\\premake\\bin\\premake5.exe vs2022\n";
+		batFile << "call ..\\..\\..\\. .\\vendor\\premake\\bin\\premake5.exe vs2022\n";
 		batFile.close();
 
 		std::string command = path+"\\Win-GenProjects.bat";
 		std::system(command.c_str());
-
+		*/
 		return true;
 	}
 

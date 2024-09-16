@@ -23,12 +23,12 @@ namespace eg
 {
 	static UUID s_Font;
 	bool projectOpened = false;
-	RecentProjectSerializer rps;
+	RecentProjectSerializer m_RecentProjectSerializer;
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
-		rps = RecentProjectSerializer();
-		m_WelcomePanel = CreateScope<WelcomingPanel>(rps.getProjectList(), rps);
+		m_RecentProjectSerializer = RecentProjectSerializer();
+		m_WelcomePanel = CreateScope<WelcomingPanel>(m_RecentProjectSerializer.getProjectList(), m_RecentProjectSerializer);
 		m_NameNewProjectPanel = CreateScope<NameNewProjectPanel>();
 		m_NameNewProjectPanel->ShowWindow(s_Font);
 
@@ -244,6 +244,7 @@ namespace eg
 		else {
 			if (!projectOpened) {
 				if (m_WelcomePanel->isNewProjectCreated()) {
+					//nya 2
 					NewProject();
 					m_NameNewProjectPanel->setNameGiven(true);
 				}
@@ -319,6 +320,7 @@ namespace eg
 
 			m_SceneHierarchyPanel.OnImGuiRender();
 			m_ContentBrowserPanel->OnImGuiRender();
+			m_ProjectDirectoryPanel->OnImGuiRender();
 			m_ConsolePanel->OnImGuiRender();
 
 			if ((*(this->m_UnsavedChangesPanel)).GetUnsavedChangesPanelRender()) {
@@ -665,7 +667,7 @@ namespace eg
 		if (m_SceneState == SceneState::Play)
 		{
 			Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+ 			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
 			Renderer2D::BeginScene(camera, cameraEntity.GetComponent<TransformComponent>().GetTransform());
 		}
 		else
@@ -753,7 +755,6 @@ namespace eg
 			OnSceneStop();
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
 		m_ActiveScenePath = std::filesystem::path();
 		ConsolePanel::Log("File: EditorLayer.cpp - New Scene Created", ConsolePanel::LogType::Info);
 	}
@@ -823,6 +824,44 @@ namespace eg
 		SetIsSaved(true);
 	}
 
+
+	bool EditorLayer::CreateCmakelists(const std::filesystem::path path)
+	{
+		std::filesystem::path pathToScripts(path.string() + "\\Assets\\Scripts");
+		m_CustomScriptsDirectory = pathToScripts;
+		std::filesystem::path cmakeFilePath = pathToScripts / "CMakeLists.txt";
+
+		if(std::filesystem::exists(cmakeFilePath) && std::filesystem::is_regular_file(cmakeFilePath)) return true;
+
+		std::filesystem::path cscmakelistsPath = path.parent_path() / "CustomScriptsCmakeLists.txt";
+		std::ifstream source(cscmakelistsPath, std::ios::binary);
+
+		std::ofstream destination(cmakeFilePath, std::ios::binary);
+
+		if (!source.is_open() || !destination.is_open()) {
+			return false;
+		}
+
+		destination << source.rdbuf();
+
+		destination.flush();
+		destination.close();
+		source.close();
+		return true;
+	}
+
+	const std::string EditorLayer::CompileCustomScripts()
+	{
+		std::filesystem::path projectDirectory =  m_CurrentProject->GetProjectDirectory() / "Assets" / "Scripts";
+		const std::string& projectName = m_CurrentProject->GetProjectName();
+		std::string command = "cd " + projectDirectory.string() + " && cmake -DPROJECT_NAME=" + projectName + " . && cmake --build .";
+		if(system(command.c_str())!=0) return "Compilation failed. Look into console for more information.";
+		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetScriptModulePath();
+		ScriptEngine::ReloadAssembly();
+		EG_TRACE("Compilation of Custom Scripts succeded");
+		return "Compilation succeded.";
+	}
+
 	void EditorLayer::NewProject()
 	{
 		std::filesystem::path saveDir = m_NameNewProjectPanel->projectName + "\\" + m_NameNewProjectPanel->projectName + ".mnproj";
@@ -831,7 +870,7 @@ namespace eg
 		std::string scriptsFolder = m_NameNewProjectPanel->projectName + "\\Assets\\Scripts";
 		std::string scenesFolder = m_NameNewProjectPanel->projectName + "\\Assets\\Scenes";
 		
-		rps.Serialize(absolutePath.string(), "recentProjectSerializer.txt");
+		m_RecentProjectSerializer.Serialize(absolutePath.string(), "recentProjectSerializer.txt");
 
 		Project::New();
 
@@ -846,18 +885,24 @@ namespace eg
 		AssetDirectory* root = new AssetDirectory(rootUUID, "Assets", 0);
 
 		AssetDirectoryManager::initDefault(rootUUID);
+
+		EG_ASSERT(this->CreateCmakelists(absolutePath.parent_path().string()));
 		
-		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
-		m_ContentBrowserPanel->InitPanels();
-		m_AddResourcePanel = CreateScope<AddResourcePanel>();
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-
-
 		Project::Save(absolutePath);
 		NewScene();
 		m_ActiveScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 		Save();
 		OpenScene(m_ActiveScenePath);
+
+		OpenProject(absolutePath);
+		/*ScriptEngine::Init();
+		m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+		m_ProjectDirectoryPanel = CreateRef<ProjectDirectoryPanel>();
+		m_ProjectDirectoryPanel->SetContentBrowserPanel(m_ContentBrowserPanel);
+		m_ContentBrowserPanel->InitPanels();
+		m_AddResourcePanel = CreateScope<AddResourcePanel>();
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);*/
+
 
 		
 		ScriptSerializer::Serialize(scriptsFolder, m_NameNewProjectPanel->projectName);
@@ -873,22 +918,24 @@ namespace eg
 			return false;
 		}
 		OpenProject(filepath);
-		rps.Serialize(filepath, "recentProjectSerializer.txt");
+		m_RecentProjectSerializer.Serialize(filepath, "recentProjectSerializer.txt");
 		ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
 		return true;
 	}
 
 	void EditorLayer::OpenProject(const std::filesystem::path& path)
 	{
-		if (Project::Load(path))
+		if (m_CurrentProject = Project::Load(path))
 		{
 			ScriptEngine::Init();
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
-			m_ContentBrowserPanel->InitPanels();
+			m_ProjectDirectoryPanel = CreateRef<ProjectDirectoryPanel>();
+			m_ProjectDirectoryPanel->SetContentBrowserPanel(m_ContentBrowserPanel);
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+			m_ContentBrowserPanel->InitPanels();
 			Application::Get().ChangeNameWithCurrentProject(true);
 
 
