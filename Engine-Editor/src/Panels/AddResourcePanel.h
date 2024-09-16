@@ -39,9 +39,6 @@ namespace eg {
 		Ref<Texture2D> m_NativeScriptIcon;
 		Ref<Texture2D> m_CustomIcon;
 
-		ImFont* m_PoppinsLightFont;
-		ImFont* m_PoppinsMediumFont;
-
 		bool m_showResourcePanel = false;
 		std::filesystem::path m_ResourcePath;
 		bool m_ImagePanelinitialized = false;

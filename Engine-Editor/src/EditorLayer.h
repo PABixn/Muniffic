@@ -145,6 +145,8 @@ namespace eg {
 		ImVec4 m_NormalShade = ImVec4(0.204f, 0.145f, 0.278f, 1.0f);
 
 		ImFont* m_PoppinsRegularFont;
+		ImFont* m_PoppinsLightFont;
+		ImFont* m_PoppinsMediumFont;
 	};
 
 }

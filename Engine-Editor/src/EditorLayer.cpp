@@ -59,6 +59,11 @@ namespace eg
 		auto& io = ImGui::GetIO();
 		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesDefault());
 		IM_ASSERT(m_PoppinsRegularFont != NULL);
+		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsLightFont != NULL);
+		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsMediumFont != NULL);
 		io.FontDefault = m_PoppinsRegularFont;
 
 		FrameBufferSpecification fbSpec;
