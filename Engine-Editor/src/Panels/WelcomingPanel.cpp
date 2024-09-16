@@ -30,7 +30,6 @@ namespace eg
 
 	void WelcomingPanel::OnImGuiRender()
 	{
-
 		ImGui::Begin("WelcomingPanel", &m_Show , ImGuiWindowFlags_NoTitleBar| ImGuiViewportFlags_NoDecoration);
 		ImGui::SetWindowFontScale(2.2);
 		ImGui::Text("Muniffic Physics Engine");
