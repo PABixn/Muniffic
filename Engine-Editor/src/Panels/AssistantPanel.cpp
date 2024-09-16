@@ -302,16 +302,19 @@ namespace eg
 	{
 		if (m_isListening)
 		{
-			if (!assistantManager->GetVoiceAssistantListening())
+			if (!assistantManager->GetVoiceAssistantListening() && !assistantManager->GetIsThreadOccupied())
 			{
+				assistantManager->SetThreadOccupied(true);
+				assistantManager->SetVoiceAssistantListening(true);
 				std::thread t([this] { assistantManager->StartListening(); });
 				t.detach();
 			}
 		}
 		else
 		{
-			if (assistantManager->GetVoiceAssistantListening())
+			if (assistantManager->GetVoiceAssistantListening() && !assistantManager->GetIsThreadOccupied())
 			{
+				assistantManager->SetThreadOccupied(true);
 				assistantManager->SetVoiceAssistantListening(false);
 				std::thread t([this] { assistantManager->StopListening(); });
 				t.detach();
@@ -457,6 +460,10 @@ namespace eg
 		if(message.empty())
 			return;
 
+		if(assistantManager->GetIsThreadOccupied())
+			return;
+
+		assistantManager->SetThreadOccupied(true);
 		std::thread t(DoMessage, assistantManager, threadID, buffer);
 		t.detach();
 	}

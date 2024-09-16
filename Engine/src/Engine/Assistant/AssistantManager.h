@@ -51,6 +51,9 @@ namespace eg
 		bool IsNewVoiceMessageAvailable() { return newVoiceMessageAvailable; }
 		std::string GetLastVoiceMessage() { newVoiceMessageAvailable = false; return lastVoiceMessage; }
 
+		bool GetIsThreadOccupied() { return IsThreadOccupied; }
+		void SetThreadOccupied(bool occupied) { IsThreadOccupied = occupied; }	
+
 	private:
 		std::string m_AssistantName;
 		std::string m_AssistantInstructions;
@@ -60,6 +63,7 @@ namespace eg
 		std::string lastVoiceMessage;
 		bool IsVoiceAssistantListening;
 		bool IsVoiceAsssistantInitialized;
+		bool IsThreadOccupied;
 
 	private:
 		PyObject* m_voiceAssistantModule;

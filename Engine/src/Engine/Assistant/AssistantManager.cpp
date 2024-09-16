@@ -15,6 +15,7 @@ namespace eg
 		IsVoiceAssistantListening = false;
 		newVoiceMessageAvailable = false;
 		IsVoiceAsssistantInitialized = false;
+		IsThreadOccupied = false;
 
 		Init();
 	}
@@ -41,6 +42,7 @@ namespace eg
 
 		PyGILState_Release(gstate);
 	
+		IsThreadOccupied = false;
 	}
 
 	bool AssistantManager::CheckMicrophoneAvailable()
@@ -57,6 +59,8 @@ namespace eg
 
 		PyGILState_Release(gstate);
 
+		IsThreadOccupied = false;
+
 		return PyObject_IsTrue(result);
 	}
 
@@ -67,6 +71,8 @@ namespace eg
 		PyObject_CallObject(m_stopVoiceAssistant, nullptr);
 
 		PyGILState_Release(gstate);
+
+		IsThreadOccupied = false;
 	}
 
 	void AssistantManager::StartListening()
@@ -88,6 +94,7 @@ namespace eg
 			PyGILState_Release(gstate);
 			IsVoiceAssistantListening = false;
 			EG_CORE_ERROR("Failed to get voice message");
+			IsThreadOccupied = false;
 			return;
 		}
 
@@ -95,6 +102,7 @@ namespace eg
 
 		lastVoiceMessage = text;
 		newVoiceMessageAvailable = true;
+		IsThreadOccupied = false;
 	}
 
 	void AssistantManager::Init()
@@ -169,6 +177,8 @@ namespace eg
 		}
 
 		PyEval_SaveThread();
+
+		IsThreadOccupied = false;
 	}
 
 	void AssistantManager::CreateAssistant(std::string assistantName, std::string assistantInstructions = "")
@@ -198,6 +208,8 @@ namespace eg
 		PyGILState_Release(gstate);
 
 		SaveAssistant();
+
+		IsThreadOccupied = false;
 	}
 
 	std::string AssistantManager::CreateThread()
@@ -218,6 +230,8 @@ namespace eg
 
 		PyGILState_Release(gstate);
 
+		IsThreadOccupied = false;
+
 		return threadID;
 	}
 
@@ -226,10 +240,10 @@ namespace eg
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
 			EG_CORE_ERROR("Thread not found");
+			IsThreadOccupied = false;
 			return;
 		}
 
-		// Ensure GIL state is acquired
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(m_AssistantID.c_str()), PyUnicode_FromString(threadID.c_str()));
@@ -239,6 +253,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
 			PyGILState_Release(gstate);
+			IsThreadOccupied = false;
 			return;
 		}
 
@@ -249,13 +264,15 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call initiate_run function");
 			PyGILState_Release(gstate);
+			IsThreadOccupied = false;
 			return;
 		}
 
 		m_Threads.at(threadID)->m_RunIDs.push_back(PyUnicode_AsUTF8(result));
 
-		// Release GIL state
 		PyGILState_Release(gstate);
+
+		IsThreadOccupied = false;
 	}
 
 
@@ -264,6 +281,7 @@ namespace eg
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
 			EG_CORE_ERROR("Thread not found");
+			IsThreadOccupied = false;
 			return;
 		}
 
@@ -273,7 +291,6 @@ namespace eg
 
 		m_Threads.at(threadID)->messages.push_back(messageObj);
 
-		// Ensure GIL state is acquired
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(message.c_str()));
@@ -286,14 +303,15 @@ namespace eg
 
 			delete messageObj;
 			m_Threads.at(threadID)->messages.pop_back();
-
+			IsThreadOccupied = false;
 			return;
 		}
 
 		PyObject_CallObject(m_AddMessage, args);
 
-		// Release GIL state
 		PyGILState_Release(gstate);
+
+		IsThreadOccupied = false;
 	}
 
 
@@ -302,18 +320,19 @@ namespace eg
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
 			EG_CORE_ERROR("Thread not found");
+			IsThreadOccupied = false;
 			return false;
 		}
 
 		if (m_Threads.at(threadID)->m_RunIDs.size() == 0)
 		{
 			EG_CORE_ERROR("No run IDs found for thread");
+			IsThreadOccupied = false;
 			return false;
 		}
 
 		std::string runID = m_Threads.at(threadID)->m_RunIDs.at(m_Threads.at(threadID)->m_RunIDs.size() - 1);
 
-		// Ensure GIL state is acquired
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()));
@@ -323,6 +342,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
 			PyGILState_Release(gstate);
+			IsThreadOccupied = false;
 			return false;
 		}
 
@@ -333,6 +353,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call wait_for_completion function");
 			PyGILState_Release(gstate);
+			IsThreadOccupied = false;
 			return false;
 		}
 
@@ -347,6 +368,7 @@ namespace eg
 				PyErr_Print();
 				EG_CORE_ERROR("Failed to create args object");
 				PyGILState_Release(gstate);
+				IsThreadOccupied = false;
 				return false;
 			}
 
@@ -357,6 +379,7 @@ namespace eg
 				PyErr_Print();
 				EG_CORE_ERROR("Failed to call get_last_message function");
 				PyGILState_Release(gstate);
+				IsThreadOccupied = false;
 				return false;
 			}
 
@@ -374,6 +397,8 @@ namespace eg
 			
 			m_Threads.at(threadID)->messages.push_back(messageObj);
 
+			IsThreadOccupied = false;
+
 			return true;
 		}
 		else if (status == "requires_action")
@@ -384,10 +409,12 @@ namespace eg
 		{
 			EG_CORE_ERROR("Run " + status);
 			PyGILState_Release(gstate);
+			IsThreadOccupied = false;
 			return false;
 		}
 
 		PyGILState_Release(gstate);
+		IsThreadOccupied = false;
 		return false;
 	}
 
@@ -400,6 +427,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
 			PyGILState_Release(gstate);
+			IsThreadOccupied = false;
 			return false;
 		}
 
@@ -410,6 +438,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call get_tool_call function");
 			PyGILState_Release(gstate);
+			IsThreadOccupied = false;
 			return false;
 		}
 
@@ -507,6 +536,7 @@ namespace eg
 					PyErr_Print();
 					EG_CORE_ERROR("Failed to create args object");
 					PyGILState_Release(gstate);
+					IsThreadOccupied = false;
 					return false;
 				}
 
@@ -517,6 +547,7 @@ namespace eg
 					PyErr_Print();
 					EG_CORE_ERROR("Failed to call submit_tool_outputs function");
 					PyGILState_Release(gstate);
+					IsThreadOccupied = false;
 					return false;
 				}
 			}
@@ -524,7 +555,6 @@ namespace eg
 			WaitForCompletion(threadID);
 		}
 	}
-
 
 	void AssistantManager::SaveAssistant()
 	{
@@ -552,6 +582,7 @@ namespace eg
 			std::filesystem::create_directories(path.parent_path());
 			std::ofstream file(path.string(), std::ios::trunc);
 			file.close();
+			IsThreadOccupied = false;
 			return false;
 		}
 
@@ -564,21 +595,28 @@ namespace eg
 		catch (YAML::ParserException e)
 		{
 			EG_CORE_ERROR("Failed to load assistant data");
+			IsThreadOccupied = false;
 			return false;
 		}
 
 		if(data["assistantID"])
 			m_AssistantID = data["assistantID"].as<std::string>();
 		else
+		{
+			IsThreadOccupied = false;
 			return false;
+		}
 
 		if (!CheckIfAssistantExists(m_AssistantID))
 		{
 			EG_CORE_ERROR("Assistant with ID {0} does not exist", m_AssistantID);
+			IsThreadOccupied = false;
 			return false;
 		}
 
 		EG_CORE_INFO("Assistant loaded with ID: {0}", m_AssistantID);
+
+		IsThreadOccupied = false;
 
 		return true;
 	}
@@ -593,6 +631,7 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
+			IsThreadOccupied = false;
 			return false;
 		}
 
@@ -602,10 +641,13 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call check_if_assistant_exists function");
+			IsThreadOccupied = false;
 			return false;
 		}	
 
 		PyGILState_Release(gstate);
+
+		IsThreadOccupied = false;
 
 		return PyObject_IsTrue(result);
 	}
