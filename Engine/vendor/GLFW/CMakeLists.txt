@@ -1,179 +1,117 @@
-cmake_minimum_required(VERSION 3.4...3.20 FATAL_ERROR)
+# GLFW/CMakeLists.txt
 
-project(GLFW VERSION 3.4.0 LANGUAGES C)
+cmake_minimum_required(VERSION 3.16)
+project(GLFW LANGUAGES C)
 
-set(CMAKE_LEGACY_CYGWIN_WIN32 OFF)
+add_library(GLFW STATIC)
 
-if (POLICY CMP0054)
-    cmake_policy(SET CMP0054 NEW)
-endif()
-
-if (POLICY CMP0069)
-    cmake_policy(SET CMP0069 NEW)
-endif()
-
-if (POLICY CMP0077)
-    cmake_policy(SET CMP0077 NEW)
-endif()
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-    set(GLFW_STANDALONE TRUE)
-endif()
-
-option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-option(GLFW_BUILD_EXAMPLES "Build the GLFW example programs" ${GLFW_STANDALONE})
-option(GLFW_BUILD_TESTS "Build the GLFW test programs" ${GLFW_STANDALONE})
-option(GLFW_BUILD_DOCS "Build the GLFW documentation" ON)
-option(GLFW_INSTALL "Generate installation target" ON)
-
-include(GNUInstallDirs)
-include(CMakeDependentOption)
-
-if (GLFW_USE_OSMESA)
-    message(FATAL_ERROR "GLFW_USE_OSMESA has been removed; set the GLFW_PLATFORM init hint")
-endif()
-
-cmake_dependent_option(GLFW_BUILD_WIN32 "Build support for Win32" ON "WIN32" OFF)
-cmake_dependent_option(GLFW_BUILD_COCOA "Build support for Cocoa" ON "APPLE" OFF)
-cmake_dependent_option(GLFW_BUILD_X11 "Build support for X11" ON "UNIX;NOT APPLE" OFF)
-cmake_dependent_option(GLFW_BUILD_WAYLAND "Build support for Wayland"
-    "${GLFW_USE_WAYLAND}" "UNIX;NOT APPLE" OFF)
-
-cmake_dependent_option(GLFW_USE_HYBRID_HPG "Force use of high-performance GPU on hybrid systems" OFF
-                       "WIN32" OFF)
-cmake_dependent_option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" ON
-                       "MSVC" OFF)
-
-set(GLFW_LIBRARY_TYPE "${GLFW_LIBRARY_TYPE}" CACHE STRING
-    "Library type override for GLFW (SHARED, STATIC, OBJECT, or empty to follow BUILD_SHARED_LIBS)")
-
-if (GLFW_LIBRARY_TYPE)
-    if (GLFW_LIBRARY_TYPE STREQUAL "SHARED")
-        set(GLFW_BUILD_SHARED_LIBRARY TRUE)
-    else()
-        set(GLFW_BUILD_SHARED_LIBRARY FALSE)
-    endif()
+if(MSVC)
+    target_compile_options(GLFW PRIVATE /w)
 else()
-    set(GLFW_BUILD_SHARED_LIBRARY ${BUILD_SHARED_LIBS})
+    target_compile_options(GLFW PRIVATE -w)
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${GLFW_SOURCE_DIR}/CMake/modules")
+# Output directories for binaries and object files
+set_target_properties(GLFW PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/GLFW"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/GLFW"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/GLFW"
+    OUTPUT_NAME "GLFW"
+)
 
-find_package(Threads REQUIRED)
+# Source files
+set(GLFW_FILES
+    "include/GLFW/glfw3.h"
+    "include/GLFW/glfw3native.h"
+    #"src/glfw_config.h"
+    "src/context.c"
+    "src/init.c"
+    "src/input.c"
+    "src/monitor.c"
+    "src/null_init.c"
+    "src/null_joystick.c"
+    "src/null_monitor.c"
+    "src/null_window.c"
+    "src/platform.c"
+    "src/vulkan.c"
+    "src/window.c"
+)
 
-if (GLFW_BUILD_DOCS)
-    set(DOXYGEN_SKIP_DOT TRUE)
-    find_package(Doxygen)
+target_sources(GLFW PRIVATE ${GLFW_FILES})
+
+# Platform-specific source files and defines
+if(UNIX AND NOT APPLE) # Linux
+    target_sources(GLFW PRIVATE
+        "src/x11_init.c"
+        "src/x11_monitor.c"
+        "src/x11_window.c"
+        "src/xkb_unicode.c"
+        "src/posix_module.c"
+        "src/posix_time.c"
+        "src/posix_thread.c"
+        "src/glx_context.c"
+        "src/egl_context.c"
+        "src/osmesa_context.c"
+        "src/linux_joystick.c"
+    )
+    target_compile_definitions(GLFW PRIVATE _GLFW_X11)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+elseif(APPLE) # macOS
+    target_sources(GLFW PRIVATE
+        "src/cocoa_init.m"
+        "src/cocoa_monitor.m"
+        "src/cocoa_window.m"
+        "src/cocoa_joystick.m"
+        "src/cocoa_time.c"
+        "src/nsgl_context.m"
+        "src/posix_thread.c"
+        "src/posix_module.c"
+        "src/osmesa_context.c"
+        "src/egl_context.c"
+    )
+    target_compile_definitions(GLFW PRIVATE _GLFW_COCOA)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+elseif(WIN32) # Windows
+    target_sources(GLFW PRIVATE
+        "src/win32_init.c"
+        "src/win32_joystick.c"
+        "src/win32_module.c"
+        "src/win32_monitor.c"
+        "src/win32_time.c"
+        "src/win32_thread.c"
+        "src/win32_window.c"
+        "src/wgl_context.c"
+        "src/egl_context.c"
+        "src/osmesa_context.c"
+    )
+    target_compile_definitions(GLFW PRIVATE _GLFW_WIN32 _CRT_SECURE_NO_WARNINGS)
+    set(CMAKE_SYSTEM_VERSION "latest")
 endif()
 
-#--------------------------------------------------------------------
-# Report backend selection
-#--------------------------------------------------------------------
-if (GLFW_BUILD_WIN32)
-    message(STATUS "Including Win32 support")
-endif()
-if (GLFW_BUILD_COCOA)
-    message(STATUS "Including Cocoa support")
-endif()
-if (GLFW_BUILD_WAYLAND)
-    message(STATUS "Including Wayland support")
-endif()
-if (GLFW_BUILD_X11)
-    message(STATUS "Including X11 support")
-endif()
+# Debug configuration
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
-#--------------------------------------------------------------------
-# Apply Microsoft C runtime library option
-# This is here because it also applies to tests and examples
-#--------------------------------------------------------------------
-if (MSVC AND NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-    if (CMAKE_VERSION VERSION_LESS 3.15)
-        foreach (flag CMAKE_C_FLAGS
-                      CMAKE_C_FLAGS_DEBUG
-                      CMAKE_C_FLAGS_RELEASE
-                      CMAKE_C_FLAGS_MINSIZEREL
-                      CMAKE_C_FLAGS_RELWITHDEBINFO)
+# Release configuration
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
-            if (flag MATCHES "/MD")
-                string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-            endif()
-            if (flag MATCHES "/MDd")
-                string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
-            endif()
+# Dist configuration
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -O3")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O3")
+set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -O3 -DNDEBUG")
 
-        endforeach()
-    else()
-        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    endif()
-endif()
-
-#--------------------------------------------------------------------
-# Create generated files
-#--------------------------------------------------------------------
-include(CMakePackageConfigHelpers)
-
-set(GLFW_CONFIG_PATH "${CMAKE_INSTALL_LIBDIR}/cmake/glfw3")
-
-configure_package_config_file(CMake/glfw3Config.cmake.in
-                              src/glfw3Config.cmake
-                              INSTALL_DESTINATION "${GLFW_CONFIG_PATH}"
-                              NO_CHECK_REQUIRED_COMPONENTS_MACRO)
-
-write_basic_package_version_file(src/glfw3ConfigVersion.cmake
-                                 VERSION ${GLFW_VERSION}
-                                 COMPATIBILITY SameMajorVersion)
-
-#--------------------------------------------------------------------
-# Add subdirectories
-#--------------------------------------------------------------------
-add_subdirectory(src)
-
-if (GLFW_BUILD_EXAMPLES)
-    add_subdirectory(examples)
-endif()
-
-if (GLFW_BUILD_TESTS)
-    add_subdirectory(tests)
-endif()
-
-if (DOXYGEN_FOUND AND GLFW_BUILD_DOCS)
-    add_subdirectory(docs)
-endif()
-
-#--------------------------------------------------------------------
-# Install files other than the library
-# The library is installed by src/CMakeLists.txt
-#--------------------------------------------------------------------
-if (GLFW_INSTALL)
-    install(DIRECTORY include/GLFW DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-            FILES_MATCHING PATTERN glfw3.h PATTERN glfw3native.h)
-
-    install(FILES "${GLFW_BINARY_DIR}/src/glfw3Config.cmake"
-                  "${GLFW_BINARY_DIR}/src/glfw3ConfigVersion.cmake"
-            DESTINATION "${GLFW_CONFIG_PATH}")
-
-    install(EXPORT glfwTargets FILE glfw3Targets.cmake
-            EXPORT_LINK_INTERFACE_LIBRARIES
-            DESTINATION "${GLFW_CONFIG_PATH}")
-    install(FILES "${GLFW_BINARY_DIR}/src/glfw3.pc"
-            DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
-
-    if (DOXYGEN_FOUND AND GLFW_BUILD_DOCS)
-        install(DIRECTORY "${GLFW_BINARY_DIR}/docs/html"
-                DESTINATION "${CMAKE_INSTALL_DOCDIR}")
-    endif()
-
-    # Only generate this target if no higher-level project already has
-    if (NOT TARGET uninstall)
-        configure_file(CMake/cmake_uninstall.cmake.in
-                       cmake_uninstall.cmake IMMEDIATE @ONLY)
-
-        add_custom_target(uninstall
-                          "${CMAKE_COMMAND}" -P
-                          "${GLFW_BINARY_DIR}/cmake_uninstall.cmake")
-        set_target_properties(uninstall PROPERTIES FOLDER "GLFW3")
+# Symbols for different configurations
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(GLFW PRIVATE GLFW_DEBUG)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "Dist")
+    target_compile_options(GLFW PRIVATE -O3)
+    if(CMAKE_BUILD_TYPE STREQUAL "Dist")
+        set(CMAKE_C_FLAGS_DIST "${CMAKE_C_FLAGS_DIST} -DNDEBUG")
+        set(CMAKE_CXX_FLAGS_DIST "${CMAKE_CXX_FLAGS_DIST} -DNDEBUG")
     endif()
 endif()
 

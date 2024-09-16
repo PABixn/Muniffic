@@ -27,6 +27,7 @@ namespace eg {
 
 	Scene::Scene()
 	{
+
 	}
 
 	Scene::~Scene()
@@ -131,7 +132,11 @@ namespace eg {
 	{
 		if (entity.GetParent().has_value())
 			entity.GetParent().value().RemoveChild(entity);
-		m_PhysicsWorld->DestroyBody((b2Body *)entity.GetComponent<RigidBody2DComponent>().RuntimeBody);
+		if (m_IsRunning && entity.HasComponent<RigidBody2DComponent>())
+		{
+			b2Body* entityBody = (b2Body*)entity.GetComponent<RigidBody2DComponent>().RuntimeBody;
+			m_PhysicsWorld->DestroyBody(entityBody);
+		}
 		m_EntityMap.erase(entity.GetUUID());
 		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
@@ -220,10 +225,44 @@ namespace eg {
 		RenderScene(camera);
 	}
 
-	void Scene::OnUpdateRuntime(Timestep ts)
+	void Scene::FixedUpdate()
 	{
+		{
+			const int32_t velocityIterations = 6;
+			const int32_t positionIterations = 2;
+			//float interpolationAlpha = (T - Time.fixedTime) / Time.fixedDeltaTime;
+			m_PhysicsWorld->Step(m_FixedFramerate/1000.0f, velocityIterations, positionIterations);
+
+			auto view = m_Registry.view<RigidBody2DComponent>();
+			for (auto e : view)
+			{
+				Entity entity{ e, this };
+				auto& rb = entity.GetComponent<RigidBody2DComponent>();
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto* body = (b2Body*)rb.RuntimeBody;
+
+
+				transform.PrevTranslation = transform.Translation;
+				float interpolationAlpha = 1.0f;
+
+
+				transform.Translation.x = transform.PrevTranslation.x + interpolationAlpha * (body->GetPosition().x - transform.PrevTranslation.x);
+				transform.Translation.y = transform.PrevTranslation.y + interpolationAlpha * (body->GetPosition().y - transform.PrevTranslation.y);
+				transform.Rotation.z = body->GetAngle();
+			}
+		}
+	}
+
+	void Scene::OnUpdateRuntime(Timestep ts,std::chrono::steady_clock::time_point& oldTime)
+	{
+		m_NewTime = std::chrono::high_resolution_clock::now();
+		m_Delta = std::chrono::duration_cast<std::chrono::milliseconds>(m_NewTime - oldTime).count();
+		oldTime = m_NewTime;
+		
+
 		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
+			
 			// Update Native scripts
 			{
 				//C# Entity OnUpdate
@@ -248,6 +287,19 @@ namespace eg {
 					});
 			}
 
+			
+
+
+
+			m_TimePassed = m_TimePassed + (float)m_Delta;
+
+
+			while (m_TimePassed >= m_FixedFramerate)
+			{
+				FixedUpdate();
+				m_TimePassed = m_TimePassed - m_FixedFramerate;
+				
+			}
 			// Physics
 			{
 				const int32_t velocityIterations = 6;
@@ -255,21 +307,23 @@ namespace eg {
 				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 				auto view = m_Registry.view<RigidBody2DComponent>();
+				for (auto e : view)
 				{
-					for (auto e : view)
-					{
-						Entity entity{ e, this };
-						auto& rb = entity.GetComponent<RigidBody2DComponent>();
-						auto& transform = entity.GetComponent<TransformComponent>();
-						auto* body = (b2Body*)rb.RuntimeBody;
+					Entity entity{ e, this };
+					auto& rb = entity.GetComponent<RigidBody2DComponent>();
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto* body = (b2Body*)rb.RuntimeBody;
 
-						transform.Translation.x = body->GetPosition().x;
-						transform.Translation.y = body->GetPosition().y;
-						transform.Rotation.z = body->GetAngle();
-					}
+					transform.Translation.x = body->GetPosition().x;
+					transform.Translation.y = body->GetPosition().y;
+					transform.Rotation.z = body->GetAngle();
 				}
 			}
 
+			for (Entity entity : m_EntitiesToDestroy)
+			{
+				DestroyEntity(entity);
+			}
 		}
 
 		// Render 2D
@@ -359,7 +413,6 @@ namespace eg {
 
 			Renderer2D::EndScene();
 		}
-
 	}
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
@@ -483,6 +536,11 @@ namespace eg {
 		
 	}
 
+	void Scene::AddEntityToDestroy(Entity entity)
+	{
+		m_EntitiesToDestroy.push_back(entity  );
+	}
+
 	Entity Scene::DuplicateEntity(Entity entity)
 	{
 		std::string name = entity.GetName();
@@ -560,6 +618,7 @@ namespace eg {
 			fixtureDef.restitution = bc.Restitution;
 			fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
 			fixtureDef.userData.pointer = entity.GetUUID();
+			fixtureDef.isSensor = bc.IsSensor;
 
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			bc.RuntimeFixture = fixture;
@@ -580,6 +639,7 @@ namespace eg {
 			fixtureDef.restitution = cc.Restitution;
 			fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
 			fixtureDef.userData.pointer = entity.GetUUID();
+			fixtureDef.isSensor = cc.IsSensor;
 
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			cc.RuntimeFixture = fixture;
@@ -616,8 +676,11 @@ namespace eg {
 		{
 			Entity e{ entity, this };
 			auto& transform = e.GetComponent<TransformComponent>();
+			auto& rb = e.GetComponent<RigidBody2DComponent>();
 
 			b2Body* body = (b2Body*)StartRuntimeBody(e);
+			body->SetGravityScale(rb.GravityMultiplier);
+
 
 			if (e.HasComponent<BoxCollider2DComponent>())
 			{
@@ -632,6 +695,7 @@ namespace eg {
 				fixtureDef.restitution = bc.Restitution;
 				fixtureDef.restitutionThreshold = bc.RestitutionThreshold;
 				fixtureDef.userData.pointer = e.GetUUID();
+				fixtureDef.isSensor = bc.IsSensor;
 
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				bc.RuntimeFixture = fixture;
@@ -652,6 +716,7 @@ namespace eg {
 				fixtureDef.restitution = cc.Restitution;
 				fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
 				fixtureDef.userData.pointer = e.GetUUID();
+				fixtureDef.isSensor = cc.IsSensor;
 				
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				cc.RuntimeFixture = fixture;

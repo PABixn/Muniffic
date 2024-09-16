@@ -3412,6 +3412,33 @@ void ImGui::RenderFrame(ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, bool border,
     }
 }
 
+// Render a rectangle shaped with optional rounding and borders
+void ImGui::RenderFrameRounded(ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, ImDrawFlags flags, bool border, float rounding)
+{
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = g.CurrentWindow;
+    window->DrawList->AddRectFilled(p_min, p_max, fill_col, rounding, flags);
+    const float border_size = g.Style.FrameBorderSize;
+    if (border && border_size > 0.0f)
+    {
+        window->DrawList->AddRect(p_min + ImVec2(1, 1), p_max + ImVec2(1, 1), GetColorU32(ImGuiCol_BorderShadow), rounding, flags, border_size);
+        window->DrawList->AddRect(p_min, p_max, GetColorU32(ImGuiCol_Border), rounding, flags, border_size);
+    }
+}
+// Render a rectangle shaped with optional rounding and borders
+void ImGui::Vec3AxisRenderFrame(ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, bool border, float rounding, ImDrawCornerFlags flags)
+{
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = g.CurrentWindow;
+    window->DrawList->AddRectFilled(p_min, p_max, fill_col, rounding, flags);
+    const float border_size = g.Style.FrameBorderSize;
+    if (border && border_size > 0.0f)
+    {
+        window->DrawList->AddRect(p_min + ImVec2(1, 1), p_max + ImVec2(1, 1), GetColorU32(ImGuiCol_BorderShadow), rounding, flags, border_size);
+        window->DrawList->AddRect(p_min, p_max, GetColorU32(ImGuiCol_Border), rounding, flags, border_size);
+    }
+}
+
 void ImGui::RenderFrameBorder(ImVec2 p_min, ImVec2 p_max, float rounding)
 {
     ImGuiContext& g = *GImGui;
@@ -10046,6 +10073,13 @@ ImVec2 ImGui::GetCursorStartPos()
 }
 
 void ImGui::Indent(float indent_w)
+{
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = GetCurrentWindow();
+    window->DC.Indent.x += (indent_w != 0.0f) ? indent_w : g.Style.IndentSpacing;
+    window->DC.CursorPos.x = window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x;
+}
+void ImGui::TreeDropdownIndent(float indent_w)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();

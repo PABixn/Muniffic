@@ -4,6 +4,7 @@
 #include "Engine/Events/ApplicationEvent.h"
 #include "Engine/Events/MouseEvent.h"
 #include "Engine/Core/KeyCodes.h"
+#include "Engine/Core/Input.h"
 
 namespace eg
 {
@@ -50,8 +51,6 @@ namespace eg
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
-
-		//Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -95,6 +94,7 @@ namespace eg
 						break;
 					}
 				}
+				Input::KeyCallback(key, action);
 			});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods) {
@@ -102,28 +102,30 @@ namespace eg
 
 			switch (action)
 			{
-			case GLFW_PRESS:
-			{
-				MouseButtonPressedEvent event(button);
-				data.EventCallback(event);
-				break;
+				case GLFW_PRESS:
+				{
+					MouseButtonPressedEvent event(button);
+					data.EventCallback(event);
+					break;
+				}
+				case GLFW_RELEASE:
+				{
+					MouseButtonReleasedEvent event(button);
+					data.EventCallback(event);
+					break;
+				}
 			}
-			case GLFW_RELEASE:
-			{
-				MouseButtonReleasedEvent event(button);
-				data.EventCallback(event);
-				break;
-			}
-			}
+			Input::MouseCallback(button, action);
 
-			});
+		});
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			MouseScrolledEvent event((float)xOffset, (float)yOffset);
-			data.EventCallback(event);
-			});
+			data.EventCallback(event); 
+			Input::ScrollCallback(xOffset, yOffset);
+		});
 
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos) {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);

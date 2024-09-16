@@ -22,7 +22,7 @@ namespace eg
     /// Base class for all components.
     /// </summary>
     public abstract class Component
-    { 
+    {
         /// <summary>
         /// Reference to entity the component is attached to.
         /// </summary>
@@ -419,6 +419,14 @@ namespace eg
             set => InternalCalls.RigidBody2DComponent_SetType(Entity.ID, value);
         }
 
+        //GravityMultiplier
+        public float GravityMultiplier 
+        {
+            get => InternalCalls.RigidBody2DComponent_GetGravityMultiplier(Entity.ID);
+            set => InternalCalls.RigidBody2DComponent_SetGravityMultiplier(Entity.ID, value);
+        }
+
+
         /// <summary>
         /// Initializes the runtime body of the RigidBody2D component.
         /// </summary>
@@ -456,11 +464,132 @@ namespace eg
             get => InternalCalls.RigidBody2DComponent_IsFixedRotation(Entity.ID);
             set => InternalCalls.RigidBody2DComponent_SetFixedRotation(Entity.ID, ref value);
         }
+
+        public bool enabled
+        {
+            get => InternalCalls.RigidBody2DComponent_IsEnabled(Entity.ID);
+            set => InternalCalls.RigidBody2DComponent_SetEnabled(Entity.ID, value);
+        }
+
+        public bool sleepingAllowed
+        {
+            get => InternalCalls.RigidBody2DComponent_IsSleepingAllowed(Entity.ID);
+            set => InternalCalls.RigidBody2DComponent_SetSleepingAllowed(Entity.ID, value);
+        }
+
+        public float angularDamping
+        {
+            get => InternalCalls.RigidBody2DComponent_GetAngularDamping(Entity.ID);
+            set => InternalCalls.RigidBody2DComponent_SetAngularDamping(Entity.ID, value);
+        }
+
+        public float angularVelocity
+        {
+            get => InternalCalls.RigidBody2DComponent_GetAngularVelocity(Entity.ID);
+            set => InternalCalls.RigidBody2DComponent_SetAngularVelocity(Entity.ID, value);
+        }
+
+        //public ? contactList
+        //{
+        //    get => InternalCalls.RigidBody2DComponent_GetContactList(Entity.ID);
+        //}
+
+        //public ? jointList
+        //{
+        //    get => InternalCalls.RigidBody2DComponent_GetJointList(Entity.ID);
+        //}
+
+        public float linearDamping
+        {
+            get => InternalCalls.RigidBody2DComponent_GetLinearDamping(Entity.ID);
+            set => InternalCalls.RigidBody2DComponent_SetLinearDamping(Entity.ID, value);
+        }
+
+        public Vector2 localPoint
+        {
+            get => InternalCalls.RigidBody2DComponent_GetLocalPoint(Entity.ID);
+        }
+
+        public Vector2 localVector
+        {
+            get => InternalCalls.RigidBody2DComponent_GetLocalVector(Entity.ID);
+        }
+
+        public float mass
+        {
+            get => InternalCalls.RigidBody2DComponent_GetMass(Entity.ID);
+        }
+
+        public float massData
+        {
+          get => InternalCalls.RigidBody2DComponent_GetMassData(Entity.ID);
+          set => InternalCalls.RigidBody2DComponent_SetMassData(Entity.ID, value);
+        }
+
+        public Vector2 position 
+        {
+            get => InternalCalls.RigidBody2DComponent_GetPosition(Entity.ID);
+        }
+
+        public B2transform transform
+        {
+          get => InternalCalls.RigidBody2DComponent_GetTransform(Entity.ID);
+          set => InternalCalls.RigidBody2DComponent_SetTransform(Entity.ID, value);
+        }
+
+
+
+        public Vector2 worldPoint
+        {
+            get => InternalCalls.RigidBody2DComponent_GetWorldPoint(Entity.ID);
+        }
+
+        public Vector2 worldVector
+        {
+            get => InternalCalls.RigidBody2DComponent_GetWorldVector(Entity.ID);
+        }
+
+        public bool awake
+        {
+            get => InternalCalls.RigidBody2DComponent_IsAwake(Entity.ID);
+            set => InternalCalls.RigidBody2DComponent_SetAwake(Entity.ID, value);
+        }
+
+        public bool bullet
+        {
+            get => InternalCalls.RigidBody2DComponent_IsBullet(Entity.ID);
+            set => InternalCalls.RigidBody2DComponent_SetBullet(Entity.ID, value);
+        }
+
+       // public ref Entity GetUserData()
+        //{
+         //   return InternalCalls.RigidBody2DComponent_GetUserData(Entity.ID);
+        //}
+        
+
+        
+        public void ApplyForce(Vector2 force, Vector2 point, bool wake = true)
+        {
+            InternalCalls.RigidBody2DComponent_ApplyForce(Entity.ID, ref force, ref point, wake);
+        }
+
+        public void ApplyForceToCenter(Vector2 force, bool wake = true)
+        {
+            InternalCalls.RigidBody2DComponent_ApplyForceToCenter(Entity.ID, ref force, wake);
+        }
+
+        public void ApplyTorque(float torque, bool wake = true)
+        {
+            InternalCalls.RigidBody2DComponent_ApplyTorque(Entity.ID, torque, wake);
+        }
+
+
     }
 
-    public enum Side {
-            LEFT = 0, RIGHT, TOP, BOTTOM
-        }
+    public enum Side
+    {
+        LEFT = 0, RIGHT, TOP, BOTTOM
+    }
 
     public class BoxCollider2DComponent : Component
     {
@@ -516,9 +645,15 @@ namespace eg
             set => InternalCalls.BoxCollider2DComponent_SetRestitutionThreshold(Entity.ID, ref value);
         }
 
+        public bool isSensor
+        {
+            get => InternalCalls.BoxCollider2DComponent_IsSensor((ulong)Entity.ID);
+            set => InternalCalls.BoxCollider2DComponent_SetSensor((ulong)Entity.ID, ref value);
+        }
+
         public bool CollidesWith(Entity other)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, other.ID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWith((ulong)Entity.ID, (ulong)other.ID);
         }
 
         public bool CollidesWithBox(Entity other)
@@ -555,7 +690,7 @@ namespace eg
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithTopEdge(Entity.ID, other.ID);
         }
-        
+
         public bool CollidesWithLeftEdge(Entity other)
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithLeftEdge(Entity.ID, other.ID);
@@ -570,19 +705,19 @@ namespace eg
         {
             return InternalCalls.BoxCollider2DComponent_CollidesWithBoxCoords(Entity.ID, ref center, ref size);
         }
-        
-        
-    public bool CollidesWith(long entityID)
-    {
-        return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
-    }
 
-    bool CollidesWithEntitiesSide(Entity entity, Side side)
-    {
-        if (entity == null)
+
+        public bool CollidesWith(long entityID)
         {
-            return false;
+            return InternalCalls.BoxCollider2DComponent_CollidesWith((ulong)Entity.ID, entityID);
         }
+
+        bool CollidesWithEntitiesSide(Entity entity, Side side)
+        {
+            if (entity == null)
+            {
+                return false;
+            }
 
             switch (side)
             {
@@ -596,19 +731,19 @@ namespace eg
                     return this.CollidesWithBottomEdge(entity);
             }
 
-        return false;
-    }
-
-    bool CollidesWithEntity(string entityName)
-    {
-        Entity entity = Entity.FindEntityByName(entityName);
-        if (entity == null)
-        {
             return false;
         }
 
-        return CollidesWith(entity);
-    }
+        bool CollidesWithEntity(string entityName)
+        {
+            Entity entity = Entity.FindEntityByName(entityName);
+            if (entity == null)
+            {
+                return false;
+            }
+
+            return CollidesWith(entity);
+        }
     }
 
     public class CircleCollider2DComponent : Component
@@ -648,10 +783,15 @@ namespace eg
             get => InternalCalls.CircleCollider2DComponent_GetRadius(Entity.ID);
             set => InternalCalls.CircleCollider2DComponent_SetRadius(Entity.ID, ref value);
         }
+        public bool isSensor
+        {
+            get => InternalCalls.CircleCollider2DComponent_IsSensor((ulong)Entity.ID);
+            set => InternalCalls.CircleCollider2DComponent_SetSensor((ulong)Entity.ID, ref value);
+        }
 
         public bool CollidesWith(Entity other)
         {
-            return InternalCalls.CircleCollider2DComponent_CollidesWith(Entity.ID, other.ID);
+            return InternalCalls.CircleCollider2DComponent_CollidesWith((ulong)Entity.ID, (ulong)other.ID);
         }
 
         public bool CollidesWithCircle(Entity other)
@@ -682,7 +822,7 @@ namespace eg
         public bool CollidesWithEntity(long entityID)
         {
 
-            return InternalCalls.CircleCollider2DComponent_CollidesWith(Entity.ID, entityID);
+            return InternalCalls.CircleCollider2DComponent_CollidesWith((ulong)Entity.ID, (ulong)entityID);
         }
 
         public bool CollidesWithEntity(string entityName)
@@ -698,25 +838,25 @@ namespace eg
 
         public bool CollidesWithEntitySide(long entityID, Side side)
         {
-           Entity entity = Entity.FindEntityByID(entityID);
-           if (entity == null)
-           {
-               return false;
-           }
+            Entity entity = Entity.FindEntityByID(entityID);
+            if (entity == null)
+            {
+                return false;
+            }
 
-           switch (side)
-           {
-               case Side.LEFT:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, entity.ID);
-               case Side.RIGHT:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, entity.ID);
-               case Side.TOP:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, entity.ID);
-               case Side.BOTTOM:
-                   return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, entity.ID);
-               default:
-                   return false;
-           }
+            switch (side)
+            {
+                case Side.LEFT:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithLeftEdge(Entity.ID, entity.ID);
+                case Side.RIGHT:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithRightEdge(Entity.ID, entity.ID);
+                case Side.TOP:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithTopEdge(Entity.ID, entity.ID);
+                case Side.BOTTOM:
+                    return InternalCalls.CircleCollider2DComponent_CollidesWithBottomEdge(Entity.ID, entity.ID);
+                default:
+                    return false;
+            }
         }
 
         public bool CollidesWithEntitiesLeftEdge(Entity other)

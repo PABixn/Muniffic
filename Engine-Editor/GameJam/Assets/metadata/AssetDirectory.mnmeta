@@ -1,57 +1,52 @@
-Root: 4415220485909902051
+Root: 2052949809877214851
 Directories:
-  - UUID: 2293609554447130123
-    Name: SubTextures
-    Parent: 4415220485909902051
-    Subdirectories:
-      []
-    Assets:
-      - 8445089710411027499
-  - UUID: 740602716317509739
-    Name: Shaders
-    Parent: 4415220485909902051
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 1549463422698458353
-    Name: Textures
-    Parent: 4415220485909902051
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 3925534363660600358
-    Name: Animations
-    Parent: 4415220485909902051
-    Subdirectories:
-      []
-    Assets:
-      - 3535187961141617245
-  - UUID: 8480765534504766502
-    Name: SpriteAtlas
-    Parent: 4415220485909902051
-    Subdirectories:
-      []
-    Assets:
-      - 3918779571077109730
-  - UUID: 887306884427864042
+  - UUID: 5452054827863041738
     Name: Fonts
-    Parent: 4415220485909902051
+    Parent: 2052949809877214851
     Subdirectories:
       []
     Assets:
-      - 6692796227191014944
-  - UUID: 6680760260778166328
+      - 2480837916818095271
+  - UUID: 3026753407213625090
+    Name: SubTextures
+    Parent: 2052949809877214851
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 4342498036523794994
+    Name: Textures
+    Parent: 2052949809877214851
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 6250219803581862280
+    Name: Animations
+    Parent: 2052949809877214851
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 6903827892183295655
+    Name: SpriteAtlas
+    Parent: 2052949809877214851
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 7971197052863430193
     Name: Scripts
-    Parent: 4415220485909902051
+    Parent: 2052949809877214851
     Subdirectories:
       []
     Assets:
-      []
-  - UUID: 1352568492709588764
-    Name: Audio
-    Parent: 4415220485909902051
+      - 6370029969853740667
+      - 4808558139062134088
+      - 8741614671586200841
+  - UUID: 9040814590909244185
+    Name: Shaders
+    Parent: 2052949809877214851
     Subdirectories:
       []
     Assets:

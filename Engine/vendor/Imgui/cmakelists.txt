@@ -1,0 +1,80 @@
+# ImGui/CMakeLists.txt
+
+cmake_minimum_required(VERSION 3.16)
+project(ImGui LANGUAGES CXX)
+
+add_library(ImGui STATIC)
+
+if(MSVC)
+    target_compile_options(ImGui PRIVATE /w)
+else()
+    target_compile_options(ImGui PRIVATE -w)
+endif()
+
+# Output directories for binaries and object files
+set_target_properties(ImGui PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ImGui"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ImGui"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ImGui"
+    OUTPUT_NAME "ImGui"
+)
+
+target_link_directories(ImGui INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/ImGui/${CMAKE_BUILD_TYPE}")
+
+file(GLOB_RECURSE ALL_FILES 
+    "*.cpp"
+    "*.h"
+)
+
+# Add the filtered files to your target
+target_sources(ImGui PRIVATE ${ALL_FILES})
+
+# Add source files
+#target_sources(ImGui PRIVATE
+#    "imconfig.h"
+#    "imgui.h"
+#    "imgui.cpp"
+#    "imgui_draw.cpp"
+#    "imgui_internal.h"
+#    "imgui_tables.cpp"
+#    "imgui_widgets.cpp"
+#    "imstb_rectpack.h"
+#    "imstb_textedit.h"
+#    "imstb_truetype.h"
+#    "imgui_demo.cpp"
+#    "misc/cpp/imgui_stdlib.h"
+#    "misc/cpp/imgui_stdlib.cpp"
+#)
+
+# Include directories
+target_include_directories(ImGui PRIVATE
+    "${CMAKE_SOURCE_DIR}/Engine/vendor/GLFW/include"
+    "${CMAKE_SOURCE_DIR}/Engine/vendor/Glad/include"
+    "${CMAKE_SOURCE_DIR}/Engine/vendor/ImGui"
+)
+
+# Link GLFW and Glad
+target_link_libraries(ImGui PRIVATE
+    GLFW
+    Glad
+)
+
+# Platform-specific settings
+if(WIN32)
+    set(CMAKE_SYSTEM_VERSION "latest")
+elseif(UNIX AND NOT APPLE) # Linux
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    set(CMAKE_SYSTEM_VERSION "latest")
+endif()
+
+# Build configuration settings
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(ImGui PRIVATE IMGUI_DEBUG)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
+
+elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
+    set(CMAKE_CXX_FLAGS_DIST "${CMAKE_CXX_FLAGS_DIST} -O3 -DNDEBUG")
+endif()

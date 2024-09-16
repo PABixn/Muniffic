@@ -7,6 +7,7 @@
 #include "Engine/Resources/ResourceSerializer.h"
 #include "Engine/Resources/ResourceDatabase.h"
 #include "../EditorLayer.h"
+#include <sys/stat.h>
 #include "Engine/Resources/AssetDirectoryManager.h"
 
 namespace eg
@@ -22,6 +23,48 @@ namespace eg
 		auto& io = ImGui::GetIO();
 		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
 		IM_ASSERT(m_PoppinsRegularFont != nullptr);
+	}
+
+	void ContentBrowserPanel::DrawCenteredText(const std::string& text, const float& cellSize) {
+		auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+		auto CursorX = ImGui::GetCursorPosX();
+		float offset = (cellSize - textWidth) * 0.43f;
+		if (textWidth < cellSize) {
+			ImGui::SetCursorPosX(CursorX + offset);
+			ImGui::TextWrapped(text.c_str());
+		}
+		else {
+			int a = ceil(textWidth / cellSize) + 1;
+			for (int i = 0; i < a; i++) {
+				if (i >= 2)
+				{
+					auto r = text.substr((text.length() / a) * i, (text.length() / a) - 3);
+					r += "...";
+					textWidth = ImGui::CalcTextSize(r.c_str()).x;
+					CursorX = ImGui::GetCursorPosX();
+					offset = (cellSize - textWidth) * 0.45f;
+					ImGui::SetCursorPosX(CursorX + offset);
+					ImGui::TextWrapped(r.c_str());
+					return;
+				}
+				auto r = text.substr((text.length() / a) * i, (text.length() / a));
+				textWidth = ImGui::CalcTextSize(r.c_str()).x;
+				CursorX = ImGui::GetCursorPosX();
+				offset = (cellSize - textWidth) * 0.45f;
+				ImGui::SetCursorPosX(CursorX + offset);
+				ImGui::TextWrapped(r.c_str());
+			}
+			auto r = text.substr((text.length() / a) * a);
+			if (r != "")
+			{
+				textWidth = ImGui::CalcTextSize(r.c_str()).x;
+				CursorX = ImGui::GetCursorPosX();
+				offset = (cellSize - textWidth) * 0.5f;
+				ImGui::SetCursorPosX(CursorX + offset);
+				ImGui::TextWrapped(r.c_str());
+			}
+		}
+
 	}
 
 	void ContentBrowserPanel::InitPanels()
@@ -212,7 +255,6 @@ namespace eg
 				ImGui::EndDragDropTarget();
 			}
 		}
-
 		ImGui::SameLine();
 		drawList->ChannelsSplit(2);
 		drawList->ChannelsSetCurrent(1);
@@ -318,8 +360,8 @@ namespace eg
 		for (UUID directory : AssetDirectoryManager::getSubdirectories(m_CurrentDirectory))
 		{
 			std::string name = AssetDirectoryManager::getDirectoryName(directory);
-			ImGui::PushID(name.c_str());
-			
+			ImGui::PushID(directory);
+
 			Ref<Texture2D> icon = m_DirectoryIcon;
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0,0,0,0));
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
@@ -340,7 +382,7 @@ namespace eg
 					break;*/
 				}
 
-				if(ImGui::MenuItem("Rename"))
+				if (ImGui::MenuItem("Rename"))
 				{
 					isRenameClicked = true;
 					//m_RenameFolderPanel->ShowWindow(directory);
@@ -428,8 +470,8 @@ namespace eg
 					if (ResourceUtils::CanDrop(directory))
 					{
 						uint64_t uuid = *(uint64_t*)payload->Data;
-						
-						if(ResourceDatabase::FindResourceData(uuid))
+
+						if (ResourceDatabase::FindResourceData(uuid))
 							Commands::ExecuteMoveResourceCommand(uuid, directory);
 						else
 							Commands::ExecuteMoveDirectoryCommand(uuid, directory);
@@ -444,7 +486,7 @@ namespace eg
 				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
 
-			ImGui::TextWrapped(name.c_str());
+			DrawCenteredText(name.c_str(), cellSize);
 
 			ImGui::NextColumn();
 

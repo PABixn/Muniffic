@@ -49,6 +49,7 @@ namespace eg {
 	struct TransformComponent : Component
 	{
 		glm::vec3 Translation{ 0.0f, 0.0f, 0.0f };
+		glm::vec3 PrevTranslation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Scale{ 1.0f, 1.0f, 1.0f };
 
@@ -114,6 +115,7 @@ namespace eg {
 		glm::vec4 Color { 1.0f, 1.0f, 1.0f, 1.0f };
 		float Thickness = 1.0f;
 		float Fade = 0.005f;
+		bool isSensor = false;
 
 		CircleRendererComponent() = default;
 		CircleRendererComponent(const CircleRendererComponent&) = default;
@@ -184,6 +186,7 @@ namespace eg {
 
 		//Storage for runtime
 		void* RuntimeBody = nullptr;
+		float GravityMultiplier = 1.1f;
 
 		RigidBody2DComponent() = default;
 		RigidBody2DComponent(const RigidBody2DComponent&) = default;
@@ -203,6 +206,8 @@ namespace eg {
 		float Restitution = 0.0f;
 		float RestitutionThreshold = 0.5f;
 
+		bool IsSensor = false;
+
 		void* RuntimeFixture = nullptr;
 		
 		BoxCollider2DComponent() = default;
@@ -218,6 +223,8 @@ namespace eg {
 		float Friction = 0.5f;
 		float Restitution = 0.0f;
 		float RestitutionThreshold = 0.5f;
+
+		bool IsSensor = false;
 
 		//Storage for runtime
 		void* RuntimeFixture = nullptr;

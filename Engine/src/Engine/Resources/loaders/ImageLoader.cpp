@@ -14,12 +14,13 @@ namespace eg
 		}
 
 		std::filesystem::path fullPath = name;
-		//EG_CORE_TRACE("Root directory: {}", fullPath.root_directory().string().c_str());
-		//EG_CORE_TRACE("Parent path: {}", fullPath.parent_path().string().c_str());
-
+		/*
+		EG_CORE_TRACE("Root directory: {}", fullPath.root_directory().string().c_str());
+		EG_CORE_TRACE("Parent path: {}", fullPath.parent_path().string().c_str());
+		*/
 		int32_t width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
-		stbi_uc *data = nullptr;
+		stbi_uc* data = nullptr;
 
 		data = stbi_load(fullPath.string().c_str(), &width, &height, &channels, 0);
 

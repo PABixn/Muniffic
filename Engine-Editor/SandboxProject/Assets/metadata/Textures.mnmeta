@@ -1,8 +1,2 @@
 Resources:
-  - UUID: 5471553183538401854
-    ParentDirectory: -1778098708303362336
-    ResourceName: afilewithsuperlongfilenamemadefortestingaddingmoretexttotestitevenmore
-    Extension: .png
-    Width: 604
-    Height: 569
-    Channels: 3
+  []

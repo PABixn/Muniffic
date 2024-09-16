@@ -72,12 +72,14 @@ namespace eg
 		bool AssemblyReloadPending = false;
 
 		bool EnableDebugging = false;
+		bool ScriptInstancesInitialized = false;
 
 		// Runtime
 		Scene *SceneContext = nullptr;
 	};
 
 	static ScriptEngineData *s_Data;
+	bool ScriptEngine::s_Initialized = false;
 
 	namespace Utils
 	{
@@ -129,13 +131,13 @@ namespace eg
 	{
 		s_Data = new ScriptEngineData();
 		InitMono();
-		bool status = LoadAssembly("Resources/Scripts/Muniffic-ScriptCore.dll");
+		bool status = LoadAssembly("Resources/Scripts/Debug/Muniffic-ScriptCore.dll");
 		if (!status)
 		{
 			EG_CORE_ERROR("Failed to load core assembly!");
 			return;
 		}
-		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
+		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetScriptModulePath();
 		status = LoadAppAssembly(scriptModulePath);
 		if (!status)
 		{
@@ -148,6 +150,7 @@ namespace eg
 		ScriptGlue::RegisterFunctions();
 
 		s_Data->EntityClass = ScriptClass("eg", "DefaultBehaviour", true);
+		s_Initialized = true;
 	}
 
 	void ScriptEngine::Shutdown()
@@ -168,6 +171,8 @@ namespace eg
 
 	void ScriptEngine::ShutdownMono()
 	{
+		if (s_Data == nullptr)return; //Means Mono hasn't been initialized yet (Closed app before choosing project)
+
 		// mono_domain_set(mono_get_root_domain(), false);
 
 		// mono_domain_unload(s_Data->AppDomain);
@@ -338,13 +343,14 @@ namespace eg
 
 	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path &filepath)
 	{
+		s_Data->AppAssemblyPath = filepath;
+		if (!std::filesystem::exists(filepath)) return false;
 		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath.string(), s_Data->EnableDebugging);
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 
 		if (!s_Data->AppAssembly)
 			return false;
 
-		s_Data->AppAssemblyPath = filepath;
 
 		s_Data->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(
 			filepath.string(),
@@ -360,7 +366,8 @@ namespace eg
 		mono_domain_unload(s_Data->AppDomain);
 
 		LoadAssembly(s_Data->CoreAssemblyPath);
-		LoadAppAssembly(s_Data->AppAssemblyPath);
+		std::filesystem::path fajlpath = s_Data->AppAssemblyPath;
+		LoadAppAssembly(fajlpath);
 		LoadAssemblyClasses();
 
 		ScriptGlue::RegisterComponents();
@@ -376,6 +383,7 @@ namespace eg
 	void ScriptEngine::OnRuntimeStop()
 	{
 		s_Data->SceneContext = nullptr;
+		s_Data->ScriptInstancesInitialized = false;
 		s_Data->EntityInstances.clear();
 	}
 
@@ -390,6 +398,9 @@ namespace eg
 		const auto &nsc = entity.GetComponent<ScriptComponent>();
 
 		s_Data->EntityInstances[uuid] = std::unordered_map<std::string, Ref<ScriptInstance>>();
+
+		if(!s_Data->ScriptInstancesInitialized)
+			s_Data->ScriptInstancesInitialized = true;
 
 		for (UUID scriptUUID : nsc.Scripts)
 		{
@@ -425,7 +436,7 @@ namespace eg
 		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
 		{
 			for (auto& [key, value] : s_Data->EntityInstances.at(entityID))
-				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()))
+				if(ResourceDatabase::IsScriptEnabled(value->GetUUID()) && s_Data->SceneContext->EntityExists(entityID))
 					value->InvokeOnUpdate(ts);
 			/*Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
 			instance->InvokeOnUpdate(ts);*/
@@ -439,6 +450,16 @@ namespace eg
 	Scene *ScriptEngine::GetSceneContext()
 	{
 		return s_Data->SceneContext;
+	}
+
+	std::vector<Ref<ScriptInstance>> ScriptEngine::GetAllScriptInstances()
+	{
+		if (s_Data == nullptr) return std::vector<Ref<ScriptInstance>>();
+		std::vector<Ref<ScriptInstance>> result;
+		for (auto& [key, value] : s_Data->EntityInstances)
+			for (auto& [key, value] : value)
+				result.push_back(value);
+		return result;
 	}
 
 	std::vector<Ref<ScriptInstance>> ScriptEngine::GetEntityScriptInstances(UUID uuid)
@@ -478,6 +499,7 @@ namespace eg
 	MonoObject *ScriptEngine::InstantiateClass(MonoClass *monoClass)
 	{
 		MonoObject *object = mono_object_new(s_Data->AppDomain, monoClass);
+		
 		mono_runtime_object_init(object);
 		return object;
 	}
@@ -508,20 +530,32 @@ namespace eg
 		: m_ScriptClass(scriptClass)
 	{
 		m_Instance = m_ScriptClass->Instantiate();
+		m_InstanceHandle = mono_gchandle_new(m_Instance, true);
 
 		m_UUID = uuid;
+		m_EntityUUID = entity.GetUUID();
 
 		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
 		m_OnCreateMethod = m_ScriptClass->GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = m_ScriptClass->GetMethod("OnUpdate", 1);
 		m_OnCollisionEnterMethod = m_ScriptClass->GetMethod("OnCollisionEnter", 1);
 		m_OnCollisionExitMethod = m_ScriptClass->GetMethod("OnCollisionExit", 1);
+		m_OnKeyPress = m_ScriptClass->GetMethod("OnKeyPress", 1);
+		m_OnKeyRelease = m_ScriptClass->GetMethod("OnKeyRelease", 1);
+		m_OnMouseButtonPress = m_ScriptClass->GetMethod("OnMouseButtonPress", 1);
+		m_OnMouseButtonRelease = m_ScriptClass->GetMethod("OnMouseButtonRelease", 1);
+		m_OnScroll = m_ScriptClass->GetMethod("OnScroll", 1);
 
 		{
 			UUID uuid = entity.GetUUID();
 			void *arg = &uuid;
 			m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &arg);
 		}
+	}
+
+	ScriptInstance::~ScriptInstance()
+	{
+		mono_gchandle_free(m_InstanceHandle);
 	}
 
 	MonoString* ScriptEngine::CreateString(const char* string)
@@ -548,7 +582,7 @@ namespace eg
 	{
 		if (m_OnCollisionEnterMethod)
 		{
-			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
+			UUID uuid = m_EntityUUID == collision.entityA ? collision.entityB : collision.entityA;
 			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
 			void* arg = args;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionEnterMethod, &arg);
@@ -559,10 +593,56 @@ namespace eg
 	{
 		if (m_OnCollisionExitMethod)
 		{
-			UUID uuid = m_UUID == collision.entityA ? collision.entityB : collision.entityA;
+			UUID uuid = m_EntityUUID == collision.entityA ? collision.entityB : collision.entityA;
 			Collision2D* args = new Collision2D(uuid, collision.contactPoints, collision.friction, collision.restitution, collision.tangentSpeed);
 			void* arg = args;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnCollisionExitMethod, &arg);
+		}
+	}
+
+	void ScriptInstance::InvokeOnKeyPress(int keycode)
+	{
+		if (m_OnKeyPress)
+		{
+			void* args = &keycode;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnKeyPress, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnKeyRelease(int keycode)
+	{
+		if (m_OnKeyRelease)
+		{
+			void* args = &keycode;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnKeyRelease, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnMouseButtonPress(int button)
+	{
+		if (m_OnMouseButtonPress)
+		{
+			void* args = &button;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnMouseButtonPress, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnMouseButtonRelease(int button)
+	{
+		if (m_OnMouseButtonRelease)
+		{
+			void* args = &button;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnMouseButtonRelease, &args);
+		}
+	}
+
+	void ScriptInstance::InvokeOnScroll(double xOffset, double yOffset)
+	{
+		if (m_OnScroll)
+		{
+			float offsets[] = { (float)xOffset, (float)yOffset };
+			void* args = &offsets;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnMouseButtonRelease, &args);
 		}
 	}
 
