@@ -358,13 +358,12 @@ namespace eg
 	void ScriptEngine::CallMethod(UUID entityID, const std::string& className, const std::string& methodName, int parameterCount, void** params)
 	{
 		Ref<ScriptInstance> instance = GetEntityScriptInstance(entityID, className);
-		if (instance)
-		{
-			MonoMethod* method = instance->GetScriptClass()->GetMethod(methodName, parameterCount);
-			//Switch if to Assert
-			if(method)
-				instance->GetScriptClass()->InvokeMethod(instance->GetManagedObject(), method, params);
-		}
+		if (!instance)
+			return;
+		MonoMethod* method = instance->GetScriptClass()->GetMethod(methodName, parameterCount);
+		//Switch if to Assert
+		if (method)
+			instance->GetScriptClass()->InvokeMethod(instance->GetManagedObject(), method, params);
 	
 	}
 

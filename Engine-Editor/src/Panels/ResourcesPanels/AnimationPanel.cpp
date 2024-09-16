@@ -379,9 +379,10 @@ namespace eg {
 
 					FrameResourceData* dataFrame = new FrameResourceData();
 					dataFrame->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Frame);
+					dataFrame->ResourceName = m_ResourceData->ResourceName + std::to_string(i);
 					dataFrame->Duration = m_PreviewData->GetFrame(i)->GetFrameDuration();
 					dataFrame->SubTexture = subTextureUUID;
-					dataFrame->ClassName = m_PreviewData->GetFrame(i)->GetClassName();
+					dataFrame->ClassName = m_PreviewData->GetFrame(i)->GetClassname();
 					dataFrame->FunctionCallName = m_PreviewData->GetFrame(i)->GetFunctionCallName();
 					UUID uuid = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)dataFrame, ResourceType::Frame);
 					m_ResourceData->Frames.push_back(uuid);
@@ -393,8 +394,7 @@ namespace eg {
 				m_ResourceData->Loop = m_PreviewData->IsLooped();
 				m_ResourceData->Extension = ".anim";
 				ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)saData, ResourceType::SpriteAtlas);
-				ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_ResourceData, ResourceType::Animation);
-				
+				UUID animID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_ResourceData, ResourceType::Animation);
 				CloseAnimationPanel();
 			}
 			if (ImGui::Button("Cancel"))

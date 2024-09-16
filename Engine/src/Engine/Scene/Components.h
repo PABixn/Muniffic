@@ -107,6 +107,7 @@ namespace eg {
 		AnimatorComponent()
 		{
 			Animator2D = CreateRef<Animator>();
+			Animator2D->SetEntityID(EntityID);
 		};
 		AnimatorComponent(const UUID& entityID)
 		{
@@ -114,9 +115,13 @@ namespace eg {
 			Animator2D->SetEntityID(entityID);
 		};
 		AnimatorComponent(const AnimatorComponent& animator)
-			: Animator2D(animator.Animator2D) {};
+			: Animator2D(animator.Animator2D) {
+			Animator2D->SetEntityID(EntityID);
+		};
 		AnimatorComponent(const Ref<Animator>& animator)
-			: Animator2D(animator) {}
+			: Animator2D(animator) {
+			Animator2D->SetEntityID(EntityID);
+		}
 
 		Ref<Animator> Animator2D;
 	};

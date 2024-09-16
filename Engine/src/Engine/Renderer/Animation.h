@@ -30,22 +30,25 @@ namespace eg {
 		inline const Ref<SubTexture2D>& GetSubTexture() const { return SubTexture; }
 		inline const int GetFrameDuration() const { return FrameDuration; }
 		inline const bool GetIsKeyFrame() const { return isKeyFrame; }
-		inline const std::string& GetClassName() const { return ClassName; }
+		inline const std::string& GetClassname() const { return ClassName; }
 		inline const std::string& GetFunctionCallName() const { return FunctionCallName; }
 		inline const UUID& GetEntityID() const { return EntityID; }
 
 		void Save();
 		void CallFunction(UUID entityid);
 
+		static void DeleteAsset(UUID id);
+		static void DeleteAssets(const std::vector<UUID>& ids);
 
 	private:
-		std::string ClassName = "";
-		std::string FunctionCallName = "";
-		UUID FrameID = 0;
-		Ref<SubTexture2D> SubTexture;
 		int FrameDuration = 1;
 		bool isKeyFrame = false;
+		
 		UUID EntityID = 0;
+		UUID FrameID = 0;
+		Ref<SubTexture2D> SubTexture;
+		std::string ClassName = "";
+		std::string FunctionCallName = "";
 	};
 
 	class Animation {
@@ -81,6 +84,8 @@ namespace eg {
 		void RemoveFrame(int index);
 		void ClearFrames();
 		Ref<FrameData> AddFrame(const Ref<FrameData>& frame);
+		void SwapFrames(int index1, int index2);
+		void MoveFrame(int index, int newIndex);
 
 		inline const std::vector<Ref<FrameData>>& GetFrames() const { return m_frames; }
 		const Ref<FrameData> GetFrame() const;
@@ -102,13 +107,13 @@ namespace eg {
 	private:
 		int m_frameRate;
 		float m_frame = 0;
+		float m_PreviousFrame = 0;
 		bool m_loop = false;
 		bool m_playing = false;
 		bool m_AnimationEnded = false;
 		UUID m_AnimationID;
 		UUID m_EntityID;
 		std::vector<Ref<FrameData>> m_frames;
-
 		std::string m_name = "";
 	};
 }

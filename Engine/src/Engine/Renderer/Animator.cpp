@@ -109,6 +109,7 @@ namespace eg {
 		EG_PROFILE_FUNCTION();
 		Ref<Animation> anim = Animation::Create();
 		anim->SetName(name);
+		anim->SetEntityID(m_EntityID);
 		m_Animations->push_back(anim);
 	}
 

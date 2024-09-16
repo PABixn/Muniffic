@@ -100,6 +100,7 @@ namespace eg
 
 		m_EditorCamera.OnUpdate(ts);
 		m_SceneHierarchyPanel.Update(ts);
+		m_AnimationEditorPanel->Update(ts);
 
 		Renderer2D::ResetStats();
 		m_FrameBuffer->Bind();

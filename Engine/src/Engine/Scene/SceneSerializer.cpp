@@ -623,6 +623,7 @@ namespace eg {
 				{
 					auto& ac = deserializedEntity.AddComponent<AnimatorComponent>();
 					ac.Animator2D = CreateRef<Animator>();
+					ac.Animator2D->SetEntityID(deserializedEntity.GetUUID());
 					ac.Animator2D->SetSpeed(animatorComponent["Speed"].as<float>());
 
 					auto animations = animatorComponent["Animations"];
@@ -633,7 +634,6 @@ namespace eg {
 							//TODO: if animation uses prefab
 							Ref<Animation> anim = Animation::Create(UUID(animation.as<int64_t>()));
 							if (anim) {
-								anim->SetEntityID(deserializedEntity.GetUUID());
 								ac.Animator2D->AddAnimation(anim);
 							}
 							//TODO: else load all data for animation from scene file

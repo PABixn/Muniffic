@@ -298,9 +298,9 @@ namespace eg
 				CacheAnimation(uuid, data);
 			}
 
-			if (frameNode)
+			if (frameResources)
 			{
-				for (auto resource : frameNode)
+				for (auto resource : frameResources)
 				{
 					UUID uuid = resource["UUID"].as<int64_t>();
 
@@ -316,6 +316,10 @@ namespace eg
 					data->Extension = resource["Extension"].as<std::string>();
 					data->SubTexture = resource["SubTexture"].as<int64_t>();
 					data->Duration = resource["Duration"].as<int>();
+					if(resource["ClassName"])
+						data->ClassName = resource["ClassName"].as<std::string>();
+					if(resource["FunctionCallName"])
+						data->FunctionCallName = resource["FunctionCallName"].as<std::string>();
 					//data->functionCallName = resource["FunctionCallName"].as<std::string>();
 
 					CacheFrame(uuid, data);
@@ -514,7 +518,6 @@ namespace eg
 			animationOut << YAML::Key << "FrameRate" << YAML::Value << value->FrameRate;
 			animationOut << YAML::Key << "FrameCount" << YAML::Value << value->FrameCount;
 			animationOut << YAML::Key << "Loop" << YAML::Value << value->Loop;
-			//animationOut << YAML::Key << "FrameDuration" << YAML::Value << value->FrameDuration;
 			animationOut << YAML::Key << "Frames" << YAML::Value << YAML::BeginSeq;
 			for (auto& frame : value->Frames)
 			{
@@ -539,7 +542,10 @@ namespace eg
 			frameOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
 			frameOut << YAML::Key << "SubTexture" << YAML::Value << value->SubTexture;
 			frameOut << YAML::Key << "Duration" << YAML::Value << value->Duration;
-			//frameOut << YAML::Key << "FunctionCallName" << YAML::Value << value->functionCallName;
+			if(value->ClassName != "")
+				frameOut << YAML::Key << "ClassName" << YAML::Value << value->ClassName;
+			if(value->FunctionCallName != "")
+				frameOut << YAML::Key << "FunctionCallName" << YAML::Value << value->FunctionCallName;
 			frameOut << YAML::EndMap;
 		}
 
@@ -643,6 +649,7 @@ namespace eg
 
 		std::ofstream textureFile(textureMetadataPath, std::ios::trunc);
 		std::ofstream animationFile(animationMetadataPath, std::ios::trunc);
+		std::ofstream frameFile(frameMetadataPath, std::ios::trunc);
 		std::ofstream spriteAtlasFile(spriteAtlasMetadataPath, std::ios::trunc);
 		std::ofstream subTextureFile(subTextureMetadataPath, std::ios::trunc);
 		std::ofstream fontFile(fontMetadataPath, std::ios::trunc);
@@ -651,6 +658,7 @@ namespace eg
 
 		textureFile << textureOut.c_str();
 		animationFile << animationOut.c_str();
+		frameFile << frameOut.c_str();
 		spriteAtlasFile << spriteAtlasOut.c_str();
 		subTextureFile << subtextureOut.c_str();
 		fontFile << fontOut.c_str();
@@ -659,6 +667,7 @@ namespace eg
 
 		textureFile.close();
 		animationFile.close();
+		frameFile.close();
 		spriteAtlasFile.close();
 		subTextureFile.close();
 		fontFile.close();

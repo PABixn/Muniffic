@@ -1,2 +1,5 @@
 Resources:
-  []
+  - UUID: 1488523464249039906
+    ParentDirectory: 6084018604914584834
+    ResourceName: OpenSans-Regular
+    Extension: .ttf

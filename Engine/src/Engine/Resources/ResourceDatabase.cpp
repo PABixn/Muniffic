@@ -322,6 +322,15 @@ namespace eg
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
+		else if (resourceType == ResourceType::Frame)
+		{
+			if (ResourceSerializer::FrameResourceDataCache.find(uuid) != ResourceSerializer::FrameResourceDataCache.end())
+			{
+				delete ResourceSerializer::FrameResourceDataCache.at(uuid);
+				ResourceSerializer::FrameResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+			}
+		}
 		else if (resourceType == ResourceType::SpriteAtlas)
 		{
 			if (ResourceSerializer::SpriteAtlasResourceDataCache.find(uuid) != ResourceSerializer::SpriteAtlasResourceDataCache.end())
@@ -385,6 +394,8 @@ namespace eg
 			return ResourceSerializer::SubTextureResourceDataCache.at(uuid);
 		else if (type == ResourceType::Animation)
 			return ResourceSerializer::AnimationResourceDataCache.at(uuid);
+		else if (type == ResourceType::Frame)
+			return ResourceSerializer::FrameResourceDataCache.at(uuid);
 		else if (type == ResourceType::SpriteAtlas)
 			return ResourceSerializer::SpriteAtlasResourceDataCache.at(uuid);
 		else if (type == ResourceType::Font)
@@ -700,7 +711,8 @@ namespace eg
 		for (UUID asset : assets)
 		{
 			ResourceData* data = (ResourceData*)GetResourceData(asset);
-
+			if(!data)
+				continue;
 			if (data->ResourceName == resourceData->ResourceName && data->Extension == resourceData->Extension)
 				return asset;
 		}

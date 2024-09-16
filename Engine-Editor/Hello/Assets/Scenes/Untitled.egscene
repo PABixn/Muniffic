@@ -1,3 +1,51 @@
 Scene: Untitled
 Entities:
-  []
+  - Entity: 2660590869285063221
+    Name: Cube
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        - 5428845014584669409
+      Transitions:
+        []
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 7519060775171983353
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 8555027220540701048
+    Name: Cube
+    TagComponent:
+      Tag: Empty Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.769999981
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+      IsInherited: false
+      IsInheritedInChildren: false

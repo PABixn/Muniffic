@@ -1,2 +1,8 @@
 Resources:
-  []
+  - UUID: 7519060775171983353
+    ParentDirectory: 9210664484734635646
+    ResourceName: Game.Player
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []

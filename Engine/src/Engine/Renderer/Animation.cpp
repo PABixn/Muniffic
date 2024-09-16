@@ -3,7 +3,7 @@
 #include "Engine/Resources/ResourceDatabase.h"
 #include "Engine/Resources/Systems/ResourceSystem.h"
 #include "Engine/Scripting/ScriptEngine.h"
-
+#include "Engine/Resources/AssetDirectoryManager.h"
 
 namespace eg
 {
@@ -62,6 +62,7 @@ namespace eg
 			Ref<FrameData> frame = FrameData::Create(animData->Frames[i]);
 			if (!frame)
 				return nullptr;
+			anim->m_frames.push_back(frame);
 		}
 		return anim;
 	}
@@ -86,6 +87,11 @@ namespace eg
 					m_playing = false;
 				}
 			}
+			if ((int)m_frame < m_frame && (int)m_frame >= m_PreviousFrame && m_frames[(int)m_frame]->GetClassname() != "" && m_frames[(int)m_frame]->GetFunctionCallName() != "")
+			{
+				GetFrame((int)m_frame)->CallFunction(m_EntityID);
+			}
+			m_PreviousFrame = m_frame;
 		}
 	}
 
@@ -157,6 +163,7 @@ namespace eg
 		animData->Loop = m_loop;
 		animData->Frames.clear();
 		for(auto& frame : m_frames) {
+			animData->Frames.push_back(frame->GetFrameID());
 			frame->Save();
 		}
 	}
@@ -185,6 +192,28 @@ namespace eg
 		return frame;
 	}
 
+	void Animation::SwapFrames(int index1, int index2)
+	{
+		EG_PROFILE_FUNCTION();
+		if (index1 < m_frames.size() && index2 < m_frames.size())
+		{
+			Ref<FrameData> temp = m_frames[index1];
+			m_frames[index1] = m_frames[index2];
+			m_frames[index2] = temp;
+		}
+	}
+
+	void Animation::MoveFrame(int from, int to)
+	{
+		EG_PROFILE_FUNCTION();
+		if (from < m_frames.size() && to < m_frames.size())
+		{
+			Ref<FrameData> temp = m_frames[from];
+			m_frames.erase(m_frames.begin() + from);
+			m_frames.insert(m_frames.begin() + to, temp);
+		}
+	}
+
 	const Ref<FrameData> Animation::GetFrame(int frame) const
 	{
 		EG_PROFILE_FUNCTION();
@@ -207,9 +236,11 @@ namespace eg
 	Ref<FrameData> FrameData::Create(const UUID& id)
 	{
 		EG_PROFILE_FUNCTION();
+		
 		Ref<FrameData> frame = CreateRef<FrameData>();
 
 		FrameResourceData* frameData = (FrameResourceData*)ResourceDatabase::GetResourceData(id);
+		EG_ASSERT(frameData, "FrameData::Create() - FrameResourceData is null");
 		frame->FrameID = id;
 		frame->FrameDuration = frameData->Duration;
 		frame->ClassName = frameData->ClassName;
@@ -267,6 +298,23 @@ namespace eg
 		if (ClassName != "" && FunctionCallName != "")
 		{
 			ScriptEngine::CallMethod(entityID, ClassName, FunctionCallName);
+		}
+	}
+
+	void FrameData::DeleteAsset(UUID id)
+	{
+		EG_PROFILE_FUNCTION();
+		UUID directoryID = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Frame);
+		AssetDirectoryManager::removeAsset(directoryID, id);
+	}
+
+	void FrameData::DeleteAssets(const std::vector<UUID>& ids)
+	{
+		EG_PROFILE_FUNCTION();
+		UUID directoryID = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Frame);
+		for (auto& id : ids)
+		{
+			AssetDirectoryManager::removeAsset(directoryID, id);
 		}
 	}
 
