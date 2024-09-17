@@ -205,8 +205,6 @@ namespace eg
 		PyGILState_Release(gstate);
 
 		SaveAssistant();
-
-		
 	}
 
 	std::string AssistantManager::CreateThread()
@@ -226,8 +224,6 @@ namespace eg
 		m_Threads[threadID] = thread;
 
 		PyGILState_Release(gstate);
-
-		
 
 		return threadID;
 	}
@@ -268,8 +264,6 @@ namespace eg
 		m_Threads.at(threadID)->m_RunIDs.push_back(PyUnicode_AsUTF8(result));
 
 		PyGILState_Release(gstate);
-
-		
 	}
 
 
@@ -307,8 +301,6 @@ namespace eg
 		PyObject_CallObject(m_AddMessage, args);
 
 		PyGILState_Release(gstate);
-
-		
 	}
 
 

@@ -61,6 +61,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<TagComponent>())
+				return "Entity does not have TagComponent.";
+
 			std::string& tag = entity.GetComponent<TagComponent>().Tag;
 			std::string name = tag;
 			tag = params.at(1);
@@ -466,6 +469,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<TransformComponent>())
+				return "Entity does not have TransformComponent.";
+
 			TransformComponent& transform = entity.GetComponent<TransformComponent>();
 
 			std::string transformString = "Position: X: "
@@ -497,6 +503,9 @@ namespace eg
 
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
+
+			if(!entity.HasComponent<TransformComponent>())
+				return "Entity does not have TransformComponent.";
 
 			TransformComponent& transform = entity.GetComponent<TransformComponent>();
 
@@ -554,6 +563,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<CameraComponent>())
+				return "Entity does not have CameraComponent.";
+
 			CameraComponent& camera = entity.GetComponent<CameraComponent>();
 
 			std::string cameraString = "Primary: " + std::to_string(camera.Primary) + " FixedAspectRatio: " + std::to_string(camera.FixedAspectRatio) + " AspectRatio: " + std::to_string(camera.FixedAspectRatio);
@@ -585,6 +597,9 @@ namespace eg
 
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
+
+			if(!entity.HasComponent<CameraComponent>())
+				return "Entity does not have CameraComponent.";
 
 			CameraComponent& camera = entity.GetComponent<CameraComponent>();
 			SceneCamera& sceneCamera = camera.Camera;
@@ -756,6 +771,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<SpriteRendererComponent>())
+				return "Entity does not have SpriteRendererComponent.";
+
 			SpriteRendererComponent& spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
 
 			std::string spriteRendererString = "Color: R: "
@@ -786,6 +804,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<SpriteRendererComponent>())
+				return "Entity does not have SpriteRendererComponent.";
+
 			SpriteRendererComponent& spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
 
 			if (params.at(1) == "TilingFactor")
@@ -806,7 +827,7 @@ namespace eg
 				else if(params.size() < 5)
 					return "No B value provided.";
 				else if(params.size() < 6)
-					params[5] = "255";
+					params.push_back("255");
 					//return "No A value provided.";
 
 
@@ -866,6 +887,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<CircleRendererComponent>())
+				return "Entity does not have CircleRendererComponent.";
+
 			CircleRendererComponent& circleRenderer = entity.GetComponent<CircleRendererComponent>();
 
 			std::string circleRendererString = "Color: R: "
@@ -894,6 +918,9 @@ namespace eg
 
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
+
+			if(entity.HasComponent<CircleRendererComponent>() == false)
+				return "Entity does not have CircleRendererComponent.";
 
 			if(entity.HasComponent<CircleRendererComponent>() == false)
 				return "Entity does not have CircleRendererComponent.";
@@ -929,7 +956,7 @@ namespace eg
 				else if(params.size() < 5)
 					return "No B value provided.";
 				else if(params.size() < 6)
-					params[5] = "255";
+					params.push_back("255");
 					//return "No A value provided.";
 
 				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
@@ -969,6 +996,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<RigidBody2DComponent>())
+				return "Entity does not have RigidBody2DComponent.";
+
 			RigidBody2DComponent& rigidBody2D = entity.GetComponent<RigidBody2DComponent>();
 
 			std::string rigidBody2DString = "Type: ";
@@ -993,6 +1023,9 @@ namespace eg
 
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
+
+			if(!entity.HasComponent<RigidBody2DComponent>())
+				return "Entity does not have RigidBody2DComponent.";
 
 			RigidBody2DComponent& rigidBody2D = entity.GetComponent<RigidBody2DComponent>();
 
@@ -1064,6 +1097,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<BoxCollider2DComponent>())
+				return "Entity does not have BoxCollider2DComponent.";
+
 			BoxCollider2DComponent& boxCollider2D = entity.GetComponent<BoxCollider2DComponent>();
 
 			std::string boxCollider2DString = "Offset: X: "
@@ -1094,6 +1130,9 @@ namespace eg
 
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
+
+			if(!entity.HasComponent<BoxCollider2DComponent>())
+				return "Entity does not have BoxCollider2DComponent.";
 
 			BoxCollider2DComponent& boxCollider2D = entity.GetComponent<BoxCollider2DComponent>();
 
@@ -1193,6 +1232,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<CircleCollider2DComponent>())
+				return "Entity does not have CircleCollider2DComponent.";
+
 			CircleCollider2DComponent& circleCollider2D = entity.GetComponent<CircleCollider2DComponent>();
 
 			std::string circleCollider2DString = "Offset: X: "
@@ -1222,6 +1264,9 @@ namespace eg
 
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
+
+			if(!entity.HasComponent<CircleCollider2DComponent>())
+				return "Entity does not have CircleCollider2DComponent.";
 
 			CircleCollider2DComponent& circleCollider2D = entity.GetComponent<CircleCollider2DComponent>();
 
@@ -1313,6 +1358,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<TextComponent>())
+				return "Entity does not have TextComponent.";
+
 			TextComponent& text = entity.GetComponent<TextComponent>();
 
 			std::string textString = "Text: " + text.TextString + " Font: " +
@@ -1343,6 +1391,9 @@ namespace eg
 			if (entity == Entity())
 				return "Entity with UUID " + params.at(0) + " not found";
 
+			if(!entity.HasComponent<TextComponent>())
+				return "Entity does not have TextComponent.";
+
 			TextComponent& text = entity.GetComponent<TextComponent>();
 
 			if (params.at(1) == "Text")
@@ -1372,7 +1423,7 @@ namespace eg
 				else if (params.size() < 5)
 					return "No B value provided.";
 				else if (params.size() < 6)
-					params[5] = "255";
+					params.push_back("255");
 					//return "No A value provided.";
 
 				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)
