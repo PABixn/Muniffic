@@ -62,6 +62,8 @@ namespace eg
 		auto& io = ImGui::GetIO();
 		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf",18.0f,NULL,io.Fonts->GetGlyphRangesDefault());
 		IM_ASSERT(m_PoppinsRegularFont != nullptr);
+		m_PoppinsMediumFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsMediumFontBig != nullptr);
 		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf",20.0f,NULL,io.Fonts->GetGlyphRangesDefault());
 		IM_ASSERT(m_PoppinsMediumFont != nullptr);
 		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf",20.0f,NULL,io.Fonts->GetGlyphRangesDefault());
@@ -237,7 +239,7 @@ namespace eg
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
-
+		ImGui::PopStyleColor();
 		//Welcoming panel code
 		if (m_WelcomePanel->IsShown()) {
 			ImGuiStyle& style = ImGui::GetStyle();
@@ -346,7 +348,7 @@ namespace eg
 
 			ImGui::EndMenuBar();
 		}
-		ImGui::PopStyleColor(2);
+		ImGui::PopStyleColor();
 		ImGui::PopFont();
 
 			m_SceneHierarchyPanel.OnImGuiRender();

@@ -20,12 +20,9 @@ namespace eg
 		m_PlusIcon = Texture2D::Create("resources/icons/contentBrowser/PlusIcon.png");
 		m_ArrowIcon = Texture2D::Create("resources/icons/contentBrowser/ArrowIcon.png");
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
-		auto& io = ImGui::GetIO();
-		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsRegularFont != nullptr);
 	}
 
-	void ContentBrowserPanel::DrawCenteredText(const std::string& text, const float& cellSize) {
+	/*void ContentBrowserPanel::DrawCenteredText(const std::string& text, const float& cellSize) {
 		auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
 		auto CursorX = ImGui::GetCursorPosX();
 		float offset = (cellSize - textWidth) * 0.43f;
@@ -65,7 +62,7 @@ namespace eg
 			}
 		}
 
-	}
+	}*/
 
 	void ContentBrowserPanel::InitPanels()
 	{
@@ -207,7 +204,7 @@ namespace eg
 		auto btnColorHovered = style.Colors[ImGuiCol_ButtonHovered];
 		auto btnColorActive = style.Colors[ImGuiCol_ButtonActive];
 
-		ImGui::PushFont(m_PoppinsRegularFont);
+		ImGui::PushFont(static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_PoppinsMediumFontBig);
 
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
 
@@ -486,7 +483,7 @@ namespace eg
 				Commands::ExecuteRawValueCommand(&m_CurrentDirectory, oldPath, std::string("ContentBrowserPanel-Current Directory"), true);
 			}
 
-			DrawCenteredText(name.c_str(), cellSize);
+			ImGui::TextWrapped(name.c_str(), cellSize);
 
 			ImGui::NextColumn();
 

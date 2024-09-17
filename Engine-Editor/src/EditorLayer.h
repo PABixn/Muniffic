@@ -77,11 +77,6 @@ namespace eg {
 		Ref<Texture2D> m_LogoIcon;
 		Ref<FrameBuffer> m_FrameBuffer;
 
-		ImFont* m_PoppinsRegularFont;
-		ImFont* m_PoppinsMediumFont;
-		ImFont* m_PoppinsSemiBoldFont;
-		ImFont* m_PoppinsExtraBoldFont;
-
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_RuntimeScene;
 		Ref<Scene> m_EditorScene;
@@ -153,6 +148,13 @@ namespace eg {
 		ImVec4 m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
 		ImVec4 m_LightShade = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
 		ImVec4 m_NormalShade = ImVec4(0.192f,0.157f,0.267f,1.0f);
+
+		ImFont* m_PoppinsRegularFont;
+		ImFont* m_PoppinsMediumFont;
+		ImFont* m_PoppinsMediumFontBig;
+		ImFont* m_PoppinsSemiBoldFont;
+		ImFont* m_PoppinsExtraBoldFont;
+
 	};
 
 }
