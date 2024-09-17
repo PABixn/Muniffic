@@ -30,6 +30,7 @@ namespace eg
 		m_IconMicrophoneUnavailable = Texture2D::Create("resources/icons/micUnavailableIcon.png");
 		m_isListening = false;
 		m_isMicrophoneAvailable = assistantManager->CheckMicrophoneAvailable();
+		m_messageInProgress = false;
 	}
 
 	AssistantPanel::~AssistantPanel()
@@ -40,6 +41,12 @@ namespace eg
 
 	void DoMessage(AssistantManager* assistantManager, std::string threadID, char* buffer)
 	{
+		if (assistantManager->GetVoiceAssistantListening())
+		{
+			assistantManager->SetVoiceAssistantListening(false);
+			assistantManager->StopListening();
+		}
+
 		std::string message = buffer;
 		memset(buffer, 0, 1024);
 		assistantManager->AddMessage(threadID, message);
@@ -300,26 +307,7 @@ namespace eg
 
 	void AssistantPanel::OnImGuiRender()
 	{
-		if (m_isListening)
-		{
-			if (!assistantManager->GetVoiceAssistantListening() && !assistantManager->GetIsThreadOccupied())
-			{
-				assistantManager->SetThreadOccupied(true);
-				assistantManager->SetVoiceAssistantListening(true);
-				std::thread t([this] { assistantManager->StartListening(); });
-				t.detach();
-			}
-		}
-		else
-		{
-			if (assistantManager->GetVoiceAssistantListening() && !assistantManager->GetIsThreadOccupied())
-			{
-				assistantManager->SetThreadOccupied(true);
-				assistantManager->SetVoiceAssistantListening(false);
-				std::thread t([this] { assistantManager->StopListening(); });
-				t.detach();
-			}
-		}
+		ImGui::Begin("Assistant Panel");
 
 		if (assistantManager->IsNewVoiceMessageAvailable())
 		{
@@ -328,7 +316,27 @@ namespace eg
 			RunMessage(buffer);
 		}
 
-		ImGui::Begin("Assistant Panel");
+		if (assistantManager->GetIsMessageInProgress())
+			m_isListening = false;
+
+		if (m_isListening)
+		{
+			if (!assistantManager->GetVoiceAssistantListening())
+			{
+				assistantManager->SetVoiceAssistantListening(true);
+				std::thread t([this] { assistantManager->StartListening(); });
+				t.detach();
+			}
+		}
+		else
+		{
+			if (assistantManager->GetVoiceAssistantListening())
+			{
+				assistantManager->SetVoiceAssistantListening(false);
+				std::thread t([this] { assistantManager->StopListening(); });
+				t.detach();
+			}
+		}
 
 		float buttonSize = 25.0f;
 		float availableHeight = ImGui::GetWindowSize().y - buttonSize * 2 - ImGui::GetCursorPosY();
@@ -460,10 +468,8 @@ namespace eg
 		if(message.empty())
 			return;
 
-		if(assistantManager->GetIsThreadOccupied())
-			return;
+		assistantManager->SetMessageInProgress(true);
 
-		assistantManager->SetThreadOccupied(true);
 		std::thread t(DoMessage, assistantManager, threadID, buffer);
 		t.detach();
 	}

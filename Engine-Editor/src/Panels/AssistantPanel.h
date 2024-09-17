@@ -29,5 +29,6 @@ namespace eg
 		Ref<Texture2D> m_IconMicrophoneUnavailable;
 		bool m_isListening;
 		bool m_isMicrophoneAvailable;
+		bool m_messageInProgress;
 	};
 }
