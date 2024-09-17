@@ -22,48 +22,6 @@ namespace eg
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
 	}
 
-	/*void ContentBrowserPanel::DrawCenteredText(const std::string& text, const float& cellSize) {
-		auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
-		auto CursorX = ImGui::GetCursorPosX();
-		float offset = (cellSize - textWidth) * 0.43f;
-		if (textWidth < cellSize) {
-			ImGui::SetCursorPosX(CursorX + offset);
-			ImGui::TextWrapped(text.c_str());
-		}
-		else {
-			int a = ceil(textWidth / cellSize) + 1;
-			for (int i = 0; i < a; i++) {
-				if (i >= 2)
-				{
-					auto r = text.substr((text.length() / a) * i, (text.length() / a) - 3);
-					r += "...";
-					textWidth = ImGui::CalcTextSize(r.c_str()).x;
-					CursorX = ImGui::GetCursorPosX();
-					offset = (cellSize - textWidth) * 0.45f;
-					ImGui::SetCursorPosX(CursorX + offset);
-					ImGui::TextWrapped(r.c_str());
-					return;
-				}
-				auto r = text.substr((text.length() / a) * i, (text.length() / a));
-				textWidth = ImGui::CalcTextSize(r.c_str()).x;
-				CursorX = ImGui::GetCursorPosX();
-				offset = (cellSize - textWidth) * 0.45f;
-				ImGui::SetCursorPosX(CursorX + offset);
-				ImGui::TextWrapped(r.c_str());
-			}
-			auto r = text.substr((text.length() / a) * a);
-			if (r != "")
-			{
-				textWidth = ImGui::CalcTextSize(r.c_str()).x;
-				CursorX = ImGui::GetCursorPosX();
-				offset = (cellSize - textWidth) * 0.5f;
-				ImGui::SetCursorPosX(CursorX + offset);
-				ImGui::TextWrapped(r.c_str());
-			}
-		}
-
-	}*/
-
 	void ContentBrowserPanel::InitPanels()
 	{
 		m_RenameFolderPanel = CreateScope<RenameFolderPanel>();

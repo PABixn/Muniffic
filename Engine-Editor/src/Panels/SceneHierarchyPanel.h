@@ -16,7 +16,8 @@ namespace eg {
 		BoxColliderIcon,
 		CircleColliderIcon,
 		TextRendererIcon,
-		AnimatorIcon
+		AnimatorIcon,
+		AudioIcon
 	};
 	enum searchRes
 	{

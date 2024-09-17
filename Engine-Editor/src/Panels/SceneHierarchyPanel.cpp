@@ -312,6 +312,7 @@ namespace eg {
 		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"CircleCol.png"));
 		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"TextRen.png"));
 		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"Animator.png"));
+		m_ComponentIcons.push_back(Texture2D::Create(IconPath+"AudioIcon.png"));
 		m_Context = scene;
 		m_SelectionContext = {};
 		m_ImagePanel = CreateRef<ImagePanel>();
@@ -854,14 +855,22 @@ namespace eg {
 				}
 				if (PrettyButton("Add Script"))
 				{
-					ScriptResourceData* data = new ScriptResourceData();
+					ImGui::OpenPopup("AddScript");
+					/*ScriptResourceData* data = new ScriptResourceData();
 					data->ResourceName = "";
 					data->Extension = ".cs";
 					data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Script);
 					data->Type = ResourceType::Script;
 
 					UUID uuid = ResourceDatabase::AddResource(AssetDirectoryManager::getDirectoryPath(data->ParentDirectory), data, ResourceType::Script);
-					component.Scripts.push_back(uuid);
+					component.Scripts.push_back(uuid);*/
+				}
+				if(ImGui::BeginPopupModal("AddScript", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
+					ImGui::Text("Add Script");
+					if (ImGui::Button("Cancel")) {
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
 				}
 				static std::vector<char*> buffers;
 
