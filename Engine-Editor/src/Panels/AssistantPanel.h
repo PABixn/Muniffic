@@ -15,7 +15,7 @@ namespace eg
 		void RenderUserMessage(const std::string& message);
 		void RenderAssistantMessage(const std::string& message, int id = 0);
 		void RunMessage(const std::string message);
-		std::string GetLanguageSymbol(std::string language);
+		std::string GetLanguageSymbol(const std::string& language);
 
 	private:
 		static char buffer[1024];
@@ -27,6 +27,7 @@ namespace eg
 		Ref<Texture2D> m_IconMicrophone;
 		Ref<Texture2D> m_IconMicrophoneOff;
 		Ref<Texture2D> m_IconMicrophoneUnavailable;
+		Ref<Texture2D> m_IconSettings;
 		bool m_isListening;
 		bool m_isMicrophoneAvailable;
 		bool m_messageInProgress;

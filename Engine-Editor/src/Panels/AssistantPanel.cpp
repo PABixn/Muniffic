@@ -28,6 +28,7 @@ namespace eg
 		m_IconMicrophone = Texture2D::Create("resources/icons/micIcon.png");
 		m_IconMicrophoneOff = Texture2D::Create("resources/icons/micOffIcon.png");
 		m_IconMicrophoneUnavailable = Texture2D::Create("resources/icons/micUnavailableIcon.png");
+		m_IconSettings = Texture2D::Create("resources/icons/assistantSettingsIcon.png");
 		m_isListening = false;
 		m_isMicrophoneAvailable = assistantManager->CheckMicrophoneAvailable();
 		m_messageInProgress = false;
@@ -87,76 +88,25 @@ namespace eg
 		ImGui::EndGroup();
 	}
 
-	std::string AssistantPanel::GetLanguageSymbol(std::string language)
+	std::string AssistantPanel::GetLanguageSymbol(const std::string& language)
 	{
-		if(language == "csharp")
-			return "C#";
-		else if(language == "cpp")
-			return "C++";
-		else if (language == "python")
-			return "Python";
-		else if (language == "javascript")
-			return "JavaScript";
-		else if (language == "java")
-			return "Java";
-		else if (language == "ruby")
-			return "Ruby";
-		else if (language == "php")
-			return "PHP";
-		else if (language == "swift")
-			return "Swift";
-		else if (language == "kotlin")
-			return "Kotlin";
-		else if (language == "typescript")
-			return "TypeScript";
-		else if (language == "go")
-			return "Go";
-		else if (language == "rust")
-			return "Rust";
-		else if (language == "scala")
-			return "Scala";
-		else if (language == "r")
-			return "R";
-		else if (language == "perl")
-			return "Perl";
-		else if (language == "lua")
-			return "Lua";
-		else if (language == "haskell")
-			return "Haskell";
-		else if (language == "elixir")
-			return "Elixir";
-		else if (language == "clojure")
-			return "Clojure";
-		else if (language == "fsharp")
-			return "F#";
-		else if (language == "erlang")
-			return "Erlang";
-		else if (language == "dart")
-			return "Dart";
-		else if (language == "crystal")
-			return "Crystal";
-		else if (language == "cobol")
-			return "COBOL";
-		else if (language == "bash")
-			return "Bash";
-		else if (language == "assembly")
-			return "Assembly";
-		else if (language == "powershell")
-			return "PowerShell";
-		else if (language == "sql")
-			return "SQL";
-		else if (language == "html")
-			return "HTML";
-		else if (language == "css")
-			return "CSS";
-		else if (language == "xml")
-			return "XML";
-		else if (language == "json")
-			return "JSON";
-		else if (language == "yaml")
-			return "YAML";
-		else if (language == "markdown")
-			return "Markdown";
+		static const std::unordered_map<std::string, std::string> languageMap = {
+			{"csharp", "C#"}, {"cpp", "C++"}, {"python", "Python"},
+			{"javascript", "JavaScript"}, {"java", "Java"}, {"ruby", "Ruby"},
+			{"php", "PHP"}, {"swift", "Swift"}, {"kotlin", "Kotlin"},
+			{"typescript", "TypeScript"}, {"go", "Go"}, {"rust", "Rust"},
+			{"scala", "Scala"}, {"r", "R"}, {"perl", "Perl"},
+			{"lua", "Lua"}, {"haskell", "Haskell"}, {"elixir", "Elixir"},
+			{"clojure", "Clojure"}, {"fsharp", "F#"}, {"erlang", "Erlang"},
+			{"dart", "Dart"}, {"crystal", "Crystal"}, {"cobol", "COBOL"},
+			{"bash", "Bash"}, {"assembly", "Assembly"}, {"powershell", "PowerShell"},
+			{"sql", "SQL"}, {"html", "HTML"}, {"css", "CSS"},
+			{"xml", "XML"}, {"json", "JSON"}, {"yaml", "YAML"},
+			{"markdown", "Markdown"}
+		};
+
+		auto it = languageMap.find(language);
+		return (it != languageMap.end()) ? it->second : "";
 	}
 
 	void AssistantPanel::RenderAssistantMessage(const std::string& message, int id) {
@@ -339,7 +289,83 @@ namespace eg
 		}
 
 		float buttonSize = 25.0f;
-		float availableHeight = ImGui::GetWindowSize().y - buttonSize * 2 - ImGui::GetCursorPosY();
+		float availableHeight = ImGui::GetWindowSize().y - buttonSize * 4 - ImGui::GetCursorPosY();
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+		ImGui::SetCursorPosX(ImGui::GetWindowSize().x - buttonSize * 1.5);
+
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		ImVec2 center = ImVec2(pos.x + buttonSize * 0.5f, pos.y + buttonSize * 0.5f);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+
+		if (ImGui::ImageButton((ImTextureID)m_IconSettings->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		{
+			ImGui::OpenPopup("Assistant Settings");
+		}
+
+		if (ImGui::IsItemHovered())
+		{
+			float glow_radius = 1.0f;
+			ImVec4 glow_color = ImVec4(0.8f, 0.8f, 1.0f, 0.3f);
+
+			draw_list->AddCircleFilled(center, buttonSize * 0.5f + glow_radius, ImColor(glow_color), 32);
+		}
+
+		ImGui::PopStyleColor(3);
+
+		if (ImGui::BeginPopupModal("Assistant Settings", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.14f, 0.12f, 0.22f, 1.0f));         
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.88f, 0.85f, 0.96f, 1.0f));             
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.21f, 0.35f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.35f, 0.30f, 0.45f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.21f, 0.35f, 1.0f));           
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35f, 0.30f, 0.45f, 1.0f));  
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.45f, 0.40f, 0.55f, 1.0f));     
+			ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.88f, 0.85f, 0.96f, 1.0f));       
+			ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, ImVec4(0.35f, 0.30f, 0.45f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.25f, 0.21f, 0.35f, 1.0f));           
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.35f, 0.30f, 0.45f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.45f, 0.40f, 0.55f, 1.0f));    
+			ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.25f, 0.21f, 0.35f, 1.0f));
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 6.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 12.0f);    
+			ImGui::PushStyleVar(ImGuiStyleVar_GrabRounding, 8.0f);       
+			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 12.0f);      
+
+			ImGui::Text("Assistant's Settings");
+
+			static char instructions[256] = "";
+			ImGui::Text("Additional instructions");
+			ImGui::InputTextMultiline("##instructions", instructions, IM_ARRAYSIZE(instructions), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 5));
+
+			static float volume = 0.5f;
+			ImGui::Text("Assistant's volume");
+			ImGui::SliderFloat("##volume", &volume, 0.0f, 1.0f, "%.2f");
+
+			ImGui::SameLine();
+
+			const char* languages[] = { "C++", "Python", "JavaScript", "Java", "C#"};
+			static int current_language = 0;
+			ImGui::Text("Preferred language");
+			ImGui::Combo("##language", &current_language, languages, IM_ARRAYSIZE(languages));
+
+			if (ImGui::Button("Close", ImVec2(120, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::PopStyleColor(13);
+			ImGui::PopStyleVar(6);
+
+			ImGui::EndPopup();
+		}
 
 		ImGui::BeginChild("Messages", ImVec2(ImGui::GetWindowSize().x, availableHeight), false, ImGuiWindowFlags_HorizontalScrollbar);
 
@@ -379,9 +405,7 @@ namespace eg
 
 		ImGui::SetCursorPosY(ImGui::GetWindowSize().y - buttonSize * 1.5);
 
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-
-		ImVec2 pos = ImGui::GetCursorScreenPos();
+		pos = ImGui::GetCursorScreenPos();
 		ImVec2 inputSize = ImVec2(300, 30);
 
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.21f, 0.35f, 1.00f));
@@ -413,7 +437,7 @@ namespace eg
 		ImGui::SameLine();
 
 		pos = ImGui::GetCursorScreenPos();
-		ImVec2 center = ImVec2(pos.x + buttonSize * 0.5f, pos.y + buttonSize * 0.5f);
+		center = ImVec2(pos.x + buttonSize * 0.5f, pos.y + buttonSize * 0.5f);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
