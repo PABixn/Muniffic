@@ -1,7 +1,7 @@
 Root: 1274541393096234650
 Directories:
-  - UUID: 8529615392521996306
-    Name: SpriteAtlas
+  - UUID: 7647691802991497178
+    Name: Scenes
     Parent: 1274541393096234650
     Subdirectories:
       []
@@ -14,8 +14,8 @@ Directories:
       []
     Assets:
       []
-  - UUID: 7647691802991497178
-    Name: Scenes
+  - UUID: 8529615392521996306
+    Name: SpriteAtlas
     Parent: 1274541393096234650
     Subdirectories:
       []
@@ -28,13 +28,6 @@ Directories:
       []
     Assets:
       []
-  - UUID: 5893105601190356635
-    Name: Fonts
-    Parent: 1274541393096234650
-    Subdirectories:
-      []
-    Assets:
-      []
   - UUID: 2425581504258727803
     Name: Animations
     Parent: 1274541393096234650
@@ -42,6 +35,13 @@ Directories:
       []
     Assets:
       []
+  - UUID: 5893105601190356635
+    Name: Fonts
+    Parent: 1274541393096234650
+    Subdirectories:
+      []
+    Assets:
+      - 7934014646605026757
   - UUID: 2854346632293281808
     Name: Scripts
     Parent: 1274541393096234650

@@ -62,6 +62,8 @@ namespace eg {
 
 		//UI Panels
 		void UI_Toolbar();
+
+		void LoadFonts();
 	private:
 		Ref<Project> m_CurrentProject;
 		std::filesystem::path m_CustomScriptsDirectory; //absolute

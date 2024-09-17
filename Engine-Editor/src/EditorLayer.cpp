@@ -59,19 +59,7 @@ namespace eg
 		m_IconStep = Texture2D::Create("resources/icons/StepButton.png");
 		m_LogoIcon = Texture2D::Create("resources/icons/logo.png");
 
-		auto& io = ImGui::GetIO();
-		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf",18.0f,NULL,io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsRegularFont != nullptr);
-		m_PoppinsMediumFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsMediumFontBig != nullptr);
-		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf",20.0f,NULL,io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsMediumFont != nullptr);
-		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf",20.0f,NULL,io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsSemiBoldFont != nullptr);
-		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf",20.0f,NULL,io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsExtraBoldFont != nullptr);
-
-		io.FontDefault = m_PoppinsRegularFont;
+		LoadFonts();
 
 		FrameBufferSpecification fbSpec;
 		fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
@@ -295,8 +283,8 @@ namespace eg
 			style.WindowMinSize.x = minWinSizeX;
 
 			style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0, 0, 0, 0);
-		style.Colors[ImGuiCol_HeaderActive] = ImVec4(0, 0, 0, 0);
-		style.Colors[ImGuiCol_TextDisabled] = m_LightTextShade;
+			style.Colors[ImGuiCol_HeaderActive] = ImVec4(0, 0, 0, 0);
+			style.Colors[ImGuiCol_TextDisabled] = m_LightTextShade;
 
 		//ImGui::Image((ImTextureID)m_LogoIcon->GetRendererID(),ImVec2(30,30));
 		//ImGui::SameLine();
@@ -1075,6 +1063,22 @@ namespace eg
 	void EditorLayer::CloseAddResourcePanel()
 	{
 		m_AddResourcePanel = nullptr;
+	}
+
+	void EditorLayer::LoadFonts() {
+		auto& io = ImGui::GetIO();
+		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsRegularFont != nullptr);
+		m_PoppinsMediumFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsMediumFontBig != nullptr);
+		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsMediumFont != nullptr);
+		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsSemiBoldFont != nullptr);
+		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsExtraBoldFont != nullptr);
+
+		io.FontDefault = m_PoppinsRegularFont;
 	}
 
 }
