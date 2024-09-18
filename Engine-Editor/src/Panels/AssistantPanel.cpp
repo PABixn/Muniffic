@@ -3,44 +3,46 @@
 #include <Imgui/imgui.h>
 #include "Engine/Project/Project.h"
 #include "Imgui/imgui_markdown.h"
+#include <thread>
+#include <sstream>
+#include <unordered_map>
 
 namespace eg
 {
-	char AssistantPanel::buffer[1024];
-	static ImGui::MarkdownConfig mdConfig;
-
 	AssistantPanel::AssistantPanel()
+		: assistantManager(std::make_unique<AssistantManager>()),
+		assistantRespondingAnimation("."),
+		m_IconCopy(Texture2D::Create("resources/icons/copyCode.png")),
+		m_IconSend(Texture2D::Create("resources/icons/sendIcon.png")),
+		m_IconMicrophone(Texture2D::Create("resources/icons/micIcon.png")),
+		m_IconMicrophoneOff(Texture2D::Create("resources/icons/micOffIcon.png")),
+		m_IconMicrophoneUnavailable(Texture2D::Create("resources/icons/micUnavailableIcon.png")),
+		m_IconSettings(Texture2D::Create("resources/icons/assistantSettingsIcon.png")),
+		m_isListening(false),
+		m_isMicrophoneAvailable(assistantManager->CheckMicrophoneAvailable()),
+		m_isLastMessageFromUser(false)
 	{
-		assistantManager = new AssistantManager();
+		memset(buffer, 0, sizeof(buffer));
 
 		if (!assistantManager->LoadAssistant())
 		{
-			std::string instructions = "You are an assistant for Muniffic Game Engine. You can answer questions about the engine, explain mechanics (how everything works) and also write scripts using utilities provided by Muniffic Script Engine. You can also call functions when it is needed to satisfy the user. When user asks to do something, firstly check if you can do it yourself using provieded function, if not, continue with other tools (remember that TransformComponent is default, it can't be added or removed). Before answering any question about the engine (specifically scripts) check the documentation. \n You have needed documentation in following files (don't write about these files to the user): \n - Muniffic.docx - general documentation of the engine, explaining how the whole engine works. \n - Scripting-Engine.cs - scripting engine code containing all functions that can be used for scripting. \n - Scripting-Engine-Examples.cs - general rules for writing scripts and examples of how to perform specific actions(how to use scripting system functions). \n You answer questions only about Muniffic, don't write anything about other engines. \n If you don't know something or are unsure, make an elegant excuse. \n If user asks something about scripts, write an example full script file performing requested action.";
+			std::string instructions =
+				"You are an assistant for Muniffic Game Engine. You can answer questions about the engine, explain mechanics (how everything works) and also write scripts using utilities provided by Muniffic Script Engine. You can also call functions when it is needed to satisfy the user. When user asks to do something, firstly check if you can do it yourself using provided function, if not, continue with other tools (remember that TransformComponent is default, it can't be added or removed). Before answering any question about the engine (specifically scripts) check the documentation.\n"
+				"You have needed documentation in following files (don't write about these files to the user):\n"
+				"- Muniffic.docx - general documentation of the engine, explaining how the whole engine works.\n"
+				"- Scripting-Engine.cs - scripting engine code containing all functions that can be used for scripting.\n"
+				"- Scripting-Engine-Examples.cs - general rules for writing scripts and examples of how to perform specific actions (how to use scripting system functions).\n"
+				"You answer questions only about Muniffic, don't write anything about other engines.\n"
+				"If you don't know something or are unsure, make an elegant excuse.\n"
+				"If user asks something about scripts, write an example full script file performing requested action.";
 
 			assistantManager->CreateAssistant("Bob", instructions);
 		}
 
 		threadID = assistantManager->CreateThread();
-
-		assistantRespondingAnimation = ".";
-		m_IconCopy = Texture2D::Create("resources/icons/copyCode.png");
-		m_IconSend = Texture2D::Create("resources/icons/sendIcon.png");
-		m_IconMicrophone = Texture2D::Create("resources/icons/micIcon.png");
-		m_IconMicrophoneOff = Texture2D::Create("resources/icons/micOffIcon.png");
-		m_IconMicrophoneUnavailable = Texture2D::Create("resources/icons/micUnavailableIcon.png");
-		m_IconSettings = Texture2D::Create("resources/icons/assistantSettingsIcon.png");
-		m_isListening = false;
-		m_isMicrophoneAvailable = assistantManager->CheckMicrophoneAvailable();
-		m_messageInProgress = false;
 	}
 
-	AssistantPanel::~AssistantPanel()
-	{
-		delete assistantManager;
-		assistantManager = nullptr;
-	}
-
-	void DoMessage(AssistantManager* assistantManager, std::string threadID, char* buffer)
+	void AssistantPanel::DoMessage(const std::string& message)
 	{
 		if (assistantManager->GetVoiceAssistantListening())
 		{
@@ -48,15 +50,14 @@ namespace eg
 			assistantManager->StopListening();
 		}
 
-		std::string message = buffer;
-		memset(buffer, 0, 1024);
 		assistantManager->AddMessage(threadID, message);
 		assistantManager->InitiateRun(threadID);
 		assistantManager->WaitForCompletion(threadID);
 	}
 
-	void AssistantPanel::RenderUserMessage(const std::string& message) {
-		float padding = 10.0f; 
+	void AssistantPanel::RenderUserMessage(const std::string& message)
+	{
+		float padding = 10.0f;
 		float rightMargin = 15.0f;
 		float maxBubbleWidth = ImGui::GetWindowSize().x * 0.6f;
 
@@ -109,7 +110,8 @@ namespace eg
 		return (it != languageMap.end()) ? it->second : "";
 	}
 
-	void AssistantPanel::RenderAssistantMessage(const std::string& message, int id) {
+	void AssistantPanel::RenderAssistantMessage(const std::string& message, int id)
+	{
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
 		drawList->ChannelsSplit(3);
 		drawList->ChannelsSetCurrent(2);
@@ -224,7 +226,7 @@ namespace eg
 			}
 			else
 			{
-				if(!msg.empty())
+				if (!msg.empty())
 					msg += "\n";
 				msg += line;
 			}
@@ -263,29 +265,21 @@ namespace eg
 		{
 			std::string message = assistantManager->GetLastVoiceMessage();
 			memcpy(buffer, message.data(), message.size());
-			RunMessage(buffer);
+			RunMessage(message);
 		}
 
 		if (assistantManager->GetIsMessageInProgress())
 			m_isListening = false;
 
-		if (m_isListening)
+		if (m_isListening && !assistantManager->GetVoiceAssistantListening())
 		{
-			if (!assistantManager->GetVoiceAssistantListening())
-			{
-				assistantManager->SetVoiceAssistantListening(true);
-				std::thread t([this] { assistantManager->StartListening(); });
-				t.detach();
-			}
+			assistantManager->SetVoiceAssistantListening(true);
+			std::thread(&AssistantManager::StartListening, assistantManager.get()).detach();
 		}
-		else
+		else if (!m_isListening && assistantManager->GetVoiceAssistantListening())
 		{
-			if (assistantManager->GetVoiceAssistantListening())
-			{
-				assistantManager->SetVoiceAssistantListening(false);
-				std::thread t([this] { assistantManager->StopListening(); });
-				t.detach();
-			}
+			assistantManager->SetVoiceAssistantListening(false);
+			std::thread(&AssistantManager::StopListening, assistantManager.get()).detach();
 		}
 
 		float buttonSize = 25.0f;
@@ -316,28 +310,30 @@ namespace eg
 
 		ImGui::PopStyleColor(3);
 
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + buttonSize * 0.5);
+
 		if (ImGui::BeginPopupModal("Assistant Settings", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.14f, 0.12f, 0.22f, 1.0f));         
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.88f, 0.85f, 0.96f, 1.0f));             
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.14f, 0.12f, 0.22f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.88f, 0.85f, 0.96f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.21f, 0.35f, 1.00f));
 			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.35f, 0.30f, 0.45f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.21f, 0.35f, 1.0f));           
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35f, 0.30f, 0.45f, 1.0f));  
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.45f, 0.40f, 0.55f, 1.0f));     
-			ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.88f, 0.85f, 0.96f, 1.0f));       
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.21f, 0.35f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.35f, 0.30f, 0.45f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.45f, 0.40f, 0.55f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.88f, 0.85f, 0.96f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, ImVec4(0.35f, 0.30f, 0.45f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.25f, 0.21f, 0.35f, 1.0f));           
+			ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.25f, 0.21f, 0.35f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.35f, 0.30f, 0.45f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.45f, 0.40f, 0.55f, 1.0f));    
+			ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.45f, 0.40f, 0.55f, 1.0f));
 			ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.25f, 0.21f, 0.35f, 1.0f));
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 6.0f));
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 12.0f);    
-			ImGui::PushStyleVar(ImGuiStyleVar_GrabRounding, 8.0f);       
-			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 12.0f);      
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 12.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_GrabRounding, 8.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 12.0f);
 
 			ImGui::Text("Assistant's Settings");
 
@@ -349,9 +345,7 @@ namespace eg
 			ImGui::Text("Assistant's volume");
 			ImGui::SliderFloat("##volume", &volume, 0.0f, 1.0f, "%.2f");
 
-			ImGui::SameLine();
-
-			const char* languages[] = { "C++", "Python", "JavaScript", "Java", "C#"};
+			const char* languages[] = { "C++", "Python", "JavaScript", "Java", "C#" };
 			static int current_language = 0;
 			ImGui::Text("Preferred language");
 			ImGui::Combo("##language", &current_language, languages, IM_ARRAYSIZE(languages));
@@ -369,36 +363,37 @@ namespace eg
 
 		ImGui::BeginChild("Messages", ImVec2(ImGui::GetWindowSize().x, availableHeight), false, ImGuiWindowFlags_HorizontalScrollbar);
 
-		std::string lastMessageRole = "";
-
-		for (Message* msg : assistantManager->GetMessages(threadID))
+		if (assistantManager->ThreadAvailable(threadID))
 		{
-			if (msg->role == "assistant")
-				RenderAssistantMessage(msg->content, msg->id);
-			else
-				RenderUserMessage(msg->content);
-
-			lastMessageRole = msg->role;
-			ImGui::NewLine();
-		}
-
-		if (lastMessageRole == "user")
-		{
-			static float timer = 0.0f;
-			timer += ImGui::GetIO().DeltaTime;
-
-			if (timer > 0.5f)
+			m_isLastMessageFromUser = assistantManager->GetLastMessageRole(threadID) == "user";
+			for (Message* msg : assistantManager->GetMessages(threadID))
 			{
-				if (assistantRespondingAnimation.size() < 4)
-					assistantRespondingAnimation += ".";
+				if (msg->role == "assistant")
+					RenderAssistantMessage(msg->content, msg->id);
 				else
-					assistantRespondingAnimation = ".";
+					RenderUserMessage(msg->content);
 
-				timer = 0.0f;
+				ImGui::NewLine();
 			}
 
-			RenderAssistantMessage(assistantRespondingAnimation);
-			ImGui::NewLine();
+			if (m_isLastMessageFromUser)
+			{
+				static float timer = 0.0f;
+				timer += ImGui::GetIO().DeltaTime;
+
+				if (timer > 0.5f)
+				{
+					if (assistantRespondingAnimation.size() < 4)
+						assistantRespondingAnimation += ".";
+					else
+						assistantRespondingAnimation = ".";
+
+					timer = 0.0f;
+				}
+
+				RenderAssistantMessage(assistantRespondingAnimation);
+				ImGui::NewLine();
+			}
 		}
 
 		ImGui::EndChild();
@@ -463,7 +458,7 @@ namespace eg
 
 		if (ImGui::ImageButton(m_isMicrophoneAvailable ? m_isListening ? (ImTextureID)m_IconMicrophone->GetRendererID() : (ImTextureID)m_IconMicrophoneOff->GetRendererID() : (ImTextureID)m_IconMicrophoneUnavailable->GetRendererID(), { buttonSize, buttonSize }, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
-			if(m_isMicrophoneAvailable)
+			if (m_isMicrophoneAvailable)
 				m_isListening = !m_isListening;
 		}
 
@@ -487,14 +482,14 @@ namespace eg
 		ImGui::End();
 	}
 
-	void AssistantPanel::RunMessage(const std::string message)
+	void AssistantPanel::RunMessage(const std::string& message)
 	{
-		if(message.empty())
+		if (message.empty() || m_isLastMessageFromUser)
 			return;
 
 		assistantManager->SetMessageInProgress(true);
 
-		std::thread t(DoMessage, assistantManager, threadID, buffer);
-		t.detach();
+		memset(buffer, 0, sizeof(buffer));
+		std::thread(&AssistantPanel::DoMessage, this, message).detach();
 	}
 }

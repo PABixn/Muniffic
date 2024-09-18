@@ -16,8 +16,43 @@ namespace eg
 		newVoiceMessageAvailable = false;
 		IsVoiceAsssistantInitialized = false;
 		IsMessageInProgress = false;
+		m_Threads = std::unordered_map<std::string, Thread*>();
 
 		Init();
+	}
+
+	bool AssistantManager::ThreadAvailable(std::string threadID)
+	{
+		if (m_Threads.find(threadID) == m_Threads.end())
+		{
+			EG_CORE_ERROR("Thread not found");
+			return false;
+		}
+
+		if (m_Threads.at(threadID)->messages.size() < 1)
+		{
+			//EG_CORE_ERROR("No messages found for thread");
+			return false;
+		}
+
+		return true;
+	}
+
+	const std::string& AssistantManager::GetLastMessageRole(std::string threadID)
+	{
+		if (m_Threads.find(threadID) == m_Threads.end())
+		{
+			EG_CORE_ERROR("Thread not found");
+			return "";
+		}
+
+		if (m_Threads.at(threadID)->messages.size() == 0)
+		{
+			EG_CORE_ERROR("No messages found for thread");
+			return "";
+		}
+
+		return m_Threads.at(threadID)->messages.at(m_Threads.at(threadID)->messages.size() - 1)->role;
 	}
 
 	void AssistantManager::SpeakText(std::string text)

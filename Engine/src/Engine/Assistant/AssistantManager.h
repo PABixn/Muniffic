@@ -54,6 +54,10 @@ namespace eg
 		bool GetIsMessageInProgress() { return IsMessageInProgress; }
 		void SetMessageInProgress(bool available) { IsMessageInProgress = available; }
 
+		const std::string& GetLastMessageRole(std::string threadID);
+
+		bool ThreadAvailable(std::string threadID);
+
 	private:
 		std::string m_AssistantName;
 		std::string m_AssistantInstructions;
