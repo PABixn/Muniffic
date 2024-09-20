@@ -203,6 +203,8 @@ namespace eg {
 
 		static bool isMethodInternal(const std::string& methodName);
 
+		static int GetMethodParameterCount(const std::string& className, const std::string& methodName);
+
 		static MonoImage* GetCoreAssemblyImage();
 
 		static MonoObject* GetManagedInstance(UUID uuid, std::string name);

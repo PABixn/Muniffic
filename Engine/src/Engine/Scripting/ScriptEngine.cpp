@@ -372,6 +372,17 @@ namespace eg
 		return std::find(s_InternallCallFunctions.begin(), s_InternallCallFunctions.end(), methodName) != s_InternallCallFunctions.end();
 	}
 
+	int ScriptEngine::GetMethodParameterCount(const std::string& className, const std::string& methodName)
+	{
+		bool exists = s_Data->ScriptMethods.end() != s_Data->ScriptMethods.find(className) && s_Data->ScriptMethods[className].end() != s_Data->ScriptMethods[className].find(methodName);
+		if(!exists)
+			return 0;
+		MonoMethodSignature* signature = mono_method_signature(s_Data->ScriptMethods[className][methodName].Method);
+		if (!signature)
+			return 0;
+		return mono_signature_get_param_count(signature);
+	}
+
 	MonoImage* ScriptEngine::GetCoreAssemblyImage()
 	{
 		return s_Data->CoreAssemblyImage;
