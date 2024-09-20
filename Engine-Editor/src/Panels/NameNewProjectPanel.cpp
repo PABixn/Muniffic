@@ -1,6 +1,7 @@
 #include "NameNewProjectPanel.h"
 #include "Engine/Resources/ResourceDatabase.h"
 #include "../../Engine-Editor/src/Commands/Commands.h"
+#include <vector>
 
 namespace eg
 {
@@ -14,6 +15,36 @@ namespace eg
 		m_Show = true;
 	}
 
+	char correctChar(char& s) {
+		if (s == ' ') {
+			return '_';
+		}
+		return s;
+	}
+
+	bool NameNewProjectPanel::isNameAllowed(char* name)
+	{
+		while (*name != '\0') {
+			if (correctChar(*name) != *name)
+			{
+				return false;
+			}
+			name++;
+		}
+		return true;
+	}
+
+	std::vector<char> NameNewProjectPanel::makeNameAllowed(char* name)
+	{
+		std::vector<char> correctedName = std::vector<char>();
+		while (*name != '\0') {
+			correctedName.push_back(correctChar(*name));
+			name++;
+		}
+		correctedName.push_back(correctChar(*name));
+		return correctedName;
+	}
+
 	void NameNewProjectPanel::OnImGuiRender()
 	{
 		ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
@@ -24,13 +55,33 @@ namespace eg
 		ImGui::InputText("##ProjectName", buffer, 256);
 		if (ImGui::Button("Save"))
 		{
-			projectName = buffer;
-			m_GiveProjectName = false;
-			
-			
-			//Commands::ExecuteRenameDirectoryCommand(m_ProjectUUID, buffer);
-			//ResourceDatabase::RenameDirectory(m_Path, buffer);
-			m_Show = false;
+			if (isNameAllowed(buffer))
+			{
+				projectName = buffer;
+				m_GiveProjectName = false;
+				m_Show = false;
+			}
+			else
+			{
+				ImGui::OpenPopup("Project name not allowed");
+			}
+		}
+		if (ImGui::BeginPopupModal("Project name not allowed"))
+		{
+			ImGui::Text("Project name contains forbidden characters. \nThe project will be saved as: ");
+			std::vector<char> correctedName= makeNameAllowed(buffer);
+			ImGui::Text(correctedName.data());
+			if (ImGui::Button("ok")) {
+				projectName = correctedName.data();
+				m_GiveProjectName = false;
+				m_Show = false;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("cancel"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
 		}
 		ImGui::End();
 	}

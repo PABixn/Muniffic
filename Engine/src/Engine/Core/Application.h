@@ -29,7 +29,7 @@ namespace eg {
 		ApplicationCommandLineArgs CommandLineArgs;
 	};
 
-	 class Application
+	class Application
 	{
 	public:
 
@@ -45,13 +45,14 @@ namespace eg {
 		inline static Application& Get() { return *s_Instance; }
 		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 		inline Window& GetWindow() { return *m_Window; }
-		
+
 		void Close();
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 		void SubmitToMainThread(std::function<void()> function);
 		void ChangeName(const char* text);
 		void ChangeNameWithCurrentProject(bool saved);
+		int getCurrentFrame() { return frame; };
 	private:
 		void Run();
 		virtual bool OnWindowClose(WindowCloseEvent& e);
@@ -73,6 +74,7 @@ namespace eg {
 		std::vector<std::function<void()>> m_MainThreadQueue;
 		std::mutex m_MainThreadQueueMutex;
 	private:
+		int frame = 0;
 		static Application* s_Instance;
 		friend int ::main(int argc, char** argv);
 		

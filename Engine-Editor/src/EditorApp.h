@@ -20,8 +20,8 @@ namespace eg
 		{
 			// PushLayer(new WelcomeLayer());
 			PushLayer(new EditorLayer());
-			ChangeNameWithCurrentProject(true);
-			TCHAR buffer[MAX_PATH] = {0};
+			//ChangeNameWithCurrentProject(true);
+			TCHAR buffer[MAX_PATH] = { 0 };
 			GetModuleFileName(NULL, buffer, MAX_PATH);
 			std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
 			std::wstring finalPath = std::wstring(buffer).substr(0, pos);
@@ -42,12 +42,14 @@ namespace eg
 
 			glfwSetWindowIcon((GLFWwindow *)this->GetWindow().GetNativeWindow(), 1, images);
 			stbi_image_free(images[0].pixels);
+			//ChangeNameWithCurrentProject(true);
 		};
 
 		~Editor() {}
 
-		void OnUpdate()
-		{
+		EditorLayer* GetEditorLayer() { return static_cast<EditorLayer*>(GetFirstLayer()); }
+
+		void OnUpdate() {
 		}
 		bool OnWindowClose(WindowCloseEvent &e);
 	};

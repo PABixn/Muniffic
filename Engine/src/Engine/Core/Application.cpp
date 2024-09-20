@@ -107,6 +107,7 @@ namespace eg
 			}
 
 			m_Window->OnUpdate();
+			frame++;
 		}
 	}
 

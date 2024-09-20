@@ -73,6 +73,23 @@ namespace eg
 		YAML::Node data;
 		try
 		{
+			std::filesystem::path abs = std::filesystem::absolute(path);
+			
+			if (!std::filesystem::exists(abs))
+			{
+				//std::filesystem::create_(path);
+ 				std::ofstream file(path);
+
+				if (file.is_open()) {
+					file << "RecentProjects:" << std::endl;
+					file.close();
+					std::cout << "File created and written successfully." << std::endl;
+				}
+				else {
+					std::cerr << "Error creating or opening the file." << std::endl;
+				}
+
+			}
 			data = YAML::LoadFile(path);
 		}
 		catch (const YAML::Exception& e)

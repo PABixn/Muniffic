@@ -864,8 +864,23 @@ namespace eg
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
-				// zna1
 				ImGui::Unindent();
+				static std::string result;
+				if (PrettyButton("Compile Scripts"))
+				{
+					EditorLayer* editorLayer = static_cast<EditorLayer*>(Application::Get().GetFirstLayer());
+					result =  (editorLayer->CompileCustomScripts());
+					ImGui::OpenPopup("Compilation");
+					//zna1
+				}
+				bool open = true;
+				if (ImGui::BeginPopupModal("Compilation", &open))
+				{
+					ImGui::Text(result.c_str());
+					if (ImGui::Button("OK"))
+						ImGui::CloseCurrentPopup();
+					ImGui::EndPopup();
+				}
 				if (PrettyButton("Add Script"))
 				{
 					ScriptResourceData* data = new ScriptResourceData();
@@ -1222,18 +1237,18 @@ namespace eg
 				if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand<glm::vec4, SpriteRendererComponent>(&component.Color, color, entity, "SpriteRendererComponent-Color");
 
-				DrawComponentPropertyFileReference("Texture", component.TextureUUID, [&component, &entity](int64_t* what)
+				DrawComponentPropertyFileReference("Texture", component.TextureUUID, [&component, &entity](int64_t* what) {
+					Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
+					if (texture->IsLoaded())
 					{
-						Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
-						if (texture->IsLoaded())
-						{
-							component.TextureUUID = *what;
-							Ref<Texture2D> oldTexture = component.Texture;
-							component.Texture = texture;
-							Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
-						}
-						else
-							EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what)); });
+						component.TextureUUID = *what;
+						Ref<Texture2D> oldTexture = component.Texture;
+						component.Texture = texture;
+						Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
+					}
+					else
+						EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what));
+				});
 				float factor = component.TilingFactor;
 				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
 					Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
@@ -1315,6 +1330,13 @@ namespace eg
 											{
 			const char* bodyTypeString[] = { "Static", "Dynamic", "Kinematic"};
 			const char* currentBodyTypeString = bodyTypeString[(int)component.Type];
+
+			DrawComponentPropertyCombo("BodyType", std::vector<const char*>(bodyTypeString, bodyTypeString + sizeof bodyTypeString / sizeof bodyTypeString[0]), (int)component.Type, [&component, &entity](int number) {
+				RigidBody2DComponent::BodyType type = component.Type;
+				component.Type = (RigidBody2DComponent::BodyType)number;
+				Commands::ExecuteRawValueCommand<RigidBody2DComponent::BodyType, RigidBody2DComponent>(&component.Type, type, entity, "RigidBody2DComponent-Body Type", true);
+			});
+			
 			float* GravityMultiplier = &component.GravityMultiplier;
 			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
 			{
@@ -1338,9 +1360,7 @@ namespace eg
 			
 			if(DrawComponentPropertyCheckbox("Fixed Rotation", &component.FixedRotation))
 				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");
-
-			if (ImGui::DragFloat("Gravity multiplier", &component.GravityMultiplier, 0.1f))
-				Commands::ExecuteRawValueCommand<float, RigidBody2DComponent>(&component.GravityMultiplier, component.GravityMultiplier, entity, "RigidBody2DComponent-Gravity Multiplier"); }, m_Context, ComponentIcons::RigidBodyIcon);
+		}, m_Context, ComponentIcons::RigidBodyIcon);
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [entity](auto &component)
 											  {
@@ -1359,8 +1379,9 @@ namespace eg
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Restitution, restitution, entity, "BoxCollider2DComponent-Restitution");
 			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
-			if (DrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
-				Commands::ExecuteRawValueCommand<bool, BoxCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "BoxCollider2DComponent-Is Sensor"); }, m_Context, ComponentIcons::BoxColliderIcon);
+			if (ImGui::Checkbox("Is Sensor", &component.IsSensor))
+				Commands::ExecuteRawValueCommand<bool, BoxCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "BoxCollider2DComponent-Is Sensor");
+		}, m_Context, ComponentIcons::BoxColliderIcon);
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [entity](auto &component)
 												 {
@@ -1380,7 +1401,8 @@ namespace eg
 			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
 			if (DrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
-				Commands::ExecuteRawValueCommand<bool, CircleCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "CircleCollider2DComponent-Is Sensor"); }, m_Context, ComponentIcons::CircleColliderIcon);
+				Commands::ExecuteRawValueCommand<bool, CircleCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "CircleCollider2DComponent-Is Sensor");
+			}, m_Context, ComponentIcons::CircleColliderIcon);
 
 		DrawComponent<TextComponent>("Text Renderer", entity, [entity](auto &component)
 									 {

@@ -2,6 +2,8 @@ Scene: Untitled
 Entities:
   - Entity: 10642011015283237485
     Name: Cube
+    Children:
+      - 7612254516769269469
     TagComponent:
       Tag: Text
     TransformComponent:

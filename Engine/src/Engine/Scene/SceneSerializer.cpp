@@ -12,7 +12,7 @@
 #include <yaml-cpp/yaml.h>
 #include <fstream>
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
-
+#include "box2d/b2_fixture.h"
 
 
 namespace eg {

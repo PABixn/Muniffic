@@ -16,10 +16,13 @@ namespace eg
 		void setNameGiven(bool val) { m_GiveProjectName = val; }
 		void setUUID(UUID uuid) { m_ProjectUUID = uuid; }
 		std::string projectName;
-
+		
 	protected:
 		bool m_GiveProjectName;
 		bool m_Show;
 		UUID m_ProjectUUID;
+	private:
+		bool isNameAllowed(char* name);
+		std::vector<char> makeNameAllowed(char* name);
 	};
 }

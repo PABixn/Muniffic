@@ -1,0 +1,136 @@
+# Engine/CMakeLists.txt
+include(../Dependencies.cmake)
+
+cmake_minimum_required(VERSION 3.16)
+project(Engine LANGUAGES CXX)
+
+add_library(Engine STATIC)
+
+set_target_properties(Engine PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
+
+# Output directories for binaries and object files
+set_target_properties(Engine PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Engine"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Engine"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Engine"
+    OUTPUT_NAME "Engine"
+)
+
+# Precompiled Header
+target_precompile_headers(Engine PRIVATE "src/egpch.h")
+
+# Source files
+file(GLOB_RECURSE ENGINE_SOURCE 
+    "src/*.h"
+    "src/*.cpp"
+)
+file(GLOB_RECURSE STB_IMAGE_SOURCE 
+    "vendor/stb_image/*.h"
+    "vendor/stb_image/*.cpp"
+)
+file(GLOB_RECURSE GLM_SOURCE
+    "vendor/glm/glm/*.hpp"
+    "vendor/glm/glm/*.inl"
+)
+file(GLOB_RECURSE IMGUIZMO_SOURCE
+    "vendor/ImGuizmo/ImGuizmo.h"
+    "vendor/ImGuizmo/ImGuizmo.cpp"
+)
+
+target_sources(Engine PRIVATE
+    ${ENGINE_SOURCE}
+    ${STB_IMAGE_SOURCE}
+    ${GLM_SOURCE}
+    ${IMGUIZMO_SOURCE}
+)
+
+# Include directories
+target_include_directories(Engine PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/vendor"
+    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/spdlog/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/stb_image"
+    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/glm/glm"
+    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/ImGuizmo"
+    "${IncludeDir_Box2D}"
+    "${IncludeDir_filewatch}"
+    "${IncludeDir_GLFW}"
+    "${IncludeDir_Glad}"
+    "${IncludeDir_ImGui}"
+    "${IncludeDir_glm}"
+    "${IncludeDir_stb_image}"
+    "${IncludeDir_entt}"
+    "${IncludeDir_yaml_cpp}"
+    "${IncludeDir_msdfgen}"
+    "${IncludeDir_msdf_atlas_gen}"
+    "${IncludeDir_ImGuizmo}"
+    "${IncludeDir_VulkanSDK}"
+    "${IncludeDir_mono}"
+)
+
+# Define preprocessor macros
+target_compile_definitions(Engine PRIVATE
+    _CRT_SECURE_NO_WARNINGS
+    GLFW_INCLUDE_NONE
+)
+
+# Link external libraries
+target_link_libraries(Engine PUBLIC
+    Box2D
+    GLFW
+    Glad
+    Imgui
+    msdf-atlas-gen
+    opengl32
+    dwmapi
+    yaml-cpp
+    "${Library_mono}"
+)
+
+# Disable PCH for specific files
+set_source_files_properties(vendor/ImGuizmo/ImGuizmo.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+
+# Platform-specific settings
+if(WIN32)
+    target_compile_definitions(Engine PRIVATE _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
+    target_link_libraries(Engine PRIVATE
+        "${Library_WinSock}"
+        "${Library_WinMM}"
+        "${Library_WinVersion}"
+        "${Library_BCrypt}"
+    )
+endif()
+
+# Build configuration settings
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(Engine PRIVATE EG_DEBUG)
+    target_compile_options(Engine PRIVATE $<$<CONFIG:Debug>:-g>)
+    target_link_libraries(Engine PRIVATE
+        "${Library_ShaderC_Debug}"
+        "${Library_SPIRV_Cross_Debug}"
+        "${Library_SPIRV_Cross_GLSL_Debug}"
+    )
+
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_definitions(Engine PRIVATE EG_RELEASE)
+    target_compile_options(Engine PRIVATE $<$<CONFIG:Release>:-O2>)
+    target_link_libraries(Engine PRIVATE
+        "${Library_ShaderC_Release}"
+        "${Library_SPIRV_Cross_Release}"
+        "${Library_SPIRV_Cross_GLSL_Release}"
+    )
+
+elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
+    target_compile_definitions(Engine PRIVATE EG_DIST)
+    target_compile_options(Engine PRIVATE $<$<CONFIG:Dist>:-O3>)
+    target_link_libraries(Engine PRIVATE
+        "${Library_ShaderC_Release}"
+        "${Library_SPIRV_Cross_Release}"
+        "${Library_SPIRV_Cross_GLSL_Release}"
+    )
+endif()

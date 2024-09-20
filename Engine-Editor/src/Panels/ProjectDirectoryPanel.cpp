@@ -27,10 +27,10 @@ namespace eg {
 		ImGui::Begin("Project Directory");
 		ImGui::PopStyleVar();
 		auto s = Project::GetProjectDirectory();
-		drawDirectoryTreeNode(s);
+		DrawDirectoryTreeNode(s);
 		ImGui::End();
 	}
-	void ProjectDirectoryPanel::drawDirectoryTreeNode(const std::filesystem::path& path) {
+	void ProjectDirectoryPanel::DrawDirectoryTreeNode(const std::filesystem::path& path) {
 
 		auto t = ImGui::GetItemID();
 		auto i = getPathID(path.string());
@@ -83,7 +83,7 @@ namespace eg {
 			if (std::filesystem::is_directory(path))
 			{
 				for (auto& directoryEntry : std::filesystem::directory_iterator(path)) {
-					drawDirectoryTreeNode(directoryEntry.path());
+					DrawDirectoryTreeNode(directoryEntry.path());
 				}
 			}
 			ImGui::TreePop();
