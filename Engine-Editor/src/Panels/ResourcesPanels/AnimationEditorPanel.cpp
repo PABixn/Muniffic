@@ -185,17 +185,17 @@ namespace eg {
 			if (opened)
 			{
 				const auto& scriptMethods = ScriptEngine::GetAllScriptMethodMaps();
-				for (auto& [key, value] : scriptMethods) {
-					bool openedClass = ImGui::TreeNodeEx(key.c_str(), ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow);
+				for (auto& [className, value] : scriptMethods) {
+					bool openedClass = ImGui::TreeNodeEx(className.c_str(), ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow);
 					if (!openedClass)
 						continue;
-					for (auto& [key2, value2] : value) {
-						if (ScriptEngine::isMethodInternal(key2))
+					for (auto& [MethodName, value2] : value) {
+						if (ScriptEngine::isMethodInternal(MethodName) || ScriptEngine::GetMethodParameterCount(className, MethodName) != 0)
 							continue;
-						if (ImGui::Button(key2.c_str()))
+						if (ImGui::Button(MethodName.c_str()))
 						{
-							m_Anim->GetFrame(m_ClickedFrame)->SetFunctionCallName(key2);
-							m_Anim->GetFrame(m_ClickedFrame)->SetClassName(key);
+							m_Anim->GetFrame(m_ClickedFrame)->SetFunctionCallName(MethodName);
+							m_Anim->GetFrame(m_ClickedFrame)->SetClassName(className);
 							ImGui::CloseCurrentPopup();
 						}
 					}
@@ -238,20 +238,28 @@ namespace eg {
 			ImGui::GetWindowDrawList()->AddLine(ImVec2(i, ImGui::GetWindowPos().y), ImVec2(i, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y), IM_COL32(255, 255, 255, 255), 0.8f);
 		}
 
+		std::vector<ImU32> colors;
+		colors.reserve(m_Anim->GetFrameCount());
+
 		int i = 0;
 		m_HoveredFrame = -1;
 		m_FrameReleased = false;
+
+		i = 0;
 		for (auto frame : m_Anim->GetFrames()) {
 			ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 			float rectWidth = baseFrameWidth * frame->GetFrameDuration() + 2 * (frame->GetFrameDuration() - 1);
-			
-			ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(cursorPos.x, cursorPos.y), ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40), (ImU32)GetFrameColor(i));
+			ImVec2 cursorPos2 = ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40);
+			if (ImGui::IsMouseHoveringRect(cursorPos, cursorPos2))
+			{
+				m_HoveredFrame = i;
+			}
+			ImGui::GetWindowDrawList()->AddRectFilled(cursorPos, cursorPos2, (ImU32)GetFrameColor(i));
 
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y));
 			ImGui::InvisibleButton(("rectBtn" + std::to_string(i)).c_str(), ImVec2(rectWidth, 40));
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x + rectWidth + 2, cursorPos.y));
 
-			HandleFrameHover(i);
 			HandleFrameLeftClick(i);
 			HandleFrameRightClick(i);
 			HandleFrameDrag(i);
@@ -274,10 +282,6 @@ namespace eg {
 
 	void AnimationEditorPanel::HandleFrameHover(int frameIndex)
 	{
-		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem)) {
-			m_HoveredFrame = frameIndex;
-			EG_TRACE("Hovered frame: {0}", frameIndex);
-		}
 	}
 
 	void AnimationEditorPanel::HandleFrameLeftClick(int clickedFrameIndex)
@@ -327,6 +331,7 @@ namespace eg {
 			return;
 		m_FrameReleased = true;
 		m_FrameStartDuration = 1;
+		ResetSelectedFrames();
 	}
 
 	void AnimationEditorPanel::HandleResize()
@@ -389,10 +394,12 @@ namespace eg {
 
 	uint32_t AnimationEditorPanel::GetFrameColor(int frame)
 	{
-		if(IsFrameSelected(frame))
-			return IM_COL32(65, 51, 122, 255);
 		if (m_IsDragging && m_DraggingIndex == frame)
 			return IM_COL32(255, 105, 180, 255);
+		if (IsFrameSelected(frame))
+			return IM_COL32(65, 51, 122, 255);
+		if(m_HoveredFrame == frame)
+			return IM_COL32(255, 255, 255, 255);
 		return IM_COL32(194, 239, 235, 255);
 	}
 }

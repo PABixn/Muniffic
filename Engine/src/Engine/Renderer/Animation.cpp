@@ -295,7 +295,8 @@ namespace eg
 	void FrameData::CallFunction(UUID entityID)
 	{
 		EG_PROFILE_FUNCTION();
-		if (ClassName != "" && FunctionCallName != "")
+		bool callMethod = ClassName != "" && FunctionCallName != "" && ScriptEngine::GetMethodParameterCount(ClassName, FunctionCallName) == 0;
+		if (callMethod)
 		{
 			ScriptEngine::CallMethod(entityID, ClassName, FunctionCallName);
 		}

@@ -1246,6 +1246,9 @@ namespace eg
 
 				if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
 					Commands::ExecuteRawValueCommand(&component.Color, color, "SpriteRendererComponent-Color");
+				if (!component.SubTexture || !component.SubTexture->GetTexture())
+					return;
+
 				DrawComponentPropertyFileReference("Texture", component.SubTextureUUID, [&component](int64_t* what)
 					{
 						Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);

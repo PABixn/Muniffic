@@ -359,7 +359,7 @@ namespace eg
 
 			if (scriptResources)
 			{
-				for (auto resource : scriptResources)
+     				for (auto resource : scriptResources)
 				{
 					UUID uuid = resource["UUID"].as<int64_t>();
 

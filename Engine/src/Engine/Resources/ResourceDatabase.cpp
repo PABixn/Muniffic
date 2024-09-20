@@ -61,7 +61,7 @@ namespace eg
 		}
 		else if (type == ResourceType::Image)
 		{
-			Ref<Texture2D> texture = Texture2D::Create((const char*)data);
+			Ref<Texture2D> texture = Texture2D::Create(uuid);
 			RuntimeTextureResourceCache[uuid] = texture;
 			return texture.get();
 		}
