@@ -40,15 +40,16 @@ namespace eg
 		int size = 800;
 		ImGuiStyle& style = ImGui::GetStyle();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2((size * 0.05), 20));
-		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		style.WindowRounding = 12.0f;
-		ImGui::SetWindowSize(ImVec2(size, 600));
+		ImGui::SetNextWindowSize(ImVec2(size, 600));
 
-		if (ImGui::BeginPopupModal("Resource Loader", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize)) {
+		if (ImGui::Begin("Resource Loader", nullptr, ImGuiWindowFlags_NoDecoration)) {
 
 			ImGui::PushFont(static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_PoppinsMediumFont);
 			TextCenteredOnLine("Resource Loader");
 			ImGui::PopFont();
+
 			ImGui::PushFont(static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_PoppinsLightFont);
 
 			auto btnColor = style.Colors[ImGuiCol_Button];
@@ -58,51 +59,44 @@ namespace eg
 			style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0, 0, 0, 0);
 			style.Colors[ImGuiCol_ButtonActive] = ImVec4(0, 0, 0, 0);
 
-			if (PositionButtonWithTheSameWidth("Animation", 4, 1, 150, 50))
-			{
+			if (PositionButtonWithTheSameWidth("Animation", 4, 1, 150, 50)) {
 				bool resourceChosen = ChooseNewResource("Image (*.png)\0*.png\0");
-				if (resourceChosen)
-				{
-					if (m_AnimationPanel)
+				if (resourceChosen) {
+					if (m_AnimationPanel) {
 						m_AnimationPanel->OpenAnimationPanel(m_ResourcePath);
+					}
 				}
 			}
 			ImGui::SameLine();
-			if (PositionButtonWithTheSameWidth("Shader", 4, 2, 150, 50))
-			{
+			if (PositionButtonWithTheSameWidth("Shader", 4, 2, 150, 50)) {
 				bool resourceChosen = ChooseNewResource("Shader (*.shader)\0*.shader\0");
 			}
 			ImGui::SameLine();
-			if (PositionButtonWithTheSameWidth("Font", 4, 3, 150, 50))
-			{
+			if (PositionButtonWithTheSameWidth("Font", 4, 3, 150, 50)) {
 				bool resourceChosen = ChooseNewResource("Font (*.ttf)\0*.ttf\0");
 			}
 			ImGui::SameLine();
 			if (PositionButtonWithTheSameWidth("Text", 4, 4, 150, 50)) {
 				bool resourceChosen = ChooseNewResource("Text (*.txt)\0*.txt\0");
 			}
-			if (PositionButtonWithTheSameWidth("Image", 4, 1, 150, 50))
-			{
+
+			if (PositionButtonWithTheSameWidth("Image", 4, 1, 150, 50)) {
 				bool resourceChosen = ChooseNewResource("Image (*.png)\0*.png\0");
-				if (resourceChosen)
-				{
+				if (resourceChosen) {
 					if (m_ImagePanel)
 						m_ImagePanel->OpenImagePanel(m_ResourcePath);
 				}
 			}
 			ImGui::SameLine();
-			if (PositionButtonWithTheSameWidth("Script", 4, 2, 150, 50))
-			{
+			if (PositionButtonWithTheSameWidth("Script", 4, 2, 150, 50)) {
 				bool resourceChosen = ChooseNewResource("Script (*.cs)\0*.cs\0");
 			}
 			ImGui::SameLine();
-			if (PositionButtonWithTheSameWidth("NativeScript", 4, 3, 150, 50))
-			{
+			if (PositionButtonWithTheSameWidth("NativeScript", 4, 3, 150, 50)) {
 				bool resourceChosen = ChooseNewResource("NativeScript (*.dll)\0*.dll\0");
 			}
 			ImGui::SameLine();
-			if (PositionButtonWithTheSameWidth("Custom", 4, 4, 150, 50))
-			{
+			if (PositionButtonWithTheSameWidth("Custom", 4, 4, 150, 50)) {
 				bool resourceChosen = ChooseNewResource("Custom (*.custom)\0*.custom\0");
 			}
 
@@ -110,17 +104,17 @@ namespace eg
 			style.Colors[ImGuiCol_ButtonHovered] = static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade;
 			style.Colors[ImGuiCol_ButtonActive] = static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_LightShade;
 
-			if (ButtonCenteredOnLine("Cancel", 150, 50, true))
-			{
-				ImGui::CloseCurrentPopup();
+			if (ButtonCenteredOnLine("Cancel", 150, 50, true)) {
 				m_showResourcePanel = false;
 			}
+
 			ImGui::PopFont();
-			ImGui::EndPopup();
+			ImGui::End();
 			style.Colors[ImGuiCol_Button] = btnColor;
 			style.Colors[ImGuiCol_ButtonHovered] = btnColorHovered;
 			style.Colors[ImGuiCol_ButtonActive] = btnColorActive;
 		}
+
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 
