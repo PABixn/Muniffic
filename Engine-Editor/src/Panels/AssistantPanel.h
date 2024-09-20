@@ -31,10 +31,15 @@ namespace eg
         Ref<Texture2D> m_IconMicrophoneOff;
         Ref<Texture2D> m_IconMicrophoneUnavailable;
         Ref<Texture2D> m_IconSettings;
+        Ref<Texture2D> m_IconReadAloud;
+        Ref<Texture2D> m_IconReadAloudHover;
+        Ref<Texture2D> m_IconReadAloudActive;
+        ImTextureID m_IconReadMessageAloud;
         bool m_isListening;
         bool m_isMicrophoneAvailable;
         bool m_isLastMessageFromUser;
         bool m_readAloud;
+        bool m_showMessageTooltip;
         ImGui::MarkdownConfig mdConfig;
     };
 }

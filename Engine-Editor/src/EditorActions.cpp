@@ -81,7 +81,10 @@ namespace eg
 
 			UUID uuid = m_Scene->FindEntityByName(params.at(0)).GetUUID();
 
-			return "Entity created with UUID: " + uuid;
+			if(uuid == 0)
+				return "Failed to create entity.";
+
+			return "Entity created with UUID: " + std::to_string(uuid);
 		}
 		else if (actionName == "DeleteEntity")
 		{

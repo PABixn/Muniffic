@@ -18,10 +18,15 @@ namespace eg
 		m_IconMicrophoneOff(Texture2D::Create("resources/icons/micOffIcon.png")),
 		m_IconMicrophoneUnavailable(Texture2D::Create("resources/icons/micUnavailableIcon.png")),
 		m_IconSettings(Texture2D::Create("resources/icons/assistantSettingsIcon.png")),
+		m_IconReadAloud(Texture2D::Create("resources/icons/readIcon.png")),
+		m_IconReadAloudHover(Texture2D::Create("resources/icons/readIcon_hover.png")),
+		m_IconReadAloudActive(Texture2D::Create("resources/icons/readIcon_active.png")),
+		m_IconReadMessageAloud((ImTextureID)m_IconReadAloud->GetRendererID()),
 		m_isListening(false),
 		m_isMicrophoneAvailable(assistantManager->CheckMicrophoneAvailable()),
 		m_isLastMessageFromUser(false),
-		m_readAloud(false)
+		m_readAloud(false),
+		m_showMessageTooltip(false)
 	{
 		memset(buffer, 0, sizeof(buffer));
 
@@ -142,7 +147,6 @@ namespace eg
 
 		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
 
-		//ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
 
 		while (std::getline(stream, line))
@@ -252,6 +256,12 @@ namespace eg
 			ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth, ImGui::GetCursorScreenPos().y + padding),
 			IM_COL32(64, 54, 89, 255), 10.0f
 		);
+
+		if (ImGui::IsMouseHoveringRect(initialCursorPos,
+			ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth, ImGui::GetCursorScreenPos().y + padding)))
+			m_showMessageTooltip = true;
+		else
+			m_showMessageTooltip = false;
 
 		drawList->ChannelsMerge();
 
@@ -403,6 +413,33 @@ namespace eg
 		}
 
 		ImGui::EndChild();
+
+		if (m_showMessageTooltip)
+		{
+			ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.25f, 0.21f, 0.35f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 12.0f);
+
+			if(ImGui::BeginPopupContextItem("MessageTooltip"))
+			{
+				if (ImGui::ImageButton(m_IconReadMessageAloud, ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+				{
+					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloudActive->GetRendererID();
+				}
+
+				if (ImGui::IsItemHovered())
+					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloudHover->GetRendererID();
+				else
+					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloud->GetRendererID();
+
+
+				ImGui::EndPopup();
+			}
+			ImGui::PopStyleColor(4);
+			ImGui::PopStyleVar(1);
+		}
 
 		ImGui::SetCursorPosY(ImGui::GetWindowSize().y - buttonSize * 1.5);
 
