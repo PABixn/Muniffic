@@ -53,6 +53,9 @@ def SpeakText(command):
     engine.say(command)
     engine.runAndWait()
 
+def SetVolume(volume):
+    global engine
+    engine.setProperty('volume', volume)
 
 def StopVoiceAssistant():
     global shouldListen

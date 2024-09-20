@@ -40,6 +40,7 @@ namespace eg
 		bool TakeAction(std::string threadID, std::string runID, PyGILState_STATE gstate);
 
 		void SpeakText(std::string text);
+		void SetVolume(float volume);
 
 		std::vector<Message*> SetAssistantID(std::string assistantID) { m_AssistantID = assistantID; }
 		std::string GetAssistantID() { return m_AssistantID; }
@@ -90,6 +91,7 @@ namespace eg
 		PyObject* m_SubmitToolOutputs;
 		PyObject* m_InitVoiceAssistant;
 		PyObject* m_CheckMicrophoneAvailable;
+		PyObject* m_SetVolume;
 	};
 }
 

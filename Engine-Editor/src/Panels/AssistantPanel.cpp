@@ -368,6 +368,7 @@ namespace eg
 
 			if (ImGui::Button("Close", ImVec2(120, 0)))
 			{
+				std::thread([this] { assistantManager->SetVolume(volume); }).detach();
 				ImGui::CloseCurrentPopup();
 			}
 

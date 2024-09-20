@@ -98,6 +98,23 @@ namespace eg
 		return PyObject_IsTrue(result);
 	}
 
+	void AssistantManager::SetVolume(float volume)
+	{
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
+		PyObject* args = PyTuple_Pack(1, PyFloat_FromDouble(volume));
+
+		if (args == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to create args object");
+		}
+
+		PyObject_CallObject(m_SetVolume, args);
+
+		PyGILState_Release(gstate);
+	}
+
 	void AssistantManager::StopListening()
 	{
 		PyGILState_STATE gstate = PyGILState_Ensure();
@@ -188,8 +205,9 @@ namespace eg
 		m_SpeakText = PyObject_GetAttrString(m_voiceAssistantModule, "SpeakText");
 		m_InitVoiceAssistant = PyObject_GetAttrString(m_voiceAssistantModule, "InitVoiceAssistant");
 		m_CheckMicrophoneAvailable = PyObject_GetAttrString(m_voiceAssistantModule, "CheckMicrophoneAvailable");
+		m_SetVolume = PyObject_GetAttrString(m_voiceAssistantModule, "SetVolume");
 
-		if (m_startVoiceAssistant == nullptr && m_SpeakText == nullptr && m_stopVoiceAssistant == nullptr && m_InitVoiceAssistant == nullptr && m_CheckMicrophoneAvailable == nullptr)
+		if (m_startVoiceAssistant == nullptr && m_SpeakText == nullptr && m_stopVoiceAssistant == nullptr && m_InitVoiceAssistant == nullptr && m_CheckMicrophoneAvailable == nullptr && m_SetVolume == nullptr)
 		{
 			EG_CORE_ERROR("Failed to load Python functions");
 		}
