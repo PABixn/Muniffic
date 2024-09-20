@@ -20,9 +20,12 @@ namespace eg
 		m_IconSettings(Texture2D::Create("resources/icons/assistantSettingsIcon.png")),
 		m_isListening(false),
 		m_isMicrophoneAvailable(assistantManager->CheckMicrophoneAvailable()),
-		m_isLastMessageFromUser(false)
+		m_isLastMessageFromUser(false),
+		m_readAloud(false)
 	{
 		memset(buffer, 0, sizeof(buffer));
+
+		mdConfig = ImGui::MarkdownConfig();
 
 		if (!assistantManager->LoadAssistant())
 		{
@@ -194,7 +197,7 @@ namespace eg
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding * 2);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding * 2);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
-					ImGui::Text(msg.c_str());
+					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
 					ImGui::PopTextWrapPos();
 
 					drawList->ChannelsSetCurrent(1);
@@ -216,7 +219,7 @@ namespace eg
 				{
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
-					ImGui::Text(msg.c_str());
+					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
 					ImGui::PopTextWrapPos();
 					msg = "";
 
@@ -238,12 +241,12 @@ namespace eg
 		{
 			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
 			ImGui::SetCursorPosX(initialCursorPosX + padding);
-			ImGui::Text(msg.c_str());
+			ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
 			ImGui::PopTextWrapPos();
 		}
 
 		drawList->ChannelsSetCurrent(0);
-
+	
 		ImGui::GetWindowDrawList()->AddRectFilled(
 			initialCursorPos,
 			ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth, ImGui::GetCursorScreenPos().y + padding),
@@ -344,6 +347,9 @@ namespace eg
 			static float volume = 0.5f;
 			ImGui::Text("Assistant's volume");
 			ImGui::SliderFloat("##volume", &volume, 0.0f, 1.0f, "%.2f");
+
+			ImGui::Text("Read aloud");
+			ImGui::Checkbox("##readAloud", &m_readAloud);
 
 			const char* languages[] = { "C++", "Python", "JavaScript", "Java", "C#" };
 			static int current_language = 0;
@@ -488,6 +494,7 @@ namespace eg
 			return;
 
 		assistantManager->SetMessageInProgress(true);
+		assistantManager->SetShouldReadAloud(m_readAloud);
 
 		memset(buffer, 0, sizeof(buffer));
 		std::thread(&AssistantPanel::DoMessage, this, message).detach();

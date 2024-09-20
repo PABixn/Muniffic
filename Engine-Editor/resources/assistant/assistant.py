@@ -207,8 +207,13 @@ def get_run_status(thread_id, run_id):
 def get_last_message(thread_id):
     load_dotenv()
     client = openai.OpenAI()
-    response = client.beta.threads.messages.list(thread_id=thread_id).data[0].content[0].text.value
-    return response
+    response = client.beta.threads.messages.list(thread_id=thread_id).data[0].content[0].text
+    annotations = response.annotations
+    for annotation in annotations:
+        response.value = response.value.replace(
+            annotation.text, ""
+        )
+    return response.value
 
 
 def check_if_assistant_exists(assistant_id):

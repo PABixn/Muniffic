@@ -16,6 +16,7 @@ namespace eg
 		newVoiceMessageAvailable = false;
 		IsVoiceAsssistantInitialized = false;
 		IsMessageInProgress = false;
+		ShouldReadAloud = true;
 		m_Threads = std::unordered_map<std::string, Thread*>();
 
 		Init();
@@ -93,8 +94,6 @@ namespace eg
 		}
 
 		PyGILState_Release(gstate);
-
-		
 
 		return PyObject_IsTrue(result);
 	}
@@ -416,8 +415,11 @@ namespace eg
 			messageObj->content = message;
 			messageObj->id = m_Threads.at(threadID)->messages.size();
 
-			std::thread t([this, messageObj] { SpeakText(messageObj->content); });
-			t.detach();
+			if (ShouldReadAloud)
+			{
+				std::thread t([this, messageObj] { SpeakText(messageObj->content); });
+				t.detach();
+			}
 			
 			m_Threads.at(threadID)->messages.push_back(messageObj);
 

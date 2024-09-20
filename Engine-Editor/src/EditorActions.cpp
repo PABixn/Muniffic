@@ -79,7 +79,9 @@ namespace eg
 
 			Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs(params.at(0), {}, m_Scene, *m_SelectedEntity));
 
-			return "Entity created";
+			UUID uuid = m_Scene->FindEntityByName(params.at(0)).GetUUID();
+
+			return "Entity created with UUID: " + uuid;
 		}
 		else if (actionName == "DeleteEntity")
 		{
@@ -827,7 +829,7 @@ namespace eg
 				else if(params.size() < 5)
 					return "No B value provided.";
 				else if(params.size() < 6)
-					params.push_back("255");
+					params.insert(params.begin() + 5, "255");
 					//return "No A value provided.";
 
 
@@ -956,7 +958,7 @@ namespace eg
 				else if(params.size() < 5)
 					return "No B value provided.";
 				else if(params.size() < 6)
-					params.push_back("255");
+					params.insert(params.begin() + 5, "255");
 					//return "No A value provided.";
 
 				if(ComponentHelper::CanConvertToFloat(params.at(2)) == false)
@@ -1423,7 +1425,7 @@ namespace eg
 				else if (params.size() < 5)
 					return "No B value provided.";
 				else if (params.size() < 6)
-					params.push_back("255");
+					params.insert(params.begin() + 5, "255");
 					//return "No A value provided.";
 
 				if (ComponentHelper::CanConvertToFloat(params.at(2)) == false)

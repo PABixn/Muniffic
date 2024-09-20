@@ -54,6 +54,9 @@ namespace eg
 		bool GetIsMessageInProgress() { return IsMessageInProgress; }
 		void SetMessageInProgress(bool available) { IsMessageInProgress = available; }
 
+		void SetShouldReadAloud(bool readAloud) { ShouldReadAloud = readAloud; }
+		bool GetShouldReadAloud() { return ShouldReadAloud; }
+
 		const std::string& GetLastMessageRole(std::string threadID);
 
 		bool ThreadAvailable(std::string threadID);
@@ -68,6 +71,7 @@ namespace eg
 		bool IsVoiceAssistantListening;
 		bool IsVoiceAsssistantInitialized;
 		bool IsMessageInProgress;
+		bool ShouldReadAloud;
 
 	private:
 		PyObject* m_voiceAssistantModule;

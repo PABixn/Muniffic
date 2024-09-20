@@ -4,6 +4,7 @@
 #include <Engine/Assistant/AssistantManager.h>
 #include <Imgui/imgui.h>
 #include <Engine/Renderer/Texture.h>
+#include "Imgui/imgui_markdown.h"
 
 namespace eg
 {
@@ -33,5 +34,7 @@ namespace eg
         bool m_isListening;
         bool m_isMicrophoneAvailable;
         bool m_isLastMessageFromUser;
+        bool m_readAloud;
+        ImGui::MarkdownConfig mdConfig;
     };
 }
