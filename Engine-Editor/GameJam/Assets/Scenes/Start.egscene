@@ -29,7 +29,7 @@ Entities:
     RigidBody2DComponent:
       Body Type: Dynamic
       FixedRotation: false
-      GravityMultiplier: 0.3
+      GravityMultiplier: 1.0
       IsInherited: false
       IsInheritedInChildren: false
     CircleCollider2DComponent:

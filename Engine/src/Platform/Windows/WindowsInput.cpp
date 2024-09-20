@@ -13,6 +13,9 @@ namespace eg {
 
 	void Input::KeyCallback(int key, int action)
 	{
+		if (!ScriptEngine::IsInitialized())
+			return;
+
 		switch (action)
 		{
 			case GLFW_PRESS:
@@ -28,6 +31,9 @@ namespace eg {
 
 	void Input::MouseCallback(int button, int action)
 	{
+		if (!ScriptEngine::IsInitialized())
+			return;
+
 		switch (action)
 		{
 			case GLFW_PRESS:
@@ -43,6 +49,9 @@ namespace eg {
 
 	void Input::ScrollCallback(double xOffset, double yOffset)
 	{
+		if (!ScriptEngine::IsInitialized())
+			return;
+
 		for (auto& scriptInstance : ScriptEngine::GetAllScriptInstances())
 			scriptInstance->InvokeOnScroll(xOffset, yOffset);
 	}
