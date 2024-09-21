@@ -24,8 +24,7 @@ namespace eg {
 		bool PositionButtonWithTheSameWidth(const char* label,int numberOfButtonsInLine,int index, int width = 0, int height = 0);
 		void DrawCenteredText(const std::string& label, const float& cellSize, const float& cursorX, const int& btnIndex);
 		bool RenderFile(const std::string& label, const float& thumbnailSize);
-		
-
+		void LoadIcons();
 		bool IsResourcePanelOpen() { return m_showResourcePanel; }
 	private:
 		Ref<ImagePanel> m_ImagePanel;

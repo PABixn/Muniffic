@@ -22,14 +22,7 @@ namespace eg
 		m_AnimationPanel = CreateRef<AnimationPanel>();
 		m_ImagePanelinitialized = m_ImagePanel->InitImagePanel();
 		m_AnimationPanelinitialized = m_AnimationPanel->InitAnimationPanel();
-		m_AnimationIcon = Texture2D::Create("resources/icons/addResourcePanel/animation_icon_white.png");
-		m_ShaderIcon = Texture2D::Create("resources/icons/addResourcePanel/shader_icon_white.png");
-		m_FontIcon = Texture2D::Create("resources/icons/addResourcePanel/font_icon_white.png");
-		m_TextIcon = Texture2D::Create("resources/icons/addResourcePanel/text_icon_white.png");
-		m_ImageIcon = Texture2D::Create("resources/icons/addResourcePanel/image_icon_white.png");
-		m_ScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/script_icon_white.png");
-		m_NativeScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/nativescript_icon_white.png");
-		m_CustomIcon = Texture2D::Create("resources/icons/addResourcePanel/custom_icon_white.png");
+		LoadIcons();
 	}
 	void AddResourcePanel::OnImGuiRender()
 	{
@@ -254,6 +247,17 @@ namespace eg
 		ImGui::PopID(); 
 
 		return openPopup;
+	}
+
+	void AddResourcePanel::LoadIcons() {
+		m_AnimationIcon = Texture2D::Create("resources/icons/addResourcePanel/animation_icon_white.png");
+		m_ShaderIcon = Texture2D::Create("resources/icons/addResourcePanel/shader_icon_white.png");
+		m_FontIcon = Texture2D::Create("resources/icons/addResourcePanel/font_icon_white.png");
+		m_TextIcon = Texture2D::Create("resources/icons/addResourcePanel/text_icon_white.png");
+		m_ImageIcon = Texture2D::Create("resources/icons/addResourcePanel/image_icon_white.png");
+		m_ScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/script_icon_white.png");
+		m_NativeScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/nativescript_icon_white.png");
+		m_CustomIcon = Texture2D::Create("resources/icons/addResourcePanel/custom_icon_white.png");
 	}
 	
 }
