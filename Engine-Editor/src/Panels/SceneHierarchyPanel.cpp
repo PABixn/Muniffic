@@ -574,7 +574,17 @@ namespace eg {
 		}
 
 		if (ImGui::IsItemClicked())
+		{
 			SetSelectedEntity(entity);
+			if (ImGui::FindWindowByName("Properties") != NULL)
+			{
+				if (ImGui::FindWindowByName("Properties")->DockIsActive)
+				{
+					ImGuiTabBar* tabbar = ImGui::FindWindowByName("Properties")->DockNode->TabBar;
+					ImGui::TabBarQueueFocus(tabbar, ImGui::TabBarFindTabByID(tabbar, ImGui::FindWindowByName("Properties")->TabId));
+				}
+			}
+		}
 
 		if (ImGui::BeginPopupContextItem())
 		{
