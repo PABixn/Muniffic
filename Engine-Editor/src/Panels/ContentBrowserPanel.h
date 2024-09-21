@@ -15,6 +15,7 @@ namespace eg {
 		void RenderFile(UUID key, const std::string& name, ResourceType type);
 		friend class ProjectDirectoryPanel;
 		void InitPanels();
+		void LoadIcons();
 
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }
@@ -26,6 +27,9 @@ namespace eg {
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_ImageIcon;
+		Ref<Texture2D> m_ScriptFileIcon;
+		Ref<Texture2D> m_AudioFileIcon;
+		Ref<Texture2D> m_AnimationFileIcon;
 		Ref<Texture2D> m_PlusIcon;
 		Ref<Texture2D> m_ArrowIcon;
 		ImFont* m_PoppinsRegularFont;

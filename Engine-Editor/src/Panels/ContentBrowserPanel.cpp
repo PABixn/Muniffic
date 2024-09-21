@@ -15,10 +15,7 @@ namespace eg
 	ContentBrowserPanel::ContentBrowserPanel()
 	: m_BaseDirectory(AssetDirectoryManager::getRootDirectoryUUID()), m_CurrentDirectory(m_BaseDirectory)
 	{
-		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/FolderIcon.png");
-		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
-		m_PlusIcon = Texture2D::Create("resources/icons/contentBrowser/PlusIcon.png");
-		m_ArrowIcon = Texture2D::Create("resources/icons/contentBrowser/ArrowIcon.png");
+		LoadIcons();
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
 	}
 
@@ -77,7 +74,14 @@ namespace eg
 		ImGui::PushID(name.c_str());
 		auto& style = ImGui::GetStyle();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+		if (type == ResourceType::Script)
+			ImGui::ImageButton((ImTextureID)m_ScriptFileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+		else if (type == ResourceType::Audio)
+			ImGui::ImageButton((ImTextureID)m_AudioFileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+		else if (type == ResourceType::Animation)
+			ImGui::ImageButton((ImTextureID)m_AnimationFileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+		else
+			ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 		ImGui::PopStyleColor();
 
 		bool isDeleteClicked = false;
@@ -496,6 +500,16 @@ namespace eg
 
 		ImGui::PopFont();
 		ImGui::End();
+	}
+
+	void ContentBrowserPanel::LoadIcons() {
+		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/FolderIcon.png");
+		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
+		m_ScriptFileIcon = Texture2D::Create("resources/icons/contentBrowser/scriptFileIcon.png");
+		m_AudioFileIcon = Texture2D::Create("resources/icons/contentBrowser/audioFileIcon.png");
+		m_AnimationFileIcon = Texture2D::Create("resources/icons/contentBrowser/animationFileIcon.png");
+		m_PlusIcon = Texture2D::Create("resources/icons/contentBrowser/PlusIcon.png");
+		m_ArrowIcon = Texture2D::Create("resources/icons/contentBrowser/ArrowIcon.png");
 	}
 
 }
