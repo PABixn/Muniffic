@@ -485,12 +485,14 @@ namespace eg {
 			}
 		}
 
-		//Set Animations
+		//Draw Animations
 		{
 			auto group = m_Registry.group<TransformComponent, AnimatorComponent>();
 			for (auto entity : group)
 			{
 				auto [transform, animator] = group.get<TransformComponent, AnimatorComponent>(entity);
+				if(animator.Animator2D->GetCurrentAnimation() == nullptr || animator.Animator2D->GetCurrentAnimation()->GetFrameCount() == 0)
+					continue;
 				Ref<SubTexture2D> texture = animator.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
 
 				Renderer2D::DrawQuad(transform.GetTransform(), texture, (int)entity);

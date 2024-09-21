@@ -4,7 +4,23 @@
 #include "Engine/Resources/AssetDirectoryManager.h"
 namespace eg {
 
-	static int baseFrameWidth = 20;
+	constexpr const float LINEWIDTH = 3;
+	constexpr const float LINEOFFSET = 1.5f;
+	constexpr const int BASEGAP = 10;
+
+	constexpr const float ROUNDING = 5.0f;
+
+
+	constexpr const ImU32 BASEINPUTCOLOR = IM_COL32(0x40, 0x36, 0x59, 0xff);//0x403659FF;
+	constexpr const ImU32 HOVEREDCOLOR = IM_COL32(0x5a, 0x4a, 0xa7, 0xff);//0x5A4A7DFF;
+	constexpr const ImU32 ACTIVEINPUTCOLOR = IM_COL32(0x83, 0x79, 0x93, 0xff);// 0x83799EFF;
+	constexpr const ImU32 SELECTEDFRAMECOLOR = IM_COL32(0xc6, 0xbb, 0xe2, 0xff);//0xC6BBE2FF;
+	constexpr const ImU32 BGCOLOR = IM_COL32(0x28, 0x1f, 0x3a, 0xff);// 0x281F3AFF;
+
+	float hoverTime = 0.0f;
+	float hoverTimeMax = 2.5f;
+	int hoverFrame = -1;
+	float frameWidth = 0;
 
 	bool AnimationEditorPanel::OpenAnimationEditorPanel(UUID asset) {
 		ResetData();
@@ -16,7 +32,6 @@ namespace eg {
 		m_LenghtSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/lengthChangeSelectedIcon.png");
 		m_MoveIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveIcon.png");
 		m_MoveSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveSelectedIcon.png");
-
 		SetFrames();
 
 		return m_Anim != nullptr;
@@ -25,6 +40,14 @@ namespace eg {
 	void AnimationEditorPanel::OnImGuiRender() {
 		if (!m_ShowAnimationEditorPanel)
 			return;
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, BGCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_Tab, BGCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_TabHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_TabActive, ACTIVEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, ACTIVEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_TabUnfocused, BGCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, BGCOLOR);
+
 		UpdateDisplayedFrame();
 		ImGui::Begin("Animation Editor Panel", nullptr, ImGuiWindowFlags_HorizontalScrollbar);
 		ImGui::SetWindowSize(ImVec2(1000, 800));
@@ -41,7 +64,7 @@ namespace eg {
 		
 		ImGui::End();
 		HandleResize();
-
+		ImGui::PopStyleColor(7);
 	}
 
 	void AnimationEditorPanel::DrawAnimationPreview() {
@@ -49,7 +72,7 @@ namespace eg {
 		Ref<SubTexture2D> subTexture = m_Anim->GetFrame(m_DisplayedFrameIndex)->GetSubTexture();
 
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 300) * 0.5f);
-		ImGui::SetCursorPosY(100);
+		ImGui::SetCursorPosY(100);  
 		float spaceY = ImGui::GetCursorPos().y + 322;
 		int i = 0;
 		
@@ -177,6 +200,15 @@ namespace eg {
 			ImGui::OpenPopup("FunctionCallPopup");
 			m_OpenFunctionCallPopup = false;
 		}
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, BGCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, BASEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ACTIVEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_Header, BASEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ACTIVEINPUTCOLOR);
+		ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, ROUNDING);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
 		if (ImGui::BeginPopup("FunctionCallPopup")) {
 			ImGui::Text("Function name:");
 			static char functionName[128];
@@ -205,56 +237,118 @@ namespace eg {
 
 			}
 			ImGui::EndPopup();
+			
+			
 		}
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(7);
 	}
 
 	void AnimationEditorPanel::DrawAnimationOptions()
 	{
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, BGCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ACTIVEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_Header, SELECTEDFRAMECOLOR);
+		ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, ROUNDING);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 5));
 		if (ImGui::BeginPopup("AnimationOptions")) {
 			if (m_SelectedFrames.second < 0) {
-				if (ImGui::MenuItem("Remove frame")) {
+				if (ImGui::Selectable("Remove frame", false, ImGuiSelectableFlags_DontClosePopups)) {
 					m_DeletedFrames.push_back(m_Anim->GetFrame(m_ClickedFrame)->GetFrameID());
 					m_Anim->RemoveFrame(m_ClickedFrame);
 					SetFrames();
 				}
-				if (ImGui::MenuItem("Add function call")) {
+				if (ImGui::Selectable("Add function call", false, ImGuiSelectableFlags_DontClosePopups)) {
 					m_OpenFunctionCallPopup = true;
+				}
+				if (ImGui::Selectable("Remove function call", false, ImGuiSelectableFlags_DontClosePopups)) {
+					m_Anim->GetFrame(m_ClickedFrame)->SetFunctionCallName("");
+					m_Anim->GetFrame(m_ClickedFrame)->SetClassName("");
 				}
 			}
 			else {
-				if (ImGui::MenuItem("Swap frames")) {
+				if (ImGui::Selectable("Swap frames", false, ImGuiSelectableFlags_DontClosePopups)) {
 					m_Anim->SwapFrames(m_SelectedFrames.first, m_SelectedFrames.second);
 					SetFrames();
 				}
 			}
 			ImGui::EndPopup();
 		}
+		ImGui::PopStyleVar(3);
+		ImGui::PopStyleColor(4);
 	}
 
 	void AnimationEditorPanel::DrawFrameTrack()
 	{
-		ImGui::BeginChild("Animation timeline", ImVec2(ImGui::GetWindowSize().x, 100), true);
-		for (float i = ImGui::GetWindowPos().x + 6; i < ImGui::GetWindowPos().x + ImGui::GetWindowSize().x; i += 22.0f) {
-			ImGui::GetWindowDrawList()->AddLine(ImVec2(i, ImGui::GetWindowPos().y), ImVec2(i, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y), IM_COL32(255, 255, 255, 255), 0.8f);
+		float contentRegionAvailX = ImGui::GetContentRegionAvail().x;
+		float buttonGap = 10;
+		ImVec2 buttonSize = ImVec2(30, 30);
+		float trackWidth = contentRegionAvailX - buttonSize.x - buttonGap ;
+		size_t animationDuration = m_Anim->GetAnimDuration();
+		float startX = ImGui::GetCursorScreenPos().x + buttonSize.x + buttonGap ;
+		float startY = ImGui::GetCursorScreenPos().y + 25 ;
+
+		
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
+		
+		ImVec4 moveIconTint = m_Move ? ImVec4(1, 1, 1, 1) : ImVec4(0.5, 0.5, 0.5, 1);
+		ImVec4 resizeIconTint = m_Resize ? ImVec4(1, 1, 1, 1) : ImVec4(0.5, 0.5, 0.5, 1);
+		if (ImGui::ImageButton((ImTextureID)(m_LenghtIcon->GetRendererID()), buttonSize, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0,0,0,0), resizeIconTint)) {
+			if (m_Move)
+				m_Move = false;
+			m_Resize = !m_Resize;
 		}
+		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + buttonGap));
+		if (ImGui::ImageButton((ImTextureID)(m_MoveIcon->GetRendererID()), buttonSize, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0,0,0,0), moveIconTint)) {
+			if (m_Resize)
+				m_Resize = false;
+			m_Move = !m_Move;
+		}
+		ImGui::PopStyleVar();
 
-		std::vector<ImU32> colors;
-		colors.reserve(m_Anim->GetFrameCount());
+		ImGui::SetCursorScreenPos(ImVec2(startX, startY));
 
-		int i = 0;
+		
 		m_HoveredFrame = -1;
 		m_FrameReleased = false;
 
-		i = 0;
+		ImGui::GetWindowDrawList()->AddRect(ImVec2(startX - 2, startY-18), ImVec2(startX + trackWidth, startY + 42), IM_COL32_WHITE, 2, 0, 2);
+		frameWidth = trackWidth / animationDuration;
+		int i = 0;
+		ImVec2 cursorPos, cursorPos2;
+		float rectWidth = 0;
 		for (auto frame : m_Anim->GetFrames()) {
-			ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-			float rectWidth = baseFrameWidth * frame->GetFrameDuration() + 2 * (frame->GetFrameDuration() - 1);
-			ImVec2 cursorPos2 = ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40);
+			rectWidth = (trackWidth / animationDuration - 2) * frame->GetFrameDuration();
+
+			cursorPos = ImGui::GetCursorScreenPos();
+			cursorPos2 = ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40);
+			
+
 			if (ImGui::IsMouseHoveringRect(cursorPos, cursorPos2))
+
 			{
 				m_HoveredFrame = i;
+				if (i != hoverFrame)
+				{
+					hoverTime = 0.0f;
+				}
+				else
+				{
+					hoverTime += ImGui::GetIO().DeltaTime;
+				}
+				hoverFrame = i;
 			}
-			ImGui::GetWindowDrawList()->AddRectFilled(cursorPos, cursorPos2, (ImU32)GetFrameColor(i));
+			ImVec2 textSize = ImGui::CalcTextSize(std::to_string(i).c_str(), NULL, NULL, NULL);
+			ImVec2 textStart = ImVec2(cursorPos.x + rectWidth * 0.5f - textSize.x * 0.5f, cursorPos.y - 18);
+			if (i != 0)
+				ImGui::GetWindowDrawList()->AddLine(ImVec2(cursorPos.x - LINEOFFSET, cursorPos.y-16), ImVec2(cursorPos.x - LINEOFFSET, cursorPos2.y), IM_COL32_WHITE, LINEWIDTH);
+			
+			ImGui::GetWindowDrawList()->AddRectFilled(cursorPos, cursorPos2, GetFrameColor(i));
+			if(frame->GetFunctionCallName() != "" && frame->GetClassname() != "")
+				ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(cursorPos.x + rectWidth /2, cursorPos.y + 20), 5, IM_COL32_WHITE);
+			ImGui::GetWindowDrawList()->AddText(textStart, IM_COL32_WHITE, std::to_string(i).c_str());
 
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y));
 			ImGui::InvisibleButton(("rectBtn" + std::to_string(i)).c_str(), ImVec2(rectWidth, 40));
@@ -267,17 +361,48 @@ namespace eg {
 
 			i++;
 		}
-		
+		if(m_HoveredFrame < 0)
+			hoverFrame = -1;
+		ImGui::SetCursorScreenPos(ImVec2(startX - buttonSize.x - buttonGap, ImGui::GetCursorScreenPos().y + 60));
 		
 		DrawAnimationOptions();
 		DrawFunctionCallPopup();
+		DrawFunctionInfoPopup();
 
 		if (m_FrameReleased) {
 			HandleMove(m_HoveredFrame);
 			m_IsDragging = false;
 			m_DraggingIndex = -1;
 		}
-		ImGui::EndChild();
+
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, BASEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ACTIVEINPUTCOLOR);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
+		ImGui::DragInt("Frame Rate", m_Anim->GetFrameRatePtr(), 1.0f, 1.0f, 500);
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor(3);
+	}
+
+	void AnimationEditorPanel::DrawFunctionInfoPopup()
+	{
+		if(hoverTime < hoverTimeMax || m_Anim->GetFrame(hoverFrame)->GetClassname() == "")
+			return;
+
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, BGCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, BASEINPUTCOLOR);
+		ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, ROUNDING);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
+		ImGui::OpenPopup("FunctionInfoPopup");
+
+		if (ImGui::BeginPopup("FunctionInfoPopup")) {
+			ImGui::Text("Function name", m_Anim->GetFrame(hoverFrame)->GetFunctionCallName().c_str());
+			ImGui::Text("Class name", m_Anim->GetFrame(hoverFrame)->GetClassname().c_str());
+		}
+		ImGui::EndPopup();
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(2);
+
 	}
 
 	void AnimationEditorPanel::HandleFrameHover(int frameIndex)
@@ -327,11 +452,10 @@ namespace eg {
 
 	void AnimationEditorPanel::HandleFrameLeftClickRelease(int clickedFrameIndex)
 	{
-		if (!ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+		if (!ImGui::IsMouseReleased(ImGuiMouseButton_Left) )
 			return;
+
 		m_FrameReleased = true;
-		m_FrameStartDuration = 1;
-		ResetSelectedFrames();
 	}
 
 	void AnimationEditorPanel::HandleResize()
@@ -341,7 +465,7 @@ namespace eg {
 		if (!m_IsDragging || m_DraggingIndex == -1)
 			return;
 		m_ResizeOffset += ImGui::GetIO().MouseDelta.x;
-		float estNewDuration = std::max(1, (int)(m_FrameStartDuration + m_ResizeOffset / (baseFrameWidth+2)));
+		float estNewDuration = std::max(1, (int)(m_FrameStartDuration + m_ResizeOffset / (frameWidth)));
 		m_Anim->GetFrame(m_DraggingIndex)->SetFrameDuration(estNewDuration);
 		SetFrames();
 		
@@ -363,43 +487,41 @@ namespace eg {
 
 	void AnimationEditorPanel::DrawActionButtons()
 	{
-		ImGui::DragInt("Frame Rate %f:", m_Anim->GetFrameRatePtr(), 1.0f, 1.0f, 500);
-
-		if (ImGui::ImageButton((ImTextureID)(m_Resize ? m_LenghtSelectedIcon->GetRendererID() : m_LenghtIcon->GetRendererID()), ImVec2(50, 50), ImVec2(0, 0), ImVec2(1, 1), 0)) {
-			if (m_Move)
-				m_Move = false;
-			m_Resize = !m_Resize;
-		}
-		ImGui::SameLine();
-		if (ImGui::ImageButton((ImTextureID)(m_Move ? m_MoveSelectedIcon->GetRendererID() : m_MoveIcon->GetRendererID()), ImVec2(50, 50), ImVec2(0, 0), ImVec2(1, 1), 0)) {
-			if (m_Resize)
-				m_Resize = false;
-			m_Move = !m_Move;
-		}
+		
 	}
 
 	void AnimationEditorPanel::DrawExitButtons()
 	{
-		if (ImGui::Button("Save")) {
+		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + BASEGAP));
+		ImGui::PushStyleColor(ImGuiCol_Button, BASEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ACTIVEINPUTCOLOR);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
+		ImVec2 buttonSize = ImVec2(90, 40);
+		if (ImGui::Button("Save", buttonSize)) {
 			m_Anim->Save();
 			FrameData::DeleteAssets(m_DeletedFrames);
 			ShowAnimationEditorPanel(false);
 			ResetData();
 		}
-		if (ImGui::Button("Close")) {
+		ImGui::SameLine();
+		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x + BASEGAP, ImGui::GetCursorScreenPos().y));
+		if (ImGui::Button("Close", buttonSize)) {
 			ShowAnimationEditorPanel(false);
 			ResetData();
 		}
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor(3);
 	}
 
 	uint32_t AnimationEditorPanel::GetFrameColor(int frame)
 	{
 		if (m_IsDragging && m_DraggingIndex == frame)
-			return IM_COL32(255, 105, 180, 255);
+			return ACTIVEINPUTCOLOR;
 		if (IsFrameSelected(frame))
-			return IM_COL32(65, 51, 122, 255);
+			return SELECTEDFRAMECOLOR;
 		if(m_HoveredFrame == frame)
-			return IM_COL32(255, 255, 255, 255);
-		return IM_COL32(194, 239, 235, 255);
+			return HOVEREDCOLOR;
+		return BASEINPUTCOLOR;
 	}
 }

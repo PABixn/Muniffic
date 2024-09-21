@@ -132,7 +132,7 @@ namespace eg
 	}
 
 	void ContentBrowserPanel::OnImGuiRender() {
-		if (m_DeleteFilePanel->IsShown())
+			if (m_DeleteFilePanel->IsShown())
 			m_DeleteFilePanel->OnImGuiRender();
 
 		if (m_RenameFolderPanel->IsShown())

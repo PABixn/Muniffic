@@ -214,6 +214,18 @@ namespace eg
 		}
 	}
 
+	const size_t Animation::GetAnimDuration()
+	{
+		EG_PROFILE_FUNCTION();
+		size_t duration = 0;
+		for (auto& frame : m_frames)
+		{
+			duration += frame->GetFrameDuration();
+		}
+		return duration;
+	
+	}
+
 	const Ref<FrameData> Animation::GetFrame(int frame) const
 	{
 		EG_PROFILE_FUNCTION();

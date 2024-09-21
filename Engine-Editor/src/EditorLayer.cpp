@@ -583,6 +583,7 @@ namespace eg
 		{
 			if (controlPressed)
 				m_AddResourcePanel->showResourcePanel(true);
+			break;
 		}
 		case Key::N:
 		{

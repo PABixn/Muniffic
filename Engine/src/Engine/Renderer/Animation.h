@@ -104,6 +104,8 @@ namespace eg {
 		inline const UUID& GetID() const { return m_AnimationID; }
 		inline const UUID& GetEntityID() const { return m_EntityID; }
 
+		const size_t GetAnimDuration();
+
 	private:
 		int m_frameRate;
 		float m_frame = 0;

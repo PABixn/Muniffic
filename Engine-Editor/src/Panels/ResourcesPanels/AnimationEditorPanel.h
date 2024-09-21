@@ -22,6 +22,7 @@ namespace eg {
 		void DrawFunctionCallPopup();
 		void DrawAnimationOptions();
 		void DrawFrameTrack();
+		void DrawFunctionInfoPopup();
 		void HandleFrameHover(int frameIndex);
 		void HandleFrameLeftClick(int clickedFrameIndex);
 		void HandleFrameRightClick(int clickedFrameIndex);
@@ -59,5 +60,6 @@ namespace eg {
 		std::pair<int, int> m_SelectedFrames = { -1, -1 };
 		std::vector<UUID> m_DeletedFrames;
 		
+
 	};
 }

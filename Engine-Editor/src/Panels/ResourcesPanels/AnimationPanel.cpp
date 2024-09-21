@@ -8,6 +8,28 @@
 
 
 namespace eg {
+
+	namespace Utils {
+		ImVec4 ColorFromHexNoAlpha(unsigned int hexColor)
+		{
+			float r = ((hexColor >> 16) & 0xFF) / 255.0f;
+			float g = ((hexColor >> 8) & 0xFF) / 255.0f;
+			float b = (hexColor & 0xFF) / 255.0f;
+			float a = 1.0f; // Full opacity by default
+			return ImVec4(r, g, b, a);
+		}
+	}
+
+	constexpr const int DRAGINTWIDTH = 125;
+	constexpr const int BASEGAP = 20;
+	constexpr const int ADDITIONALGAP = 64;
+	constexpr const int ROUNDING = 10;
+
+	const ImVec4 BASEINPUTCOLOR = Utils::ColorFromHexNoAlpha(0x403659);
+	const ImVec4 HOVEREDCOLOR = Utils::ColorFromHexNoAlpha(0x5A4A7D);
+	const ImVec4 ACTIVEINPUTCOLOR = Utils::ColorFromHexNoAlpha(0x83799E);
+	const ImVec4 BGCOLOR = Utils::ColorFromHexNoAlpha(0x281F3A);
+
 	AnimationPanel::AnimationPanel(const std::filesystem::path& path)
 	{
 		//InitAnimationPanel(path);
@@ -151,13 +173,6 @@ namespace eg {
 	{
 		m_ResourceData->Frames.clear();
 
-		SpriteAtlasResourceData* saData = new SpriteAtlasResourceData();
-		saData->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::SpriteAtlas);
-		saData->ResourceName = m_ResourceData->ResourceName;
-		saData->Extension = ResourceUtils::GetResourceTypeExtension(ResourceType::SpriteAtlas);
-		saData->Width = m_TextureData->Width;
-		saData->Height = m_TextureData->Height;
-		saData->Channels = m_TextureData->Channels;
 		m_TextureUUID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_TextureData, ResourceType::Image);
 		for (int i = 0; i < m_PreviewData->GetFrameCount(); i++)
 		{
@@ -173,7 +188,6 @@ namespace eg {
 			data->TexCoords[3] = { subTexture->GetMin().x, subTexture->GetMax().y };
 
 			UUID subTextureUUID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)data, ResourceType::SubTexture);
-			saData->Sprites.push_back(subTextureUUID);
 
 			FrameResourceData* dataFrame = new FrameResourceData();
 			dataFrame->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Frame);
@@ -191,7 +205,6 @@ namespace eg {
 		m_ResourceData->FrameCount = m_PreviewData->GetFrameCount();
 		m_ResourceData->Loop = m_PreviewData->IsLooped();
 		m_ResourceData->Extension = ".anim";
-		ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)saData, ResourceType::SpriteAtlas);
 		UUID animID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_ResourceData, ResourceType::Animation);
 	}
 
@@ -244,7 +257,11 @@ namespace eg {
 
 	void AnimationPanel::DrawFrameSelection()
 	{
-		if (ImGui::DragInt("SubTexture column count: %d", &m_MaxColumn, 1.0f, 1, m_TextureData->Width))
+		EG_PROFILE_FUNCTION();
+		float contentRegionAvailX = ImGui::GetContentRegionAvail().x;
+		ImGui::PushItemWidth(DRAGINTWIDTH);
+
+		if (ImGui::DragInt("Column count", &m_MaxColumn, 1.0f, 1, m_TextureData->Width))
 		{
 			if (m_MaxColumn < 1)
 				m_MaxColumn = 1;
@@ -256,8 +273,11 @@ namespace eg {
 			SetFrames();
 		}
 
-
-		if (ImGui::DragInt("SubTexture row count: %d", &m_MaxRow, 1.0f, 1, m_TextureData->Height))
+		 
+		ImGui::SameLine();  
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + BASEGAP + ADDITIONALGAP);
+		
+		if (ImGui::DragInt("Row count", &m_MaxRow, 1.0f, 1, m_TextureData->Height))
 		{
 			if (m_MaxRow < 1)
 				m_MaxRow = 1;
@@ -268,8 +288,9 @@ namespace eg {
 			ClearOutdatedFrames();
 			SetFrames();
 		}
+		
 
-		if (ImGui::DragInt("Begin Column: %d", &m_Column, 1.0f, 0, m_MaxColumn-1))
+		if (ImGui::DragInt("Begin Column", &m_Column, 1.0f, 0, m_MaxColumn-1))
 		{
 			if (m_Column > m_MaxColumn - 1)
 			{
@@ -283,8 +304,10 @@ namespace eg {
 			SetSelectedFrames();
 		}
 
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + BASEGAP + ADDITIONALGAP);
 
-		if (ImGui::DragInt("Begin Row: %d", &m_Row, 1.0f, 0, m_MaxRow - 1))
+		if (ImGui::DragInt("Begin Row", &m_Row, 1.0f, 0, m_MaxRow - 1))
 		{
 			if (m_Row > m_MaxRow - 1)
 			{
@@ -298,7 +321,7 @@ namespace eg {
 			SetSelectedFrames();
 		}
 
-		if (ImGui::DragInt("Selected Columns Count: %d", &m_ColumnCount, 1.0f, 1, m_MaxColumn-m_Column))
+		if (ImGui::DragInt("Selected Columns Count", &m_ColumnCount, 1.0f, 1, m_MaxColumn-m_Column))
 		{
 			if (m_ColumnCount < 1)
 				m_ColumnCount = 1;
@@ -307,7 +330,10 @@ namespace eg {
 			SetSelectedFrames();
 		}
 
-		if (ImGui::DragInt("Selected Rows Count: %d", &m_RowCount, 1.0f, 1, m_MaxRow-m_Row))
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + BASEGAP);
+
+		if (ImGui::DragInt("Selected Rows Count", &m_RowCount, 1.0f, 1, m_MaxRow-m_Row))
 		{
 			if (m_RowCount < 1)
 				m_RowCount = 1;
@@ -315,8 +341,8 @@ namespace eg {
 				m_RowCount = m_MaxRow - m_Row;
 			SetSelectedFrames();
 		}
-
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
+		ImGui::PopItemWidth();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(20, 20));
 		if (ImGui::Button("Select all", ImVec2(90, 40))) {
 			for (int i = 0; i < (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight); i++)
@@ -333,27 +359,36 @@ namespace eg {
 			m_SelectedFrames.clear();
 			SetFrames();
 		}
-		ImGui::PopStyleVar(2);
+
+		ImGui::PopStyleVar(1);
 	}
 
 	void AnimationPanel::DrawAnimInfo()
 	{
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
 		ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
-		if (ImGui::DragInt("Frame Rate: %f", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500)) {
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + BASEGAP);
+		ImGui::Checkbox("Loop", m_PreviewData->IsLoopedPtr());
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
+		if (ImGui::DragInt("Frame Rate", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500)) {
 			SetFrames();
 		}
-		ImGui::Checkbox("Loop", m_PreviewData->IsLoopedPtr());
+		
 		char buffer[512];
 		memset(buffer, 0, sizeof(buffer));
 		std::strncpy(buffer, m_ResourceData->ResourceName.c_str(), sizeof(buffer));
 
-		if (ImGui::InputText("Animation Name: ", buffer, sizeof(buffer)))
+		if (ImGui::InputText("Animation Name", buffer, sizeof(buffer)))
 			m_ResourceData->ResourceName = std::string(buffer);
+		ImGui::PopStyleVar();
 	}
 
 	void AnimationPanel::DrawAnimationPreview()
 	{
-		ImGui::Text("Animation: %s", m_ResourceData->ResourceName.c_str());
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
+		ImGui::Text("Animation Preview:");
 		if (m_PreviewData->GetFrameCount() > 0)
 		{
 			Ref<SubTexture2D> subTexture = m_PreviewData->GetFrame()->GetSubTexture();
@@ -374,13 +409,28 @@ namespace eg {
 		EG_PROFILE_FUNCTION();
 		if (!m_ShowAnimationPanel)
 			return;
-		//m_MaxColumn = (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth);
-		//m_MaxRow = (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight);
+
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, BGCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_Tab, BGCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_TabHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_TabActive, ACTIVEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, ACTIVEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_TabUnfocused, BGCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, BGCOLOR);
 		ImGui::Begin("Animation Preview");
+
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, BASEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ACTIVEINPUTCOLOR);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, BASEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ACTIVEINPUTCOLOR);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
 
 		DrawFrameSelection();
 
-		ImGui::Text("Right click to select key frames");
 		ImGui::Text("Image Preview:");
 
 		for (int i = 0; i < (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight); i++)
@@ -390,21 +440,29 @@ namespace eg {
 				DrawSubtexture(i, j);
 			}
 		}
-
-		
 		
 		DrawAnimInfo();
 		
 		DrawAnimationPreview();
+		
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(20, 20));
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
 
-		if (ImGui::Button("Save"))
+		if (ImGui::Button("Save", ImVec2(90, 40)))
 		{
+
 			SaveData();
 			CloseAnimationPanel();
 		}
-		if (ImGui::Button("Cancel"))
+
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(90, 40)))
 			CloseAnimationPanel();
+
+		ImGui::PopStyleColor(12);
+		ImGui::PopStyleVar(2);
 		ImGui::End();
+		ImGui::PopStyleColor();
 	}
 
 	void AnimationPanel::CloseAnimationPanel()
