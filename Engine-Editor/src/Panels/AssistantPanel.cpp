@@ -6,6 +6,8 @@
 #include <thread>
 #include <sstream>
 #include <unordered_map>
+#include <cctype>
+#include <algorithm>
 
 namespace eg
 {
@@ -26,7 +28,10 @@ namespace eg
 		m_isMicrophoneAvailable(assistantManager->CheckMicrophoneAvailable()),
 		m_isLastMessageFromUser(false),
 		m_readAloud(false),
-		m_showMessageTooltip(false)
+		m_showMessageTooltip(false),
+		m_messageCount(0),
+		m_isAssistantMessageInProgress(false),
+		m_shouldListen(false)
 	{
 		memset(buffer, 0, sizeof(buffer));
 
@@ -118,6 +123,24 @@ namespace eg
 		return (it != languageMap.end()) ? it->second : "";
 	}
 
+	std::string AssistantPanel::ExtractLanguageName(std::string line) {
+		if(line.find("```") == std::string::npos)
+			return "";
+
+		line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
+		return line.substr(3);
+	}
+
+	bool AssistantPanel::StartsOrEndsCodeBlock(std::string line) {
+		if (line.find("```") != std::string::npos)
+		{
+			line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
+			return line.starts_with("```");
+		}
+
+		return false;
+	}
+
 	void AssistantPanel::RenderAssistantMessage(const std::string& message, int id)
 	{
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -151,7 +174,7 @@ namespace eg
 
 		while (std::getline(stream, line))
 		{
-			if (line.starts_with("```"))
+			if (StartsOrEndsCodeBlock(line))
 			{
 				if (insideCode)
 				{
@@ -190,7 +213,7 @@ namespace eg
 
 					ImGui::GetWindowDrawList()->AddRectFilled(
 						ImVec2(cursorPos.x + padding, cursorPos.y),
-						ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth - padding, ImGui::GetCursorScreenPos().y + padding * 2 + codeToolbarHeight),
+						ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth - padding, ImGui::GetCursorScreenPos().y + codeToolbarHeight),
 						IM_COL32(32, 26, 48, 255), 10.0f, ImDrawFlags_RoundCornersTop
 					);
 
@@ -199,7 +222,6 @@ namespace eg
 					cursorPos = ImGui::GetCursorScreenPos();
 
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding * 2);
-					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding * 2);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
 					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
 					ImGui::PopTextWrapPos();
@@ -222,13 +244,12 @@ namespace eg
 				else
 				{
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
-					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
+					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
 					ImGui::PopTextWrapPos();
 					msg = "";
 
 					insideCode = true;
-					language = line.substr(3);
+					language = ExtractLanguageName(line);
 				}
 			}
 			else
@@ -244,8 +265,7 @@ namespace eg
 		if (!msg.empty())
 		{
 			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-			ImGui::SetCursorPosX(initialCursorPosX + padding);
-			ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
+			ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
 			ImGui::PopTextWrapPos();
 		}
 
@@ -283,6 +303,8 @@ namespace eg
 
 		if (assistantManager->GetIsMessageInProgress())
 			m_isListening = false;
+		else if(m_shouldListen)
+			m_isListening = true;
 
 		if (m_isListening && !assistantManager->GetVoiceAssistantListening())
 		{
@@ -361,6 +383,15 @@ namespace eg
 			ImGui::Text("Read aloud");
 			ImGui::Checkbox("##readAloud", &m_readAloud);
 
+			ImGui::Text("Should voice assistant listen");
+			if (ImGui::Checkbox("##listen", &m_shouldListen))
+			{
+				if (m_shouldListen)
+					m_isListening = true;
+				else
+					m_isListening = false;
+			}
+
 			const char* languages[] = { "C++", "Python", "JavaScript", "Java", "C#" };
 			static int current_language = 0;
 			ImGui::Text("Preferred language");
@@ -398,6 +429,9 @@ namespace eg
 				static float timer = 0.0f;
 				timer += ImGui::GetIO().DeltaTime;
 
+				if (m_isAssistantMessageInProgress == false)
+					m_isAssistantMessageInProgress = true;
+
 				if (timer > 0.5f)
 				{
 					if (assistantRespondingAnimation.size() < 4)
@@ -410,6 +444,14 @@ namespace eg
 
 				RenderAssistantMessage(assistantRespondingAnimation);
 				ImGui::NewLine();
+			}
+			else
+				m_isAssistantMessageInProgress = false;
+
+			if (m_messageCount != assistantManager->GetMessages(threadID).size() || m_isAssistantMessageInProgress)
+			{
+				m_messageCount = assistantManager->GetMessages(threadID).size();
+				ImGui::SetScrollHereY(1.0f);
 			}
 		}
 

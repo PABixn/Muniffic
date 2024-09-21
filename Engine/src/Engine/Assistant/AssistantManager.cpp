@@ -438,6 +438,8 @@ namespace eg
 				std::thread t([this, messageObj] { SpeakText(messageObj->content); });
 				t.detach();
 			}
+			else
+				IsMessageInProgress = false;
 			
 			m_Threads.at(threadID)->messages.push_back(messageObj);
 

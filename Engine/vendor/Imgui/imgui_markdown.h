@@ -329,7 +329,7 @@ namespace ImGui
     // External interface
     //-----------------------------------------------------------------------------
 
-    inline void Markdown( const char* markdown_, size_t markdownLength_, const MarkdownConfig& mdConfig_ );
+    inline void Markdown( const char* markdown_, size_t markdownLength_, const MarkdownConfig& mdConfig_, float leftPadding = 0.0f );
 
     //-----------------------------------------------------------------------------
     // Internals
@@ -522,8 +522,10 @@ namespace ImGui
     }
     
     // render markdown
-    inline void Markdown( const char* markdown_, size_t markdownLength_, const MarkdownConfig& mdConfig_ )
+    inline void Markdown( const char* markdown_, size_t markdownLength_, const MarkdownConfig& mdConfig_, float leftPadding)
     {
+        ImGui::Indent(leftPadding);
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
         static const char* linkHoverStart = NULL; // we need to preserve status of link hovering between frames
         ImGuiStyle& style = ImGui::GetStyle();
         Line        line;
@@ -786,7 +788,7 @@ namespace ImGui
                 if( em.state == Emphasis::MIDDLE && line.emphasisCount >=3 &&
                     ( line.lineStart + line.emphasisCount ) == i )
                 {
-                    ImGui::Separator();
+                    //ImGui::Separator();
                 }
                 else
                 {
@@ -810,7 +812,7 @@ namespace ImGui
 
         if( em.state == Emphasis::LEFT && line.emphasisCount >= 3 )
         {
-            ImGui::Separator();
+            //ImGui::Separator();
         }
         else
         {
@@ -826,6 +828,9 @@ namespace ImGui
                 RenderLine( markdown_, line, textRegion, mdConfig_ );
             }
         }
+
+        ImGui::Unindent(leftPadding);
+        ImGui::PopStyleVar();
     }
 
     inline bool TextRegion::RenderLinkText( const char* text_, const char* text_end_, const Link& link_,
@@ -991,7 +996,7 @@ namespace ImGui
             {
                 if( fmt.separator )
                 {
-                    ImGui::Separator();
+                    //ImGui::Separator();
                     ImGui::NewLine();
                 }
                 else

@@ -13,13 +13,16 @@ namespace eg
     public:
         AssistantPanel();
         void OnImGuiRender();
+
+    private:
+        void DoMessage(const std::string& message);
         void RenderUserMessage(const std::string& message);
         void RenderAssistantMessage(const std::string& message, int id = 0);
         void RunMessage(const std::string& message);
         std::string GetLanguageSymbol(const std::string& language);
+        bool StartsOrEndsCodeBlock(std::string line);
+        std::string ExtractLanguageName(std::string line);
 
-    private:
-        void DoMessage(const std::string& message);
 
         char buffer[1024];
         std::string threadID;
@@ -36,10 +39,13 @@ namespace eg
         Ref<Texture2D> m_IconReadAloudActive;
         ImTextureID m_IconReadMessageAloud;
         bool m_isListening;
+        bool m_shouldListen;
         bool m_isMicrophoneAvailable;
         bool m_isLastMessageFromUser;
         bool m_readAloud;
         bool m_showMessageTooltip;
+        bool m_isAssistantMessageInProgress;
         ImGui::MarkdownConfig mdConfig;
+        int m_messageCount;
     };
 }
