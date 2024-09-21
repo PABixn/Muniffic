@@ -24,7 +24,6 @@ namespace eg {
 		virtual void OnEvent(Event& e) override;
 
 		const std::string CompileCustomScripts(); 
-	public: // Getters/setters
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
