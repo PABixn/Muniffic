@@ -414,6 +414,27 @@ namespace eg
 			}
 		}
 
+		if (ImGui::BeginPopupModal("No Camera", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration))
+		{
+			ImVec2 window_size = ImGui::GetWindowSize();
+			ImVec2 screen_center = ImGui::GetMainViewport()->GetCenter();
+			ImGui::SetWindowPos(ImVec2(screen_center.x - window_size.x * 0.5f, screen_center.y - window_size.y * 0.5f));
+
+			ImGui::Text("No entity with Camera Component was found in current scene. \n At least one must be present.");
+
+			float window_width = ImGui::GetWindowSize().x;
+			float button_width = 120.0f;
+			ImGui::SetCursorPosX((window_width - button_width) * 0.5f);
+
+			if (ImGui::Button("OK", ImVec2(button_width, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+
+
 		if (hasSimulateButton)
 		{
 			if (hasPlayButton)
@@ -819,6 +840,13 @@ namespace eg
 
 	void EditorLayer::OnScenePlay()
 	{
+		if (m_ActiveScene->GetEntitiesWith<CameraComponent>().empty())
+		{
+			ImGui::OpenPopup("No Camera");
+
+			return;
+		}
+
 		if (!m_RuntimeScene)
 			m_RuntimeScene = CreateRef<Scene>();
 		if (m_SceneState == SceneState::Simulate)
