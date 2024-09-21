@@ -6,13 +6,13 @@
 namespace eg {
 	bool Editor::OnWindowClose(WindowCloseEvent& e)
 	{
-		if (GetIsSaved())
+		if (IsProjectSaved())
 		{
 			SetRunning(false);
 			return true;
 		}
 		ResourceSerializer::SerializeResourceCache();
-		(*(dynamic_cast<EditorLayer*>(this->GetFirstLayer()))).GetUnsavedChangesPanel()->SetUnsavedChangesPanelRender(true);
+		(*(dynamic_cast<EditorLayer*>(this->GetFirstLayer()))).SetIsWindowTryingToClose(true);
 		return false;
 	}
 
