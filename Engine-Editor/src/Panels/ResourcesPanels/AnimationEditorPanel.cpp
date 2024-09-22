@@ -1,5 +1,5 @@
 #include "AnimationEditorPanel.h"
-#include "Imgui/imgui.h"
+
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Resources/AssetDirectoryManager.h"
 namespace eg {
@@ -9,7 +9,7 @@ namespace eg {
 	constexpr const int BASEGAP = 10;
 
 	constexpr const float ROUNDING = 5.0f;
-
+	constexpr const float MINFRAMEWIDTH = 30.0f;
 
 	constexpr const ImU32 BASEINPUTCOLOR = IM_COL32(0x40, 0x36, 0x59, 0xff);//0x403659FF;
 	constexpr const ImU32 HOVEREDCOLOR = IM_COL32(0x5a, 0x4a, 0xa7, 0xff);//0x5A4A7DFF;
@@ -18,7 +18,7 @@ namespace eg {
 	constexpr const ImU32 BGCOLOR = IM_COL32(0x28, 0x1f, 0x3a, 0xff);// 0x281F3AFF;
 
 	float hoverTime = 0.0f;
-	float hoverTimeMax = 2.5f;
+	float hoverTimeMax = 1.5f;
 	int hoverFrame = -1;
 	float frameWidth = 0;
 
@@ -40,6 +40,7 @@ namespace eg {
 	void AnimationEditorPanel::OnImGuiRender() {
 		if (!m_ShowAnimationEditorPanel)
 			return;
+
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, BGCOLOR);
 		ImGui::PushStyleColor(ImGuiCol_Tab, BGCOLOR);
 		ImGui::PushStyleColor(ImGuiCol_TabHovered, HOVEREDCOLOR);
@@ -58,12 +59,12 @@ namespace eg {
 
 		DrawFrameTrack();
 
-		DrawActionButtons();
+		DrawFrameRate();
 
 		DrawExitButtons();
 		
 		ImGui::End();
-		HandleResize();
+		
 		ImGui::PopStyleColor(7);
 	}
 
@@ -209,6 +210,7 @@ namespace eg {
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ACTIVEINPUTCOLOR);
 		ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, ROUNDING);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
+
 		if (ImGui::BeginPopup("FunctionCallPopup")) {
 			ImGui::Text("Function name:");
 			static char functionName[128];
@@ -282,72 +284,52 @@ namespace eg {
 
 	void AnimationEditorPanel::DrawFrameTrack()
 	{
-		float contentRegionAvailX = ImGui::GetContentRegionAvail().x;
 		float buttonGap = 10;
+		float rightMargin = 20;
 		ImVec2 buttonSize = ImVec2(30, 30);
-		float trackWidth = contentRegionAvailX - buttonSize.x - buttonGap ;
+		float trackWidth = ImGui::GetContentRegionAvail().x - buttonSize.x - buttonGap - rightMargin;
 		size_t animationDuration = m_Anim->GetAnimDuration();
 		float startX = ImGui::GetCursorScreenPos().x + buttonSize.x + buttonGap ;
-		float startY = ImGui::GetCursorScreenPos().y + 25 ;
-
+		float startY = ImGui::GetCursorScreenPos().y + 25;
+		frameWidth = trackWidth / animationDuration < MINFRAMEWIDTH ? MINFRAMEWIDTH : trackWidth / animationDuration;
 		
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
-		
-		ImVec4 moveIconTint = m_Move ? ImVec4(1, 1, 1, 1) : ImVec4(0.5, 0.5, 0.5, 1);
-		ImVec4 resizeIconTint = m_Resize ? ImVec4(1, 1, 1, 1) : ImVec4(0.5, 0.5, 0.5, 1);
-		if (ImGui::ImageButton((ImTextureID)(m_LenghtIcon->GetRendererID()), buttonSize, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0,0,0,0), resizeIconTint)) {
-			if (m_Move)
-				m_Move = false;
-			m_Resize = !m_Resize;
-		}
-		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + buttonGap));
-		if (ImGui::ImageButton((ImTextureID)(m_MoveIcon->GetRendererID()), buttonSize, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0,0,0,0), moveIconTint)) {
-			if (m_Resize)
-				m_Resize = false;
-			m_Move = !m_Move;
-		}
-		ImGui::PopStyleVar();
-
-		ImGui::SetCursorScreenPos(ImVec2(startX, startY));
-
+		DrawActionButtons(buttonSize, buttonGap);
 		
 		m_HoveredFrame = -1;
 		m_FrameReleased = false;
 
-		ImGui::GetWindowDrawList()->AddRect(ImVec2(startX - 2, startY-18), ImVec2(startX + trackWidth, startY + 42), IM_COL32_WHITE, 2, 0, 2);
-		frameWidth = trackWidth / animationDuration;
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, BGCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, ACTIVEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive, BASEINPUTCOLOR);
+
+		ImGui::SetCursorScreenPos(ImVec2(startX - 2, startY - 20));
+		ImGui::BeginChild("FrameTrack", ImVec2(trackWidth + 16, 80), false, ImGuiWindowFlags_HorizontalScrollbar);
+		float scroll = ImGui::GetScrollX();
+		ImGui::SetCursorScreenPos(ImVec2(startX - scroll, startY));
+
 		int i = 0;
 		ImVec2 cursorPos, cursorPos2;
 		float rectWidth = 0;
-		for (auto frame : m_Anim->GetFrames()) {
-			rectWidth = (trackWidth / animationDuration - 2) * frame->GetFrameDuration();
 
+		for (auto frame : m_Anim->GetFrames()) {
+			rectWidth = frameWidth * frame->GetFrameDuration()-2;
 			cursorPos = ImGui::GetCursorScreenPos();
 			cursorPos2 = ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40);
-			
 
-			if (ImGui::IsMouseHoveringRect(cursorPos, cursorPos2))
+			HandleFrameHover(i, cursorPos, cursorPos2);
 
-			{
-				m_HoveredFrame = i;
-				if (i != hoverFrame)
-				{
-					hoverTime = 0.0f;
-				}
-				else
-				{
-					hoverTime += ImGui::GetIO().DeltaTime;
-				}
-				hoverFrame = i;
-			}
 			ImVec2 textSize = ImGui::CalcTextSize(std::to_string(i).c_str(), NULL, NULL, NULL);
 			ImVec2 textStart = ImVec2(cursorPos.x + rectWidth * 0.5f - textSize.x * 0.5f, cursorPos.y - 18);
-			if (i != 0)
-				ImGui::GetWindowDrawList()->AddLine(ImVec2(cursorPos.x - LINEOFFSET, cursorPos.y-16), ImVec2(cursorPos.x - LINEOFFSET, cursorPos2.y), IM_COL32_WHITE, LINEWIDTH);
-			
+
 			ImGui::GetWindowDrawList()->AddRectFilled(cursorPos, cursorPos2, GetFrameColor(i));
-			if(frame->GetFunctionCallName() != "" && frame->GetClassname() != "")
-				ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(cursorPos.x + rectWidth /2, cursorPos.y + 20), 5, IM_COL32_WHITE);
+
+			if(i)
+				ImGui::GetWindowDrawList()->AddLine(ImVec2(cursorPos.x - LINEOFFSET, cursorPos.y - 17), ImVec2(cursorPos.x - LINEOFFSET, cursorPos2.y+1), IM_COL32_WHITE, LINEWIDTH);
+
+			if (frame->GetFunctionCallName() != "" && frame->GetClassname() != "")
+				ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(cursorPos.x + rectWidth / 2, cursorPos.y + 20), 5, IM_COL32_WHITE);
+
 			ImGui::GetWindowDrawList()->AddText(textStart, IM_COL32_WHITE, std::to_string(i).c_str());
 
 			ImGui::SetCursorScreenPos(ImVec2(cursorPos.x, cursorPos.y));
@@ -361,8 +343,16 @@ namespace eg {
 
 			i++;
 		}
-		if(m_HoveredFrame < 0)
+
+		ImGui::GetWindowDrawList()->AddRect(ImVec2(startX - 2, startY - 18), ImVec2(cursorPos2.x, startY + 42), IM_COL32_WHITE, 2, 0, 2);
+		ImGui::EndChild();
+		ImGui::PopStyleColor(4);
+
+		if (m_HoveredFrame < 0)
+		{
 			hoverFrame = -1;
+			hoverTime = 0.0f;
+		}
 		ImGui::SetCursorScreenPos(ImVec2(startX - buttonSize.x - buttonGap, ImGui::GetCursorScreenPos().y + 60));
 		
 		DrawAnimationOptions();
@@ -375,29 +365,28 @@ namespace eg {
 			m_DraggingIndex = -1;
 		}
 
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, BASEINPUTCOLOR);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, HOVEREDCOLOR);
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ACTIVEINPUTCOLOR);
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
-		ImGui::DragInt("Frame Rate", m_Anim->GetFrameRatePtr(), 1.0f, 1.0f, 500);
-		ImGui::PopStyleVar();
-		ImGui::PopStyleColor(3);
+		HandleResize();
+		
 	}
 
 	void AnimationEditorPanel::DrawFunctionInfoPopup()
 	{
-		if(hoverTime < hoverTimeMax || m_Anim->GetFrame(hoverFrame)->GetClassname() == "")
+		if(hoverTime < hoverTimeMax)
 			return;
 
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, BGCOLOR);
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, BASEINPUTCOLOR);
 		ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, ROUNDING);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
-		ImGui::OpenPopup("FunctionInfoPopup");
+		ImGui::OpenPopup("Frame Info Popup");
 
-		if (ImGui::BeginPopup("FunctionInfoPopup")) {
-			ImGui::Text("Function name", m_Anim->GetFrame(hoverFrame)->GetFunctionCallName().c_str());
-			ImGui::Text("Class name", m_Anim->GetFrame(hoverFrame)->GetClassname().c_str());
+		if (ImGui::BeginPopup("Frame Info Popup")) {
+			ImGui::Text("Frame Length: %d", m_Anim->GetFrame(hoverFrame)->GetFrameDuration());
+			if (m_Anim->GetFrame(hoverFrame)->GetClassname() != "")
+			{
+				ImGui::Text("Function name", m_Anim->GetFrame(hoverFrame)->GetFunctionCallName().c_str());
+				ImGui::Text("Class name", m_Anim->GetFrame(hoverFrame)->GetClassname().c_str());
+			}
 		}
 		ImGui::EndPopup();
 		ImGui::PopStyleVar(2);
@@ -405,8 +394,33 @@ namespace eg {
 
 	}
 
-	void AnimationEditorPanel::HandleFrameHover(int frameIndex)
+	void AnimationEditorPanel::DrawFrameRate()
 	{
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, BASEINPUTCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, HOVEREDCOLOR);
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, SELECTEDFRAMECOLOR);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
+		ImGui::DragInt("Frame Rate", m_Anim->GetFrameRatePtr(), 1.0f, 1.0f, 500);
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor(3);
+	}
+
+	void AnimationEditorPanel::HandleFrameHover(int frameIndex, const ImVec2& cursorPos, const ImVec2& cursorPos2)
+	{
+		if (ImGui::IsMouseHoveringRect(cursorPos, cursorPos2))
+
+		{
+			m_HoveredFrame = frameIndex;
+			if (frameIndex != hoverFrame)
+			{
+				hoverTime = 0.0f;
+			}
+			else
+			{
+				hoverTime += ImGui::GetIO().DeltaTime;
+			}
+			hoverFrame = frameIndex;
+		}
 	}
 
 	void AnimationEditorPanel::HandleFrameLeftClick(int clickedFrameIndex)
@@ -445,6 +459,7 @@ namespace eg {
 				{
 					m_FrameStartDuration = m_Anim->GetFrame(clickedFrameIndex)->GetFrameDuration();
 					ImGui::ResetMouseDragDelta();
+					m_ResizeOffset = 0;
 				}
 			}
 		}
@@ -464,9 +479,12 @@ namespace eg {
 			return;
 		if (!m_IsDragging || m_DraggingIndex == -1)
 			return;
+
 		m_ResizeOffset += ImGui::GetIO().MouseDelta.x;
 		float estNewDuration = std::max(1, (int)(m_FrameStartDuration + m_ResizeOffset / (frameWidth)));
-		m_Anim->GetFrame(m_DraggingIndex)->SetFrameDuration(estNewDuration);
+
+		if(estNewDuration != m_Anim->GetFrame(m_DraggingIndex)->GetFrameDuration())
+			m_Anim->GetFrame(m_DraggingIndex)->SetFrameDuration(estNewDuration);
 		SetFrames();
 		
 	}
@@ -485,31 +503,52 @@ namespace eg {
 		
 	}
 
-	void AnimationEditorPanel::DrawActionButtons()
+	void AnimationEditorPanel::DrawActionButtons(const ImVec2& buttonSize, float gap)
 	{
-		
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
+		ImVec4 moveIconTint = m_Move ? ImVec4(1, 1, 1, 1) : ImVec4(0.75, 0.75, 0.75, 1);
+		ImVec4 resizeIconTint = m_Resize ? ImVec4(1, 1, 1, 1) : ImVec4(0.75, 0.75, 0.75, 1);
+		if (ImGui::ImageButton((ImTextureID)(m_LenghtIcon->GetRendererID()), buttonSize, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), resizeIconTint)) {
+			if (m_Move)
+				m_Move = false;
+			m_Resize = !m_Resize;
+		}
+		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + gap));
+		if (ImGui::ImageButton((ImTextureID)(m_MoveIcon->GetRendererID()), buttonSize, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), moveIconTint)) {
+			if (m_Resize)
+				m_Resize = false;
+			m_Move = !m_Move;
+		}
+		ImGui::PopStyleVar();
 	}
 
 	void AnimationEditorPanel::DrawExitButtons()
 	{
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + BASEGAP));
+
 		ImGui::PushStyleColor(ImGuiCol_Button, BASEINPUTCOLOR);
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, HOVEREDCOLOR);
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ACTIVEINPUTCOLOR);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
+
 		ImVec2 buttonSize = ImVec2(90, 40);
+
 		if (ImGui::Button("Save", buttonSize)) {
 			m_Anim->Save();
 			FrameData::DeleteAssets(m_DeletedFrames);
 			ShowAnimationEditorPanel(false);
 			ResetData();
 		}
+
 		ImGui::SameLine();
+
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x + BASEGAP, ImGui::GetCursorScreenPos().y));
+
 		if (ImGui::Button("Close", buttonSize)) {
 			ShowAnimationEditorPanel(false);
 			ResetData();
 		}
+
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor(3);
 	}

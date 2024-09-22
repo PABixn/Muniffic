@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine.h"
-
+#include "Imgui/imgui.h"
 namespace eg {
 	class AnimationEditorPanel {
 	public:
@@ -23,14 +23,15 @@ namespace eg {
 		void DrawAnimationOptions();
 		void DrawFrameTrack();
 		void DrawFunctionInfoPopup();
-		void HandleFrameHover(int frameIndex);
+		void DrawFrameRate();
+		void HandleFrameHover(int frameIndex, const ImVec2& cursorPos, const ImVec2& cursorPos2);
 		void HandleFrameLeftClick(int clickedFrameIndex);
 		void HandleFrameRightClick(int clickedFrameIndex);
 		void HandleFrameDrag(int clickedFrameIndex);
 		void HandleFrameLeftClickRelease(int clickedFrameIndex);
 		void HandleResize();
 		void HandleMove(int moveTo);
-		void DrawActionButtons();
+		void DrawActionButtons(const ImVec2& buttonSize, float gap);
 		void DrawExitButtons();
 		uint32_t GetFrameColor(int frame);
 	private:

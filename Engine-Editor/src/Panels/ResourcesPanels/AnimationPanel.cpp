@@ -64,8 +64,6 @@ namespace eg {
 		m_FrameWidth = ((ImageResourceData*)m_LoadedResource->Data)->width;
 
 		m_PreviewOriginImage = Texture2D::Create(path.string());
-		//m_FrameData.SubTexture = SubTexture2D::Create(m_PreviewOriginImage, {0, 0}, {1, 1});
-		//m_FramesData.push_back(m_FrameData);
 		m_PreviewData = Animation::Create();
 		m_ResourceData = new AnimationResourceData();
 		m_ResourceData->ParentDirectory = 0;
