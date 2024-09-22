@@ -231,9 +231,20 @@ namespace eg {
 			const int32_t velocityIterations = 6;
 			const int32_t positionIterations = 2;
 			//float interpolationAlpha = (T - Time.fixedTime) / Time.fixedDeltaTime;
+
+			{
+				auto view = m_Registry.view<ScriptComponent>();
+				for (auto entity : view)
+				{
+					Entity e{ entity, this };
+					ScriptEngine::OnUpdateEntity(e, m_FixedFramerate/1000.0f);
+				}
+			}
+
 			m_PhysicsWorld->Step(m_FixedFramerate/1000.0f, velocityIterations, positionIterations);
 
 			auto view = m_Registry.view<RigidBody2DComponent>();
+
 			for (auto e : view)
 			{
 				Entity entity{ e, this };
@@ -241,14 +252,23 @@ namespace eg {
 				auto& transform = entity.GetComponent<TransformComponent>();
 				auto* body = (b2Body*)rb.RuntimeBody;
 
+				if (transform.Translation == transform.PrevTranslation)
+				{
 
-				transform.PrevTranslation = transform.Translation;
-				float interpolationAlpha = 1.0f;
 
 
-				transform.Translation.x = transform.PrevTranslation.x + interpolationAlpha * (body->GetPosition().x - transform.PrevTranslation.x);
-				transform.Translation.y = transform.PrevTranslation.y + interpolationAlpha * (body->GetPosition().y - transform.PrevTranslation.y);
-				transform.Rotation.z = body->GetAngle();
+					transform.Translation.x = body->GetPosition().x;
+					transform.Translation.y = body->GetPosition().y;
+					transform.Rotation.z = body->GetAngle();
+
+					transform.PrevTranslation = transform.Translation;
+				}
+				else {
+					body->SetTransform(b2Vec2(transform.Translation.x, transform.Translation.y), transform.Rotation.z);
+					transform.PrevTranslation = transform.Translation;
+
+				}
+
 			}
 		}
 	}
@@ -266,12 +286,7 @@ namespace eg {
 			// Update Native scripts
 			{
 				//C# Entity OnUpdate
-				auto view = m_Registry.view<ScriptComponent>();
-				for (auto entity : view)
-				{
-					Entity e{ entity, this };
-					ScriptEngine::OnUpdateEntity(e, ts);
-				}
+				
 
 				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 					{

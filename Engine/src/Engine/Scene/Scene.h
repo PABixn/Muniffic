@@ -97,7 +97,7 @@ namespace eg {
 		std::chrono::time_point<std::chrono::high_resolution_clock> m_NewTime;
 		unsigned long m_Delta;
 		float m_TimePassed = 0;
-		float m_FixedFramerate = 1000.0f / 720.0f;
+		float m_FixedFramerate = 1000.0f / 120.0f;
 
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 		//Change to shared_ptr if doesn't couse any problems
