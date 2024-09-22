@@ -20,10 +20,10 @@ namespace eg
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
 	}
 
-	void ContentBrowserPanel::Update(float dt)
+	void ContentBrowserPanel::Update(float ts)
 	{
 		if(m_AnimationEditorPanel && m_AnimationEditorPanel->IsAnimationEditorOpen())
-			m_AnimationEditorPanel->Update(dt);
+			m_AnimationEditorPanel->Update(ts);
 	}
 
 	void ContentBrowserPanel::DrawCenteredText(const std::string& text, const float& cellSize) {

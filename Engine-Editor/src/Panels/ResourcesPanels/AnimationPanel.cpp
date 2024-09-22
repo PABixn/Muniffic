@@ -30,16 +30,20 @@ namespace eg {
 	const ImVec4 ACTIVEINPUTCOLOR = Utils::ColorFromHexNoAlpha(0x83799E);
 	const ImVec4 BGCOLOR = Utils::ColorFromHexNoAlpha(0x281F3A);
 
+	const ImVec4 UNSELECTEDFRAMECOLOR = Utils::ColorFromHexNoAlpha(0xA64D4DFF);
+	const ImVec4 SELECTEDFRAMECOLOR = Utils::ColorFromHexNoAlpha(0x4DA674FF);
+	//const ImVec4 SELECTEDFRAMECOLOR = Utils::ColorFromHexNoAlpha(0x609686FF);
+
 	AnimationPanel::AnimationPanel(const std::filesystem::path& path)
 	{
-		//InitAnimationPanel(path);
 	}
 
 	bool AnimationPanel::OpenAnimationPanel(const std::filesystem::path& path)
 	{
+		EG_PROFILE_FUNCTION();
 		ShowAnimationPanel(true);
 		m_FrameData = CreateRef<FrameData>();
-		EG_PROFILE_FUNCTION();
+		
 		std::filesystem::path textureBasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animations";
 		bool resourceLoad = false;
 		m_LoadedResource = new Resource();
@@ -217,10 +221,8 @@ namespace eg {
 
 
 		bool isSelectedFrame = std::find(m_SelectedFrames.begin(), m_SelectedFrames.end(), std::make_pair(i, j)) != m_SelectedFrames.end();
-
-		ImVec4 borderColor = ImVec4{ 1.0f, 0.0f, 0.0f, 1.0f };
-		if (isSelectedFrame)
-			borderColor = ImVec4{ 0.0f, 1.0f, 0.0f, 1.0f };
+		//#A64D4D i #4DA674 / #
+		ImVec4 borderColor = isSelected ? SELECTEDFRAMECOLOR : UNSELECTEDFRAMECOLOR;
 		ImVec2 size = ImVec2(
 			m_BasePreviewWidthImage / (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth),
 			m_BasePreviewHeightImage / (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight)
@@ -340,8 +342,10 @@ namespace eg {
 			SetSelectedFrames();
 		}
 		ImGui::PopItemWidth();
+
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(20, 20));
+
 		if (ImGui::Button("Select all", ImVec2(90, 40))) {
 			for (int i = 0; i < (int)(m_PreviewOriginImage->GetHeight() / m_FrameHeight); i++)
 				for (int j = 0; j < (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth); j++) {
@@ -365,11 +369,15 @@ namespace eg {
 	{
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
 		ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
+
 		ImGui::SameLine();
+
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + BASEGAP);
 		ImGui::Checkbox("Loop", m_PreviewData->IsLoopedPtr());
+
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
+
 		if (ImGui::DragInt("Frame Rate", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500)) {
 			SetFrames();
 		}
