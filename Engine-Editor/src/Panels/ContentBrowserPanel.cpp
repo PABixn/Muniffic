@@ -31,34 +31,7 @@ namespace eg
 
 		DrawIcon(type);
 
-		bool isDeleteClicked = false;
-		bool isRenameClicked = false;
-		if (ImGui::BeginPopupContextItem("FileOptions"))
-		{
-			if (ImGui::MenuItem("Delete"))
-			{
-				isDeleteClicked = true;
-			}
-
-			if (ImGui::MenuItem("Rename"))
-			{
-				isRenameClicked = true;
-			}
-
-			ImGui::EndPopup();
-		}
-
-		if (isDeleteClicked) {
-			ImGui::OpenPopup("DeleteFile");
-			isDeleteClicked = false;
-		}
-
-		if (isRenameClicked) {
-			ImGui::OpenPopup("RenameFile");
-			isRenameClicked = false;
-		}
-
-		ShowFilePopups(key, type, name);
+		ShowFileMenu(key, type);
 
 		if (ImGui::BeginDragDropSource())
 		{
@@ -169,14 +142,8 @@ namespace eg
 			isClicked = false;
 		}
 
-		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding,10.f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
-		
 		ShowCreateFolderPopup();
 
-		ImGui::PopStyleVar(2);
-		ImGui::PopStyleColor();
 		ImGui::SameLine();
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.f);
@@ -242,7 +209,7 @@ namespace eg
 				isRenameClicked = false;
 			}
 
-			ShowFolderPopups(directory,name);
+			ShowFolderPopups(directory);
 
 			if (ImGui::BeginDragDropSource())
 			{
@@ -299,13 +266,13 @@ namespace eg
 		m_ArrowIcon = Texture2D::Create("resources/icons/contentBrowser/ArrowIcon.png");
 	}
 
-	void ContentBrowserPanel::ShowFolderPopups(UUID directory, std::string name) {
+	void ContentBrowserPanel::ShowFolderPopups(UUID directory) {
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
 
 		ShowDeleteFolderPopup(directory);
-		ShowRenameFolderPopup(directory,name);
+		ShowRenameFolderPopup(directory);
 
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor();
@@ -339,7 +306,7 @@ namespace eg
 		}
 	}
 
-	void ContentBrowserPanel::ShowRenameFolderPopup(UUID directory, std::string name) {
+	void ContentBrowserPanel::ShowRenameFolderPopup(UUID directory) {
 		ImGuiStyle& style = ImGui::GetStyle();
 
 		if (ImGui::BeginPopupModal("RenameFolder", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
@@ -370,6 +337,9 @@ namespace eg
 
 	void ContentBrowserPanel::ShowCreateFolderPopup() {
 		ImGuiStyle& style = ImGui::GetStyle();
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
 
 		if (ImGui::BeginPopupModal("CreateNewDirectory", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
 
@@ -402,21 +372,54 @@ namespace eg
 			ImGui::PopStyleVar(2);
 			ImGui::EndPopup();
 		}
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor();
 	}
 
-	void ContentBrowserPanel::ShowFilePopups(UUID key, ResourceType type, std::string name) {
+	void ContentBrowserPanel::ShowFileMenu(UUID key, ResourceType type) {
+		bool isDeleteClicked = false;
+		bool isRenameClicked = false;
+		if (ImGui::BeginPopupContextItem("FileOptions"))
+		{
+			if (ImGui::MenuItem("Delete"))
+			{
+				isDeleteClicked = true;
+			}
+
+			if (ImGui::MenuItem("Rename"))
+			{
+				isRenameClicked = true;
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (isDeleteClicked) {
+			ImGui::OpenPopup("DeleteFile");
+			isDeleteClicked = false;
+		}
+
+		if (isRenameClicked) {
+			ImGui::OpenPopup("RenameFile");
+			isRenameClicked = false;
+		}
+
+		ShowFilePopups(key, type);
+	}
+
+	void ContentBrowserPanel::ShowFilePopups(UUID key, ResourceType type) {
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
 
 		ShowDeleteFilePopup(key, type);
-		ShowRenameFilePopup(key, type, name);
+		ShowRenameFilePopup(key, type);
 
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor();
 	}
 
-	void ContentBrowserPanel::ShowRenameFilePopup(UUID key, ResourceType type, std::string name) {
+	void ContentBrowserPanel::ShowRenameFilePopup(UUID key, ResourceType type) {
 		ImGuiStyle& style = ImGui::GetStyle();
 
 		if (ImGui::BeginPopupModal("RenameFile", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {

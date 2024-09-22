@@ -17,12 +17,13 @@ namespace eg {
 		void LoadIcons();
 		void DrawIcon(ResourceType type);
 		void ShowDeleteFolderPopup(UUID directory);
-		void ShowRenameFolderPopup(UUID directory, std::string name);
+		void ShowRenameFolderPopup(UUID directory);
 		void ShowCreateFolderPopup();
 		void ShowDeleteFilePopup(UUID file, ResourceType type);
-		void ShowRenameFilePopup(UUID file, ResourceType type, std::string name);
-		void ShowFilePopups(UUID file, ResourceType type, std::string name);
-		void ShowFolderPopups(UUID folder, std::string name);
+		void ShowRenameFilePopup(UUID file, ResourceType type);
+		void ShowFilePopups(UUID file, ResourceType type);
+		void ShowFolderPopups(UUID folder);
+		void ShowFileMenu(UUID file, ResourceType type);
 
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }
