@@ -22,6 +22,11 @@ namespace eg {
 	int hoverFrame = -1;
 	float frameWidth = 0;
 
+	AnimationEditorPanel::AnimationEditorPanel(UUID asset)
+	{
+		OpenAnimationEditorPanel(asset);
+	}
+
 	bool AnimationEditorPanel::OpenAnimationEditorPanel(UUID asset) {
 		ResetData();
 		ShowAnimationEditorPanel(true);

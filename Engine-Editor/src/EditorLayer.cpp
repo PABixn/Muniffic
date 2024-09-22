@@ -31,7 +31,6 @@ namespace eg
 		m_WelcomePanel = CreateScope<WelcomingPanel>(m_RecentProjectSerializer.getProjectList(), m_RecentProjectSerializer);
 		m_NameNewProjectPanel = CreateScope<NameNewProjectPanel>();
 		m_NameNewProjectPanel->ShowWindow(s_Font);
-		m_AnimationEditorPanel = CreateRef<AnimationEditorPanel>();
 	}
 
 	constexpr float AxisLength = 100000000.0f;
@@ -100,7 +99,8 @@ namespace eg
 
 		m_EditorCamera.OnUpdate(ts);
 		m_SceneHierarchyPanel.Update(ts);
-		m_AnimationEditorPanel->Update(ts);
+		if(m_ContentBrowserPanel)
+			m_ContentBrowserPanel->Update(ts);
 
 		Renderer2D::ResetStats();
 		m_FrameBuffer->Bind();

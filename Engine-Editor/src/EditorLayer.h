@@ -126,14 +126,13 @@ namespace eg
 		//Time for fixedUpdate loop
 		std::chrono::steady_clock::time_point oldTime = std::chrono::high_resolution_clock::now();;
 		// Panels
-		SceneHierarchyPanel m_SceneHierarchyPanel;
-		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
-		Scope<AddResourcePanel> m_AddResourcePanel;
-		Scope<WelcomingPanel> m_WelcomePanel;
-		Scope<NameNewProjectPanel> m_NameNewProjectPanel;
-		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
-		Scope<ConsolePanel> m_ConsolePanel;
-		Ref<AnimationEditorPanel> m_AnimationEditorPanel;
+		SceneHierarchyPanel m_SceneHierarchyPanel = nullptr;
+		Ref<ContentBrowserPanel> m_ContentBrowserPanel = nullptr;
+		Scope<AddResourcePanel> m_AddResourcePanel = nullptr;
+		Scope<WelcomingPanel> m_WelcomePanel = nullptr;
+		Scope<NameNewProjectPanel> m_NameNewProjectPanel = nullptr;
+		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel = nullptr;
+		Scope<ConsolePanel> m_ConsolePanel = nullptr;
 
 		// Popups
 		bool IsWindowTryingToClose = false; // Helper for unsaved changes

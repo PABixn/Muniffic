@@ -20,6 +20,12 @@ namespace eg
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
 	}
 
+	void ContentBrowserPanel::Update(float dt)
+	{
+		if(m_AnimationEditorPanel && m_AnimationEditorPanel->IsAnimationEditorOpen())
+			m_AnimationEditorPanel->Update(dt);
+	}
+
 	void ContentBrowserPanel::DrawCenteredText(const std::string& text, const float& cellSize) {
 		auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
 		auto CursorX = ImGui::GetCursorPosX();
@@ -117,8 +123,7 @@ namespace eg
 			}
 			if (animData->Type == ResourceType::Animation) {
 				if (ImGui::MenuItem("Open animation editor panel")) {
-					EditorLayer* e = (EditorLayer*)Application::Get().GetFirstLayer();
-					e->GetAnimationEditorPanel()->OpenAnimationEditorPanel(key);
+					m_AnimationEditorPanel = CreateScope<AnimationEditorPanel>(key);
 					ImGui::EndPopup();
 					ImGui::PopStyleColor();
 					ImGui::PopID();
@@ -297,8 +302,14 @@ namespace eg
 			Commands::ExecuteRawValueCommand(&padding, offset, std::string("ContentBrowserPanel-Padding"));
 
 		ImGui::End();
-		EditorLayer* e = (EditorLayer*)Application::Get().GetFirstLayer();
-		e->GetAnimationEditorPanel()->OnImGuiRender();
+		//EditorLayer* e = (EditorLayer*)Application::Get().GetFirstLayer();
+		if (m_AnimationEditorPanel)
+		{
+			m_AnimationEditorPanel->OnImGuiRender();
+			if (!m_AnimationEditorPanel->IsAnimationEditorOpen())
+				m_AnimationEditorPanel = nullptr;
+		}
+
 		//m_ContentBrowserRightClickPanel->OnImGuiRender();
 	}
 

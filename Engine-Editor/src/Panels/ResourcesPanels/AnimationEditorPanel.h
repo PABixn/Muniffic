@@ -4,6 +4,9 @@
 namespace eg {
 	class AnimationEditorPanel {
 	public:
+		AnimationEditorPanel() = default;
+		AnimationEditorPanel(UUID asset);
+		~AnimationEditorPanel() = default;
 		bool OpenAnimationEditorPanel(UUID asset);
 		void OnImGuiRender();
 		void DrawAnimationPreview();
