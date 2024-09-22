@@ -39,6 +39,8 @@ target_include_directories(Engine-Editor PRIVATE
 target_link_libraries(Engine-Editor PRIVATE Engine)
 target_link_libraries(Engine-Editor PRIVATE ImGui)
 
+# Muniffic logo icon directory
+target_compile_definitions(Engine-Editor PRIVATE LOGO_DIRECTORY=\"${CMAKE_CURRENT_BINARY_DIR}/resources/icons/EditorIcon/logo.png\")
 # Platform-specific settings for Windows
 if(WIN32)
     target_compile_definitions(Engine-Editor PRIVATE "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING")

@@ -636,14 +636,6 @@ namespace eg
 					DrawEntityNode(edi);
 				}
 			}
-			/*
-			if (entity.Exists())
-			{
-				for (Entity& child : entity.GetChildren()) {
-					DrawEntityNode(child);
-				}
-			}
-			*/
 			ImGui::TreePop();
 		}
 	}

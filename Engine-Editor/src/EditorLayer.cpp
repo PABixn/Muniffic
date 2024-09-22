@@ -324,8 +324,30 @@ namespace eg
 			m_ProjectDirectoryPanel->OnImGuiRender();
 			m_ConsolePanel->OnImGuiRender();
 
-			if ((*(this->m_UnsavedChangesPanel)).GetUnsavedChangesPanelRender()) {
-				if (!GetIsSaved())(*m_UnsavedChangesPanel).OnImGuiRender();
+			if (IsWindowTryingToClose) {
+				if (!IsProjectSaved()) {
+					ImGui::OpenPopup("Unsaved Changes");
+					ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
+					ImGui::BeginPopupModal("Unsaved Changes", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+					ImGui::Text("Warning: Unsaved changes");
+					bool SaveBttn = ImGui::Button("Save");
+					ImGui::SameLine();
+					bool NotSaveBttn = ImGui::Button("Don't save");
+					ImGui::SameLine();
+					bool CancelBttn = ImGui::Button("Cancel");
+					if (SaveBttn) {
+						(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
+						Application::Get().Close();
+					}
+					else if (NotSaveBttn) {
+						Application::Get().Close();
+					}
+					else if (CancelBttn) {
+						SetIsWindowTryingToClose(false);
+					}
+					ImGui::EndPopup();
+
+				};
 			}
 
 			ImGui::Begin("Stats");
