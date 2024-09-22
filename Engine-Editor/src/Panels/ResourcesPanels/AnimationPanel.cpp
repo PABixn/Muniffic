@@ -30,8 +30,8 @@ namespace eg {
 	const ImVec4 ACTIVEINPUTCOLOR = Utils::ColorFromHexNoAlpha(0x83799E);
 	const ImVec4 BGCOLOR = Utils::ColorFromHexNoAlpha(0x281F3A);
 
-	const ImVec4 UNSELECTEDFRAMECOLOR = Utils::ColorFromHexNoAlpha(0xA64D4DFF);
-	const ImVec4 SELECTEDFRAMECOLOR = Utils::ColorFromHexNoAlpha(0x4DA674FF);
+	const ImVec4 UNSELECTEDFRAMECOLOR = Utils::ColorFromHexNoAlpha(0xA64D4D);
+	const ImVec4 SELECTEDFRAMECOLOR = Utils::ColorFromHexNoAlpha(0x4DA674);
 	//const ImVec4 SELECTEDFRAMECOLOR = Utils::ColorFromHexNoAlpha(0x609686FF);
 
 	AnimationPanel::AnimationPanel(const std::filesystem::path& path)
