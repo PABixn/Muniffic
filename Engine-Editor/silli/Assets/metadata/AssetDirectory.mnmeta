@@ -15,7 +15,7 @@ Directories:
     Assets:
       - 7935576954781750142
   - UUID: 7647691802991497178
-    Name: Scenes
+    Name: New folder name
     Parent: 1274541393096234650
     Subdirectories:
       []
@@ -59,13 +59,6 @@ Directories:
   - UUID: 7912666472671592762
     Name: Source
     Parent: 2854346632293281808
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 3395491227716080149
-    Name: Audio
-    Parent: 1274541393096234650
     Subdirectories:
       []
     Assets:

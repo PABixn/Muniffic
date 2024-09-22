@@ -16,6 +16,14 @@ namespace eg {
 		friend class ProjectDirectoryPanel;
 		void InitPanels();
 		void LoadIcons();
+		void DrawIcon(ResourceType type);
+		void ShowDeleteFolderPopup(UUID directory);
+		void ShowRenameFolderPopup(UUID directory, std::string name);
+		void ShowCreateFolderPopup();
+		void ShowDeleteFilePopup(UUID file, ResourceType type);
+		void ShowRenameFilePopup(UUID file, ResourceType type, std::string name);
+		void ShowFilePopups(UUID file, ResourceType type, std::string name);
+		void ShowFolderPopups(UUID folder, std::string name);
 
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }
