@@ -1,9 +1,9 @@
 Resources:
-  - UUID: 7201806203005289225
-    ParentDirectory: 3321032141929891636
+  - UUID: 1591980485801781963
+    ParentDirectory: 1717878910063012334
     ResourceName: blue_boy0
     Extension: ""
-    Texture: 7935576954781750142
+    Texture: 5828464540545766617
     TexCoords:
       - [0, 0]
       - [1, 0]

@@ -21,7 +21,6 @@ namespace eg
 
 	void ContentBrowserPanel::InitPanels()
 	{
-		m_RenameFolderPanel = CreateScope<RenameFolderPanel>();
 		m_DeleteDirectoryPanel = CreateScope<DeleteDirectoryPanel>();
 	}
 
@@ -75,8 +74,6 @@ namespace eg
 	}
 
 	void ContentBrowserPanel::OnImGuiRender() {
-		if (m_RenameFolderPanel->IsShown())
-			m_RenameFolderPanel->OnImGuiRender();
 
 		if (m_DeleteDirectoryPanel->IsShown())
 			m_DeleteDirectoryPanel->OnImGuiRender();
