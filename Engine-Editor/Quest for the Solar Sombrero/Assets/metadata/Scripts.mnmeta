@@ -119,6 +119,11 @@ Resources:
     ResourceName: Quest.EntityTypeComponent
     Extension: .cs
     IsEnabled: true
+  - UUID: 7600635253778978762
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.CameraMove
+    Extension: .cs
+    IsEnabled: true
   - UUID: 6432620949770189512
     ParentDirectory: 4766252472221097665
     ResourceName: Quest.EntityTypeComponent

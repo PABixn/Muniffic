@@ -269,7 +269,7 @@ namespace eg
 
 		ImGui::Begin("Stats");
 		std::string name = "None";
-		if (m_HoveredEntity)
+		if (m_HoveredEntity && m_HoveredEntity.Exists())
 			name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
 		ImGui::Text("Hovered Entity: %s", name.c_str());
 
@@ -521,6 +521,7 @@ namespace eg
 		{
 			if(controlPressed)
 				m_AddResourcePanel->showResourcePanel(true);
+			break;
 		}
 		case Key::N:
 		{

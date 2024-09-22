@@ -1,2 +1,8 @@
 Resources:
-  []
+  - UUID: 1167825039206530667
+    ParentDirectory: 2253647538745825584
+    ResourceName: whitebg
+    Extension: .png
+    Width: 976
+    Height: 631
+    Channels: 4

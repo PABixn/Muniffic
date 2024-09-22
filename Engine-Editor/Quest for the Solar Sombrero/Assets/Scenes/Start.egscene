@@ -1,5 +1,22 @@
 Scene: Untitled
 Entities:
+  - Entity: 644181148969175029
+    Name: Cube
+    Parent: 6554156150363477803
+    TagComponent:
+      Tag: Background
+    TransformComponent:
+      Translation: [0, 0, -0.00999999978]
+      Rotation: [0, 0, 0]
+      Scale: [111.199997, 99.4000015, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 1167825039206530667
+      IsInherited: false
+      IsInheritedInChildren: false
   - Entity: 313044020897929461
     Name: Cube
     Parent: 5624161485600518
@@ -298,6 +315,7 @@ Entities:
     Name: Cube
     Children:
       - 5624161485600518
+      - 644181148969175029
     TagComponent:
       Tag: Surroundings
     TransformComponent:
@@ -365,6 +383,11 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 7600635253778978762
       IsInherited: false
       IsInheritedInChildren: false
   - Entity: 8523268525221821751
