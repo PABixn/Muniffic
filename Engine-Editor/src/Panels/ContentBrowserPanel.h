@@ -24,6 +24,7 @@ namespace eg {
 		void ShowFilePopups(UUID file, ResourceType type);
 		void ShowFolderPopups(UUID folder);
 		void ShowFileMenu(UUID file, ResourceType type);
+		void ShowFolderMenu(UUID directory);
 
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }

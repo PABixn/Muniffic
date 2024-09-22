@@ -183,33 +183,7 @@ namespace eg
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 			ImGui::PopStyleColor();
 
-			bool isDeleteClicked = false;
-			bool isRenameClicked = false;
-			if (ImGui::BeginPopupContextItem("DirectoryOptions"))
-			{
-				if (ImGui::MenuItem("Delete"))
-				{
-					isDeleteClicked = true;
-				}
-
-				if (ImGui::MenuItem("Rename"))
-				{
-					isRenameClicked = true;
-				}
-
-				ImGui::EndPopup();
-			}
-
-			if (isDeleteClicked) {
-				ImGui::OpenPopup("DeleteFolder");
-				isDeleteClicked = false;
-			}
-			if (isRenameClicked) {
-				ImGui::OpenPopup("RenameFolder");
-				isRenameClicked = false;
-			}
-
-			ShowFolderPopups(directory);
+			ShowFolderMenu(directory);
 
 			if (ImGui::BeginDragDropSource())
 			{
@@ -264,6 +238,36 @@ namespace eg
 		m_AnimationFileIcon = Texture2D::Create("resources/icons/contentBrowser/animationFileIcon.png");
 		m_PlusIcon = Texture2D::Create("resources/icons/contentBrowser/PlusIcon.png");
 		m_ArrowIcon = Texture2D::Create("resources/icons/contentBrowser/ArrowIcon.png");
+	}
+
+	void ContentBrowserPanel::ShowFolderMenu(UUID directory) {
+		bool isDeleteClicked = false;
+		bool isRenameClicked = false;
+		if (ImGui::BeginPopupContextItem("DirectoryOptions"))
+		{
+			if (ImGui::MenuItem("Delete"))
+			{
+				isDeleteClicked = true;
+			}
+
+			if (ImGui::MenuItem("Rename"))
+			{
+				isRenameClicked = true;
+			}
+
+			ImGui::EndPopup();
+		}
+
+		if (isDeleteClicked) {
+			ImGui::OpenPopup("DeleteFolder");
+			isDeleteClicked = false;
+		}
+		if (isRenameClicked) {
+			ImGui::OpenPopup("RenameFolder");
+			isRenameClicked = false;
+		}
+
+		ShowFolderPopups(directory);
 	}
 
 	void ContentBrowserPanel::ShowFolderPopups(UUID directory) {

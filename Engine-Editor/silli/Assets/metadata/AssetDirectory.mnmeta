@@ -56,13 +56,6 @@ Directories:
       []
     Assets:
       []
-  - UUID: 3825354498855393046
-    Name: Audio
-    Parent: 3309555998982676383
-    Subdirectories:
-      []
-    Assets:
-      []
   - UUID: 6308418189360257750
     Name: Scenes
     Parent: 3309555998982676383
