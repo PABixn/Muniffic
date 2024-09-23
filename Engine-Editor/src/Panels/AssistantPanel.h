@@ -23,7 +23,7 @@ namespace eg
         bool StartsOrEndsCodeBlock(std::string line);
         std::string ExtractLanguageName(std::string line);
 
-
+    private:
         char buffer[1024];
         std::string threadID;
         std::unique_ptr<AssistantManager> assistantManager;

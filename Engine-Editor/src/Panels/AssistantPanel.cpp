@@ -414,7 +414,7 @@ namespace eg
 		if (assistantManager->ThreadAvailable(threadID))
 		{
 			m_isLastMessageFromUser = assistantManager->GetLastMessageRole(threadID) == "user";
-			for (Message* msg : assistantManager->GetMessages(threadID))
+			for (AssistantManager::Message* msg : assistantManager->GetMessages(threadID))
 			{
 				if (msg->role == "assistant")
 					RenderAssistantMessage(msg->content, msg->id);

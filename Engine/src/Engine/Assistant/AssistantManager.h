@@ -5,22 +5,22 @@
 
 namespace eg
 {
-	struct Message
-	{
-		std::string role;
-		std::string content;
-		int id;
-	};
-
-	struct Thread
-	{
-		std::vector<Message*> messages;
-		std::vector<std::string> m_RunIDs;
-	};
-
 	class AssistantManager
 	{
 	public:
+		struct Message
+		{
+			std::string role;
+			std::string content;
+			int id;
+		};
+
+		struct Thread
+		{
+			std::vector<Message*> messages;
+			std::vector<std::string> m_RunIDs;
+		};
+
 		AssistantManager();
 		~AssistantManager();
 
