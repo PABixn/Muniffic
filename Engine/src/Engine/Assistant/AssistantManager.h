@@ -28,10 +28,11 @@ namespace eg
 		void SaveAssistant();
 
 		void Init();
+		bool CheckAPI();
 		void StartListening();
 		void StopListening();
 		bool CheckMicrophoneAvailable();
-		void CreateAssistant(std::string assistantName, std::string assistantInstructions);
+		bool CreateAssistant(std::string assistantName, std::string assistantInstructions);
 		std::string CreateThread();
 		void InitiateRun(std::string threadID);
 		void AddMessage(std::string threadID, std::string message);
@@ -92,6 +93,7 @@ namespace eg
 		PyObject* m_InitVoiceAssistant;
 		PyObject* m_CheckMicrophoneAvailable;
 		PyObject* m_SetVolume;
+		PyObject* m_CheckAPI;
 	};
 }
 

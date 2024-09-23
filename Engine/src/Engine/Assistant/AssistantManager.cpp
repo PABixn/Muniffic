@@ -221,8 +221,9 @@ namespace eg
 		m_CheckIfAssistantExists = PyObject_GetAttrString(m_pModule, "check_if_assistant_exists");
 		m_GetToolCall = PyObject_GetAttrString(m_pModule, "get_tool_call");
 		m_SubmitToolOutputs = PyObject_GetAttrString(m_pModule, "submit_tool_outputs");
+		m_CheckAPI = PyObject_GetAttrString(m_pModule, "check_api_key");
 
-		if (m_CreateAssistant == nullptr || m_CreateThread == nullptr || m_InitiateRun == nullptr || m_WaitForCompletion == nullptr || m_GetLastMessage == nullptr || m_CheckIfAssistantExists == nullptr || m_GetLastMessage == nullptr || m_SubmitToolOutputs == nullptr)
+		if (m_CreateAssistant == nullptr || m_CreateThread == nullptr || m_InitiateRun == nullptr || m_WaitForCompletion == nullptr || m_GetLastMessage == nullptr || m_CheckIfAssistantExists == nullptr || m_GetLastMessage == nullptr || m_SubmitToolOutputs == nullptr || m_CheckAPI == nullptr)
 		{
 			EG_CORE_ERROR("Failed to load Python functions");
 		}
@@ -230,7 +231,25 @@ namespace eg
 		PyEval_SaveThread();
 	}
 
-	void AssistantManager::CreateAssistant(std::string assistantName, std::string assistantInstructions = "")
+	bool AssistantManager::CheckAPI()
+	{
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
+		PyObject* result = PyObject_CallObject(m_CheckAPI, nullptr);
+
+		if (result == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to call check_api_key function");
+			return false;
+		}
+
+		PyGILState_Release(gstate);
+
+		return PyObject_IsTrue(result);
+	}
+
+	bool AssistantManager::CreateAssistant(std::string assistantName, std::string assistantInstructions = "")
 	{
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
@@ -240,6 +259,7 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
+			return false;
 		}
 
 		PyObject* result = PyObject_CallObject(m_CreateAssistant, args);
@@ -248,6 +268,7 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call create_assistant function");
+			return false;
 		}
 			
 		EG_CORE_INFO("Assistant created with ID: {0}", PyUnicode_AsUTF8(result));
@@ -257,6 +278,8 @@ namespace eg
 		PyGILState_Release(gstate);
 
 		SaveAssistant();
+
+		return true;
 	}
 
 	std::string AssistantManager::CreateThread()

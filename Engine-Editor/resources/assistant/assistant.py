@@ -6,6 +6,15 @@ from typing import Dict, Any
 import openai
 from dotenv import load_dotenv
 
+def check_api_key():
+    load_dotenv()
+    client = openai.OpenAI()
+    try:
+        client.models.list()
+    except openai.AuthenticationError:
+        return False
+    else:
+        return True
 
 def create_assistant(name, model="gpt-4o-mini", instructions=None):
     load_dotenv()

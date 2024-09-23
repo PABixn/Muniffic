@@ -45,6 +45,7 @@ namespace eg
         bool m_readAloud;
         bool m_showMessageTooltip;
         bool m_isAssistantMessageInProgress;
+        bool m_assistantInitialized;
         ImGui::MarkdownConfig mdConfig;
         int m_messageCount;
     };

@@ -31,11 +31,17 @@ namespace eg
 		m_showMessageTooltip(false),
 		m_messageCount(0),
 		m_isAssistantMessageInProgress(false),
-		m_shouldListen(false)
+		m_shouldListen(false),
+		m_assistantInitialized(false)
 	{
 		memset(buffer, 0, sizeof(buffer));
 
 		mdConfig = ImGui::MarkdownConfig();
+
+		m_assistantInitialized = assistantManager->CheckAPI();
+
+		if(!m_assistantInitialized)
+			return;
 
 		if (!assistantManager->LoadAssistant())
 		{
@@ -49,8 +55,10 @@ namespace eg
 				"If you don't know something or are unsure, make an elegant excuse.\n"
 				"If user asks something about scripts, write an example full script file performing requested action.";
 
-			assistantManager->CreateAssistant("Bob", instructions);
+				assistantManager->CreateAssistant("Bob", instructions);
 		}
+		else
+			m_assistantInitialized = true;
 
 		threadID = assistantManager->CreateThread();
 	}
@@ -293,6 +301,13 @@ namespace eg
 	void AssistantPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Assistant Panel");
+
+		if (!m_assistantInitialized)
+		{
+			ImGui::Text("Assistant initialization failed");
+			ImGui::End();
+			return;
+		}
 
 		if (assistantManager->IsNewVoiceMessageAvailable())
 		{
