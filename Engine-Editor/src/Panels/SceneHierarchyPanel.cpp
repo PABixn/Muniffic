@@ -426,8 +426,9 @@ namespace eg {
 				ImGui::EndDragDropTarget();
 			}
 
-			
-			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+
+
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered() || !m_Context->GetRegistry().valid(m_SelectionContext))
 			{
 				m_SelectionContext = {};
 			}
@@ -614,14 +615,6 @@ namespace eg {
 					DrawEntityNode(edi);
 				}
 			}
-			/*
-			if (entity.Exists())
-			{
-				for (Entity& child : entity.GetChildren()) {
-					DrawEntityNode(child);
-				}
-			}
-			*/
 			ImGui::TreePop();
 		}
 	}
@@ -850,8 +843,23 @@ namespace eg {
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
-			//zna1
 				ImGui::Unindent();
+				static std::string result;
+				if (PrettyButton("Compile Scripts"))
+				{
+					EditorLayer* editorLayer = static_cast<EditorLayer*>(Application::Get().GetFirstLayer());
+					result =  (editorLayer->CompileCustomScripts());
+					ImGui::OpenPopup("Compilation");
+					//zna1
+				}
+				bool open = true;
+				if (ImGui::BeginPopupModal("Compilation", &open))
+				{
+					ImGui::Text(result.c_str());
+					if (ImGui::Button("OK"))
+						ImGui::CloseCurrentPopup();
+					ImGui::EndPopup();
+				}
 				if (PrettyButton("Add Script"))
 				{
 					ScriptResourceData* data = new ScriptResourceData();
@@ -1306,6 +1314,7 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<RigidBody2DComponent::BodyType, RigidBody2DComponent>(&component.Type, type, entity, "RigidBody2DComponent-Body Type", true);
 			});
 			/*
+			float* GravityMultiplier = &component.GravityMultiplier;
 			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
 			{
 				for (int i = 0; i < 2; i++)
@@ -1346,6 +1355,8 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.Restitution, restitution, entity, "BoxCollider2DComponent-Restitution");
 			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
+			if (ImGui::Checkbox("Is Sensor", &component.IsSensor))
+				Commands::ExecuteRawValueCommand<bool, BoxCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "BoxCollider2DComponent-Is Sensor");
 		}, m_Context, ComponentIcons::BoxColliderIcon);
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [entity](auto& component) {
@@ -1364,6 +1375,8 @@ namespace eg {
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.Restitution, restitution, entity, "CircleCollider2DComponent-Restitution");
 			if(DrawComponentPropertyFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f))
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
+			if (DrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
+				Commands::ExecuteRawValueCommand<bool, CircleCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "CircleCollider2DComponent-Is Sensor");
 			}, m_Context, ComponentIcons::CircleColliderIcon);
 
 		DrawComponent<TextComponent>("Text Renderer", entity, [entity](auto& component)

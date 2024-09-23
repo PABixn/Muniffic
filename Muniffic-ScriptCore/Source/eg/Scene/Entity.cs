@@ -368,7 +368,7 @@ namespace eg
         /// <returns>Script instance as an object.</returns>
         public T As<T>() where T : DefaultBehaviour, new()
         {
-            object instance = InternalCalls.Entity_GetScriptInstance(ID);
+            object instance = InternalCalls.Entity_GetScriptInstance(ID, typeof(T).Namespace + "." + typeof(T).Name);
             return instance as T;
         }
 

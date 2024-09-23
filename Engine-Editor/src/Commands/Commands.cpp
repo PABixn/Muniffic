@@ -13,7 +13,7 @@ namespace eg
 		}
 		if (val)LastSavedCommandIndex = Commands::currentCommandIndex;
 	}
-	bool GetIsSaved() {
+	bool IsProjectSaved() {
 		return isSaved;
 	}
 

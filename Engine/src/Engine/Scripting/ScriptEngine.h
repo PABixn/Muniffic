@@ -99,11 +99,16 @@ namespace eg {
 	{
 	public:
 		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity, UUID uuid);
-
+		~ScriptInstance();
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
 		void InvokeOn2DCollisionEnter(InternalCollision2DEvent collision);
 		void InvokeOn2DCollisionExit(InternalCollision2DEvent collision);
+		void InvokeOnKeyPress(int keycode);
+		void InvokeOnKeyRelease(int keycode);
+		void InvokeOnMouseButtonPress(int button);
+		void InvokeOnMouseButtonRelease(int button);
+		void InvokeOnScroll(double xOffset, double yOffset);
 		
 		Ref<ScriptClass> GetScriptClass() const { return m_ScriptClass; }
 
@@ -136,14 +141,21 @@ namespace eg {
 		bool SetFieldValueInternal(const std::string& name, const void* value);
 	private:
 		UUID m_UUID;
+		UUID m_EntityUUID;
 		Ref<ScriptClass> m_ScriptClass;
 
+		uint32_t m_InstanceHandle = 0;
 		MonoObject* m_Instance = nullptr;
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
 		MonoMethod* m_OnCollisionEnterMethod = nullptr;
 		MonoMethod* m_OnCollisionExitMethod = nullptr;
+		MonoMethod* m_OnKeyPress = nullptr;
+		MonoMethod* m_OnKeyRelease = nullptr;
+		MonoMethod* m_OnMouseButtonPress = nullptr;
+		MonoMethod* m_OnMouseButtonRelease = nullptr;
+		MonoMethod* m_OnScroll = nullptr;
 		inline static char s_FieldValueBuffer[16];
 
 		friend class ScriptEngine;
@@ -174,6 +186,7 @@ namespace eg {
 
 		static Scene* GetSceneContext();
 		static Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid, std::string name);
+		static std::vector<Ref<ScriptInstance>> GetAllScriptInstances();
 		static std::vector<Ref<ScriptInstance>> GetEntityScriptInstances(UUID uuid);
 
 		static Ref<ScriptClass> GetEntityClass(const std::string& name);
@@ -185,14 +198,16 @@ namespace eg {
 		static MonoObject* GetManagedInstance(UUID uuid, std::string name);
 
 		static MonoString* CreateString(const char* string);
+
+		static bool IsInitialized() { return s_Initialized; }
 	private:
+		static bool s_Initialized;
+
 		static void InitMono();
 		static void ShutdownMono();
 
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
 		static void LoadAssemblyClasses();
-
-		
 
 		friend class ScriptClass;
 		friend class ScriptGlue;

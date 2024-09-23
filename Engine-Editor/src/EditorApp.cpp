@@ -4,22 +4,21 @@
 #include "Engine/Resources/ResourceSerializer.h"
 
 namespace eg {
-
 	bool Editor::OnWindowClose(WindowCloseEvent& e)
 	{
-		if (GetIsSaved())
+		if (IsProjectSaved())
 		{
 			SetRunning(false);
 			return true;
 		}
 		ResourceSerializer::SerializeResourceCache();
-		(*(dynamic_cast<EditorLayer*>(this->GetFirstLayer()))).GetUnsavedChangesPanel()->SetUnsavedChangesPanelRender(true);
+		(*(dynamic_cast<EditorLayer*>(this->GetFirstLayer()))).SetIsWindowTryingToClose(true);
 		return false;
 	}
 
 	Application* CreateApplication(ApplicationCommandLineArgs args) {
 		ApplicationSpecification spec;
-		spec.Name = "Muniffic editor";
+		spec.Name = "Editor";
 		spec.CommandLineArgs = args;
 
 		return new Editor(spec);

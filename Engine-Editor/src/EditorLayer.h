@@ -1,13 +1,13 @@
 #pragma once
 #include "Engine.h"
-#include "Panels/UnsavedChangesPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Engine/Renderer/EditorCamera.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/AddResourcePanel.h"
 #include "Panels/ProjectDirectoryPanel.h"
 #include "Panels/ConsolePanel.h"
-#include "Panels/AssistantPanel.h"
+#include "Panels/WelcomingPanel.h"
+#include "Panels/NameNewProjectPanel.h"
 
 
 namespace eg {
@@ -23,10 +23,11 @@ namespace eg {
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& e) override;
 
+		const std::string CompileCustomScripts(); 
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
-
+		void SetIsWindowTryingToClose(bool value) { IsWindowTryingToClose = value; } // Helper for unsaved changes popup
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
@@ -37,6 +38,8 @@ namespace eg {
 		void OpenScene(const std::filesystem::path& path);
 		void SaveAs();
 		void Save();
+
+		bool CreateCmakelists(const std::filesystem::path path); // path to where the .mnproj is (assumes the Assets/Scripts is a subdirectory)
 
 		void NewProject();
 		bool OpenProject();
@@ -60,6 +63,10 @@ namespace eg {
 	private:
 		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;
+		friend class AddResourcePanel;
+	private:
+		Ref<Project> m_CurrentProject;
+		std::filesystem::path m_CustomScriptsDirectory; // absolute
 		OrthographicCameraController m_Camera;
 		//Temp
 		Ref<Shader> m_Shader;
@@ -106,19 +113,6 @@ namespace eg {
 		bool m_ShowAxis = false;
 		bool m_ShowGrid = false;
 
-		// Panels
-		SceneHierarchyPanel m_SceneHierarchyPanel;
-		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
-		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
-		Scope<AddResourcePanel> m_AddResourcePanel;
-		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
-		RenameFolderPanel* m_RenameFolderPanel;
-		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
-		RenameResourcePanel* m_RenameResourcePanel;
-		CreateDirectoryPanel* m_CreateDirectoryPanel;*/
-		Scope<ConsolePanel> m_ConsolePanel;
-		Scope<AssistantPanel> m_AssistantPanel;
-
 		enum class SceneState
 		{
 			Edit = 0, Play = 1, Simulate = 2
@@ -126,12 +120,21 @@ namespace eg {
 
 		SceneState m_SceneState = SceneState::Edit;
 
-		friend class AddResourcePanel;
-	public:
-		UnsavedChangesPanel* m_UnsavedChangesPanel;
-		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
-		
 
+		//Time for fixedUpdate loop
+		std::chrono::steady_clock::time_point oldTime = std::chrono::high_resolution_clock::now();;
+		// Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
+		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
+		Scope<AddResourcePanel> m_AddResourcePanel;
+		Scope<WelcomingPanel> m_WelcomePanel;
+		Scope<NameNewProjectPanel> m_NameNewProjectPanel;
+		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
+		Scope<ConsolePanel> m_ConsolePanel;
+
+		// Popups
+		bool IsWindowTryingToClose = false; // Helper for unsaved changes
+		
 	};
 
 }

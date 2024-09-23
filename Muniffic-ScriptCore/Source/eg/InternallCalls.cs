@@ -63,7 +63,7 @@ namespace eg
         internal extern static long Entity_FindEntityByName(string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static object Entity_GetScriptInstance(long UUID);
+        internal extern static object Entity_GetScriptInstance(long UUID, string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Entity_HasComponent(long ID, Type componentType);
@@ -187,7 +187,7 @@ namespace eg
         internal extern static bool AnimatorComponent_CanTransition(long UUID, string from, string to);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool AnimatorComponent_CanTransitionByIndex(long UUID, int from, int to);
-        
+
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static string AnimatorComponent_GetCurrentAnimation(long UUID);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -265,23 +265,133 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool RigidBody2DComponent_ApplyLinearImpulse(long ID, ref Vector2 impulse, ref Vector2 point, bool wake);
+        
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_GetLinearVelocity(long entityID, out Vector2 linearVelocity);
+        
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_SetLinearVelocity(long entityID, ref Vector2 linearVelocity);
+        
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static RigidBody2DComponent.BodyType RigidBody2DComponent_GetType(long entityID);
+        
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_SetType(long entityID, RigidBody2DComponent.BodyType type);
-
+        
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool RigidBody2DComponent_ApplyLinearImpulseToCenter(long iD, ref Vector2 impulse, bool wake);
-
+        
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool RigidBody2DComponent_IsFixedRotation(long iD);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void RigidBody2DComponent_SetFixedRotation(long iD, ref bool fixedRotation);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetGravityMultiplier(long iD, float newMultiplier);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float RigidBody2DComponent_GetGravityMultiplier(long iD);
+
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_ApplyForce(long iD, ref Vector2 force, ref Vector2 point, bool wake);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_ApplyForceToCenter(long iD, ref Vector2 force, bool wake);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_ApplyTorque(long iD, float torque, bool wake);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetEnabled(long iD, bool enabled);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool RigidBody2DComponent_IsEnabled(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetSleepingAllowed(long iD, bool allowed);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool RigidBody2DComponent_IsSleepingAllowed(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float RigidBody2DComponent_GetAngularDamping(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetAngularDamping(long iD, float angularDamping);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float RigidBody2DComponent_GetAngularVelocity(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetAngularVelocity(long iD, float velocity);
+
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        //internal extern static void RigidBody2DComponent_GetContactList(long iD);
+
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+        //internal extern static void RigidBody2DComponent_GetJointList(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float RigidBody2DComponent_GetLinearDamping(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetLinearDamping(long iD, float linearDamping);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static Vector2 RigidBody2DComponent_GetLocalPoint(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static Vector2 RigidBody2DComponent_GetLocalVector(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float RigidBody2DComponent_GetMass(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float RigidBody2DComponent_GetMassData(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetMassData(long iD, float massData);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static Vector2 RigidBody2DComponent_GetPosition(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static B2transform RigidBody2DComponent_GetTransform(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetTransform(long iD, B2transform transform);
+
+        //[MethodImplAttribute(MethodImplOptions.InternalCall)]
+       // internal extern static ref Entity RigidBody2DComponent_GetUserData(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static Vector2 RigidBody2DComponent_GetWorldPoint(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static Vector2 RigidBody2DComponent_GetWorldVector(long iD);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool RigidBody2DComponent_IsAwake(long iD);
+
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetAwake(long iD, bool awake);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool RigidBody2DComponent_IsBullet(long iD);
+
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void RigidBody2DComponent_SetBullet(long iD, bool bullet);
+
+
+
+
+
+
+
         #endregion
 
         #region BoxCollider2D
@@ -321,6 +431,12 @@ namespace eg
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void BoxCollider2DComponent_SetRestitutionThreshold(long entityID, ref float restitutionThreshold);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool BoxCollider2DComponent_IsSensor(long entityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void BoxCollider2DComponent_SetSensor(long entityID, ref bool isSensor);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool BoxCollider2DComponent_CollidesWith(long entityID, long otherEntityID);
@@ -395,6 +511,12 @@ namespace eg
         internal extern static void CircleCollider2DComponent_SetRestitutionThreshold(long entityID, ref float restitutionThreshold);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool CircleCollider2DComponent_IsSensor(long entityID);
+
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        internal extern static void CircleCollider2DComponent_SetSensor(long entityID, ref bool isSensor);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool CircleCollider2DComponent_CollidesWith(long entityID, long otherEntityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -430,9 +552,32 @@ namespace eg
         #endregion
 
         #region Input
-
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static bool Input_IsKeyDown(KeyCode keyCode);
+        internal extern static string Input_GetClipboardContent();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetClipboardContent(string content);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string Input_GetKeyName(KeyCode keycode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsKeyPressed(KeyCode keycode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsKeyReleased(KeyCode keycode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsMouseButtonPressed(MouseCode button);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsMouseButtonReleased(MouseCode button);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsCursorOnWindow();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float Input_GetCursorPositonX();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float Input_GetCursorPositonY();
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetCursorMode(int mode);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetStickyKeysEnabled(bool enable);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void Input_SetStickyMouseButtonsEnabled(bool enable);
         #endregion
 
         #region TextComponent

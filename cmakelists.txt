@@ -1,0 +1,54 @@
+cmake_minimum_required(VERSION 3.16)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+add_definitions(-DUNICODE -D_UNICODE)
+
+project(Muniffic)
+
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+include(Dependencies.cmake)
+
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(ARCHITECTURE "x86_64")
+else()
+    set(ARCHITECTURE "x86")
+endif()
+
+# Build configurations
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dist" CACHE STRING "" FORCE)
+
+# MultiProcessor compilation flag
+if(MSVC)
+    add_compile_options(/MP)
+endif()
+
+# Output directories for build configurations
+set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}-${CMAKE_SYSTEM_NAME}-${ARCHITECTURE})
+
+# Dependencies
+add_subdirectory(Engine/vendor/Box2D)
+add_subdirectory(Engine/vendor/GLFW)
+add_subdirectory(Engine/vendor/Glad)
+add_subdirectory(Engine/vendor/imgui)
+add_subdirectory(Engine/vendor/msdf-atlas-gen)
+add_subdirectory(Engine/vendor/yaml-cpp)
+
+add_subdirectory(Engine)
+add_subdirectory(Muniffic-ScriptCore)
+
+# TODO: un-hardcode this :3
+# add_subdirectory(Engine-Editor/SandboxProject/Assets/Scripts)
+
+add_subdirectory(Engine-Editor)
+
+#set_target_properties(Muniffic PROPERTIES VS_STARTUP_PROJECT Engine-Editor)
+
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Engine-Editor)
