@@ -315,6 +315,7 @@ namespace eg
 			m_ContentBrowserPanel->OnImGuiRender();
 			m_ProjectDirectoryPanel->OnImGuiRender();
 			m_ConsolePanel->OnImGuiRender();
+			m_AssistantPanel->OnImGuiRender();
 
 			if (IsWindowTryingToClose) {
 				if (!IsProjectSaved()) {
@@ -651,39 +652,40 @@ namespace eg
 				}
 				break;
 			}
-			case Key::W:
+		case Key::W:
+		{
+			if (!ImGuizmo::IsUsing())
+				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+			break;
+		}
+		case Key::E:
+		{
+			if (!ImGuizmo::IsUsing())
+				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+			break;
+		}
+		case Key::R:
+		{
+			if (control)
+				ScriptEngine::ReloadAssembly();
+			else if (!ImGuizmo::IsUsing())
+				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			break;
+		}
+		case Key::Delete:
+		{
+			if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0)
 			{
-				if (!ImGuizmo::IsUsing())
-					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-				break;
-			}
-			case Key::E:
-			{
-				if (!ImGuizmo::IsUsing())
-					m_GizmoType = ImGuizmo::OPERATION::ROTATE;
-				break;
-			}
-			case Key::R:
-			{
-				if (control)
-					ScriptEngine::ReloadAssembly();
-				else if (!ImGuizmo::IsUsing())
-					m_GizmoType = ImGuizmo::OPERATION::SCALE;
-				break;
-			}
-			case Key::Delete:
-			{
-				if (Application::Get().GetImGuiLayer()->GetActiveWidgetID() == 0)
+				Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+				if (selectedEntity)
 				{
-					Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-					if (selectedEntity)
-					{
-						m_SceneHierarchyPanel.SetSelectedEntity({});
-						Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", selectedEntity, m_ActiveScene, selectedEntity));
-					}
+					m_SceneHierarchyPanel.SetSelectedEntity({});
+					Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", selectedEntity, m_ActiveScene, selectedEntity));
 				}
-				break;
 			}
+			break;
+		}
+		}
 		}
 
 		return false;

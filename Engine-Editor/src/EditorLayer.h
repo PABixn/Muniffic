@@ -8,6 +8,7 @@
 #include "Panels/ConsolePanel.h"
 #include "Panels/WelcomingPanel.h"
 #include "Panels/NameNewProjectPanel.h"
+#include "Panels/AssistantPanel.h"
 
 
 namespace eg {
@@ -131,6 +132,7 @@ namespace eg {
 		Scope<NameNewProjectPanel> m_NameNewProjectPanel;
 		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
 		Scope<ConsolePanel> m_ConsolePanel;
+		Scope<AssistantPanel> m_AssistantPanel;
 
 		// Popups
 		bool IsWindowTryingToClose = false; // Helper for unsaved changes
