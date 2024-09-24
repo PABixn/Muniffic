@@ -260,6 +260,13 @@ namespace eg {
 		ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, ROUNDING);
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 5));
+
+		if (m_OpenOptionsPopup)
+		{
+			ImGui::OpenPopup("AnimationOptions");
+			m_OpenOptionsPopup = false;
+		}
+
 		if (ImGui::BeginPopup("AnimationOptions")) {
 			if (m_SelectedFrames.second < 0) {
 				if (ImGui::Selectable("Remove frame", false, ImGuiSelectableFlags_DontClosePopups)) {
@@ -361,8 +368,8 @@ namespace eg {
 		ImGui::SetCursorScreenPos(ImVec2(startX - buttonSize.x - buttonGap, ImGui::GetCursorScreenPos().y + 60));
 		
 		DrawAnimationOptions();
-		DrawFunctionCallPopup();
-		DrawFunctionInfoPopup();
+		//DrawFunctionCallPopup();
+		//DrawFunctionInfoPopup();
 
 		if (m_FrameReleased) {
 			HandleMove(m_HoveredFrame);
@@ -449,7 +456,7 @@ namespace eg {
 		if (m_PlayAnimation)
 			return;
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-			ImGui::OpenPopup("AnimationOptions");
+			m_OpenOptionsPopup = true;
 			m_ClickedFrame = clickedFrameIndex;
 		}
 	}

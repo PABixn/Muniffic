@@ -47,6 +47,7 @@ namespace eg {
 		bool m_IsDisplayed = false;
 		bool m_IsDragging = false;
 		bool m_OpenFunctionCallPopup = false;
+		bool m_OpenOptionsPopup = false;
 		bool m_FrameReleased = false;
 		int m_DraggingIndex = -1;
 		int m_ClickedFrame;
