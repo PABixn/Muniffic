@@ -1,5 +1,2 @@
 RecentProjects:
-  Projects0: D:\proggramming\c++\OpenGL\Muniffic\Engine-Editor\GameJam\Game.mnproj
-  Projects1: D:\proggramming\c++\OpenGL\Muniffic\Engine-Editor\NewProj\NewProj.mnproj
-  Projects2: D:\proggramming\c++\OpenGL\Muniffic\Engine-Editor\Hello\Hello.mnproj
-  Projects3: C:\dev\Muniffic\Engine-Editor\New\New.mnproj
+  Projects0: ""
