@@ -40,7 +40,7 @@ namespace eg
 		void SaveAs();
 		void Save();
 
-		bool CreateCmakelists(const std::filesystem::path path); // path to where the .mnproj is (assumes the Assets/Scripts is a subdirectory)
+		bool CreateCmakelists(const std::filesystem::path path); 
 
 		void NewProject();
 		bool OpenProject();

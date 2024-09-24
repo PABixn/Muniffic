@@ -19,8 +19,10 @@
 #include "Engine/Project/ScriptSerializer.h"
 
 namespace eg
-
 {
+
+	const std::string customScriptsCmakeLists = "CustomScriptsCmakeLists.txt";
+
 	static UUID s_Font;
 	bool projectOpened = false;
 	RecentProjectSerializer m_RecentProjectSerializer;
@@ -273,7 +275,7 @@ namespace eg
 				//m_AddResourcePanel = CreateScope<AddResourcePanel>();
 
 				projectOpened = true;
-			}
+		     	}
 
 			style.WindowMinSize.x = minWinSizeX;
 
@@ -857,7 +859,8 @@ namespace eg
 
 		if(std::filesystem::exists(cmakeFilePath) && std::filesystem::is_regular_file(cmakeFilePath)) return true;
 
-		std::filesystem::path cscmakelistsPath = path.parent_path() / "CustomScriptsCmakeLists.txt";
+		std::filesystem::path cscmakelistsPath = customScriptsCmakeLists;
+		std::filesystem::path abs = std::filesystem::absolute(cscmakelistsPath);
 		std::ifstream source(cscmakelistsPath, std::ios::binary);
 
 		std::ofstream destination(cmakeFilePath, std::ios::binary);
@@ -888,8 +891,9 @@ namespace eg
 
 	void EditorLayer::NewProject()
 	{
-		std::filesystem::path saveDir = m_NameNewProjectPanel->projectName + "\\" + m_NameNewProjectPanel->projectName + ".mnproj";
+		std::filesystem::path saveDir = std::filesystem::current_path() / "Projects" / m_NameNewProjectPanel->projectName / m_NameNewProjectPanel->projectName / ".mnproj";
 		std::filesystem::path absolutePath = std::filesystem::absolute(saveDir);
+		//std::filesystem::path savePath = absolutePath / "Projects";
 
 		std::string scriptsFolder = m_NameNewProjectPanel->projectName + "\\Assets\\Scripts";
 		std::string scenesFolder = m_NameNewProjectPanel->projectName + "\\Assets\\Scenes";

@@ -61,5 +61,5 @@ CMakeFiles/
 CMakeCache.txt
 
 # Projects
-Engine-Editor/Projects
-!Engine-Editor/Projects/Sandbox
+Engine-Editor/Projects/*
+!Engine-Editor/Projects/Sandbox/
