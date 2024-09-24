@@ -1,19 +1,5 @@
 Root: 7648198237894077732
 Directories:
-  - UUID: 392436979524707876
-    Name: Scenes
-    Parent: 7648198237894077732
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 3893147662860707748
-    Name: Shaders
-    Parent: 7648198237894077732
-    Subdirectories:
-      []
-    Assets:
-      []
   - UUID: 3080411495881607740
     Name: SubTextures
     Parent: 7648198237894077732
@@ -26,6 +12,20 @@ Directories:
     Parent: 7648198237894077732
     Subdirectories:
       - 1111898348909245368
+    Assets:
+      []
+  - UUID: 392436979524707876
+    Name: Scenes
+    Parent: 7648198237894077732
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 3893147662860707748
+    Name: Shaders
+    Parent: 7648198237894077732
+    Subdirectories:
+      []
     Assets:
       []
   - UUID: 1111898348909245368
