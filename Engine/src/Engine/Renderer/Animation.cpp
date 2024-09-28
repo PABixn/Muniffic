@@ -164,6 +164,7 @@ namespace eg
 		animData->Frames.clear();
 		for(auto& frame : m_frames) {
 			animData->Frames.push_back(frame->GetFrameID());
+			frame->SetEntityID(m_EntityID);
 			frame->Save();
 		}
 	}
@@ -189,6 +190,7 @@ namespace eg
 		if (!frame->GetSubTexture())
 		return FrameData::Create();
 		m_frames.push_back(frame);
+		frame->SetEntityID(m_EntityID);
 		return frame;
 	}
 
@@ -231,7 +233,7 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		if (m_frames.size() > 0 && frame < m_frames.size() && frame >= 0)
 			return m_frames.at(frame);
-		return FrameData::Create();
+		return nullptr;
 	}
 
 	const Ref<FrameData> Animation::GetFrame() const
@@ -279,7 +281,7 @@ namespace eg
 	}
 
 	FrameData::FrameData()
-		: FrameDuration(1), isKeyFrame(false), ClassName(""), FunctionCallName("")//, SubTexture(SubTexture2D::Create())
+		: FrameDuration(1), isKeyFrame(false), ClassName(""), FunctionCallName("")
 	{
 	}
 

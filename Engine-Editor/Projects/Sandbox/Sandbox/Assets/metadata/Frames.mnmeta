@@ -1,2 +1,1621 @@
 Resources:
-  []
+  - UUID: 3642809357404359535
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325203
+    Extension: ""
+    SubTexture: 8245403126140292292
+    Duration: 1
+  - UUID: 8447279477166173551
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 1423250
+    Extension: ""
+    SubTexture: 3426419912061551918
+    Duration: 1
+  - UUID: 4211786477000164574
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 1423251
+    Extension: ""
+    SubTexture: 2157356607216926070
+    Duration: 1
+  - UUID: 6024478549381377540
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325216
+    Extension: ""
+    SubTexture: 5019041280542807842
+    Duration: 1
+  - UUID: 529370667278310916
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325159
+    Extension: ""
+    SubTexture: 8640018298735999116
+    Duration: 1
+  - UUID: 7259246478052878852
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325128
+    Extension: ""
+    SubTexture: 5062402628726781958
+    Duration: 1
+  - UUID: 6375773851559070212
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232557
+    Extension: ""
+    SubTexture: 1744929465566221352
+    Duration: 1
+  - UUID: 1166891372434889092
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 1423256
+    Extension: ""
+    SubTexture: 7425225909521495051
+    Duration: 1
+  - UUID: 1412118796031136132
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232546
+    Extension: ""
+    SubTexture: 4081968173834871984
+    Duration: 1
+  - UUID: 4768656813337819772
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 1423252
+    Extension: ""
+    SubTexture: 682787821708920430
+    Duration: 1
+  - UUID: 1728269197462812705
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232511
+    Extension: ""
+    SubTexture: 807523878543793657
+    Duration: 1
+  - UUID: 4476107024073758625
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325113
+    Extension: ""
+    SubTexture: 3948726011074229719
+    Duration: 1
+  - UUID: 7202675756227608481
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 1423253
+    Extension: ""
+    SubTexture: 4724804973430559289
+    Duration: 1
+  - UUID: 7557968242602752098
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232559
+    Extension: ""
+    SubTexture: 210996455787827630
+    Duration: 1
+  - UUID: 216052127919976226
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232556
+    Extension: ""
+    SubTexture: 4658843440515048629
+    Duration: 1
+  - UUID: 4807784943322681762
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232553
+    Extension: ""
+    SubTexture: 4579738156430907164
+    Duration: 1
+  - UUID: 61307746900184546
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 1423254
+    Extension: ""
+    SubTexture: 8644307893200733073
+    Duration: 1
+  - UUID: 1462853316625062299
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232547
+    Extension: ""
+    SubTexture: 4415396146676709169
+    Duration: 1
+  - UUID: 7100057908993528795
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 1423255
+    Extension: ""
+    SubTexture: 7602017653960874838
+    Duration: 1
+  - UUID: 4543754222322122544
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 1423257
+    Extension: ""
+    SubTexture: 4155602752916272094
+    Duration: 1
+  - UUID: 7390883625553679208
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325195
+    Extension: ""
+    SubTexture: 6827609894332233608
+    Duration: 1
+  - UUID: 7403644272504185704
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232550
+    Extension: ""
+    SubTexture: 2615763809603082694
+    Duration: 1
+  - UUID: 173179753689205352
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232529
+    Extension: ""
+    SubTexture: 2443637939401234578
+    Duration: 1
+  - UUID: 1507364281586891304
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325126
+    Extension: ""
+    SubTexture: 3067282240609713043
+    Duration: 1
+  - UUID: 8339618919621825064
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232579
+    Extension: ""
+    SubTexture: 5578165633221769809
+    Duration: 1
+  - UUID: 854525371684258856
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 1423258
+    Extension: ""
+    SubTexture: 6436747562059155893
+    Duration: 1
+  - UUID: 9198699337135127223
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232537
+    Extension: ""
+    SubTexture: 5579415783176253839
+    Duration: 1
+  - UUID: 6887824634494688887
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 1423259
+    Extension: ""
+    SubTexture: 7443524854215869028
+    Duration: 1
+  - UUID: 4272720821638262495
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232565
+    Extension: ""
+    SubTexture: 5658985533504040637
+    Duration: 1
+  - UUID: 2386416565244609247
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232520
+    Extension: ""
+    SubTexture: 1072544991159741164
+    Duration: 1
+  - UUID: 4526837155357274399
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232510
+    Extension: ""
+    SubTexture: 7007261020987593050
+    Duration: 1
+  - UUID: 2624660170823246058
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232512
+    Extension: ""
+    SubTexture: 4096619952820011891
+    Duration: 1
+  - UUID: 1473169797692907387
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232513
+    Extension: ""
+    SubTexture: 7573998636934153077
+    Duration: 1
+  - UUID: 5919944048824828768
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325147
+    Extension: ""
+    SubTexture: 6698995579810742618
+    Duration: 1
+  - UUID: 5153653882644733280
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232514
+    Extension: ""
+    SubTexture: 5942128484125012462
+    Duration: 1
+  - UUID: 7336528899274826981
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325177
+    Extension: ""
+    SubTexture: 9134973740987709385
+    Duration: 1
+  - UUID: 663775969478242021
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325130
+    Extension: ""
+    SubTexture: 7045568975792553444
+    Duration: 1
+  - UUID: 91846813001214181
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232530
+    Extension: ""
+    SubTexture: 1023211764342167065
+    Duration: 1
+  - UUID: 1055472586709118565
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325243
+    Extension: ""
+    SubTexture: 7408312910887884234
+    Duration: 1
+  - UUID: 80750786623385701
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232515
+    Extension: ""
+    SubTexture: 1934905717522864899
+    Duration: 1
+  - UUID: 2421300031368866119
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325196
+    Extension: ""
+    SubTexture: 7778437940480132077
+    Duration: 1
+  - UUID: 872663585204092231
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232554
+    Extension: ""
+    SubTexture: 2023238098403576400
+    Duration: 1
+  - UUID: 4877961497728308743
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232516
+    Extension: ""
+    SubTexture: 4496686106269335188
+    Duration: 1
+  - UUID: 235960845624745821
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232517
+    Extension: ""
+    SubTexture: 8102436166049355897
+    Duration: 1
+  - UUID: 9106130582664090726
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232518
+    Extension: ""
+    SubTexture: 5040549870190485264
+    Duration: 1
+  - UUID: 5301182878135456389
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232519
+    Extension: ""
+    SubTexture: 1230347111553079448
+    Duration: 1
+  - UUID: 8101564476202924926
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325227
+    Extension: ""
+    SubTexture: 3284807329458305077
+    Duration: 1
+  - UUID: 2665147664075189118
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232521
+    Extension: ""
+    SubTexture: 4196655530014144200
+    Duration: 1
+  - UUID: 4594337398161857433
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232522
+    Extension: ""
+    SubTexture: 8690441213117622179
+    Duration: 1
+  - UUID: 2275323277887134773
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232523
+    Extension: ""
+    SubTexture: 6001492300473131202
+    Duration: 1
+  - UUID: 3613137156733422260
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232539
+    Extension: ""
+    SubTexture: 4859687431995585885
+    Duration: 1
+  - UUID: 5815283625111856308
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232545
+    Extension: ""
+    SubTexture: 8430614905883814922
+    Duration: 1
+  - UUID: 316924752315490868
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325215
+    Extension: ""
+    SubTexture: 9139123942595992965
+    Duration: 1
+  - UUID: 5721128887519327796
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232524
+    Extension: ""
+    SubTexture: 2631148056642352420
+    Duration: 1
+  - UUID: 9192553863863585364
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325183
+    Extension: ""
+    SubTexture: 1836269376220410312
+    Duration: 1
+  - UUID: 7519650164390834772
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232525
+    Extension: ""
+    SubTexture: 1152135064677953116
+    Duration: 1
+  - UUID: 5268091291985745089
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232544
+    Extension: ""
+    SubTexture: 320300141032628906
+    Duration: 1
+  - UUID: 5675845860770308353
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232543
+    Extension: ""
+    SubTexture: 6073485847268250056
+    Duration: 1
+  - UUID: 5159777592601950081
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325107
+    Extension: ""
+    SubTexture: 2397513310854388082
+    Duration: 1
+  - UUID: 6235375829871872897
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232526
+    Extension: ""
+    SubTexture: 3274327175833958941
+    Duration: 1
+  - UUID: 3981105466095401938
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232527
+    Extension: ""
+    SubTexture: 3655887298400509808
+    Duration: 1
+  - UUID: 5085940016550738035
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325247
+    Extension: ""
+    SubTexture: 7612934224838577098
+    Duration: 1
+  - UUID: 3773013868986094195
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232528
+    Extension: ""
+    SubTexture: 6902546694710518397
+    Duration: 1
+  - UUID: 7801262787109132817
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325265
+    Extension: ""
+    SubTexture: 1375877868111947825
+    Duration: 1
+  - UUID: 1959143686754078225
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325262
+    Extension: ""
+    SubTexture: 662764782164092136
+    Duration: 1
+  - UUID: 8064359391666662417
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325173
+    Extension: ""
+    SubTexture: 1572859448323657226
+    Duration: 1
+  - UUID: 7369742587197998097
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232531
+    Extension: ""
+    SubTexture: 2276227257602389290
+    Duration: 1
+  - UUID: 1697675208487603250
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325129
+    Extension: ""
+    SubTexture: 3114081496751805939
+    Duration: 1
+  - UUID: 7258376614427110450
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232560
+    Extension: ""
+    SubTexture: 8183402806063305160
+    Duration: 1
+  - UUID: 8268373675586584562
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232532
+    Extension: ""
+    SubTexture: 2894392553913921581
+    Duration: 1
+  - UUID: 5183280503898150224
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325137
+    Extension: ""
+    SubTexture: 7960885135441995034
+    Duration: 1
+  - UUID: 2600910008840080208
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232533
+    Extension: ""
+    SubTexture: 3066221077394218777
+    Duration: 1
+  - UUID: 8939617056413897670
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232534
+    Extension: ""
+    SubTexture: 6153206882406461227
+    Duration: 1
+  - UUID: 6797114848565179629
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232535
+    Extension: ""
+    SubTexture: 960254383654596361
+    Duration: 1
+  - UUID: 1825197445532220162
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232536
+    Extension: ""
+    SubTexture: 4247557260314132644
+    Duration: 1
+  - UUID: 1257435106039828132
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232584
+    Extension: ""
+    SubTexture: 714482623972076884
+    Duration: 1
+  - UUID: 4500414204329023652
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232563
+    Extension: ""
+    SubTexture: 5929393421437963855
+    Duration: 1
+  - UUID: 2295263793757523492
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325111
+    Extension: ""
+    SubTexture: 1307144975266610357
+    Duration: 1
+  - UUID: 8059774236811251236
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232538
+    Extension: ""
+    SubTexture: 315346489451752299
+    Duration: 1
+  - UUID: 3400931140229713103
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232561
+    Extension: ""
+    SubTexture: 5891147240657187975
+    Duration: 1
+  - UUID: 3736912958523904143
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232540
+    Extension: ""
+    SubTexture: 954706139346457378
+    Duration: 1
+  - UUID: 791937145692492971
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232541
+    Extension: ""
+    SubTexture: 2835507544966807287
+    Duration: 1
+  - UUID: 6134110363952854272
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232542
+    Extension: ""
+    SubTexture: 1708763794103904625
+    Duration: 1
+  - UUID: 570934659187249206
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232573
+    Extension: ""
+    SubTexture: 2131124256458717820
+    Duration: 1
+  - UUID: 1833647465239957046
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232552
+    Extension: ""
+    SubTexture: 5048604442833137435
+    Duration: 1
+  - UUID: 1436534056507457398
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325219
+    Extension: ""
+    SubTexture: 1238558469105356360
+    Duration: 1
+  - UUID: 1470940063221675382
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232548
+    Extension: ""
+    SubTexture: 8224240819548801606
+    Duration: 1
+  - UUID: 1938880257747709187
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232549
+    Extension: ""
+    SubTexture: 2144809600091332897
+    Duration: 1
+  - UUID: 4668644872979515711
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232551
+    Extension: ""
+    SubTexture: 8569894586619877426
+    Duration: 1
+  - UUID: 8843048491032780182
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232555
+    Extension: ""
+    SubTexture: 5275468073859365712
+    Duration: 1
+  - UUID: 5145731178188809017
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325207
+    Extension: ""
+    SubTexture: 4499627276449717148
+    Duration: 1
+  - UUID: 3876385030119852345
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232558
+    Extension: ""
+    SubTexture: 5182696525430950515
+    Duration: 1
+  - UUID: 1758493638476217749
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232562
+    Extension: ""
+    SubTexture: 6157830992247159414
+    Duration: 1
+  - UUID: 48958226587859500
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232564
+    Extension: ""
+    SubTexture: 4598629635139543005
+    Duration: 1
+  - UUID: 5822783915580635639
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232566
+    Extension: ""
+    SubTexture: 289144940784858832
+    Duration: 1
+  - UUID: 1646172922085506853
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325115
+    Extension: ""
+    SubTexture: 5930672944721317792
+    Duration: 1
+  - UUID: 3538159384105255205
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232567
+    Extension: ""
+    SubTexture: 4398661856838235754
+    Duration: 1
+  - UUID: 2914992962281738719
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232568
+    Extension: ""
+    SubTexture: 1980492805074359861
+    Duration: 1
+  - UUID: 7091144946504755792
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232569
+    Extension: ""
+    SubTexture: 1409375937879149576
+    Duration: 1
+  - UUID: 3022342568520662102
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232570
+    Extension: ""
+    SubTexture: 5736769509563850930
+    Duration: 1
+  - UUID: 5926120123342752756
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232571
+    Extension: ""
+    SubTexture: 6003743392528066559
+    Duration: 1
+  - UUID: 4829398450175179899
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232572
+    Extension: ""
+    SubTexture: 2121559989226088754
+    Duration: 1
+  - UUID: 9149897124289696338
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325181
+    Extension: ""
+    SubTexture: 8153754617200395689
+    Duration: 1
+  - UUID: 8288140651627026002
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232574
+    Extension: ""
+    SubTexture: 5009779844380510750
+    Duration: 1
+  - UUID: 8328523129644617915
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232575
+    Extension: ""
+    SubTexture: 535808991510823295
+    Duration: 1
+  - UUID: 3441811122781528828
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325214
+    Extension: ""
+    SubTexture: 547200466144432483
+    Duration: 1
+  - UUID: 5285143106174254844
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232576
+    Extension: ""
+    SubTexture: 4392612065219048456
+    Duration: 1
+  - UUID: 2662172012670057761
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232577
+    Extension: ""
+    SubTexture: 1274996111971539865
+    Duration: 1
+  - UUID: 163698453648107258
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232578
+    Extension: ""
+    SubTexture: 1367074383356271898
+    Duration: 1
+  - UUID: 2126581923592158923
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325263
+    Extension: ""
+    SubTexture: 3448292193754658003
+    Duration: 1
+  - UUID: 5280025625651140299
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325102
+    Extension: ""
+    SubTexture: 8397928800798454562
+    Duration: 1
+  - UUID: 6018943471272173259
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232580
+    Extension: ""
+    SubTexture: 22086973553787947
+    Duration: 1
+  - UUID: 1641869960161060151
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232581
+    Extension: ""
+    SubTexture: 3061833830185456000
+    Duration: 1
+  - UUID: 2595072277816157462
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232582
+    Extension: ""
+    SubTexture: 515947107495841338
+    Duration: 1
+  - UUID: 3147108691421132091
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232583
+    Extension: ""
+    SubTexture: 2096755249650286054
+    Duration: 1
+  - UUID: 4389358168586137541
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325231
+    Extension: ""
+    SubTexture: 4157518564348156259
+    Duration: 1
+  - UUID: 5666625928019672005
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232585
+    Extension: ""
+    SubTexture: 1107479019050264402
+    Duration: 1
+  - UUID: 5911135529925949834
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232587
+    Extension: ""
+    SubTexture: 754773641538031292
+    Duration: 1
+  - UUID: 2038328604990665098
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232586
+    Extension: ""
+    SubTexture: 4864908266688647380
+    Duration: 1
+  - UUID: 2637877029316557543
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232588
+    Extension: ""
+    SubTexture: 3647286553427136049
+    Duration: 1
+  - UUID: 956821543769308529
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232589
+    Extension: ""
+    SubTexture: 412566782678568992
+    Duration: 1
+  - UUID: 983493107636109195
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232590
+    Extension: ""
+    SubTexture: 1037091819459053910
+    Duration: 1
+  - UUID: 4986127872997254153
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325156
+    Extension: ""
+    SubTexture: 640869435429085419
+    Duration: 1
+  - UUID: 3969334625151523849
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232591
+    Extension: ""
+    SubTexture: 7246450657504371363
+    Duration: 1
+  - UUID: 8250502111384545818
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232592
+    Extension: ""
+    SubTexture: 5303587899541673867
+    Duration: 1
+  - UUID: 8179720187616256833
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232593
+    Extension: ""
+    SubTexture: 6572520711241822977
+    Duration: 1
+  - UUID: 444243841922926778
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325238
+    Extension: ""
+    SubTexture: 5276476273365459054
+    Duration: 1
+  - UUID: 5741970386224071866
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232594
+    Extension: ""
+    SubTexture: 8242354446342917167
+    Duration: 1
+  - UUID: 3328713480645062449
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232595
+    Extension: ""
+    SubTexture: 125575152671915614
+    Duration: 1
+  - UUID: 7193371622664187960
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232596
+    Extension: ""
+    SubTexture: 7335460433915061029
+    Duration: 1
+  - UUID: 8273211841635284541
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232597
+    Extension: ""
+    SubTexture: 3275284061423671365
+    Duration: 1
+  - UUID: 8114930111505374371
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325116
+    Extension: ""
+    SubTexture: 8767007961370800955
+    Duration: 1
+  - UUID: 8632251195539200163
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232598
+    Extension: ""
+    SubTexture: 3010070308207409613
+    Duration: 1
+  - UUID: 1017146133117759146
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 14232599
+    Extension: ""
+    SubTexture: 3990071352959719824
+    Duration: 1
+  - UUID: 7621534345346315060
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325100
+    Extension: ""
+    SubTexture: 5994756298802282286
+    Duration: 1
+  - UUID: 6996125256166674880
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325101
+    Extension: ""
+    SubTexture: 6656280086514270933
+    Duration: 1
+  - UUID: 5407222813581563737
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325206
+    Extension: ""
+    SubTexture: 6929201889250631719
+    Duration: 1
+  - UUID: 9011690563035056985
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325172
+    Extension: ""
+    SubTexture: 3199690604998041807
+    Duration: 1
+  - UUID: 1630192179327703897
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325103
+    Extension: ""
+    SubTexture: 1247954903712449371
+    Duration: 1
+  - UUID: 8847985441386536981
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325104
+    Extension: ""
+    SubTexture: 4996009274760494292
+    Duration: 1
+  - UUID: 7552747236643916330
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325105
+    Extension: ""
+    SubTexture: 3350498649942200993
+    Duration: 1
+  - UUID: 2620793111844035470
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325224
+    Extension: ""
+    SubTexture: 6264171084026435945
+    Duration: 1
+  - UUID: 2325021044317169550
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325106
+    Extension: ""
+    SubTexture: 8913157471858994632
+    Duration: 1
+  - UUID: 508355185575233831
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325108
+    Extension: ""
+    SubTexture: 1233144140293852085
+    Duration: 1
+  - UUID: 928749241754872567
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325109
+    Extension: ""
+    SubTexture: 938765527953094626
+    Duration: 1
+  - UUID: 7818444934744765132
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325110
+    Extension: ""
+    SubTexture: 8954532864150183702
+    Duration: 1
+  - UUID: 4796892667645555039
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325253
+    Extension: ""
+    SubTexture: 6282402588506946629
+    Duration: 1
+  - UUID: 7227985387091506015
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325112
+    Extension: ""
+    SubTexture: 4269081118343350647
+    Duration: 1
+  - UUID: 2748950948993103120
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325114
+    Extension: ""
+    SubTexture: 3080930522668711610
+    Duration: 1
+  - UUID: 473572385060692212
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325117
+    Extension: ""
+    SubTexture: 1428346286190362187
+    Duration: 1
+  - UUID: 9154975863029663472
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325118
+    Extension: ""
+    SubTexture: 5164050002450487317
+    Duration: 1
+  - UUID: 7233752715300406146
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325119
+    Extension: ""
+    SubTexture: 4656676964187660118
+    Duration: 1
+  - UUID: 1395272119764176097
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325120
+    Extension: ""
+    SubTexture: 7165721777548191846
+    Duration: 1
+  - UUID: 8177409997949562542
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325121
+    Extension: ""
+    SubTexture: 3114769047900352212
+    Duration: 1
+  - UUID: 6851465185373170886
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325122
+    Extension: ""
+    SubTexture: 7177713278100922112
+    Duration: 1
+  - UUID: 7231551979881861063
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325150
+    Extension: ""
+    SubTexture: 6444817814657566608
+    Duration: 1
+  - UUID: 4973824330255230919
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325123
+    Extension: ""
+    SubTexture: 1963101527185285515
+    Duration: 1
+  - UUID: 7051646181367287832
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325266
+    Extension: ""
+    SubTexture: 7455668444809930134
+    Duration: 1
+  - UUID: 5500651619388652568
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325124
+    Extension: ""
+    SubTexture: 264680723472023146
+    Duration: 1
+  - UUID: 8214656968493457317
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325125
+    Extension: ""
+    SubTexture: 3000294982818924863
+    Duration: 1
+  - UUID: 7273770421058319948
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325127
+    Extension: ""
+    SubTexture: 2845932812168285222
+    Duration: 1
+  - UUID: 5263134477621743109
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325131
+    Extension: ""
+    SubTexture: 5217464411150735103
+    Duration: 1
+  - UUID: 3868870585475884409
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325132
+    Extension: ""
+    SubTexture: 2503798754773430672
+    Duration: 1
+  - UUID: 8730323932425076972
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325204
+    Extension: ""
+    SubTexture: 4520151070177994844
+    Duration: 1
+  - UUID: 1471164685182482156
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325133
+    Extension: ""
+    SubTexture: 2067073471885122265
+    Duration: 1
+  - UUID: 6885810671469884817
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325261
+    Extension: ""
+    SubTexture: 7735507469216821159
+    Duration: 1
+  - UUID: 202954900584894353
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325134
+    Extension: ""
+    SubTexture: 5907547095723700180
+    Duration: 1
+  - UUID: 3585202823360012226
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325135
+    Extension: ""
+    SubTexture: 1363541545424762375
+    Duration: 1
+  - UUID: 5244994687891293618
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325244
+    Extension: ""
+    SubTexture: 1381618983857584312
+    Duration: 1
+  - UUID: 5053983794412716978
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325136
+    Extension: ""
+    SubTexture: 1331143223277592948
+    Duration: 1
+  - UUID: 889568190763640782
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325138
+    Extension: ""
+    SubTexture: 398458834522878740
+    Duration: 1
+  - UUID: 6948613211397607965
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325139
+    Extension: ""
+    SubTexture: 7206046739220665367
+    Duration: 1
+  - UUID: 24271819321121110
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325140
+    Extension: ""
+    SubTexture: 328259106083816872
+    Duration: 1
+  - UUID: 339875532789951895
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325141
+    Extension: ""
+    SubTexture: 5456606250673479201
+    Duration: 1
+  - UUID: 6252259198650257124
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325142
+    Extension: ""
+    SubTexture: 4622209927470684053
+    Duration: 1
+  - UUID: 357530397540850264
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325257
+    Extension: ""
+    SubTexture: 8422276883245292228
+    Duration: 1
+  - UUID: 7970342381639077464
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325143
+    Extension: ""
+    SubTexture: 5822066702228745691
+    Duration: 1
+  - UUID: 2256448119386074576
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325144
+    Extension: ""
+    SubTexture: 7784524661823020387
+    Duration: 1
+  - UUID: 8450470146085029828
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325211
+    Extension: ""
+    SubTexture: 711662775221463813
+    Duration: 1
+  - UUID: 640272870806887364
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325145
+    Extension: ""
+    SubTexture: 4129060982997475634
+    Duration: 1
+  - UUID: 7037379614810176712
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325146
+    Extension: ""
+    SubTexture: 5192583396311836260
+    Duration: 1
+  - UUID: 4074212375430024670
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325221
+    Extension: ""
+    SubTexture: 6030542916432874967
+    Duration: 1
+  - UUID: 7823450935893914078
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325148
+    Extension: ""
+    SubTexture: 580437965117620906
+    Duration: 1
+  - UUID: 7477657710969381280
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325149
+    Extension: ""
+    SubTexture: 4408706470335068720
+    Duration: 1
+  - UUID: 3977930393932046482
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325226
+    Extension: ""
+    SubTexture: 2670327045678868996
+    Duration: 1
+  - UUID: 2667339884178359442
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325151
+    Extension: ""
+    SubTexture: 23577755827926480
+    Duration: 1
+  - UUID: 5384732562021055900
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325269
+    Extension: ""
+    SubTexture: 5450990968138954836
+    Duration: 1
+  - UUID: 348277748571603356
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325152
+    Extension: ""
+    SubTexture: 1010686592808057129
+    Duration: 1
+  - UUID: 1186728614370241963
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325153
+    Extension: ""
+    SubTexture: 2360182053155557127
+    Duration: 1
+  - UUID: 5698201381699618816
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325154
+    Extension: ""
+    SubTexture: 479901981658545625
+    Duration: 1
+  - UUID: 7386797762902369402
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325155
+    Extension: ""
+    SubTexture: 5294956733072550888
+    Duration: 1
+  - UUID: 1930470047432424599
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325237
+    Extension: ""
+    SubTexture: 457370610647804100
+    Duration: 1
+  - UUID: 3638286716106759319
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325157
+    Extension: ""
+    SubTexture: 7626074827449130980
+    Duration: 1
+  - UUID: 1983445777857939519
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325158
+    Extension: ""
+    SubTexture: 5454336364015690321
+    Duration: 1
+  - UUID: 3302307722271358104
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325160
+    Extension: ""
+    SubTexture: 5119566515875350877
+    Duration: 1
+  - UUID: 8984673171058017361
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325161
+    Extension: ""
+    SubTexture: 8726860907752220509
+    Duration: 1
+  - UUID: 5750655185556329714
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325162
+    Extension: ""
+    SubTexture: 2407114317780521864
+    Duration: 1
+  - UUID: 3868604359489808710
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325163
+    Extension: ""
+    SubTexture: 7118691614755886097
+    Duration: 1
+  - UUID: 9205423963702612558
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325164
+    Extension: ""
+    SubTexture: 3983521733578257618
+    Duration: 1
+  - UUID: 5360930895741042517
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325165
+    Extension: ""
+    SubTexture: 8920616261302739901
+    Duration: 1
+  - UUID: 8359693067483503564
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325166
+    Extension: ""
+    SubTexture: 3869687235648305578
+    Duration: 1
+  - UUID: 4189835550414826910
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325167
+    Extension: ""
+    SubTexture: 1159822473771636077
+    Duration: 1
+  - UUID: 3042619420370547906
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325168
+    Extension: ""
+    SubTexture: 7330231214040266012
+    Duration: 1
+  - UUID: 1713890432378859184
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325169
+    Extension: ""
+    SubTexture: 919848997804956389
+    Duration: 1
+  - UUID: 4632077059238477406
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325170
+    Extension: ""
+    SubTexture: 3761994054096665021
+    Duration: 1
+  - UUID: 7694588969386171588
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325171
+    Extension: ""
+    SubTexture: 8471232316211244069
+    Duration: 1
+  - UUID: 4442472337479158704
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325186
+    Extension: ""
+    SubTexture: 5558410248452658430
+    Duration: 1
+  - UUID: 2444978958700256176
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325174
+    Extension: ""
+    SubTexture: 8806505604503121909
+    Duration: 1
+  - UUID: 7159434263477518965
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325175
+    Extension: ""
+    SubTexture: 5151702540221732706
+    Duration: 1
+  - UUID: 8491366494045880174
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325176
+    Extension: ""
+    SubTexture: 8055465536505433621
+    Duration: 1
+  - UUID: 7688779232630265708
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325178
+    Extension: ""
+    SubTexture: 4432841496937784181
+    Duration: 1
+  - UUID: 4175642388792229510
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325179
+    Extension: ""
+    SubTexture: 8009621501678913557
+    Duration: 1
+  - UUID: 4832028859184996616
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325180
+    Extension: ""
+    SubTexture: 1431045294243889585
+    Duration: 1
+  - UUID: 6181453956811940055
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325182
+    Extension: ""
+    SubTexture: 8075583171947625701
+    Duration: 1
+  - UUID: 340264988775748995
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325184
+    Extension: ""
+    SubTexture: 7688938346072137536
+    Duration: 1
+  - UUID: 8656231652254766331
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325185
+    Extension: ""
+    SubTexture: 4683943937344346709
+    Duration: 1
+  - UUID: 177692034517242218
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325187
+    Extension: ""
+    SubTexture: 323113416264750524
+    Duration: 1
+  - UUID: 3867490224076566531
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325188
+    Extension: ""
+    SubTexture: 5135920967830139833
+    Duration: 1
+  - UUID: 8238470762616636392
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325189
+    Extension: ""
+    SubTexture: 8173183969409591613
+    Duration: 1
+  - UUID: 8198629832384782181
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325190
+    Extension: ""
+    SubTexture: 2285684554021432619
+    Duration: 1
+  - UUID: 6656956464288862694
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325191
+    Extension: ""
+    SubTexture: 1364573496673075931
+    Duration: 1
+  - UUID: 7651281749106308450
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325192
+    Extension: ""
+    SubTexture: 8359260506311938573
+    Duration: 1
+  - UUID: 7412122017873212065
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325193
+    Extension: ""
+    SubTexture: 2393241223660972320
+    Duration: 1
+  - UUID: 4312722189628552797
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325194
+    Extension: ""
+    SubTexture: 2118108707143724818
+    Duration: 1
+  - UUID: 7146109845476259597
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325197
+    Extension: ""
+    SubTexture: 178015064872596759
+    Duration: 1
+  - UUID: 1516040280001973716
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325233
+    Extension: ""
+    SubTexture: 5891945504920856163
+    Duration: 1
+  - UUID: 1479432091566761428
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325198
+    Extension: ""
+    SubTexture: 6759778653235582392
+    Duration: 1
+  - UUID: 5388929253919428516
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325199
+    Extension: ""
+    SubTexture: 9117394578858974014
+    Duration: 1
+  - UUID: 6520893520893794580
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325200
+    Extension: ""
+    SubTexture: 3814840553808198028
+    Duration: 1
+  - UUID: 8899740182920581956
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325201
+    Extension: ""
+    SubTexture: 6664439298493506441
+    Duration: 1
+  - UUID: 2025996224472865865
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325202
+    Extension: ""
+    SubTexture: 7157068615140628439
+    Duration: 1
+  - UUID: 3804504591385052094
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325205
+    Extension: ""
+    SubTexture: 3352302815496813929
+    Duration: 1
+  - UUID: 6972683435006205877
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325208
+    Extension: ""
+    SubTexture: 8572053488438480663
+    Duration: 1
+  - UUID: 4038771287930755590
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325209
+    Extension: ""
+    SubTexture: 5945343061270479974
+    Duration: 1
+  - UUID: 3767623646658941436
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325210
+    Extension: ""
+    SubTexture: 4794622664090900102
+    Duration: 1
+  - UUID: 2908920147355553282
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325212
+    Extension: ""
+    SubTexture: 105682595987138646
+    Duration: 1
+  - UUID: 3944299605665268729
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325213
+    Extension: ""
+    SubTexture: 8580978494982753970
+    Duration: 1
+  - UUID: 3661707367341496946
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325217
+    Extension: ""
+    SubTexture: 4854248069208972676
+    Duration: 1
+  - UUID: 1945811070705500276
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325218
+    Extension: ""
+    SubTexture: 3617550062519860923
+    Duration: 1
+  - UUID: 8684581562016538602
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325220
+    Extension: ""
+    SubTexture: 4261079176703340739
+    Duration: 1
+  - UUID: 3246005684790150483
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325222
+    Extension: ""
+    SubTexture: 492825181176073393
+    Duration: 1
+  - UUID: 4293087347079588858
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325223
+    Extension: ""
+    SubTexture: 1601251386771882343
+    Duration: 1
+  - UUID: 6023571713209597575
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325225
+    Extension: ""
+    SubTexture: 7218920171356222835
+    Duration: 1
+  - UUID: 1358365553892908804
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325228
+    Extension: ""
+    SubTexture: 7954605365070072506
+    Duration: 1
+  - UUID: 7806485335197175904
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325229
+    Extension: ""
+    SubTexture: 7353959287860027745
+    Duration: 1
+  - UUID: 288000557579890982
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325230
+    Extension: ""
+    SubTexture: 8534818142383762143
+    Duration: 1
+  - UUID: 6007770654927060173
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325232
+    Extension: ""
+    SubTexture: 3647538353161953951
+    Duration: 1
+  - UUID: 6552548235581380139
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325234
+    Extension: ""
+    SubTexture: 2067130599258472466
+    Duration: 1
+  - UUID: 9124284181283077624
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325235
+    Extension: ""
+    SubTexture: 7268622035331672008
+    Duration: 1
+  - UUID: 5695012758255959285
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325236
+    Extension: ""
+    SubTexture: 5999405521072734684
+    Duration: 1
+  - UUID: 7407318093834375935
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325239
+    Extension: ""
+    SubTexture: 6962416373746055651
+    Duration: 1
+  - UUID: 2369430544576869980
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325240
+    Extension: ""
+    SubTexture: 6660128696962449036
+    Duration: 1
+  - UUID: 8841924694165115763
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325241
+    Extension: ""
+    SubTexture: 2986799600085995163
+    Duration: 1
+  - UUID: 9076570026696806559
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325242
+    Extension: ""
+    SubTexture: 3160616342736459327
+    Duration: 1
+  - UUID: 135182863810841147
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325245
+    Extension: ""
+    SubTexture: 5428395791092960626
+    Duration: 1
+  - UUID: 3715683276527627059
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325246
+    Extension: ""
+    SubTexture: 3842790068285693534
+    Duration: 1
+  - UUID: 6134386923273174039
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325248
+    Extension: ""
+    SubTexture: 488233853283695214
+    Duration: 1
+  - UUID: 6942829481436583665
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325249
+    Extension: ""
+    SubTexture: 340644622531039901
+    Duration: 1
+  - UUID: 7074417059562602473
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325250
+    Extension: ""
+    SubTexture: 6523612434210345461
+    Duration: 1
+  - UUID: 4828711052895466931
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325251
+    Extension: ""
+    SubTexture: 6557865834788061319
+    Duration: 1
+  - UUID: 108385450327872920
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325252
+    Extension: ""
+    SubTexture: 3948974572569429247
+    Duration: 1
+  - UUID: 5339836785058253421
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325254
+    Extension: ""
+    SubTexture: 4006615650166029909
+    Duration: 1
+  - UUID: 7647511814340431380
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325255
+    Extension: ""
+    SubTexture: 4939738195919959321
+    Duration: 1
+  - UUID: 4527301953504555431
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325256
+    Extension: ""
+    SubTexture: 1484226567463358603
+    Duration: 1
+  - UUID: 6153626586761549873
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325258
+    Extension: ""
+    SubTexture: 295156706770775594
+    Duration: 1
+  - UUID: 7245574462722655158
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325259
+    Extension: ""
+    SubTexture: 1686340593951864255
+    Duration: 1
+  - UUID: 3761497969737195746
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325260
+    Extension: ""
+    SubTexture: 6020577186973463029
+    Duration: 1
+  - UUID: 6232376502454237540
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325264
+    Extension: ""
+    SubTexture: 3904659155648537639
+    Duration: 1
+  - UUID: 856645657672749807
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325267
+    Extension: ""
+    SubTexture: 7222523782296238835
+    Duration: 1
+  - UUID: 1058188753729318791
+    ParentDirectory: 8752731844902843963
+    ResourceName: Zrzut ekranu 2024-04-23 142325268
+    Extension: ""
+    SubTexture: 4644055261002669058
+    Duration: 1

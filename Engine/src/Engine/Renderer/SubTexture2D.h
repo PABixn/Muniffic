@@ -21,7 +21,7 @@ namespace eg {
 		static Ref<SubTexture2D> Create(UUID id);
 
 		const Ref<Texture2D>& GetTexture() const { return m_Texture; }
-		const Ref<Texture2D>&& GetTexture() { return std::move(m_Texture); }
+		const Ref<Texture2D>&& GetTexture() = delete;
 
 		const glm::vec2* GetTexCoords() const { return m_TexCoords; }
 		const glm::vec2* GetCoordsPtr(int index) const { return &m_TexCoords[index]; }

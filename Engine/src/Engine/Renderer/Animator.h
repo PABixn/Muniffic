@@ -28,7 +28,6 @@ namespace eg {
 		void SetEntityID(UUID id) { m_EntityID = id; }
 
 		Ref<Animation> GetCurrentAnimation() const;
-		//const Animation& GetCurrentAnimationRef() const { return *m_Animations[m_AnimationIndex]; }
 		const Ref<std::vector<Ref<Animation>>>& GetAnimations() const { return m_Animations; }
 		Ref<Animation> GetAnimation(const std::string& name);
 		Ref<Animation> GetAnimation(int index) { return (*m_Animations)[index]; }

@@ -284,8 +284,6 @@ namespace eg
 
 				data->Extension = resource["Extension"].as<std::string>();
 				data->FrameRate = resource["FrameRate"].as<float>();
-				data->FrameCount = resource["FrameCount"].as<int>();
-				//if(resource["FrameDuration"])
 				data->Loop = resource["Loop"].as<bool>();
 
 				auto frames = resource["Frames"];
@@ -320,7 +318,6 @@ namespace eg
 						data->ClassName = resource["ClassName"].as<std::string>();
 					if(resource["FunctionCallName"])
 						data->FunctionCallName = resource["FunctionCallName"].as<std::string>();
-					//data->functionCallName = resource["FunctionCallName"].as<std::string>();
 
 					CacheFrame(uuid, data);
 				}

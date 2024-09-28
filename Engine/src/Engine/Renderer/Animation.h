@@ -79,7 +79,6 @@ namespace eg {
 		void SetID(const UUID& id);
 		void SetEntityID(const UUID& id);
 		void Save();
-		//void SetFrameSize(int frameSize);
 
 		void RemoveFrame(int index);
 		void ClearFrames();
