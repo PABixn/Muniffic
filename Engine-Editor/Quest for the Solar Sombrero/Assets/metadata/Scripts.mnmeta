@@ -1,4 +1,9 @@
 Resources:
+  - UUID: 1749365369953931251
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EnemyRunComponent
+    Extension: .cs
+    IsEnabled: true
   - UUID: 4641017705192003699
     ParentDirectory: 4766252472221097665
     ResourceName: Player.Quest
@@ -12,6 +17,11 @@ Resources:
   - UUID: 9149549715020659870
     ParentDirectory: 4766252472221097665
     ResourceName: Quest.HealthComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 8577620827347989014
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EnemyAttackBoxComponent
     Extension: .cs
     IsEnabled: true
   - UUID: 1172285517226286934
@@ -39,9 +49,19 @@ Resources:
     ResourceName: Quest.HealthComponent
     Extension: .cs
     IsEnabled: true
+  - UUID: 6551870888956770724
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.BaseEnemy
+    Extension: .cs
+    IsEnabled: true
   - UUID: 3685085408964477476
     ParentDirectory: 4766252472221097665
     ResourceName: dafadfafa
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 2824554049453834808
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.HealthComponent
     Extension: .cs
     IsEnabled: true
   - UUID: 7758979846545580536
@@ -109,6 +129,11 @@ Resources:
     ResourceName: Quest.EntityTypeComponent
     Extension: .cs
     IsEnabled: true
+  - UUID: 1819177571848508454
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.Mushroom
+    Extension: .cs
+    IsEnabled: true
   - UUID: 16859306465186022
     ParentDirectory: 4766252472221097665
     ResourceName: Quest.EffectsComponent
@@ -159,7 +184,67 @@ Resources:
     ResourceName: Quest.Lava
     Extension: .cs
     IsEnabled: true
+  - UUID: 4665160368794623832
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.BaseEnemy
+    Extension: .cs
+    IsEnabled: true
   - UUID: 7188692372317572120
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 7464248588542729561
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EnemyAttackBoxComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 9135230000100379801
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.BaseEnemy
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 2330594025706578158
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.HealthComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 1260445986946774162
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 8892341662037560797
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EnemyRunComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 2071889331798195487
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 6861870381877679759
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EnemyAttackBoxComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 9152039657934610189
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.HealthComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 584332377222610939
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 5549808137326695692
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EnemyRunComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 2955444857699297698
     ParentDirectory: 4766252472221097665
     ResourceName: Quest.EntityTypeComponent
     Extension: .cs

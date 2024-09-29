@@ -10,7 +10,7 @@ namespace Quest
     internal class Mushroom : DefaultBehaviour
     {
         public float speedBoostValue = .350f;
-        public int jumpBoostPercent = 2;
+        public int jumpBoostPercent = 1;
         private float duration = 15f;
         private float timeElapsed;
         

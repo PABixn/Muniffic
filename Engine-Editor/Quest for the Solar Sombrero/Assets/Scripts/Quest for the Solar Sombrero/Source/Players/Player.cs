@@ -33,7 +33,7 @@ namespace Quest
         public int CirclePlayerHealth { get; private set; } = 400;
         public int TrianglePlayerHealth { get; private set; } = 250;
 
-        public float BasePlayerSpeedMultiplier { get; private set; } = 0.9f;
+        public float BasePlayerSpeedMultiplier { get; private set; } = 1f;
         public float SquarePlayerSpeedMultiplier { get; private set; } = 0.5f;
         public float CirclePlayerSpeedMultiplier { get; private set; } = 1;
         public float TrianglePlayerSpeedMultiplier { get; private set; } = 1.5f;

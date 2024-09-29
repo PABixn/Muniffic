@@ -1,8 +1,22 @@
 Resources:
-  - UUID: 1167825039206530667
+  - UUID: 5599541932600392828
     ParentDirectory: 2253647538745825584
-    ResourceName: whitebg
+    ResourceName: background
     Extension: .png
-    Width: 976
-    Height: 631
+    Width: 1920
+    Height: 1080
+    Channels: 3
+  - UUID: 1493904456273274352
+    ParentDirectory: 2386411112421410563
+    ResourceName: filled
+    Extension: .png
+    Width: 558
+    Height: 248
+    Channels: 4
+  - UUID: 2305872604538338753
+    ParentDirectory: 3706893911192476344
+    ResourceName: Mushroom
+    Extension: .png
+    Width: 88
+    Height: 103
     Channels: 4
