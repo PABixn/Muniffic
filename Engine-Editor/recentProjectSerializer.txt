@@ -1,2 +1,0 @@
-RecentProjects:
-  Projects0: C:\dev\Muniffic\Engine-Editor\Projects\Sandbox\Sandbox\.mnproj
