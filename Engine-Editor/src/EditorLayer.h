@@ -60,6 +60,8 @@ namespace eg {
 
 		//UI Panels
 		void UI_Toolbar();
+		
+		bool DisplayWelcomingPanel();
 	private:
 		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;

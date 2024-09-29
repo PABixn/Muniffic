@@ -263,10 +263,10 @@ namespace eg {
 
 					transform.PrevTranslation = transform.Translation;
 				}
-				else {
+				else
+				{
 					body->SetTransform(b2Vec2(transform.Translation.x, transform.Translation.y), transform.Rotation.z);
 					transform.PrevTranslation = transform.Translation;
-
 				}
 
 			}

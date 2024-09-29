@@ -175,10 +175,6 @@ namespace eg
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-		/*if (m_WelcomePanel->IsShown()) {
-			dockspace_flags |= ImGuiDockNodeFlags_AutoHideTabBar;
-			dockspace_flags |= ImGuiDockNodeFlags_NoSplit;
-		}*/
 
 		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
 		// because it would be confusing to have two docking targets within each others.
@@ -223,57 +219,11 @@ namespace eg
 		}
 
 		//Welcoming panel code
-		if (m_WelcomePanel->IsShown()) {
-			ImGuiStyle& style = ImGui::GetStyle();
-			float minWinSizeX = style.WindowMinSize.x;
-			float minWinSizeY = style.WindowMinSize.y;
-			style.WindowMinSize.x = 1500.0f;
-			style.WindowMinSize.y = 1500.0f;
-			style.WindowMinSize.x = minWinSizeX;
-			style.WindowMinSize.y = minWinSizeY;
 
-			m_WelcomePanel->OnImGuiRender();
-			ImGui::End();
+		if (DisplayWelcomingPanel()) {
+			return;
 		}
-		else if (m_NameNewProjectPanel->isNameGiven() && m_WelcomePanel->isNewProjectCreated() && m_NameNewProjectPanel->IsShown()) {
-			//m_NameNewProjectPanel->ShowWindow(s_Font)
-			m_NameNewProjectPanel->OnImGuiRender();
-			ImGui::End();
-
-		}
-		else {
-			if (!projectOpened) {
-				if (m_WelcomePanel->isNewProjectCreated()) {
-					//nya 2
-					NewProject();
-					m_NameNewProjectPanel->setNameGiven(true);
-				}
-				else
-				{
-					if (m_WelcomePanel->getSelectedProject() != "")
-					{
-						auto projectFilePath = m_WelcomePanel->getSelectedProject();
-						OpenProject(projectFilePath);
-					}
-					else
-					{
-						auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
-						if (commandLineArgs.Count > 1)
-						{
-							auto projectFilePath = commandLineArgs[1];
-							OpenProject(projectFilePath);
-						}
-						else
-							if (!OpenProject())
-								Application::Get().Close();
-							else m_AddResourcePanel = CreateScope<AddResourcePanel>();
-					}
-				}
-				//m_AddResourcePanel = CreateScope<AddResourcePanel>();
-
-				projectOpened = true;
-			}
-
+		{	
 			style.WindowMinSize.x = minWinSizeX;
 
 			if (ImGui::BeginMenuBar())
@@ -318,10 +268,14 @@ namespace eg
 				ImGui::EndMenuBar();
 			}
 
-			m_SceneHierarchyPanel.OnImGuiRender();
-			m_ContentBrowserPanel->OnImGuiRender();
-			m_ProjectDirectoryPanel->OnImGuiRender();
-			m_ConsolePanel->OnImGuiRender();
+			if (projectOpened) {
+				m_SceneHierarchyPanel.OnImGuiRender();
+				m_ContentBrowserPanel->OnImGuiRender();
+				m_ProjectDirectoryPanel->OnImGuiRender();
+				m_ConsolePanel->OnImGuiRender();
+			}
+
+			
 
 			if (IsWindowTryingToClose) {
 				if (!IsProjectSaved()) {
@@ -886,7 +840,7 @@ namespace eg
 
 	void EditorLayer::NewProject()
 	{
-		std::filesystem::path saveDir = m_NameNewProjectPanel->projectName + "\\" + m_NameNewProjectPanel->projectName + ".mnproj";
+		std::filesystem::path saveDir = "Projects\\" + m_NameNewProjectPanel->projectName + "\\" + m_NameNewProjectPanel->projectName + ".mnproj";
 		std::filesystem::path absolutePath = std::filesystem::absolute(saveDir);
 
 		std::string scriptsFolder = m_NameNewProjectPanel->projectName + "\\Assets\\Scripts";
@@ -911,6 +865,10 @@ namespace eg
 		EG_ASSERT(this->CreateCmakelists(absolutePath.parent_path().string()));
 		
 		Project::Save(absolutePath);
+
+		projectOpened = true;
+
+
 		NewScene();
 		m_ActiveScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 		Save();
@@ -949,6 +907,8 @@ namespace eg
 	{
 		if (m_CurrentProject = Project::Load(path))
 		{
+			projectOpened = true;
+
 			ScriptEngine::Init();
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
@@ -959,6 +919,7 @@ namespace eg
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 			m_ContentBrowserPanel->InitPanels();
 			Application::Get().ChangeNameWithCurrentProject(true);
+
 
 
 			ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
@@ -1063,4 +1024,62 @@ namespace eg
 		m_AddResourcePanel = nullptr;
 	}
 
+	bool EditorLayer::DisplayWelcomingPanel()
+	{
+		if (m_WelcomePanel->IsShown()) {
+			ImGuiStyle& style = ImGui::GetStyle();
+			float minWinSizeX = style.WindowMinSize.x;
+			float minWinSizeY = style.WindowMinSize.y;
+			style.WindowMinSize.x = 1500.0f;
+			style.WindowMinSize.y = 1500.0f;
+			style.WindowMinSize.x = minWinSizeX;
+			style.WindowMinSize.y = minWinSizeY;
+
+			m_WelcomePanel->OnImGuiRender();
+			ImGui::End();
+			return true;
+		}
+		if (m_NameNewProjectPanel->isNameGiven() && m_WelcomePanel->isNewProjectCreated() && m_NameNewProjectPanel->IsShown()) {
+			//m_NameNewProjectPanel->ShowWindow(s_Font)
+			m_NameNewProjectPanel->OnImGuiRender();
+			ImGui::End();
+			return true;
+		}
+		if (!projectOpened)
+		{
+			if (m_WelcomePanel->isNewProjectCreated()) 
+			{
+				//nya 2
+				NewProject();
+				m_NameNewProjectPanel->setNameGiven(true);
+
+				return false;
+			}
+			
+			if (m_WelcomePanel->getSelectedProject() != "")
+			{
+				auto projectFilePath = m_WelcomePanel->getSelectedProject();
+				OpenProject(projectFilePath);
+
+				return false;
+			}
+
+			auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
+			if (commandLineArgs.Count > 1)
+			{
+				auto projectFilePath = commandLineArgs[1];
+				OpenProject(projectFilePath);
+				return false;
+			}
+
+			if (!OpenProject())
+			{
+				Application::Get().Close();
+				return false;
+			}
+
+			m_AddResourcePanel = CreateScope<AddResourcePanel>();
+		}
+		return false;
+	}
 }
