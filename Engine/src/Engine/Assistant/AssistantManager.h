@@ -64,16 +64,16 @@ namespace eg
 		bool ThreadAvailable(std::string threadID);
 
 	private:
-		bool IsVoiceAssistantListening;
-		bool IsVoiceAsssistantInitialized;
-		bool IsMessageInProgress;
-		bool ShouldReadAloud;
-		bool newVoiceMessageAvailable;
 		std::string m_AssistantName;
 		std::string m_AssistantInstructions;
 		std::string m_AssistantID;
 		std::unordered_map<std::string, Thread*> m_Threads;
 		std::string lastVoiceMessage;
+		bool IsVoiceAssistantListening;
+		bool IsVoiceAsssistantInitialized;
+		bool IsMessageInProgress;
+		bool ShouldReadAloud;
+		bool newVoiceMessageAvailable;
 
 	private:
 		PyObject* m_voiceAssistantModule = nullptr;

@@ -643,15 +643,9 @@ namespace eg
 		case Key::Q:
 		{
 			if (!ImGuizmo::IsUsing())
-			{
-				if (!ImGuizmo::IsUsing())
-				{
-					if (!ImGuizmo::IsUsing())
-						m_GizmoType = -1;
-					break;
-				}
-				break;
-			}
+				m_GizmoType = -1;
+			break;
+		}
 		case Key::W:
 		{
 			if (!ImGuizmo::IsUsing())
@@ -684,7 +678,6 @@ namespace eg
 				}
 			}
 			break;
-		}
 		}
 		}
 
