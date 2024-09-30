@@ -1,12 +1,5 @@
 Root: 3309555998982676383
 Directories:
-  - UUID: 6028786384177603059
-    Name: Textures
-    Parent: 3309555998982676383
-    Subdirectories:
-      []
-    Assets:
-      - 5828464540545766617
   - UUID: 2125295706162130587
     Name: Scripts
     Parent: 3309555998982676383
@@ -14,6 +7,13 @@ Directories:
       - 6186495313798934768
     Assets:
       []
+  - UUID: 6028786384177603059
+    Name: Textures
+    Parent: 3309555998982676383
+    Subdirectories:
+      []
+    Assets:
+      - 5828464540545766617
   - UUID: 1717878910063012334
     Name: SubTextures
     Parent: 3309555998982676383

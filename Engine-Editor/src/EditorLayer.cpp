@@ -486,8 +486,11 @@ namespace eg
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 0));
 		float size = ImGui::GetWindowHeight() - 4.0f;
-		auto regionX = ImGui::GetWindowContentRegionMax().x * 0.5f;
-		ImGui::SetCursorPosX((regionX)-(size)-5);
+		ImVec2 elementSize = ImGui::GetContentRegionAvail();
+		float iconPosX = (elementSize.x - size) * 0.5f;
+		float iconPosY = (elementSize.y - size) * 0.5f;
+		ImGui::SetCursorPos(ImVec2(iconPosX, iconPosY));
+
 		bool hasPlayButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play;
 		bool hasSimulateButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate;
 		bool hasPauseButton = m_SceneState != SceneState::Edit;
