@@ -23,8 +23,8 @@ def create_assistant(name, model="gpt-4o-mini", instructions=None):
     vector_store = client.beta.vector_stores.create(name="Muniffic documentation")
 
     file_paths = [os.getcwd() + "/resources/assistant/doc/Muniffic.docx",
-                  os.getcwd() + "/resources/assistant/doc/Scripting Engine Docs/Scripting-Engine.cs",
-                  os.getcwd() + "/resources/assistant/doc/Scripting Engine Docs/Scripting-Engine-Examples.cs"]
+                  os.getcwd() + "/resources/assistant/doc/Scripting Engine Docs/Scripting-Engine.txt",
+                  os.getcwd() + "/resources/assistant/doc/Scripting Engine Docs/Scripting-Engine-Examples.txt"]
 
     file_streams = [open(path, "rb") for path in file_paths]
 

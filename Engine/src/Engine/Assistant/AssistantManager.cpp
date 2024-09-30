@@ -168,7 +168,7 @@ namespace eg
 			EG_CORE_ERROR("Failed to get sysPath object");
 		}
 
-		std::filesystem::path modulePath = Project::GetResourcesPath() / "resources/assistant";
+		std::filesystem::path modulePath = "resources/assistant";
 
 		PyObject* path = PyUnicode_FromString(modulePath.string().c_str());
 

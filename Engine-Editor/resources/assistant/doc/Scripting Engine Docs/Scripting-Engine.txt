@@ -1,4 +1,4 @@
-﻿//Entities
+//Entities
 
 /// <summary>
 /// Base class for all scripts, from which all scripts should be derived.

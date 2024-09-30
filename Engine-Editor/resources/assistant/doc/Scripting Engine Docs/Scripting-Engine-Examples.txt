@@ -1,4 +1,4 @@
-﻿//GENERAL RULES
+//GENERAL RULES
 /*
  * Every script file must import the 'eg' namespace.
  * All script classes must be public and derived from DefaultBehaviour class.
