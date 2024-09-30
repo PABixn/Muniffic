@@ -15,6 +15,7 @@ namespace eg
         void OnImGuiRender();
 
     private:
+        std::string LoadInstructions();
         void DoMessage(const std::string& message);
         void RenderUserMessage(const std::string& message);
         void RenderAssistantMessage(const std::string& message, int id = 0);
@@ -22,22 +23,11 @@ namespace eg
         std::string GetLanguageSymbol(const std::string& language);
         bool StartsOrEndsCodeBlock(std::string line);
         std::string ExtractLanguageName(std::string line);
+        void RenderAssistantSettings();
+        void UpdateAssistantStatus();
 
     private:
         char buffer[1024];
-        std::string threadID;
-        std::unique_ptr<AssistantManager> assistantManager;
-        std::string assistantRespondingAnimation;
-        Ref<Texture2D> m_IconCopy;
-        Ref<Texture2D> m_IconSend;
-        Ref<Texture2D> m_IconMicrophone;
-        Ref<Texture2D> m_IconMicrophoneOff;
-        Ref<Texture2D> m_IconMicrophoneUnavailable;
-        Ref<Texture2D> m_IconSettings;
-        Ref<Texture2D> m_IconReadAloud;
-        Ref<Texture2D> m_IconReadAloudHover;
-        Ref<Texture2D> m_IconReadAloudActive;
-        ImTextureID m_IconReadMessageAloud;
         bool m_isListening;
         bool m_shouldListen;
         bool m_isMicrophoneAvailable;
@@ -46,7 +36,20 @@ namespace eg
         bool m_showMessageTooltip;
         bool m_isAssistantMessageInProgress;
         bool m_assistantInitialized;
-        ImGui::MarkdownConfig mdConfig;
         int m_messageCount;
+        ImTextureID m_IconReadMessageAloud = nullptr;
+        std::string threadID;
+        std::string assistantRespondingAnimation;
+        Ref<Texture2D> m_IconCopy = nullptr;
+        Ref<Texture2D> m_IconSend = nullptr;
+        Ref<Texture2D> m_IconMicrophone = nullptr;
+        Ref<Texture2D> m_IconMicrophoneOff = nullptr;
+        Ref<Texture2D> m_IconMicrophoneUnavailable = nullptr;
+        Ref<Texture2D> m_IconSettings = nullptr;
+        Ref<Texture2D> m_IconReadAloud = nullptr;
+        Ref<Texture2D> m_IconReadAloudHover = nullptr;
+        Ref<Texture2D> m_IconReadAloudActive = nullptr;
+        ImGui::MarkdownConfig mdConfig;
+        std::unique_ptr<AssistantManager> assistantManager;
     };
 }

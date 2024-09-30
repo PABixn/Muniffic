@@ -6,7 +6,7 @@ namespace eg
 	Ref<Scene> EditorActions::m_Scene = nullptr;
 	Entity* EditorActions::m_SelectedEntity = nullptr;
 
-	std::string EditorActions::ExecuteEntityAction(const std::string& actionName, std::vector<std::string>& params)
+	std::string EditorActions::ExecuteEntityAction(const std::string& actionName, const std::vector<std::string>& params)
 	{
 		if (actionName == "GetUUID")
 		{
@@ -102,7 +102,7 @@ namespace eg
 		}
 	}
 
-	std::string EditorActions::ExecuteComponentAction(const std::string& actionName, std::vector<std::string>& params)
+	std::string EditorActions::ExecuteComponentAction(const std::string& actionName, const std::vector<std::string>& params)
 	{
 		if (actionName == "GetTransformComponent")
 		{

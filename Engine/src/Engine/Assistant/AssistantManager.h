@@ -64,36 +64,37 @@ namespace eg
 		bool ThreadAvailable(std::string threadID);
 
 	private:
-		std::string m_AssistantName;
-		std::string m_AssistantInstructions;
-		std::string m_AssistantID;
-		std::unordered_map<std::string, Thread*> m_Threads;
-		bool newVoiceMessageAvailable;
-		std::string lastVoiceMessage;
 		bool IsVoiceAssistantListening;
 		bool IsVoiceAsssistantInitialized;
 		bool IsMessageInProgress;
 		bool ShouldReadAloud;
+		bool newVoiceMessageAvailable;
+		std::string m_AssistantName;
+		std::string m_AssistantInstructions;
+		std::string m_AssistantID;
+		std::unordered_map<std::string, Thread*> m_Threads;
+		std::string lastVoiceMessage;
 
 	private:
-		PyObject* m_voiceAssistantModule;
-		PyObject* m_startVoiceAssistant;
-		PyObject* m_stopVoiceAssistant;
-		PyObject* m_SpeakText;
-		PyObject* m_pModule;
-		PyObject* m_CreateAssistant;
-		PyObject* m_CreateThread;
-		PyObject* m_AddMessage;
-		PyObject* m_InitiateRun;
-		PyObject* m_WaitForCompletion;
-		PyObject* m_GetLastMessage;
-		PyObject* m_CheckIfAssistantExists;
-		PyObject* m_GetToolCall;
-		PyObject* m_SubmitToolOutputs;
-		PyObject* m_InitVoiceAssistant;
-		PyObject* m_CheckMicrophoneAvailable;
-		PyObject* m_SetVolume;
-		PyObject* m_CheckAPI;
+		PyObject* m_voiceAssistantModule = nullptr;
+		PyObject* m_startVoiceAssistant = nullptr;
+		PyObject* m_stopVoiceAssistant = nullptr;
+		PyObject* m_SpeakText = nullptr;
+		PyObject* m_pModule = nullptr;
+		PyObject* m_CreateAssistant = nullptr;
+		PyObject* m_CreateThread = nullptr;
+		PyObject* m_AddMessage = nullptr;
+		PyObject* m_InitiateRun = nullptr;
+		PyObject* m_WaitForCompletion = nullptr;
+		PyObject* m_GetLastMessage = nullptr;
+		PyObject* m_CheckIfAssistantExists = nullptr;
+		PyObject* m_GetToolCall = nullptr;
+		PyObject* m_SubmitToolOutputs = nullptr;
+		PyObject* m_InitVoiceAssistant = nullptr;
+		PyObject* m_CheckMicrophoneAvailable = nullptr;
+		PyObject* m_SetVolume = nullptr;
+		PyObject* m_CheckAPI = nullptr;
+
 	};
 }
 
