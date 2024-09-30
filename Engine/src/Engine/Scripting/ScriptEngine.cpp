@@ -19,7 +19,7 @@
 
 namespace eg
 {
-
+	static const std::array<std::string,5> s_InternallCallFunctions = { "OnUpdate", "OnCreate", ".ctor", "OnCollisionEnter", "OnCollisionExit" };
 	static std::unordered_map<std::string, ScriptFieldType> s_ScriptFieldTypeMap =
 		{
 
@@ -66,7 +66,9 @@ namespace eg
 		std::unordered_map<UUID, std::unordered_map<std::string, Ref<ScriptInstance>>> EntityInstances;
 
 		using ScriptFieldMap = std::unordered_map<std::string, ScriptFieldInstance>;
+		using ScriptMethodMap = std::unordered_map<std::string, ScriptMethod>;
 		std::unordered_map<UUID, ScriptFieldMap> EntityFields;
+		std::unordered_map<std::string, ScriptMethodMap> ScriptMethods;
 
 		Scope<filewatch::FileWatch<std::string>> AppAssemblyFileWatcher;
 		bool AssemblyReloadPending = false;
@@ -185,7 +187,7 @@ namespace eg
 	void ScriptEngine::LoadAssemblyClasses()
 	{
 		s_Data->EntityClasses.clear();
-
+		s_Data->ScriptMethods.clear();
 		// MonoImage* image = mono_assembly_get_image(assembly);
 		const MonoTableInfo *typeDefinitionsTable = mono_image_get_table_info(s_Data->AppAssemblyImage, MONO_TABLE_TYPEDEF);
 		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
@@ -264,11 +266,45 @@ namespace eg
 
 							EG_CORE_WARN("{} type: {}", fieldName, MunifficFieldType);
 							scriptClass->m_Fields[fieldName] = { fieldName, fieldType, field };
+							
 						}
 					}
 				}
 			}
+			iterator = nullptr;
+			while (MonoMethod* method = mono_class_get_methods(monoClass, &iterator))
+			{
+				const char* methodName = mono_method_get_name(method);
+				uint32_t flags = mono_method_get_flags(method, 0);
 
+				EG_CORE_WARN("{} flags: {}", methodName, flags);
+				if (flags & MONO_FIELD_ATTR_PUBLIC)
+				{
+					scriptClass->m_Methods[methodName] = { methodName, method };
+				}
+			}
+
+			for (MonoClass* baseClass : baseClasses)
+			{
+				if (baseClass != nullptr)
+				{
+					int fieldCount = mono_class_num_fields(baseClass);
+					EG_CORE_WARN("Fields of class: {}, with: {} fields", mono_class_get_name(baseClass), fieldCount);
+					void* iterator = nullptr;
+					while (MonoMethod* method = mono_class_get_methods(baseClass, &iterator))
+					{
+						const char* methodName = mono_method_get_name(method);
+						uint32_t flags = mono_method_get_flags(method,0);
+
+						EG_CORE_WARN("{} flags: {}", methodName, flags);
+						if (flags & MONO_FIELD_ATTR_PUBLIC)
+						{
+							scriptClass->m_Methods[methodName] = { methodName, method };
+						}
+					}
+				}
+			}
+			s_Data->ScriptMethods[fullName] = scriptClass->GetMethods();
 			EG_CORE_TRACE("{}.{}", nameSpace, className);
 		}
 
@@ -294,12 +330,59 @@ namespace eg
 		EG_CORE_ASSERT(entity);
 
 		UUID uuid = entity.GetUUID();
+
+		for (auto& [key, value] : s_Data->EntityFields)
+		{
+			EG_CORE_TRACE("Entity: {}", key);
+			for (auto& [key, value] : value)
+			{
+				EG_CORE_TRACE("Field: {}", key);
+			}
+		}
 		// EG_CORE_ASSERT(s_Data->EntityFields.find(uuid) != s_Data->EntityFields.end(), "Entity has no script fields!");
 
 		// if(s_Data->EntityFields.find(uuid) == s_Data->EntityFields.end())
 		// s_Data->EntityFields[uuid] = ScriptFieldMap();
 
 		return s_Data->EntityFields[uuid];
+	}
+
+	const ScriptMethodMap& ScriptEngine::GetScriptMethodMap(const std::string& className)
+	{
+		return s_Data->ScriptMethods[className];
+	}
+
+	const std::unordered_map<std::string, ScriptMethodMap>& ScriptEngine::GetAllScriptMethodMaps()
+	{
+		return s_Data->ScriptMethods;
+	}
+
+	void ScriptEngine::CallMethod(UUID entityID, const std::string& className, const std::string& methodName, int parameterCount, void** params)
+	{
+		Ref<ScriptInstance> instance = GetEntityScriptInstance(entityID, className);
+		if (!instance)
+			return;
+		MonoMethod* method = instance->GetScriptClass()->GetMethod(methodName, parameterCount);
+		//Switch if to Assert
+		if (method)
+			instance->GetScriptClass()->InvokeMethod(instance->GetManagedObject(), method, params);
+	
+	}
+
+	bool ScriptEngine::isMethodInternal(const std::string& methodName)
+	{
+		return std::find(s_InternallCallFunctions.begin(), s_InternallCallFunctions.end(), methodName) != s_InternallCallFunctions.end();
+	}
+
+	int ScriptEngine::GetMethodParameterCount(const std::string& className, const std::string& methodName)
+	{
+		bool exists = s_Data->ScriptMethods.end() != s_Data->ScriptMethods.find(className) && s_Data->ScriptMethods[className].end() != s_Data->ScriptMethods[className].find(methodName);
+		if(!exists)
+			return 0;
+		MonoMethodSignature* signature = mono_method_signature(s_Data->ScriptMethods[className][methodName].Method);
+		if (!signature)
+			return 0;
+		return mono_signature_get_param_count(signature);
 	}
 
 	MonoImage* ScriptEngine::GetCoreAssemblyImage()
@@ -673,5 +756,11 @@ namespace eg
 		const ScriptField &field = it->second;
 		mono_field_set_value(m_Instance, field.ClassField, (void *)value);
 		return true;
+	}
+
+	ScriptMethod::ScriptMethod(const std::string& name, MonoMethod* method)
+	{
+		Name = name;
+		Method = method;
 	}
 }

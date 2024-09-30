@@ -9,6 +9,9 @@ Engine-Editor/resources/Scripts/Debug/
 Engine-Editor/SandboxProject/Assets/Scripts/Binaries/
 Engine-Editor/SandboxProject/Assets/Scripts/obj/
 
+# Cache
+Engine-Editor/recentProjectSerializer.txt
+
 # Muniffic files
 *.log
 recentProjectSerializer.txt
@@ -59,3 +62,7 @@ CMakeFiles/
 **.dir/
 !Dependencies.cmake
 CMakeCache.txt
+
+# Projects
+Engine-Editor/Projects/*
+!Engine-Editor/Projects/Sandbox/
