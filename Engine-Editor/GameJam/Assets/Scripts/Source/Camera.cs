@@ -16,7 +16,6 @@ namespace Game
         public float zoomSpeed = 5f;
         TransformComponent transform;
         TransformComponent playerTransform;
-        TransformComponent backgroundTransform;
 
         void OnCreate()
         {
@@ -24,8 +23,6 @@ namespace Game
 
             if (HasComponent<CameraComponent>())
                 GetComponent<CameraComponent>().type = type;
-
-            backgroundTransform = Entity.FindEntityByName("Background").GetComponent<TransformComponent>();
 
             player = Entity.FindEntityByName("Player");
 
@@ -52,7 +49,6 @@ namespace Game
                 zoom += 1 / zoomSpeed * ts;
 
             transform.translation = new Vector3(playerTransform.translation.X, playerTransform.translation.Y, 10 / zoom);
-            backgroundTransform.translation = new Vector3(playerTransform.translation.X, playerTransform.translation.Y, -1);
         }
     }
 }
