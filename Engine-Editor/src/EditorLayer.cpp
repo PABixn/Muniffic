@@ -902,7 +902,7 @@ namespace eg
 
 	void EditorLayer::NewProject()
 	{
-		std::filesystem::path saveDir = std::filesystem::current_path() / "Projects" / m_NameNewProjectPanel->projectName / m_NameNewProjectPanel->projectName / ".mnproj";
+		std::filesystem::path saveDir = std::filesystem::current_path() / "Projects" / m_NameNewProjectPanel->projectName / (m_NameNewProjectPanel->projectName + ".mnproj");
 		std::filesystem::path absolutePath = std::filesystem::absolute(saveDir);
 		//std::filesystem::path savePath = absolutePath / "Projects";
 
