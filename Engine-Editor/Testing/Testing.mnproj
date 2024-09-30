@@ -1,6 +1,0 @@
-Project:
-  Name: Testing
-  StartScene: Untitled.egscene
-  AssetDirectory: Assets
-  SceneDirectory: Scenes
-  ScriptModulePath: Scripts/Binaries/
