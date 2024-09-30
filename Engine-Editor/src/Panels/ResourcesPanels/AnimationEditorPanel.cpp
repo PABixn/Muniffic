@@ -220,12 +220,13 @@ namespace eg {
 			ImGui::Text("Function name:");
 			static char functionName[128];
 			ImGui::InputText("##functionName", functionName, 128);
-			bool opened = ImGui::TreeNodeEx("Available Function calls:", ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow);
+			int treeNodeFlags = ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow;
+			bool opened = ImGui::TreeNodeEx("Available Function calls:", treeNodeFlags);
 			if (opened)
 			{
 				const auto& scriptMethods = ScriptEngine::GetAllScriptMethodMaps();
 				for (auto& [className, value] : scriptMethods) {
-					bool openedClass = ImGui::TreeNodeEx(className.c_str(), ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow);
+					bool openedClass = ImGui::TreeNodeEx(className.c_str(), treeNodeFlags);
 					if (!openedClass)
 						continue;
 					for (auto& [MethodName, value2] : value) {

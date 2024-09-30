@@ -103,11 +103,7 @@ namespace eg
 		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
 			ImGui::OpenPopup("FileOptions");
 		}
-		/*if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
-			EditorLayer* e = (EditorLayer*)Application::Get().GetFirstLayer();
-			e->GetAnimationEditorPanel()->OpenAnimationEditorPanel(key);
-			m_ContentBrowserRightClickPanel->OpenContentBrowserRightClickPanel(key,ImGui::GetMousePos().x, ImGui::GetMousePos().y);
-		}*/
+
 		DrawCenteredText(name.c_str(), thumbnailSize);
 		AnimationResourceData* animData = (AnimationResourceData*)ResourceDatabase::GetResourceData(key);
 		if (ImGui::BeginPopupContextItem("FileOptions"))
@@ -119,9 +115,10 @@ namespace eg
 				ImGui::EndPopup();
 				ImGui::PopStyleColor();
 				ImGui::PopID();
+				
 				return;
 			}
-			if (animData->Type == ResourceType::Animation) {
+			if (animData && animData->Type == ResourceType::Animation) {
 				if (ImGui::MenuItem("Open animation editor panel")) {
 					m_AnimationEditorPanel = CreateScope<AnimationEditorPanel>(key);
 					ImGui::EndPopup();
@@ -190,7 +187,6 @@ namespace eg
 			if (ImGui::MenuItem("Create Folder"))
 			{
 				m_CreateDirectoryPanel->ShowWindow(m_CurrentDirectory);
-				//AssetDirectory* newDirectory = new AssetDirectory(UUID(), "New Folder", m_CurrentDirectory);
 			}
 			ImGui::EndPopup();
 		}
@@ -213,8 +209,6 @@ namespace eg
 
 		for (UUID asset : AssetDirectoryManager::getAssets(m_CurrentDirectory))
 		{
-			//AnimationResourceData* animData = (AnimationResourceData*)ResourceDatabase::GetResourceData(asset);
-			//animData->
 			ResourceType type = ResourceDatabase::GetResourceType(asset);
 			std::string name = ResourceDatabase::GetResourceName(asset);
 			if (name.find(buffer) == std::string::npos)
@@ -302,7 +296,7 @@ namespace eg
 			Commands::ExecuteRawValueCommand(&padding, offset, std::string("ContentBrowserPanel-Padding"));
 
 		ImGui::End();
-		//EditorLayer* e = (EditorLayer*)Application::Get().GetFirstLayer();
+
 		if (m_AnimationEditorPanel)
 		{
 			m_AnimationEditorPanel->OnImGuiRender();
@@ -310,7 +304,6 @@ namespace eg
 				m_AnimationEditorPanel = nullptr;
 		}
 
-		//m_ContentBrowserRightClickPanel->OnImGuiRender();
 	}
 
 }
