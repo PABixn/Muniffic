@@ -41,7 +41,8 @@ namespace eg
 			switch (type)
 			{
 			case ResourceType::Image:
-				return ".png";
+				return "
+					";
 			case ResourceType::SubTexture:
 				return ".subtexture";
 			case ResourceType::SpriteAtlas:
