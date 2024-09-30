@@ -12,7 +12,7 @@
 namespace eg
 {
 	AssistantPanel::AssistantPanel()
-		: assistantManager(std::make_unique<AssistantManager>()),
+		: assistantManager(CreateScope<AssistantManager>()),
 		assistantRespondingAnimation("."),
 		m_IconCopy(Texture2D::Create("resources/icons/copyCode.png")),
 		m_IconSend(Texture2D::Create("resources/icons/sendIcon.png")),

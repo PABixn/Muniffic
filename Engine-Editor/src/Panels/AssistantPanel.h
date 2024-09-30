@@ -27,9 +27,9 @@ namespace eg
         void UpdateAssistantStatus();
 
     private:
-        ImTextureID m_IconReadMessageAloud = nullptr;
         std::string threadID;
         std::string assistantRespondingAnimation;
+        ImTextureID m_IconReadMessageAloud = nullptr;
         Ref<Texture2D> m_IconCopy = nullptr;
         Ref<Texture2D> m_IconSend = nullptr;
         Ref<Texture2D> m_IconMicrophone = nullptr;
@@ -39,8 +39,8 @@ namespace eg
         Ref<Texture2D> m_IconReadAloud = nullptr;
         Ref<Texture2D> m_IconReadAloudHover = nullptr;
         Ref<Texture2D> m_IconReadAloudActive = nullptr;
+        Scope<AssistantManager> assistantManager = nullptr;
         ImGui::MarkdownConfig mdConfig;
-        std::unique_ptr<AssistantManager> assistantManager;
         char buffer[1024];
         bool m_isListening;
         bool m_shouldListen;
