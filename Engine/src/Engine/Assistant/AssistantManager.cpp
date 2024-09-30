@@ -642,7 +642,7 @@ namespace eg
 
 	bool AssistantManager::LoadAssistant()
 	{
-		std::filesystem::path path = Project::GetResourcesPath() / "resources/assistant/assistant.mndata";
+		std::filesystem::path path = "resources/assistant/assistant.mndata";
 
 		if (!std::filesystem::exists(path))
 		{
