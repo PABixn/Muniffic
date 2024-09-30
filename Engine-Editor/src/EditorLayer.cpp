@@ -509,7 +509,7 @@ namespace eg
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 0));
 		float size = ImGui::GetWindowHeight() - 4.0f;
 		ImVec2 elementSize = ImGui::GetContentRegionAvail();
-		float iconPosX = (elementSize.x - size) * 0.5f;
+		float iconPosX = (elementSize.x - size) * 0.5f - 19.0f;
 		float iconPosY = (elementSize.y - size) * 0.5f;
 		ImGui::SetCursorPos(ImVec2(iconPosX, iconPosY));
 

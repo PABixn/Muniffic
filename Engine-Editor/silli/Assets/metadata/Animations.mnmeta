@@ -1,10 +1,2 @@
 Resources:
-  - UUID: 2151375621495253716
-    ParentDirectory: 6742782834259228885
-    ResourceName: blue_boy
-    Extension: .anim
-    FrameRate: 1
-    FrameCount: 1
-    Loop: true
-    Frames:
-      - 1591980485801781963
+  []

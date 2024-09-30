@@ -1,10 +1,2 @@
 Resources:
-  - UUID: 9098314720269997722
-    ParentDirectory: 2735900739891495464
-    ResourceName: blue_boy
-    Extension: .spriteatlas
-    Width: 1920
-    Height: 1080
-    Channels: 4
-    Sprites:
-      - 1591980485801781963
+  []

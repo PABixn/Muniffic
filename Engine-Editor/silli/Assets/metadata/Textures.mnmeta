@@ -1,8 +1,2 @@
 Resources:
-  - UUID: 5828464540545766617
-    ParentDirectory: 6028786384177603059
-    ResourceName: blue_boy
-    Extension: .png
-    Width: 1920
-    Height: 1080
-    Channels: 4
+  []

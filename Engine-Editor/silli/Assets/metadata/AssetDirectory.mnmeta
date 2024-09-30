@@ -1,64 +1,71 @@
-Root: 3309555998982676383
+Root: 7496928750785001193
 Directories:
-  - UUID: 2125295706162130587
-    Name: Scripts
-    Parent: 3309555998982676383
-    Subdirectories:
-      - 6186495313798934768
-    Assets:
-      []
-  - UUID: 6028786384177603059
-    Name: Textures
-    Parent: 3309555998982676383
-    Subdirectories:
-      []
-    Assets:
-      - 5828464540545766617
-  - UUID: 1717878910063012334
+  - UUID: 5622831476033289689
     Name: SubTextures
-    Parent: 3309555998982676383
+    Parent: 7496928750785001193
     Subdirectories:
       []
     Assets:
-      - 1591980485801781963
-  - UUID: 6742782834259228885
+      []
+  - UUID: 2099638979660185931
+    Name: Textures
+    Parent: 7496928750785001193
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 2774336185351076346
     Name: Animations
-    Parent: 3309555998982676383
+    Parent: 7496928750785001193
     Subdirectories:
       []
     Assets:
-      - 2151375621495253716
-  - UUID: 9194542290052007016
+      []
+  - UUID: 3744402267148573228
     Name: Fonts
-    Parent: 3309555998982676383
+    Parent: 7496928750785001193
     Subdirectories:
       []
     Assets:
-      - 1421208031512260552
-  - UUID: 2735900739891495464
+      - 8429598388564989931
+  - UUID: 8641830738523278996
+    Name: Scripts
+    Parent: 7496928750785001193
+    Subdirectories:
+      - 4077551578958716720
+    Assets:
+      []
+  - UUID: 4621856684184097845
     Name: SpriteAtlas
-    Parent: 3309555998982676383
+    Parent: 7496928750785001193
     Subdirectories:
       []
     Assets:
-      - 9098314720269997722
-  - UUID: 2827638682007571564
+      []
+  - UUID: 5700417033810812632
     Name: Shaders
-    Parent: 3309555998982676383
+    Parent: 7496928750785001193
     Subdirectories:
       []
     Assets:
       []
-  - UUID: 6186495313798934768
+  - UUID: 4077551578958716720
     Name: Source
-    Parent: 2125295706162130587
+    Parent: 8641830738523278996
     Subdirectories:
       []
     Assets:
       []
-  - UUID: 6308418189360257750
+  - UUID: 2979428942496697699
+    Name: Audio
+    Parent: 7496928750785001193
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 6798892450538600079
     Name: Scenes
-    Parent: 3309555998982676383
+    Parent: 7496928750785001193
     Subdirectories:
       []
     Assets:
