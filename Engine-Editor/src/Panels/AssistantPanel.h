@@ -27,16 +27,6 @@ namespace eg
         void UpdateAssistantStatus();
 
     private:
-        char buffer[1024];
-        bool m_isListening;
-        bool m_shouldListen;
-        bool m_isMicrophoneAvailable;
-        bool m_isLastMessageFromUser;
-        bool m_readAloud;
-        bool m_showMessageTooltip;
-        bool m_isAssistantMessageInProgress;
-        bool m_assistantInitialized;
-        int m_messageCount;
         ImTextureID m_IconReadMessageAloud = nullptr;
         std::string threadID;
         std::string assistantRespondingAnimation;
@@ -51,5 +41,15 @@ namespace eg
         Ref<Texture2D> m_IconReadAloudActive = nullptr;
         ImGui::MarkdownConfig mdConfig;
         std::unique_ptr<AssistantManager> assistantManager;
+        char buffer[1024];
+        bool m_isListening;
+        bool m_shouldListen;
+        bool m_isMicrophoneAvailable;
+        bool m_isLastMessageFromUser;
+        bool m_readAloud;
+        bool m_showMessageTooltip;
+        bool m_isAssistantMessageInProgress;
+        bool m_assistantInitialized;
+        int m_messageCount;
     };
 }
