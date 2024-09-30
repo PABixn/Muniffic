@@ -25,6 +25,7 @@ namespace eg
 	{
 		bool isInheritedInChildren = false;
 		bool isInherited = false;
+		UUID EntityID = 0;
 	};
 
 	struct IDComponent
@@ -42,6 +43,7 @@ namespace eg
 		std::string Tag;
 
 		TagComponent() = default;
+		TagComponent(const UUID& entityID) { EntityID = entityID; }
 		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& tag)
 			: Tag(tag) {}
@@ -55,6 +57,7 @@ namespace eg
 		glm::vec3 Scale{ 1.0f, 1.0f, 1.0f };
 
 		TransformComponent() { isInheritedInChildren = true; isInherited = true; };
+		TransformComponent(const UUID& entityID) { EntityID = entityID; isInheritedInChildren = true; isInherited = true; };
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const glm::vec3 & translation)
 			: Translation(translation) {}
@@ -77,6 +80,7 @@ namespace eg
 		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;
+		SpriteRendererComponent(const UUID& entityID) { EntityID = entityID; }
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)  
 			: Color(color) {}
@@ -86,13 +90,14 @@ namespace eg
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<SubTexture2D> SubTexture;
-		UUID SubTextureUUID = 0;
+		UUID SubTextureUUID;
 		float TilingFactor = 1.0f;
 
 		SpriteRendererSTComponent()
 		{
 			SubTexture = CreateRef<SubTexture2D>();
 		};
+		SpriteRendererSTComponent(const UUID& entityID){}
 		SpriteRendererSTComponent(const SpriteRendererSTComponent&) = default;
 		SpriteRendererSTComponent(const glm::vec4& color)
 			: Color(color) {}
@@ -103,10 +108,21 @@ namespace eg
 		AnimatorComponent()
 		{
 			Animator2D = CreateRef<Animator>();
+			Animator2D->SetEntityID(EntityID);
 		};
-		AnimatorComponent(const AnimatorComponent&) = default;
+		AnimatorComponent(const UUID& entityID)
+		{
+			Animator2D = CreateRef<Animator>();
+			Animator2D->SetEntityID(entityID);
+		};
+		AnimatorComponent(const AnimatorComponent& animator)
+			: Animator2D(animator.Animator2D) {
+			Animator2D->SetEntityID(EntityID);
+		};
 		AnimatorComponent(const Ref<Animator>& animator)
-			: Animator2D(animator) {}
+			: Animator2D(animator) {
+			Animator2D->SetEntityID(EntityID);
+		}
 
 		Ref<Animator> Animator2D;
 	};
@@ -119,6 +135,7 @@ namespace eg
 		bool isSensor = false;
 
 		CircleRendererComponent() = default;
+		CircleRendererComponent(const UUID& entityID) { EntityID = entityID; }
 		CircleRendererComponent(const CircleRendererComponent&) = default;
 		CircleRendererComponent(const glm::vec4& color)
 			: Color(color) {}
@@ -131,6 +148,7 @@ namespace eg
 		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
+		CameraComponent(const UUID& entityID) { EntityID = entityID; }
 		CameraComponent(const CameraComponent&) = default;
 	};
 
@@ -139,6 +157,7 @@ namespace eg
 		std::vector<UUID> Scripts;
 
 		ScriptComponent() = default;
+		ScriptComponent(const UUID& entityID) { EntityID = entityID; }
 		ScriptComponent(const ScriptComponent&) = default;
 	};
 
@@ -190,6 +209,7 @@ namespace eg
 		float GravityMultiplier = 1.1f;
 
 		RigidBody2DComponent() = default;
+		RigidBody2DComponent(const UUID& entityID) { EntityID = entityID; }
 		RigidBody2DComponent(const RigidBody2DComponent&) = default;
 
 	};
@@ -212,6 +232,7 @@ namespace eg
 		void* RuntimeFixture = nullptr;
 		
 		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent(const UUID& entityID) { EntityID = entityID; }
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 
@@ -231,6 +252,7 @@ namespace eg
 		void* RuntimeFixture = nullptr;
 
 		CircleCollider2DComponent() = default;
+		CircleCollider2DComponent(const UUID& entityID) { EntityID = entityID; }
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 
 		#pragma region Functionality
@@ -246,6 +268,9 @@ namespace eg
 		glm::vec4 Color { 1.0f };
 		float Kerning = 0.0f;
 		float LineSpacing = 0.0f;
+
+		TextComponent() = default;
+		TextComponent(const UUID& entityID) { EntityID = entityID; }
 	};
 
 	struct AudioSourceComponent : Component
@@ -253,6 +278,11 @@ namespace eg
 		AudioSourceComponent()
 		{
 			Audio = CreateRef<BasicAudio>();
+		};
+		AudioSourceComponent(const UUID& entityID)
+		{
+			Audio = CreateRef<BasicAudio>();
+			EntityID = entityID;
 		};
 		AudioSourceComponent(const AudioSourceComponent&) = default;
 		AudioSourceComponent(const Ref<BasicAudio>& audio)

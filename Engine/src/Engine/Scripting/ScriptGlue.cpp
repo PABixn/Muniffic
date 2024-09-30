@@ -276,7 +276,7 @@ namespace eg
 		return entity.IsChild(child);
 	}
 
-	static uint64_t Entity_GetParent(UUID uuid)
+	static int64_t Entity_GetParent(UUID uuid)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
@@ -398,7 +398,7 @@ namespace eg
 		Utils::RemoveComponent(AllComponents{}, managedType, e);
 	}
 
-	static uint64_t Entity_FindEntityByName(MonoString *name)
+	static int64_t Entity_FindEntityByName(MonoString *name)
 	{
 		char *cStr = mono_string_to_utf8(name);
 
@@ -420,7 +420,7 @@ namespace eg
 		return scene->EntityExists(uuid);
 	}
 
-	static uint64_t Entity_Create(MonoString *name)
+	static int64_t Entity_Create(MonoString *name)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");

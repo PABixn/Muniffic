@@ -4,6 +4,8 @@
 #include "Engine/Utils/YAMLConversion.h"
 #include "AssetDirectorySerializer.h"
 #include "ResourceUtils.h"
+#include "Engine/Scripting/ScriptEngine.h"
+#include "Engine/Scripting/ScriptingTypes.h"
 #include <yaml-cpp/yaml.h>
 #include <fstream>
 #include <optional>
@@ -12,8 +14,11 @@
 
 namespace eg
 {
+
+
 	std::unordered_map<UUID, TextureResourceData*> ResourceSerializer::TextureResourceDataCache;
 	std::unordered_map<UUID, AnimationResourceData*> ResourceSerializer::AnimationResourceDataCache;
+	std::unordered_map<UUID, FrameResourceData*> ResourceSerializer::FrameResourceDataCache;
 	std::unordered_map<UUID, SpriteAtlasResourceData*> ResourceSerializer::SpriteAtlasResourceDataCache;
 	std::unordered_map<UUID, SubTextureResourceData*> ResourceSerializer::SubTextureResourceDataCache;
 	std::unordered_map<UUID, FontResourceData*> ResourceSerializer::FontResourceDataCache;
@@ -27,13 +32,14 @@ namespace eg
 
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
 		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
+		std::filesystem::path frameMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Frame);
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
 		std::filesystem::path subTextureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SubTexture);
 		std::filesystem::path fontMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Font);
 		std::filesystem::path scriptMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Script);
 		std::filesystem::path audioMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Audio);
 
-		YAML::Node textureNode, animationNode, spriteAtlasNode, subTextureNode, fontNode, scriptNode, audioNode;
+		YAML::Node textureNode, animationNode, frameNode, spriteAtlasNode, subTextureNode, fontNode, scriptNode, audioNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
 		{
@@ -46,6 +52,13 @@ namespace eg
 		{
 			std::filesystem::create_directories(animationMetadataPath.parent_path());
 			std::ofstream file(animationMetadataPath, std::ios::trunc);
+			file.close();
+		}
+
+		if (!std::filesystem::exists(frameMetadataPath))
+		{
+			std::filesystem::create_directories(frameMetadataPath.parent_path());
+			std::ofstream file(frameMetadataPath, std::ios::trunc);
 			file.close();
 		}
 
@@ -106,6 +119,16 @@ namespace eg
 
 		try
 		{
+			frameNode = YAML::LoadFile(frameMetadataPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", frameMetadataPath, e.what());
+			return false;
+		}
+
+		try
+		{
 			spriteAtlasNode = YAML::LoadFile(spriteAtlasMetadataPath.string());
 		}
 		catch (YAML::ParserException e)
@@ -156,6 +179,7 @@ namespace eg
 
 		auto textureResources = textureNode["Resources"];
 		auto animationResources = animationNode["Resources"];
+		auto frameResources = frameNode["Resources"];
 		auto spriteAtlasResources = spriteAtlasNode["Resources"];
 		auto subtextureResource = subTextureNode["Resources"];
 		auto fontResources = fontNode["Resources"];
@@ -166,7 +190,7 @@ namespace eg
 		{
 			for (auto resource : fontResources)
 			{
-				UUID uuid = resource["UUID"].as<uint64_t>();
+				UUID uuid = resource["UUID"].as<int64_t>();
 
 				FontResourceData* data = new FontResourceData();
 				if (resource["ParentDirectory"])
@@ -219,7 +243,7 @@ namespace eg
 		{
 			for (auto resource : subtextureResource)
 			{
-				UUID uuid = resource["UUID"].as<uint64_t>();
+				UUID uuid = resource["UUID"].as<int64_t>();
 
 				SubTextureResourceData* data = new SubTextureResourceData();
 				if (resource["ParentDirectory"])
@@ -231,7 +255,7 @@ namespace eg
 				else
 					data->ResourceName = resource["SubtextureName"].as<std::string>();
 				data->Extension = resource["Extension"].as<std::string>();
-				data->Texture = resource["Texture"].as<uint64_t>();
+				data->Texture = resource["Texture"].as<int64_t>();
 
 				auto texCoords = resource["TexCoords"];
 				int i = 0;
@@ -249,7 +273,7 @@ namespace eg
 		{
 			for (auto resource : animationResources)
 			{
-				UUID uuid = resource["UUID"].as<uint64_t>();
+				UUID uuid = resource["UUID"].as<int64_t>();
 
 				AnimationResourceData* data = new AnimationResourceData();
 				if (resource["ParentDirectory"])
@@ -263,23 +287,50 @@ namespace eg
 
 				data->Extension = resource["Extension"].as<std::string>();
 				data->FrameRate = resource["FrameRate"].as<float>();
-				data->FrameCount = resource["FrameCount"].as<int>();
 				data->Loop = resource["Loop"].as<bool>();
 
 				auto frames = resource["Frames"];
 				for (auto frame : frames)
 				{
-					data->Frames.push_back(frame.as<uint64_t>());
+					data->Frames.push_back(frame.as<int64_t>());
 				}
 
+
 				CacheAnimation(uuid, data);
+			}
+
+			if (frameResources)
+			{
+				for (auto resource : frameResources)
+				{
+					UUID uuid = resource["UUID"].as<int64_t>();
+
+					FrameResourceData* data = new FrameResourceData();
+					if (resource["ParentDirectory"])
+						data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+					else
+						data->ParentDirectory = 0;
+					if (resource["ResourceName"])
+						data->ResourceName = resource["ResourceName"].as<std::string>();
+					else
+						data->ResourceName = resource["FrameName"].as<std::string>();
+					data->Extension = resource["Extension"].as<std::string>();
+					data->SubTexture = resource["SubTexture"].as<int64_t>();
+					data->Duration = resource["Duration"].as<int>();
+					if(resource["ClassName"])
+						data->ClassName = resource["ClassName"].as<std::string>();
+					if(resource["FunctionCallName"])
+						data->FunctionCallName = resource["FunctionCallName"].as<std::string>();
+
+					CacheFrame(uuid, data);
+				}
 			}
 
 			if (spriteAtlasResources)
 			{
 				for (auto resource : spriteAtlasResources)
 				{
-					UUID uuid = resource["UUID"].as<uint64_t>();
+					UUID uuid = resource["UUID"].as<int64_t>();
 
 					SpriteAtlasResourceData* data = new SpriteAtlasResourceData();
 					if (resource["ParentDirectory"])
@@ -299,18 +350,18 @@ namespace eg
 					auto sprites = resource["Sprites"];
 					for (auto sprite : sprites)
 					{
-						data->Sprites.push_back(sprite.as<uint64_t>());
+						data->Sprites.push_back(sprite.as<int64_t>());
 					}
 
 					CacheSpriteAtlas(uuid, data);
 				}
-			}
+			} 
 
 			if (scriptResources)
 			{
-				for (auto resource : scriptResources)
+     				for (auto resource : scriptResources)
 				{
-					UUID uuid = resource["UUID"].as<uint64_t>();
+					UUID uuid = resource["UUID"].as<int64_t>();
 
 					ScriptResourceData* data = new ScriptResourceData();
 
@@ -325,9 +376,26 @@ namespace eg
 						data->IsEnabled = true;
 					data->Extension = resource["Extension"].as<std::string>();
 
+					auto methods = resource["Methods"];
+					for (auto method : methods)
+					{
+						MethodResourceData methodData;
+						methodData.ClassName = method["ClassName"].as<std::string>();
+						auto parameters = method["Parameters"];
+						for (auto parameter : parameters)
+						{
+							std::pair<std::string, ScriptFieldType> parameterData;
+							parameterData.first = parameter["ParameterName"].as<std::string>();
+							parameterData.second = Utils::ScriptFieldTypeFromString(parameter["ParameterType"].as<std::string>());
+							methodData.Parameters.push_back(parameterData);
+						}
+						data->Methods[method["MethodName"].as<std::string>()] = methodData;
+					}
+
 					CacheScript(uuid, data);
 				}
 			}
+
 			if (audioResources)
 			{
 				for (auto resource : audioResources)
@@ -359,6 +427,7 @@ namespace eg
 
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
 		std::filesystem::path animationMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Animation);
+		std::filesystem::path frameMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Frame);
 		std::filesystem::path spriteAtlasMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SpriteAtlas);
 		std::filesystem::path subTextureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::SubTexture);
 		std::filesystem::path fontMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Font);
@@ -366,13 +435,16 @@ namespace eg
 		std::filesystem::path audioMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Audio);
 
 
-		YAML::Emitter textureOut, animationOut, spriteAtlasOut, subtextureOut, fontOut, scriptOut, audioOut;
+		YAML::Emitter textureOut, animationOut, frameOut, spriteAtlasOut, subtextureOut, fontOut, scriptOut, audioOut;
 
 		if(!std::filesystem::exists(textureMetadataPath.parent_path()))
 			std::filesystem::create_directories(textureMetadataPath.parent_path());
 
 		if (!std::filesystem::exists(animationMetadataPath.parent_path()))
 			std::filesystem::create_directories(animationMetadataPath.parent_path());
+
+		if (!std::filesystem::exists(frameMetadataPath.parent_path()))
+			std::filesystem::create_directories(frameMetadataPath.parent_path());
 
 		if (!std::filesystem::exists(spriteAtlasMetadataPath.parent_path()))
 			std::filesystem::create_directories(spriteAtlasMetadataPath.parent_path());
@@ -458,6 +530,28 @@ namespace eg
 		animationOut << YAML::EndSeq;
 		animationOut << YAML::EndMap;
 
+		frameOut << YAML::BeginMap;
+		frameOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
+
+		for (auto& [key, value] : FrameResourceDataCache)
+		{
+			frameOut << YAML::BeginMap;
+			frameOut << YAML::Key << "UUID" << YAML::Value << key;
+			frameOut << YAML::Key << "ParentDirectory" << YAML::Value << value->ParentDirectory;
+			frameOut << YAML::Key << "ResourceName" << YAML::Value << value->ResourceName;
+			frameOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
+			frameOut << YAML::Key << "SubTexture" << YAML::Value << value->SubTexture;
+			frameOut << YAML::Key << "Duration" << YAML::Value << value->Duration;
+			if(value->ClassName != "")
+				frameOut << YAML::Key << "ClassName" << YAML::Value << value->ClassName;
+			if(value->FunctionCallName != "")
+				frameOut << YAML::Key << "FunctionCallName" << YAML::Value << value->FunctionCallName;
+			frameOut << YAML::EndMap;
+		}
+
+		frameOut << YAML::EndSeq;
+		frameOut << YAML::EndMap;
+
 		spriteAtlasOut << YAML::BeginMap;
 		spriteAtlasOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
 
@@ -510,6 +604,27 @@ namespace eg
 			scriptOut << YAML::Key << "ResourceName" << YAML::Value << value->ResourceName;
 			scriptOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
 			scriptOut << YAML::Key << "IsEnabled" << YAML::Value << value->IsEnabled;
+			scriptOut << YAML::Key << "Methods" << YAML::Value << YAML::BeginSeq;
+			
+			for (auto& [key2, value2] : value->Methods)
+			{
+				scriptOut << YAML::BeginMap;
+				scriptOut << YAML::Key << "MethodName" << YAML::Value << key;
+				scriptOut << YAML::Key << "ClassName" << YAML::Value << value2.ClassName;
+				scriptOut << YAML::Key << "Parameters" << YAML::Value << YAML::BeginSeq;
+				for(auto& parameter : value2.Parameters)
+				{
+					scriptOut << YAML::BeginMap;
+					scriptOut << YAML::Key << "ParameterName" << YAML::Value << parameter.first;
+					scriptOut << YAML::Key << "ParameterType" << YAML::Value << Utils::ScriptFieldTypeToString(parameter.second);
+					scriptOut << YAML::EndMap;
+				}
+
+				scriptOut << YAML::EndSeq;
+				scriptOut << YAML::EndMap;
+			}
+
+			scriptOut << YAML::EndSeq;
 			scriptOut << YAML::EndMap;
 		}
 
@@ -534,6 +649,7 @@ namespace eg
 
 		std::ofstream textureFile(textureMetadataPath, std::ios::trunc);
 		std::ofstream animationFile(animationMetadataPath, std::ios::trunc);
+		std::ofstream frameFile(frameMetadataPath, std::ios::trunc);
 		std::ofstream spriteAtlasFile(spriteAtlasMetadataPath, std::ios::trunc);
 		std::ofstream subTextureFile(subTextureMetadataPath, std::ios::trunc);
 		std::ofstream fontFile(fontMetadataPath, std::ios::trunc);
@@ -542,6 +658,7 @@ namespace eg
 
 		textureFile << textureOut.c_str();
 		animationFile << animationOut.c_str();
+		frameFile << frameOut.c_str();
 		spriteAtlasFile << spriteAtlasOut.c_str();
 		subTextureFile << subtextureOut.c_str();
 		fontFile << fontOut.c_str();
@@ -550,6 +667,7 @@ namespace eg
 
 		textureFile.close();
 		animationFile.close();
+		frameFile.close();
 		spriteAtlasFile.close();
 		subTextureFile.close();
 		fontFile.close();
@@ -679,6 +797,22 @@ namespace eg
 		AnimationResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Animation;
 		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
+	}
+
+	void ResourceSerializer::CacheFrame(UUID uuid, FrameResourceData* data)
+	{
+		if (FrameResourceDataCache.find(uuid) != FrameResourceDataCache.end())
+		{
+			if (FrameResourceDataCache[uuid] != nullptr)
+				delete FrameResourceDataCache[uuid];
+			FrameResourceDataCache.erase(uuid);
+		}
+
+		data->Type = ResourceType::Frame;
+		FrameResourceDataCache[uuid] = data;
+		ResourceTypeInfo[uuid] = ResourceType::Frame;
+		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
+	
 	}
 
 	void ResourceSerializer::CacheSpriteAtlas(UUID uuid, SpriteAtlasResourceData* data)

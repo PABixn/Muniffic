@@ -557,7 +557,7 @@ namespace eg {
 
 					if (spriteRendererComponent["TextureUUID"])
 					{
-						uint64_t textureUUID = spriteRendererComponent["TextureUUID"].as<uint64_t>();
+						int64_t textureUUID = spriteRendererComponent["TextureUUID"].as<int64_t>();
 
 						if (ResourceDatabase::FindResourceData(textureUUID, ResourceType::Image))
 						{
@@ -585,7 +585,7 @@ namespace eg {
 					src.TilingFactor = spriteRendererComponentST["TilingFactor"].as<float>();
 					if (spriteRendererComponentST["TextureUUID"])
 					{
-						uint64_t textureUUID = spriteRendererComponentST["TextureUUID"].as<uint64_t>();
+						int64_t textureUUID = spriteRendererComponentST["TextureUUID"].as<int64_t>();
 
 						if (ResourceDatabase::FindResourceData(uuid, ResourceType::Image))
 						{
@@ -623,6 +623,7 @@ namespace eg {
 				{
 					auto& ac = deserializedEntity.AddComponent<AnimatorComponent>();
 					ac.Animator2D = CreateRef<Animator>();
+					ac.Animator2D->SetEntityID(deserializedEntity.GetUUID());
 					ac.Animator2D->SetSpeed(animatorComponent["Speed"].as<float>());
 
 					auto animations = animatorComponent["Animations"];
@@ -631,9 +632,10 @@ namespace eg {
 						for (auto animation : animations)
 						{
 							//TODO: if animation uses prefab
-							Ref<Animation> anim = Animation::Create(UUID(animation.as<uint64_t>()));
-							if(anim)
+							Ref<Animation> anim = Animation::Create(UUID(animation.as<int64_t>()));
+							if (anim) {
 								ac.Animator2D->AddAnimation(anim);
+							}
 							//TODO: else load all data for animation from scene file
 						}
 					}
@@ -643,7 +645,7 @@ namespace eg {
 					{
 						for (auto transition : transitions)
 						{
-							ac.Animator2D->AddTransition(transition["From"].as<uint64_t>(), transition["To"].as<uint64_t>());
+							ac.Animator2D->AddTransition(transition["From"].as<int64_t>(), transition["To"].as<int64_t>());
 						}
 					}
 				}
@@ -654,7 +656,8 @@ namespace eg {
 					auto& rb = deserializedEntity.AddComponent<RigidBody2DComponent>();
 					rb.Type = RigidBody2dBodyTypeFromString(rigidBody2DComponent["Body Type"].as<std::string>());
 					rb.FixedRotation = rigidBody2DComponent["FixedRotation"].as<bool>();
-					rb.GravityMultiplier = rigidBody2DComponent["GravityMultiplier"].as<float>();
+					if(rigidBody2DComponent["GravityMultiplier"])
+						rb.GravityMultiplier = rigidBody2DComponent["GravityMultiplier"].as<float>();
 
 					if(rigidBody2DComponent["IsInherited"])
 						rb.isInherited = rigidBody2DComponent["IsInherited"].as<bool>();

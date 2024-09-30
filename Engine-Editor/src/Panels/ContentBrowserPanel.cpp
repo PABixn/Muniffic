@@ -20,6 +20,12 @@ namespace eg
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
 	}
 
+	void ContentBrowserPanel::Update(float ts)
+	{
+		if(m_AnimationEditorPanel && m_AnimationEditorPanel->IsAnimationEditorOpen())
+			m_AnimationEditorPanel->Update(ts);
+	}
+
 	void ContentBrowserPanel::DrawCenteredText(const std::string& text, const float& cellSize) {
 		auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
 		auto CursorX = ImGui::GetCursorPosX();
@@ -82,7 +88,7 @@ namespace eg
 
 		if (ImGui::BeginDragDropSource())
 		{
-			ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(uint64_t));
+			ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(int64_t));
 			ImGui::EndDragDropSource();
 		}
 
@@ -93,26 +99,42 @@ namespace eg
 				(*s).SetPreviewAbsoluteImagePath(std::filesystem::path(ResourceDatabase::GetResourcePath(key)));
 			}
 		}
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+			ImGui::OpenPopup("FileOptions");
+		}
+
 		DrawCenteredText(name.c_str(), thumbnailSize);
-		
+		AnimationResourceData* animData = (AnimationResourceData*)ResourceDatabase::GetResourceData(key);
 		if (ImGui::BeginPopupContextItem("FileOptions"))
 		{
 			if (ImGui::MenuItem("Delete"))
 			{
 				m_DeleteFilePanel->ShowWindow(key, type);
-				ImGui::PopStyleColor();
-				//ImGui::NextColumn();
+				ImGui::NextColumn();
 				ImGui::EndPopup();
+				ImGui::PopStyleColor();
 				ImGui::PopID();
+				
 				return;
 			}
+			if (animData && animData->Type == ResourceType::Animation) {
+				if (ImGui::MenuItem("Open animation editor panel")) {
+					m_AnimationEditorPanel = CreateScope<AnimationEditorPanel>(key);
+					ImGui::EndPopup();
+					ImGui::PopStyleColor();
+					ImGui::PopID();
+					return;
+				}
+			}
+			ImGui::EndPopup();
 		}
 		ImGui::PopStyleColor();
 		ImGui::PopID();
 	}
 
 	void ContentBrowserPanel::OnImGuiRender() {
-		if (m_DeleteFilePanel->IsShown())
+			if (m_DeleteFilePanel->IsShown())
 			m_DeleteFilePanel->OnImGuiRender();
 
 		if (m_RenameFolderPanel->IsShown())
@@ -143,7 +165,7 @@ namespace eg
 				{
 					if (ResourceUtils::CanDrop(AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory)))
 					{
-						uint64_t uuid = *(uint64_t*)payload->Data;
+						int64_t uuid = *(int64_t*)payload->Data;
 						if (ResourceDatabase::FindResourceData(uuid))
 							Commands::ExecuteMoveResourceCommand(uuid, AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory));
 						else
@@ -165,7 +187,6 @@ namespace eg
 			if (ImGui::MenuItem("Create Folder"))
 			{
 				m_CreateDirectoryPanel->ShowWindow(m_CurrentDirectory);
-				//AssetDirectory* newDirectory = new AssetDirectory(UUID(), "New Folder", m_CurrentDirectory);
 			}
 			ImGui::EndPopup();
 		}
@@ -227,7 +248,7 @@ namespace eg
 
 			if (ImGui::BeginDragDropSource())
 			{
-				ImGui::SetDragDropPayload("ContentBrowserPanel", &directory, sizeof(uint64_t));
+				ImGui::SetDragDropPayload("ContentBrowserPanel", &directory, sizeof(int64_t));
 				ImGui::Text(name.c_str());
 				ImGui::EndDragDropSource();
 			}
@@ -238,7 +259,7 @@ namespace eg
 				{
 					if (ResourceUtils::CanDrop(directory))
 					{
-						uint64_t uuid = *(uint64_t*)payload->Data;
+						int64_t uuid = *(int64_t*)payload->Data;
 
 						if (ResourceDatabase::FindResourceData(uuid))
 							Commands::ExecuteMoveResourceCommand(uuid, directory);
@@ -269,6 +290,14 @@ namespace eg
 		float size = thumbnailSize, offset = padding;
 
 		ImGui::End();
+
+		if (m_AnimationEditorPanel)
+		{
+			m_AnimationEditorPanel->OnImGuiRender();
+			if (!m_AnimationEditorPanel->IsAnimationEditorOpen())
+				m_AnimationEditorPanel = nullptr;
+		}
+
 	}
 
 }
