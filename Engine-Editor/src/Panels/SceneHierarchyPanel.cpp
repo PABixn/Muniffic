@@ -372,6 +372,7 @@ namespace eg {
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::Begin("Scene Hierarchy");
 		ImGui::PopStyleVar();
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
 
 		float paddingTop = 10.f;
 		float paddingLeft = 15.f;
@@ -386,14 +387,32 @@ namespace eg {
 		}
 		ImGui::PopStyleVar();
 		ImGui::PopStyleVar();
+
 		//search bar
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(paddingLeft, paddingTop));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 30.f);
 		ImGui::PushItemWidth(ImGui::GetWindowWidth()-rightAndLeftFreeSpace);
 		ImGui::SetCursorPosX(rightAndLeftFreeSpace/2);
 		ImGui::SetCursorPosY(40.f);
+
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		ImVec2 padd = ImGui::GetStyle().FramePadding; 
+		ImVec2 inputSize = ImVec2(300, 30);
+
 		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount()==2) {
 			Search();
+		}
+
+		bool isHovered = ImGui::IsItemHovered();
+		bool isActive = ImGui::IsItemActive();
+
+		if (isHovered || isActive) {
+			ImVec4 hoverColor = isHovered ? ImVec4(0.45f, 0.42f, 0.55f, 1.00f) : ImVec4(0.55f, 0.50f, 0.70f, 1.00f);
+			ImColor borderColor = ImColor(hoverColor);
+
+			float totalWidth = ImGui::CalcItemWidth();
+
+			drawList->AddRect(pos, ImVec2(pos.x + totalWidth, pos.y + inputSize.y + padd.y), borderColor, 30.0f, 0, 2.0f);
 		}
 		for (EntityDisplayInfo e : m_ListOfEntityDisplayed) {
 			DrawEntityNode(e);

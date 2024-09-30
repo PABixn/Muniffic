@@ -147,10 +147,33 @@ namespace eg
 		ImGui::SameLine();
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.f);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5.0f, 10.f));
+		
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 10.f));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 30.f);
+
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		ImVec2 inputSize = ImVec2(300, 30);
+		ImVec2 padd = ImGui::GetStyle().FramePadding;
+
 		static char buffer[256];
-		ImGui::InputText("##Filter", buffer, 256);
-		ImGui::PopStyleVar();
+		ImGui::InputTextWithHint("##Filter", "Search", buffer, 256);
+
+		bool isHovered = ImGui::IsItemHovered();
+		bool isActive = ImGui::IsItemActive();
+
+		if (isHovered || isActive) {
+			ImVec4 hoverColor = isHovered ? ImVec4(0.45f, 0.42f, 0.55f, 1.00f) : ImVec4(0.55f, 0.50f, 0.70f, 1.00f);
+			ImColor borderColor = ImColor(hoverColor);
+
+			float totalWidth = ImGui::CalcItemWidth();
+
+			drawList->AddRect(pos, ImVec2(pos.x + totalWidth, pos.y + inputSize.y + padd.y), borderColor, 30.0f, 0, 2.0f);
+		}
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar(3);
 
 		static float padding = 25.0f;
 		static float thumbnailSize = 100.0f;

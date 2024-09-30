@@ -21,13 +21,6 @@ Directories:
       []
     Assets:
       []
-  - UUID: 3744402267148573228
-    Name: Fonts
-    Parent: 7496928750785001193
-    Subdirectories:
-      []
-    Assets:
-      - 8429598388564989931
   - UUID: 8641830738523278996
     Name: Scripts
     Parent: 7496928750785001193
@@ -35,6 +28,13 @@ Directories:
       - 4077551578958716720
     Assets:
       []
+  - UUID: 3744402267148573228
+    Name: Fonts
+    Parent: 7496928750785001193
+    Subdirectories:
+      []
+    Assets:
+      - 8429598388564989931
   - UUID: 4621856684184097845
     Name: SpriteAtlas
     Parent: 7496928750785001193
