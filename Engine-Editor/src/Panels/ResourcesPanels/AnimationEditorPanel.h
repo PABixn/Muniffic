@@ -38,6 +38,15 @@ namespace eg {
 		void DrawExitButtons();
 		uint32_t GetFrameColor(int frame);
 	private:
+		std::pair<int, int> m_SelectedFrames = { -1, -1 };
+		std::vector<UUID> m_DeletedFrames;
+		Ref<Animation> m_Anim;
+		Ref<Texture2D> m_PlayIcon;
+		Ref<Texture2D> m_StopIcon;
+		Ref<Texture2D> m_MoveIcon;
+		Ref<Texture2D> m_MoveSelectedIcon;
+		Ref<Texture2D> m_LenghtIcon;
+		Ref<Texture2D> m_LenghtSelectedIcon;
 		bool m_ShowAnimationEditorPanel = false;
 		bool m_PlayAnimation = false;
 		bool m_ShowLongerFrame = false;
@@ -55,16 +64,5 @@ namespace eg {
 		int m_HoveredFrame = -1;
 		int m_FrameStartDuration = 1;
 		float m_ResizeOffset = 0.0f;
-		Ref<Animation> m_Anim;
-		Ref<Texture2D> m_PlayIcon;
-		Ref<Texture2D> m_StopIcon;
-		Ref<Texture2D> m_MoveIcon;
-		Ref<Texture2D> m_MoveSelectedIcon;
-		Ref<Texture2D> m_LenghtIcon;
-		Ref<Texture2D> m_LenghtSelectedIcon;
-		std::pair<int, int> m_SelectedFrames = { -1, -1 };
-		std::vector<UUID> m_DeletedFrames;
-		
-
 	};
 }
