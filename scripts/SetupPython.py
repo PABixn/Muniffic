@@ -45,13 +45,13 @@ class PythonConfiguration:
     def __InstallPackage(cls, installName, packageName):
         permissionGranted = False
         while not permissionGranted:
-            reply = str(input("Would you like to install Python package '{0:s}'? [Y/N]: ".format(packageName))).lower().strip()[:1]
+            reply = str(input("Would you like to install Python package '{0:s}'? [Y/N]: ".format(installName))).lower().strip()[:1]
             if (reply == 'n' or reply == 'N'):
                 return False
             permissionGranted = (reply == 'y' or reply == 'Y')
         
-        print(f"Installing {packageName} module...")
-        subprocess.check_call(['python', '-m', 'pip', 'install', packageName])
+        print(f"Installing {installName} module...")
+        subprocess.check_call(['python', '-m', 'pip', 'install', installName])
         return cls.__ValidatePackage(installName, packageName)
 
 if __name__ == "__main__":
