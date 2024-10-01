@@ -336,7 +336,7 @@ namespace eg
 		m_ImagePanel = CreateRef<ImagePanel>();
 		m_ListOfEntityDisplayed = std::vector<EntityDisplayInfo>();
 		Search();
-		m_PuzzleIcon = Texture2D::Create("resources/icons/hierarchyPanel/puzzle_rotated.png");
+		m_PuzzleIcon = Texture2D::Create("resources/icons/hierarchyPanel/puzzle.png");
 	}
 
 	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity)
