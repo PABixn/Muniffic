@@ -114,6 +114,11 @@ Resources:
     ResourceName: Quest.Fire
     Extension: .cs
     IsEnabled: true
+  - UUID: 6462348398565358084
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
   - UUID: 3575382580301741380
     ParentDirectory: 4766252472221097665
     ResourceName: Quest.EntityTypeComponent
@@ -172,6 +177,11 @@ Resources:
   - UUID: 1248221058066509864
     ParentDirectory: 4766252472221097665
     ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+  - UUID: 3374694820642742376
+    ParentDirectory: 4766252472221097665
+    ResourceName: Quest.Portal
     Extension: .cs
     IsEnabled: true
   - UUID: 2871114278602628459

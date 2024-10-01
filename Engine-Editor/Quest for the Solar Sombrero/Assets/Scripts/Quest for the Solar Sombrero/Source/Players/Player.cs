@@ -38,7 +38,7 @@ namespace Quest
         public float CirclePlayerSpeedMultiplier { get; private set; } = 1;
         public float TrianglePlayerSpeedMultiplier { get; private set; } = 1.5f;
 
-        public float BasePlayerJumpForceMultiplier { get; private set; } = 0.5f;
+        public float BasePlayerJumpForceMultiplier { get; private set; } = 0.6f;
         public float SquarePlayerJumpForceMultiplier { get; private set; } = 0;
         public float CirclePlayerJumpForceMultiplier { get; private set; } = 2.0f;
         public float TrianglePlayerJumpForceMultiplier { get; private set; } = 1;
