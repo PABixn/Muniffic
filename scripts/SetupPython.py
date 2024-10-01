@@ -7,9 +7,20 @@ class PythonConfiguration:
     def Validate(cls):
         if not cls.__ValidatePython():
             return # cannot validate further
+        
+        packageNames = {
+            "requests":"requests", 
+            "openai":"openai", 
+            "typing":"typing" ,
+            "pyttsx3":"pyttsx3", 
+            "pyaudio":"pyaudio",
+            "SpeechRecognition":"speech_recognition", 
+            "python-dotenv":"dotenv"
+            }
 
-        for packageName in ["requests", "openai", "typing", "SpeechRecognition", "pyttsx3", "pyaudio", "python-dotenv"]:
-            if not cls.__ValidatePackage(packageName):
+        for installName, packageName in packageNames.items():
+            print(installName)
+            if not cls.__ValidatePackage(installName, packageName):
                 return # cannot validate further
 
     @classmethod
@@ -22,15 +33,16 @@ class PythonConfiguration:
                     versionMajor, versionMinor))
                 return False
             return True
+       
 
     @classmethod
-    def __ValidatePackage(cls, packageName):
+    def __ValidatePackage(cls, installName, packageName):
         if importlib_util.find_spec(packageName) is None:
-            return cls.__InstallPackage(packageName)
+            return cls.__InstallPackage(installName, packageName)
         return True
 
     @classmethod
-    def __InstallPackage(cls, packageName):
+    def __InstallPackage(cls, installName, packageName):
         permissionGranted = False
         while not permissionGranted:
             reply = str(input("Would you like to install Python package '{0:s}'? [Y/N]: ".format(packageName))).lower().strip()[:1]
@@ -40,8 +52,7 @@ class PythonConfiguration:
         
         print(f"Installing {packageName} module...")
         subprocess.check_call(['python', '-m', 'pip', 'install', packageName])
-
-       # return cls.__ValidatePackage(packageName)
+        return cls.__ValidatePackage(installName, packageName)
 
 if __name__ == "__main__":
     PythonConfiguration.Validate()
