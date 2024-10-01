@@ -1,55 +1,55 @@
 #pragma once
 #include "Engine.h"
-#include "Panels/UnsavedChangesPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Engine/Renderer/EditorCamera.h"
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/AddResourcePanel.h"
 #include "Panels/ProjectDirectoryPanel.h"
 #include "Panels/ConsolePanel.h"
+#include "Panels/ResourcesPanels/AnimationEditorPanel.h"
 #include "Panels/WelcomingPanel.h"
 #include "Panels/NameNewProjectPanel.h"
+#include "Panels/AssistantPanel.h"
 
-
-namespace eg {
+namespace eg
+{
 	class EditorLayer : public Layer
 	{
 	public:
 		EditorLayer();
-		virtual~EditorLayer() = default;
+		virtual ~EditorLayer() = default;
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 
 		virtual void OnUpdate(Timestep ts) override;
 		virtual void OnImGuiRender() override;
-		virtual void OnEvent(Event& e) override;
+		virtual void OnEvent(Event &e) override;
 
+		const std::string CompileCustomScripts(); 
 		SceneHierarchyPanel* GetSceneHierarchyPanel() { return &m_SceneHierarchyPanel; }
 		Ref<ContentBrowserPanel> GetContentBrowserPanel() { return m_ContentBrowserPanel; }
 		UUID GetCurrentDirectoryUUID() { m_ContentBrowserPanel->GetCurrentDirectoryUUID(); }
-		const std::string CompileCustomScripts(); 
-		//bool CompileCustomScripts(const std::filesystem::path& path, const std::string& projectName); //returns true if successful, path to where the cmakelists.txt are (path should end with Assets/Scripts)
-
+		void SetIsWindowTryingToClose(bool value) { IsWindowTryingToClose = value; } // Helper for unsaved changes popup
 	private:
-		bool OnKeyPressed(KeyPressedEvent& e);
-		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+		bool OnKeyPressed(KeyPressedEvent &e);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent &e);
 		void OnOverlayRender();
 
 		void NewScene();
 		void OpenScene();
-		void OpenScene(const std::filesystem::path& path);
+		void OpenScene(const std::filesystem::path &path);
 		void SaveAs();
 		void Save();
 
-		bool CreateCmakelists(const std::filesystem::path path); // path to where the .mnproj is (assumes the Assets/Scripts is a subdirectory)
+		bool CreateCmakelists(const std::filesystem::path path); 
 
 		void NewProject();
 		bool OpenProject();
-		void OpenProject(const std::filesystem::path& path);
+		void OpenProject(const std::filesystem::path &path);
 		void SaveProjectAs();
 		void SaveProject();
 
-		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
+		void SerializeScene(Ref<Scene> scene, const std::filesystem::path &path);
 
 		void OnScenePlay();
 		void OnSceneStop();
@@ -60,17 +60,20 @@ namespace eg {
 
 		void CloseAddResourcePanel();
 
-		//UI Panels
+		// UI Panels
 		void UI_Toolbar();
+
 	private:
-		Ref<Project> m_CurrentProject;
-		std::filesystem::path m_CustomScriptsDirectory; //absolute
 		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;
+		friend class AddResourcePanel;
+	private:
+		Ref<Project> m_CurrentProject;
+		std::filesystem::path m_CustomScriptsDirectory; // absolute
 		OrthographicCameraController m_Camera;
-		//Temp
+		// Temp
 		Ref<Shader> m_Shader;
-		glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+		glm::vec4 m_SquareColor = {0.2f, 0.3f, 0.8f, 1.0f};
 		Ref<VertexArray> m_VA;
 		Ref<Texture2D> m_Texture;
 		Ref<Texture2D> m_IconPlay, m_IconStop, m_IconPause, m_IconSimulate, m_IconStep;
@@ -92,11 +95,11 @@ namespace eg {
 
 		struct ProfileResult
 		{
-			const char* Name;
+			const char *Name;
 			float Time;
 		};
 
-		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
 		glm::vec2 m_ViewportBounds[2];
 
 		bool m_ViewportFocused = false;
@@ -110,24 +113,8 @@ namespace eg {
 		int m_GizmoType = -1;
 
 		bool m_ShowPhysicsColliders = false;
-		bool m_ShowAxis = true;
-		bool m_ShowGrid = true;
-
-		//Time for fixedUpdate loop
-		std::chrono::steady_clock::time_point oldTime = std::chrono::high_resolution_clock::now();;
-		// Panels
-		SceneHierarchyPanel m_SceneHierarchyPanel;
-		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
-		Scope<AddResourcePanel> m_AddResourcePanel;
-		Scope<WelcomingPanel> m_WelcomePanel;
-		Scope<NameNewProjectPanel> m_NameNewProjectPanel;
-		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel;
-		/*Scope<DeleteFilePanel> m_DeleteFilePanel;
-		RenameFolderPanel* m_RenameFolderPanel;
-		DeleteDirectoryPanel* m_DeleteDirectoryPanel;
-		RenameResourcePanel* m_RenameResourcePanel;
-		CreateDirectoryPanel* m_CreateDirectoryPanel;*/
-		Scope<ConsolePanel> m_ConsolePanel;
+		bool m_ShowAxis = false;
+		bool m_ShowGrid = false;
 
 		enum class SceneState
 		{
@@ -149,6 +136,22 @@ namespace eg {
 		ImFont* m_PoppinsRegularFont;
 		ImFont* m_PoppinsLightFont;
 		ImFont* m_PoppinsMediumFont;
+
+		//Time for fixedUpdate loop
+		std::chrono::steady_clock::time_point oldTime = std::chrono::high_resolution_clock::now();;
+		// Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
+		Ref<ContentBrowserPanel> m_ContentBrowserPanel = nullptr;
+		Scope<AddResourcePanel> m_AddResourcePanel = nullptr;
+		Scope<WelcomingPanel> m_WelcomePanel = nullptr;
+		Scope<NameNewProjectPanel> m_NameNewProjectPanel = nullptr;
+		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel = nullptr;
+		Scope<ConsolePanel> m_ConsolePanel = nullptr;
+		Scope<AssistantPanel> m_AssistantPanel = nullptr;
+
+		// Popups
+		bool IsWindowTryingToClose = false; // Helper for unsaved changes
+		
 	};
 
 }

@@ -9,7 +9,7 @@
 namespace eg
 {
 	void SetIsSaved(bool val);
-	bool GetIsSaved();
+	bool IsProjectSaved();
 	class Commands
 	{
 	public:
@@ -459,7 +459,7 @@ namespace eg
 			void Execute(CommandArgs args) override 
 			{
 				if(!m_SelectionContext.HasComponent<T>())
-					m_SelectionContext.AddComponent<T>();
+					m_SelectionContext.AddComponent<T>(args.m_Entity.GetUUID());
 			}
 
 			void Undo() override
@@ -934,7 +934,7 @@ namespace eg
 			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
 				Command* command = new ChangeValueCommand<T>(function, value, previousValue, label);
 			else {
-				if (GetIsSaved()) {
+				if (IsProjectSaved()) {
 					SetIsSaved(false);
 				}
 			}
@@ -949,7 +949,7 @@ namespace eg
 			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
 				Command* command = new ChangeRawValueCommand<T>(value_ptr, previousValue, label);
 			else {
-				if (GetIsSaved()) {
+				if (IsProjectSaved()) {
 					SetIsSaved(false);
 				}
 			}
@@ -978,7 +978,7 @@ namespace eg
 			if (bypass || previousCommand == nullptr || previousCommand->GetLabel() != label)
 				Command* command = new ChangeRefValueCommand<T>(value_ptr, previous_value_ptr, label);
 			else {
-				if (GetIsSaved()) {
+				if (IsProjectSaved()) {
 					SetIsSaved(false);
 				}
 			}

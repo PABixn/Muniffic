@@ -82,6 +82,8 @@ namespace eg
 
 		AssetDirectory* animations = new AssetDirectory(UUID(), "Animations", rootUUID);
 
+		AssetDirectory* frames = new AssetDirectory(UUID(), "Frames", rootUUID);
+
 		AssetDirectory* fonts = new AssetDirectory(UUID(), "Fonts", rootUUID);
 
 		AssetDirectory* spriteAtlas = new AssetDirectory(UUID(), "SpriteAtlas", rootUUID);

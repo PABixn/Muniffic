@@ -26,9 +26,11 @@ namespace eg
 		SubTextureResourceData *subTexData = (SubTextureResourceData*)ResourceDatabase::GetResourceData(id);
 
 		Ref<SubTexture2D> subTex = CreateRef<SubTexture2D>();
-		Ref<Texture2D> texture = Texture2D::Create(subTexData->Texture);
+		Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(subTexData->Texture);
 		if (!texture)
 			return nullptr;
+
+		subTex->m_Id = id;
 		subTex->m_TexCoords[0] = subTexData->TexCoords[0];
 		subTex->m_TexCoords[1] = subTexData->TexCoords[1];
 		subTex->m_TexCoords[2] = subTexData->TexCoords[2];

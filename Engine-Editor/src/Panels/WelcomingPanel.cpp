@@ -46,7 +46,6 @@ namespace eg
 		Ref<Texture2D> directoryIcon = m_DirectoryIcon;
 		Ref<Texture2D> newProjectIcon = m_NewProjectIcon;
 		Ref<Texture2D> deleteProjectIcon = m_DeleteProjectIcon;
-		//ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		
 		if (ImGui::Button("Open an existing project", { ImGui::GetWindowWidth() - 20.0f, 32.0f}))
 		{

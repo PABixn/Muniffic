@@ -27,16 +27,16 @@ namespace eg {
 		void LoadIcons();
 		bool IsResourcePanelOpen() { return m_showResourcePanel; }
 	private:
-		Ref<ImagePanel> m_ImagePanel;
-		Ref<AnimationPanel> m_AnimationPanel;
-		Ref<Texture2D> m_AnimationIcon;
-		Ref<Texture2D> m_ShaderIcon;
-		Ref<Texture2D> m_FontIcon;
-		Ref<Texture2D> m_TextIcon;
-		Ref<Texture2D> m_ImageIcon;
-		Ref<Texture2D> m_ScriptIcon;
-		Ref<Texture2D> m_NativeScriptIcon;
-		Ref<Texture2D> m_CustomIcon;
+		Ref<ImagePanel> m_ImagePanel = nullptr;
+		Ref<AnimationPanel> m_AnimationPanel = nullptr;
+		Ref<Texture2D> m_AnimationIcon = nullptr;
+		Ref<Texture2D> m_ShaderIcon = nullptr;
+		Ref<Texture2D> m_FontIcon = nullptr;
+		Ref<Texture2D> m_TextIcon = nullptr;
+		Ref<Texture2D> m_ImageIcon = nullptr;
+		Ref<Texture2D> m_ScriptIcon = nullptr;
+		Ref<Texture2D> m_NativeScriptIcon = nullptr;
+		Ref<Texture2D> m_CustomIcon = nullptr;
 
 		bool m_showResourcePanel = false;
 		std::filesystem::path m_ResourcePath;
