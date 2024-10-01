@@ -208,7 +208,10 @@ namespace eg
 		}
 
 		if (ResourceDatabase::GetFontResourceDataCache().size() > 0)
+		{
 			Font::SetDefaultFont(ResourceDatabase::GetFontResourceDataCache().begin()->first);
+			ResourceDatabase::LoadRuntimeResource(Font::GetDefaultFontUUID(), ResourceType::Font);
+		}
 		else
 			Font::LoadFont("assets/fonts/opensans/OpenSans-Regular.ttf");
 

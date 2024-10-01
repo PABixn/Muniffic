@@ -4,7 +4,7 @@ Resources:
     ResourceName: Zrzut ekranu 2024-04-23 142325
     Extension: .anim
     FrameRate: 25
-    FrameCount: 270
+    FrameCount: 0
     Loop: true
     Frames:
       - 8447279477166173551

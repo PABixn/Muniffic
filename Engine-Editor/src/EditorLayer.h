@@ -9,6 +9,7 @@
 #include "Panels/ResourcesPanels/AnimationEditorPanel.h"
 #include "Panels/WelcomingPanel.h"
 #include "Panels/NameNewProjectPanel.h"
+#include "Panels/AssistantPanel.h"
 
 namespace eg
 {
@@ -112,8 +113,8 @@ namespace eg
 		int m_GizmoType = -1;
 
 		bool m_ShowPhysicsColliders = false;
-		bool m_ShowAxis = true;
-		bool m_ShowGrid = true;
+		bool m_ShowAxis = false;
+		bool m_ShowGrid = false;
 
 		enum class SceneState
 		{
@@ -133,6 +134,7 @@ namespace eg
 		Scope<NameNewProjectPanel> m_NameNewProjectPanel = nullptr;
 		Ref<ProjectDirectoryPanel> m_ProjectDirectoryPanel = nullptr;
 		Scope<ConsolePanel> m_ConsolePanel = nullptr;
+		Scope<AssistantPanel> m_AssistantPanel = nullptr;
 
 		// Popups
 		bool IsWindowTryingToClose = false; // Helper for unsaved changes

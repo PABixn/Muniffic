@@ -289,12 +289,6 @@ namespace eg
 
 		float size = thumbnailSize, offset = padding;
 
-		if (ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512))
-			Commands::ExecuteRawValueCommand(&thumbnailSize, size, std::string("ContentBrowserPanel-Thumbnail Size"));
-
-		if (ImGui::SliderFloat("Padding", &padding, 0, 32))
-			Commands::ExecuteRawValueCommand(&padding, offset, std::string("ContentBrowserPanel-Padding"));
-
 		ImGui::End();
 
 		if (m_AnimationEditorPanel)

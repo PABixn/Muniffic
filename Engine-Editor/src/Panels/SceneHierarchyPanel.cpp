@@ -18,6 +18,7 @@
 #include "shellapi.h"
 #include "functional"
 #include "ConsolePanel.h"
+#include "../EditorActions.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -329,7 +330,9 @@ namespace eg
 		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "TextRen.png"));
 		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Animator.png"));
 		m_Context = scene;
+		EditorActions::SetScene(scene);
 		m_SelectionContext = {};
+		EditorActions::SetSelectionContext(&m_SelectionContext);
 		m_ImagePanel = CreateRef<ImagePanel>();
 		m_ListOfEntityDisplayed = std::vector<EntityDisplayInfo>();
 		Search();
@@ -417,8 +420,8 @@ namespace eg
 		{
 			Search();
 		}
-		for (EntityDisplayInfo e : m_ListOfEntityDisplayed)
-		{
+		Search();
+		for (EntityDisplayInfo e : m_ListOfEntityDisplayed) {
 			DrawEntityNode(e);
 		}
 		if (m_FirstDrawAfterSearch)
@@ -603,7 +606,17 @@ namespace eg
 		}
 
 		if (ImGui::IsItemClicked())
+		{
 			SetSelectedEntity(entity);
+			if (ImGui::FindWindowByName("Properties") != NULL)
+			{
+				if (ImGui::FindWindowByName("Properties")->DockIsActive)
+				{
+					ImGuiTabBar* tabbar = ImGui::FindWindowByName("Properties")->DockNode->TabBar;
+					ImGui::TabBarQueueFocus(tabbar, ImGui::TabBarFindTabByID(tabbar, ImGui::FindWindowByName("Properties")->TabId));
+				}
+			}
+		}
 
 		if (ImGui::BeginPopupContextItem())
 		{
@@ -697,7 +710,7 @@ namespace eg
 							Commands::ExecuteManageComponentInheritanceCommand<T>(entity, context, Commands::InheritanceCommandType::COPY_COMPONENT_AND_VALUES);
 					}
 
-					if (entity.GetParent().has_value())
+					if (entity.GetParent().has_value())	
 					{
 						if (ImGui::MenuItem(entity.GetInheritableComponent<T>()->isInherited == false ? "Inherit from parent" : "Stop inheriting from parent"))
 							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInherited, true);
@@ -748,7 +761,9 @@ namespace eg
 			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer), ImGuiInputTextFlags_Wrapped))
 			{
+				std::string name = tag;
 				tag = std::string(buffer);
+				Commands::ExecuteRawValueCommand<std::string>(&tag, name, "TagComponent-Tag");
 			}
 			ImGui::PopItemWidth();
 			ImGui::PopStyleVar();
@@ -918,6 +933,7 @@ namespace eg
 					if (del)
 					{
 						component.Scripts.erase(std::find(component.Scripts.begin(), component.Scripts.end(), scriptUUID));
+						AssetDirectoryManager::removeAsset(ResourceDatabase::GetResourceParentDirectory(scriptUUID), scriptUUID);
 
 						if (open)
 						{

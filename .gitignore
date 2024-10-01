@@ -50,6 +50,9 @@ Engine/vendor/VulkanSDK
 Engine-Editor/assets/cache/
 scripts/__pycache__/
 
+#Python
+Engine-Editor/.env
+
 # IDE configurations
 .idea/
 .vscode/

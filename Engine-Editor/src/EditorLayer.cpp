@@ -14,6 +14,7 @@
 #include "ImGuizmo.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <Engine/Assistant/AssistantManager.h>
 #include "Engine/Project/ProjectSerializer.h"
 #include "Engine/Project/RecentProjectSerializer.h"
 #include "Engine/Project/ScriptSerializer.h"
@@ -183,8 +184,6 @@ namespace eg
 			dockspace_flags |= ImGuiDockNodeFlags_NoSplit;
 		}*/
 
-		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-		// because it would be confusing to have two docking targets within each others.
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 		if (opt_fullscreen)
 		{
@@ -198,15 +197,9 @@ namespace eg
 			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 		}
 
-		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ImGuiWindowFlags_NoBackground;
 
-		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-		// all active windows docked into it will lose their parent and become undocked.
-		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
 		ImGui::PopStyleVar();
@@ -325,6 +318,7 @@ namespace eg
 			m_ContentBrowserPanel->OnImGuiRender();
 			m_ProjectDirectoryPanel->OnImGuiRender();
 			m_ConsolePanel->OnImGuiRender();
+			m_AssistantPanel->OnImGuiRender();
 
 			if (IsWindowTryingToClose) {
 				if (!IsProjectSaved()) {
@@ -505,6 +499,27 @@ namespace eg
 			}
 		}
 
+		if (ImGui::BeginPopupModal("No Camera", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration))
+		{
+			ImVec2 window_size = ImGui::GetWindowSize();
+			ImVec2 screen_center = ImGui::GetMainViewport()->GetCenter();
+			ImGui::SetWindowPos(ImVec2(screen_center.x - window_size.x * 0.5f, screen_center.y - window_size.y * 0.5f));
+
+			ImGui::Text("No entity with Camera Component was found in current scene. \n At least one must be present.");
+
+			float window_width = ImGui::GetWindowSize().x;
+			float button_width = 120.0f;
+			ImGui::SetCursorPosX((window_width - button_width) * 0.5f);
+
+			if (ImGui::Button("OK", ImVec2(button_width, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+
+
 		if (hasSimulateButton)
 		{
 			if (hasPlayButton)
@@ -632,11 +647,7 @@ namespace eg
 		case Key::Q:
 		{
 			if (!ImGuizmo::IsUsing())
-			{
-				if (!ImGuizmo::IsUsing())
-					m_GizmoType = -1;
-				break;
-			}
+				m_GizmoType = -1;
 			break;
 		}
 		case Key::W:
@@ -962,6 +973,7 @@ namespace eg
 			m_ProjectDirectoryPanel = CreateRef<ProjectDirectoryPanel>();
 			m_ProjectDirectoryPanel->SetContentBrowserPanel(m_ContentBrowserPanel);
 			m_AddResourcePanel = CreateScope<AddResourcePanel>();
+			m_AssistantPanel = CreateScope<AssistantPanel>();
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 			m_ContentBrowserPanel->InitPanels();
 			Application::Get().ChangeNameWithCurrentProject(true);
@@ -994,6 +1006,13 @@ namespace eg
 
 	void EditorLayer::OnScenePlay()
 	{
+		if (m_ActiveScene->GetEntitiesWith<CameraComponent>().empty())
+		{
+			ImGui::OpenPopup("No Camera");
+
+			return;
+		}
+
 		if (!m_RuntimeScene)
 			m_RuntimeScene = CreateRef<Scene>();
 		if (m_SceneState == SceneState::Simulate)

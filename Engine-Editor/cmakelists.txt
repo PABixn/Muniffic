@@ -38,6 +38,7 @@ target_include_directories(Engine-Editor PRIVATE
 # Link libraries
 target_link_libraries(Engine-Editor PRIVATE Engine)
 target_link_libraries(Engine-Editor PRIVATE ImGui)
+target_link_directories(Engine-Editor PUBLIC ${LibraryDir_python})
 
 # Muniffic logo icon directory
 target_compile_definitions(Engine-Editor PRIVATE LOGO_DIRECTORY=\"${CMAKE_CURRENT_BINARY_DIR}/resources/icons/EditorIcon/logo.png\")
