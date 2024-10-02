@@ -821,7 +821,6 @@ namespace eg
 
         public bool CollidesWithEntity(long entityID)
         {
-
             return InternalCalls.CircleCollider2DComponent_CollidesWith(Entity.ID, entityID);
         }
 
