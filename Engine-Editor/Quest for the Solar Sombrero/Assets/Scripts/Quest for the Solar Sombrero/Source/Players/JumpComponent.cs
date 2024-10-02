@@ -32,6 +32,7 @@ namespace Quest
         public void OnUpdate(float ts)
         {
             if(rigidBody == null || collider == null || !Enabled) return;
+            
             if (isGrounded())
             {
                 coyoteTimer = coyoteTime;

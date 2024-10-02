@@ -12,6 +12,8 @@ namespace eg
 		UUID entityA = contact->GetFixtureA()->GetUserData().pointer;
 		UUID entityB = contact->GetFixtureB()->GetUserData().pointer;
 
+		//if (entityA != 8642503828169504136 && entityB != 8642503828169504136) return;
+
 		collision.entityA = entityA;
 		collision.entityB = entityB;
 

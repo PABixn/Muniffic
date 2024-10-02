@@ -20,13 +20,6 @@ Resources:
     Width: 88
     Height: 103
     Channels: 4
-  - UUID: 9079340428750126981
-    ParentDirectory: 2253647538745825584
-    ResourceName: backgroundFinal
-    Extension: .png
-    Width: 1920
-    Height: 1080
-    Channels: 3
   - UUID: 3762114415574018837
     ParentDirectory: 3706893911192476344
     ResourceName: shield
@@ -34,3 +27,10 @@ Resources:
     Width: 102
     Height: 92
     Channels: 4
+  - UUID: 9079340428750126981
+    ParentDirectory: 2253647538745825584
+    ResourceName: backgroundFinal
+    Extension: .png
+    Width: 1920
+    Height: 1080
+    Channels: 3

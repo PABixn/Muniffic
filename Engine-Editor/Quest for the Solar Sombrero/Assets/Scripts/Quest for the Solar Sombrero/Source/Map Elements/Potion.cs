@@ -21,7 +21,7 @@ namespace Quest
         {
         }
 
-        public void OnCollision(Collision2D collision)
+        public void OnCollisionEnter(Collision2D collision)
         {
             if (collision.otherEntity == null || collision.otherEntity.name != "Player")
             {
