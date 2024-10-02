@@ -174,6 +174,7 @@ namespace eg {
 	void AnimationPanel::SaveData()
 	{
 		m_ResourceData->Frames.clear();
+		m_ResourceData->Frames.reserve(m_PreviewData->GetFrameCount());
 
 		m_TextureUUID = ResourceDatabase::AddResource(m_OriginalResourcePath, (void*)m_TextureData, ResourceType::Image);
 		for (int i = 0; i < m_PreviewData->GetFrameCount(); i++)

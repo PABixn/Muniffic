@@ -1574,7 +1574,7 @@ namespace eg
 							{
 								index = std::find((*animations).begin(), (*animations).end(), animation) - (*animations).begin();
 							}
-							if (ShowAnimationPreview && animation->GetFrame()->GetSubTexture())
+                            if (ShowAnimationPreview && animation->GetFrameCount() > 0 && animation->GetFrame()->GetSubTexture())
 							{
 								ImGui::EndColumns();
 							}
