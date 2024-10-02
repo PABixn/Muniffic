@@ -118,8 +118,8 @@ namespace eg {
 	{
 		Entity entity = { m_Registry.create(), this };
 		entity.AddComponent<IDComponent>(uuid);
-		entity.AddComponent<TransformComponent>();
-		auto& tag = entity.AddComponent<TagComponent>();
+		entity.AddComponent<TransformComponent>(uuid);
+		auto& tag = entity.AddComponent<TagComponent>(uuid);
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		m_EntityMap[uuid] = (entt::entity)entity;
@@ -384,12 +384,15 @@ namespace eg {
 			}
 			 
 			//Set Animations
+			
 			{
-				auto group = m_Registry.view<SpriteRendererSTComponent, AnimatorComponent>();
+				auto group = m_Registry.view<TransformComponent, AnimatorComponent>();
 				for (auto entity : group)
 				{
-					auto [sprite, animator] = group.get<SpriteRendererSTComponent, AnimatorComponent>(entity);
-					sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame();
+					auto [transform, animator ] = group.get<TransformComponent, AnimatorComponent>(entity);
+					Ref<SubTexture2D> texture = animator.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
+
+					Renderer2D::DrawQuad(transform.GetTransform(), texture, (int)entity);
 				}
 			}
 
@@ -497,15 +500,19 @@ namespace eg {
 			}
 		}
 
-		////Set Animations
-		//{
-		//	auto group = m_Registry.group<SpriteRendererSTComponent, AnimatorComponent>();
-		//	for (auto entity : group)
-		//	{
-		//		auto [sprite, animator] = group.get<SpriteRendererSTComponent, AnimatorComponent>(entity);
-		//		sprite.SubTexture = animator.Animator2D->GetCurrentAnimation()->GetFrame();
-		//	}
-		//}
+		//Draw Animations
+		{
+			auto group = m_Registry.group<TransformComponent, AnimatorComponent>();
+			for (auto entity : group)
+			{
+				auto [transform, animator] = group.get<TransformComponent, AnimatorComponent>(entity);
+				if(animator.Animator2D->GetCurrentAnimation() == nullptr || animator.Animator2D->GetCurrentAnimation()->GetFrameCount() == 0)
+					continue;
+				Ref<SubTexture2D> texture = animator.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
+
+				Renderer2D::DrawQuad(transform.GetTransform(), texture, (int)entity);
+			}
+		}
 
 		// Draw Subtexture sprites
 		{
@@ -513,8 +520,11 @@ namespace eg {
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererSTComponent>(entity);
-
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				bool canBeDisplayed = sprite.SubTexture && sprite.SubTexture->GetTexture() && sprite.SubTexture->GetTexture()->IsLoaded();
+				if(canBeDisplayed)
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				else
+					Renderer2D::DrawQuad(transform.GetTransform(), { 1.0f, 0.0f, 1.0f, 1.0f }, (int)entity);
 			}
 		}
 

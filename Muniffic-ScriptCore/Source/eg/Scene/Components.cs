@@ -647,13 +647,13 @@ namespace eg
 
         public bool isSensor
         {
-            get => InternalCalls.BoxCollider2DComponent_IsSensor((long)Entity.ID);
-            set => InternalCalls.BoxCollider2DComponent_SetSensor((long)Entity.ID, ref value);
+            get => InternalCalls.BoxCollider2DComponent_IsSensor(Entity.ID);
+            set => InternalCalls.BoxCollider2DComponent_SetSensor(Entity.ID, ref value);
         }
 
         public bool CollidesWith(Entity other)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWith((long)Entity.ID, (long)other.ID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, other.ID);
         }
 
         public bool CollidesWithBox(Entity other)
@@ -709,7 +709,7 @@ namespace eg
 
         public bool CollidesWith(long entityID)
         {
-            return InternalCalls.BoxCollider2DComponent_CollidesWith((long)Entity.ID, entityID);
+            return InternalCalls.BoxCollider2DComponent_CollidesWith(Entity.ID, entityID);
         }
 
         bool CollidesWithEntitiesSide(Entity entity, Side side)
@@ -785,13 +785,13 @@ namespace eg
         }
         public bool isSensor
         {
-            get => InternalCalls.CircleCollider2DComponent_IsSensor((long)Entity.ID);
-            set => InternalCalls.CircleCollider2DComponent_SetSensor((long)Entity.ID, ref value);
+            get => InternalCalls.CircleCollider2DComponent_IsSensor(Entity.ID);
+            set => InternalCalls.CircleCollider2DComponent_SetSensor(Entity.ID, ref value);
         }
 
         public bool CollidesWith(Entity other)
         {
-            return InternalCalls.CircleCollider2DComponent_CollidesWith((long)Entity.ID, (long)other.ID);
+            return InternalCalls.CircleCollider2DComponent_CollidesWith(Entity.ID, other.ID);
         }
 
         public bool CollidesWithCircle(Entity other)
@@ -821,8 +821,7 @@ namespace eg
 
         public bool CollidesWithEntity(long entityID)
         {
-
-            return InternalCalls.CircleCollider2DComponent_CollidesWith((long)Entity.ID, (long)entityID);
+            return InternalCalls.CircleCollider2DComponent_CollidesWith(Entity.ID, entityID);
         }
 
         public bool CollidesWithEntity(string entityName)

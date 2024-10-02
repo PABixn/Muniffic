@@ -1,0 +1,15 @@
+C:\Muniffic\doc\JSONGenerator\bin\Debug\net8.0\JSONGenerator.exe
+C:\Muniffic\doc\JSONGenerator\bin\Debug\net8.0\JSONGenerator.deps.json
+C:\Muniffic\doc\JSONGenerator\bin\Debug\net8.0\JSONGenerator.runtimeconfig.json
+C:\Muniffic\doc\JSONGenerator\bin\Debug\net8.0\JSONGenerator.dll
+C:\Muniffic\doc\JSONGenerator\bin\Debug\net8.0\JSONGenerator.pdb
+C:\Muniffic\doc\JSONGenerator\obj\Debug\net8.0\JSONGenerator.GeneratedMSBuildEditorConfig.editorconfig
+C:\Muniffic\doc\JSONGenerator\obj\Debug\net8.0\JSONGenerator.AssemblyInfoInputs.cache
+C:\Muniffic\doc\JSONGenerator\obj\Debug\net8.0\JSONGenerator.AssemblyInfo.cs
+C:\Muniffic\doc\JSONGenerator\obj\Debug\net8.0\JSONGenerator.csproj.CoreCompileInputs.cache
+C:\Muniffic\doc\JSONGenerator\obj\Debug\net8.0\JSONGenerator.sourcelink.json
+C:\Muniffic\doc\JSONGenerator\obj\Debug\net8.0\JSONGenerator.dll
+C:\Muniffic\doc\JSONGenerator\obj\Debug\net8.0\refint\JSONGenerator.dll
+C:\Muniffic\doc\JSONGenerator\obj\Debug\net8.0\JSONGenerator.pdb
+C:\Muniffic\doc\JSONGenerator\obj\Debug\net8.0\JSONGenerator.genruntimeconfig.cache
+C:\Muniffic\doc\JSONGenerator\obj\Debug\net8.0\ref\JSONGenerator.dll
