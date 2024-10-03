@@ -8,15 +8,15 @@
 namespace eg {
 	ProjectDirectoryPanel::ProjectDirectoryPanel() {
 	}
-	uint64_t getPathID(const std::string path) {
-		static std::map<std::string, uint64_t> paths;
+	int64_t getPathID(const std::string path) {
+		static std::map<std::string, int64_t> paths;
 		try
 		{
 			return paths.at(path);
 		}
 		catch (const std::out_of_range&)
 		{
-			uint64_t id = paths.size() + 69;
+			int64_t id = paths.size() + 69;
 			paths.insert({ path, id });
 			return id;
 		}

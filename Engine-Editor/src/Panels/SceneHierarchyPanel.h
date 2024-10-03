@@ -20,8 +20,8 @@ namespace eg {
 	};
 	enum searchRes
 	{
-		ChildSearched, 
-		thisSearched, 
+		ChildSearched,
+		thisSearched,
 		parentSearched,
 		bothSearched
 	};

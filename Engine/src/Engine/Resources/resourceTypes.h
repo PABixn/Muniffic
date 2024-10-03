@@ -4,12 +4,14 @@
 #include <filesystem>
 #include "Engine/Project/Project.h"
 #include "Engine/Core/UUID.h"
+#include "Engine/Scripting/ScriptingTypes.h"
 
 namespace eg
 {
 	enum class ResourceType
 	{
 		Animation,
+		Frame,
 		Audio,
 		SpriteAtlas,
 		SubTexture,
@@ -68,15 +70,31 @@ namespace eg
 		std::vector<UUID> Frames;
 	};
 
+	struct FrameResourceData : public ResourceData
+	{
+		UUID SubTexture;
+		int Duration;
+		std::string ClassName;
+		std::string FunctionCallName;
+	};
+
 	struct SubTextureResourceData : public ResourceData
 	{
 		glm::vec2 TexCoords[4];
 		UUID Texture;
 	};
 
+	struct MethodResourceData
+	{
+		std::string ClassName;
+		std::string MethodName;
+		std::vector<std::pair<std::string, ScriptFieldType>> Parameters;
+	};
+
 	struct ScriptResourceData : public ResourceData
 	{
 		bool IsEnabled = true;
+		std::unordered_map<std::string, MethodResourceData> Methods;
 	};
 
 	struct FontResourceData : public ResourceData

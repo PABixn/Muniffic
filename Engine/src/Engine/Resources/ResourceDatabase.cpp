@@ -61,7 +61,7 @@ namespace eg
 		}
 		else if (type == ResourceType::Image)
 		{
-			Ref<Texture2D> texture = Texture2D::Create((const char*)data);
+			Ref<Texture2D> texture = Texture2D::Create(uuid);
 			RuntimeTextureResourceCache[uuid] = texture;
 			return texture.get();
 		}
@@ -131,22 +131,41 @@ namespace eg
 
 	void ResourceDatabase::SetResourceData(UUID uuid, ResourceType resourceType, void* data)
 	{
-		if (resourceType == ResourceType::Image)
-			ResourceSerializer::TextureResourceDataCache[uuid] = (TextureResourceData*)data;
-		else if(resourceType == ResourceType::SubTexture)
-			ResourceSerializer::SubTextureResourceDataCache[uuid] = (SubTextureResourceData*)data;
-		else if (resourceType == ResourceType::Animation)
+		switch (resourceType)
+		{
+		case eg::ResourceType::Animation:
 			ResourceSerializer::AnimationResourceDataCache[uuid] = (AnimationResourceData*)data;
-		else if(resourceType == ResourceType::SpriteAtlas)
-			ResourceSerializer::SpriteAtlasResourceDataCache[uuid] = (SpriteAtlasResourceData*)data;
-		else if(resourceType == ResourceType::Font)
-			ResourceSerializer::FontResourceDataCache[uuid] = (FontResourceData*)data;
-		else if(resourceType == ResourceType::Script)
-			ResourceSerializer::ScriptResourceDataCache[uuid] = (ScriptResourceData*)data;
-		else if(resourceType == ResourceType::Audio)
+			break;
+		case eg::ResourceType::Frame:
+			ResourceSerializer::FrameResourceDataCache[uuid] = (FrameResourceData*)data;
+			break;
+		case eg::ResourceType::Audio:
 			ResourceSerializer::AudioResourceDataCache[uuid] = (AudioResourceData*)data;
-		else
+			break;
+		case eg::ResourceType::SpriteAtlas:
+			ResourceSerializer::SpriteAtlasResourceDataCache[uuid] = (SpriteAtlasResourceData*)data;
+			break;
+		case eg::ResourceType::SubTexture:
+			ResourceSerializer::SubTextureResourceDataCache[uuid] = (SubTextureResourceData*)data;
+			break;
+		case eg::ResourceType::Font:
+			ResourceSerializer::FontResourceDataCache[uuid] = (FontResourceData*)data;
+			break;
+		case eg::ResourceType::Image:
+			ResourceSerializer::TextureResourceDataCache[uuid] = (TextureResourceData*)data;
+			break;
+		case eg::ResourceType::Script:
+			ResourceSerializer::ScriptResourceDataCache[uuid] = (ScriptResourceData*)data;
+			break;
+		case eg::ResourceType::Text:
+		case eg::ResourceType::Shader:
+		case eg::ResourceType::NativeScript:
+		case eg::ResourceType::None:
+		case eg::ResourceType::Custom:
+		default:
 			EG_CORE_ERROR("Resource type not supported");
+			break;
+		}
 	}
 
 	ResourceType ResourceDatabase::GetResourceType(UUID uuid)
@@ -303,6 +322,15 @@ namespace eg
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
+		else if (resourceType == ResourceType::Frame)
+		{
+			if (ResourceSerializer::FrameResourceDataCache.find(uuid) != ResourceSerializer::FrameResourceDataCache.end())
+			{
+				delete ResourceSerializer::FrameResourceDataCache.at(uuid);
+				ResourceSerializer::FrameResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+			}
+		}
 		else if (resourceType == ResourceType::SpriteAtlas)
 		{
 			if (ResourceSerializer::SpriteAtlasResourceDataCache.find(uuid) != ResourceSerializer::SpriteAtlasResourceDataCache.end())
@@ -314,10 +342,10 @@ namespace eg
 		}
 		else if (resourceType == ResourceType::Script)
 		{
-			if (ResourceSerializer::SpriteAtlasResourceDataCache.find(uuid) != ResourceSerializer::SpriteAtlasResourceDataCache.end())
+			if (ResourceSerializer::ScriptResourceDataCache.find(uuid) != ResourceSerializer::ScriptResourceDataCache.end())
 			{
-				delete ResourceSerializer::SpriteAtlasResourceDataCache.at(uuid);
-				ResourceSerializer::SpriteAtlasResourceDataCache.erase(uuid);
+				delete ResourceSerializer::ScriptResourceDataCache.at(uuid);
+				ResourceSerializer::ScriptResourceDataCache.erase(uuid);
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
@@ -328,6 +356,8 @@ namespace eg
 				EG_CORE_ERROR("Cannot delete default font");
 				return;
 			}
+
+			AssetDirectoryManager::removeAsset(ResourceSerializer::FontResourceDataCache[uuid]->ParentDirectory, uuid, deleteFile);
 
 			FontResourceData* data = ResourceSerializer::FontResourceDataCache[uuid];
 
@@ -342,8 +372,6 @@ namespace eg
 
 			delete data;
 		}
-
-
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported for deletion");
@@ -366,6 +394,8 @@ namespace eg
 			return ResourceSerializer::SubTextureResourceDataCache.at(uuid);
 		else if (type == ResourceType::Animation)
 			return ResourceSerializer::AnimationResourceDataCache.at(uuid);
+		else if (type == ResourceType::Frame)
+			return ResourceSerializer::FrameResourceDataCache.at(uuid);
 		else if (type == ResourceType::SpriteAtlas)
 			return ResourceSerializer::SpriteAtlasResourceDataCache.at(uuid);
 		else if (type == ResourceType::Font)
@@ -478,6 +508,21 @@ namespace eg
 		}
 
 		ResourceSerializer::CacheSubTexture(uuid, data);
+	}
+
+	void AddFrameResource(UUID uuid, const std::filesystem::path& originalResourcePath, FrameResourceData* data)
+	{
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Frame);
+
+		if (finalPath != originalResourcePath)
+		{
+			if (!std::filesystem::exists(finalPath.parent_path()))
+			{
+				std::filesystem::create_directories(finalPath.parent_path());
+			}
+		}
+
+		ResourceSerializer::CacheFrame(uuid, data);
 	}
 
 	void AddFontResourceData(UUID uuid, const std::filesystem::path& originalResourcePath, FontResourceData* data)
@@ -667,7 +712,8 @@ namespace eg
 		for (UUID asset : assets)
 		{
 			ResourceData* data = (ResourceData*)GetResourceData(asset);
-
+			if(!data)
+				continue;
 			if (data->ResourceName == resourceData->ResourceName && data->Extension == resourceData->Extension)
 				return asset;
 		}
@@ -704,6 +750,9 @@ namespace eg
 			break;
 		case ResourceType::SubTexture:
 			AddSubTextureResource(uuid, originalResourcePath, (SubTextureResourceData*)data);
+			break;
+		case ResourceType::Frame:
+			AddFrameResource(uuid, originalResourcePath, (FrameResourceData*)data);
 			break;
 		case ResourceType::Animation:
 			AddAnimationResource(uuid, originalResourcePath, (AnimationResourceData*)data);

@@ -35,7 +35,7 @@ namespace eg
 
 		if (ImGui::BeginDragDropSource())
 		{
-			ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(uint64_t));
+			ImGui::SetDragDropPayload("ContentBrowserPanel", &key, sizeof(int64_t));
 			ImGui::EndDragDropSource();
 		}
 
@@ -96,7 +96,7 @@ namespace eg
 				{
 					if (ResourceUtils::CanDrop(AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory)))
 					{
-						uint64_t uuid = *(uint64_t*)payload->Data;
+						int64_t uuid = *(int64_t*)payload->Data;
 						if (ResourceDatabase::FindResourceData(uuid))
 							Commands::ExecuteMoveResourceCommand(uuid, AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory));
 						else
@@ -134,6 +134,7 @@ namespace eg
 			if (ImGui::MenuItem("Create Folder"))
 			{
 				isClicked = true;
+				m_CreateDirectoryPanel->ShowWindow(m_CurrentDirectory);
 			}
 			ImGui::EndPopup();
 		}
@@ -210,7 +211,7 @@ namespace eg
 
 			if (ImGui::BeginDragDropSource())
 			{
-				ImGui::SetDragDropPayload("ContentBrowserPanel", &directory, sizeof(uint64_t));
+				ImGui::SetDragDropPayload("ContentBrowserPanel", &directory, sizeof(int64_t));
 				ImGui::Text(name.c_str());
 				ImGui::EndDragDropSource();
 			}
@@ -221,7 +222,7 @@ namespace eg
 				{
 					if (ResourceUtils::CanDrop(directory))
 					{
-						uint64_t uuid = *(uint64_t*)payload->Data;
+						int64_t uuid = *(int64_t*)payload->Data;
 
 						if (ResourceDatabase::FindResourceData(uuid))
 							Commands::ExecuteMoveResourceCommand(uuid, directory);
@@ -251,6 +252,14 @@ namespace eg
 
 		ImGui::PopFont();
 		ImGui::End();
+
+		if (m_AnimationEditorPanel)
+		{
+			m_AnimationEditorPanel->OnImGuiRender();
+			if (!m_AnimationEditorPanel->IsAnimationEditorOpen())
+				m_AnimationEditorPanel = nullptr;
+		}
+
 	}
 
 	void ContentBrowserPanel::LoadIcons() {

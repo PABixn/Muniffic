@@ -459,7 +459,7 @@ namespace eg
 			void Execute(CommandArgs args) override 
 			{
 				if(!m_SelectionContext.HasComponent<T>())
-					m_SelectionContext.AddComponent<T>();
+					m_SelectionContext.AddComponent<T>(args.m_Entity.GetUUID());
 			}
 
 			void Undo() override
