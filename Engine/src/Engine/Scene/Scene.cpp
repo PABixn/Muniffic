@@ -579,6 +579,16 @@ namespace eg {
 		return {};
 	}
 
+	void Scene::FindEntitiesByName(const std::string_view& name, std::vector<Entity>& outVec) {
+		auto view  = m_Registry.view<TagComponent>();
+		for (auto entity : view)
+		{
+			const auto& tag = view.get<TagComponent>(entity).Tag;
+			if (tag == name)
+				outVec.emplace_back( entity, this );
+		}
+	}
+
 	Entity Scene::GetEntityByUUID(UUID uuid)
 	{
 		//TODO: Maybe should assert
