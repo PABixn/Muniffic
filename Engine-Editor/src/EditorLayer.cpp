@@ -1100,7 +1100,9 @@ namespace eg
 		IM_ASSERT(m_PoppinsMediumFont != nullptr);
 		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
 		IM_ASSERT(m_PoppinsSemiBoldFont != nullptr);
-		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsSemiBoldFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 40.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		IM_ASSERT(m_PoppinsSemiBoldFontBig != nullptr);
+		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
 		IM_ASSERT(m_PoppinsExtraBoldFont != nullptr);
 
 		io.FontDefault = m_PoppinsRegularFont;

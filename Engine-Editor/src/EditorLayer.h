@@ -149,6 +149,7 @@ namespace eg {
 		ImFont* m_PoppinsMediumFont;
 		ImFont* m_PoppinsMediumFontBig;
 		ImFont* m_PoppinsSemiBoldFont;
+		ImFont* m_PoppinsSemiBoldFontBig;
 		ImFont* m_PoppinsExtraBoldFont;
 
 	};
