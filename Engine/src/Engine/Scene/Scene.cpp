@@ -241,6 +241,8 @@ namespace eg {
 				auto& transform = entity.GetComponent<TransformComponent>();
 				auto* body = (b2Body*)rb.RuntimeBody;
 
+				if (!body)
+					continue;
 
 				transform.PrevTranslation = transform.Translation;
 				float interpolationAlpha = 1.0f;
@@ -314,6 +316,9 @@ namespace eg {
 					auto& transform = entity.GetComponent<TransformComponent>();
 					auto* body = (b2Body*)rb.RuntimeBody;
 
+					if (!body)
+						continue;
+
 					transform.Translation.x = body->GetPosition().x;
 					transform.Translation.y = body->GetPosition().y;
 					transform.Rotation.z = body->GetAngle();
@@ -324,6 +329,7 @@ namespace eg {
 			{
 				DestroyEntity(entity);
 			}
+			m_EntitiesToDestroy.clear();
 		}
 
 		// Render 2D
@@ -375,6 +381,8 @@ namespace eg {
 				for (auto entity : group)
 				{
 					auto [transform, animator ] = group.get<TransformComponent, AnimatorComponent>(entity);
+					if (animator.Animator2D->GetCurrentAnimation() == nullptr || animator.Animator2D->GetCurrentAnimation()->GetFrameCount() == 0)
+						continue;
 					Ref<SubTexture2D> texture = animator.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
 
 					Renderer2D::DrawQuad(transform.GetTransform(), texture, (int)entity);
