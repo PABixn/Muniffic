@@ -377,7 +377,7 @@ namespace eg {
 					auto [transform, animator ] = group.get<TransformComponent, AnimatorComponent>(entity);
 					Ref<SubTexture2D> texture = animator.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
 
-					Renderer2D::DrawQuad(transform.GetTransform(), texture, (int)entity);
+					Renderer2D::DrawQuad(transform.GetTransform(), texture, 1, glm::vec4(1.0f), (int)entity);
 				}
 			}
 
