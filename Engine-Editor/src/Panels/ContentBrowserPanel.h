@@ -7,6 +7,7 @@
 #include "DeleteDirectoryPanel.h"
 #include "RenameResourcePanel.h"
 #include "CreateDirectoryPanel.h"
+#include "ResourcesPanels/AnimationEditorPanel.h"
 
 namespace eg {
 	
@@ -22,17 +23,19 @@ namespace eg {
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }
 
+		void Update(float ts);
 	private:
 		UUID m_BaseDirectory;
 		UUID m_CurrentDirectory;
 		void DrawCenteredText(const std::string& text, const float& cellSize);
-		Ref<Texture2D> m_DirectoryIcon;
-		Ref<Texture2D> m_FileIcon;
-		Ref<Texture2D> m_ImageIcon;
-		Scope<DeleteFilePanel> m_DeleteFilePanel;
-		Scope<RenameFolderPanel> m_RenameFolderPanel;
-		Scope<RenameResourcePanel> m_RenameResourcePanel;
-		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel;
-		Scope<CreateDirectoryPanel> m_CreateDirectoryPanel;
+		Ref<Texture2D> m_DirectoryIcon = nullptr;
+		Ref<Texture2D> m_FileIcon = nullptr;
+		Ref<Texture2D> m_ImageIcon = nullptr;
+		Scope<DeleteFilePanel> m_DeleteFilePanel = nullptr;
+		Scope<RenameFolderPanel> m_RenameFolderPanel = nullptr;
+		Scope<RenameResourcePanel> m_RenameResourcePanel = nullptr;
+		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel = nullptr;
+		Scope<CreateDirectoryPanel> m_CreateDirectoryPanel = nullptr;
+		Scope<AnimationEditorPanel> m_AnimationEditorPanel = nullptr;
 	};
 }

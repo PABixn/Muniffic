@@ -22,6 +22,7 @@ set(IncludeDir_msdf_atlas_gen "${CMAKE_SOURCE_DIR}/Engine/vendor/msdf-atlas-gen/
 # Library directories
 set(LibraryDir_VulkanSDK "${VULKAN_SDK}/Lib")
 set(LibraryDir_mono "${CMAKE_SOURCE_DIR}/Engine/vendor/mono/lib/${CMAKE_BUILD_TYPE}")
+set(LibraryDir_python "${CMAKE_SOURCE_DIR}/Engine/vendor/python/lib/${CMAKE_BUILD_TYPE}")
 
 # Libraries
 set(Library_mono "${LibraryDir_mono}/libmono-static-sgen.lib")

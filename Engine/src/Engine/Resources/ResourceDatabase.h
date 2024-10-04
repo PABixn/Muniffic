@@ -44,6 +44,8 @@ namespace eg
 		static UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 
 		static std::unordered_map<UUID, TextureResourceData*>& GetTextureResourceDataCache() { return ResourceSerializer::TextureResourceDataCache; }
+		static std::unordered_map<UUID, ScriptResourceData*>& GetScriptResourceDataCache() { return ResourceSerializer::ScriptResourceDataCache; }
+		static std::unordered_map<UUID, FrameResourceData*>& GetFrameResourceDataCache() { return ResourceSerializer::FrameResourceDataCache; }
 		static std::unordered_map<UUID, AnimationResourceData*>& GetAnimationResourceDataCache() { return ResourceSerializer::AnimationResourceDataCache; }
 		static std::unordered_map<UUID, SubTextureResourceData*>& GetSubTextureResourceDataCache() { return ResourceSerializer::SubTextureResourceDataCache; }
 		static std::unordered_map < UUID, SpriteAtlasResourceData*>& GetSpriteAtlasResourceDataCache() { return ResourceSerializer::SpriteAtlasResourceDataCache; }

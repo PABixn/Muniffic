@@ -315,7 +315,7 @@ namespace eg
 
 	bool Commands::CanRevert(bool isUndo)
 	{
-		return isUndo ? currentCommandIndex >= 0 : currentCommandIndex < static_cast<int>(commandHistory.size()) - 1;
+		return isUndo ? currentCommandIndex >= 0 && commandHistory.size() > 0 : currentCommandIndex < static_cast<int>(commandHistory.size()) - 1;
 	}
 
 	/*template<>

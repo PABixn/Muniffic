@@ -27,6 +27,8 @@ namespace eg
 				return "Fonts";
 			case ResourceType::Animation:
 				return "Animations";
+			case ResourceType::Frame:
+				return "Frames";
 			case ResourceType::Script:
 				return "Scripts";
 			case ResourceType::Audio:
@@ -55,6 +57,8 @@ namespace eg
 				return ".txt";
 			case ResourceType::Animation:
 				return ".anim";
+			case ResourceType::Frame:
+				return ".frame";
 			case ResourceType::Script:
 				return ".script";
 			case ResourceType::NativeScript:
@@ -68,6 +72,7 @@ namespace eg
 
 		static ResourceType GetResourceTypeByExtension(std::string extension)
 		{
+
 			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg")
 				return ResourceType::Image;
 			else if (extension == ".subtexture")
@@ -82,6 +87,8 @@ namespace eg
 				return ResourceType::Text;
 			else if (extension == ".anim")
 				return ResourceType::Animation;
+			else if (extension == ".frame")
+				return ResourceType::Frame;
 			else if (extension == ".cs")
 				return ResourceType::Script;
 			else if (extension == ".nativescript")
@@ -112,6 +119,8 @@ namespace eg
 				return baseDirectory / "Texts.mnmeta";
 			case ResourceType::Animation:
 				return baseDirectory / "Animations.mnmeta";
+			case ResourceType::Frame:
+				return baseDirectory / "Frames.mnmeta";
 			case ResourceType::Script:
 				return baseDirectory / "Scripts.mnmeta";
 			case ResourceType::NativeScript:
