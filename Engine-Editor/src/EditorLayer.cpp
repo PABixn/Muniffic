@@ -58,15 +58,6 @@ namespace eg
 		m_IconStop = Texture2D::Create("resources/icons/StopButton.png");
 		m_IconStep = Texture2D::Create("resources/icons/StepButton.png");
 
-		auto& io = ImGui::GetIO();
-		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsRegularFont != NULL);
-		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsLightFont != NULL);
-		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsMediumFont != NULL);
-		io.FontDefault = m_PoppinsRegularFont;
-
 		FrameBufferSpecification fbSpec;
 		fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
 		fbSpec.Width = 1280;
@@ -357,9 +348,10 @@ namespace eg
 
 			ImGui::Begin("Stats");
 			std::string name = "None";
-			if (m_HoveredEntity)
+			if (m_HoveredEntity.GetScene() && m_HoveredEntity.Exists()) { 
 				name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
-			ImGui::Text("Hovered Entity: %s", name.c_str());
+				ImGui::Text("Hovered Entity: %s", name.c_str());
+			}
 
 			auto stats = Renderer2D::GetStats();
 			ImGui::Text("Renderer2D Stats:");

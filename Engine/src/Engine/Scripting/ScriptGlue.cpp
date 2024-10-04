@@ -918,7 +918,7 @@ namespace eg
 
 		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		b2Vec2 velocity = b2Vec2(linearVelocity->x, linearVelocity->y*0);
+		b2Vec2 velocity = b2Vec2(linearVelocity->x, linearVelocity->y);
 		body->SetLinearVelocity(velocity);
 	}
 
