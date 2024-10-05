@@ -72,7 +72,7 @@ namespace eg
 				return editorPath / "step_button.png";
 			case Icons::Editor_SimulateButton:
 				return editorPath / "simulate_button.png";
-			case Icons::Editor_ResourceNotFound:
+			case Icons::ResourceNotFound:
 				return "resources/graphics/resource_not_found.png";
 			case Icons::WelcomePanel_DeleteProject:
 				return welcomePanelPath / "delete_project.png";
