@@ -46,6 +46,7 @@ namespace eg {
 		Entity DuplicateEntity(Entity entity);
 
 		Entity FindEntityByName(const std::string_view& name);
+		void FindEntitiesByName(const std::string_view& name, std::vector<Entity>& outVec);
 		Entity GetEntityByUUID(UUID uuid);
 		bool EntityExists(UUID uuid);
 		void AwakeRuntimeBody(Entity entity);

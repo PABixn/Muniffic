@@ -413,6 +413,27 @@ namespace eg
 		return e.GetUUID();
 	}
 
+	static int64_t* Entity_FindEntitiesByName(MonoString * name, int* size)
+        {
+            Scene* scene = ScriptEngine::GetSceneContext();
+            EG_CORE_ASSERT(scene, "No scene context!");
+			
+			char *cStr = mono_string_to_utf8(name);
+
+			std::vector<Entity> entities;
+			scene->FindEntitiesByName(cStr, entities);
+
+            int64_t* uuids = new int64_t[entities.size()];
+			int i = 0;
+			for (Entity e : entities) {
+				uuids[i++] = e.GetUUID();
+			}
+
+            *size = entities.size();
+
+            return uuids;
+        }
+
 	static bool Entity_Exists(UUID uuid)
 	{
 		Scene *scene = ScriptEngine::GetSceneContext();
@@ -918,7 +939,7 @@ namespace eg
 
 		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		b2Vec2 velocity = b2Vec2(linearVelocity->x, linearVelocity->y*0);
+		b2Vec2 velocity = b2Vec2(linearVelocity->x, linearVelocity->y);
 		body->SetLinearVelocity(velocity);
 	}
 
@@ -2407,6 +2428,7 @@ namespace eg
 
 		EG_ADD_INTERNAL_CALL(Entity_HasComponent);
 		EG_ADD_INTERNAL_CALL(Entity_FindEntityByName);
+        EG_ADD_INTERNAL_CALL(Entity_FindEntitiesByName);
 		EG_ADD_INTERNAL_CALL(Entity_GetScriptInstance);
 		EG_ADD_INTERNAL_CALL(Entity_Create);
 		EG_ADD_INTERNAL_CALL(Entity_Destroy);

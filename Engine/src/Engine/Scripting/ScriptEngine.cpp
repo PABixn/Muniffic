@@ -333,10 +333,10 @@ namespace eg
 
 		for (auto& [key, value] : s_Data->EntityFields)
 		{
-			EG_CORE_TRACE("Entity: {}", key);
+			//EG_CORE_TRACE("Entity: {}", key);
 			for (auto& [key, value] : value)
 			{
-				EG_CORE_TRACE("Field: {}", key);
+				//EG_CORE_TRACE("Field: {}", key);
 			}
 		}
 		// EG_CORE_ASSERT(s_Data->EntityFields.find(uuid) != s_Data->EntityFields.end(), "Entity has no script fields!");
