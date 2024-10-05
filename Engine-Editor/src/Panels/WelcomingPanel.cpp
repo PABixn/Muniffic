@@ -28,7 +28,7 @@ namespace eg
 	{
 		ImGui::Begin("WelcomingPanel", &m_Show , ImGuiWindowFlags_NoTitleBar| ImGuiViewportFlags_NoDecoration);
 		ImGui::SetWindowFontScale(2.2);
-		ImGui::Text("Muniffic Physics Engine");
+		ImGui::Text("Muniffic Engine");
 
 		ImGui::SetWindowFontScale(1.0);
 

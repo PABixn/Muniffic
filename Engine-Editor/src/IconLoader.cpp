@@ -18,11 +18,11 @@ namespace eg
 
 	void IconLoader::LoadIcons()
 	{
-		Ref<Texture2D> defaultIcon = Texture2D::Create("resources/graphics/image_not_found.png");
+		Ref<Texture2D> defaultIcon = Texture2D::Create("resources/graphics/resource_not_found.png");
 
-		if (!defaultIcon->IsLoaded())
+		if (defaultIcon == nullptr || !defaultIcon->IsLoaded())
 		{
-			EG_WARN("Could not load default texture {0}", "resources/graphics/image_not_found.png");
+			EG_WARN("Could not load default texture {0}", "resources/graphics/resource_not_found.png");
 			return;
 		}
 
@@ -73,7 +73,7 @@ namespace eg
 			case Icons::Editor_SimulateButton:
 				return editorPath / "simulate_button.png";
 			case Icons::Editor_ResourceNotFound:
-				return editorPath / "resource_not_found.png";
+				return "resources/graphics/resource_not_found.png";
 			case Icons::WelcomePanel_DeleteProject:
 				return welcomePanelPath / "delete_project.png";
 			case Icons::WelcomePanel_NewProject:
@@ -129,9 +129,9 @@ namespace eg
 			case Icons::AnimationEditor_LengthChangeSelected:
 				return animationEditorPath / "length_change_selected.png";
 			case Icons::AnimationEditor_MoveIcon:
-				return animationEditorPath / "move_icon.png";
+				return animationEditorPath / "move.png";
 			case Icons::AnimationEditor_MoveIconSelected:
-				return animationEditorPath / "move_icon_selected.png";
+				return animationEditorPath / "move_selected.png";
 			case Icons::Assistant_Settings:
 				return assistantPath / "settings.png";
 			case Icons::Assistant_CopyCode:

@@ -566,7 +566,7 @@ namespace eg {
 						}
 						else
 						{
-							src.Texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							src.Texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/resource_not_found.png")).string());
 							EG_CORE_WARN("Texture not found: {0}", textureUUID);
 						}
 					}
@@ -597,7 +597,7 @@ namespace eg {
 						}
 						else
 						{
-							Ref<Texture2D> texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							Ref<Texture2D> texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/resource_not_found.png")).string());
 							src.SubTexture = CreateRef<SubTexture2D>(texture, glm::vec2(0,0), glm::vec2(1000, 1000));
 						}
 					}
