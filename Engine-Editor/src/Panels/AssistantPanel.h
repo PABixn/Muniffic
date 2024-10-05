@@ -37,8 +37,6 @@ namespace eg
         Ref<Texture2D> m_IconMicrophoneUnavailable = nullptr;
         Ref<Texture2D> m_IconSettings = nullptr;
         Ref<Texture2D> m_IconReadAloud = nullptr;
-        Ref<Texture2D> m_IconReadAloudHover = nullptr;
-        Ref<Texture2D> m_IconReadAloudActive = nullptr;
         Scope<AssistantManager> assistantManager = nullptr;
         ImGui::MarkdownConfig mdConfig;
         char buffer[1024];

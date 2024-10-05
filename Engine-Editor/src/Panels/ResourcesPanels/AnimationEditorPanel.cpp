@@ -2,6 +2,8 @@
 
 #include "Engine/Scripting/ScriptEngine.h"
 #include "Engine/Resources/AssetDirectoryManager.h"
+#include "../../IconLoader.h"
+
 namespace eg {
 
 	constexpr const float LINEWIDTH = 3;
@@ -31,12 +33,12 @@ namespace eg {
 		ResetData();
 		ShowAnimationEditorPanel(true);
 		m_Anim = Animation::Create(asset);
-		m_PlayIcon = Texture2D::Create("resources/icons/PlayButton.png");
-		m_StopIcon = Texture2D::Create("resources/icons/StopButton.png");
-		m_LenghtIcon = Texture2D::Create("resources/icons/animationEditorPanel/lengthChangeIcon.png");
-		m_LenghtSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/lengthChangeSelectedIcon.png");
-		m_MoveIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveIcon.png");
-		m_MoveSelectedIcon = Texture2D::Create("resources/icons/animationEditorPanel/moveSelectedIcon.png");
+		m_PlayIcon = IconLoader::GetIcon(Icons::Editor_PlayButton);
+		m_StopIcon = IconLoader::GetIcon(Icons::Editor_StopButton);
+		m_LenghtIcon = IconLoader::GetIcon(Icons::AnimationEditor_LengthChange);
+		m_LenghtSelectedIcon = IconLoader::GetIcon(Icons::AnimationEditor_LengthChangeSelected);
+		m_MoveIcon = IconLoader::GetIcon(Icons::AnimationEditor_MoveIcon);
+		m_MoveSelectedIcon = IconLoader::GetIcon(Icons::AnimationEditor_MoveIconSelected);
 		SetFrames();
 
 		return m_Anim != nullptr;

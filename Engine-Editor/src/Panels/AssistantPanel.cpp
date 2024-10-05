@@ -8,21 +8,20 @@
 #include <unordered_map>
 #include <cctype>
 #include <algorithm>
+#include "../IconLoader.h"
 
 namespace eg
 {
 	AssistantPanel::AssistantPanel()
 		: assistantManager(CreateScope<AssistantManager>()),
 		assistantRespondingAnimation("."),
-		m_IconCopy(Texture2D::Create("resources/icons/copyCode.png")),
-		m_IconSend(Texture2D::Create("resources/icons/sendIcon.png")),
-		m_IconMicrophone(Texture2D::Create("resources/icons/micIcon.png")),
-		m_IconMicrophoneOff(Texture2D::Create("resources/icons/micOffIcon.png")),
-		m_IconMicrophoneUnavailable(Texture2D::Create("resources/icons/micUnavailableIcon.png")),
-		m_IconSettings(Texture2D::Create("resources/icons/assistantSettingsIcon.png")),
-		m_IconReadAloud(Texture2D::Create("resources/icons/readIcon.png")),
-		m_IconReadAloudHover(Texture2D::Create("resources/icons/readIcon_hover.png")),
-		m_IconReadAloudActive(Texture2D::Create("resources/icons/readIcon_active.png")),
+		m_IconCopy(IconLoader::GetIcon(Icons::Assistant_CopyCode)),
+		m_IconSend(IconLoader::GetIcon(Icons::Assistant_Send)),
+		m_IconMicrophone(IconLoader::GetIcon(Icons::Assistant_Microphone)),
+		m_IconMicrophoneOff(IconLoader::GetIcon(Icons::Assistant_MicrophoneOff)),
+		m_IconMicrophoneUnavailable(IconLoader::GetIcon(Icons::Assistant_MicrophoneUnavailable)),
+		m_IconSettings(IconLoader::GetIcon(Icons::Assistant_Settings)),
+		m_IconReadAloud(IconLoader::GetIcon(Icons::Assistant_Read)),
 		m_isListening(false),
 		m_isMicrophoneAvailable(false),
 		m_isLastMessageFromUser(false),
@@ -415,7 +414,7 @@ namespace eg
 
 			if(ImGui::BeginPopupContextItem("MessageTooltip"))
 			{
-				if (ImGui::ImageButton(m_IconReadMessageAloud, ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+				/*if (ImGui::ImageButton(m_IconReadMessageAloud, ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 				{
 					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloudActive->GetRendererID();
 				}
@@ -423,7 +422,7 @@ namespace eg
 				if (ImGui::IsItemHovered())
 					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloudHover->GetRendererID();
 				else
-					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloud->GetRendererID();
+					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloud->GetRendererID();*/
 
 
 				ImGui::EndPopup();

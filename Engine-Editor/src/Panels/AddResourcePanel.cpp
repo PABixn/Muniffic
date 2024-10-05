@@ -10,6 +10,7 @@
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
 #include "../EditorLayer.h"
+#include "../IconLoader.h"
 #include <Imgui/imgui_internal.h>
 
 namespace eg
@@ -250,14 +251,14 @@ namespace eg
 	}
 
 	void AddResourcePanel::LoadIcons() {
-		m_AnimationIcon = Texture2D::Create("resources/icons/addResourcePanel/animation_icon_white.png");
-		m_ShaderIcon = Texture2D::Create("resources/icons/addResourcePanel/shader_icon_white.png");
-		m_FontIcon = Texture2D::Create("resources/icons/addResourcePanel/font_icon_white.png");
-		m_TextIcon = Texture2D::Create("resources/icons/addResourcePanel/text_icon_white.png");
-		m_ImageIcon = Texture2D::Create("resources/icons/addResourcePanel/image_icon_white.png");
-		m_ScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/script_icon_white.png");
-		m_NativeScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/nativescript_icon_white.png");
-		m_CustomIcon = Texture2D::Create("resources/icons/addResourcePanel/custom_icon_white.png");
+		m_AnimationIcon = IconLoader::GetIcon(Icons::AddResource_Animation);
+		m_ShaderIcon = IconLoader::GetIcon(Icons::AddResource_Shader);
+		m_FontIcon = IconLoader::GetIcon(Icons::AddResource_Font);
+		m_TextIcon = IconLoader::GetIcon(Icons::AddResource_Text);
+		m_ImageIcon = IconLoader::GetIcon(Icons::AddResource_Image);
+		m_ScriptIcon = IconLoader::GetIcon(Icons::AddResource_Script);
+		m_NativeScriptIcon = IconLoader::GetIcon(Icons::AddResource_NativeScript);
+		m_CustomIcon = IconLoader::GetIcon(Icons::AddResource_Custom);
 	}
 	
 }

@@ -1,12 +1,8 @@
 #include "WelcomingPanel.h"
-
+#include "../IconLoader.h"
 
 namespace eg
-
-	
-
 {	
-
 	WelcomingPanel::WelcomingPanel() {}
 	WelcomingPanel::WelcomingPanel(std::vector<std::string> list, RecentProjectSerializer m_RecentProjectSerializer)
 		: m_Show(true), m_DirectoryUUID(0), m_ProjectList(list), m_Rps(m_RecentProjectSerializer)
@@ -22,9 +18,9 @@ namespace eg
 	}
 
 	void WelcomingPanel::InitWelcomingPanel() {
-		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
-		m_NewProjectIcon = Texture2D::Create("resources/icons/contentBrowser/NewProjectIcon.png");
-		m_DeleteProjectIcon = Texture2D::Create("resources/icons/contentBrowser/DeleteProjectIcon.png");
+		m_DirectoryIcon = IconLoader::GetIcon(Icons::ContentBrowser_Directory);
+		m_NewProjectIcon = IconLoader::GetIcon(Icons::WelcomePanel_NewProject);
+		m_DeleteProjectIcon = IconLoader::GetIcon(Icons::WelcomePanel_DeleteProject);
 	}
 
 

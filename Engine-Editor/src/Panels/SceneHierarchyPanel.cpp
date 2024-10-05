@@ -19,6 +19,7 @@
 #include "functional"
 #include "ConsolePanel.h"
 #include "../EditorActions.h"
+#include "../IconLoader.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -316,19 +317,18 @@ namespace eg
 	{
 		// See ComponentIcon enum (SceneHierarchyPanel.h)
 		m_ComponentIcons = std::vector<Ref<Texture2D>>();
-		std::string IconPath = "resources/icons/hierarchyPanel/Components/";
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "ComponentIcon.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Transform.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Camera.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Script.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "SpriteRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "SubTexRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "CircleRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "RigidBody.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "BoxCol.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "CircleCol.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "TextRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Animator.png"));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_Puzzle));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_Transform));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_Camera));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_Script));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_SpriteRenderer));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_SubTextureRenderer));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_CircleCollider2D));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_RigidBody2D));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_BoxCollider2D));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_CircleCollider2D));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_TextRenderer));
+		m_ComponentIcons.push_back(IconLoader::GetIcon(Icons::Component_Animator));
 		m_Context = scene;
 		EditorActions::SetScene(scene);
 		m_SelectionContext = {};
@@ -336,7 +336,7 @@ namespace eg
 		m_ImagePanel = CreateRef<ImagePanel>();
 		m_ListOfEntityDisplayed = std::vector<EntityDisplayInfo>();
 		Search();
-		m_PuzzleIcon = Texture2D::Create("resources/icons/hierarchyPanel/puzzle.png");
+		m_PuzzleIcon = IconLoader::GetIcon(Icons::Component_Puzzle);
 	}
 
 	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity)
