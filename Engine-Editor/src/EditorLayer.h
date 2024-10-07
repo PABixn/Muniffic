@@ -64,7 +64,6 @@ namespace eg
 		void UI_Toolbar();
 
 		void LoadFonts();
-		void SetColors();
 	private:
 		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;

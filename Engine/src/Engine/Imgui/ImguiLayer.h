@@ -22,7 +22,7 @@ namespace eg {
 		void End();
 
 		void SetBlockEvents(bool block) { m_BlockEvents = block; }
-		void SetDarkThemeColors();
+		static void SetDarkThemeColors();
 
 		uint32_t GetActiveWidgetID() const;
 	private:

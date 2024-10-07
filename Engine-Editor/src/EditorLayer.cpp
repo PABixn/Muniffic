@@ -40,7 +40,7 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
-		SetColors();
+		ImGuiLayer::SetDarkThemeColors();
 
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
@@ -1140,38 +1140,6 @@ namespace eg
 		IM_ASSERT(m_PoppinsExtraBoldFont != nullptr);
 
 		io.FontDefault = m_PoppinsRegularFont;
-	}
-
-	void EditorLayer::SetColors() {
-		auto& style = ImGui::GetStyle();
-
-		style.Colors[ImGuiCol_WindowBg] = m_DarkShade;
-		style.Colors[ImGuiCol_ChildBg] = m_DarkShade;
-		style.Colors[ImGuiCol_PopupBg] = m_NormalShade;
-		style.Colors[ImGuiCol_Border] = m_DarkShade;
-		style.Colors[ImGuiCol_BorderShadow] = m_DarkShade;
-		style.Colors[ImGuiCol_FrameBg] = m_NormalShade;
-		style.Colors[ImGuiCol_FrameBgHovered] = m_NormalShade;
-		style.Colors[ImGuiCol_FrameBgActive] = m_NormalShade;
-		style.Colors[ImGuiCol_MenuBarBg] = m_DarkShade;
-		style.Colors[ImGuiCol_ScrollbarBg] = m_DarkShade;
-		style.Colors[ImGuiCol_ScrollbarGrab] = m_LightShade;
-		style.Colors[ImGuiCol_ScrollbarGrabHovered] = m_LightShade;
-		style.Colors[ImGuiCol_ScrollbarGrabActive] = m_LightShade;
-		style.Colors[ImGuiCol_Button] = m_NormalShade;
-		style.Colors[ImGuiCol_ButtonHovered] = m_LightShade;
-		style.Colors[ImGuiCol_ButtonActive] = m_LightShade;
-		style.Colors[ImGuiCol_CheckMark] = m_NormalShade;
-		style.Colors[ImGuiCol_TitleBg] = m_NormalShade;
-		style.Colors[ImGuiCol_TitleBgActive] = m_NormalShade;
-		style.Colors[ImGuiCol_TitleBgCollapsed] = m_NormalShade;
-		style.Colors[ImGuiCol_Tab] = m_LightShade;
-		style.Colors[ImGuiCol_TabHovered] = m_LightShade;
-		style.Colors[ImGuiCol_TabActive] = m_DarkShade;
-		style.Colors[ImGuiCol_TabUnfocused] = m_LightShade;
-		style.Colors[ImGuiCol_TabUnfocusedActive] = m_DarkShade;
-
-		style.FrameRounding = 10.0f;
 	}
 
 }
