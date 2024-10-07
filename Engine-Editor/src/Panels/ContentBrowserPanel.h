@@ -35,9 +35,14 @@ namespace eg {
 		UUID m_BaseDirectory;
 		UUID m_CurrentDirectory;
 		void DrawCenteredText(const std::string& text, const float& cellSize);
-		Ref<Texture2D> m_DirectoryIcon = nullptr;
-		Ref<Texture2D> m_FileIcon = nullptr;
-		Ref<Texture2D> m_ImageIcon = nullptr;
+		Ref<Texture2D> m_DirectoryIcon;
+		Ref<Texture2D> m_FileIcon;
+		Ref<Texture2D> m_ImageIcon;
+		Ref<Texture2D> m_ScriptFileIcon;
+		Ref<Texture2D> m_AudioFileIcon;
+		Ref<Texture2D> m_AnimationFileIcon;
+		Ref<Texture2D> m_PlusIcon;
+		Ref<Texture2D> m_ArrowIcon;
 		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel = nullptr;
 		Scope<AnimationEditorPanel> m_AnimationEditorPanel = nullptr;
 	};

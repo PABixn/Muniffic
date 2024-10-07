@@ -64,6 +64,7 @@ namespace eg
 		void UI_Toolbar();
 
 		void LoadFonts();
+		void SetColors();
 	private:
 		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;
@@ -124,20 +125,20 @@ namespace eg
 		};
 
 		SceneState m_SceneState = SceneState::Edit;
-
 		friend class AddResourcePanel;
 	public:
-		UnsavedChangesPanel* m_UnsavedChangesPanel;
-		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
-	
-	public:
-		ImVec4 m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
+		ImVec4 m_LightTextShade = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
 		ImVec4 m_LightShade = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-		ImVec4 m_NormalShade = ImVec4(0.204f, 0.145f, 0.278f, 1.0f);
-
-		ImFont* m_PoppinsRegularFont;
+		ImVec4 m_NormalShade = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
+		ImVec4 m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
+		
 		ImFont* m_PoppinsLightFont;
+		ImFont* m_PoppinsRegularFont;
 		ImFont* m_PoppinsMediumFont;
+		ImFont* m_PoppinsMediumFontBig;
+		ImFont* m_PoppinsSemiBoldFont;
+		ImFont* m_PoppinsSemiBoldFontBig;
+		ImFont* m_PoppinsExtraBoldFont;
 
 		//Time for fixedUpdate loop
 		std::chrono::steady_clock::time_point oldTime = std::chrono::high_resolution_clock::now();;
@@ -153,21 +154,6 @@ namespace eg
 
 		// Popups
 		bool IsWindowTryingToClose = false; // Helper for unsaved changes
-		
-	//styles
-	public:
-		ImVec4 m_LightTextShade = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
-		ImVec4 m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
-		ImVec4 m_LightShade = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-		ImVec4 m_NormalShade = ImVec4(0.192f,0.157f,0.267f,1.0f);
-
-		ImFont* m_PoppinsRegularFont;
-		ImFont* m_PoppinsMediumFont;
-		ImFont* m_PoppinsMediumFontBig;
-		ImFont* m_PoppinsSemiBoldFont;
-		ImFont* m_PoppinsSemiBoldFontBig;
-		ImFont* m_PoppinsExtraBoldFont;
-
 	};
 
 }

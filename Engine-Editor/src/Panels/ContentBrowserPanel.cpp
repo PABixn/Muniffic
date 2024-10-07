@@ -134,7 +134,6 @@ namespace eg
 			if (ImGui::MenuItem("Create Folder"))
 			{
 				isClicked = true;
-				m_CreateDirectoryPanel->ShowWindow(m_CurrentDirectory);
 			}
 			ImGui::EndPopup();
 		}
