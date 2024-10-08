@@ -146,9 +146,11 @@ namespace eg
 		void SetParent(std::optional<Entity> entity)
 		{
 			auto& parent = m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
-			if(entity.has_value())
-				if(entity.value().GetUUID() != GetUUID())
+			if (entity.has_value())
+			{
+				if (entity.value().GetUUID() != GetUUID())
 					parent = entity.value().GetUUID();
+			}
 			else
 				parent = NULL;
 		}
