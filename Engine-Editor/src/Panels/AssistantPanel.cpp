@@ -15,13 +15,6 @@ namespace eg
 	AssistantPanel::AssistantPanel()
 		: assistantManager(CreateScope<AssistantManager>()),
 		assistantRespondingAnimation("."),
-		m_IconCopy(IconLoader::GetIcon(Icons::Assistant_CopyCode)),
-		m_IconSend(IconLoader::GetIcon(Icons::Assistant_Send)),
-		m_IconMicrophone(IconLoader::GetIcon(Icons::Assistant_Microphone)),
-		m_IconMicrophoneOff(IconLoader::GetIcon(Icons::Assistant_MicrophoneOff)),
-		m_IconMicrophoneUnavailable(IconLoader::GetIcon(Icons::Assistant_MicrophoneUnavailable)),
-		m_IconSettings(IconLoader::GetIcon(Icons::Assistant_Settings)),
-		m_IconReadAloud(IconLoader::GetIcon(Icons::Assistant_Read)),
 		m_isListening(false),
 		m_isMicrophoneAvailable(false),
 		m_isLastMessageFromUser(false),
@@ -42,7 +35,6 @@ namespace eg
 			return;
 
 		m_isMicrophoneAvailable = assistantManager->CheckMicrophoneAvailable();
-		m_IconReadMessageAloud = (ImTextureID)m_IconReadAloud->GetRendererID();
 
 		if (!assistantManager->LoadAssistant())
 		{
@@ -216,7 +208,7 @@ namespace eg
 					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 0.2));
 					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
-					if (ImGui::ImageButton((std::to_string(id) + std::to_string(buttonIndex)).c_str(), (ImTextureID)m_IconCopy->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1)))
+					if (ImGui::ImageButton((std::to_string(id) + std::to_string(buttonIndex)).c_str(), (ImTextureID)IconLoader::GetIcon(Icons::Assistant_CopyCode)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1)))
 					{
 						ImGui::LogToClipboard();
 						ImGui::LogText(msg.c_str());
@@ -337,7 +329,7 @@ namespace eg
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
-		if (ImGui::ImageButton((ImTextureID)m_IconSettings->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		if (ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::Assistant_Settings)->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
 			ImGui::OpenPopup("Assistant Settings");
 		}
@@ -471,7 +463,7 @@ namespace eg
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
-		if (ImGui::ImageButton((ImTextureID)m_IconSend->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		if (ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::Assistant_Send)->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
 			RunMessage(buffer);
 		}
@@ -489,7 +481,9 @@ namespace eg
 		pos = ImGui::GetCursorScreenPos();
 		center = ImVec2(pos.x + buttonSize * 0.5f, pos.y + buttonSize * 0.5f);
 
-		if (ImGui::ImageButton(m_isMicrophoneAvailable ? m_isListening ? (ImTextureID)m_IconMicrophone->GetRendererID() : (ImTextureID)m_IconMicrophoneOff->GetRendererID() : (ImTextureID)m_IconMicrophoneUnavailable->GetRendererID(), { buttonSize, buttonSize }, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		ImTextureID icon = m_isMicrophoneAvailable ? m_isListening ? (ImTextureID)IconLoader::GetIcon(Icons::Assistant_Microphone)->GetRendererID() : (ImTextureID)IconLoader::GetIcon(Icons::Assistant_MicrophoneOff)->GetRendererID() : (ImTextureID)IconLoader::GetIcon(Icons::Assistant_MicrophoneUnavailable)->GetRendererID();
+
+		if (ImGui::ImageButton(icon, { buttonSize, buttonSize }, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
 			if (m_isMicrophoneAvailable)
 				m_isListening = !m_isListening;

@@ -33,12 +33,6 @@ namespace eg {
 		ResetData();
 		ShowAnimationEditorPanel(true);
 		m_Anim = Animation::Create(asset);
-		m_PlayIcon = IconLoader::GetIcon(Icons::Editor_PlayButton);
-		m_StopIcon = IconLoader::GetIcon(Icons::Editor_StopButton);
-		m_LenghtIcon = IconLoader::GetIcon(Icons::AnimationEditor_LengthChange);
-		m_LenghtSelectedIcon = IconLoader::GetIcon(Icons::AnimationEditor_LengthChangeSelected);
-		m_MoveIcon = IconLoader::GetIcon(Icons::AnimationEditor_MoveIcon);
-		m_MoveSelectedIcon = IconLoader::GetIcon(Icons::AnimationEditor_MoveIconSelected);
 		SetFrames();
 
 		return m_Anim != nullptr;
@@ -185,7 +179,7 @@ namespace eg {
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
 		ImGui::SetCursorPosX(ImGui::GetWindowSize().x * 0.5f - 50 * 0.5f);
-		if (ImGui::ImageButton((ImTextureID)(*m_Anim->IsPlayingPtr() ? m_StopIcon->GetRendererID() : m_PlayIcon->GetRendererID()), ImVec2(50, 50))) {
+		if (ImGui::ImageButton((ImTextureID)(*m_Anim->IsPlayingPtr() ? IconLoader::GetIcon(Icons::Editor_StopButton)->GetRendererID() : IconLoader::GetIcon(Icons::Editor_PlayButton)->GetRendererID()), ImVec2(50, 50))) {
 			if (*m_Anim->IsPlayingPtr()) {
 				m_Anim->Stop();
 				m_PlayAnimation = false;
@@ -523,13 +517,13 @@ namespace eg {
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
 		ImVec4 moveIconTint = m_Move ? ImVec4(1, 1, 1, 1) : ImVec4(0.75, 0.75, 0.75, 1);
 		ImVec4 resizeIconTint = m_Resize ? ImVec4(1, 1, 1, 1) : ImVec4(0.75, 0.75, 0.75, 1);
-		if (ImGui::ImageButton((ImTextureID)(m_LenghtIcon->GetRendererID()), buttonSize, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), resizeIconTint)) {
+		if (ImGui::ImageButton((ImTextureID)(IconLoader::GetIcon(Icons::AnimationEditor_LengthChange)->GetRendererID()), buttonSize, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), resizeIconTint)) {
 			if (m_Move)
 				m_Move = false;
 			m_Resize = !m_Resize;
 		}
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + gap));
-		if (ImGui::ImageButton((ImTextureID)(m_MoveIcon->GetRendererID()), buttonSize, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), moveIconTint)) {
+		if (ImGui::ImageButton((ImTextureID)(IconLoader::GetIcon(Icons::AnimationEditor_MoveIcon)->GetRendererID()), buttonSize, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), moveIconTint)) {
 			if (m_Resize)
 				m_Resize = false;
 			m_Move = !m_Move;

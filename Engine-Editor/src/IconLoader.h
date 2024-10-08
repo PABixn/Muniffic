@@ -64,5 +64,6 @@ namespace eg
 	private:
 		static std::unordered_map<Icons, Ref<Texture2D>> m_Icons;
 		static Ref<Texture2D> m_DefaultIcon;
+		static std::filesystem::path m_DefaultIconPath;
 	};
 }

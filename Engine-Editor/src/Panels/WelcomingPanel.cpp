@@ -17,11 +17,7 @@ namespace eg
 		m_DirectoryUUID = directoryUUID;
 	}
 
-	void WelcomingPanel::InitWelcomingPanel() {
-		m_DirectoryIcon = IconLoader::GetIcon(Icons::ContentBrowser_Directory);
-		m_NewProjectIcon = IconLoader::GetIcon(Icons::WelcomePanel_NewProject);
-		m_DeleteProjectIcon = IconLoader::GetIcon(Icons::WelcomePanel_DeleteProject);
-	}
+	void WelcomingPanel::InitWelcomingPanel() {}
 
 
 	void WelcomingPanel::OnImGuiRender()
@@ -38,10 +34,6 @@ namespace eg
 		ImGui::Text("Menu");
 
 		ImGui::SetWindowFontScale(1.0);
-
-		Ref<Texture2D> directoryIcon = m_DirectoryIcon;
-		Ref<Texture2D> newProjectIcon = m_NewProjectIcon;
-		Ref<Texture2D> deleteProjectIcon = m_DeleteProjectIcon;
 		
 		if (ImGui::Button("Open an existing project", { ImGui::GetWindowWidth() - 20.0f, 32.0f}))
 		{
@@ -49,7 +41,7 @@ namespace eg
 		}
 		ImGui::SameLine();
 		ImGui::SetCursorPosX({ 8.0f });
-		ImGui::Image((ImTextureID)directoryIcon->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
+		ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
 		
 		if (ImGui::Button("Create a new project", { ImGui::GetWindowWidth() - 20.0f, 32.0f}))
 		{
@@ -58,7 +50,7 @@ namespace eg
 		}
 		ImGui::SameLine();
 		ImGui::SetCursorPosX({ 8.0f });
-		ImGui::Image((ImTextureID)newProjectIcon->GetRendererID(), { 30.0f, 30.0f }, { 0, 1 }, { 1, 0 });
+		ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::WelcomePanel_NewProject)->GetRendererID(), { 30.0f, 30.0f }, { 0, 1 }, { 1, 0 });
 
 		ImGui::End();
 
@@ -97,12 +89,12 @@ namespace eg
 					ImGui::SameLine();
 					float cursorPos = ImGui::GetCursorPosX();
 					ImGui::SetCursorPosX({ cursorPos - 39.0f });
-					ImGui::Image((ImTextureID)deleteProjectIcon->GetRendererID(), { 30.0f, 30.0f }, { 0, 1 }, { 1, 0 });
+					ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::WelcomePanel_DeleteProject)->GetRendererID(), { 30.0f, 30.0f }, { 0, 1 }, { 1, 0 });
 
 					
 					ImGui::SameLine();
 					ImGui::SetCursorPosX({ 8.0f });
-					ImGui::Image((ImTextureID)directoryIcon->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
+					ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
 				}
 				i++;
 			}

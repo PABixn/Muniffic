@@ -5,6 +5,7 @@ namespace eg
 {
 	std::unordered_map<Icons, Ref<Texture2D>> IconLoader::m_Icons = std::unordered_map<Icons, Ref<Texture2D>>();
 	Ref<Texture2D> IconLoader::m_DefaultIcon = nullptr;
+	std::filesystem::path IconLoader::m_DefaultIconPath = "resources/graphics/resource_not_found.png";
 
 	Ref<Texture2D> IconLoader::GetIcon(Icons icon)
 	{
@@ -18,11 +19,11 @@ namespace eg
 
 	void IconLoader::LoadIcons()
 	{
-		Ref<Texture2D> defaultIcon = Texture2D::Create("resources/graphics/resource_not_found.png");
+		Ref<Texture2D> defaultIcon = Texture2D::Create(m_DefaultIconPath.string());
 
 		if (defaultIcon == nullptr || !defaultIcon->IsLoaded())
 		{
-			EG_WARN("Could not load default texture {0}", "resources/graphics/resource_not_found.png");
+			EG_WARN("Could not load default texture {0}", m_DefaultIconPath.string());
 			return;
 		}
 
@@ -73,7 +74,7 @@ namespace eg
 			case Icons::Editor_SimulateButton:
 				return editorPath / "simulate_button.png";
 			case Icons::ResourceNotFound:
-				return "resources/graphics/resource_not_found.png";
+				return m_DefaultIconPath.string();
 			case Icons::WelcomePanel_DeleteProject:
 				return welcomePanelPath / "delete_project.png";
 			case Icons::WelcomePanel_NewProject:
@@ -148,7 +149,7 @@ namespace eg
 				return assistantPath / "send.png";
 
 			default:
-				return "resources/graphics/resource_not_found.png";
+				return m_DefaultIconPath.string();
 		}
 	}
 }
