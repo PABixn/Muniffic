@@ -58,6 +58,12 @@ target_link_libraries(ImGui PRIVATE
     GLFW
     Glad
 )
+find_package(Vulkan REQUIRED)
+if(NOT Vulkan_FOUND)
+message(FATAL_ERROR "Vulkan not found")
+endif()
+target_include_directories(ImGui PUBLIC ${Vulkan_INCLUDE_DIR})
+target_link_libraries(ImGui PUBLIC ${Vulkan_LIBRARIES})
 
 # Platform-specific settings
 if(WIN32)
