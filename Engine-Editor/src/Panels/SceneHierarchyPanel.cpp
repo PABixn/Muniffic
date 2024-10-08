@@ -342,6 +342,7 @@ namespace eg
 	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity)
 	{
 		bool searched = false, childsearched = false;
+		std::string silli = entity.GetName();
 		EntityDisplayInfo currentEntityDisplayInfo = EntityDisplayInfo();
 		for (Entity e : entity.GetChildren())
 		{
@@ -373,6 +374,7 @@ namespace eg
 								   {
 			Entity entity{ entityID, m_Context.get() };
 			if (entity.GetParent() == std::nullopt) {
+				std::string silli = entity.GetName();
 				if (m_Search != "")
 				{
 					std::optional<EntityDisplayInfo> found = SearchEntity(entity);
