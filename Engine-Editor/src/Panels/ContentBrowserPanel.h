@@ -34,7 +34,6 @@ namespace eg {
 	private:
 		UUID m_BaseDirectory;
 		UUID m_CurrentDirectory;
-		void DrawCenteredText(const std::string& text, const float& cellSize);
 		Ref<Texture2D> m_DirectoryIcon;
 		Ref<Texture2D> m_FileIcon;
 		Ref<Texture2D> m_ImageIcon;

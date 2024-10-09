@@ -138,9 +138,9 @@ namespace eg {
 		colors[ImGuiCol_PopupBg] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
 
 		// Headers
-		colors[ImGuiCol_Header] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
-		colors[ImGuiCol_HeaderHovered] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
-		colors[ImGuiCol_HeaderActive] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
+		colors[ImGuiCol_Header] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
+		colors[ImGuiCol_HeaderActive] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
 
 		// Buttons
 		colors[ImGuiCol_Button] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
@@ -172,9 +172,6 @@ namespace eg {
 
 		//Others
 		colors[ImGuiCol_MenuBarBg] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
-
-		//Rounding
-		style.FrameRounding = 10.0f;
 	}
 	uint32_t ImGuiLayer::GetActiveWidgetID() const
 	{

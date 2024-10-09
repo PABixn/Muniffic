@@ -133,8 +133,8 @@ namespace eg
 		
 		ImFont* m_PoppinsLightFont;
 		ImFont* m_PoppinsRegularFont;
+		ImFont* m_PoppinsRegularFontBig;
 		ImFont* m_PoppinsMediumFont;
-		ImFont* m_PoppinsMediumFontBig;
 		ImFont* m_PoppinsSemiBoldFont;
 		ImFont* m_PoppinsSemiBoldFontBig;
 		ImFont* m_PoppinsExtraBoldFont;

@@ -600,7 +600,10 @@ namespace eg
 		}
 		// flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f));
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 		opened = ImGui::CustomTreeNodeEx((void *)(int64_t)entity.GetUUID(), flags, tag.c_str());
+		ImGui::PopStyleColor(2);
 		ImGui::PopStyleVar();
 		if (ImGui::BeginDragDropSource())
 		{
@@ -684,10 +687,13 @@ namespace eg
 			Ref<Texture2D> iconID = m_ComponentIcons[iconOrType];
 
 			bool open;
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
+			ImGui::PushStyleColor(ImGuiCol_HeaderActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 			if (entity.GetChildren().size() > 0 && entity.GetInheritableComponent<T>()->isInheritedInChildren)
 				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), (treeNodeFlags | ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(iconID->GetRendererID()));
 			else
 				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(iconID->GetRendererID()));
+			ImGui::PopStyleColor(2);
 			ImGui::PopStyleVar();
 			if (!(name == std::string("Transform") && !(entity.GetChildren().size() > 0 || entity.GetParent().has_value())))
 			{

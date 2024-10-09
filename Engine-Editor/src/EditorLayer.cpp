@@ -40,7 +40,6 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
-		ImGuiLayer::SetDarkThemeColors();
 
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
@@ -62,15 +61,6 @@ namespace eg
 		m_LogoIcon = Texture2D::Create("resources/icons/logo.png");
 
 		LoadFonts();
-
-		auto& io = ImGui::GetIO();
-		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsRegularFont != NULL);
-		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsLightFont != NULL);
-		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsMediumFont != NULL);
-		io.FontDefault = m_PoppinsRegularFont;
 
 		FrameBufferSpecification fbSpec;
 		fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
@@ -116,8 +106,8 @@ namespace eg
 
 		m_EditorCamera.OnUpdate(ts);
 		m_SceneHierarchyPanel.Update(ts);
-		//if(m_ContentBrowserPanel)
-			//m_ContentBrowserPanel->Update(ts);
+		if(m_ContentBrowserPanel)
+			m_ContentBrowserPanel->Update(ts);
 
 		Renderer2D::ResetStats();
 		m_FrameBuffer->Bind();
@@ -516,7 +506,7 @@ namespace eg
 		float size = ImGui::GetWindowHeight() - 4.0f;
 		ImVec2 elementSize = ImGui::GetContentRegionAvail();
 		float iconPosX = (elementSize.x - size) * 0.5f - 19.0f;
-		float iconPosY = (elementSize.y - size) * 0.5f;
+		float iconPosY = (elementSize.y - size) * 0.5f + 2.0f;
 		ImGui::SetCursorPos(ImVec2(iconPosX, iconPosY));
 
 		bool hasPlayButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play;
@@ -526,7 +516,7 @@ namespace eg
 		if (hasPlayButton)
 		{
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
-			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 					OnScenePlay();
@@ -562,7 +552,7 @@ namespace eg
 				ImGui::SameLine();
 
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
-			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
 					OnSceneSimulate();
@@ -576,7 +566,7 @@ namespace eg
 			ImGui::SameLine();
 			{
 				Ref<Texture2D> icon = m_IconPause;
-				if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+				if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
 				{
 					m_ActiveScene->SetPaused(!isPaused);
 				}
@@ -589,7 +579,7 @@ namespace eg
 				{
 					Ref<Texture2D> icon = m_IconStep;
 					bool isPaused = m_ActiveScene->IsPaused();
-					if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+					if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
 					{
 						m_ActiveScene->Step();
 					}
@@ -1126,20 +1116,26 @@ namespace eg
 
 	void EditorLayer::LoadFonts() {
 		auto& io = ImGui::GetIO();
-		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsRegularFont != nullptr);
-		m_PoppinsMediumFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsMediumFontBig != nullptr);
-		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsMediumFont != nullptr);
+
+		ImFontConfig font_config;
+		font_config.OversampleH = 2;
+		font_config.OversampleV = 1;
+		font_config.MergeMode = false;
+		font_config.PixelSnapH = true;
+
+		static const ImWchar full_ranges[] = { 0x0020, 0xFFFF, 0 };
+
+		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, &font_config, full_ranges);
+		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsRegularFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, &font_config, full_ranges);
 		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsSemiBoldFont != nullptr);
 		m_PoppinsSemiBoldFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 40.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsSemiBoldFontBig != nullptr);
 		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		IM_ASSERT(m_PoppinsExtraBoldFont != nullptr);
 
 		io.FontDefault = m_PoppinsRegularFont;
+
+		io.Fonts->Build();
 	}
 
 }

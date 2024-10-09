@@ -58,7 +58,7 @@ namespace eg
 		auto btnColorHovered = style.Colors[ImGuiCol_ButtonHovered];
 		auto btnColorActive = style.Colors[ImGuiCol_ButtonActive];
 
-		ImGui::PushFont(static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_PoppinsMediumFontBig);
+		ImGui::PushFont(static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_PoppinsRegularFontBig);
 
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
 
@@ -414,6 +414,7 @@ namespace eg
 	void ContentBrowserPanel::ShowFileMenu(UUID key, ResourceType type) {
 		bool isDeleteClicked = false;
 		bool isRenameClicked = false;
+		AnimationResourceData* animData = (AnimationResourceData*)ResourceDatabase::GetResourceData(key);
 		if (ImGui::BeginPopupContextItem("FileOptions"))
 		{
 			if (ImGui::MenuItem("Delete"))
@@ -424,6 +425,11 @@ namespace eg
 			if (ImGui::MenuItem("Rename"))
 			{
 				isRenameClicked = true;
+			}
+			if (animData && animData->Type == ResourceType::Animation) {
+				if (ImGui::MenuItem("Open animation editor panel")) {
+					m_AnimationEditorPanel = CreateScope<AnimationEditorPanel>(key);
+				}
 			}
 
 			ImGui::EndPopup();
@@ -538,5 +544,11 @@ namespace eg
 			ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 		ImGui::PopStyleColor();
+	}
+
+	void ContentBrowserPanel::Update(float ts)
+	{
+		if (m_AnimationEditorPanel && m_AnimationEditorPanel->IsAnimationEditorOpen())
+			m_AnimationEditorPanel->Update(ts);
 	}
 }

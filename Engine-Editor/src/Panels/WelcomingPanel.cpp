@@ -45,6 +45,7 @@ namespace eg
 		ImGui::PushFont(static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_PoppinsSemiBoldFontBig);
 		ImGui::Text("Recently opened projects");
 		ImGui::PopFont();
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
 		int i = 0;
 		if (m_ProjectList.size()) {
 			for (auto project : m_ProjectList)
@@ -113,6 +114,7 @@ namespace eg
 		ImGui::SetCursorPosX(posX);
 		ImGui::Image((ImTextureID)m_NewProjectIcon->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
 		ImGui::PopFont();
+		ImGui::PopStyleVar();
 
 		ImGui::End();
 	}
