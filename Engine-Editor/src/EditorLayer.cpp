@@ -18,6 +18,7 @@
 #include "Engine/Project/ProjectSerializer.h"
 #include "Engine/Project/RecentProjectSerializer.h"
 #include "Engine/Project/ScriptSerializer.h"
+#include "MarkdownRenderer/Markdown.h"
 
 namespace eg
 {
@@ -236,7 +237,19 @@ namespace eg
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 
+		ImGui::OpenPopup("MarkdownTest");
+
 		//Welcoming panel code
+		if (ImGui::BeginPopupModal("MarkdownTest", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar))
+		{
+			Markdown markdown;
+			markdown.init(m_PoppinsRegularFont, m_PoppinsMediumFont);
+			markdown.text("#Hello, world! \nSiema");
+			markdown.text("##Hello, world! \nSiema");
+			markdown.text("###Hello, world! \nSiema");
+			ImGui::EndPopup();
+		}
+
 		if (m_WelcomePanel->IsShown()) {
 			ImGuiStyle& style = ImGui::GetStyle();
 			float minWinSizeX = style.WindowMinSize.x;

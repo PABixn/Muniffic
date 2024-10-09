@@ -227,6 +227,7 @@ namespace eg
 					ImGui::PopStyleColor(3);
 
 					buttonIndex++;
+
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - iconSize - iconCenterY / 2);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding * 2.5);
 					ImGui::Text(GetLanguageSymbol(language).c_str());
