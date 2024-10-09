@@ -3,6 +3,7 @@
 #include "imgui.h"
 #include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
 #include "Platform/OpenGL/imgui_impl_opengl3.h"
+#include "Imgui/backends/imgui_impl_vulkan.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "Engine/Core/Application.h"

@@ -28,7 +28,8 @@ namespace eg
 
 		m_Window = Window::Create(WindowProps(applicationSpec.Name));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
-		Renderer::Init();
+		VRenderer::Init();
+		//Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		m_LayerStack.PushOverlay(m_ImGuiLayer);
@@ -39,6 +40,7 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		ScriptEngine::Shutdown();
 		Renderer::Shutdown();
+		VRenderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer *layer)

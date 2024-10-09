@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.16)
 project(Engine LANGUAGES CXX)
 
 add_library(Engine STATIC)
+set_target_properties(Engine PROPERTIES CMAKE_DISABLE_PRECOMPILE_HEADERS ON)
+
 
 set_target_properties(Engine PROPERTIES
     CXX_STANDARD 20
@@ -91,6 +93,11 @@ target_link_libraries(Engine PUBLIC
     yaml-cpp
     "${Library_mono}"
 )
+
+# TO-DO Vulkan
+# make it prettier in code
+target_include_directories(Engine PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src/Platform/Vulkan")
+target_compile_definitions(Engine PRIVATE SHADERS_FOLDER="${CMAKE_CURRENT_BINARY_DIR}/src/Platform/Vulkan/Shaders")
 
 # Disable PCH for specific files
 set_source_files_properties(vendor/ImGuizmo/ImGuizmo.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)

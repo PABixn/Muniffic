@@ -5,6 +5,7 @@
 #include "Engine/ImGui/ImGuiLayer.h"
 #include "Engine/Core/Timestep.h"
 #include "Engine/Resources/Systems/ResourceSystem.h"
+#include "Engine/Renderer/VRenderer.h"
 
 int main(int argc, char** argv);
 

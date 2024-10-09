@@ -3,7 +3,6 @@
 #include "OrthographicCamera.h"
 #include "Shader.h"
 namespace eg {
-
 	class Renderer {
 	public:
 		static void Init();
