@@ -161,7 +161,7 @@ namespace eg
 		{
 			// Update
 
-			m_RuntimeScene->OnUpdateRuntime(ts, oldTime);
+			m_RuntimeScene->OnUpdateRuntime(ts, m_OldTime);
 
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
@@ -1069,7 +1069,7 @@ namespace eg
 		}
 		{
             EG_PROFILE_SCOPE("OnRuntimeStart");
-			oldTime = std::chrono::high_resolution_clock::now();
+			m_OldTime = std::chrono::high_resolution_clock::now();
 		    m_RuntimeScene->OnRuntimeStart();
 		    m_ActiveScene = m_RuntimeScene;
 		    m_SceneHierarchyPanel.SetContext(m_ActiveScene);
