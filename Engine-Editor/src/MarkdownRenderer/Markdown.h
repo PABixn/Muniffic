@@ -27,10 +27,10 @@ public:
 	void text(const char* str);
 
 private:
-	void render_text(const std::string& str);
+	void process_text(const std::string& str);
 
-	void apply_block_type(std::string& line, BlockType block_type);
-	void clear_block_type(BlockType block_type);
+	void apply_block_style(std::string& line, BlockType block_type);
+	void clear_block_style(BlockType block_type);
 
 private:
 	ImFont* regular_font = nullptr;

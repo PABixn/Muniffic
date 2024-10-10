@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <vector>
+#include <unordered_map>
 
 void Markdown::init(ImFont* regular_font, ImFont* bold_font)
 {
@@ -11,15 +12,15 @@ void Markdown::init(ImFont* regular_font, ImFont* bold_font)
 
 void Markdown::text(const std::string& str)
 {
-	render_text(str.c_str());
+	process_text(str.c_str());
 }
 
 void Markdown::text(const char* str)
 {
-	render_text(str);
+	process_text(str);
 }
 
-void Markdown::render_text(const std::string& str)
+void Markdown::process_text(const std::string& str)
 {
 	int heading_level = 0, list_level = 0, star_level = 0, dash_level = 0;
 
@@ -28,6 +29,7 @@ void Markdown::render_text(const std::string& str)
 	std::stringstream ss(str);
 	std::string line = "";
 	BlockType block_type = BlockType::None;
+	std::unordered_map<size_t, BlockType> block_type_map;
 
 
 	while (std::getline(ss, line))
@@ -74,24 +76,12 @@ void Markdown::render_text(const std::string& str)
 				dash_level = 0;
 			}
 		}
-
-		if (block_type != BlockType::None)
-		{
-			apply_block_type(line, block_type);
-		}
-
-		ImGui::Text(line.c_str());
-
-		if (block_type != BlockType::None)
-		{
-			clear_block_type(block_type);
-			block_type = BlockType::None;
-		}
 	}
+
 	ImGui::PopStyleVar();
 }
 
-void Markdown::apply_block_type(std::string& line, BlockType block_type)
+void Markdown::apply_block_style(std::string& line, BlockType block_type)
 {
 	switch (block_type)
 	{
@@ -113,7 +103,7 @@ void Markdown::apply_block_type(std::string& line, BlockType block_type)
 	}
 }
 
-void Markdown::clear_block_type(BlockType block_type)
+void Markdown::clear_block_style(BlockType block_type)
 {
 	switch (block_type)
 	{
