@@ -18,6 +18,7 @@
 #include "Engine/Project/ProjectSerializer.h"
 #include "Engine/Project/RecentProjectSerializer.h"
 #include "Engine/Project/ScriptSerializer.h"
+#include "IconLoader.h"
 
 namespace eg
 {
@@ -67,14 +68,18 @@ namespace eg
 			EG_ERROR("Failed to initialize resource system.");
 			return;
 		}
+
+		IconLoader::LoadIcons();
+
 		m_WelcomePanel->InitWelcomingPanel();
 
 		EG_PROFILE_FUNCTION();
-		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");
-		m_IconPause = Texture2D::Create("resources/icons/PauseButton.png");
-		m_IconSimulate = Texture2D::Create("resources/icons/SimulateButton.png");
-		m_IconStop = Texture2D::Create("resources/icons/StopButton.png");
-		m_IconStep = Texture2D::Create("resources/icons/StepButton.png");
+
+		m_IconPlay = IconLoader::GetIcon(Icons::Editor_PlayButton);
+		m_IconPause = IconLoader::GetIcon(Icons::Editor_PauseButton);
+		m_IconSimulate = IconLoader::GetIcon(Icons::Editor_SimulateButton);
+		m_IconStop = IconLoader::GetIcon(Icons::Editor_StopButton);
+		m_IconStep = IconLoader::GetIcon(Icons::Editor_StepButton);
 
 		FrameBufferSpecification fbSpec;
 		fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };

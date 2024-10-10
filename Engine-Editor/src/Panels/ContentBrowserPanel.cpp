@@ -9,14 +9,15 @@
 #include "../EditorLayer.h"
 #include <sys/stat.h>
 #include "Engine/Resources/AssetDirectoryManager.h"
+#include "../IconLoader.h"
 
 namespace eg
 {
 	ContentBrowserPanel::ContentBrowserPanel()
 	: m_BaseDirectory(AssetDirectoryManager::getRootDirectoryUUID()), m_CurrentDirectory(m_BaseDirectory)
 	{
-		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
-		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
+		m_DirectoryIcon = IconLoader::GetIcon(Icons::ContentBrowser_Directory);
+		m_FileIcon = IconLoader::GetIcon(Icons::ContentBrowser_File);
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
 	}
 

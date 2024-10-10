@@ -13,6 +13,7 @@
 #include <fstream>
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
 #include "box2d/b2_fixture.h"
+#include "../Engine-Editor/src/IconLoader.h"
 
 
 namespace eg {
@@ -566,7 +567,7 @@ namespace eg {
 						}
 						else
 						{
-							src.Texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							src.Texture = IconLoader::GetIcon(Icons::ResourceNotFound);
 							EG_CORE_WARN("Texture not found: {0}", textureUUID);
 						}
 					}
@@ -597,7 +598,7 @@ namespace eg {
 						}
 						else
 						{
-							Ref<Texture2D> texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							Ref<Texture2D> texture = IconLoader::GetIcon(Icons::ResourceNotFound);
 							src.SubTexture = CreateRef<SubTexture2D>(texture, glm::vec2(0,0), glm::vec2(1000, 1000));
 						}
 					}
