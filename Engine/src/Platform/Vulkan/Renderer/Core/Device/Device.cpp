@@ -149,9 +149,9 @@ void eg::Device::cleanUp()
         // vk instance setup
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        appInfo.pApplicationName = "Simulator";
+        appInfo.pApplicationName = "Muniffic";
         appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.pEngineName = "Renderer";
+        appInfo.pEngineName = "Muni";
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.apiVersion = VK_API_VERSION_1_0;
 

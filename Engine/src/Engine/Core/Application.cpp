@@ -31,8 +31,8 @@ namespace eg
 		VRenderer::Init();
 		//Renderer::Init();
 
-		m_ImGuiLayer = new ImGuiLayer();
-		m_LayerStack.PushOverlay(m_ImGuiLayer);
+		//m_ImGuiLayer = new ImGuiLayer();
+		//m_LayerStack.PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
