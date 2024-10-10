@@ -30,6 +30,11 @@ namespace eg {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 
+		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+        io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
 		ImGui::StyleColorsDark();
 		ImGuiStyle& style = ImGui::GetStyle();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
