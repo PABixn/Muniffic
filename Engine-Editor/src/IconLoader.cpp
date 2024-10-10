@@ -9,6 +9,8 @@ namespace eg
 
 	Ref<Texture2D> IconLoader::GetIcon(Icons icon)
 	{
+		EG_PROFILE_FUNCTION();
+
 		if(m_Icons.find(icon) == m_Icons.end())
 		{
 			EG_WARN("Icon {0} not found", static_cast<int>(icon));
@@ -19,6 +21,8 @@ namespace eg
 
 	void IconLoader::LoadIcons()
 	{
+		EG_PROFILE_FUNCTION();
+
 		Ref<Texture2D> defaultIcon = Texture2D::Create(m_DefaultIconPath.string());
 
 		if (defaultIcon == nullptr || !defaultIcon->IsLoaded())
@@ -52,6 +56,8 @@ namespace eg
 
 	std::filesystem::path IconLoader::GetIconPath(Icons icon)
 	{
+		EG_PROFILE_FUNCTION();
+
 		std::filesystem::path basePath = "resources/icons/";
 		std::filesystem::path editorPath = basePath / "editor/";
 		std::filesystem::path welcomePanelPath = basePath / "welcome_panel/";

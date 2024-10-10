@@ -7,12 +7,14 @@ namespace eg
 	WelcomingPanel::WelcomingPanel(std::vector<std::string> list, RecentProjectSerializer m_RecentProjectSerializer)
 		: m_Show(true), m_DirectoryUUID(0), m_ProjectList(list), m_Rps(m_RecentProjectSerializer)
 	{
+        EG_PROFILE_FUNCTION();
 		m_NewProjectCreated = false;
 		m_SelectedProject = "";
 	}
 
 	void WelcomingPanel::ShowWindow(UUID directoryUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		m_Show = true;
 		m_DirectoryUUID = directoryUUID;
 	}
@@ -22,6 +24,7 @@ namespace eg
 
 	void WelcomingPanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::Begin("WelcomingPanel", &m_Show , ImGuiWindowFlags_NoTitleBar| ImGuiViewportFlags_NoDecoration);
 		ImGui::SetWindowFontScale(2.2);
 		ImGui::Text("Muniffic Engine");

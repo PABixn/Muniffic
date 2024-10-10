@@ -4,10 +4,13 @@ namespace eg
 {
 	DeleteFilePanel::DeleteFilePanel()
 		: m_Show(false), m_UUID(0), m_Type(ResourceType::None)
-	{ }
+	{
+        EG_PROFILE_FUNCTION();
+    }
 
 	void DeleteFilePanel::ShowWindow(UUID uuid, ResourceType type)
 	{
+        EG_PROFILE_FUNCTION();
 		m_Show = true;
 		m_UUID = uuid;
 		m_Type = type;
@@ -15,6 +18,7 @@ namespace eg
 
 	void DeleteFilePanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
 
 		ImGui::Begin("Delete file?", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);

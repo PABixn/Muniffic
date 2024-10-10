@@ -46,7 +46,7 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		m_LayerStack.PushLayer(layer);
 	}
-	
+
 	void Application::PushOverlay(Layer *layer)
 	{
 		EG_PROFILE_FUNCTION();
@@ -59,7 +59,7 @@ namespace eg
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
-		
+
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
@@ -113,6 +113,7 @@ namespace eg
 
 	bool Application::OnWindowClose(WindowCloseEvent &e)
 	{
+		EG_PROFILE_FUNCTION();
 		m_Running = false;
 		return true;
 	}
@@ -132,12 +133,14 @@ namespace eg
 
 	void Application::SubmitToMainThread(std::function<void()> function)
 	{
+		EG_PROFILE_FUNCTION();
 		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
 		m_MainThreadQueue.emplace_back(function);
 	}
 
 	void Application::ExecuteMainThreadQueue()
 	{
+		EG_PROFILE_FUNCTION();
 		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
 
 		for (auto &function : m_MainThreadQueue)
@@ -147,16 +150,19 @@ namespace eg
 	}
 
 	void Application::SetRunning(bool val) {
+		EG_PROFILE_FUNCTION();
 		m_Running = val;
 	}
 
 	void Application::ChangeName(const char* text) {
+		EG_PROFILE_FUNCTION();
 		if (auto WinWindow = dynamic_cast<WindowsWindow*>(&this->GetWindow()))
 			glfwSetWindowTitle((WinWindow)->GetGLFWwindow(), text);
 
 	}
 
 	void Application::ChangeNameWithCurrentProject(bool saved) {
+		EG_PROFILE_FUNCTION();
 		std::string TitleText = "Muniffic editor [";
 		TitleText += Project::GetActive().get()->GetProjectName();
 		TitleText += "]";

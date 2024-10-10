@@ -25,6 +25,7 @@ namespace eg
 		m_shouldListen(false),
 		m_assistantInitialized(false)
 	{
+        EG_PROFILE_FUNCTION();
 		memset(buffer, 0, sizeof(buffer));
 
 		mdConfig = ImGui::MarkdownConfig();
@@ -55,6 +56,7 @@ namespace eg
 
 	std::string AssistantPanel::LoadInstructions()
 	{
+        EG_PROFILE_FUNCTION();
 		std::string filename = "resources/assistant/instructions.txt";
 
 		std::ifstream file(filename);
@@ -70,6 +72,7 @@ namespace eg
 
 	void AssistantPanel::DoMessage(const std::string& message)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assistantManager->GetVoiceAssistantListening())
 		{
 			assistantManager->SetVoiceAssistantListening(false);
@@ -83,6 +86,7 @@ namespace eg
 
 	void AssistantPanel::RenderUserMessage(const std::string& message)
 	{
+        EG_PROFILE_FUNCTION();
 		float padding = 10.0f;
 		float rightMargin = 15.0f;
 		float maxBubbleWidth = ImGui::GetWindowSize().x * 0.6f;
@@ -117,6 +121,7 @@ namespace eg
 
 	std::string AssistantPanel::GetLanguageSymbol(const std::string& language)
 	{
+        EG_PROFILE_FUNCTION();
 		static const std::unordered_map<std::string, std::string> languageMap = {
 			{"csharp", "C#"}, {"cpp", "C++"}, {"python", "Python"},
 			{"javascript", "JavaScript"}, {"java", "Java"}, {"ruby", "Ruby"},
@@ -137,6 +142,7 @@ namespace eg
 	}
 
 	std::string AssistantPanel::ExtractLanguageName(std::string line) {
+        EG_PROFILE_FUNCTION();
 		if(line.find("```") == std::string::npos)
 			return "";
 
@@ -145,6 +151,7 @@ namespace eg
 	}
 
 	bool AssistantPanel::StartsOrEndsCodeBlock(std::string line) {
+        EG_PROFILE_FUNCTION();
 		if (line.find("```") != std::string::npos)
 		{
 			line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
@@ -156,6 +163,7 @@ namespace eg
 
 	void AssistantPanel::RenderAssistantMessage(const std::string& message, int id)
 	{
+        EG_PROFILE_FUNCTION();
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
 		drawList->ChannelsSplit(3);
 		drawList->ChannelsSetCurrent(2);
@@ -283,7 +291,7 @@ namespace eg
 		}
 
 		drawList->ChannelsSetCurrent(0);
-	
+
 		ImGui::GetWindowDrawList()->AddRectFilled(
 			initialCursorPos,
 			ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth, ImGui::GetCursorScreenPos().y + padding),
@@ -305,6 +313,7 @@ namespace eg
 
 	void AssistantPanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::Begin("Assistant Panel");
 
 		if (!m_assistantInitialized)
@@ -511,6 +520,7 @@ namespace eg
 
 	void AssistantPanel::UpdateAssistantStatus()
 	{
+        EG_PROFILE_FUNCTION();
 		if (assistantManager->IsNewVoiceMessageAvailable())
 		{
 			std::string message = assistantManager->GetLastVoiceMessage();
@@ -540,6 +550,7 @@ namespace eg
 
 	void AssistantPanel::RenderAssistantSettings()
 	{
+        EG_PROFILE_FUNCTION();
 		if (ImGui::BeginPopupModal("Assistant Settings", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.14f, 0.12f, 0.22f, 1.0f));
@@ -605,6 +616,7 @@ namespace eg
 
 	void AssistantPanel::RunMessage(const std::string& message)
 	{
+        EG_PROFILE_FUNCTION();
 		if (message.empty() || m_isLastMessageFromUser)
 			return;
 

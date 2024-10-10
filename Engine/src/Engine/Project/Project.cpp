@@ -7,10 +7,12 @@ namespace eg {
 	Project::Project(ProjectConfig projectConfig)
 		: m_Config(projectConfig)
 	{
+		EG_PROFILE_FUNCTION();
 	}
 
 	Ref<Project> Project::New()
 	{
+		EG_PROFILE_FUNCTION();
 		s_ActiveProject = CreateRef<Project>();
 
 		ConsolePanel::Log("File: Project.cpp - Project created successfully", ConsolePanel::LogType::Info);
@@ -19,6 +21,7 @@ namespace eg {
 
 	bool Project::Save(const std::filesystem::path& path)
 	{
+		EG_PROFILE_FUNCTION();
 		ProjectSerializer serializer(s_ActiveProject);
 		if (serializer.Serialize(path))
 		{
@@ -32,6 +35,7 @@ namespace eg {
 
 	Ref<Project> Project::Load(const std::filesystem::path& path)
 	{
+		EG_PROFILE_FUNCTION();
 		Ref<Project> project = CreateRef<Project>();
 		ProjectSerializer serializer(project);
 		if (serializer.Deserialize(path))

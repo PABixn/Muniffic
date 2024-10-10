@@ -34,6 +34,7 @@ namespace eg
 
 	const char *add(const char *begining, const char *middle, const char *ending)
 	{
+        EG_PROFILE_FUNCTION();
 		size_t resultLength = strlen(middle) + strlen(begining) + strlen(ending);
 		char *resultMsg = new char[resultLength];
 		strcpy(resultMsg, begining);
@@ -44,6 +45,7 @@ namespace eg
 
 	float CalculatePreferedComponentPropertyWidth(const char *label)
 	{
+        EG_PROFILE_FUNCTION();
 		float WidthOfLabel = ImGui::CalcTextSize(label).x;
 		if (WidthOfLabel > ImGui::GetContentRegionAvail().x * (1.f - WidthOfProperty) - 4.f)
 		{
@@ -64,6 +66,7 @@ namespace eg
 
 	static void PropertyLabel(const char *label)
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::SameLine();
 		bool s = ImGui::TextWrappedWithLineLimit(label, 1);
 
@@ -79,6 +82,7 @@ namespace eg
 
 	static bool PrettyButton(const char *label, bool fullWidth = false)
 	{
+        EG_PROFILE_FUNCTION();
 		if (fullWidth)
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(50, 7));
 		else
@@ -98,11 +102,14 @@ namespace eg
 
 	void ComponentPropertyBeforeDraw(const char *label)
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::PushID(label);
 		ImGui::PushItemWidth(CalculatePreferedComponentPropertyWidth(label));
 	}
+
 	void ComponentPropertyAfterDraw(const char *label)
 	{
+		EG_PROFILE_FUNCTION();
 		ImGui::PopItemWidth();
 		PropertyLabel(label);
 		ImGui::PopID();
@@ -110,6 +117,7 @@ namespace eg
 
 	static void DrawVec3Control(Entity entity, const std::string &label, glm::vec3 &values, float resetValue = 0.0f, float columnWidth = 100.0f, bool firstValue = false)
 	{
+		EG_PROFILE_FUNCTION();
 		float x = values.x, y = values.y, z = values.z;
 		ImGuiIO &io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
@@ -187,6 +195,7 @@ namespace eg
 
 	static bool DrawComponentPropertyFloat(const char *label, float *value, float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%.3f")
 	{
+		EG_PROFILE_FUNCTION();
 
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragFloat("", value, speed, min, max, format);
@@ -196,7 +205,7 @@ namespace eg
 
 	static bool DrawComponentPropertyFloat2(const char *label, float value[2], float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%.3f")
 	{
-
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragFloat2("", value, speed, min, max, format);
 		ComponentPropertyAfterDraw(label);
@@ -205,7 +214,7 @@ namespace eg
 
 	static bool DrawComponentPropertyFloat3(const char *label, float value[3], float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%.3f")
 	{
-
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragFloat3("", value, speed, min, max, format);
 		ComponentPropertyAfterDraw(label);
@@ -214,7 +223,7 @@ namespace eg
 
 	static bool DrawComponentPropertyFloat4(const char *label, float value[4], float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%.3f")
 	{
-
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragFloat4("", value, speed, min, max, format);
 		ComponentPropertyAfterDraw(label);
@@ -223,7 +232,7 @@ namespace eg
 
 	static bool DrawComponentPropertyInt(const char *label, int *value, float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%d")
 	{
-
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragInt("", value, speed, min, max, format);
 		ComponentPropertyAfterDraw(label);
@@ -232,7 +241,7 @@ namespace eg
 
 	static bool DrawComponentPropertyColorEdit4(const char *label, float col[4])
 	{
-
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::ColorEdit4("", col);
 		ComponentPropertyAfterDraw(label);
@@ -241,6 +250,7 @@ namespace eg
 
 	static bool DrawComponentPropertyInputText(const char *label, char *buf, size_t buf_size)
 	{
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed = ImGui::InputText("", buf, buf_size);
 		ComponentPropertyAfterDraw(label);
@@ -249,6 +259,7 @@ namespace eg
 
 	static bool DrawComponentPropertyInputText(const char *label, std::string *val)
 	{
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed = ImGui::InputText("", val);
 		ComponentPropertyAfterDraw(label);
@@ -257,6 +268,7 @@ namespace eg
 
 	static void DrawComponentPropertyFileReference(const char *label, UUID &uuid, std::function<void(int64_t *what)> fun)
 	{
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		ImGui::Button((uuid == 0) ? "none" : ResourceDatabase::GetResourceName(uuid).c_str(), {CalculatePreferedComponentPropertyWidth(label), 0});
 		if (ImGui::BeginDragDropTarget())
@@ -273,6 +285,7 @@ namespace eg
 
 	static bool DrawComponentPropertyCheckbox(const char *label, bool *CheckedValue)
 	{
+		EG_PROFILE_FUNCTION();
 		ImGui::PushID(label);
 		bool changed_value = ImGui::Checkbox("", CheckedValue);
 		PropertyLabel(label);
@@ -282,6 +295,7 @@ namespace eg
 
 	static void DrawComponentPropertyCombo(const char *label, std::vector<const char *> possiblevalues, int currentSelected, std::function<void(int number)> fun)
 	{
+		EG_PROFILE_FUNCTION();
 		ImGui::PushID(label);
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * WidthOfProperty - 4.f);
 		char *currentValueString = (char *)possiblevalues[currentSelected];
@@ -309,11 +323,13 @@ namespace eg
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene> &scene)
 	{
+        EG_PROFILE_FUNCTION();
 		SetContext(scene);
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene> &scene)
 	{
+        EG_PROFILE_FUNCTION();
 		m_Context = scene;
 		EditorActions::SetScene(scene);
 		m_SelectionContext = {};
@@ -325,6 +341,7 @@ namespace eg
 
 	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity)
 	{
+        EG_PROFILE_FUNCTION();
 		bool searched = false, childsearched = false;
 		EntityDisplayInfo currentEntityDisplayInfo = EntityDisplayInfo();
 		for (Entity e : entity.GetChildren())
@@ -352,6 +369,7 @@ namespace eg
 
 	void SceneHierarchyPanel::Search()
 	{
+		EG_PROFILE_FUNCTION();
 		m_ListOfEntityDisplayed.clear();
 		m_Context->m_Registry.each([&](auto entityID)
 								   {
@@ -374,6 +392,7 @@ namespace eg
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
+		EG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::Begin("Scene Hierarchy");
 		ImGui::PopStyleVar();
@@ -521,6 +540,7 @@ namespace eg
 
 	void SceneHierarchyPanel::Update(float dt)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_SelectionContext)
 		{
 			if (m_SelectionContext.HasComponent<AnimatorComponent>())
@@ -538,6 +558,7 @@ namespace eg
 
 	void SceneHierarchyPanel::DrawEntityNode(EntityDisplayInfo entityDisplayInfo)
 	{
+		EG_PROFILE_FUNCTION();
 		Entity entity = entityDisplayInfo.entity;
 
 		if (!entity.IsDrawable())
@@ -634,9 +655,11 @@ namespace eg
 			ImGui::TreePop();
 		}
 	}
+
 	template <typename T, typename UIFunction>
 	void SceneHierarchyPanel::DrawComponent(const std::string &name, Entity entity, UIFunction uiFunction, Ref<Scene> &context, Icons icon)
 	{
+		EG_PROFILE_FUNCTION();
 		static const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_NoArrow | ImGuiTreeNodeFlags_PropertiesComponent;
 		if (entity.HasComponent<T>())
 		{
@@ -717,6 +740,7 @@ namespace eg
 	template <typename T>
 	void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string &entryName)
 	{
+		EG_PROFILE_FUNCTION();
 		if (!m_SelectionContext.HasComponent<T>())
 		{
 			if (ImGui::MenuItem(entryName.c_str()))
@@ -729,12 +753,13 @@ namespace eg
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
+		EG_PROFILE_FUNCTION();
 		if (entity.HasComponent<TagComponent>())
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 7));
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
 			ImGui::SetCursorPos({ ImGui::GetCursorPosX() + 40, ImGui::GetCursorPosY() + 20 });
-			ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::Component_Puzzle)->GetRendererID(), { 30, 30 });
+			ImGui::Image((ImTextureID)(IconLoader::GetIcon(Icons::Component_Puzzle)->GetRendererID()), { 30, 30 });
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 120);
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);

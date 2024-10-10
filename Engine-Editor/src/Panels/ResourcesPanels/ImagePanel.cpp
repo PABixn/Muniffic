@@ -21,18 +21,20 @@ namespace eg
 
 	ImagePanel::ImagePanel(const std::filesystem::path& path)
 	{
+        EG_PROFILE_FUNCTION();
 		m_TexturePath = path;
 	}
 
 	bool ImagePanel::OpenImagePanel(const std::filesystem::path& path)
 	{
+        EG_PROFILE_FUNCTION();
 		m_TexturePath = path;
 		/*m_TextureData.ResourcePath = path;*/
 		m_BasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Textures";
 		bool resourceLoad = false;
 		m_LoadedResource = new Resource();
 		resourceLoad = resourceSystemLoad(path.string(), ResourceType::Image, m_LoadedResource);
-		
+
 		if (!resourceLoad) {
 			return false;
 		}
@@ -54,6 +56,7 @@ namespace eg
 
 	void ImagePanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		if (!m_ShowImagePanel)
 			return;
                 ImGui::PushStyleColor(ImGuiCol_WindowBg, BGCOLOR);
@@ -114,6 +117,7 @@ namespace eg
 	}
 	void ImagePanel::ResetData()
 	{
+        EG_PROFILE_FUNCTION();
 		m_TextureData = TextureResourceData();
 		m_TextureData.ParentDirectory = 0;
 		m_TextureData.ResourceName = "";

@@ -90,6 +90,7 @@ namespace eg
 
 		MonoAssembly* LoadMonoAssembly(const std::filesystem::path &assemblyPath, bool loadPDB = false)
 		{
+            EG_PROFILE_FUNCTION();
 			ScopedBuffer fileData = FileSystem::ReadFileBinary(assemblyPath.string());
 
 			if (!fileData)
@@ -117,6 +118,7 @@ namespace eg
 
 		ScriptFieldType MonoTypeToScriptFieldType(MonoType *monoType)
 		{
+            EG_PROFILE_FUNCTION();
 			std::string typeName = mono_type_get_name(monoType);
 
 			auto it = s_ScriptFieldTypeMap.find(typeName);
@@ -131,6 +133,7 @@ namespace eg
 
 	void ScriptEngine::Init()
 	{
+        EG_PROFILE_FUNCTION();
 		s_Data = new ScriptEngineData();
 		InitMono();
 		bool status = LoadAssembly("Resources/Scripts/Debug/Muniffic-ScriptCore.dll");
@@ -157,12 +160,14 @@ namespace eg
 
 	void ScriptEngine::Shutdown()
 	{
+        EG_PROFILE_FUNCTION();
 		delete s_Data;
 		ShutdownMono();
 	}
 
 	void ScriptEngine::InitMono()
 	{
+        EG_PROFILE_FUNCTION();
 		mono_set_assemblies_path("mono/lib");
 
 		MonoDomain *domain = mono_jit_init("MunifficJitRuntime");
@@ -173,6 +178,7 @@ namespace eg
 
 	void ScriptEngine::ShutdownMono()
 	{
+        EG_PROFILE_FUNCTION();
 		if (s_Data == nullptr)return; //Means Mono hasn't been initialized yet (Closed app before choosing project)
 
 		// mono_domain_set(mono_get_root_domain(), false);
@@ -186,6 +192,7 @@ namespace eg
 
 	void ScriptEngine::LoadAssemblyClasses()
 	{
+        EG_PROFILE_FUNCTION();
 		s_Data->EntityClasses.clear();
 		s_Data->ScriptMethods.clear();
 		// MonoImage* image = mono_assembly_get_image(assembly);
@@ -208,7 +215,7 @@ namespace eg
 				fullName = className;
 
 			MonoClass* monoClass = mono_class_from_name(s_Data->AppAssemblyImage, nameSpace, className);
-			
+
 
 			if (monoClass == entityClass)
 				continue;
@@ -266,7 +273,7 @@ namespace eg
 
 							EG_CORE_WARN("{} type: {}", fieldName, MunifficFieldType);
 							scriptClass->m_Fields[fieldName] = { fieldName, fieldType, field };
-							
+
 						}
 					}
 				}
@@ -313,6 +320,7 @@ namespace eg
 
 	std::vector<MonoClass*> ScriptEngine::GetBaseClasses(MonoClass* monoClass, MonoClass* entityClass)
 	{
+        EG_PROFILE_FUNCTION();
 		std::vector<MonoClass*> baseClasses;
 
 		MonoClass* baseClass = mono_class_get_parent(monoClass);
@@ -327,6 +335,7 @@ namespace eg
 
 	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(Entity entity)
 	{
+        EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(entity);
 
 		UUID uuid = entity.GetUUID();
@@ -349,16 +358,19 @@ namespace eg
 
 	const ScriptMethodMap& ScriptEngine::GetScriptMethodMap(const std::string& className)
 	{
+        EG_PROFILE_FUNCTION();
 		return s_Data->ScriptMethods[className];
 	}
 
 	const std::unordered_map<std::string, ScriptMethodMap>& ScriptEngine::GetAllScriptMethodMaps()
 	{
+        EG_PROFILE_FUNCTION();
 		return s_Data->ScriptMethods;
 	}
 
 	void ScriptEngine::CallMethod(UUID entityID, const std::string& className, const std::string& methodName, int parameterCount, void** params)
 	{
+        EG_PROFILE_FUNCTION();
 		Ref<ScriptInstance> instance = GetEntityScriptInstance(entityID, className);
 		if (!instance)
 			return;
@@ -366,16 +378,18 @@ namespace eg
 		//Switch if to Assert
 		if (method)
 			instance->GetScriptClass()->InvokeMethod(instance->GetManagedObject(), method, params);
-	
+
 	}
 
 	bool ScriptEngine::isMethodInternal(const std::string& methodName)
 	{
+        EG_PROFILE_FUNCTION();
 		return std::find(s_InternallCallFunctions.begin(), s_InternallCallFunctions.end(), methodName) != s_InternallCallFunctions.end();
 	}
 
 	int ScriptEngine::GetMethodParameterCount(const std::string& className, const std::string& methodName)
 	{
+        EG_PROFILE_FUNCTION();
 		bool exists = s_Data->ScriptMethods.end() != s_Data->ScriptMethods.find(className) && s_Data->ScriptMethods[className].end() != s_Data->ScriptMethods[className].find(methodName);
 		if(!exists)
 			return 0;
@@ -387,11 +401,13 @@ namespace eg
 
 	MonoImage* ScriptEngine::GetCoreAssemblyImage()
 	{
+        EG_PROFILE_FUNCTION();
 		return s_Data->CoreAssemblyImage;
 	}
 
 	MonoObject* ScriptEngine::GetManagedInstance(UUID uuid, std::string name)
 	{
+        EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(s_Data->EntityInstances.find(uuid) != s_Data->EntityInstances.end());
 		EG_CORE_ASSERT(s_Data->EntityInstances.at(uuid).find(name) != s_Data->EntityInstances.at(uuid).end());
 
@@ -400,6 +416,7 @@ namespace eg
 
 	static void onAppAssemblyFileSystemEvent(const std::string &path, const filewatch::Event change_type)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!s_Data->AssemblyReloadPending && change_type == filewatch::Event::modified)
 		{
 			s_Data->AssemblyReloadPending = true;
@@ -412,6 +429,7 @@ namespace eg
 
 	bool ScriptEngine::LoadAssembly(const std::filesystem::path &filepath)
 	{
+        EG_PROFILE_FUNCTION();
 		s_Data->AppDomain = mono_domain_create_appdomain((char*)"MunifficScriptRuntime", nullptr);
 		mono_domain_set(s_Data->AppDomain, true);
 		s_Data->CoreAssembly = Utils::LoadMonoAssembly(filepath.string(), s_Data->EnableDebugging);
@@ -426,6 +444,7 @@ namespace eg
 
 	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path &filepath)
 	{
+        EG_PROFILE_FUNCTION();
 		s_Data->AppAssemblyPath = filepath;
 		if (!std::filesystem::exists(filepath)) return false;
 		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath.string(), s_Data->EnableDebugging);
@@ -444,6 +463,7 @@ namespace eg
 
 	void ScriptEngine::ReloadAssembly()
 	{
+        EG_PROFILE_FUNCTION();
 		mono_domain_set(mono_get_root_domain(), false);
 
 		mono_domain_unload(s_Data->AppDomain);
@@ -460,11 +480,13 @@ namespace eg
 
 	void ScriptEngine::OnRuntimeStart(Scene *scene)
 	{
+        EG_PROFILE_FUNCTION();
 		s_Data->SceneContext = scene;
 	}
 
 	void ScriptEngine::OnRuntimeStop()
 	{
+        EG_PROFILE_FUNCTION();
 		s_Data->SceneContext = nullptr;
 		s_Data->ScriptInstancesInitialized = false;
 		s_Data->EntityInstances.clear();
@@ -472,11 +494,13 @@ namespace eg
 
 	bool ScriptEngine::EntityClassExists(const std::string &fullClassName)
 	{
+        EG_PROFILE_FUNCTION();
 		return s_Data->EntityClasses.find(fullClassName) != s_Data->EntityClasses.end();
 	}
 
 	void ScriptEngine::OnCreateEntity(Entity entity)
 	{
+        EG_PROFILE_FUNCTION();
 		UUID uuid = entity.GetUUID();
 		const auto &nsc = entity.GetComponent<ScriptComponent>();
 
@@ -515,6 +539,7 @@ namespace eg
 
 	void ScriptEngine::OnUpdateEntity(Entity entity, Timestep ts)
 	{
+        EG_PROFILE_FUNCTION();
 		UUID entityID = entity.GetUUID();
 		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
 		{
@@ -532,11 +557,13 @@ namespace eg
 
 	Scene *ScriptEngine::GetSceneContext()
 	{
+        EG_PROFILE_FUNCTION();
 		return s_Data->SceneContext;
 	}
 
 	std::vector<Ref<ScriptInstance>> ScriptEngine::GetAllScriptInstances()
 	{
+        EG_PROFILE_FUNCTION();
 		if (s_Data == nullptr) return std::vector<Ref<ScriptInstance>>();
 		std::vector<Ref<ScriptInstance>> result;
 		for (auto& [key, value] : s_Data->EntityInstances)
@@ -547,6 +574,7 @@ namespace eg
 
 	std::vector<Ref<ScriptInstance>> ScriptEngine::GetEntityScriptInstances(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		std::vector<Ref<ScriptInstance>> result;
 		if (s_Data->EntityInstances.find(uuid) != s_Data->EntityInstances.end())
 		{
@@ -558,6 +586,7 @@ namespace eg
 
 	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID uuid, std::string name)
 	{
+        EG_PROFILE_FUNCTION();
 		auto it = s_Data->EntityInstances.find(uuid);
 		if (it == s_Data->EntityInstances.end())
 			return nullptr;
@@ -568,6 +597,7 @@ namespace eg
 
 	Ref<ScriptClass> ScriptEngine::GetEntityClass(const std::string &name)
 	{
+        EG_PROFILE_FUNCTION();
 		ScriptEngineData* data = s_Data;
 		if (s_Data->EntityClasses.find(name) == s_Data->EntityClasses.end())
 			return nullptr;
@@ -576,13 +606,15 @@ namespace eg
 
 	std::unordered_map<std::string, Ref<ScriptClass>> &ScriptEngine::GetEnityClasses()
 	{
+        EG_PROFILE_FUNCTION();
 		return s_Data->EntityClasses;
 	}
 
 	MonoObject *ScriptEngine::InstantiateClass(MonoClass *monoClass)
 	{
+        EG_PROFILE_FUNCTION();
 		MonoObject *object = mono_object_new(s_Data->AppDomain, monoClass);
-		
+
 		mono_runtime_object_init(object);
 		return object;
 	}
@@ -590,21 +622,25 @@ namespace eg
 	ScriptClass::ScriptClass(const std::string &classNamespace, const std::string &className, bool isCore)
 		: m_ClassNamespace(classNamespace), m_ClassName(className), m_Fields(std::unordered_map<std::string, ScriptField>())
 	{
+        EG_PROFILE_FUNCTION();
 		m_Class = mono_class_from_name(isCore ? s_Data->CoreAssemblyImage : s_Data->AppAssemblyImage, m_ClassNamespace.c_str(), m_ClassName.c_str());
 	}
 
 	MonoObject *ScriptClass::Instantiate()
 	{
+        EG_PROFILE_FUNCTION();
 		return ScriptEngine::InstantiateClass(m_Class);
 	}
 
 	MonoMethod *ScriptClass::GetMethod(const std::string &name, int parameterCount)
 	{
+        EG_PROFILE_FUNCTION();
 		return mono_class_get_method_from_name(m_Class, name.c_str(), parameterCount);
 	}
 
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void **params)
 	{
+        EG_PROFILE_FUNCTION();
 		MonoObject *exception = nullptr;
 		return mono_runtime_invoke(method, instance, params, &exception);
 	}
@@ -612,6 +648,7 @@ namespace eg
 	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity, UUID uuid)
 		: m_ScriptClass(scriptClass)
 	{
+        EG_PROFILE_FUNCTION();
 		m_Instance = m_ScriptClass->Instantiate();
 		m_InstanceHandle = mono_gchandle_new(m_Instance, true);
 
@@ -638,22 +675,26 @@ namespace eg
 
 	ScriptInstance::~ScriptInstance()
 	{
+        EG_PROFILE_FUNCTION();
 		mono_gchandle_free(m_InstanceHandle);
 	}
 
 	MonoString* ScriptEngine::CreateString(const char* string)
 	{
+        EG_PROFILE_FUNCTION();
 		return mono_string_new(s_Data->AppDomain, string);
 	}
 
 	void ScriptInstance::InvokeOnCreate()
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_OnCreateMethod)
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
 	}
 
 	void ScriptInstance::InvokeOnUpdate(float ts)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_OnUpdateMethod)
 		{
 			void *arg = &ts;
@@ -663,6 +704,7 @@ namespace eg
 
 	void ScriptInstance::InvokeOn2DCollisionEnter(InternalCollision2DEvent collision)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_OnCollisionEnterMethod)
 		{
 			UUID uuid = m_EntityUUID == collision.entityA ? collision.entityB : collision.entityA;
@@ -674,6 +716,7 @@ namespace eg
 
 	void ScriptInstance::InvokeOn2DCollisionExit(InternalCollision2DEvent collision)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_OnCollisionExitMethod)
 		{
 			UUID uuid = m_EntityUUID == collision.entityA ? collision.entityB : collision.entityA;
@@ -685,6 +728,7 @@ namespace eg
 
 	void ScriptInstance::InvokeOnKeyPress(int keycode)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_OnKeyPress)
 		{
 			void* args = &keycode;
@@ -694,6 +738,7 @@ namespace eg
 
 	void ScriptInstance::InvokeOnKeyRelease(int keycode)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_OnKeyRelease)
 		{
 			void* args = &keycode;
@@ -703,6 +748,7 @@ namespace eg
 
 	void ScriptInstance::InvokeOnMouseButtonPress(int button)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_OnMouseButtonPress)
 		{
 			void* args = &button;
@@ -712,6 +758,7 @@ namespace eg
 
 	void ScriptInstance::InvokeOnMouseButtonRelease(int button)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_OnMouseButtonRelease)
 		{
 			void* args = &button;
@@ -721,6 +768,7 @@ namespace eg
 
 	void ScriptInstance::InvokeOnScroll(double xOffset, double yOffset)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_OnScroll)
 		{
 			float offsets[] = { (float)xOffset, (float)yOffset };
@@ -732,10 +780,12 @@ namespace eg
 	ScriptField::ScriptField(const std::string &name, ScriptFieldType type, MonoClassField *valuePtr)
 		: Name(name), Type(type), ClassField(valuePtr)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	bool ScriptInstance::GetFieldValueInternal(const std::string &name, void *buffer)
 	{
+        EG_PROFILE_FUNCTION();
 		const auto &fields = m_ScriptClass->GetFields();
 		auto it = fields.find(name);
 		if (it == fields.end())
@@ -748,6 +798,7 @@ namespace eg
 
 	bool ScriptInstance::SetFieldValueInternal(const std::string &name, const void *value)
 	{
+        EG_PROFILE_FUNCTION();
 		const auto &fields = m_ScriptClass->GetFields();
 		auto it = fields.find(name);
 		if (it == fields.end())
@@ -760,6 +811,7 @@ namespace eg
 
 	ScriptMethod::ScriptMethod(const std::string& name, MonoMethod* method)
 	{
+        EG_PROFILE_FUNCTION();
 		Name = name;
 		Method = method;
 	}

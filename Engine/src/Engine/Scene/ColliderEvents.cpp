@@ -7,8 +7,9 @@ namespace eg
 {
 	void ContactListener::BeginContact(b2Contact* contact)
 	{
+        EG_PROFILE_FUNCTION();
 		InternalCollision2DEvent collision;
-		
+
 		UUID entityA = contact->GetFixtureA()->GetUserData().pointer;
 		UUID entityB = contact->GetFixtureB()->GetUserData().pointer;
 
@@ -34,6 +35,7 @@ namespace eg
 
 	void ContactListener::EndContact(b2Contact* contact)
 	{
+        EG_PROFILE_FUNCTION();
 		InternalCollision2DEvent collision;
 
 		UUID entityA = contact->GetFixtureA()->GetUserData().pointer;

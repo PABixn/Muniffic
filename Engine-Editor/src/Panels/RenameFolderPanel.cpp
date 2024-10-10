@@ -6,16 +6,20 @@ namespace eg
 {
 	RenameFolderPanel::RenameFolderPanel()
 		: m_Show(false), m_DirectoryUUID(0)
-	{ }
+	{
+	    EG_PROFILE_FUNCTION();
+	}
 
 	void RenameFolderPanel::ShowWindow(UUID directoryUUID)
 	{
+		EG_PROFILE_FUNCTION();
 		m_DirectoryUUID = directoryUUID;
 		m_Show = true;
 	}
 
 	void RenameFolderPanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
 
 		ImGui::Begin("Rename folder", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);

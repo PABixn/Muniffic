@@ -12,6 +12,7 @@ namespace eg
 {
 	AssistantManager::AssistantManager()
 	{
+		EG_PROFILE_FUNCTION();
 		IsVoiceAssistantListening = false;
 		newVoiceMessageAvailable = false;
 		IsVoiceAsssistantInitialized = false;
@@ -24,6 +25,7 @@ namespace eg
 
 	bool AssistantManager::ThreadAvailable(std::string threadID)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
 			EG_CORE_ERROR("Thread not found");
@@ -41,6 +43,7 @@ namespace eg
 
 	const std::string& AssistantManager::GetLastMessageRole(std::string threadID)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
 			EG_CORE_ERROR("Thread not found");
@@ -58,6 +61,7 @@ namespace eg
 
 	void AssistantManager::SpeakText(std::string text)
 	{
+		EG_PROFILE_FUNCTION();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		if (!IsVoiceAsssistantInitialized)
@@ -83,6 +87,7 @@ namespace eg
 
 	bool AssistantManager::CheckMicrophoneAvailable()
 	{
+		EG_PROFILE_FUNCTION();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* result = PyObject_CallObject(m_CheckMicrophoneAvailable, nullptr);
@@ -100,6 +105,7 @@ namespace eg
 
 	void AssistantManager::SetVolume(float volume)
 	{
+		EG_PROFILE_FUNCTION();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* args = PyTuple_Pack(1, PyFloat_FromDouble(volume));
@@ -117,6 +123,7 @@ namespace eg
 
 	void AssistantManager::StopListening()
 	{
+		EG_PROFILE_FUNCTION();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject_CallObject(m_stopVoiceAssistant, nullptr);
@@ -126,6 +133,7 @@ namespace eg
 
 	void AssistantManager::StartListening()
 	{
+		EG_PROFILE_FUNCTION();
 		IsVoiceAssistantListening = true;
 
 		PyGILState_STATE gstate = PyGILState_Ensure();
@@ -143,7 +151,7 @@ namespace eg
 			PyGILState_Release(gstate);
 			IsVoiceAssistantListening = false;
 			EG_CORE_ERROR("Failed to get voice message");
-			
+
 			return;
 		}
 
@@ -157,6 +165,7 @@ namespace eg
 
 	void AssistantManager::Init()
 	{
+		EG_PROFILE_FUNCTION();
 		Py_Initialize();
 		PyEval_InitThreads();
 
@@ -233,6 +242,7 @@ namespace eg
 
 	bool AssistantManager::CheckAPI()
 	{
+		EG_PROFILE_FUNCTION();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* result = PyObject_CallObject(m_CheckAPI, nullptr);
@@ -251,6 +261,7 @@ namespace eg
 
 	bool AssistantManager::CreateAssistant(std::string assistantName, std::string assistantInstructions = "")
 	{
+		EG_PROFILE_FUNCTION();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* args = PyTuple_Pack(3, PyUnicode_FromString(assistantName.c_str()), PyUnicode_FromString("gpt-4o-mini"), PyUnicode_FromString(assistantInstructions.c_str()));
@@ -270,7 +281,7 @@ namespace eg
 			EG_CORE_ERROR("Failed to call create_assistant function");
 			return false;
 		}
-			
+
 		EG_CORE_INFO("Assistant created with ID: {0}", PyUnicode_AsUTF8(result));
 
 		m_AssistantID = PyUnicode_AsUTF8(result);
@@ -284,6 +295,7 @@ namespace eg
 
 	std::string AssistantManager::CreateThread()
 	{
+		EG_PROFILE_FUNCTION();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* result = PyObject_CallObject(m_CreateThread, nullptr);
@@ -305,10 +317,11 @@ namespace eg
 
 	void AssistantManager::InitiateRun(std::string threadID)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
 			EG_CORE_ERROR("Thread not found");
-			
+
 			return;
 		}
 
@@ -321,7 +334,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
 			PyGILState_Release(gstate);
-			
+
 			return;
 		}
 
@@ -332,7 +345,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call initiate_run function");
 			PyGILState_Release(gstate);
-			
+
 			return;
 		}
 
@@ -344,10 +357,11 @@ namespace eg
 
 	void AssistantManager::AddMessage(std::string threadID, std::string message)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
 			EG_CORE_ERROR("Thread not found");
-			
+
 			return;
 		}
 
@@ -369,7 +383,7 @@ namespace eg
 
 			delete messageObj;
 			m_Threads.at(threadID)->messages.pop_back();
-			
+
 			return;
 		}
 
@@ -381,17 +395,18 @@ namespace eg
 
 	bool AssistantManager::WaitForCompletion(std::string threadID)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
 			EG_CORE_ERROR("Thread not found");
-			
+
 			return false;
 		}
 
 		if (m_Threads.at(threadID)->m_RunIDs.size() == 0)
 		{
 			EG_CORE_ERROR("No run IDs found for thread");
-			
+
 			return false;
 		}
 
@@ -406,7 +421,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
 			PyGILState_Release(gstate);
-			
+
 			return false;
 		}
 
@@ -417,7 +432,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call wait_for_completion function");
 			PyGILState_Release(gstate);
-			
+
 			return false;
 		}
 
@@ -432,7 +447,7 @@ namespace eg
 				PyErr_Print();
 				EG_CORE_ERROR("Failed to create args object");
 				PyGILState_Release(gstate);
-				
+
 				return false;
 			}
 
@@ -443,7 +458,7 @@ namespace eg
 				PyErr_Print();
 				EG_CORE_ERROR("Failed to call get_last_message function");
 				PyGILState_Release(gstate);
-				
+
 				return false;
 			}
 
@@ -463,7 +478,7 @@ namespace eg
 			}
 			else
 				IsMessageInProgress = false;
-			
+
 			m_Threads.at(threadID)->messages.push_back(messageObj);
 
 			return true;
@@ -476,17 +491,18 @@ namespace eg
 		{
 			EG_CORE_ERROR("Run " + status);
 			PyGILState_Release(gstate);
-			
+
 			return false;
 		}
 
 		PyGILState_Release(gstate);
-		
+
 		return false;
 	}
 
 	bool AssistantManager::TakeAction(std::string threadID, std::string runID, PyGILState_STATE gstate)
 	{
+		EG_PROFILE_FUNCTION();
 		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()));
 
 		if (args == nullptr)
@@ -494,7 +510,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
 			PyGILState_Release(gstate);
-			
+
 			return false;
 		}
 
@@ -505,7 +521,7 @@ namespace eg
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call get_tool_call function");
 			PyGILState_Release(gstate);
-			
+
 			return false;
 		}
 
@@ -603,7 +619,7 @@ namespace eg
 					PyErr_Print();
 					EG_CORE_ERROR("Failed to create args object");
 					PyGILState_Release(gstate);
-					
+
 					return false;
 				}
 
@@ -614,7 +630,7 @@ namespace eg
 					PyErr_Print();
 					EG_CORE_ERROR("Failed to call submit_tool_outputs function");
 					PyGILState_Release(gstate);
-					
+
 					return false;
 				}
 			}
@@ -625,6 +641,7 @@ namespace eg
 
 	void AssistantManager::SaveAssistant()
 	{
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path path = Project::GetResourcesPath() / "resources/assistant/assistant.mndata";
 		YAML::Emitter out;
 
@@ -642,6 +659,7 @@ namespace eg
 
 	bool AssistantManager::LoadAssistant()
 	{
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path path = "resources/assistant/assistant.mndata";
 
 		if (!std::filesystem::exists(path))
@@ -649,7 +667,7 @@ namespace eg
 			std::filesystem::create_directories(path.parent_path());
 			std::ofstream file(path.string(), std::ios::trunc);
 			file.close();
-			
+
 			return false;
 		}
 
@@ -662,7 +680,7 @@ namespace eg
 		catch (YAML::ParserException e)
 		{
 			EG_CORE_ERROR("Failed to load assistant data");
-			
+
 			return false;
 		}
 
@@ -670,26 +688,27 @@ namespace eg
 			m_AssistantID = data["assistantID"].as<std::string>();
 		else
 		{
-			
+
 			return false;
 		}
 
 		if (!CheckIfAssistantExists(m_AssistantID))
 		{
 			EG_CORE_ERROR("Assistant with ID {0} does not exist", m_AssistantID);
-			
+
 			return false;
 		}
 
 		EG_CORE_INFO("Assistant loaded with ID: {0}", m_AssistantID);
 
-		
+
 
 		return true;
 	}
 
 	bool AssistantManager::CheckIfAssistantExists(std::string assistantID)
 	{
+		EG_PROFILE_FUNCTION();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		PyObject* args = PyTuple_Pack(1, PyUnicode_FromString(assistantID.c_str()));
@@ -698,7 +717,7 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to create args object");
-			
+
 			return false;
 		}
 
@@ -708,13 +727,13 @@ namespace eg
 		{
 			PyErr_Print();
 			EG_CORE_ERROR("Failed to call check_if_assistant_exists function");
-			
+
 			return false;
-		}	
+		}
 
 		PyGILState_Release(gstate);
 
-		
+
 
 		return PyObject_IsTrue(result);
 	}
