@@ -244,9 +244,7 @@ namespace eg
 		{
 			Markdown markdown;
 			markdown.init(m_PoppinsRegularFont, m_PoppinsMediumFont);
-			markdown.text("#Hello, world! \nSiema");
-			markdown.text("##Hello, world! \nSiema");
-			markdown.text("###Hello, world! \nSiema");
+			markdown.text("**Siema**");
 			ImGui::EndPopup();
 		}
 
