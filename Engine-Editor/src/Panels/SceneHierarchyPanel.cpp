@@ -1455,7 +1455,7 @@ namespace eg
 		DrawComponent<AnimatorComponent>("Animator", entity, [entity, this](auto &component)
 										 {
 			bool ShowAnimationPreview = !(m_Context->IsRunning());
-				PrettyButton("Add Animation", true)
+				PrettyButton("Add Animation", true);
                 if (ImGui::BeginDragDropTarget()) {
                     int64_t* uuid;
 
