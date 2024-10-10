@@ -27,19 +27,20 @@ namespace eg {
 
 	Scene::Scene()
 	{
-
+        EG_PROFILE_FUNCTION();
 	}
 
 	Scene::~Scene()
 	{
-
+        EG_PROFILE_FUNCTION();
 	}
-	
-	
+
+
 
 	template<typename... Component>
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
 	{
+        EG_PROFILE_FUNCTION();
 		([&]()
 			{
 			auto view = src.view<Component>();
@@ -56,12 +57,14 @@ namespace eg {
 	template<typename... Component>
 	static void CopyComponent(ComponentGroup<Component...>, entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
 	{
+        EG_PROFILE_FUNCTION();
 		CopyComponent<Component...>(dst, src, enttMap);
 	}
 
 	template<typename... Component>
 	static void CopyComponentIfExists(Entity dst, Entity src)
 	{
+        EG_PROFILE_FUNCTION();
 		([&]()
 			{
 				if (src.HasComponent<Component>())
@@ -72,17 +75,19 @@ namespace eg {
 	template<typename... Component>
 	static void CopyComponentIfExists(ComponentGroup<Component...>, Entity dst, Entity src)
 	{
+        EG_PROFILE_FUNCTION();
 		CopyComponentIfExists<Component...>(dst, src);
 	}
 
 	Ref<Scene> Scene::Copy(Ref<Scene>& other)
 	{
+        EG_PROFILE_FUNCTION();
 		Ref<Scene> scene = CreateRef<Scene>();
 		scene->m_ViewportWidth = other->m_ViewportWidth;
 		scene->m_ViewportHeight = other->m_ViewportHeight;
 
 		std::unordered_map<UUID, entt::entity> enttMap;
-		
+
 		auto& srcSceneRegistry = other->m_Registry;
 		auto& dstSceneRegistry = scene->m_Registry;
 		auto idView = srcSceneRegistry.view<IDComponent>();
@@ -111,11 +116,13 @@ namespace eg {
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+        EG_PROFILE_FUNCTION();
 		return CreateEntityWithID(UUID(), name);
 	}
 
 	Entity Scene::CreateEntityWithID(UUID uuid, const std::string& name)
 	{
+        EG_PROFILE_FUNCTION();
 		Entity entity = { m_Registry.create(), this };
 		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>(uuid);
@@ -130,6 +137,7 @@ namespace eg {
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+        EG_PROFILE_FUNCTION();
 		if (entity.GetParent().has_value())
 			entity.GetParent().value().RemoveChild(entity);
 		if (m_IsRunning && entity.HasComponent<RigidBody2DComponent>())
@@ -145,6 +153,7 @@ namespace eg {
 
 	void Scene::OnRuntimeStart()
 	{
+        EG_PROFILE_FUNCTION();
 		OnPhysics2DStart();
 		m_IsRunning = true;
 		//Scripting
@@ -173,6 +182,7 @@ namespace eg {
 
 	void Scene::OnRuntimeStop()
 	{
+        EG_PROFILE_FUNCTION();
 		OnPhysics2DStop();
 		m_IsRunning = false;
 		if (EvaluateSceneAudio) {
@@ -190,6 +200,7 @@ namespace eg {
 
 	void Scene::OnSimulationStart()
 	{
+        EG_PROFILE_FUNCTION();
 		OnPhysics2DStart();
 		// Audio
 		if (EvaluateSceneAudio) {
@@ -206,15 +217,16 @@ namespace eg {
 
 	void Scene::OnSimulationStop()
 	{
+        EG_PROFILE_FUNCTION();
 		OnPhysics2DStop();
 		if (EvaluateSceneAudio) {
 			auto ASourceView = m_Registry.view<AudioSourceComponent>();
 			for (auto f : ASourceView)
 			{
-				
+
 
 					ASourceView.get<AudioSourceComponent>(f).Audio->Stop();
-				
+
 			}
 		}
 	}
@@ -222,11 +234,13 @@ namespace eg {
 
 	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
 	{
+        EG_PROFILE_FUNCTION();
 		RenderScene(camera);
 	}
 
 	void Scene::FixedUpdate()
 	{
+        EG_PROFILE_FUNCTION();
 		{
 			const int32_t velocityIterations = 6;
 			const int32_t positionIterations = 2;
@@ -257,14 +271,15 @@ namespace eg {
 
 	void Scene::OnUpdateRuntime(Timestep ts,std::chrono::steady_clock::time_point& oldTime)
 	{
+        EG_PROFILE_FUNCTION();
 		m_NewTime = std::chrono::high_resolution_clock::now();
 		m_Delta = std::chrono::duration_cast<std::chrono::milliseconds>(m_NewTime - oldTime).count();
 		oldTime = m_NewTime;
-		
+
 
 		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
-			
+
 			// Update Native scripts
 			{
 				//C# Entity OnUpdate
@@ -289,7 +304,7 @@ namespace eg {
 					});
 			}
 
-			
+
 
 
 
@@ -300,7 +315,7 @@ namespace eg {
 			{
 				FixedUpdate();
 				m_TimePassed = m_TimePassed - m_FixedFramerate;
-				
+
 			}
 			// Physics
 			{
@@ -373,9 +388,9 @@ namespace eg {
 					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
 			}
-			 
+
 			//Set Animations
-			
+
 			{
 				auto group = m_Registry.view<TransformComponent, AnimatorComponent>();
 				for (auto entity : group)
@@ -399,7 +414,7 @@ namespace eg {
 					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
 			}
-			
+
 			// Draw circles
 			{
 				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
@@ -428,7 +443,8 @@ namespace eg {
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
-		
+        EG_PROFILE_FUNCTION();
+
 		if (!m_IsPaused || m_StepFrames-- > 0)
 			// Physics
 		{
@@ -460,6 +476,7 @@ namespace eg {
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_ViewportHeight == height && m_ViewportWidth == width)
 			return;
 
@@ -479,6 +496,7 @@ namespace eg {
 
 	void Scene::RenderScene(EditorCamera& camera)
 	{
+        EG_PROFILE_FUNCTION();
 		Renderer2D::BeginScene(camera);
 		RenderAxis();
 
@@ -548,19 +566,22 @@ namespace eg {
 
 	void Scene::RenderAxis()
 	{
+        EG_PROFILE_FUNCTION();
 		//X: red
 		//y: green
 		//z: blue
-		
+
 	}
 
 	void Scene::AddEntityToDestroy(Entity entity)
 	{
+        EG_PROFILE_FUNCTION();
 		m_EntitiesToDestroy.push_back(entity  );
 	}
 
 	Entity Scene::DuplicateEntity(Entity entity)
 	{
+        EG_PROFILE_FUNCTION();
 		std::string name = entity.GetName();
 		Entity newEntity = CreateEntity(name);
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
@@ -569,6 +590,7 @@ namespace eg {
 
 	Entity Scene::FindEntityByName(const std::string_view& name)
 	{
+        EG_PROFILE_FUNCTION();
 		auto view = m_Registry.view<TagComponent>();
 		for (auto entity : view)
 		{
@@ -580,6 +602,7 @@ namespace eg {
 	}
 
 	void Scene::FindEntitiesByName(const std::string_view& name, std::vector<Entity>& outVec) {
+        EG_PROFILE_FUNCTION();
 		auto view  = m_Registry.view<TagComponent>();
 		for (auto entity : view)
 		{
@@ -591,6 +614,7 @@ namespace eg {
 
 	Entity Scene::GetEntityByUUID(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		//TODO: Maybe should assert
 		if(m_EntityMap.find(uuid) != m_EntityMap.end())
 			return Entity{ m_EntityMap[uuid], this };
@@ -599,11 +623,13 @@ namespace eg {
 
 	bool Scene::EntityExists(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		return m_EntityMap.find(uuid) != m_EntityMap.end();
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()
 	{
+        EG_PROFILE_FUNCTION();
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
@@ -616,11 +642,13 @@ namespace eg {
 
 	void Scene::Step(int frames)
 	{
+        EG_PROFILE_FUNCTION();
 		m_StepFrames = frames;
 	}
 
 	void Scene::AwakeRuntimeBody(Entity entity)
 	{
+        EG_PROFILE_FUNCTION();
 		auto& transform = entity.GetComponent<TransformComponent>();
 		auto& rb = entity.GetComponent<RigidBody2DComponent>();
 
@@ -676,6 +704,7 @@ namespace eg {
 
 	void* Scene::StartRuntimeBody(Entity entity)
 	{
+        EG_PROFILE_FUNCTION();
 		auto& transform = entity.GetComponent<TransformComponent>();
 		auto& rb = entity.GetComponent<RigidBody2DComponent>();
 
@@ -693,8 +722,9 @@ namespace eg {
 
 	void Scene::OnPhysics2DStart()
 	{
+        EG_PROFILE_FUNCTION();
 		m_PhysicsWorld = new b2World({ 0.0f, -9.81f });
-		
+
 		ContactListener* listener = new ContactListener();
 
 		m_PhysicsWorld->SetContactListener(listener);
@@ -745,7 +775,7 @@ namespace eg {
 				fixtureDef.restitutionThreshold = cc.RestitutionThreshold;
 				fixtureDef.userData.pointer = e.GetUUID();
 				fixtureDef.isSensor = cc.IsSensor;
-				
+
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				cc.RuntimeFixture = fixture;
 			}
@@ -754,6 +784,7 @@ namespace eg {
 
 	void Scene::OnPhysics2DStop()
 	{
+        EG_PROFILE_FUNCTION();
 		delete m_PhysicsWorld;
 		m_PhysicsWorld = nullptr;
 	}
@@ -761,29 +792,34 @@ namespace eg {
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
+        EG_PROFILE_FUNCTION();
 		static_assert(sizeof(T) == 0);
 	}
 
-	
+
 
 	template<>
 	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
 			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
 	}
@@ -791,55 +827,66 @@ namespace eg {
 	template<>
 	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<RigidBody2DComponent>(Entity entity, RigidBody2DComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 	template<>
 	void Scene::OnComponentAdded<AudioSourceComponent>(Entity entity, AudioSourceComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<SpriteRendererSTComponent>(Entity entity, SpriteRendererSTComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Scene::OnComponentAdded<AnimatorComponent>(Entity entity, AnimatorComponent& component)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 }

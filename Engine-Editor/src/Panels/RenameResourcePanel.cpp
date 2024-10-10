@@ -6,16 +6,20 @@ namespace eg
 {
 	RenameResourcePanel::RenameResourcePanel()
 		: m_Show(false), m_UUID(0)
-	{ }
+	{
+	    EG_PROFILE_FUNCTION();
+	}
 
 	void RenameResourcePanel::ShowWindow(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		m_UUID = uuid;
 		m_Show = true;
 	}
 
 	void RenameResourcePanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
 
 		ImGui::Begin("Rename resource", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);

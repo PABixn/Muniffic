@@ -9,6 +9,7 @@
 namespace eg {
 	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
 	{
+        EG_PROFILE_FUNCTION();
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:
@@ -26,6 +27,7 @@ namespace eg {
 
 	Ref<VertexBuffer>(VertexBuffer::Create(uint32_t size))
 	{
+        EG_PROFILE_FUNCTION();
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:
@@ -43,6 +45,7 @@ namespace eg {
 
 	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
 	{
+        EG_PROFILE_FUNCTION();
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:

@@ -9,6 +9,7 @@ namespace eg {
 	namespace Math {
 		bool DecomposeTransform(const glm::mat4& transform, glm::vec3& outTranslation, glm::vec3& outRotation, glm::vec3& outScale)
 		{
+		    EG_PROFILE_FUNCTION();
 			//From glm::decompose in matrix_decompose.inl
 			using namespace glm;
 			using T = float;

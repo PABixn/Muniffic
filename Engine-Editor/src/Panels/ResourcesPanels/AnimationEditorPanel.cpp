@@ -26,10 +26,12 @@ namespace eg {
 
 	AnimationEditorPanel::AnimationEditorPanel(UUID asset)
 	{
+        EG_PROFILE_FUNCTION();
 		OpenAnimationEditorPanel(asset);
 	}
 
 	bool AnimationEditorPanel::OpenAnimationEditorPanel(UUID asset) {
+        EG_PROFILE_FUNCTION();
 		ResetData();
 		ShowAnimationEditorPanel(true);
 		m_Anim = Animation::Create(asset);
@@ -39,6 +41,7 @@ namespace eg {
 	}
 
 	void AnimationEditorPanel::OnImGuiRender() {
+        EG_PROFILE_FUNCTION();
 		if (!m_ShowAnimationEditorPanel)
 			return;
 
@@ -63,21 +66,22 @@ namespace eg {
 		DrawFrameRate();
 
 		DrawExitButtons();
-		
+
 		ImGui::End();
-		
+
 		ImGui::PopStyleColor(7);
 	}
 
 	void AnimationEditorPanel::DrawAnimationPreview() {
+        EG_PROFILE_FUNCTION();
 
 		Ref<SubTexture2D> subTexture = m_Anim->GetFrame(m_DisplayedFrameIndex)->GetSubTexture();
 
 		ImGui::SetCursorPosX((ImGui::GetWindowSize().x - 300) * 0.5f);
-		ImGui::SetCursorPosY(100);  
+		ImGui::SetCursorPosY(100);
 		float spaceY = ImGui::GetCursorPos().y + 322;
 		int i = 0;
-		
+
 		if (m_Anim->GetFrameCount() > 0) {
 			ImGui::Image(
 				(void*)subTexture->GetTexture()->GetRendererID(),
@@ -89,18 +93,20 @@ namespace eg {
 					subTexture->GetMax().x,
 					subTexture->GetMin().y)
 			);
-			
+
 		}
 		ImGui::SetCursorPosY(spaceY);
 	}
 
 	void AnimationEditorPanel::Update(float dt)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_PlayAnimation)
 			m_Anim->Update(dt, 1.0f);
 	}
 
 	void AnimationEditorPanel::SetFrames() {
+        EG_PROFILE_FUNCTION();
 
 		m_Anim->SetFrame(0);
 		ResetSelectedFrames();
@@ -108,6 +114,7 @@ namespace eg {
 
 	void AnimationEditorPanel::ResetData()
 	{
+        EG_PROFILE_FUNCTION();
 		ResetSelectedFrames();
 		m_Anim = nullptr;
 		m_PlayAnimation = false;
@@ -125,6 +132,7 @@ namespace eg {
 
 	void AnimationEditorPanel::UpdateSelectedFrames()
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_Move || m_Resize) {
 			ResetSelectedFrames();
 		}
@@ -147,17 +155,20 @@ namespace eg {
 
 	bool AnimationEditorPanel::IsFrameSelected(int frame)
 	{
+        EG_PROFILE_FUNCTION();
 		return m_SelectedFrames.first == frame || m_SelectedFrames.second == frame;
 	}
 
 	void AnimationEditorPanel::ResetSelectedFrames()
 	{
+        EG_PROFILE_FUNCTION();
 		m_SelectedFrames.first = -1;
 		m_SelectedFrames.second = -1;
 	}
 
 	void AnimationEditorPanel::UpdateDisplayedFrame()
 	{
+        EG_PROFILE_FUNCTION();
 		if(m_PlayAnimation)
 		{
 			m_DisplayedFrameIndex = m_Anim->GetCurrentFrame();
@@ -174,6 +185,7 @@ namespace eg {
 
 	void AnimationEditorPanel::DrawPlayButton()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
@@ -197,6 +209,7 @@ namespace eg {
 
 	void AnimationEditorPanel::DrawFunctionCallPopup()
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_OpenFunctionCallPopup)
 		{
 			ImGui::OpenPopup("FunctionCallPopup");
@@ -241,8 +254,8 @@ namespace eg {
 
 			}
 			ImGui::EndPopup();
-			
-			
+
+
 		}
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(7);
@@ -250,6 +263,7 @@ namespace eg {
 
 	void AnimationEditorPanel::DrawAnimationOptions()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, BGCOLOR);
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, HOVEREDCOLOR);
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, ACTIVEINPUTCOLOR);
@@ -293,6 +307,7 @@ namespace eg {
 
 	void AnimationEditorPanel::DrawFrameTrack()
 	{
+        EG_PROFILE_FUNCTION();
 		float buttonGap = 10;
 		float rightMargin = 20;
 		ImVec2 buttonSize = ImVec2(30, 30);
@@ -301,9 +316,9 @@ namespace eg {
 		float startX = ImGui::GetCursorScreenPos().x + buttonSize.x + buttonGap ;
 		float startY = ImGui::GetCursorScreenPos().y + 25;
 		frameWidth = trackWidth / animationDuration < MINFRAMEWIDTH ? MINFRAMEWIDTH : trackWidth / animationDuration;
-		
+
 		DrawActionButtons(buttonSize, buttonGap);
-		
+
 		m_HoveredFrame = -1;
 		m_FrameReleased = false;
 
@@ -363,7 +378,7 @@ namespace eg {
 			hoverTime = 0.0f;
 		}
 		ImGui::SetCursorScreenPos(ImVec2(startX - buttonSize.x - buttonGap, ImGui::GetCursorScreenPos().y + 60));
-		
+
 		DrawAnimationOptions();
 		//DrawFunctionCallPopup();
 		//DrawFunctionInfoPopup();
@@ -375,11 +390,12 @@ namespace eg {
 		}
 
 		HandleResize();
-		
+
 	}
 
 	void AnimationEditorPanel::DrawFunctionInfoPopup()
 	{
+        EG_PROFILE_FUNCTION();
 		if(hoverTime < hoverTimeMax)
 			return;
 
@@ -405,6 +421,7 @@ namespace eg {
 
 	void AnimationEditorPanel::DrawFrameRate()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, BASEINPUTCOLOR);
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, HOVEREDCOLOR);
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, SELECTEDFRAMECOLOR);
@@ -416,6 +433,7 @@ namespace eg {
 
 	void AnimationEditorPanel::HandleFrameHover(int frameIndex, const ImVec2& cursorPos, const ImVec2& cursorPos2)
 	{
+        EG_PROFILE_FUNCTION();
 		if (ImGui::IsMouseHoveringRect(cursorPos, cursorPos2))
 
 		{
@@ -434,6 +452,7 @@ namespace eg {
 
 	void AnimationEditorPanel::HandleFrameLeftClick(int clickedFrameIndex)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_PlayAnimation || !ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			return;
 		if (m_ClickedFrame == clickedFrameIndex) {
@@ -445,11 +464,12 @@ namespace eg {
 		}
 		UpdateSelectedFrames();
 		EG_TRACE("Clicked frame: {0}", clickedFrameIndex);
-		
+
 	}
 
 	void AnimationEditorPanel::HandleFrameRightClick(int clickedFrameIndex)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_PlayAnimation)
 			return;
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Right)) {
@@ -460,6 +480,7 @@ namespace eg {
 
 	void AnimationEditorPanel::HandleFrameDrag(int clickedFrameIndex)
 	{
+        EG_PROFILE_FUNCTION();
 		if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
 			if (!m_IsDragging) {
 				m_IsDragging = true;
@@ -476,6 +497,7 @@ namespace eg {
 
 	void AnimationEditorPanel::HandleFrameLeftClickRelease(int clickedFrameIndex)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!ImGui::IsMouseReleased(ImGuiMouseButton_Left) )
 			return;
 
@@ -484,6 +506,7 @@ namespace eg {
 
 	void AnimationEditorPanel::HandleResize()
 	{
+        EG_PROFILE_FUNCTION();
 		if(!m_Resize)
 			return;
 		if (!m_IsDragging || m_DraggingIndex == -1)
@@ -495,11 +518,12 @@ namespace eg {
 		if(estNewDuration != m_Anim->GetFrame(m_DraggingIndex)->GetFrameDuration())
 			m_Anim->GetFrame(m_DraggingIndex)->SetFrameDuration(estNewDuration);
 		SetFrames();
-		
+
 	}
 
 	void AnimationEditorPanel::HandleMove(int moveTo)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!m_Move)
 			return;
 		if (!m_IsDragging || m_DraggingIndex == -1)
@@ -509,11 +533,12 @@ namespace eg {
 			m_Anim->MoveFrame(m_DraggingIndex, moveTo);
 			SetFrames();
 		}
-		
+
 	}
 
 	void AnimationEditorPanel::DrawActionButtons(const ImVec2& buttonSize, float gap)
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
 		ImVec4 moveIconTint = m_Move ? ImVec4(1, 1, 1, 1) : ImVec4(0.75, 0.75, 0.75, 1);
 		ImVec4 resizeIconTint = m_Resize ? ImVec4(1, 1, 1, 1) : ImVec4(0.75, 0.75, 0.75, 1);
@@ -533,6 +558,7 @@ namespace eg {
 
 	void AnimationEditorPanel::DrawExitButtons()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::SetCursorScreenPos(ImVec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y + BASEGAP));
 
 		ImGui::PushStyleColor(ImGuiCol_Button, BASEINPUTCOLOR);
@@ -564,6 +590,7 @@ namespace eg {
 
 	uint32_t AnimationEditorPanel::GetFrameColor(int frame)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_IsDragging && m_DraggingIndex == frame)
 			return ACTIVEINPUTCOLOR;
 		if (IsFrameSelected(frame))

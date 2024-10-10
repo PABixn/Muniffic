@@ -7,6 +7,7 @@ namespace eg
 {
 	bool binaryLoaderLoad(ResourceLoader* loader, std::string name, Resource* resource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (loader == nullptr || resource == nullptr)
 		{
 			EG_CORE_ERROR("Invalid arguments passed to binaryLoaderLoad");
@@ -36,6 +37,7 @@ namespace eg
 
 	ResourceLoader binaryResourceLoaderCreate()
 	{
+        EG_PROFILE_FUNCTION();
 		return ResourceLoader();
 	}
 }

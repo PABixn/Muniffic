@@ -14,6 +14,7 @@ namespace eg
 	template<typename T, typename S, int N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
 	static Ref<Texture2D> CreateAndCacheAtlas(const std::string& fontName, float fontSize, const std::vector<msdf_atlas::GlyphGeometry>& glyphs, const msdf_atlas::FontGeometry& fontGeometry, uint32_t width, uint32_t height)
 	{
+        EG_PROFILE_FUNCTION();
 		msdf_atlas::GeneratorAttributes attributes;
 		attributes.config.overlapSupport = true;
 		attributes.scanlinePass = true;
@@ -38,6 +39,7 @@ namespace eg
 
 	bool fontLoaderLoad(ResourceLoader* loader, std::string name, Resource* outResource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!loader || name.empty() || !outResource)
 		{
 			return false;
@@ -139,6 +141,7 @@ namespace eg
 
 	void fontLoaderUnload(ResourceLoader* loader, Resource* resource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!loader || !resource)
 		{
 			EG_ERROR("Invalid resource or loader passed to fontLoaderUnload");
@@ -156,6 +159,7 @@ namespace eg
 
 	ResourceLoader fontResourceLoaderCreate()
 	{
+        EG_PROFILE_FUNCTION();
 		ResourceLoader loader;
 		loader.Type = ResourceType::Font;
 		loader.load = fontLoaderLoad;
