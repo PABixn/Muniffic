@@ -3,6 +3,8 @@
 #include "ResourcesPanels/ImagePanel.h"
 //#include "ConsolePanel.h"
 #include "Imgui/imgui.h"
+#include "../IconLoader.h"
+
 namespace eg {
 	enum ComponentIcons {
 		ComponentIcon = 0,
@@ -65,7 +67,7 @@ namespace eg {
 		void Search();
 		std::optional<EntityDisplayInfo> SearchEntity(Entity entity);
 		template<typename T, typename UIFunction>
-		void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, Ref<Texture2D> icon);
+		void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, Icons icon);
 	private:
 		std::string m_Search;
 		Ref<ImagePanel> m_ImagePanel;

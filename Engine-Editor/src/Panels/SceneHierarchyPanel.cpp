@@ -19,7 +19,6 @@
 #include "functional"
 #include "ConsolePanel.h"
 #include "../EditorActions.h"
-#include "../IconLoader.h"
 
 /* The Microsoft C++ compiler is non-compliant with the C++ standard and needs
  * the following definition to disable a security warning on std::strncpy().
@@ -638,12 +637,14 @@ namespace eg
 		}
 	}
 	template <typename T, typename UIFunction>
-	void SceneHierarchyPanel::DrawComponent(const std::string &name, Entity entity, UIFunction uiFunction, Ref<Scene> &context, Ref<Texture2D> icon)
+	void SceneHierarchyPanel::DrawComponent(const std::string &name, Entity entity, UIFunction uiFunction, Ref<Scene> &context, Icons icon)
 	{
 		static const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_NoArrow | ImGuiTreeNodeFlags_PropertiesComponent;
 		if (entity.HasComponent<T>())
 		{
-			std::string ajDzik(entity.GetName() + std::to_string(icon->GetRendererID()));
+			Ref<Texture2D> componentIcon = IconLoader::GetIcon(icon);
+
+			std::string ajDzik(entity.GetName() + std::to_string(componentIcon->GetRendererID()));
 			ImGui::PushID(ajDzik.c_str());
 			auto &component = entity.GetComponent<T>();
 			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
@@ -653,9 +654,9 @@ namespace eg
 
 			bool open;
 			if (entity.GetChildren().size() > 0 && entity.GetInheritableComponent<T>()->isInheritedInChildren)
-				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), (treeNodeFlags | ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(icon->GetRendererID()));
+				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), (treeNodeFlags | ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(componentIcon->GetRendererID()));
 			else
-				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(icon->GetRendererID()));
+				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(componentIcon->GetRendererID()));
 			ImGui::PopStyleVar();
 			if (!(name == std::string("Transform") && !(entity.GetChildren().size() > 0 || entity.GetParent().has_value())))
 			{
@@ -784,7 +785,7 @@ namespace eg
 			{
 				DrawVec3Control(entity, "Translation", component.Translation, 0.0f, 100.f, true);
 				DrawVec3Control(entity, "Rotation", component.Rotation);
-				DrawVec3Control(entity, "Scale", component.Scale, 1.0f); }, m_Context, IconLoader::GetIcon(Icons::Component_Transform));
+				DrawVec3Control(entity, "Scale", component.Scale, 1.0f); }, m_Context, Icons::Component_Transform);
 
 		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component)
 			{
@@ -851,7 +852,7 @@ namespace eg
 
 					if (DrawComponentPropertyCheckbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
 						Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
-				} }, m_Context, IconLoader::GetIcon(Icons::Component_Camera));
+				} }, m_Context, Icons::Component_Camera);
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
@@ -1220,7 +1221,7 @@ namespace eg
 				}
 				ImGui::Indent();
 			},
-			m_Context, IconLoader::GetIcon(Icons::Component_Script));
+			m_Context, Icons::Component_Script);
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)
 			{
@@ -1245,7 +1246,7 @@ namespace eg
 				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
 					Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
 			},
-			m_Context, IconLoader::GetIcon(Icons::Component_SpriteRenderer));
+			m_Context, Icons::Component_SpriteRenderer);
 
 		DrawComponent<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D", entity, [](auto& component)
 			{
@@ -1304,7 +1305,7 @@ namespace eg
 				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
 					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
 			},
-			m_Context, IconLoader::GetIcon(Icons::Component_SubTextureRenderer));
+			m_Context, Icons::Component_SubTextureRenderer);
 
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [entity](auto& component)
 			{
@@ -1316,7 +1317,7 @@ namespace eg
 				if (DrawComponentPropertyFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
 					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Thickness, thickness, entity, "CircleRendererComponent-Thickness");
 				if (DrawComponentPropertyFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
-					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Fade, fade, entity, "CircleRendererComponent-Fade"); }, m_Context, IconLoader::GetIcon(Icons::Component_CircleRenderer));
+					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Fade, fade, entity, "CircleRendererComponent-Fade"); }, m_Context, Icons::Component_CircleRenderer);
 
 		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [entity](auto &component)
 		{
@@ -1352,7 +1353,7 @@ namespace eg
 			
 			if(DrawComponentPropertyCheckbox("Fixed Rotation", &component.FixedRotation))
 				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");
-		}, m_Context, IconLoader::GetIcon(Icons::Component_RigidBody2D));
+		}, m_Context, Icons::Component_RigidBody2D);
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [entity](auto &component)
 		{
@@ -1373,7 +1374,7 @@ namespace eg
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
 			if (ImGui::Checkbox("Is Sensor", &component.IsSensor))
 				Commands::ExecuteRawValueCommand<bool, BoxCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "BoxCollider2DComponent-Is Sensor");
-		}, m_Context, IconLoader::GetIcon(Icons::Component_BoxCollider2D));
+		}, m_Context, Icons::Component_BoxCollider2D);
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [entity](auto &component)
 		{
@@ -1394,7 +1395,7 @@ namespace eg
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
 			if (DrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
 				Commands::ExecuteRawValueCommand<bool, CircleCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "CircleCollider2DComponent-Is Sensor");
-			}, m_Context, IconLoader::GetIcon(Icons::Component_CircleCollider2D));
+			}, m_Context, Icons::Component_CircleCollider2D);
 
 		DrawComponent<TextComponent>("Text Renderer", entity, [entity](auto &component)
 		{
@@ -1436,7 +1437,7 @@ namespace eg
 				if(DrawComponentPropertyFloat("Kerning", &component.Kerning, 0.025f))
 					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.Kerning, kerning, entity, "TextComponent-Kerning");
 				if(DrawComponentPropertyFloat("Line Spacing", &component.LineSpacing, 0.025f))
-					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing"); }, m_Context, IconLoader::GetIcon(Icons::Component_TextRenderer));
+					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing"); }, m_Context, Icons::Component_TextRenderer);
 
 		DrawComponent<AnimatorComponent>("Animator", entity, [entity, this](auto &component)
 										 {
@@ -1671,7 +1672,7 @@ namespace eg
 							}
 						}
 					}
-				} }, m_Context, IconLoader::GetIcon(Icons::Component_Animator));
+				} }, m_Context, Icons::Component_Animator);
 
 		DrawComponent<AudioSourceComponent>("Audio Source", entity, [](auto &component)
 											{
@@ -1694,6 +1695,6 @@ namespace eg
 			
 			ImGui::Checkbox("Loop", component.Audio->IsLoopedPtr());
 			ImGui::Checkbox("Playing from start", component.Audio->IsPlayingFromStartPtr());
-			ImGui::SliderFloat("Volume", component.Audio->GetVolumePtr(), 0, 10); }, m_Context, IconLoader::GetIcon(Icons::Component_Animator));
+			ImGui::SliderFloat("Volume", component.Audio->GetVolumePtr(), 0, 10); }, m_Context, Icons::Component_Animator);
 	}
 }
