@@ -41,6 +41,24 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		ImFontConfig font_config;
+		font_config.OversampleH = 2;
+		font_config.OversampleV = 1;
+		font_config.MergeMode = false;
+		font_config.PixelSnapH = true;
+
+		static const ImWchar full_ranges[] = { 0x0020, 0xFFFF, 0 };
+
+		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, &font_config, full_ranges);
+		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, &font_config, full_ranges);
+
+		io.FontDefault = m_PoppinsRegularFont;
+
+		io.Fonts->Build();
+
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
 		resourceSystemConfig.ResourceDirectory = "../resources";
@@ -400,8 +418,9 @@ namespace eg
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
 					const wchar_t* path = (const wchar_t*)payload->Data;
-
-					OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
+					std::filesystem::path p = path;
+					if (p.extension() == ".egscene")
+   						OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
 				}
 				ImGui::EndDragDropTarget();
 			}

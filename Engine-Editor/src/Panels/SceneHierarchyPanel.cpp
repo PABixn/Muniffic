@@ -326,7 +326,6 @@ namespace eg
 	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity)
 	{
 		bool searched = false, childsearched = false;
-		std::string silli = entity.GetName();
 		EntityDisplayInfo currentEntityDisplayInfo = EntityDisplayInfo();
 		for (Entity e : entity.GetChildren())
 		{
@@ -358,7 +357,6 @@ namespace eg
 								   {
 			Entity entity{ entityID, m_Context.get() };
 			if (entity.GetParent() == std::nullopt) {
-				std::string silli = entity.GetName();
 				if (m_Search != "")
 				{
 					std::optional<EntityDisplayInfo> found = SearchEntity(entity);
@@ -1442,12 +1440,22 @@ namespace eg
 		DrawComponent<AnimatorComponent>("Animator", entity, [entity, this](auto &component)
 										 {
 			bool ShowAnimationPreview = !(m_Context->IsRunning());
-				if (PrettyButton("Add Animation", true))
-				{
-					std::string name = "Animation" + std::to_string(component.Animator2D->GetAnimations()->size());
-					component.Animator2D->AddAnimationWithName(name);
-					Commands::ExecuteVectorCommand<Ref<Animation>>({ component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, Animation::Create() });
-				}
+				PrettyButton("Add Animation", true)
+                if (ImGui::BeginDragDropTarget()) {
+                    int64_t* uuid;
+
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel")) {
+                        uuid = (int64_t*)payload->Data;
+
+                        Ref<Animation> animation = Animation::Create((UUID)(*uuid));
+                        if (animation) {
+							component.Animator2D->AddAnimation(animation);
+                            Commands::ExecuteVectorCommand<Ref<Animation>>({ component.Animator2D->GetAnimations(), Commands::VectorCommandType::REMOVE_LAST, Commands::VectorCommandType::ADD, nullptr, animation });
+                        } else
+                            EG_WARN("Could not load animation from {0}", ResourceDatabase::GetResourcePath(*uuid));
+                    }
+                    ImGui::EndDragDropTarget();
+                }
 				const Ref<std::vector<Ref<Animation>>> animations = component.Animator2D->GetAnimations();
 				if (animations->size() > 0)
 				{
