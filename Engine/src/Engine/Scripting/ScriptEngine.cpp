@@ -19,6 +19,7 @@
 
 namespace eg
 {
+	static bool s_Initialized = false;
 	static const std::array<std::string,5> s_InternallCallFunctions = { "OnUpdate", "OnCreate", ".ctor", "OnCollisionEnter", "OnCollisionExit" };
 	static std::unordered_map<std::string, ScriptFieldType> s_ScriptFieldTypeMap =
 		{
@@ -135,7 +136,8 @@ namespace eg
 	{
         EG_PROFILE_FUNCTION();
 		s_Data = new ScriptEngineData();
-		InitMono();
+        if (!s_Initialized)
+			InitMono();
 		bool status = LoadAssembly("Resources/Scripts/Debug/Muniffic-ScriptCore.dll");
 		if (!status)
 		{
@@ -174,6 +176,8 @@ namespace eg
 		EG_CORE_ASSERT(domain, "Could not initialize Mono");
 
 		s_Data->RootDomain = domain;
+
+		s_Initialized = true;
 	}
 
 	void ScriptEngine::ShutdownMono()

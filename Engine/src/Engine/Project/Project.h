@@ -59,6 +59,11 @@ namespace eg {
 			
 		}
 
+		inline static const std::filesystem::path GetProjectPath(){
+            EG_CORE_ASSERT(s_ActiveProject, "No active project");
+            return s_ActiveProject->m_ProjectDirectory / (s_ActiveProject->m_Config.Name + ".mnproj");
+        }
+
 		static void SetProjectName(const std::string& newName) {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			s_ActiveProject->m_Config.Name = newName;
@@ -111,6 +116,9 @@ namespace eg {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
 			return s_ActiveProject->m_ProjectDirectory.parent_path();
 		}
+
+		
+		inline static bool IsLoaded() { return s_ActiveProject != nullptr; }
 
 	private:
 		ProjectConfig m_Config;
