@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "egpch.h"
-#include "Engine/Project/Project.h"	
+#include "Engine/Project/Project.h"
 #include <yaml-cpp/yaml.h>
 #include "ResourceUtils.h"
 #include "Systems/ResourceSystem.h"
@@ -18,6 +18,7 @@ namespace eg
 
 	void ResourceDatabase::EnableScript(UUID uuid, bool enable)
 	{
+        EG_PROFILE_FUNCTION();
 		if (ResourceSerializer::ScriptResourceDataCache.find(uuid) != ResourceSerializer::ScriptResourceDataCache.end())
 			((ScriptResourceData*)ResourceSerializer::ScriptResourceDataCache.at(uuid))->IsEnabled = enable;
 		else
@@ -26,6 +27,7 @@ namespace eg
 
 	bool ResourceDatabase::IsScriptEnabled(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (ResourceSerializer::ScriptResourceDataCache.find(uuid) != ResourceSerializer::ScriptResourceDataCache.end())
 			return ((ScriptResourceData*)ResourceSerializer::ScriptResourceDataCache.at(uuid))->IsEnabled;
 		else
@@ -37,6 +39,7 @@ namespace eg
 
 	bool ResourceDatabase::FindRuntimeResource(UUID uuid, ResourceType type)
 	{
+        EG_PROFILE_FUNCTION();
 		if (type == ResourceType::Font)
 			return RuntimeFontResourceCache.find(uuid) != RuntimeFontResourceCache.end();
 		else if(type == ResourceType::Image)
@@ -50,6 +53,7 @@ namespace eg
 
 	void* ResourceDatabase::AddRuntimeResource(UUID uuid, void* data, ResourceType type)
 	{
+        EG_PROFILE_FUNCTION();
 		if (data == nullptr)
 			return nullptr;
 
@@ -74,6 +78,7 @@ namespace eg
 
 	Ref<Font> ResourceDatabase::GetFontRuntimeResource(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if(RuntimeFontResourceCache.find(uuid) != RuntimeFontResourceCache.end())
 			return RuntimeFontResourceCache.at(uuid);
 		else
@@ -91,6 +96,7 @@ namespace eg
 
 	Ref<Texture2D> ResourceDatabase::GetTextureRuntimeResource(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (RuntimeTextureResourceCache.find(uuid) != RuntimeTextureResourceCache.end())
 			return RuntimeTextureResourceCache.at(uuid);
 		else
@@ -108,6 +114,7 @@ namespace eg
 
 	void* ResourceDatabase::GetRuntimeResource(UUID uuid, ResourceType type)
 	{
+        EG_PROFILE_FUNCTION();
 		if (type == ResourceType::Font)
 		{
 			if (FindRuntimeResource(uuid, type))
@@ -131,6 +138,7 @@ namespace eg
 
 	void ResourceDatabase::SetResourceData(UUID uuid, ResourceType resourceType, void* data)
 	{
+        EG_PROFILE_FUNCTION();
 		switch (resourceType)
 		{
 		case eg::ResourceType::Animation:
@@ -170,11 +178,13 @@ namespace eg
 
 	ResourceType ResourceDatabase::GetResourceType(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		return ResourceSerializer::ResourceTypeInfo.at(uuid);
 	}
 
 	bool ResourceDatabase::FindResourceData(UUID uuid, ResourceType resourceType)
 	{
+        EG_PROFILE_FUNCTION();
 		if (resourceType == ResourceType::Image)
 			return ResourceSerializer::TextureResourceDataCache.find(uuid) != ResourceSerializer::TextureResourceDataCache.end();
 		else if (resourceType == ResourceType::SubTexture)
@@ -198,6 +208,7 @@ namespace eg
 
 	UUID ResourceDatabase::GetResourceByName(const std::string& name, ResourceType type)
 	{
+        EG_PROFILE_FUNCTION();
 		if (type == ResourceType::Image)
 		{
 			for (auto& [uuid, data] : ResourceSerializer::TextureResourceDataCache)
@@ -264,11 +275,13 @@ namespace eg
 
 	void ResourceDatabase::RemoveResource(UUID uuid, bool deleteFile)
 	{
+        EG_PROFILE_FUNCTION();
 		ResourceDatabase::RemoveResource(uuid, ResourceSerializer::ResourceTypeInfo.at(uuid), deleteFile);
 	}
 
 	void ResourceDatabase::RemoveResource(UUID uuid, ResourceType resourceType, bool deleteFile)
 	{
+        EG_PROFILE_FUNCTION();
 		if (resourceType == ResourceType::Image)
 		{
 			if (ResourceSerializer::TextureResourceDataCache.find(uuid) != ResourceSerializer::TextureResourceDataCache.end())
@@ -380,6 +393,7 @@ namespace eg
 
 	void* ResourceDatabase::GetResourceData(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (ResourceSerializer::ResourceTypeInfo.find(uuid) == ResourceSerializer::ResourceTypeInfo.end())
 		{
 			EG_CORE_ERROR("Resource not found in cache");
@@ -413,11 +427,13 @@ namespace eg
 
 	bool ResourceDatabase::FindResourceData(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		return ResourceSerializer::ResourceTypeInfo.find(uuid) != ResourceSerializer::ResourceTypeInfo.end();
 	}
 
 	std::filesystem::path ResourceDatabase::GetResourcePath(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		ResourceData* data = (ResourceData*)ResourceDatabase::GetResourceData(uuid);
 
 		return AssetDirectoryManager::getDirectoryPath(data->ParentDirectory) / std::string(data->ResourceName + data->Extension);
@@ -425,16 +441,19 @@ namespace eg
 
 	std::filesystem::path ResourceDatabase::GetResourcePath(std::filesystem::path path, ResourceType type)
 	{
+        EG_PROFILE_FUNCTION();
 		return AssetDirectoryManager::getDirectoryPath(AssetDirectoryManager::GetRootAssetTypeDirectory(type)) / path.filename();
 	}
 
 	std::filesystem::path ResourceDatabase::GetResourcePath(std::filesystem::path path)
 	{
+        EG_PROFILE_FUNCTION();
 		return AssetDirectoryManager::getDirectoryPath(m_CurrentDirectory) / path.filename();
 	}
 
 	bool ResourceDatabase::MoveResource(UUID uuid, UUID parentDirectory)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!FindResourceData(uuid))
 		{
 			EG_CORE_ERROR("Resource not found in cache");
@@ -460,6 +479,7 @@ namespace eg
 
 	bool ResourceDatabase::RenameResource(UUID uuid, const std::string& name)
 	{
+        EG_PROFILE_FUNCTION();
 		if(!FindResourceData(uuid))
 		{
 			EG_CORE_ERROR("Resource not found in cache");
@@ -480,6 +500,7 @@ namespace eg
 
 	void AddTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, TextureResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Image);
 
 		if (finalPath != originalResourcePath)
@@ -497,6 +518,7 @@ namespace eg
 
 	void AddSubTextureResource(UUID uuid, const std::filesystem::path& originalResourcePath, SubTextureResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::SubTexture);
 
 		if (finalPath != originalResourcePath)
@@ -512,6 +534,7 @@ namespace eg
 
 	void AddFrameResource(UUID uuid, const std::filesystem::path& originalResourcePath, FrameResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Frame);
 
 		if (finalPath != originalResourcePath)
@@ -527,6 +550,7 @@ namespace eg
 
 	void AddFontResourceData(UUID uuid, const std::filesystem::path& originalResourcePath, FontResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Font);
 
 		if (finalPath != originalResourcePath)
@@ -544,6 +568,7 @@ namespace eg
 
 	void AddScriptResourceData(UUID uuid, const std::filesystem::path& originalResource, ScriptResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResource, ResourceType::Script);
 
 		if (!std::filesystem::exists(finalPath.parent_path()))
@@ -556,6 +581,7 @@ namespace eg
 
 	void AddAnimationResource(UUID uuid, const std::filesystem::path& originalResourcePath, AnimationResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Animation);
 
 		if (!std::filesystem::exists(finalPath.parent_path()))
@@ -568,6 +594,7 @@ namespace eg
 
 	void AddSpriteAtlasResource(UUID uuid, const std::filesystem::path& originalResourcePath, SpriteAtlasResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::SpriteAtlas);
 
 		if (finalPath != originalResourcePath)
@@ -583,6 +610,7 @@ namespace eg
 
 	void AddAudioResource(UUID uuid, const std::filesystem::path& originalResourcePath, AudioResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Audio);
 
 		if (finalPath != originalResourcePath)
@@ -598,6 +626,7 @@ namespace eg
 
 	UUID ResourceDatabase::GetResourceParentDirectory(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		ResourceData* data = (ResourceData*)ResourceDatabase::GetResourceData(uuid);
 
 		return data->ParentDirectory;
@@ -605,6 +634,7 @@ namespace eg
 
 	UUID ResourceDatabase::LoadResource(const std::filesystem::path& filePath)
 	{
+        EG_PROFILE_FUNCTION();
 		ResourceType type = ResourceUtils::GetResourceTypeByExtension(filePath.extension().string());
 
 		/*if (ResourceDatabase::FindResourceByKeyPath(ResourceUtils::GetKeyPath(filePath), type) != 0)
@@ -666,6 +696,7 @@ namespace eg
 
 	void* ResourceDatabase::LoadRuntimeResource(UUID uuid, ResourceType type)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!FindResourceData(uuid, type))
 		{
 			EG_CORE_ERROR("Resource not found in cache");
@@ -703,6 +734,7 @@ namespace eg
 
 	UUID ResourceDatabase::GetResourceByData(void* data)
 	{
+        EG_PROFILE_FUNCTION();
 		ResourceData* resourceData = (ResourceData*)data;
 
 		UUID parentDirectory = resourceData->ParentDirectory;
@@ -723,6 +755,7 @@ namespace eg
 
 	std::string ResourceDatabase::GetResourceName(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!FindResourceData(uuid))
 		{
 			EG_CORE_ERROR("Resource not found in cache");
@@ -736,6 +769,7 @@ namespace eg
 
 	UUID ResourceDatabase::AddResource(const std::filesystem::path& originalResourcePath, void* data, ResourceType resourceType)
 	{
+        EG_PROFILE_FUNCTION();
 		UUID uuid = GetResourceByData(data);
 
 		if (uuid != 0)

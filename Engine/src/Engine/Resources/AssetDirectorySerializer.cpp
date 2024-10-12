@@ -8,6 +8,7 @@ namespace eg
 {
 	bool AssetDirectorySerializer::DeserializeAssetDirectoryCache()
 	{
+        EG_PROFILE_FUNCTION();
 		std::filesystem::path metadata = ResourceUtils::GetAssetDirectoryMetadataPath();
 
 		YAML::Node node;
@@ -72,6 +73,7 @@ namespace eg
 
 	void AssetDirectorySerializer::SerializeAssetDirectoryCache()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_CORE_TRACE("Serializing Asset Directory Cache");
 
 		std::filesystem::path metadataPath = ResourceUtils::GetAssetDirectoryMetadataPath();
@@ -115,7 +117,7 @@ namespace eg
 		out << YAML::EndMap;
 
 		std::ofstream fout(metadataPath);
-		
+
 		fout << out.c_str();
 
 		fout.close();

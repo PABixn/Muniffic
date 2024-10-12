@@ -9,6 +9,7 @@ namespace eg
 {
 	Scope<Window> Window::Create(const WindowProps& props)
 	{
+		EG_PROFILE_FUNCTION();
 #ifdef EG_PLATFORM_WINDOWS
 		return CreateScope<WindowsWindow>(props);
 #else

@@ -2,7 +2,7 @@
 
 namespace eg {
 	ConsolePanel::ConsolePanel() {
-
+        EG_PROFILE_FUNCTION();
     };
     std::vector<ConsolePanel::LogMessage*> ConsolePanel::Logs;
     enum class LogType {
@@ -11,6 +11,7 @@ namespace eg {
         Error
     };
     void ConsolePanel::ClearLogs() {
+        EG_PROFILE_FUNCTION();
         Logs.clear();
     };
     std::string ConsolePanel::getCurrentTime() {
@@ -21,6 +22,7 @@ namespace eg {
         return time;
     }
     void ConsolePanel::Draw() {
+        EG_PROFILE_FUNCTION();
         for (auto& log : Logs) {
             switch (log->logType) {
             case LogType::Info:
@@ -48,17 +50,21 @@ namespace eg {
         }
         //ConsolePanel::ClearLogs();
     };
+
     void ConsolePanel::Log(const std::string& message, LogType type) {
+        EG_PROFILE_FUNCTION();
         std::string mess = ConsolePanel::getCurrentTime() + " | " + message;
         Logs.push_back(new ConsolePanel::LogMessage(mess, type));
     }
+
     void ConsolePanel::OnImGuiRender() {
+        EG_PROFILE_FUNCTION();
         ImGui::Begin("Console");
         this->Draw();
-        ImGui::End();  
+        ImGui::End();
     };
 
-    
-    
-	
+
+
+
 }

@@ -5,11 +5,13 @@ namespace eg {
 	Entity::Entity(entt::entity handle, Scene* scene)
 		: m_EntityHandle(handle), m_Scene(scene)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	template<>
 	void Entity::SetComponent<TagComponent>(Entity& entity, TagComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<TagComponent>())
 			entity.AddComponent<TagComponent>();
 
@@ -22,6 +24,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<TransformComponent>(Entity& entity, TransformComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<TransformComponent>())
 			entity.AddComponent<TransformComponent>();
 
@@ -38,6 +41,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<SpriteRendererComponent>(Entity& entity, SpriteRendererComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<SpriteRendererComponent>())
 			entity.AddComponent<SpriteRendererComponent>();
 
@@ -55,6 +59,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<SpriteRendererSTComponent>(Entity& entity, SpriteRendererSTComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<SpriteRendererSTComponent>())
 			entity.AddComponent<SpriteRendererSTComponent>();
 
@@ -71,6 +76,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<CameraComponent>(Entity& entity, CameraComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<CameraComponent>())
 			entity.AddComponent<CameraComponent>();
 
@@ -89,6 +95,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<ScriptComponent>(Entity& entity, ScriptComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<ScriptComponent>())
 			entity.AddComponent<ScriptComponent>();
 
@@ -103,6 +110,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<NativeScriptComponent>(Entity& entity, NativeScriptComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<NativeScriptComponent>())
 			entity.AddComponent<NativeScriptComponent>();
 
@@ -113,6 +121,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<CircleRendererComponent>(Entity& entity, CircleRendererComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<CircleRendererComponent>())
 			entity.AddComponent<CircleRendererComponent>();
 
@@ -129,6 +138,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<BoxCollider2DComponent>(Entity& entity, BoxCollider2DComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<BoxCollider2DComponent>())
 			entity.AddComponent<BoxCollider2DComponent>();
 
@@ -148,6 +158,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<CircleCollider2DComponent>(Entity& entity, CircleCollider2DComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<CircleCollider2DComponent>())
 			entity.AddComponent<CircleCollider2DComponent>();
 
@@ -167,6 +178,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<RigidBody2DComponent>(Entity& entity, RigidBody2DComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<RigidBody2DComponent>())
 			entity.AddComponent<RigidBody2DComponent>();
 
@@ -182,6 +194,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<TextComponent>(Entity& entity, TextComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<TextComponent>())
 			entity.AddComponent<TextComponent>();
 
@@ -200,6 +213,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<AudioSourceComponent>(Entity& entity, AudioSourceComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<AudioSourceComponent>())
 			entity.AddComponent<AudioSourceComponent>();
 
@@ -211,6 +225,7 @@ namespace eg {
 	template<>
 	void Entity::SetComponent<AnimatorComponent>(Entity& entity, AnimatorComponent* component)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!entity.HasComponent<AnimatorComponent>())
 			entity.AddComponent<AnimatorComponent>();
 

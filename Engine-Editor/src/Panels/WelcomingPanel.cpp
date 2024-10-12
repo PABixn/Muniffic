@@ -1,35 +1,31 @@
 #include "WelcomingPanel.h"
 #include "../EditorLayer.h"
+#include "../IconLoader.h"
 
 namespace eg
-
-	
-
 {	
-
 	WelcomingPanel::WelcomingPanel() {}
 	WelcomingPanel::WelcomingPanel(std::vector<std::string> list, RecentProjectSerializer m_RecentProjectSerializer)
 		: m_Show(true), m_DirectoryUUID(0), m_ProjectList(list), m_Rps(m_RecentProjectSerializer)
 	{
+        EG_PROFILE_FUNCTION();
 		m_NewProjectCreated = false;
 		m_SelectedProject = "";
 	}
 
 	void WelcomingPanel::ShowWindow(UUID directoryUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		m_Show = true;
 		m_DirectoryUUID = directoryUUID;
 	}
 
-	void WelcomingPanel::InitWelcomingPanel() {
-		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/FolderIcon.png");
-		m_NewProjectIcon = Texture2D::Create("resources/icons/contentBrowser/NewProjectIcon.png");
-		m_DeleteProjectIcon = Texture2D::Create("resources/icons/contentBrowser/DeleteProjectIcon.png");
-	}
+	void WelcomingPanel::InitWelcomingPanel() {}
 
 
 	void WelcomingPanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::Begin("WelcomingPanel", &m_Show , ImGuiWindowFlags_NoTitleBar| ImGuiViewportFlags_NoDecoration);
 		ImGui::PushFont(static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_PoppinsExtraBoldFont);
 		ImGui::Text("Muniffic Game Engine");

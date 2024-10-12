@@ -102,7 +102,7 @@ namespace eg {
 		Ref<Texture2D> FontAtlasTexture;
 
 		glm::vec4 QuadVertexPositions[4];
-		
+
 		Renderer2D::Statistics Stats;
 
 		struct CameraData
@@ -111,11 +111,11 @@ namespace eg {
 		};
 		CameraData CameraBuffer;
 		Ref<UniformBuffer> CameraUniformBuffer;
-	};	
+	};
 
 	static Renderer2DData s_Data;
 
-	
+
 
 	void Renderer2D::Init() {
 		EG_PROFILE_FUNCTION();
@@ -213,7 +213,7 @@ namespace eg {
 		s_Data.TextShader = Shader::Create("assets/shaders/Renderer2D_Text.glsl");
 
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
-		
+
 		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[2] = { 0.5f, 0.5f, 0.0f, 1.0f };
@@ -242,7 +242,7 @@ namespace eg {
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
 		EG_PROFILE_FUNCTION();
-		
+
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 		StartBatch();
@@ -288,7 +288,7 @@ namespace eg {
 			s_Data.CircleShader->Bind();
 			RenderCommand::DrawIndexed(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
 			s_Data.Stats.DrawCalls++;
-		
+
 		}
 
 		if (s_Data.LineVertexCount)
@@ -300,7 +300,7 @@ namespace eg {
 			RenderCommand::SetLineThickness(s_Data.LineThickness);
 			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
 			s_Data.Stats.DrawCalls++;
-		
+
 		}
 
 		if (s_Data.TextIndexCount)
@@ -318,6 +318,7 @@ namespace eg {
 
 	void Renderer2D::StartBatch()
 	{
+        EG_PROFILE_FUNCTION();
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 
@@ -340,6 +341,7 @@ namespace eg {
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
+        EG_PROFILE_FUNCTION();
 		DrawQuad({ position.x, position.y, 0.0f }, size, color);
 	}
 
@@ -349,7 +351,7 @@ namespace eg {
 		constexpr size_t quadVertexCount = 4;
 		const glm::vec2 textureCoords[] = { {0.0f,0.0f}, {1.0f,0.0f}, {1.0f,1.0f}, {0.0f,1.0f} };
 
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices) 
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
 
 		const float texIndex = 0.0f; // White Texture
@@ -374,6 +376,7 @@ namespace eg {
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor) {
+        EG_PROFILE_FUNCTION();
 		DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor, tintColor);
 	}
 
@@ -386,6 +389,7 @@ namespace eg {
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor) {
+        EG_PROFILE_FUNCTION();
 		DrawQuad({ position.x, position.y, 0.0f }, size, subTexture, tilingFactor, tintColor);
 	}
 
@@ -511,6 +515,7 @@ namespace eg {
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color) {
+        EG_PROFILE_FUNCTION();
 		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color);
 	}
 
@@ -546,6 +551,7 @@ namespace eg {
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor) {
+        EG_PROFILE_FUNCTION();
 		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tilingFactor, tintColor);
 	}
 
@@ -595,10 +601,12 @@ namespace eg {
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor) {
+        EG_PROFILE_FUNCTION();
 		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, subTexture, tilingFactor, tintColor);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, float tilingFactor, const glm::vec4& tintColor) {
+        EG_PROFILE_FUNCTION();
 		constexpr size_t quadVertexCount = 4;
 		const glm::vec4 color = { 1.0f,1.0f,1.0f,1.0f };
 		const glm::vec2* textureCoords = subTexture->GetTexCoords();
@@ -673,6 +681,7 @@ namespace eg {
 
 	void Renderer2D::DrawLine(const glm::vec3& start, const glm::vec3& end, const glm::vec4& color, int entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		if(s_Data.LineVertexCount >= Renderer2DData::MaxVertices)
 			FlushAndReset();
 		s_Data.LineVertexBufferPtr->Position = start;
@@ -690,6 +699,7 @@ namespace eg {
 
 	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		glm::vec3 p0 = glm::vec3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z);
 		glm::vec3 p1 = glm::vec3(position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z);
 		glm::vec3 p2 = glm::vec3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z);
@@ -703,6 +713,7 @@ namespace eg {
 
 	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
+        EG_PROFILE_FUNCTION();
 
 		glm::vec3 lineVertices[4];
 		for (size_t i = 0; i < 4; i++)
@@ -718,6 +729,7 @@ namespace eg {
 
 	void Renderer2D::DrawString(const std::string& text, Ref<Font> font, const glm::mat4& transform, const TextParams& textParams, int entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		const auto& fontGeometry = font->GetData()->FontGeometry;
 		const auto& metrics = fontGeometry.getMetrics();
 		Ref<Texture2D> atlas = font->GetAtlasTexture();
@@ -827,21 +839,25 @@ namespace eg {
 
 	void Renderer2D::DrawString(const std::string& string, const glm::mat4& transform, const TextComponent& component, int entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		DrawString(string, component.RuntimeFont, transform, { component.Color, component.Kerning, component.LineSpacing }, entityID);
 	}
 
 	float Renderer2D::GetLineThickness()
 	{
+        EG_PROFILE_FUNCTION();
 		return s_Data.LineThickness;
 	}
 
 	void Renderer2D::SetLineThickness(float thickness)
 	{
+        EG_PROFILE_FUNCTION();
 		s_Data.LineThickness = thickness;
 	}
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		if(src.Texture)
 			DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entityID);
 		else
@@ -850,6 +866,7 @@ namespace eg {
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererSTComponent& src, int entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		if(src.SubTexture->GetTexture())
 			DrawQuad(transform, src.SubTexture, src.TilingFactor, src.Color, entityID);
 		else
@@ -857,10 +874,12 @@ namespace eg {
 	}
 
 	void Renderer2D::ResetStats() {
+        EG_PROFILE_FUNCTION();
 		memset(&s_Data.Stats, 0, sizeof(Statistics));
 	}
 
 	Renderer2D::Statistics Renderer2D::GetStats() {
+        EG_PROFILE_FUNCTION();
 		return s_Data.Stats;
 	}
 }

@@ -10,6 +10,7 @@
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
 #include "../EditorLayer.h"
+#include "../IconLoader.h"
 #include <Imgui/imgui_internal.h>
 
 namespace eg
@@ -18,12 +19,14 @@ namespace eg
 	static float textY = 0;
 	AddResourcePanel::AddResourcePanel()
 	{
+        EG_PROFILE_FUNCTION();
 		m_ImagePanel = CreateRef<ImagePanel>();
 		m_AnimationPanel = CreateRef<AnimationPanel>();
 		m_ImagePanelinitialized = m_ImagePanel->InitImagePanel();
 		m_AnimationPanelinitialized = m_AnimationPanel->InitAnimationPanel();
 		LoadIcons();
 	}
+
 	void AddResourcePanel::OnImGuiRender()
 	{
 		if (!m_showResourcePanel)
@@ -117,12 +120,14 @@ namespace eg
 
 	void AddResourcePanel::Update(float ts)
 	{
+        EG_PROFILE_FUNCTION();
 		if(m_AnimationPanel->IsAnimationPanelOpen())
 			m_AnimationPanel->OnUpdate(ts);
 	}
 
 	bool AddResourcePanel::ChooseNewResource(const std::string filter)
 	{
+        EG_PROFILE_FUNCTION();
 		std::filesystem::path path = FileDialogs::OpenFile(filter.c_str());
 		if (path.empty())
 		{
@@ -134,6 +139,7 @@ namespace eg
 
 	bool AddResourcePanel::ButtonCenteredOnLine(const char* label, int width, int height,bool isDown, float alignment)
 	{
+        EG_PROFILE_FUNCTION();
 		ImGuiStyle& style = ImGui::GetStyle();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
@@ -162,6 +168,7 @@ namespace eg
 	}
 
 	void AddResourcePanel::TextCenteredOnLine(const char* label, float alignment) {
+        EG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 40));
 		float oldSize = ImGui::GetFont()->Scale;
 		//ImGui::GetFont()->Scale *= 2;
@@ -175,10 +182,11 @@ namespace eg
 		//ImGui::GetFont()->Scale = oldSize;
 		ImGui::PopFont();;
 		ImGui::PopStyleVar();
-		
+
 	}
 
 	bool AddResourcePanel::PositionButtonWithTheSameWidth(const char* label, int numberOfButtonsInLine, int index, int width, int height) {
+        EG_PROFILE_FUNCTION();
 		if (index <= numberOfButtonsInLine) {
 			ImGuiStyle& style = ImGui::GetStyle();
 			const float thumbnailSize = 128.0f;
@@ -210,6 +218,7 @@ namespace eg
 	}
 
 	void AddResourcePanel::DrawCenteredText(const std::string& label, const float& cellSize, const float& cursorX, const int& btnIndex) {
+        EG_PROFILE_FUNCTION();
 		auto textWidth = ImGui::CalcTextSize(label.c_str()).x;
 		//auto CursorX = ImGui::GetCursorPosX();
 		float offset = (cellSize - textWidth) * 0.48f;
@@ -221,6 +230,7 @@ namespace eg
 	}
 
 	bool AddResourcePanel::RenderFile(const std::string& label, const float& thumbnailSize) {
+        EG_PROFILE_FUNCTION();
 		//static float thumbnailSize = 128.0f;
 
 		ImGui::PushID(label.c_str());
@@ -244,20 +254,21 @@ namespace eg
 		else if (label._Equal("Custom"))
 			openPopup = ImGui::ImageButton((ImTextureID)m_CustomIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
 		ImGui::PopStyleColor();
-		ImGui::PopID(); 
+		ImGui::PopID();
 
 		return openPopup;
 	}
 
 	void AddResourcePanel::LoadIcons() {
-		m_AnimationIcon = Texture2D::Create("resources/icons/addResourcePanel/animation_icon_white.png");
-		m_ShaderIcon = Texture2D::Create("resources/icons/addResourcePanel/shader_icon_white.png");
-		m_FontIcon = Texture2D::Create("resources/icons/addResourcePanel/font_icon_white.png");
-		m_TextIcon = Texture2D::Create("resources/icons/addResourcePanel/text_icon_white.png");
-		m_ImageIcon = Texture2D::Create("resources/icons/addResourcePanel/image_icon_white.png");
-		m_ScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/script_icon_white.png");
-		m_NativeScriptIcon = Texture2D::Create("resources/icons/addResourcePanel/nativescript_icon_white.png");
-		m_CustomIcon = Texture2D::Create("resources/icons/addResourcePanel/custom_icon_white.png");
+        EG_PROFILE_FUNCTION();
+		m_AnimationIcon = IconLoader::GetIcon(Icons::AddResource_Animation);
+		m_ShaderIcon = IconLoader::GetIcon(Icons::AddResource_Shader);
+		m_FontIcon = IconLoader::GetIcon(Icons::AddResource_Font);
+		m_TextIcon = IconLoader::GetIcon(Icons::AddResource_Text);
+		m_ImageIcon = IconLoader::GetIcon(Icons::AddResource_Image);
+		m_ScriptIcon = IconLoader::GetIcon(Icons::AddResource_Script);
+		m_NativeScriptIcon = IconLoader::GetIcon(Icons::AddResource_NativeScript);
+		m_CustomIcon = IconLoader::GetIcon(Icons::AddResource_Custom);
 	}
-	
+
 }

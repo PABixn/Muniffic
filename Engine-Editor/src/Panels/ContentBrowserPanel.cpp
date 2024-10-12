@@ -9,23 +9,84 @@
 #include "../EditorLayer.h"
 #include <sys/stat.h>
 #include "Engine/Resources/AssetDirectoryManager.h"
+#include "../IconLoader.h"
 
 namespace eg
 {
 	ContentBrowserPanel::ContentBrowserPanel()
 	: m_BaseDirectory(AssetDirectoryManager::getRootDirectoryUUID()), m_CurrentDirectory(m_BaseDirectory)
 	{
-		LoadIcons();
+        EG_PROFILE_FUNCTION();
+		m_DirectoryIcon = IconLoader::GetIcon(Icons::ContentBrowser_Directory);
+		m_FileIcon = IconLoader::GetIcon(Icons::ContentBrowser_File);
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
+	}
+
+	void ContentBrowserPanel::Update(float ts)
+	{
+        EG_PROFILE_FUNCTION();
+		if(m_AnimationEditorPanel && m_AnimationEditorPanel->IsAnimationEditorOpen())
+			m_AnimationEditorPanel->Update(ts);
+	}
+
+	void ContentBrowserPanel::DrawCenteredText(const std::string& text, const float& cellSize) {
+        EG_PROFILE_FUNCTION();
+		auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+		auto CursorX = ImGui::GetCursorPosX();
+		float offset = (cellSize - textWidth) * 0.43f;
+		if (textWidth < cellSize) {
+			ImGui::SetCursorPosX(CursorX + offset);
+			ImGui::TextWrapped(text.c_str());
+		}
+		else {
+			int a = ceil(textWidth / cellSize) + 1;
+			for (int i = 0; i < a; i++) {
+				if (i >= 2)
+				{
+					auto r = text.substr((text.length() / a) * i, (text.length() / a) - 3);
+					r += "...";
+					textWidth = ImGui::CalcTextSize(r.c_str()).x;
+					CursorX = ImGui::GetCursorPosX();
+					offset = (cellSize - textWidth) * 0.45f;
+					ImGui::SetCursorPosX(CursorX + offset);
+					ImGui::TextWrapped(r.c_str());
+					return;
+				}
+				auto r = text.substr((text.length() / a) * i, (text.length() / a));
+				textWidth = ImGui::CalcTextSize(r.c_str()).x;
+				CursorX = ImGui::GetCursorPosX();
+				offset = (cellSize - textWidth) * 0.45f;
+				ImGui::SetCursorPosX(CursorX + offset);
+				ImGui::TextWrapped(r.c_str());
+			}
+			auto r = text.substr((text.length() / a) * a);
+			if (r != "")
+			{
+				textWidth = ImGui::CalcTextSize(r.c_str()).x;
+				CursorX = ImGui::GetCursorPosX();
+				offset = (cellSize - textWidth) * 0.5f;
+				ImGui::SetCursorPosX(CursorX + offset);
+				ImGui::TextWrapped(r.c_str());
+			}
+		}
+
 	}
 
 	void ContentBrowserPanel::InitPanels()
 	{
+        EG_PROFILE_FUNCTION();
+        EG_PROFILE_FUNCTION();
+		m_DeleteFilePanel = CreateScope<DeleteFilePanel>();
+		m_RenameFolderPanel = CreateScope<RenameFolderPanel>();
 		m_DeleteDirectoryPanel = CreateScope<DeleteDirectoryPanel>();
 	}
 
 	void ContentBrowserPanel::RenderFile(UUID key, const std::string& name, ResourceType type)
 	{
+        EG_PROFILE_FUNCTION();
+        EG_PROFILE_FUNCTION();
+		static float thumbnailSize = 128.0f;
+
 		ImGui::PushID(name.c_str());
 		auto& style = ImGui::GetStyle();
 

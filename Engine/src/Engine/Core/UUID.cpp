@@ -13,11 +13,13 @@ namespace eg{
 	UUID::UUID()
 		: m_UUID(s_UniformDistribution(s_Engine))
 	{
+		EG_PROFILE_FUNCTION();
 	}
 
 	UUID::UUID(int64_t uuid)
 		: m_UUID(uuid)
 	{
+		EG_PROFILE_FUNCTION();
 	}
 
 }
