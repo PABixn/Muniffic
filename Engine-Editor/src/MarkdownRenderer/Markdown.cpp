@@ -57,7 +57,7 @@ void Markdown::process_text(const std::string& str, float indend)
 		{
 			if (line[i] == '#' && heading_level < 4)
 				heading_level++;
-			else if (line[i] == '*' && star_level < 3)
+			else if (line[i] == '*' && star_level < 4)
 				star_level++;
 			else if (line[i] == '-' && dash_level < 4)
 				dash_level++;
@@ -120,6 +120,8 @@ void Markdown::check_block_style(std::string& line, bool isLastCharacter)
 			add_block_style(line, BlockType::Italic);
 		else if (star_level == 2)
 			add_block_style(line, BlockType::Bold);
+		else if (star_level == 3)
+			add_block_style(line, BlockType::BoldAndItalic);
 	}
 	else if (dash_level > 0)
 	{
@@ -153,6 +155,9 @@ void Markdown::trim_block_style(std::string& line, BlockType block_type)
 		break;
 		case BlockType::Bold:
 			from = "**";
+		break;
+		case BlockType::BoldAndItalic:
+			from = "***";
 		break;
 	}
 
@@ -224,6 +229,8 @@ void Markdown::apply_block_style(std::string& line, BlockType block_type)
 		case BlockType::Bold:
 			ImGui::PushFont(bold_font);
 		break;
+		case BlockType::BoldAndItalic:
+			ImGui::PushFont(bold_italic_font);
 		break;
 		case BlockType::None:
 			ImGui::PushFont(regular_font);
@@ -240,6 +247,7 @@ void Markdown::clear_block_style(BlockType block_type)
 		case BlockType::Heading3:
 		case BlockType::Bold:
 		case BlockType::Italic:
+		case BlockType::BoldAndItalic:
 		case BlockType::None:
 			ImGui::PopFont();
 			ImGui::SetWindowFontScale(1.0f);

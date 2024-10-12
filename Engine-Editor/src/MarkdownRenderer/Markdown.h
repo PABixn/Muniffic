@@ -15,7 +15,8 @@ class Markdown
 		Bold = 1 << 4,
 		OrderedListItem = 1 << 5,
 		UnorderedListItem = 1 << 6,
-		HorizontalRule = 1 << 7
+		HorizontalRule = 1 << 7,
+		BoldAndItalic = 1 << 8
 	};
 
 public:
