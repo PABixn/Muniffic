@@ -6,6 +6,7 @@ namespace eg {
 
 	Buffer FileSystem::ReadFileBinary(const std::filesystem::path& filepath)
 	{
+		EG_PROFILE_FUNCTION();
 		std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
 
 		if (!stream)

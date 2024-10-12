@@ -19,6 +19,7 @@
 #include "Engine/Project/RecentProjectSerializer.h"
 #include "Engine/Project/ScriptSerializer.h"
 #include "MarkdownRenderer/Markdown.h"
+#include "IconLoader.h"
 
 namespace eg
 {
@@ -31,6 +32,7 @@ namespace eg
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
+        EG_PROFILE_FUNCTION();
 		m_RecentProjectSerializer = RecentProjectSerializer();
 		m_WelcomePanel = CreateScope<WelcomingPanel>(m_RecentProjectSerializer.getProjectList(), m_RecentProjectSerializer);
 		m_NameNewProjectPanel = CreateScope<NameNewProjectPanel>();
@@ -41,6 +43,8 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
+        EG_PROFILE_FUNCTION();
+
 		ImGuiIO& io = ImGui::GetIO();
 
 		ImFontConfig font_config;
@@ -76,14 +80,17 @@ namespace eg
 			EG_ERROR("Failed to initialize resource system.");
 			return;
 		}
+
+		IconLoader::LoadIcons();
+
 		m_WelcomePanel->InitWelcomingPanel();
 
-		EG_PROFILE_FUNCTION();
-		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");
-		m_IconPause = Texture2D::Create("resources/icons/PauseButton.png");
-		m_IconSimulate = Texture2D::Create("resources/icons/SimulateButton.png");
-		m_IconStop = Texture2D::Create("resources/icons/StopButton.png");
-		m_IconStep = Texture2D::Create("resources/icons/StepButton.png");
+
+		m_IconPlay = IconLoader::GetIcon(Icons::Editor_PlayButton);
+		m_IconPause = IconLoader::GetIcon(Icons::Editor_PauseButton);
+		m_IconSimulate = IconLoader::GetIcon(Icons::Editor_SimulateButton);
+		m_IconStop = IconLoader::GetIcon(Icons::Editor_StopButton);
+		m_IconStep = IconLoader::GetIcon(Icons::Editor_StepButton);
 
 		FrameBufferSpecification fbSpec;
 		fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
@@ -105,12 +112,11 @@ namespace eg
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_WelcomePanel->IsShown()) {
 			return;
 		}
-
-
-		EG_PROFILE_FUNCTION();
+		
 		if (!m_ActiveScene->GetRegistry().valid(m_HoveredEntity))
 			m_HoveredEntity = Entity({});
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
@@ -164,7 +170,7 @@ namespace eg
 		{
 			// Update
 
-			m_RuntimeScene->OnUpdateRuntime(ts, oldTime);
+			m_RuntimeScene->OnUpdateRuntime(ts, m_OldTime);
 
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
@@ -202,6 +208,7 @@ namespace eg
 
 	void EditorLayer::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
@@ -492,6 +499,7 @@ namespace eg
 
 	void EditorLayer::UI_Toolbar()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 2.0f });
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{ 0.0f, 0.0f });
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
@@ -595,6 +603,7 @@ namespace eg
 
 	void EditorLayer::OnEvent(Event& e)
 	{
+		EG_PROFILE_FUNCTION();
 		m_Camera.OnEvent(e);
 		m_EditorCamera.OnEvent(e);
 
@@ -605,6 +614,7 @@ namespace eg
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
 	{
+		EG_PROFILE_FUNCTION();
 		if (e.IsRepeat())
 			return false;
 
@@ -718,6 +728,7 @@ namespace eg
 
 	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
+		EG_PROFILE_FUNCTION();
 		if (e.GetMouseButton() == (int)Mouse::ButtonLeft)
 		{
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(KeyCode::LeftAlt))
@@ -728,7 +739,7 @@ namespace eg
 
 	void EditorLayer::OnOverlayRender()
 	{
-
+		EG_PROFILE_FUNCTION();
 		if (m_SceneState == SceneState::Play)
 		{
 			Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
@@ -813,6 +824,7 @@ namespace eg
 
 	void EditorLayer::NewScene()
 	{
+		EG_PROFILE_FUNCTION();
 		m_ActiveScene = CreateRef<Scene>();
 		m_RuntimeScene = m_ActiveScene;
 
@@ -826,6 +838,7 @@ namespace eg
 
 	void EditorLayer::OpenScene()
 	{
+		EG_PROFILE_FUNCTION();
 		std::string filepath = FileDialogs::OpenFile("Muniffic Scene (*.egscene)\0*.egscene\0");
 		if (!filepath.empty())
 		{
@@ -839,6 +852,7 @@ namespace eg
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_SceneState != SceneState::Edit)
 			OnSceneStop();
 
@@ -862,6 +876,7 @@ namespace eg
 
 	void EditorLayer::SaveAs()
 	{
+		EG_PROFILE_FUNCTION();
 		std::string filepath = FileDialogs::SaveFile("Muniffic Scene (*.egscene)\0*.egscene\0");
 		if (!filepath.empty())
 		{
@@ -879,6 +894,7 @@ namespace eg
 
 	void EditorLayer::Save()
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_ActiveScenePath.empty())
 			SaveAs();
 		else
@@ -892,6 +908,7 @@ namespace eg
 
 	bool EditorLayer::CreateCmakelists(const std::filesystem::path path)
 	{
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path pathToScripts(path.string() + "\\Assets\\Scripts");
 		m_CustomScriptsDirectory = pathToScripts;
 		std::filesystem::path cmakeFilePath = pathToScripts / "CMakeLists.txt";
@@ -918,6 +935,7 @@ namespace eg
 
 	const std::string EditorLayer::CompileCustomScripts()
 	{
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path projectDirectory =  m_CurrentProject->GetProjectDirectory() / "Assets" / "Scripts";
 		const std::string& projectName = m_CurrentProject->GetProjectName();
 		std::string command = "cd " + projectDirectory.string() + " && cmake -DPROJECT_NAME=" + projectName + " . && cmake --build .";
@@ -930,6 +948,7 @@ namespace eg
 
 	void EditorLayer::NewProject()
 	{
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path saveDir = std::filesystem::current_path() / "Projects" / m_NameNewProjectPanel->projectName / (m_NameNewProjectPanel->projectName + ".mnproj");
 		std::filesystem::path absolutePath = std::filesystem::absolute(saveDir);
 		//std::filesystem::path savePath = absolutePath / "Projects";
@@ -978,6 +997,7 @@ namespace eg
 
 	bool EditorLayer::OpenProject()
 	{
+		EG_PROFILE_FUNCTION();
 		std::string filepath = FileDialogs::OpenFile("Muniffic Project (*.mnproj)\0*.mnproj\0");
 		if (filepath.empty())
 		{
@@ -992,6 +1012,7 @@ namespace eg
 
 	void EditorLayer::OpenProject(const std::filesystem::path& path)
 	{
+        EG_PROFILE_FUNCTION();
 		if (m_CurrentProject = Project::Load(path))
 		{
 			ScriptEngine::Init();
@@ -1017,16 +1038,19 @@ namespace eg
 
 	void EditorLayer::SaveProjectAs()
 	{
+        EG_PROFILE_FUNCTION();
 		ConsolePanel::Log("File: EditorLayer.cpp - Project saved", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::SaveProject()
 	{
+        EG_PROFILE_FUNCTION();
 		ConsolePanel::Log("File: EditorLayer.cpp - Project saved", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
 	{
+        EG_PROFILE_FUNCTION();
 		SceneSerializer serializer(scene);
 		serializer.Serialize(path.string());
 		ConsolePanel::Log("File: EditorLayer.cpp - Scene serialized", ConsolePanel::LogType::Info);
@@ -1034,28 +1058,36 @@ namespace eg
 
 	void EditorLayer::OnScenePlay()
 	{
-		if (m_ActiveScene->GetEntitiesWith<CameraComponent>().empty())
+		EG_PROFILE_FUNCTION();
 		{
-			ImGui::OpenPopup("No Camera");
-
-			return;
+			EG_PROFILE_SCOPE("Check Camera");
+		    if (m_ActiveScene->GetEntitiesWith<CameraComponent>().empty())
+		    {
+		    	ImGui::OpenPopup("No Camera");
+		    
+		    	return;
+		    }
 		}
-
-		if (!m_RuntimeScene)
-			m_RuntimeScene = CreateRef<Scene>();
 		if (m_SceneState == SceneState::Simulate)
 			OnSceneStop();
 		m_SceneState = SceneState::Play;
-
-		m_RuntimeScene = Scene::Copy(m_ActiveScene);
-		m_RuntimeScene->OnRuntimeStart();
-		m_ActiveScene = m_RuntimeScene;
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-		ConsolePanel::Log("File: EditorLayer.cpp - Scene started", ConsolePanel::LogType::Info);
+		{
+            EG_PROFILE_SCOPE("Copying Scene");
+		    m_RuntimeScene = Scene::Copy(m_ActiveScene);
+		}
+		{
+            EG_PROFILE_SCOPE("OnRuntimeStart");
+			m_OldTime = std::chrono::high_resolution_clock::now();
+		    m_RuntimeScene->OnRuntimeStart();
+		    m_ActiveScene = m_RuntimeScene;
+		    m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		    ConsolePanel::Log("File: EditorLayer.cpp - Scene started", ConsolePanel::LogType::Info);
+		}
 	}
 
 	void EditorLayer::OnSceneSimulate()
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_SceneState == SceneState::Play)
 			OnSceneStop();
 
@@ -1070,6 +1102,8 @@ namespace eg
 
 	void EditorLayer::OnScenePause()
 	{
+		EG_PROFILE_FUNCTION();
+
 		if (m_SceneState == SceneState::Edit)
 			return;
 		ConsolePanel::Log("File: EditorLayer.cpp - Scene paused", ConsolePanel::LogType::Info);
@@ -1078,7 +1112,9 @@ namespace eg
 
 	void EditorLayer::OnSceneStop()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate);
+		
 
 		if (m_SceneState == SceneState::Play)
 			m_ActiveScene->OnRuntimeStop();
@@ -1095,6 +1131,8 @@ namespace eg
 
 	void EditorLayer::OnDuplicateEntity()
 	{
+		EG_PROFILE_FUNCTION();
+
 		if (m_SceneState == SceneState::Play) {
 			ConsolePanel::Log("File: EditorLayer.cpp - Cannot duplicate entities while playing", ConsolePanel::LogType::Warning);
 			return;
@@ -1113,6 +1151,7 @@ namespace eg
 
 	void EditorLayer::CloseAddResourcePanel()
 	{
+		EG_PROFILE_FUNCTION();
 		m_AddResourcePanel = nullptr;
 	}
 }

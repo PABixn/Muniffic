@@ -5,16 +5,20 @@ namespace eg
 {
 	CreateDirectoryPanel::CreateDirectoryPanel()
 		: m_Show(false), m_DirectoryUUID(0)
-	{ }
+	{
+        EG_PROFILE_FUNCTION();
+    }
 
 	void CreateDirectoryPanel::ShowWindow(UUID parentUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		m_Show = true;
 		m_DirectoryUUID = parentUUID;
 	}
 
 	void CreateDirectoryPanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
 
 		ImGui::Begin("Create directory?", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);

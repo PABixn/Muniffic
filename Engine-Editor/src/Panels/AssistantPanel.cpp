@@ -9,21 +9,13 @@
 #include <cctype>
 #include <algorithm>
 #include "../MarkdownRenderer/Markdown.h"
+#include "../IconLoader.h"
 
 namespace eg
 {
 	AssistantPanel::AssistantPanel()
 		: assistantManager(CreateScope<AssistantManager>()),
 		assistantRespondingAnimation("."),
-		m_IconCopy(Texture2D::Create("resources/icons/copyCode.png")),
-		m_IconSend(Texture2D::Create("resources/icons/sendIcon.png")),
-		m_IconMicrophone(Texture2D::Create("resources/icons/micIcon.png")),
-		m_IconMicrophoneOff(Texture2D::Create("resources/icons/micOffIcon.png")),
-		m_IconMicrophoneUnavailable(Texture2D::Create("resources/icons/micUnavailableIcon.png")),
-		m_IconSettings(Texture2D::Create("resources/icons/assistantSettingsIcon.png")),
-		m_IconReadAloud(Texture2D::Create("resources/icons/readIcon.png")),
-		m_IconReadAloudHover(Texture2D::Create("resources/icons/readIcon_hover.png")),
-		m_IconReadAloudActive(Texture2D::Create("resources/icons/readIcon_active.png")),
 		m_isListening(false),
 		m_isMicrophoneAvailable(false),
 		m_isLastMessageFromUser(false),
@@ -34,6 +26,7 @@ namespace eg
 		m_shouldListen(false),
 		m_assistantInitialized(false)
 	{
+        EG_PROFILE_FUNCTION();
 		memset(buffer, 0, sizeof(buffer));
 
 		mdConfig = ImGui::MarkdownConfig();
@@ -44,7 +37,6 @@ namespace eg
 			return;
 
 		m_isMicrophoneAvailable = assistantManager->CheckMicrophoneAvailable();
-		m_IconReadMessageAloud = (ImTextureID)m_IconReadAloud->GetRendererID();
 
 		if (!assistantManager->LoadAssistant())
 		{
@@ -65,6 +57,7 @@ namespace eg
 
 	std::string AssistantPanel::LoadInstructions()
 	{
+        EG_PROFILE_FUNCTION();
 		std::string filename = "resources/assistant/instructions.txt";
 
 		std::ifstream file(filename);
@@ -80,6 +73,7 @@ namespace eg
 
 	void AssistantPanel::DoMessage(const std::string& message)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assistantManager->GetVoiceAssistantListening())
 		{
 			assistantManager->SetVoiceAssistantListening(false);
@@ -93,6 +87,7 @@ namespace eg
 
 	void AssistantPanel::RenderUserMessage(const std::string& message)
 	{
+        EG_PROFILE_FUNCTION();
 		float padding = 10.0f;
 		float rightMargin = 15.0f;
 		float maxBubbleWidth = ImGui::GetWindowSize().x * 0.6f;
@@ -127,6 +122,7 @@ namespace eg
 
 	std::string AssistantPanel::GetLanguageSymbol(const std::string& language)
 	{
+        EG_PROFILE_FUNCTION();
 		static const std::unordered_map<std::string, std::string> languageMap = {
 			{"csharp", "C#"}, {"cpp", "C++"}, {"python", "Python"},
 			{"javascript", "JavaScript"}, {"java", "Java"}, {"ruby", "Ruby"},
@@ -147,6 +143,7 @@ namespace eg
 	}
 
 	std::string AssistantPanel::ExtractLanguageName(std::string line) {
+        EG_PROFILE_FUNCTION();
 		if(line.find("```") == std::string::npos)
 			return "";
 
@@ -155,6 +152,7 @@ namespace eg
 	}
 
 	bool AssistantPanel::StartsOrEndsCodeBlock(std::string line) {
+        EG_PROFILE_FUNCTION();
 		if (line.find("```") != std::string::npos)
 		{
 			line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
@@ -166,6 +164,7 @@ namespace eg
 
 	void AssistantPanel::RenderAssistantMessage(const std::string& message, int id)
 	{
+        EG_PROFILE_FUNCTION();
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
 		drawList->ChannelsSplit(3);
 		drawList->ChannelsSetCurrent(2);
@@ -218,7 +217,7 @@ namespace eg
 					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 0.2));
 					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
-					if (ImGui::ImageButton((std::to_string(id) + std::to_string(buttonIndex)).c_str(), (ImTextureID)m_IconCopy->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1)))
+					if (ImGui::ImageButton((std::to_string(id) + std::to_string(buttonIndex)).c_str(), (ImTextureID)IconLoader::GetIcon(Icons::Assistant_CopyCode)->GetRendererID(), ImVec2(iconSize, iconSize), ImVec2(0, 0), ImVec2(1, 1)))
 					{
 						ImGui::LogToClipboard();
 						ImGui::LogText(msg.c_str());
@@ -297,7 +296,7 @@ namespace eg
 		}
 
 		drawList->ChannelsSetCurrent(0);
-	
+
 		ImGui::GetWindowDrawList()->AddRectFilled(
 			initialCursorPos,
 			ImVec2(ImGui::GetCursorScreenPos().x + bubbleWidth, ImGui::GetCursorScreenPos().y + padding),
@@ -319,6 +318,7 @@ namespace eg
 
 	void AssistantPanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::Begin("Assistant Panel");
 
 		if (!m_assistantInitialized)
@@ -343,7 +343,7 @@ namespace eg
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
-		if (ImGui::ImageButton((ImTextureID)m_IconSettings->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		if (ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::Assistant_Settings)->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
 			ImGui::OpenPopup("Assistant Settings");
 		}
@@ -420,7 +420,7 @@ namespace eg
 
 			if(ImGui::BeginPopupContextItem("MessageTooltip"))
 			{
-				if (ImGui::ImageButton(m_IconReadMessageAloud, ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+				/*if (ImGui::ImageButton(m_IconReadMessageAloud, ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 				{
 					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloudActive->GetRendererID();
 				}
@@ -428,7 +428,7 @@ namespace eg
 				if (ImGui::IsItemHovered())
 					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloudHover->GetRendererID();
 				else
-					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloud->GetRendererID();
+					m_IconReadMessageAloud = (ImTextureID)m_IconReadAloud->GetRendererID();*/
 
 
 				ImGui::EndPopup();
@@ -477,7 +477,7 @@ namespace eg
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
 
-		if (ImGui::ImageButton((ImTextureID)m_IconSend->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		if (ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::Assistant_Send)->GetRendererID(), ImVec2(buttonSize, buttonSize), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
 			RunMessage(buffer);
 		}
@@ -495,7 +495,9 @@ namespace eg
 		pos = ImGui::GetCursorScreenPos();
 		center = ImVec2(pos.x + buttonSize * 0.5f, pos.y + buttonSize * 0.5f);
 
-		if (ImGui::ImageButton(m_isMicrophoneAvailable ? m_isListening ? (ImTextureID)m_IconMicrophone->GetRendererID() : (ImTextureID)m_IconMicrophoneOff->GetRendererID() : (ImTextureID)m_IconMicrophoneUnavailable->GetRendererID(), { buttonSize, buttonSize }, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
+		ImTextureID icon = m_isMicrophoneAvailable ? m_isListening ? (ImTextureID)IconLoader::GetIcon(Icons::Assistant_Microphone)->GetRendererID() : (ImTextureID)IconLoader::GetIcon(Icons::Assistant_MicrophoneOff)->GetRendererID() : (ImTextureID)IconLoader::GetIcon(Icons::Assistant_MicrophoneUnavailable)->GetRendererID();
+
+		if (ImGui::ImageButton(icon, { buttonSize, buttonSize }, ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), ImVec4(1, 1, 1, 1)))
 		{
 			if (m_isMicrophoneAvailable)
 				m_isListening = !m_isListening;
@@ -523,6 +525,7 @@ namespace eg
 
 	void AssistantPanel::UpdateAssistantStatus()
 	{
+        EG_PROFILE_FUNCTION();
 		if (assistantManager->IsNewVoiceMessageAvailable())
 		{
 			std::string message = assistantManager->GetLastVoiceMessage();
@@ -552,6 +555,7 @@ namespace eg
 
 	void AssistantPanel::RenderAssistantSettings()
 	{
+        EG_PROFILE_FUNCTION();
 		if (ImGui::BeginPopupModal("Assistant Settings", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.14f, 0.12f, 0.22f, 1.0f));
@@ -617,6 +621,7 @@ namespace eg
 
 	void AssistantPanel::RunMessage(const std::string& message)
 	{
+        EG_PROFILE_FUNCTION();
 		if (message.empty() || m_isLastMessageFromUser)
 			return;
 

@@ -3,10 +3,11 @@
 
 namespace eg
 {
-	namespace Utils 
+	namespace Utils
 	{
 		void RecreateFixture(const RigidBody2DComponent& rb, BoxCollider2DComponent& bc, const TransformComponent& transform)
 		{
+		    EG_PROFILE_FUNCTION();
 			b2Body* body = (b2Body*)rb.RuntimeBody;
 
 			if (!body)
@@ -42,6 +43,7 @@ namespace eg
 
 		void RecreateFixture(const RigidBody2DComponent& rb, CircleCollider2DComponent& cc, const TransformComponent& transform)
 		{
+		    EG_PROFILE_FUNCTION();
 			b2Body* body = (b2Body*)rb.RuntimeBody;
 
 			if (!body)

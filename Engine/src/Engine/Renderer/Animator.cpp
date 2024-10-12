@@ -2,10 +2,11 @@
 #include "Animator.h"
 
 namespace eg {
-		
+
 	Animator::Animator()
 		: m_AnimationIndex(0), m_Speed(1.0f)
 	{
+        EG_PROFILE_FUNCTION();
 		m_Animations = CreateRef<std::vector<Ref<Animation>>>();
 		m_Transitions = CreateRef<std::vector<std::pair<size_t, size_t>>>();
 	}
@@ -13,6 +14,7 @@ namespace eg {
 	Animator::Animator(Ref<std::vector<Ref<Animation>>> animations, float speed, UUID entityID)
 		:m_AnimationIndex(0), m_Animations(animations), m_Speed(speed), m_EntityID(entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		for(Ref<Animation> anim : *m_Animations)
 			anim->SetEntityID(m_EntityID);
 	}
@@ -67,7 +69,7 @@ namespace eg {
 		int index = GetAnimationIndex(animationName);
 		if (index >= 0)
 			ChangeAnimation(index);
-	
+
 	}
 
 	void Animator::SetAnimations(Ref<std::vector<Ref<Animation>>> animations)

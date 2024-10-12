@@ -13,6 +13,7 @@
 #include <fstream>
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
 #include "box2d/b2_fixture.h"
+#include "../Engine-Editor/src/IconLoader.h"
 
 
 namespace eg {
@@ -25,10 +26,11 @@ namespace eg {
 		break;                                         \
 	}
 
-	
+
 
 	static std::string RigidBody2dBodyTypeToString(RigidBody2DComponent::BodyType bodyType)
 	{
+        EG_PROFILE_FUNCTION();
 		switch (bodyType)
 		{
 		case RigidBody2DComponent::BodyType::Static:    return "Static";
@@ -38,11 +40,12 @@ namespace eg {
 		EG_CORE_ASSERT(false, "Unknown RigidBody2DComponent::BodyType!");
 		ConsolePanel::Log("File: SceneSerializer.cpp - Unknown type of RigidBody2DComponent", ConsolePanel::LogType::Error);
 		return std::string();
-	
+
 	}
 
 	static RigidBody2DComponent::BodyType RigidBody2dBodyTypeFromString(const std::string& bodyType)
 	{
+        EG_PROFILE_FUNCTION();
 		if (bodyType == "Static")    return RigidBody2DComponent::BodyType::Static;
 		if (bodyType == "Dynamic")   return RigidBody2DComponent::BodyType::Dynamic;
 		if (bodyType == "Kinematic") return RigidBody2DComponent::BodyType::Kinematic;
@@ -54,10 +57,12 @@ namespace eg {
 	SceneSerializer::SceneSerializer(const Ref<Scene>& scene)
 		: m_Scene(scene)
 	{
+        EG_PROFILE_FUNCTION();
 	}
 
 	static void SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
+        EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(entity.HasComponent<IDComponent>(), "Entity has no IDComponent!");
 
 		out << YAML::BeginMap; // Entity
@@ -127,7 +132,7 @@ namespace eg {
 				out << YAML::Key << "MinCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(0);
 				out << YAML::Key << "MaxCoords" << YAML::Value << spriteRendererComponent.SubTexture->GetCoords(2);
 			}
-			out << YAML::EndMap; 
+			out << YAML::EndMap;
 		}
 
 		if (entity.HasComponent<CircleRendererComponent>())
@@ -199,14 +204,14 @@ namespace eg {
 		if (entity.HasComponent<ScriptComponent>())
 		{
 			out << YAML::Key << "ScriptComponent";
-			out << YAML::BeginMap; 
+			out << YAML::BeginMap;
 			auto& scriptComponent = entity.GetComponent<ScriptComponent>();
 
-			out << YAML::Key << "Scripts" << YAML::Value << YAML::BeginSeq; 
+			out << YAML::Key << "Scripts" << YAML::Value << YAML::BeginSeq;
 
 			for (UUID script : scriptComponent.Scripts)
 			{
-				out << YAML::BeginMap; 
+				out << YAML::BeginMap;
 				out << YAML::Key << "ScriptUUID" << YAML::Value << script;
 
 				std::string name = ResourceDatabase::GetResourceName(script);
@@ -342,7 +347,7 @@ namespace eg {
 			out << YAML::Key << "IsLooped" << YAML::Value << audioSourceComponent.Audio->IsLooped();
 			out << YAML::Key << "IsPlayingFromStart" << YAML::Value << audioSourceComponent.Audio->IsPlayingFromStart();
 			out << YAML::Key << "Volume" << YAML::Value << audioSourceComponent.Audio->GetVolume();
-			
+
 			out << YAML::Key << "IsInherited" << YAML::Value << audioSourceComponent.isInherited;
 			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << audioSourceComponent.isInheritedInChildren;
 
@@ -355,6 +360,7 @@ namespace eg {
 
 	void SceneSerializer::Serialize(const std::string& filepath)
 	{
+        EG_PROFILE_FUNCTION();
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
@@ -381,11 +387,13 @@ namespace eg {
 
 	void SceneSerializer::SerializeRuntime(const std::string& filepath)
 	{
+        EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(false, "Not implemented");
 	}
 
 	bool SceneSerializer::Deserialize(const std::string& filepath)
 	{
+        EG_PROFILE_FUNCTION();
 		YAML::Node data;
 		try
 		{
@@ -411,7 +419,7 @@ namespace eg {
 		{
 			for (auto entity : entities)
 			{
-				int64_t uuid = entity["Entity"].as<int64_t>(); 
+				int64_t uuid = entity["Entity"].as<int64_t>();
 
 				std::string name;
 				auto tagComponent = entity["TagComponent"];
@@ -461,7 +469,7 @@ namespace eg {
 					cc.Camera.SetPerspectiveVerticalFOV(cameraProps["PerspectiveFOV"].as<float>());
 					cc.Camera.SetPerspectiveNearClip(cameraProps["PerspectiveNear"].as<float>());
 					cc.Camera.SetPerspectiveFarClip(cameraProps["PerspectiveFar"].as<float>());
-					
+
 					cc.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
 					cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
 					cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
@@ -566,7 +574,7 @@ namespace eg {
 						}
 						else
 						{
-							src.Texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							src.Texture = IconLoader::GetIcon(Icons::ResourceNotFound);
 							EG_CORE_WARN("Texture not found: {0}", textureUUID);
 						}
 					}
@@ -597,7 +605,7 @@ namespace eg {
 						}
 						else
 						{
-							Ref<Texture2D> texture = Texture2D::Create((Project::GetResourcesPath() / std::filesystem::path("resources/graphics/image_not_found.png")).string());
+							Ref<Texture2D> texture = IconLoader::GetIcon(Icons::ResourceNotFound);
 							src.SubTexture = CreateRef<SubTexture2D>(texture, glm::vec2(0,0), glm::vec2(1000, 1000));
 						}
 					}
@@ -750,6 +758,7 @@ namespace eg {
 
 	bool SceneSerializer::DeserializeRuntime(const std::string& filepath)
 	{
+        EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(false, "Not implemented");
 		return false;
 	}

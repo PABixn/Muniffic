@@ -1,39 +1,33 @@
 #include "WelcomingPanel.h"
-#include <src/MarkdownRenderer/Markdown.h>
-
+#include "../IconLoader.h"
 
 namespace eg
-
-	
-
 {	
-
 	WelcomingPanel::WelcomingPanel() {}
 	WelcomingPanel::WelcomingPanel(std::vector<std::string> list, RecentProjectSerializer m_RecentProjectSerializer)
 		: m_Show(true), m_DirectoryUUID(0), m_ProjectList(list), m_Rps(m_RecentProjectSerializer)
 	{
+        EG_PROFILE_FUNCTION();
 		m_NewProjectCreated = false;
 		m_SelectedProject = "";
 	}
 
 	void WelcomingPanel::ShowWindow(UUID directoryUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		m_Show = true;
 		m_DirectoryUUID = directoryUUID;
 	}
 
-	void WelcomingPanel::InitWelcomingPanel() {
-		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/DirectoryIcon.png");
-		m_NewProjectIcon = Texture2D::Create("resources/icons/contentBrowser/NewProjectIcon.png");
-		m_DeleteProjectIcon = Texture2D::Create("resources/icons/contentBrowser/DeleteProjectIcon.png");
-	}
+	void WelcomingPanel::InitWelcomingPanel() {}
 
 
 	void WelcomingPanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::Begin("WelcomingPanel", &m_Show , ImGuiWindowFlags_NoTitleBar| ImGuiViewportFlags_NoDecoration);
 		ImGui::SetWindowFontScale(2.2);
-		ImGui::Text("Muniffic Physics Engine");
+		ImGui::Text("Muniffic Engine");
 
 		ImGui::SetWindowFontScale(1.0);
 
@@ -43,10 +37,6 @@ namespace eg
 		ImGui::Text("Menu");
 
 		ImGui::SetWindowFontScale(1.0);
-
-		Ref<Texture2D> directoryIcon = m_DirectoryIcon;
-		Ref<Texture2D> newProjectIcon = m_NewProjectIcon;
-		Ref<Texture2D> deleteProjectIcon = m_DeleteProjectIcon;
 		
 		if (ImGui::Button("Open an existing project", { ImGui::GetWindowWidth() - 20.0f, 32.0f}))
 		{
@@ -54,7 +44,7 @@ namespace eg
 		}
 		ImGui::SameLine();
 		ImGui::SetCursorPosX({ 8.0f });
-		ImGui::Image((ImTextureID)directoryIcon->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
+		ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
 		
 		if (ImGui::Button("Create a new project", { ImGui::GetWindowWidth() - 20.0f, 32.0f}))
 		{
@@ -63,7 +53,7 @@ namespace eg
 		}
 		ImGui::SameLine();
 		ImGui::SetCursorPosX({ 8.0f });
-		ImGui::Image((ImTextureID)newProjectIcon->GetRendererID(), { 30.0f, 30.0f }, { 0, 1 }, { 1, 0 });
+		ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::WelcomePanel_NewProject)->GetRendererID(), { 30.0f, 30.0f }, { 0, 1 }, { 1, 0 });
 
 		ImGui::End();
 
@@ -102,12 +92,12 @@ namespace eg
 					ImGui::SameLine();
 					float cursorPos = ImGui::GetCursorPosX();
 					ImGui::SetCursorPosX({ cursorPos - 39.0f });
-					ImGui::Image((ImTextureID)deleteProjectIcon->GetRendererID(), { 30.0f, 30.0f }, { 0, 1 }, { 1, 0 });
+					ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::WelcomePanel_DeleteProject)->GetRendererID(), { 30.0f, 30.0f }, { 0, 1 }, { 1, 0 });
 
 					
 					ImGui::SameLine();
 					ImGui::SetCursorPosX({ 8.0f });
-					ImGui::Image((ImTextureID)directoryIcon->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
+					ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
 				}
 				i++;
 			}

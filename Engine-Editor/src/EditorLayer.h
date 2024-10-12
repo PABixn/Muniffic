@@ -144,7 +144,7 @@ namespace eg
 		ImFont* m_PoppinsHeading3Font;
 
 		//Time for fixedUpdate loop
-		std::chrono::steady_clock::time_point oldTime = std::chrono::high_resolution_clock::now();;
+		std::chrono::steady_clock::time_point m_OldTime = std::chrono::high_resolution_clock::now();;
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Ref<ContentBrowserPanel> m_ContentBrowserPanel = nullptr;

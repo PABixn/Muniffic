@@ -41,12 +41,6 @@ namespace eg {
 		std::pair<int, int> m_SelectedFrames = { -1, -1 };
 		std::vector<UUID> m_DeletedFrames;
 		Ref<Animation> m_Anim;
-		Ref<Texture2D> m_PlayIcon;
-		Ref<Texture2D> m_StopIcon;
-		Ref<Texture2D> m_MoveIcon;
-		Ref<Texture2D> m_MoveSelectedIcon;
-		Ref<Texture2D> m_LenghtIcon;
-		Ref<Texture2D> m_LenghtSelectedIcon;
 		bool m_ShowAnimationEditorPanel = false;
 		bool m_PlayAnimation = false;
 		bool m_ShowLongerFrame = false;

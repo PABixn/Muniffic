@@ -7,8 +7,10 @@
 
 namespace eg {
 	ProjectDirectoryPanel::ProjectDirectoryPanel() {
+		EG_PROFILE_FUNCTION();
 	}
 	int64_t getPathID(const std::string path) {
+		EG_PROFILE_FUNCTION();
 		static std::map<std::string, int64_t> paths;
 		try
 		{
@@ -23,6 +25,7 @@ namespace eg {
 	}
 
 	void ProjectDirectoryPanel::OnImGuiRender() {
+		EG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::Begin("Project Directory");
 		ImGui::PopStyleVar();
@@ -31,6 +34,7 @@ namespace eg {
 		ImGui::End();
 	}
 	void ProjectDirectoryPanel::DrawDirectoryTreeNode(const std::filesystem::path& path) {
+		EG_PROFILE_FUNCTION();
 
 		auto t = ImGui::GetItemID();
 		auto i = getPathID(path.string());

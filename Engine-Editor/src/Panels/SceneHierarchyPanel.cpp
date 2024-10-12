@@ -34,6 +34,7 @@ namespace eg
 
 	const char *add(const char *begining, const char *middle, const char *ending)
 	{
+        EG_PROFILE_FUNCTION();
 		size_t resultLength = strlen(middle) + strlen(begining) + strlen(ending);
 		char *resultMsg = new char[resultLength];
 		strcpy(resultMsg, begining);
@@ -44,6 +45,7 @@ namespace eg
 
 	float CalculatePreferedComponentPropertyWidth(const char *label)
 	{
+        EG_PROFILE_FUNCTION();
 		float WidthOfLabel = ImGui::CalcTextSize(label).x;
 		if (WidthOfLabel > ImGui::GetContentRegionAvail().x * (1.f - WidthOfProperty) - 4.f)
 		{
@@ -64,6 +66,7 @@ namespace eg
 
 	static void PropertyLabel(const char *label)
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::SameLine();
 		bool s = ImGui::TextWrappedWithLineLimit(label, 1);
 
@@ -79,6 +82,7 @@ namespace eg
 
 	static bool PrettyButton(const char *label, bool fullWidth = false)
 	{
+        EG_PROFILE_FUNCTION();
 		if (fullWidth)
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(50, 7));
 		else
@@ -98,11 +102,14 @@ namespace eg
 
 	void ComponentPropertyBeforeDraw(const char *label)
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::PushID(label);
 		ImGui::PushItemWidth(CalculatePreferedComponentPropertyWidth(label));
 	}
+
 	void ComponentPropertyAfterDraw(const char *label)
 	{
+		EG_PROFILE_FUNCTION();
 		ImGui::PopItemWidth();
 		PropertyLabel(label);
 		ImGui::PopID();
@@ -110,6 +117,7 @@ namespace eg
 
 	static void DrawVec3Control(Entity entity, const std::string &label, glm::vec3 &values, float resetValue = 0.0f, float columnWidth = 100.0f, bool firstValue = false)
 	{
+		EG_PROFILE_FUNCTION();
 		float x = values.x, y = values.y, z = values.z;
 		ImGuiIO &io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
@@ -187,6 +195,7 @@ namespace eg
 
 	static bool DrawComponentPropertyFloat(const char *label, float *value, float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%.3f")
 	{
+		EG_PROFILE_FUNCTION();
 
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragFloat("", value, speed, min, max, format);
@@ -196,7 +205,7 @@ namespace eg
 
 	static bool DrawComponentPropertyFloat2(const char *label, float value[2], float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%.3f")
 	{
-
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragFloat2("", value, speed, min, max, format);
 		ComponentPropertyAfterDraw(label);
@@ -205,7 +214,7 @@ namespace eg
 
 	static bool DrawComponentPropertyFloat3(const char *label, float value[3], float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%.3f")
 	{
-
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragFloat3("", value, speed, min, max, format);
 		ComponentPropertyAfterDraw(label);
@@ -214,7 +223,7 @@ namespace eg
 
 	static bool DrawComponentPropertyFloat4(const char *label, float value[4], float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%.3f")
 	{
-
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragFloat4("", value, speed, min, max, format);
 		ComponentPropertyAfterDraw(label);
@@ -223,7 +232,7 @@ namespace eg
 
 	static bool DrawComponentPropertyInt(const char *label, int *value, float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%d")
 	{
-
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::DragInt("", value, speed, min, max, format);
 		ComponentPropertyAfterDraw(label);
@@ -232,7 +241,7 @@ namespace eg
 
 	static bool DrawComponentPropertyColorEdit4(const char *label, float col[4])
 	{
-
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed_value = ImGui::ColorEdit4("", col);
 		ComponentPropertyAfterDraw(label);
@@ -241,6 +250,7 @@ namespace eg
 
 	static bool DrawComponentPropertyInputText(const char *label, char *buf, size_t buf_size)
 	{
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed = ImGui::InputText("", buf, buf_size);
 		ComponentPropertyAfterDraw(label);
@@ -249,6 +259,7 @@ namespace eg
 
 	static bool DrawComponentPropertyInputText(const char *label, std::string *val)
 	{
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		bool changed = ImGui::InputText("", val);
 		ComponentPropertyAfterDraw(label);
@@ -257,6 +268,7 @@ namespace eg
 
 	static void DrawComponentPropertyFileReference(const char *label, UUID &uuid, std::function<void(int64_t *what)> fun)
 	{
+		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
 		ImGui::Button((uuid == 0) ? "none" : ResourceDatabase::GetResourceName(uuid).c_str(), {CalculatePreferedComponentPropertyWidth(label), 0});
 		if (ImGui::BeginDragDropTarget())
@@ -273,6 +285,7 @@ namespace eg
 
 	static bool DrawComponentPropertyCheckbox(const char *label, bool *CheckedValue)
 	{
+		EG_PROFILE_FUNCTION();
 		ImGui::PushID(label);
 		bool changed_value = ImGui::Checkbox("", CheckedValue);
 		PropertyLabel(label);
@@ -282,6 +295,7 @@ namespace eg
 
 	static void DrawComponentPropertyCombo(const char *label, std::vector<const char *> possiblevalues, int currentSelected, std::function<void(int number)> fun)
 	{
+		EG_PROFILE_FUNCTION();
 		ImGui::PushID(label);
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * WidthOfProperty - 4.f);
 		char *currentValueString = (char *)possiblevalues[currentSelected];
@@ -309,26 +323,13 @@ namespace eg
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene> &scene)
 	{
+        EG_PROFILE_FUNCTION();
 		SetContext(scene);
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene> &scene)
 	{
-		// See ComponentIcon enum (SceneHierarchyPanel.h)
-		m_ComponentIcons = std::vector<Ref<Texture2D>>();
-		std::string IconPath = "resources/icons/hierarchyPanel/Components/";
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "ComponentIcon.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Transform.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Camera.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Script.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "SpriteRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "SubTexRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "CircleRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "RigidBody.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "BoxCol.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "CircleCol.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "TextRen.png"));
-		m_ComponentIcons.push_back(Texture2D::Create(IconPath + "Animator.png"));
+        EG_PROFILE_FUNCTION();
 		m_Context = scene;
 		EditorActions::SetScene(scene);
 		m_SelectionContext = {};
@@ -336,11 +337,11 @@ namespace eg
 		m_ImagePanel = CreateRef<ImagePanel>();
 		m_ListOfEntityDisplayed = std::vector<EntityDisplayInfo>();
 		Search();
-		m_PuzzleIcon = Texture2D::Create("resources/icons/hierarchyPanel/puzzle.png");
 	}
 
 	std::optional<EntityDisplayInfo> SceneHierarchyPanel::SearchEntity(Entity entity)
 	{
+        EG_PROFILE_FUNCTION();
 		bool searched = false, childsearched = false;
 		EntityDisplayInfo currentEntityDisplayInfo = EntityDisplayInfo();
 		for (Entity e : entity.GetChildren())
@@ -368,6 +369,7 @@ namespace eg
 
 	void SceneHierarchyPanel::Search()
 	{
+		EG_PROFILE_FUNCTION();
 		m_ListOfEntityDisplayed.clear();
 		m_Context->m_Registry.each([&](auto entityID)
 								   {
@@ -390,6 +392,7 @@ namespace eg
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
+		EG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::Begin("Scene Hierarchy");
 		ImGui::PopStyleVar();
@@ -537,6 +540,7 @@ namespace eg
 
 	void SceneHierarchyPanel::Update(float dt)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_SelectionContext)
 		{
 			if (m_SelectionContext.HasComponent<AnimatorComponent>())
@@ -554,6 +558,7 @@ namespace eg
 
 	void SceneHierarchyPanel::DrawEntityNode(EntityDisplayInfo entityDisplayInfo)
 	{
+		EG_PROFILE_FUNCTION();
 		Entity entity = entityDisplayInfo.entity;
 
 		if (!entity.IsDrawable())
@@ -650,26 +655,29 @@ namespace eg
 			ImGui::TreePop();
 		}
 	}
+
 	template <typename T, typename UIFunction>
-	void SceneHierarchyPanel::DrawComponent(const std::string &name, Entity entity, UIFunction uiFunction, Ref<Scene> &context, int iconOrType)
+	void SceneHierarchyPanel::DrawComponent(const std::string &name, Entity entity, UIFunction uiFunction, Ref<Scene> &context, Icons icon)
 	{
+		EG_PROFILE_FUNCTION();
 		static const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_NoArrow | ImGuiTreeNodeFlags_PropertiesComponent;
 		if (entity.HasComponent<T>())
 		{
-			std::string ajDzik(entity.GetName() + std::to_string(iconOrType));
+			Ref<Texture2D> componentIcon = IconLoader::GetIcon(icon);
+
+			std::string ajDzik(entity.GetName() + std::to_string(componentIcon->GetRendererID()));
 			ImGui::PushID(ajDzik.c_str());
 			auto &component = entity.GetComponent<T>();
 			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{4, 4});
 			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 			// ImGui::Separator();
-			Ref<Texture2D> iconID = m_ComponentIcons[iconOrType];
 
 			bool open;
 			if (entity.GetChildren().size() > 0 && entity.GetInheritableComponent<T>()->isInheritedInChildren)
-				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), (treeNodeFlags | ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(iconID->GetRendererID()));
+				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), (treeNodeFlags | ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(componentIcon->GetRendererID()));
 			else
-				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(iconID->GetRendererID()));
+				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(componentIcon->GetRendererID()));
 			ImGui::PopStyleVar();
 			if (!(name == std::string("Transform") && !(entity.GetChildren().size() > 0 || entity.GetParent().has_value())))
 			{
@@ -732,6 +740,7 @@ namespace eg
 	template <typename T>
 	void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string &entryName)
 	{
+		EG_PROFILE_FUNCTION();
 		if (!m_SelectionContext.HasComponent<T>())
 		{
 			if (ImGui::MenuItem(entryName.c_str()))
@@ -744,12 +753,13 @@ namespace eg
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
+		EG_PROFILE_FUNCTION();
 		if (entity.HasComponent<TagComponent>())
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 7));
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
 			ImGui::SetCursorPos({ ImGui::GetCursorPosX() + 40, ImGui::GetCursorPosY() + 20 });
-			ImGui::Image((ImTextureID)m_PuzzleIcon->GetRendererID(), { 30, 30 });
+			ImGui::Image((ImTextureID)(IconLoader::GetIcon(Icons::Component_Puzzle)->GetRendererID()), { 30, 30 });
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 120);
 			ImGui::SameLine();
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
@@ -798,7 +808,7 @@ namespace eg
 			{
 				DrawVec3Control(entity, "Translation", component.Translation, 0.0f, 100.f, true);
 				DrawVec3Control(entity, "Rotation", component.Rotation);
-				DrawVec3Control(entity, "Scale", component.Scale, 1.0f); }, m_Context, ComponentIcons::TransformIcon);
+				DrawVec3Control(entity, "Scale", component.Scale, 1.0f); }, m_Context, Icons::Component_Transform);
 
 		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component)
 			{
@@ -865,7 +875,7 @@ namespace eg
 
 					if (DrawComponentPropertyCheckbox("Fixed Aspect Ratio", &component.FixedAspectRatio))
 						Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
-				} }, m_Context, ComponentIcons::CameraIcon);
+				} }, m_Context, Icons::Component_Camera);
 
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
@@ -1234,7 +1244,7 @@ namespace eg
 				}
 				ImGui::Indent();
 			},
-			m_Context, ComponentIcons::ScriptIcon);
+			m_Context, Icons::Component_Script);
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)
 			{
@@ -1259,7 +1269,7 @@ namespace eg
 				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
 					Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
 			},
-			m_Context, ComponentIcons::SpriteRendererIcon);
+			m_Context, Icons::Component_SpriteRenderer);
 
 		DrawComponent<SpriteRendererSTComponent>("SubTexture Sprite Renderer 2D", entity, [](auto& component)
 			{
@@ -1318,7 +1328,7 @@ namespace eg
 				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f))
 					Commands::ExecuteRawValueCommand(&component.TilingFactor, factor, "SpriteRendererComponent-Tiling Factor");
 			},
-			m_Context, ComponentIcons::SubTextureRendererIcon);
+			m_Context, Icons::Component_SubTextureRenderer);
 
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [entity](auto& component)
 			{
@@ -1330,10 +1340,10 @@ namespace eg
 				if (DrawComponentPropertyFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f))
 					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Thickness, thickness, entity, "CircleRendererComponent-Thickness");
 				if (DrawComponentPropertyFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f))
-					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Fade, fade, entity, "CircleRendererComponent-Fade"); }, m_Context, ComponentIcons::CircleRendererIcon);
+					Commands::ExecuteRawValueCommand<float, CircleRendererComponent>(&component.Fade, fade, entity, "CircleRendererComponent-Fade"); }, m_Context, Icons::Component_CircleRenderer);
 
 		DrawComponent<RigidBody2DComponent>("Rigidbody 2d", entity, [entity](auto &component)
-											{
+		{
 			const char* bodyTypeString[] = { "Static", "Dynamic", "Kinematic"};
 			const char* currentBodyTypeString = bodyTypeString[(int)component.Type];
 
@@ -1366,10 +1376,10 @@ namespace eg
 			
 			if(DrawComponentPropertyCheckbox("Fixed Rotation", &component.FixedRotation))
 				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");
-		}, m_Context, ComponentIcons::RigidBodyIcon);
+		}, m_Context, Icons::Component_RigidBody2D);
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [entity](auto &component)
-											  {
+		{
 			float density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset, size = component.Size;
 
@@ -1387,10 +1397,10 @@ namespace eg
 				Commands::ExecuteRawValueCommand<float, BoxCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "BoxCollider2DComponent-Restitution Threshold");
 			if (ImGui::Checkbox("Is Sensor", &component.IsSensor))
 				Commands::ExecuteRawValueCommand<bool, BoxCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "BoxCollider2DComponent-Is Sensor");
-		}, m_Context, ComponentIcons::BoxColliderIcon);
+		}, m_Context, Icons::Component_BoxCollider2D);
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [entity](auto &component)
-												 {
+		{
 			float radius = component.Radius, density = component.Density, friction = component.Friction, restitution = component.Restitution, restitutionThreshold = component.RestitutionThreshold;
 			glm::vec2 offset = component.Offset;
 
@@ -1408,10 +1418,10 @@ namespace eg
 				Commands::ExecuteRawValueCommand<float, CircleCollider2DComponent>(&component.RestitutionThreshold, restitutionThreshold, entity, "CircleCollider2DComponent-Restitution Threshold");
 			if (DrawComponentPropertyCheckbox("Is Sensor", &component.IsSensor))
 				Commands::ExecuteRawValueCommand<bool, CircleCollider2DComponent>(&component.IsSensor, !component.IsSensor, entity, "CircleCollider2DComponent-Is Sensor");
-			}, m_Context, ComponentIcons::CircleColliderIcon);
+			}, m_Context, Icons::Component_CircleCollider2D);
 
 		DrawComponent<TextComponent>("Text Renderer", entity, [entity](auto &component)
-									 {
+		{
 				float kerning = component.Kerning, lineSpacing = component.LineSpacing;
 				glm::vec4 color = component.Color;
 
@@ -1450,14 +1460,13 @@ namespace eg
 				if(DrawComponentPropertyFloat("Kerning", &component.Kerning, 0.025f))
 					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.Kerning, kerning, entity, "TextComponent-Kerning");
 				if(DrawComponentPropertyFloat("Line Spacing", &component.LineSpacing, 0.025f))
-					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing"); }, m_Context, ComponentIcons::TextRendererIcon);
+					Commands::ExecuteRawValueCommand<float, TextComponent>(&component.LineSpacing, lineSpacing, entity, "TextComponent-Line Spacing"); }, m_Context, Icons::Component_TextRenderer);
 
 		DrawComponent<AnimatorComponent>("Animator", entity, [entity, this](auto &component)
 										 {
 			bool ShowAnimationPreview = !(m_Context->IsRunning());
-			PrettyButton("Add Animation", true);
-                if (ImGui::BeginDragDropTarget())
-				{
+				PrettyButton("Add Animation", true);
+                if (ImGui::BeginDragDropTarget()) {
                     int64_t* uuid;
 
                     if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel")) {
@@ -1696,7 +1705,7 @@ namespace eg
 							}
 						}
 					}
-				} }, m_Context, ComponentIcons::AnimatorIcon);
+				} }, m_Context, Icons::Component_Animator);
 
 		DrawComponent<AudioSourceComponent>("Audio Source", entity, [](auto &component)
 											{
@@ -1719,6 +1728,6 @@ namespace eg
 			
 			ImGui::Checkbox("Loop", component.Audio->IsLoopedPtr());
 			ImGui::Checkbox("Playing from start", component.Audio->IsPlayingFromStartPtr());
-			ImGui::SliderFloat("Volume", component.Audio->GetVolumePtr(), 0, 10); }, m_Context, ComponentIcons::AnimatorIcon);
+			ImGui::SliderFloat("Volume", component.Audio->GetVolumePtr(), 0, 10); }, m_Context, Icons::Component_Animator);
 	}
 }
