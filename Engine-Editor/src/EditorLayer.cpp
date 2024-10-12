@@ -54,10 +54,15 @@ namespace eg
 		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, &font_config, full_ranges);
 		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, &font_config, full_ranges);
 		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, &font_config, full_ranges);
+		m_PoppinsBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsItalicFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Italic.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsBoldItalicFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-BoldItalic.ttf", 18.0f, &font_config, full_ranges);
 
 		io.FontDefault = m_PoppinsRegularFont;
 
 		io.Fonts->Build();
+
+		Markdown::init(m_PoppinsRegularFont, m_PoppinsBoldFont, m_PoppinsItalicFont, m_PoppinsBoldItalicFont);
 
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
@@ -235,17 +240,6 @@ namespace eg
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-		}
-
-		ImGui::OpenPopup("MarkdownTest");
-
-		//Welcoming panel code
-		if (ImGui::BeginPopupModal("MarkdownTest", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar))
-		{
-			Markdown markdown;
-			markdown.init(m_PoppinsRegularFont, m_PoppinsMediumFont);
-			markdown.text("**Siema**");
-			ImGui::EndPopup();
 		}
 
 		if (m_WelcomePanel->IsShown()) {

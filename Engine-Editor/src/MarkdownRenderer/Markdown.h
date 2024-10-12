@@ -15,35 +15,39 @@ class Markdown
 		Bold = 1 << 4,
 		OrderedListItem = 1 << 5,
 		UnorderedListItem = 1 << 6,
-		HorizontalRule = 1 << 7
+		HorizontalRule = 1 << 7,
+		Mixed = 1 << 8
 	};
 
 public:
 	Markdown() = default;
 
-	void init(ImFont* regular_font, ImFont* bold_font);
+	static void init(ImFont* regular_font, ImFont* bold_font, ImFont* italic_font, ImFont* bold_italic);
 
-	void text(const std::string& str);
-	void text(const char* str);
-
-private:
-	void process_text(const std::string& str);
-
-	void render_heading(std::string& line, BlockType block_type);
-	void render_line(std::string& line, BlockType block_type);
-
-	void check_block_style(std::string& line, bool isLastCharacter = false);
-
-	void trim_block_style(std::string& line, BlockType block_type);
-
-	void add_block_style(std::string& line, BlockType block_type);
-
-	void apply_block_style(std::string& line, BlockType block_type);
-	void clear_block_style(BlockType block_type);
+	static void text(const std::string& str, float indent = 0.0f);
+	static void text(const char* str, float indent = 0.0f);
 
 private:
-	ImFont* regular_font = nullptr;
-	ImFont* bold_font = nullptr;
-	std::vector<BlockType> block_types;
-	int heading_level = 0, list_level = 0, star_level = 0, dash_level = 0;
+	static void process_text(const std::string& str, float indent);
+
+	static void render_heading(std::string& line, BlockType block_type);
+	static void render_line(std::string& line, BlockType block_type);
+
+	static void check_block_style(std::string& line, bool isLastCharacter = false);
+	static bool check_if_mixed(BlockType block_type);
+
+	static void trim_block_style(std::string& line, BlockType block_type);
+
+	static void add_block_style(std::string& line, BlockType block_type);
+
+	static void apply_block_style(std::string& line, BlockType block_type);
+	static void clear_block_style(BlockType block_type);
+
+private:
+	static ImFont* regular_font;
+	static ImFont* bold_font;
+	static ImFont* italic_font;
+	static ImFont* bold_italic_font;
+	static std::vector<BlockType> block_types;
+	static int heading_level, list_level, star_level, dash_level;
 };

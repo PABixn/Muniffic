@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <cctype>
 #include <algorithm>
+#include "../MarkdownRenderer/Markdown.h"
 
 namespace eg
 {
@@ -246,7 +247,8 @@ namespace eg
 
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding * 2);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
-					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
+					//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
+					Markdown::text(msg, padding * 2);
 					ImGui::PopTextWrapPos();
 
 					drawList->ChannelsSetCurrent(1);
@@ -267,7 +269,8 @@ namespace eg
 				else
 				{
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
+					//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
+					Markdown::text(msg, padding);
 					ImGui::PopTextWrapPos();
 					msg = "";
 
@@ -288,7 +291,8 @@ namespace eg
 		if (!msg.empty())
 		{
 			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-			ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
+			//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
+			Markdown::text(msg, padding);
 			ImGui::PopTextWrapPos();
 		}
 
