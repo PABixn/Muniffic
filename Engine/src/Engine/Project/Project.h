@@ -5,13 +5,17 @@
 
 namespace eg {
 	
+
+	const 
+
+
 	struct ProjectConfig
 	{
 		std::string Name = "Untitiled";
 		std::filesystem::path StartScene = "Untitled.egscene";
 		std::filesystem::path AssetDirectory = "Assets";
 		std::filesystem::path SceneDirectory = "Scenes";
-		std::filesystem::path ScriptModulePath = "Scripts/Binaries/";
+        std::filesystem::path ScriptModulePath = "Scripts/Binaries";
 	};
 
 	class Project
@@ -93,7 +97,19 @@ namespace eg {
 
 		static const std::filesystem::path GetScriptModulePath() {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
-			return  s_ActiveProject->m_Config.ScriptModulePath / (s_ActiveProject->m_Config.Name + ".dll");
+			return  s_ActiveProject->m_Config.ScriptModulePath /
+				#ifdef EG_DEBUG
+                "Debug"
+				#elif EG_RELEASE
+				"Release"
+				#elif EG_DIST
+				"Dist"
+				#elif EG_RELWITHDEBINFO
+				"RelWithDebInfo"
+				#else
+				"Debug"
+				#endif
+				/ (s_ActiveProject->m_Config.Name + ".dll");
 		}
 
 		static void SetScriptModulePath(const std::filesystem::path& newDirectory) {

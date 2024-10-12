@@ -39,7 +39,7 @@ namespace eg {
 	};
 
 	struct FrameBufferSpecification {
-		unsigned int Width, Height;
+		unsigned int Width = 0, Height = 0;
 		FrameBufferAttachmentSpecification Attachments;
 		unsigned int Samples = 1;
 

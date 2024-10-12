@@ -19,7 +19,9 @@
 #include "Engine/Project/RecentProjectSerializer.h"
 #include "Engine/Project/ScriptSerializer.h"
 #include "IconLoader.h"
-
+#ifdef EG_RELEASE
+#define HELLO "Hello from Release"
+#endif
 namespace eg
 {
 
@@ -273,7 +275,7 @@ namespace eg
 				{
 					if (m_WelcomePanel->getSelectedProject() != "")
 					{
-						auto projectFilePath = m_WelcomePanel->getSelectedProject();
+						auto& projectFilePath = m_WelcomePanel->getSelectedProject();
 						OpenProject(projectFilePath);
 					}
 					else
@@ -928,6 +930,8 @@ namespace eg
 	const std::string EditorLayer::CompileCustomScripts()
 	{
 		EG_PROFILE_FUNCTION();
+        if (!m_CurrentProject || !Project::GetActive())
+			return "No active project";
 		std::filesystem::path projectDirectory =  m_CurrentProject->GetProjectDirectory() / "Assets" / "Scripts";
 		const std::string& projectName = m_CurrentProject->GetProjectName();
 		std::string command = "cd " + projectDirectory.string() + " && cmake -DPROJECT_NAME=" + projectName + " . && cmake --build .";

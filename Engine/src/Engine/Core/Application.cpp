@@ -11,7 +11,7 @@
 
 namespace eg
 {
-#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+#define BIND_APP_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
 	Application *Application::s_Instance = nullptr;
 
@@ -27,7 +27,7 @@ namespace eg
 			std::filesystem::current_path(applicationSpec.WorkingDirectory);
 
 		m_Window = Window::Create(WindowProps(applicationSpec.Name));
-		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_Window->SetEventCallback(BIND_APP_EVENT_FN(OnEvent));
 		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
@@ -57,8 +57,8 @@ namespace eg
 	{
 		EG_PROFILE_FUNCTION();
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_APP_EVENT_FN(OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_APP_EVENT_FN(OnWindowResize));
 
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
