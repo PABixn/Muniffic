@@ -1,4 +1,5 @@
 #include "WelcomingPanel.h"
+#include <src/MarkdownRenderer/Markdown.h>
 
 
 namespace eg

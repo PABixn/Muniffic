@@ -8,18 +8,24 @@ ImFont* Markdown::regular_font = nullptr;
 ImFont* Markdown::bold_font = nullptr;
 ImFont* Markdown::italic_font = nullptr;
 ImFont* Markdown::bold_italic_font = nullptr;
+ImFont* Markdown::heading_1_font = nullptr;
+ImFont* Markdown::heading_2_font = nullptr;
+ImFont* Markdown::heading_3_font = nullptr;
 std::vector<Markdown::BlockType> Markdown::block_types;
 int Markdown::heading_level = 0;
 int Markdown::list_level = 0;
 int Markdown::star_level = 0;
 int Markdown::dash_level = 0;
 
-void Markdown::init(ImFont* regular, ImFont* bold, ImFont* italic, ImFont* bold_italic)
+void Markdown::init(ImFont* regular, ImFont* bold, ImFont* italic, ImFont* bold_italic, ImFont* heading_1, ImFont* heading_2, ImFont* heading_3)
 {
 	regular_font = regular;
 	bold_font = bold;
 	italic_font = italic;
 	bold_italic_font = bold_italic;
+	heading_1_font = heading_1;
+	heading_2_font = heading_2;
+	heading_3_font = heading_3;
 }
 
 void Markdown::text(const std::string& str, float indent)
@@ -34,7 +40,9 @@ void Markdown::text(const char* str, float indent)
 
 void Markdown::process_text(const std::string& str, float indend)
 {
-	ImGui::Indent(indend);
+	if(indend != 0.0f)
+		ImGui::Indent(indend);
+
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
 	std::stringstream ss(str);
@@ -85,6 +93,9 @@ void Markdown::process_text(const std::string& str, float indend)
 			if (i == line.length() - 1)
 			{
 				check_block_style(block, true);
+				heading_level = 0;
+				star_level = 0;
+				dash_level = 0;
 			}
 		}
 
@@ -93,22 +104,9 @@ void Markdown::process_text(const std::string& str, float indend)
 	}
 
 	ImGui::PopStyleVar();
-	ImGui::Unindent(indend);
-}
 
-bool Markdown::check_if_mixed(BlockType block_type)
-{
-	switch (block_type)
-	{
-		case BlockType::Italic:
-			return std::find(block_types.begin(), block_types.end(), BlockType::Bold) != block_types.end();
-		break;
-		case BlockType::Bold:
-			return std::find(block_types.begin(), block_types.end(), BlockType::Italic) != block_types.end();
-		break;
-	}
-
-	return false;
+	if(indend != 0.0f)
+		ImGui::Unindent(indend);
 }
 
 void Markdown::check_block_style(std::string& line, bool isLastCharacter)
@@ -168,8 +166,9 @@ void Markdown::trim_block_style(std::string& line, BlockType block_type)
 
 void Markdown::render_line(std::string& line, BlockType block_type)
 {
-	if(check_if_mixed(block_type))
-		block_type = BlockType::Mixed;
+	if(line.empty())
+		return;
+
 	apply_block_style(line, block_type);
 	ImGui::Text(line.c_str());
 	ImGui::SameLine();
@@ -211,16 +210,13 @@ void Markdown::apply_block_style(std::string& line, BlockType block_type)
 	switch (block_type)
 	{
 		case BlockType::Heading1:
-			ImGui::PushFont(bold_font);
-			ImGui::SetWindowFontScale(2.0f);
+			ImGui::PushFont(heading_1_font);
 		break;
 		case BlockType::Heading2:
-			ImGui::PushFont(bold_font);
-			ImGui::SetWindowFontScale(1.75f);
+			ImGui::PushFont(heading_2_font);
 		break;
 		case BlockType::Heading3:
-			ImGui::PushFont(bold_font);
-			ImGui::SetWindowFontScale(1.5f);
+			ImGui::PushFont(heading_3_font);
 		break;
 		case BlockType::Italic:
 			ImGui::PushFont(italic_font);
@@ -228,8 +224,6 @@ void Markdown::apply_block_style(std::string& line, BlockType block_type)
 		case BlockType::Bold:
 			ImGui::PushFont(bold_font);
 		break;
-		case BlockType::Mixed:
-			ImGui::PushFont(bold_italic_font);
 		break;
 		case BlockType::None:
 			ImGui::PushFont(regular_font);
@@ -246,7 +240,6 @@ void Markdown::clear_block_style(BlockType block_type)
 		case BlockType::Heading3:
 		case BlockType::Bold:
 		case BlockType::Italic:
-		case BlockType::Mixed:
 		case BlockType::None:
 			ImGui::PopFont();
 			ImGui::SetWindowFontScale(1.0f);

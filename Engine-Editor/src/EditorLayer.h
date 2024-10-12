@@ -139,6 +139,9 @@ namespace eg
 		ImFont* m_PoppinsBoldFont;
 		ImFont* m_PoppinsItalicFont;
 		ImFont* m_PoppinsBoldItalicFont;
+		ImFont* m_PoppinsHeading1Font;
+		ImFont* m_PoppinsHeading2Font;
+		ImFont* m_PoppinsHeading3Font;
 
 		//Time for fixedUpdate loop
 		std::chrono::steady_clock::time_point oldTime = std::chrono::high_resolution_clock::now();;

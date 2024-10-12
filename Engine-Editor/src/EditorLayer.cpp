@@ -57,12 +57,15 @@ namespace eg
 		m_PoppinsBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 18.0f, &font_config, full_ranges);
 		m_PoppinsItalicFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Italic.ttf", 18.0f, &font_config, full_ranges);
 		m_PoppinsBoldItalicFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-BoldItalic.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsHeading1Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 36.0f, &font_config, full_ranges);
+		m_PoppinsHeading2Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 31.5f, &font_config, full_ranges);
+		m_PoppinsHeading3Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 27.0f, &font_config, full_ranges);
 
 		io.FontDefault = m_PoppinsRegularFont;
 
 		io.Fonts->Build();
 
-		Markdown::init(m_PoppinsRegularFont, m_PoppinsBoldFont, m_PoppinsItalicFont, m_PoppinsBoldItalicFont);
+		Markdown::init(m_PoppinsRegularFont, m_PoppinsBoldFont, m_PoppinsItalicFont, m_PoppinsBoldItalicFont, m_PoppinsHeading1Font, m_PoppinsHeading2Font, m_PoppinsHeading3Font);
 
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
