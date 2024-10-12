@@ -346,25 +346,40 @@ namespace eg
 				if (!IsProjectSaved()) {
 					ImGui::OpenPopup("Unsaved Changes");
 					ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
-					ImGui::BeginPopupModal("Unsaved Changes", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
-					ImGui::Text("Warning: Unsaved changes");
-					bool SaveBttn = ImGui::Button("Save");
-					ImGui::SameLine();
-					bool NotSaveBttn = ImGui::Button("Don't save");
-					ImGui::SameLine();
-					bool CancelBttn = ImGui::Button("Cancel");
-					if (SaveBttn) {
-						(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
-						Application::Get().Close();
-					}
-					else if (NotSaveBttn) {
-						Application::Get().Close();
-					}
-					else if (CancelBttn) {
-						SetIsWindowTryingToClose(false);
-					}
-					ImGui::EndPopup();
 
+					ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+					ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+
+					if (ImGui::BeginPopupModal("Unsaved Changes", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize)) {
+
+						ImVec2 spacing = style.ItemSpacing;
+						style.ItemSpacing = ImVec2(10.f, 10.f);
+						ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+
+						ImGui::Text("Warning: Unsaved changes");
+						bool SaveBttn = ImGui::Button("Save");
+						ImGui::SameLine();
+						bool NotSaveBttn = ImGui::Button("Don't save");
+						ImGui::SameLine();
+						bool CancelBttn = ImGui::Button("Cancel");
+						if (SaveBttn) {
+							(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
+							Application::Get().Close();
+						}
+						else if (NotSaveBttn) {
+							Application::Get().Close();
+						}
+						else if (CancelBttn) {
+							SetIsWindowTryingToClose(false);
+						}
+
+						style.ItemSpacing = spacing;
+						ImGui::PopStyleVar(2);
+						ImGui::EndPopup();
+					}
+
+					ImGui::PopStyleVar(2);
 				};
 			}
 
@@ -488,10 +503,11 @@ namespace eg
 
 	void EditorLayer::UI_Toolbar()
 	{
-        EG_PROFILE_FUNCTION();
+		EG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 2.0f });
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{ 0.0f, 0.0f });
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
+		ImGui::PushStyleColor(ImGuiCol_Border, m_DarkShade);
 		auto& colors = ImGui::GetStyle().Colors;
 		auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f });
@@ -520,7 +536,7 @@ namespace eg
 		if (hasPlayButton)
 		{
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
-			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 					OnScenePlay();
@@ -556,7 +572,7 @@ namespace eg
 				ImGui::SameLine();
 
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
-			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
 					OnSceneSimulate();
@@ -570,7 +586,7 @@ namespace eg
 			ImGui::SameLine();
 			{
 				Ref<Texture2D> icon = m_IconPause;
-				if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+				if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
 				{
 					m_ActiveScene->SetPaused(!isPaused);
 				}
@@ -583,7 +599,7 @@ namespace eg
 				{
 					Ref<Texture2D> icon = m_IconStep;
 					bool isPaused = m_ActiveScene->IsPaused();
-					if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+					if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
 					{
 						m_ActiveScene->Step();
 					}

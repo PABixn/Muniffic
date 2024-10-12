@@ -15,7 +15,6 @@ namespace eg {
 		void RenderFile(UUID key, const std::string& name, ResourceType type);
 		friend class ProjectDirectoryPanel;
 		void InitPanels();
-		void LoadIcons();
 		void DrawIcon(ResourceType type);
 		void ShowDeleteFolderPopup(UUID directory);
 		void ShowRenameFolderPopup(UUID directory);
@@ -34,14 +33,6 @@ namespace eg {
 	private:
 		UUID m_BaseDirectory;
 		UUID m_CurrentDirectory;
-		Ref<Texture2D> m_DirectoryIcon;
-		Ref<Texture2D> m_FileIcon;
-		Ref<Texture2D> m_ImageIcon;
-		Ref<Texture2D> m_ScriptFileIcon;
-		Ref<Texture2D> m_AudioFileIcon;
-		Ref<Texture2D> m_AnimationFileIcon;
-		Ref<Texture2D> m_PlusIcon;
-		Ref<Texture2D> m_ArrowIcon;
 		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel = nullptr;
 		Scope<AnimationEditorPanel> m_AnimationEditorPanel = nullptr;
 	};

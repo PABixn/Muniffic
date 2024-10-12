@@ -691,14 +691,13 @@ namespace eg
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{4, 4});
 			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 			// ImGui::Separator();
-
 			bool open;
 			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 			ImGui::PushStyleColor(ImGuiCol_HeaderActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 			if (entity.GetChildren().size() > 0 && entity.GetInheritableComponent<T>()->isInheritedInChildren)
 				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), (treeNodeFlags | ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(componentIcon->GetRendererID()));
 			else
-				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(iconID->GetRendererID()));
+				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(componentIcon->GetRendererID()));
 			ImGui::PopStyleColor(2);
 			ImGui::PopStyleVar();
 			if (!(name == std::string("Transform") && !(entity.GetChildren().size() > 0 || entity.GetParent().has_value())))

@@ -17,8 +17,6 @@ namespace eg
 	: m_BaseDirectory(AssetDirectoryManager::getRootDirectoryUUID()), m_CurrentDirectory(m_BaseDirectory)
 	{
         EG_PROFILE_FUNCTION();
-		m_DirectoryIcon = IconLoader::GetIcon(Icons::ContentBrowser_Directory);
-		m_FileIcon = IconLoader::GetIcon(Icons::ContentBrowser_File);
 		ResourceDatabase::SetCurrentDirectoryUUID(m_CurrentDirectory);
 	}
 
@@ -29,55 +27,10 @@ namespace eg
 			m_AnimationEditorPanel->Update(ts);
 	}
 
-	void ContentBrowserPanel::DrawCenteredText(const std::string& text, const float& cellSize) {
-        EG_PROFILE_FUNCTION();
-		auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
-		auto CursorX = ImGui::GetCursorPosX();
-		float offset = (cellSize - textWidth) * 0.43f;
-		if (textWidth < cellSize) {
-			ImGui::SetCursorPosX(CursorX + offset);
-			ImGui::TextWrapped(text.c_str());
-		}
-		else {
-			int a = ceil(textWidth / cellSize) + 1;
-			for (int i = 0; i < a; i++) {
-				if (i >= 2)
-				{
-					auto r = text.substr((text.length() / a) * i, (text.length() / a) - 3);
-					r += "...";
-					textWidth = ImGui::CalcTextSize(r.c_str()).x;
-					CursorX = ImGui::GetCursorPosX();
-					offset = (cellSize - textWidth) * 0.45f;
-					ImGui::SetCursorPosX(CursorX + offset);
-					ImGui::TextWrapped(r.c_str());
-					return;
-				}
-				auto r = text.substr((text.length() / a) * i, (text.length() / a));
-				textWidth = ImGui::CalcTextSize(r.c_str()).x;
-				CursorX = ImGui::GetCursorPosX();
-				offset = (cellSize - textWidth) * 0.45f;
-				ImGui::SetCursorPosX(CursorX + offset);
-				ImGui::TextWrapped(r.c_str());
-			}
-			auto r = text.substr((text.length() / a) * a);
-			if (r != "")
-			{
-				textWidth = ImGui::CalcTextSize(r.c_str()).x;
-				CursorX = ImGui::GetCursorPosX();
-				offset = (cellSize - textWidth) * 0.5f;
-				ImGui::SetCursorPosX(CursorX + offset);
-				ImGui::TextWrapped(r.c_str());
-			}
-		}
-
-	}
-
 	void ContentBrowserPanel::InitPanels()
 	{
         EG_PROFILE_FUNCTION();
         EG_PROFILE_FUNCTION();
-		m_DeleteFilePanel = CreateScope<DeleteFilePanel>();
-		m_RenameFolderPanel = CreateScope<RenameFolderPanel>();
 		m_DeleteDirectoryPanel = CreateScope<DeleteDirectoryPanel>();
 	}
 
@@ -132,7 +85,7 @@ namespace eg
 			drawList->ChannelsSplit(2);
 			drawList->ChannelsSetCurrent(1);
 
-			if (ImGui::ImageButton((ImTextureID)m_ArrowIcon->GetRendererID(), { 30, 30 }))
+			if (ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Arrow)->GetRendererID(), { 30, 30 }))
 			{
 				UUID oldPath = m_CurrentDirectory;
 				m_CurrentDirectory = AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory);
@@ -170,7 +123,7 @@ namespace eg
 		ImGui::SameLine();
 		drawList->ChannelsSplit(2);
 		drawList->ChannelsSetCurrent(1);
-		if(ImGui::ImageButton((ImTextureID)m_PlusIcon->GetRendererID(), ImVec2(30,30)))
+		if(ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Plus)->GetRendererID(), ImVec2(30,30)))
 		{
 			ImGui::OpenPopup("CreateNewResource");
 		}
@@ -262,9 +215,8 @@ namespace eg
 			std::string name = AssetDirectoryManager::getDirectoryName(directory);
 			ImGui::PushID(directory);
 
-			Ref<Texture2D> icon = m_DirectoryIcon;
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0,0,0,0));
-			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 			ImGui::PopStyleColor();
 
 			ShowFolderMenu(directory);
@@ -322,15 +274,6 @@ namespace eg
 
 	}
 
-	void ContentBrowserPanel::LoadIcons() {
-		m_DirectoryIcon = Texture2D::Create("resources/icons/contentBrowser/FolderIcon.png");
-		m_FileIcon = Texture2D::Create("resources/icons/contentBrowser/FileIcon.png");
-		m_ScriptFileIcon = Texture2D::Create("resources/icons/contentBrowser/scriptFileIcon.png");
-		m_AudioFileIcon = Texture2D::Create("resources/icons/contentBrowser/audioFileIcon.png");
-		m_AnimationFileIcon = Texture2D::Create("resources/icons/contentBrowser/animationFileIcon.png");
-		m_PlusIcon = Texture2D::Create("resources/icons/contentBrowser/PlusIcon.png");
-		m_ArrowIcon = Texture2D::Create("resources/icons/contentBrowser/ArrowIcon.png");
-	}
 
 	void ContentBrowserPanel::ShowFolderMenu(UUID directory) {
 		bool isDeleteClicked = false;
@@ -596,20 +539,14 @@ namespace eg
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 
 		if (type == ResourceType::Script)
-			ImGui::ImageButton((ImTextureID)m_ScriptFileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileScript)->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 		else if (type == ResourceType::Audio)
-			ImGui::ImageButton((ImTextureID)m_AudioFileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileAudio)->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 		else if (type == ResourceType::Animation)
-			ImGui::ImageButton((ImTextureID)m_AnimationFileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileAnimation)->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 		else
-			ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_File)->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 		ImGui::PopStyleColor();
-	}
-
-	void ContentBrowserPanel::Update(float ts)
-	{
-		if (m_AnimationEditorPanel && m_AnimationEditorPanel->IsAnimationEditorOpen())
-			m_AnimationEditorPanel->Update(ts);
 	}
 }

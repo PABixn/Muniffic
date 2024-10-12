@@ -86,9 +86,19 @@ namespace eg
 			case Icons::WelcomePanel_NewProject:
 				return welcomePanelPath / "new_project.png";
 			case Icons::ContentBrowser_Directory:
-				return contentBrowserPath / "directory.png";
+				return contentBrowserPath / "folder.png";
 			case Icons::ContentBrowser_File:
 				return contentBrowserPath / "file.png";
+			case Icons::ContentBrowser_FileAnimation:
+				return contentBrowserPath / "animation_file.png";
+			case Icons::ContentBrowser_FileAudio:
+				return contentBrowserPath / "audio_file.png";
+			case Icons::ContentBrowser_FileScript:
+				return contentBrowserPath / "script_file.png";
+			case Icons::ContentBrowser_Plus:
+				return contentBrowserPath / "plus.png";
+			case Icons::ContentBrowser_Arrow:
+				return contentBrowserPath / "arrow.png";
 			case Icons::Component_Transform:
 				return componentPath / "transform.png";
 			case Icons::Component_Camera:
