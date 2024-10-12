@@ -466,6 +466,29 @@ namespace eg
         }
 
         /// <summary>
+        /// Retrieves all entities from scene with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the entities to retrieve.</param>
+        /// <returns>A list of Entity objects representing the entities with the specified name.</returns>
+        public static List<Entity> FindEntitiesByName(string name)
+        {
+            IntPtr ptr = InternalCalls.Entity_FindEntitiesByName(name, out int size);
+
+            long[] managedArray = new long[size];
+
+            Marshal.Copy(ptr, managedArray, 0, size);
+
+            List<Entity> entities = new List<Entity>();
+
+            foreach (long entityID in managedArray)
+            {
+                entities.Add(new Entity(entityID));
+            }
+
+            return entities;
+        }
+
+        /// <summary>
         /// Creates new entity.
         /// </summary>
         /// <param name="name">Entity name.</param>

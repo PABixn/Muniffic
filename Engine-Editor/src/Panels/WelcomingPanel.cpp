@@ -82,7 +82,8 @@ namespace eg
 				i++;
 			}
 		}
-		else {
+		else
+		{
 			ImGui::Text("You haven't opened any project yet");
 		}
 

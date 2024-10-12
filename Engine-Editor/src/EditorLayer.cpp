@@ -368,9 +368,10 @@ namespace eg
 
 			ImGui::Begin("Stats");
 			std::string name = "None";
-			if (m_HoveredEntity)
+			if (m_HoveredEntity.GetScene() && m_HoveredEntity.Exists()) { 
 				name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
-			ImGui::Text("Hovered Entity: %s", name.c_str());
+				ImGui::Text("Hovered Entity: %s", name.c_str());
+			}
 
 			auto stats = Renderer2D::GetStats();
 			ImGui::Text("Renderer2D Stats:");
@@ -414,8 +415,9 @@ namespace eg
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
 					const wchar_t* path = (const wchar_t*)payload->Data;
-
-					OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
+					std::filesystem::path p = path;
+					if (p.extension() == ".egscene")
+   						OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
 				}
 				ImGui::EndDragDropTarget();
 			}

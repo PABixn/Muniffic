@@ -62,6 +62,9 @@ namespace eg
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static long Entity_FindEntityByName(string name);
 
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        internal extern static IntPtr Entity_FindEntitiesByName(string name, out int size);
+
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static object Entity_GetScriptInstance(long UUID, string name);
 

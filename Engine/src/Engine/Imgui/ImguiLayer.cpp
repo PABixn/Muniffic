@@ -29,23 +29,6 @@ namespace eg {
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
-		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-		ImFontConfig font_config;
-		font_config.OversampleH = 2;
-		font_config.OversampleV = 1;
-
-		static const ImWchar full_ranges[] = { 0x0020, 0xFFFF, 0 };
-
-		io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 18.0f, &font_config, full_ranges);
-
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 18.0f, &font_config, full_ranges);
-
-		//io.Fonts->Build();
-
 
 		ImGui::StyleColorsDark();
 		ImGuiStyle& style = ImGui::GetStyle();
