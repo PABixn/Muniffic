@@ -247,7 +247,7 @@ namespace eg
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding * 2);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
 					//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
-					Markdown::text(msg, padding * 2);
+					Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding * 2, padding * 2);
 					ImGui::PopTextWrapPos();
 
 					drawList->ChannelsSetCurrent(1);
@@ -269,7 +269,7 @@ namespace eg
 				{
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
 					//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
-					Markdown::text(msg, padding);
+					Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding, padding);
 					ImGui::PopTextWrapPos();
 					msg = "";
 
@@ -291,7 +291,7 @@ namespace eg
 		{
 			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
 			//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
-			Markdown::text(msg, padding);
+			Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding, padding);
 			ImGui::PopTextWrapPos();
 		}
 

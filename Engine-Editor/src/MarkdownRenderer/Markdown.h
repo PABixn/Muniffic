@@ -24,11 +24,13 @@ public:
 
 	static void init(ImFont* regular_font, ImFont* bold_font, ImFont* italic_font, ImFont* bold_italic_font, ImFont* heading_1, ImFont* heading_2, ImFont* heading_3);
 
-	static void text(const std::string& str, float indent = 0.0f);
-	static void text(const char* str, float indent = 0.0f);
+	static void text(const std::string& str, float text_max_width = 0.0f, float indent = 0.0f);
+	static void text(const char* str, float text_max_width = 0.0f, float indent = 0.0f);
 
 private:
-	static void process_text(const std::string& str, float indent);
+	static void process_text(const std::string& str, float text_max_width, float indent);
+
+	static void set_block_width(float width);
 
 	static void render_heading(std::string& line, BlockType block_type);
 	static void render_line(std::string& line, BlockType block_type);
@@ -52,4 +54,5 @@ private:
 	static ImFont* heading_3_font;
 	static std::vector<BlockType> block_types;
 	static int heading_level, list_level, star_level, dash_level;
+	static float block_width;
 };

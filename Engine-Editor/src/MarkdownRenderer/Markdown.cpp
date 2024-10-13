@@ -16,6 +16,7 @@ int Markdown::heading_level = 0;
 int Markdown::list_level = 0;
 int Markdown::star_level = 0;
 int Markdown::dash_level = 0;
+float Markdown::block_width = 0.0f;
 
 void Markdown::init(ImFont* regular, ImFont* bold, ImFont* italic, ImFont* bold_italic, ImFont* heading_1, ImFont* heading_2, ImFont* heading_3)
 {
@@ -28,18 +29,20 @@ void Markdown::init(ImFont* regular, ImFont* bold, ImFont* italic, ImFont* bold_
 	heading_3_font = heading_3;
 }
 
-void Markdown::text(const std::string& str, float indent)
+void Markdown::text(const std::string& str, float text_max_width, float indent)
 {
-	process_text(str.c_str(), indent);
+	process_text(str.c_str(), text_max_width, indent);
 }
 
-void Markdown::text(const char* str, float indent)
+void Markdown::text(const char* str, float text_max_width, float indent)
 {
-	process_text(str, indent);
+	process_text(str, text_max_width, indent);
 }
 
-void Markdown::process_text(const std::string& str, float indend)
+void Markdown::process_text(const std::string& str, float text_max_width, float indend)
 {
+	set_block_width(text_max_width);
+
 	if(indend != 0.0f)
 		ImGui::Indent(indend);
 
@@ -109,6 +112,14 @@ void Markdown::process_text(const std::string& str, float indend)
 		ImGui::Unindent(indend);
 }
 
+void Markdown::set_block_width(float width)
+{
+	if (width != 0.0f)
+		block_width = width;
+	else
+		block_width = ImGui::GetContentRegionAvail().x;
+}
+
 void Markdown::check_block_style(std::string& line, bool isLastCharacter)
 {
 	if(line.empty())
@@ -175,6 +186,9 @@ void Markdown::render_line(std::string& line, BlockType block_type)
 		return;
 
 	apply_block_style(line, block_type);
+	//render text to fill the line and then recursively render text beneath
+	/*if (ImGui::CalcTextSize(line.c_str()).x + ImGui::GetCursorPosX() >= block_width)
+		ImGui::NewLine();*/
 	ImGui::Text(line.c_str());
 	ImGui::SameLine();
 	clear_block_style(block_type);
