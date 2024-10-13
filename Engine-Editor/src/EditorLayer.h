@@ -64,7 +64,6 @@ namespace eg
 		void UI_Toolbar();
 
 	private:
-		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;
 		friend class AddResourcePanel;
 	private:
@@ -124,9 +123,6 @@ namespace eg
 		SceneState m_SceneState = SceneState::Edit;
 
 		friend class AddResourcePanel;
-	public:
-		UnsavedChangesPanel* m_UnsavedChangesPanel = nullptr;
-		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
 	
 	public:
 		ImVec4 m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);

@@ -54,6 +54,7 @@ namespace eg {
 			return false;
 		if(!resourceSystemRegisterLoader(StatePtr, fontResourceLoaderCreate()))
 			return false;
+		return true;
 	}
 
 	void resourceSystemShutdown()

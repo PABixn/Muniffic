@@ -33,7 +33,8 @@ namespace eg
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
-        EG_PROFILE_FUNCTION();
+        EG_PROFILE_FUNCTION()
+           
 		m_RecentProjectSerializer = RecentProjectSerializer();
 		m_WelcomePanel = CreateScope<WelcomingPanel>(m_RecentProjectSerializer.getProjectList(), m_RecentProjectSerializer);
 		m_NameNewProjectPanel = CreateScope<NameNewProjectPanel>();
