@@ -55,7 +55,7 @@ void Markdown::process_text(const std::string& str, float indend)
 
 		for (size_t i = 0; i < line.length(); i++)
 		{
-			if (line[i] == '#' && heading_level < 4)
+			if (line[i] == '#' && heading_level < 4 && i == heading_level)
 				heading_level++;
 			else if (line[i] == '*' && star_level < 4)
 				star_level++;
