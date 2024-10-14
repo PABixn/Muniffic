@@ -41,6 +41,7 @@ namespace eg
 		AddResource_Text,
 		AddResource_Image,
 		AddResource_Script,
+		AddResource_ScriptWhite,
 		AddResource_NativeScript,
 		AddResource_Custom,
 		AnimationEditor_LengthChange,

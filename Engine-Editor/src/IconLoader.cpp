@@ -139,6 +139,8 @@ namespace eg
 				return addResourcePath / "image.png";
 			case Icons::AddResource_Script:
 				return addResourcePath / "script.png";
+			case Icons::AddResource_ScriptWhite:
+				return addResourcePath / "script_white.png";
 			case Icons::AddResource_NativeScript:
 				return addResourcePath / "native_script.png";
 			case Icons::AnimationEditor_LengthChange:
