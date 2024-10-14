@@ -1374,26 +1374,10 @@ namespace eg
 				Commands::ExecuteRawValueCommand<RigidBody2DComponent::BodyType, RigidBody2DComponent>(&component.Type, type, entity, "RigidBody2DComponent-Body Type", true);
 			});
 			
-			float* GravityMultiplier = &component.GravityMultiplier;
-			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
-			{
-				for (int i = 0; i < 2; i++)
-				{
-					bool isSelected = currentBodyTypeString == bodyTypeString[i];
-					if (ImGui::Selectable(bodyTypeString[i], isSelected))
-					{
-						currentBodyTypeString = bodyTypeString[i];
-						RigidBody2DComponent::BodyType type = component.Type;
-						component.Type = (RigidBody2DComponent::BodyType)i;
-						Commands::ExecuteRawValueCommand<RigidBody2DComponent::BodyType, RigidBody2DComponent>(&component.Type, type, entity, "RigidBody2DComponent-Body Type", true);
-					}
+			float gravityMultiplier = component.GravityMultiplier;
 
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
-				}
-
-				ImGui::EndCombo();
-			}
+			if(DrawComponentPropertyFloat("Gravity Multiplier", &component.GravityMultiplier, 0.1f))
+				Commands::ExecuteRawValueCommand<float, RigidBody2DComponent>(&component.GravityMultiplier, gravityMultiplier, entity, "RigidBody2DComponent-Gravity Multiplier");
 			
 			if(DrawComponentPropertyCheckbox("Fixed Rotation", &component.FixedRotation))
 				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");
