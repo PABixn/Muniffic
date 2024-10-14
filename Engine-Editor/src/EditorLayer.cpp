@@ -1177,11 +1177,17 @@ namespace eg
 
 		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, &font_config, full_ranges);
 		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, &font_config, full_ranges);
-		m_PoppinsRegularFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsRegularFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, &font_config, full_ranges);
 		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, &font_config, full_ranges);
-		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		m_PoppinsSemiBoldFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 40.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 20.0f, &font_config, full_ranges);
+		m_PoppinsSemiBoldFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 40.0f, &font_config, full_ranges);
+		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf", 50.0f, &font_config, full_ranges);
+		m_PoppinsBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsItalicFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Italic.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsBoldItalicFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-BoldItalic.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsHeading1Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 36.0f, &font_config, full_ranges);
+		m_PoppinsHeading2Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 31.5f, &font_config, full_ranges);
+		m_PoppinsHeading3Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 27.0f, &font_config, full_ranges);
 
 		io.FontDefault = m_PoppinsRegularFont;
 
