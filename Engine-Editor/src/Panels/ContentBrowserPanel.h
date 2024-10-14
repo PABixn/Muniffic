@@ -2,11 +2,7 @@
 
 #include <filesystem>
 #include "Engine/Renderer/Texture.h"
-#include "DeleteFilePanel.h"
-#include "RenameFolderPanel.h"
 #include "DeleteDirectoryPanel.h"
-#include "RenameResourcePanel.h"
-#include "CreateDirectoryPanel.h"
 #include "ResourcesPanels/AnimationEditorPanel.h"
 
 namespace eg {
@@ -19,6 +15,16 @@ namespace eg {
 		void RenderFile(UUID key, const std::string& name, ResourceType type);
 		friend class ProjectDirectoryPanel;
 		void InitPanels();
+		void DrawIcon(ResourceType type);
+		void ShowDeleteFolderPopup(UUID directory);
+		void ShowRenameFolderPopup(UUID directory);
+		void ShowCreateFolderPopup();
+		void ShowDeleteFilePopup(UUID file, ResourceType type);
+		void ShowRenameFilePopup(UUID file, ResourceType type);
+		void ShowFilePopups(UUID file, ResourceType type);
+		void ShowFolderPopups(UUID folder);
+		void ShowFileMenu(UUID file, ResourceType type);
+		void ShowFolderMenu(UUID directory);
 
 		UUID GetCurrentDirectoryUUID() { return m_CurrentDirectory; }
 		void SetCurrentDirectoryUUID(UUID uuid) { m_CurrentDirectory = uuid; }
@@ -27,15 +33,7 @@ namespace eg {
 	private:
 		UUID m_BaseDirectory;
 		UUID m_CurrentDirectory;
-		void DrawCenteredText(const std::string& text, const float& cellSize);
-		Ref<Texture2D> m_DirectoryIcon = nullptr;
-		Ref<Texture2D> m_FileIcon = nullptr;
-		Ref<Texture2D> m_ImageIcon = nullptr;
-		Scope<DeleteFilePanel> m_DeleteFilePanel = nullptr;
-		Scope<RenameFolderPanel> m_RenameFolderPanel = nullptr;
-		Scope<RenameResourcePanel> m_RenameResourcePanel = nullptr;
 		Scope<DeleteDirectoryPanel> m_DeleteDirectoryPanel = nullptr;
-		Scope<CreateDirectoryPanel> m_CreateDirectoryPanel = nullptr;
 		Scope<AnimationEditorPanel> m_AnimationEditorPanel = nullptr;
 	};
 }

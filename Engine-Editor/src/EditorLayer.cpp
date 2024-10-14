@@ -43,34 +43,7 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
-        EG_PROFILE_FUNCTION();
-
-		ImGuiIO& io = ImGui::GetIO();
-
-		ImFontConfig font_config;
-		font_config.OversampleH = 2;
-		font_config.OversampleV = 1;
-		font_config.MergeMode = false;
-		font_config.PixelSnapH = true;
-
-		static const ImWchar full_ranges[] = { 0x0020, 0xFFFF, 0 };
-
-		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, &font_config, full_ranges);
-		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, &font_config, full_ranges);
-		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, &font_config, full_ranges);
-		m_PoppinsBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 18.0f, &font_config, full_ranges);
-		m_PoppinsItalicFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Italic.ttf", 18.0f, &font_config, full_ranges);
-		m_PoppinsBoldItalicFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-BoldItalic.ttf", 18.0f, &font_config, full_ranges);
-		m_PoppinsHeading1Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 36.0f, &font_config, full_ranges);
-		m_PoppinsHeading2Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 31.5f, &font_config, full_ranges);
-		m_PoppinsHeading3Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 27.0f, &font_config, full_ranges);
-
-		io.FontDefault = m_PoppinsRegularFont;
-
-		io.Fonts->Build();
-
-		Markdown::init(m_PoppinsRegularFont, m_PoppinsBoldFont, m_PoppinsItalicFont, m_PoppinsBoldItalicFont, m_PoppinsHeading1Font, m_PoppinsHeading2Font, m_PoppinsHeading3Font);
-
+		LoadFonts();
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
 		resourceSystemConfig.ResourceDirectory = "../resources";
@@ -237,6 +210,7 @@ namespace eg
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
 		ImGui::PopStyleVar();
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1529f, 0.1333f, 0.2000f, 1.0f));
 
 		if (opt_fullscreen)
 			ImGui::PopStyleVar(2);
@@ -251,7 +225,8 @@ namespace eg
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
-
+		ImGui::PopStyleColor();
+		//Welcoming panel code
 		if (m_WelcomePanel->IsShown()) {
 			ImGuiStyle& style = ImGui::GetStyle();
 			float minWinSizeX = style.WindowMinSize.x;
@@ -305,47 +280,60 @@ namespace eg
 
 			style.WindowMinSize.x = minWinSizeX;
 
-			if (ImGui::BeginMenuBar())
+			style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0, 0, 0, 0);
+			style.Colors[ImGuiCol_HeaderActive] = ImVec4(0, 0, 0, 0);
+			style.Colors[ImGuiCol_TextDisabled] = m_LightTextShade;
+
+		ImGui::PushFont(m_PoppinsSemiBoldFont);
+		ImGui::PushStyleColor(ImGuiCol_Text, m_LightTextShade);
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::BeginMenu("File"))
-				{
-					if (ImGui::MenuItem("Open Project...", "Ctrl+O"))
-						OpenProject();
+				if (ImGui::MenuItem("Open Project...", "Ctrl+O"))
+					OpenProject();
 
-					ImGui::Separator();
+				ImGui::Separator();
 
-					if (ImGui::MenuItem("New Scene", "Ctrl+N"))
-						NewScene();
+				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
+					NewScene();
 
-					if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
-						Save();
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+					Save();
 
-					if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
-						SaveAs();
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
+					SaveAs();
 
-					if (ImGui::MenuItem("Exit"))
-						Application::Get().Close();
-					ImGui::EndMenu();
-				}
-
-				if (ImGui::BeginMenu("Script"))
-				{
-					if (ImGui::MenuItem("Reload assembly", "Ctrl+R"))
-						ScriptEngine::ReloadAssembly();
-
-					ImGui::EndMenu();
-				}
-
-				if (ImGui::BeginMenu("Resources"))
-				{
-					if (ImGui::MenuItem("Add Resource", "Ctrl+A"))
-						m_AddResourcePanel->showResourcePanel(true);
-
-					ImGui::EndMenu();
-				}
-
-				ImGui::EndMenuBar();
+				if (ImGui::MenuItem("Exit"))
+					Application::Get().Close();
+				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("Script"))
+			{
+				if (ImGui::MenuItem("Reload assembly", "Ctrl+R"))
+					ScriptEngine::ReloadAssembly();
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Resources"))
+			{
+				if (ImGui::MenuItem("Add Resource", "Ctrl+A"))
+					m_AddResourcePanel->showResourcePanel(true);
+
+				ImGui::EndMenu();
+			}
+
+			if(ImGui::MenuItem("Game Objects")){}
+			if(ImGui::MenuItem("Components")){}
+			if(ImGui::MenuItem("Window")){}
+			if(ImGui::MenuItem("Help")){}
+
+			ImGui::EndMenuBar();
+		}
+		ImGui::PopStyleColor();
+		ImGui::PopFont();
 
 			m_SceneHierarchyPanel.OnImGuiRender();
 			m_ContentBrowserPanel->OnImGuiRender();
@@ -357,25 +345,40 @@ namespace eg
 				if (!IsProjectSaved()) {
 					ImGui::OpenPopup("Unsaved Changes");
 					ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
-					ImGui::BeginPopupModal("Unsaved Changes", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
-					ImGui::Text("Warning: Unsaved changes");
-					bool SaveBttn = ImGui::Button("Save");
-					ImGui::SameLine();
-					bool NotSaveBttn = ImGui::Button("Don't save");
-					ImGui::SameLine();
-					bool CancelBttn = ImGui::Button("Cancel");
-					if (SaveBttn) {
-						(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
-						Application::Get().Close();
-					}
-					else if (NotSaveBttn) {
-						Application::Get().Close();
-					}
-					else if (CancelBttn) {
-						SetIsWindowTryingToClose(false);
-					}
-					ImGui::EndPopup();
 
+					ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+					ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+
+					if (ImGui::BeginPopupModal("Unsaved Changes", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize)) {
+
+						ImVec2 spacing = style.ItemSpacing;
+						style.ItemSpacing = ImVec2(10.f, 10.f);
+						ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+
+						ImGui::Text("Warning: Unsaved changes");
+						bool SaveBttn = ImGui::Button("Save");
+						ImGui::SameLine();
+						bool NotSaveBttn = ImGui::Button("Don't save");
+						ImGui::SameLine();
+						bool CancelBttn = ImGui::Button("Cancel");
+						if (SaveBttn) {
+							(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
+							Application::Get().Close();
+						}
+						else if (NotSaveBttn) {
+							Application::Get().Close();
+						}
+						else if (CancelBttn) {
+							SetIsWindowTryingToClose(false);
+						}
+
+						style.ItemSpacing = spacing;
+						ImGui::PopStyleVar(2);
+						ImGui::EndPopup();
+					}
+
+					ImGui::PopStyleVar(2);
 				};
 			}
 
@@ -499,10 +502,11 @@ namespace eg
 
 	void EditorLayer::UI_Toolbar()
 	{
-        EG_PROFILE_FUNCTION();
+		EG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 2.0f });
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{ 0.0f, 0.0f });
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
+		ImGui::PushStyleColor(ImGuiCol_Border, m_DarkShade);
 		auto& colors = ImGui::GetStyle().Colors;
 		auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f });
@@ -517,8 +521,13 @@ namespace eg
 		if (!toolbarEnabled)
 			tintColor.w = 0.5f;
 
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 0));
 		float size = ImGui::GetWindowHeight() - 4.0f;
-		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+		ImVec2 elementSize = ImGui::GetContentRegionAvail();
+		float iconPosX = (elementSize.x - size) * 0.5f - 19.0f;
+		float iconPosY = (elementSize.y - size) * 0.5f + 2.0f;
+		ImGui::SetCursorPos(ImVec2(iconPosX, iconPosY));
+
 		bool hasPlayButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play;
 		bool hasSimulateButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate;
 		bool hasPauseButton = m_SceneState != SceneState::Edit;
@@ -596,8 +605,8 @@ namespace eg
 				}
 			}
 		}
-		ImGui::PopStyleVar(2);
-		ImGui::PopStyleColor(3);
+		ImGui::PopStyleVar(3);
+		ImGui::PopStyleColor(4);
 		ImGui::End();
 	}
 
@@ -1154,4 +1163,29 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		m_AddResourcePanel = nullptr;
 	}
+
+	void EditorLayer::LoadFonts() {
+		auto& io = ImGui::GetIO();
+
+		ImFontConfig font_config;
+		font_config.OversampleH = 2;
+		font_config.OversampleV = 1;
+		font_config.MergeMode = false;
+		font_config.PixelSnapH = true;
+
+		static const ImWchar full_ranges[] = { 0x0020, 0xFFFF, 0 };
+
+		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, &font_config, full_ranges);
+		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsRegularFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, &font_config, full_ranges);
+		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsSemiBoldFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 40.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+
+		io.FontDefault = m_PoppinsRegularFont;
+
+		io.Fonts->Build();
+	}
+
 }

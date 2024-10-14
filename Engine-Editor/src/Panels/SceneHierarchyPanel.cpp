@@ -396,6 +396,7 @@ namespace eg
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::Begin("Scene Hierarchy");
 		ImGui::PopStyleVar();
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
 
 		float paddingTop = 10.f;
 		float paddingLeft = 15.f;
@@ -417,11 +418,26 @@ namespace eg
 		ImGui::PushItemWidth(ImGui::GetWindowWidth() - rightAndLeftFreeSpace);
 		ImGui::SetCursorPosX(rightAndLeftFreeSpace / 2);
 		ImGui::SetCursorPosY(40.f);
-		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount() == 2)
-		{
+
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		ImVec2 padd = ImGui::GetStyle().FramePadding; 
+		ImVec2 inputSize = ImVec2(300, 30);
+
+		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount()==2) {
 			Search();
 		}
-		Search();
+
+		bool isHovered = ImGui::IsItemHovered();
+		bool isActive = ImGui::IsItemActive();
+
+		if (isHovered || isActive) {
+			ImVec4 hoverColor = isHovered ? ImVec4(0.45f, 0.42f, 0.55f, 1.00f) : ImVec4(0.55f, 0.50f, 0.70f, 1.00f);
+			ImColor borderColor = ImColor(hoverColor);
+
+			float totalWidth = ImGui::CalcItemWidth();
+
+			drawList->AddRect(pos, ImVec2(pos.x + totalWidth, pos.y + inputSize.y + padd.y), borderColor, 30.0f, 0, 2.0f);
+		}
 		for (EntityDisplayInfo e : m_ListOfEntityDisplayed) {
 			DrawEntityNode(e);
 		}
@@ -587,7 +603,10 @@ namespace eg
 		}
 		// flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f));
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 		opened = ImGui::CustomTreeNodeEx((void *)(int64_t)entity.GetUUID(), flags, tag.c_str());
+		ImGui::PopStyleColor(2);
 		ImGui::PopStyleVar();
 		if (ImGui::BeginDragDropSource())
 		{
@@ -672,12 +691,14 @@ namespace eg
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{4, 4});
 			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 			// ImGui::Separator();
-
 			bool open;
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
+			ImGui::PushStyleColor(ImGuiCol_HeaderActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 			if (entity.GetChildren().size() > 0 && entity.GetInheritableComponent<T>()->isInheritedInChildren)
 				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), (treeNodeFlags | ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(componentIcon->GetRendererID()));
 			else
 				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(componentIcon->GetRendererID()));
+			ImGui::PopStyleColor(2);
 			ImGui::PopStyleVar();
 			if (!(name == std::string("Transform") && !(entity.GetChildren().size() > 0 || entity.GetParent().has_value())))
 			{
@@ -1353,26 +1374,10 @@ namespace eg
 				Commands::ExecuteRawValueCommand<RigidBody2DComponent::BodyType, RigidBody2DComponent>(&component.Type, type, entity, "RigidBody2DComponent-Body Type", true);
 			});
 			
-			float* GravityMultiplier = &component.GravityMultiplier;
-			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
-			{
-				for (int i = 0; i < 2; i++)
-				{
-					bool isSelected = currentBodyTypeString == bodyTypeString[i];
-					if (ImGui::Selectable(bodyTypeString[i], isSelected))
-					{
-						currentBodyTypeString = bodyTypeString[i];
-						RigidBody2DComponent::BodyType type = component.Type;
-						component.Type = (RigidBody2DComponent::BodyType)i;
-						Commands::ExecuteRawValueCommand<RigidBody2DComponent::BodyType, RigidBody2DComponent>(&component.Type, type, entity, "RigidBody2DComponent-Body Type", true);
-					}
+			float gravityMultiplier = component.GravityMultiplier;
 
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
-				}
-
-				ImGui::EndCombo();
-			}
+			if(DrawComponentPropertyFloat("Gravity Multiplier", &component.GravityMultiplier, 0.1f))
+				Commands::ExecuteRawValueCommand<float, RigidBody2DComponent>(&component.GravityMultiplier, gravityMultiplier, entity, "RigidBody2DComponent-Gravity Multiplier");
 			
 			if(DrawComponentPropertyCheckbox("Fixed Rotation", &component.FixedRotation))
 				Commands::ExecuteRawValueCommand<bool, RigidBody2DComponent>(&component.FixedRotation, !component.FixedRotation, entity, "RigidBody2DComponent-Fixed Rotation");

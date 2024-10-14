@@ -492,8 +492,9 @@ namespace eg
 		std::filesystem::path newPath = AssetDirectoryManager::getDirectoryPath(data->ParentDirectory) / std::string(name + data->Extension);
 
 		data->ResourceName = name;
-		std::filesystem::rename(path, newPath);
-
+		if (!std::filesystem::exists(path)) 
+			std::filesystem::rename(path, newPath);
+			
 		return true;
 	}
 

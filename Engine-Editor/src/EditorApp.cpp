@@ -4,6 +4,10 @@
 #include "Engine/Resources/ResourceSerializer.h"
 
 namespace eg {
+
+	Editor::~Editor()
+	{
+	}
 	bool Editor::OnWindowClose(WindowCloseEvent& e)
 	{
 		EG_PROFILE_FUNCTION();
@@ -27,6 +31,4 @@ namespace eg {
 
 		return new Editor(spec);
 	};
-
-
 }

@@ -47,11 +47,11 @@ namespace eg {
 		if (std::filesystem::is_directory(path)) {
 			flags |= ImGuiTreeNodeFlags_DirectoryEntity;
 			flags |= ImGuiTreeNodeFlags_EntityWithChildren;
-			textureID = (ImTextureID)(m_ContentBrowserPanel->m_DirectoryIcon)->GetRendererID();
+			textureID = (ImTextureID)(IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID());
 		}
 		else if (std::filesystem::is_regular_file(path)) {
 			flags |= ImGuiTreeNodeFlags_FileEntity;
-			textureID = (ImTextureID)(m_ContentBrowserPanel->m_FileIcon)->GetRendererID();
+			textureID = (ImTextureID)(IconLoader::GetIcon(Icons::ContentBrowser_File)->GetRendererID());
 		}
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f)); 
 		bool is_open = ImGui::CustomTreeNodeWithPicEx((void*)(getPathID(path.string())), flags, tag.c_str(), textureID);
