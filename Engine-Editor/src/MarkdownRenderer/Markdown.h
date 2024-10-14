@@ -33,13 +33,15 @@ private:
 	static void set_block_width(float width);
 
 	static void render_heading(std::string& line, BlockType block_type);
-	static void render_line(std::string& line, BlockType block_type);
+	static void render_line(std::string& line, BlockType block_type, bool isFirstLine);
 
-	static void check_block_style(std::string& line, bool isLastCharacter = false);
+	static void render_wrapped_text(std::string& text, bool isFirstLine);
+
+	static void check_block_style(std::string& line, bool isFirstLine, bool isLastCharacter = false);
 
 	static void trim_block_style(std::string& line, BlockType block_type);
 
-	static void add_block_style(std::string& line, BlockType block_type);
+	static void add_block_style(std::string& line, BlockType block_type, bool isFirstLine);
 
 	static void apply_block_style(std::string& line, BlockType block_type);
 	static void clear_block_style(BlockType block_type);

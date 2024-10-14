@@ -49,12 +49,16 @@ void Markdown::process_text(const std::string& str, float text_max_width, float 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
 	std::stringstream ss(str);
-	std::string line = "", block = "";
+	std::string line = "", block = "", next_line = "";
+	bool isFirstLine = true, isLastLine = false;
 
 	while (std::getline(ss, line))
 	{
 		if (line.empty())
 			continue;
+
+		if(ss.peek() == EOF)
+			isLastLine = true;
 
 		for (size_t i = 0; i < line.length(); i++)
 		{
@@ -83,7 +87,7 @@ void Markdown::process_text(const std::string& str, float text_max_width, float 
 				}
 				else
 				{
-					check_block_style(block);
+					check_block_style(block, isFirstLine);
 				}
 
 				heading_level = 0;
@@ -95,7 +99,7 @@ void Markdown::process_text(const std::string& str, float text_max_width, float 
 
 			if (i == line.length() - 1)
 			{
-				check_block_style(block, true);
+				check_block_style(block, isFirstLine, true);
 				heading_level = 0;
 				star_level = 0;
 				dash_level = 0;
@@ -104,6 +108,9 @@ void Markdown::process_text(const std::string& str, float text_max_width, float 
 
 		block = "";
 		ImGui::NewLine();
+		if(!isLastLine)
+			ImGui::NewLine();
+		isFirstLine = false;
 	}
 
 	ImGui::PopStyleVar();
@@ -120,7 +127,7 @@ void Markdown::set_block_width(float width)
 		block_width = ImGui::GetContentRegionAvail().x;
 }
 
-void Markdown::check_block_style(std::string& line, bool isLastCharacter)
+void Markdown::check_block_style(std::string& line, bool isFirstLine, bool isLastCharacter)
 {
 	if(line.empty())
 		return;
@@ -128,21 +135,21 @@ void Markdown::check_block_style(std::string& line, bool isLastCharacter)
 	if (star_level > 0)
 	{
 		if (star_level == 1)
-			add_block_style(line, BlockType::Italic);
+			add_block_style(line, BlockType::Italic, isFirstLine);
 		else if (star_level == 2)
-			add_block_style(line, BlockType::Bold);
+			add_block_style(line, BlockType::Bold, isFirstLine);
 		else if (star_level == 3)
-			add_block_style(line, BlockType::BoldAndItalic);
+			add_block_style(line, BlockType::BoldAndItalic, isFirstLine);
 	}
 	else if (dash_level > 0)
 	{
 		if (dash_level == 1)
-			add_block_style(line, BlockType::UnorderedListItem);
+			add_block_style(line, BlockType::UnorderedListItem, isFirstLine);
 		else if (dash_level == 3)
-			add_block_style(line, BlockType::HorizontalRule);
+			add_block_style(line, BlockType::HorizontalRule, isFirstLine);
 	}
 	else if (isLastCharacter)
-		render_line(line, BlockType::None);
+		render_line(line, BlockType::None, isFirstLine);
 }
 
 void Markdown::trim_block_style(std::string& line, BlockType block_type)
@@ -180,22 +187,41 @@ void Markdown::trim_block_style(std::string& line, BlockType block_type)
 		line.erase(start_pos, from.length());
 }
 
-void Markdown::render_line(std::string& line, BlockType block_type)
+void Markdown::render_line(std::string& line, BlockType block_type, bool isFirstLine)
 {
 	if(line.empty())
 		return;
 
 	apply_block_style(line, block_type);
-	//render text to fill the line and then recursively render text beneath
-	/*if (ImGui::CalcTextSize(line.c_str()).x + ImGui::GetCursorPosX() >= block_width)
-		ImGui::NewLine();*/
-	ImGui::Text(line.c_str());
+	render_wrapped_text(line, isFirstLine);
 	ImGui::SameLine();
 	clear_block_style(block_type);
 	line = "";
 }
 
-void Markdown::add_block_style(std::string& line, BlockType block_type)
+void Markdown::render_wrapped_text(std::string& line, bool isFirstLine)
+{
+	std::stringstream ss(line);
+
+	std::string word = "";
+
+	while (ss >> word)
+	{
+		if (ImGui::CalcTextSize(word.c_str()).x + ImGui::GetCursorPosX() >= block_width)
+		{
+			if(!isFirstLine)
+				ImGui::NewLine();
+			else
+				isFirstLine = false;
+		}
+
+		ImGui::Text((word + " ").c_str());
+		ImGui::SameLine();
+		isFirstLine = false;
+	}
+}
+
+void Markdown::add_block_style(std::string& line, BlockType block_type, bool isFirstLine)
 {
 	trim_block_style(line, block_type);
 
@@ -205,13 +231,13 @@ void Markdown::add_block_style(std::string& line, BlockType block_type)
 	{
 		it = block_types.erase(it);
 		if(!line.empty())
-			render_line(line, block_type);
+			render_line(line, block_type, isFirstLine);
 	}
 	else
 	{
 		block_types.push_back(block_type);
 		if(!line.empty())
-			render_line(line, BlockType::None);
+			render_line(line, BlockType::None, isFirstLine);
 	}
 }
 

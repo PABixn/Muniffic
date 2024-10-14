@@ -252,14 +252,6 @@ namespace eg
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 
-		//ImGui::OpenPopup("Test");
-
-		if (ImGui::BeginPopup("Test"))
-		{
-			Markdown::text("#Siema\n##Siema\n###Siema\n I am a virtual assistant specializing in the Muniffic Game Engine. I can assist you with the following tasks:\n1. **Engine Features**: Explain various features and functionalities of the Muniffic Game Engine based on the documentation.\n2. **Entity and Component Management**: Help you manage entities and their components, including creation, modification, and removal.\n3. **Scripting**: Write C# scripts using the Muniffic Scripting Engine after reviewing relevant examples from the documentation.\n4. **Perform Actions**: Execute certain actions within the engine, such as adding components to entities or modifying properties.\n5. **Provide Guidance**: Offer assistance and instructions on how to perform specific tasks within the engine yourself.\nIf you have any specific questions or tasks you'd like assistance with, feel free to let me know!");
-			ImGui::EndPopup();
-		}
-
 		if (m_WelcomePanel->IsShown()) {
 			ImGuiStyle& style = ImGui::GetStyle();
 			float minWinSizeX = style.WindowMinSize.x;

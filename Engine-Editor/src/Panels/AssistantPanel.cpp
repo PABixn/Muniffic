@@ -247,7 +247,10 @@ namespace eg
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding * 2);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
 					//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
-					Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding * 2, padding * 2);
+					//Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding * 2, padding * 2);
+					ImGui::Indent(padding * 2);
+					ImGui::Text(msg.c_str());
+					ImGui::Unindent(padding * 2);
 					ImGui::PopTextWrapPos();
 
 					drawList->ChannelsSetCurrent(1);
