@@ -283,8 +283,6 @@ namespace eg
 			style.Colors[ImGuiCol_HeaderActive] = ImVec4(0, 0, 0, 0);
 			style.Colors[ImGuiCol_TextDisabled] = m_LightTextShade;
 
-		//ImGui::Image((ImTextureID)m_LogoIcon->GetRendererID(),ImVec2(30,30));
-		//ImGui::SameLine();
 		ImGui::PushFont(m_PoppinsSemiBoldFont);
 		ImGui::PushStyleColor(ImGuiCol_Text, m_LightTextShade);
 		if (ImGui::BeginMenuBar())

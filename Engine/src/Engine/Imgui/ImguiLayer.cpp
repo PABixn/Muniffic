@@ -137,52 +137,46 @@ namespace eg {
 
 	void ImGuiLayer::SetDarkThemeColors()
 	{
-		/*m_LightTextShade = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
-		m_LightShade = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-		m_NormalShade = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
-		m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
-		*/
-
 		auto& colors = ImGui::GetStyle().Colors;
 		auto& style = ImGui::GetStyle();
 
 		//Background
-		colors[ImGuiCol_WindowBg] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
-		colors[ImGuiCol_ChildBg] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
-		colors[ImGuiCol_PopupBg] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
+		colors[ImGuiCol_WindowBg] = m_DarkShade;
+		colors[ImGuiCol_ChildBg] = m_DarkShade;
+		colors[ImGuiCol_PopupBg] = m_DarkShade;
 
 		// Headers
-		colors[ImGuiCol_Header] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
-		colors[ImGuiCol_HeaderHovered] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
-		colors[ImGuiCol_HeaderActive] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
+		colors[ImGuiCol_Header] = m_NormalShade;
+		colors[ImGuiCol_HeaderHovered] = m_NormalShade;
+		colors[ImGuiCol_HeaderActive] = m_NormalShade;
 
 		// Buttons
-		colors[ImGuiCol_Button] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
-		colors[ImGuiCol_ButtonHovered] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-		colors[ImGuiCol_ButtonActive] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
+		colors[ImGuiCol_Button] = m_NormalShade;
+		colors[ImGuiCol_ButtonHovered] = m_LightShade;
+		colors[ImGuiCol_ButtonActive] = m_LightShade;
 
 		// Frame BG
-		colors[ImGuiCol_FrameBg] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
-		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
-		colors[ImGuiCol_FrameBgActive] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
+		colors[ImGuiCol_FrameBg] = m_NormalShade;
+		colors[ImGuiCol_FrameBgHovered] = m_NormalShade;
+		colors[ImGuiCol_FrameBgActive] = m_NormalShade;
 
 		// Tabs
-		colors[ImGuiCol_Tab] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-		colors[ImGuiCol_TabHovered] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
-		colors[ImGuiCol_TabActive] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
-		colors[ImGuiCol_TabUnfocused] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-		colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
+		colors[ImGuiCol_Tab] = m_LightShade;
+		colors[ImGuiCol_TabHovered] = m_DarkShade;
+		colors[ImGuiCol_TabActive] = m_DarkShade;
+		colors[ImGuiCol_TabUnfocused] = m_LightShade;
+		colors[ImGuiCol_TabUnfocusedActive] = m_DarkShade;
 
 		// Title
-		colors[ImGuiCol_TitleBg] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
-		colors[ImGuiCol_TitleBgActive] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
-		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
+		colors[ImGuiCol_TitleBg] = m_NormalShade;
+		colors[ImGuiCol_TitleBgActive] = m_NormalShade;
+		colors[ImGuiCol_TitleBgCollapsed] = m_NormalShade;
 
 		//Scrollbar
-		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
-		colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
+		colors[ImGuiCol_ScrollbarBg] = m_DarkShade;
+		colors[ImGuiCol_ScrollbarGrab] = m_LightShade;
+		colors[ImGuiCol_ScrollbarGrabHovered] = m_LightShade;
+		colors[ImGuiCol_ScrollbarGrabActive] = m_LightShade;
 
 		//Others
 		colors[ImGuiCol_MenuBarBg] = ImVec4(0.153f, 0.133f, 0.200f, 1.0f);
