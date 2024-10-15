@@ -44,6 +44,7 @@ namespace eg
 	void EditorLayer::OnAttach()
 	{
 		LoadFonts();
+
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
 		resourceSystemConfig.ResourceDirectory = "../resources";
@@ -226,6 +227,7 @@ namespace eg
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 		ImGui::PopStyleColor();
+
 		//Welcoming panel code
 		if (m_WelcomePanel->IsShown()) {
 			ImGuiStyle& style = ImGui::GetStyle();
@@ -245,9 +247,12 @@ namespace eg
 			ImGui::End();
 
 		}
-		else {
-			if (!projectOpened) {
-				if (m_WelcomePanel->isNewProjectCreated()) {
+		else
+		{
+			if (!projectOpened)
+			{
+				if (m_WelcomePanel->isNewProjectCreated())
+				{
 					//nya 2
 					NewProject();
 					m_NameNewProjectPanel->setNameGiven(true);
@@ -1164,7 +1169,8 @@ namespace eg
 		m_AddResourcePanel = nullptr;
 	}
 
-	void EditorLayer::LoadFonts() {
+	void EditorLayer::LoadFonts()
+	{
 		auto& io = ImGui::GetIO();
 
 		ImFontConfig font_config;
@@ -1192,6 +1198,8 @@ namespace eg
 		io.FontDefault = m_PoppinsRegularFont;
 
 		io.Fonts->Build();
+
+		Markdown::init(m_PoppinsRegularFont, m_PoppinsBoldFont, m_PoppinsItalicFont, m_PoppinsBoldItalicFont, m_PoppinsHeading1Font, m_PoppinsHeading2Font, m_PoppinsHeading3Font);
 	}
 
 }
