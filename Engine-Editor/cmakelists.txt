@@ -16,11 +16,28 @@ set(OBJECT_DIR "${CMAKE_CURRENT_BINARY_DIR}/Engine-Editor")
 file(GLOB_RECURSE SOURCES "src/*.h" "src/*.cpp")
 
 add_executable(Engine-Editor ${SOURCES})
-
+if (WIN32)
+    # Check if using MSVC
+    if (MSVC)
+        # Set the subsystem to Windows to avoid console window
+        target_link_options(Engine-Editor PRIVATE 
+        $<$<CONFIG:DEBUG>: /SUBSYSTEM:CONSOLE>
+        $<$<CONFIG:RelWithDebInfo>: /SUBSYSTEM:CONSOLE>
+        $<$<CONFIG:Release>: /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup>
+        $<$<CONFIG:Dist>: /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup>
+        )
+    elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        # For MinGW, use -mwindows to avoid console window
+        target_link_options(Engine-Editor PRIVATE -mwindows)
+    endif()
+endif()
 target_compile_definitions(Engine PRIVATE "$<$<CONFIG:Debug>:DEBUG_BUILD>")
 target_compile_definitions(Engine PRIVATE "$<$<CONFIG:RelWithInfo>:RelWithDebInfo_BUILD>")
 target_compile_definitions(Engine PRIVATE "$<$<CONFIG:Release>:RELEASE_BUILD>")
 target_compile_definitions(Engine PRIVATE "$<$<CONFIG:Dist>:DIST_BUILD>")
+target_compile_definitions(Engine PRIVATE 
+"$<$<OR:$<CONFIG:RelWithDebInfo>,$<CONFIG:Debug>>:EG_ENABLE_ASSERTS>"
+)
 
 set_target_properties(Engine-Editor PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${TARGET_DIR}

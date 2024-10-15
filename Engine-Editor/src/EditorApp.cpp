@@ -16,7 +16,6 @@ Editor::Editor(ApplicationSpecification spec)
         stbi_image_free(images[0].pixels);
     };
 
-bool Editor::OnWindowClose(WindowCloseEvent& e)
 
 	Editor::~Editor()
 	{

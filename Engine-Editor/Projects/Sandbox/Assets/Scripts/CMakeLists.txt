@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 
 set(CMAKE_SHARED_LINKER_FLAGS_DIST "")
-add_subdirectory("${CMAKE_BINARY_DIR}/../../../../../Muniffic-ScriptCore" "${CMAKE_BINARY_DIR}/../../../../Muniffic-ScriptCore")
+add_subdirectory("${CMAKE_BINARY_DIR}/../../../../../Muniffic-ScriptCore" "${CMAKE_BINARY_DIR}/../../../../../Muniffic-ScriptCore")
 #set(PROJECT_NAME "Example" CACHE STRING "name of project")
 set(MyProject_BUILD_TYPES Debug RelWithDebInfo Release Dist)
 project(${PROJECT_NAME} LANGUAGES CSharp)

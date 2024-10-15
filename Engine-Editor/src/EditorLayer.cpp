@@ -985,7 +985,9 @@ namespace eg
 
 		AssetDirectoryManager::initDefault(rootUUID);
 
-		EG_ASSERT(this->CreateCmakelists(absolutePath.parent_path().string()));
+		bool createdCmakeLists = CreateCmakelists(absolutePath.parent_path().string())
+
+		EG_ASSERT(createdCmakeLists);
 		
 		Project::Save(absolutePath);
 		NewScene();
