@@ -246,7 +246,7 @@ void Markdown::render_heading(std::string& line, BlockType block_type)
 	trim_block_style(line, block_type);
 
 	apply_block_style(line, block_type);
-	ImGui::Text(line.c_str());
+	render_wrapped_text(line, true);
 	clear_block_style(block_type);
 }
 
