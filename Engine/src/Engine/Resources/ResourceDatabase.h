@@ -52,6 +52,7 @@ namespace eg
 		static std::unordered_map<UUID, FontResourceData*>& GetFontResourceDataCache() { return ResourceSerializer::FontResourceDataCache; }
 		static std::unordered_map<UUID, SceneResourceData*>& GetSceneResourceDataCache() { return ResourceSerializer::SceneResourceDataCache; }
 
+		static std::string GetDefaultSceneName();
 	private:
 		static UUID m_CurrentDirectory;
 

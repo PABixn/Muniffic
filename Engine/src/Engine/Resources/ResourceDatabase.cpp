@@ -16,6 +16,21 @@ namespace eg
 	std::unordered_map<UUID, Ref<Font>> ResourceDatabase::RuntimeFontResourceCache;
 	std::unordered_map<UUID, Ref<Texture2D>> ResourceDatabase::RuntimeTextureResourceCache;
 
+	std::string ResourceDatabase::GetDefaultSceneName()
+	{
+		EG_PROFILE_FUNCTION();
+
+		int count = 0;
+
+		for (auto& [uuid, data] : ResourceSerializer::SceneResourceDataCache)
+		{
+			if(data->ResourceName.find("Untitled Scene") != std::string::npos)
+				count++;
+		}
+
+		return "Untitled Scene " + std::to_string(count);
+	}
+
 	void ResourceDatabase::EnableScript(UUID uuid, bool enable)
 	{
         EG_PROFILE_FUNCTION();

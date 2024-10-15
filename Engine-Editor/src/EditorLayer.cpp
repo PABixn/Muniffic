@@ -832,6 +832,15 @@ namespace eg
 	void EditorLayer::NewScene()
 	{
 		EG_PROFILE_FUNCTION();
+
+		SceneResourceData* data = new SceneResourceData();
+		data->ResourceName = ResourceDatabase::GetDefaultSceneName();
+		data->Extension = ".egscene";
+		data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Scene);
+		data->Type = ResourceType::Scene;
+
+		UUID uuid = ResourceDatabase::AddResource(AssetDirectoryManager::getDirectoryPath(data->ParentDirectory), data, ResourceType::Scene);
+
 		m_ActiveScene = CreateRef<Scene>();
 		m_RuntimeScene = m_ActiveScene;
 
