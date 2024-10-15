@@ -557,7 +557,8 @@ namespace eg {
 			{
 				auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
 
-				Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
+				if(text.RuntimeFont)
+					Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
 			}
 		}
 
@@ -576,7 +577,7 @@ namespace eg {
 	void Scene::AddEntityToDestroy(Entity entity)
 	{
         EG_PROFILE_FUNCTION();
-		m_EntitiesToDestroy.push_back(entity  );
+		m_EntitiesToDestroy.push_back(entity);
 	}
 
 	Entity Scene::DuplicateEntity(Entity entity)

@@ -1,5 +1,6 @@
 #include "EditorActions.h"
 #include "EditorActionsHelper.h"
+#include "EditorLayer.h"
 
 namespace eg
 {
@@ -272,6 +273,8 @@ namespace eg
 		if (uuid == 0)
 			return "Failed to create entity.";
 
+		static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->GetSceneHierarchyPanel()->Search();
+
 		return "Entity created with UUID: " + std::to_string(uuid);
 	}
 
@@ -290,6 +293,8 @@ namespace eg
 			return "Entity with UUID " + params.at(0) + " not found";
 
 		Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Scene, *m_SelectedEntity));
+
+		static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->GetSceneHierarchyPanel()->Search();
 
 		return "Entity removed";
 	}

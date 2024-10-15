@@ -3,14 +3,14 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 set(CMAKE_SHARED_LINKER_FLAGS_DIST "")
-add_subdirectory("${CMAKE_BINARY_DIR}/../../../../Muniffic-ScriptCore" "${CMAKE_BINARY_DIR}/../../../../Muniffic-ScriptCore")
+add_subdirectory("${CMAKE_BINARY_DIR}/../../../../../Muniffic-ScriptCore" "${CMAKE_BINARY_DIR}/../../../../../Muniffic-ScriptCore")
 #set(PROJECT_NAME "Example" CACHE STRING "name of project")
 project(${PROJECT_NAME} LANGUAGES CSharp)
 
 # Define configurations
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dist" CACHE STRING "" FORCE)
 
-# set(MunifficRootDir "../../../../")
+# set(MunifficRootDir "../../../../../")
 
 # Set the output directories for binaries and intermediate files
 add_library(${PROJECT_NAME} SHARED)

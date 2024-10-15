@@ -117,8 +117,6 @@ namespace eg
 
 		m_FrameBuffer->ClearAttachment(1, -1);
 
-
-
 		switch (m_SceneState)
 		{
 		case SceneState::Edit:

@@ -56,6 +56,8 @@ namespace eg {
 		void OnImGuiRender();
 		void Update(float dt);
 
+		void Search();
+
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; SetPreviewAbsoluteImagePath(""); }
 		void SetPreviewAbsoluteImagePath(std::filesystem::path path) { m_PreviewAbsoluteImagePath = path; m_ReevaluatePreview = true; }
@@ -64,7 +66,6 @@ namespace eg {
 		void DisplayAddComponentEntry(const std::string& entryName);
 		void DrawEntityNode(EntityDisplayInfo entityDisplayInfo);
 		void DrawComponents(Entity entity);
-		void Search();
 		std::optional<EntityDisplayInfo> SearchEntity(Entity entity);
 		template<typename T, typename UIFunction>
 		void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, Icons icon);

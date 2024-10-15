@@ -6,13 +6,17 @@ namespace eg
 	int Commands::currentCommandIndex;
 	int LastSavedCommandIndex = -1;
 	bool isSaved = true;
-	void SetIsSaved(bool val) {
-		if (!isSaved == val) {
+
+	void SetIsSaved(bool val)
+	{
+		if (!isSaved == val)
+		{
 			Application::Get().ChangeNameWithCurrentProject(val);
 			isSaved = val;
 		}
 		if (val)LastSavedCommandIndex = Commands::currentCommandIndex;
 	}
+
 	bool IsProjectSaved() {
 		return isSaved;
 	}
