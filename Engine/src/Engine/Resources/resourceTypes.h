@@ -10,6 +10,7 @@ namespace eg
 {
 	enum class ResourceType
 	{
+		Scene,
 		Animation,
 		Frame,
 		Audio,
@@ -98,6 +99,10 @@ namespace eg
 	};
 
 	struct FontResourceData : public ResourceData
+	{
+	};
+
+	struct SceneResourceData : public ResourceData
 	{
 	};
 

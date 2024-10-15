@@ -141,35 +141,38 @@ namespace eg
         EG_PROFILE_FUNCTION();
 		switch (resourceType)
 		{
-		case eg::ResourceType::Animation:
+		case ResourceType::Animation:
 			ResourceSerializer::AnimationResourceDataCache[uuid] = (AnimationResourceData*)data;
 			break;
-		case eg::ResourceType::Frame:
+		case ResourceType::Frame:
 			ResourceSerializer::FrameResourceDataCache[uuid] = (FrameResourceData*)data;
 			break;
-		case eg::ResourceType::Audio:
+		case ResourceType::Audio:
 			ResourceSerializer::AudioResourceDataCache[uuid] = (AudioResourceData*)data;
 			break;
-		case eg::ResourceType::SpriteAtlas:
+		case ResourceType::SpriteAtlas:
 			ResourceSerializer::SpriteAtlasResourceDataCache[uuid] = (SpriteAtlasResourceData*)data;
 			break;
-		case eg::ResourceType::SubTexture:
+		case ResourceType::SubTexture:
 			ResourceSerializer::SubTextureResourceDataCache[uuid] = (SubTextureResourceData*)data;
 			break;
-		case eg::ResourceType::Font:
+		case ResourceType::Font:
 			ResourceSerializer::FontResourceDataCache[uuid] = (FontResourceData*)data;
 			break;
-		case eg::ResourceType::Image:
+		case ResourceType::Image:
 			ResourceSerializer::TextureResourceDataCache[uuid] = (TextureResourceData*)data;
 			break;
-		case eg::ResourceType::Script:
+		case ResourceType::Script:
 			ResourceSerializer::ScriptResourceDataCache[uuid] = (ScriptResourceData*)data;
 			break;
-		case eg::ResourceType::Text:
-		case eg::ResourceType::Shader:
-		case eg::ResourceType::NativeScript:
-		case eg::ResourceType::None:
-		case eg::ResourceType::Custom:
+		case ResourceType::Scene:
+			ResourceSerializer::SceneResourceDataCache[uuid] = (SceneResourceData*)data;
+			break;
+		case ResourceType::Text:
+		case ResourceType::Shader:
+		case ResourceType::NativeScript:
+		case ResourceType::None:
+		case ResourceType::Custom:
 		default:
 			EG_CORE_ERROR("Resource type not supported");
 			break;
@@ -199,6 +202,8 @@ namespace eg
 			return ResourceSerializer::ScriptResourceDataCache.find(uuid) != ResourceSerializer::ScriptResourceDataCache.end();
 		else if (resourceType == ResourceType::Audio)
 			return ResourceSerializer::AudioResourceDataCache.find(uuid) != ResourceSerializer::AudioResourceDataCache.end();
+		else if(resourceType == ResourceType::Scene)
+			return ResourceSerializer::SceneResourceDataCache.find(uuid) != ResourceSerializer::SceneResourceDataCache.end();
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
@@ -260,6 +265,14 @@ namespace eg
 		else if (type == ResourceType::Audio)
 		{
 			for (auto& [uuid, data] : ResourceSerializer::AudioResourceDataCache)
+			{
+				if (data->ResourceName == name)
+					return uuid;
+			}
+		}
+		else if (type == ResourceType::Scene)
+		{
+			for (auto& [uuid, data] : ResourceSerializer::SceneResourceDataCache)
 			{
 				if (data->ResourceName == name)
 					return uuid;
@@ -362,6 +375,15 @@ namespace eg
 				ResourceSerializer::ResourceTypeInfo.erase(uuid);
 			}
 		}
+		else if (resourceType == ResourceType::Scene)
+		{
+			if (ResourceSerializer::SceneResourceDataCache.find(uuid) != ResourceSerializer::SceneResourceDataCache.end())
+			{
+				delete ResourceSerializer::SceneResourceDataCache.at(uuid);
+				ResourceSerializer::SceneResourceDataCache.erase(uuid);
+				ResourceSerializer::ResourceTypeInfo.erase(uuid);
+			}
+		}
 		else if (resourceType == ResourceType::Font)
 		{
 			if (uuid == Font::GetDefaultFontUUID())
@@ -418,6 +440,8 @@ namespace eg
 			return ResourceSerializer::ScriptResourceDataCache.at(uuid);
 		else if(type == ResourceType::Audio)
 			return ResourceSerializer::AudioResourceDataCache.at(uuid);
+		else if(type == ResourceType::Scene)
+			return ResourceSerializer::SceneResourceDataCache.at(uuid);
 		else
 		{
 			EG_CORE_ERROR("Resource type not supported");
@@ -619,9 +643,29 @@ namespace eg
 			{
 				std::filesystem::create_directories(finalPath.parent_path());
 			}
+
+			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
 		}
 
 		ResourceSerializer::CacheAudio(uuid, data);
+	}
+
+	void AddSceneResource(UUID uuid, const std::filesystem::path& originalResourcePath, SceneResourceData* data)
+	{
+		EG_PROFILE_FUNCTION();
+		std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(originalResourcePath, ResourceType::Scene);
+
+		if (finalPath != originalResourcePath)
+		{
+			if (!std::filesystem::exists(finalPath.parent_path()))
+			{
+				std::filesystem::create_directories(finalPath.parent_path());
+			}
+
+			std::filesystem::copy(originalResourcePath, finalPath, std::filesystem::copy_options::overwrite_existing);
+		}
+
+		ResourceSerializer::CacheScene(uuid, data);
 	}
 
 	UUID ResourceDatabase::GetResourceParentDirectory(UUID uuid)
@@ -684,6 +728,16 @@ namespace eg
 			data->ResourceName = filePath.stem().string();
 			data->Extension = filePath.extension().string();
 			AddAudioResource(uuid, filePath, data);
+
+			return uuid;
+		}
+		else if (type == ResourceType::Scene)
+		{
+			SceneResourceData* data = new SceneResourceData();
+			data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(type);
+			data->ResourceName = filePath.stem().string();
+			data->Extension = filePath.extension().string();
+			AddSceneResource(uuid, filePath, data);
 
 			return uuid;
 		}
@@ -802,7 +856,10 @@ namespace eg
 			break;
 		case ResourceType::Audio:
 			AddAudioResource(uuid, originalResourcePath, (AudioResourceData*)data);
-				break;
+			break;
+		case ResourceType::Scene:
+			AddSceneResource(uuid, originalResourcePath, (SceneResourceData*)data);
+			break;
 		}
 
 		return uuid;

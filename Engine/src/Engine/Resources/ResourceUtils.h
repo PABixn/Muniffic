@@ -17,6 +17,8 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return "Textures";
+			case ResourceType::Scene:
+				return "Scenes";
 			case ResourceType::SubTexture:
 				return "SubTextures";
 			case ResourceType::SpriteAtlas:
@@ -44,6 +46,8 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return ".png";
+			case ResourceType::Scene:
+				return ".egscene";
 			case ResourceType::SubTexture:
 				return ".subtexture";
 			case ResourceType::SpriteAtlas:
@@ -74,6 +78,8 @@ namespace eg
 
 			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg")
 				return ResourceType::Image;
+			else if (extension == ".egscene")
+				return ResourceType::Scene;
 			else if (extension == ".subtexture")
 				return ResourceType::SubTexture;
 			else if (extension == ".spriteatlas")
@@ -106,6 +112,8 @@ namespace eg
 			{
 			case ResourceType::Image:
 				return baseDirectory / "Textures.mnmeta";
+			case ResourceType::Scene:
+				return baseDirectory / "Scenes.mnmeta";
 			case ResourceType::SubTexture:
 				return baseDirectory / "SubTextures.mnmeta";
 			case ResourceType::SpriteAtlas:

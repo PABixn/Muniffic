@@ -429,10 +429,9 @@ namespace eg
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
-					const wchar_t* path = (const wchar_t*)payload->Data;
-					std::filesystem::path p = path;
-					if (p.extension() == ".egscene")
-   						OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
+					int64_t uuid = *(int64_t*)payload->Data;
+					if (ResourceDatabase::GetResourceType(uuid) == ResourceType::Scene)
+   						OpenScene(ResourceDatabase::GetResourcePath(uuid));
 				}
 				ImGui::EndDragDropTarget();
 			}

@@ -97,7 +97,7 @@ namespace eg
 		AssetDirectory* shaders = new AssetDirectory(UUID(), "Shaders", rootUUID);
 
 		UUID scriptDiectoryUUID = UUID();
-		AssetDirectory* scripts = new AssetDirectory(scriptDiectoryUUID, "Scripts", rootUUID);
+		AssetDirectory* scripts = new AssetDirectory(UUID(), "Scripts", rootUUID);
 
 		AssetDirectory* scriptsSource = new AssetDirectory(UUID(), "Source", scriptDiectoryUUID);
 

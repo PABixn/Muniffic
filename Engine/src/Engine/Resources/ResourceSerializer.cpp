@@ -14,8 +14,6 @@
 
 namespace eg
 {
-
-
 	std::unordered_map<UUID, TextureResourceData*> ResourceSerializer::TextureResourceDataCache;
 	std::unordered_map<UUID, AnimationResourceData*> ResourceSerializer::AnimationResourceDataCache;
 	std::unordered_map<UUID, FrameResourceData*> ResourceSerializer::FrameResourceDataCache;
@@ -24,6 +22,7 @@ namespace eg
 	std::unordered_map<UUID, FontResourceData*> ResourceSerializer::FontResourceDataCache;
 	std::unordered_map<UUID, ScriptResourceData*> ResourceSerializer::ScriptResourceDataCache;
 	std::unordered_map<UUID, AudioResourceData*> ResourceSerializer::AudioResourceDataCache;
+	std::unordered_map<UUID, SceneResourceData*> ResourceSerializer::SceneResourceDataCache;
 	std::unordered_map<UUID, ResourceType> ResourceSerializer::ResourceTypeInfo;
 
 	bool ResourceSerializer::DeserializeResourceCache()
@@ -39,8 +38,10 @@ namespace eg
 		std::filesystem::path fontMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Font);
 		std::filesystem::path scriptMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Script);
 		std::filesystem::path audioMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Audio);
+		std::filesystem::path sceneMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Scene);
 
-		YAML::Node textureNode, animationNode, frameNode, spriteAtlasNode, subTextureNode, fontNode, scriptNode, audioNode;
+
+		YAML::Node textureNode, animationNode, frameNode, spriteAtlasNode, subTextureNode, fontNode, scriptNode, audioNode, sceneNode;
 
 		if (!std::filesystem::exists(textureMetadataPath))
 		{
@@ -95,6 +96,13 @@ namespace eg
 		{
 			std::filesystem::create_directories(audioMetadataPath.parent_path());
 			std::ofstream file(audioMetadataPath, std::ios::trunc);
+			file.close();
+		}
+
+		if (!std::filesystem::exists(sceneMetadataPath))
+		{
+			std::filesystem::create_directories(sceneMetadataPath.parent_path());
+			std::ofstream file(sceneMetadataPath, std::ios::trunc);
 			file.close();
 		}
 
@@ -178,6 +186,16 @@ namespace eg
 			return false;
 		}
 
+		try
+		{
+			sceneNode = YAML::LoadFile(sceneMetadataPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			EG_CORE_ERROR("Failed to load .mnmeta file '{0}'\n     {1}", sceneMetadataPath, e.what());
+			return false;
+		}
+
 		auto textureResources = textureNode["Resources"];
 		auto animationResources = animationNode["Resources"];
 		auto frameResources = frameNode["Resources"];
@@ -186,6 +204,7 @@ namespace eg
 		auto fontResources = fontNode["Resources"];
 		auto scriptResources = scriptNode["Resources"];
 		auto audioResources = audioNode["Resources"];
+		auto sceneResources = sceneNode["Resources"];
 
 		if (fontResources)
 		{
@@ -205,6 +224,27 @@ namespace eg
 				data->Extension = resource["Extension"].as<std::string>();
 
 				CacheFont(uuid, data);
+			}
+		}
+
+		if (sceneResources)
+		{
+			for (auto resource : sceneResources)
+			{
+				UUID uuid = resource["UUID"].as<int64_t>();
+
+				SceneResourceData* data = new SceneResourceData();
+				if (resource["ParentDirectory"])
+					data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
+				else
+					data->ParentDirectory = 0;
+				if (resource["ResourceName"])
+					data->ResourceName = resource["ResourceName"].as<std::string>();
+				else
+					data->ResourceName = resource["SceneName"].as<std::string>();
+				data->Extension = resource["Extension"].as<std::string>();
+
+				CacheScene(uuid, data);
 			}
 		}
 
@@ -435,9 +475,10 @@ namespace eg
 		std::filesystem::path fontMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Font);
 		std::filesystem::path scriptMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Script);
 		std::filesystem::path audioMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Audio);
+		std::filesystem::path sceneMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Scene);
 
 
-		YAML::Emitter textureOut, animationOut, frameOut, spriteAtlasOut, subtextureOut, fontOut, scriptOut, audioOut;
+		YAML::Emitter textureOut, animationOut, frameOut, spriteAtlasOut, subtextureOut, fontOut, scriptOut, audioOut, sceneOut;
 
 		if(!std::filesystem::exists(textureMetadataPath.parent_path()))
 			std::filesystem::create_directories(textureMetadataPath.parent_path());
@@ -459,8 +500,12 @@ namespace eg
 
 		if (!std::filesystem::exists(scriptMetadataPath.parent_path()))
 			std::filesystem::create_directories(scriptMetadataPath.parent_path());
+
 		if (!std::filesystem::exists(audioMetadataPath.parent_path()))
 			std::filesystem::create_directories(audioMetadataPath.parent_path());
+
+		if (!std::filesystem::exists(sceneMetadataPath.parent_path()))
+			std::filesystem::create_directories(sceneMetadataPath.parent_path());
 
 		textureOut << YAML::BeginMap;
 		textureOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
@@ -649,6 +694,22 @@ namespace eg
 		audioOut << YAML::EndSeq;
 		audioOut << YAML::EndMap;
 
+		sceneOut << YAML::BeginMap;
+		sceneOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
+
+		for (auto& [key, value] : SceneResourceDataCache)
+		{
+			sceneOut << YAML::BeginMap;
+			sceneOut << YAML::Key << "UUID" << YAML::Value << key;
+			sceneOut << YAML::Key << "ParentDirectory" << YAML::Value << value->ParentDirectory;
+			sceneOut << YAML::Key << "ResourceName" << YAML::Value << value->ResourceName;
+			sceneOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
+			sceneOut << YAML::EndMap;
+		}
+
+		sceneOut << YAML::EndSeq;
+		sceneOut << YAML::EndMap;
+
 		std::ofstream textureFile(textureMetadataPath, std::ios::trunc);
 		std::ofstream animationFile(animationMetadataPath, std::ios::trunc);
 		std::ofstream frameFile(frameMetadataPath, std::ios::trunc);
@@ -657,6 +718,7 @@ namespace eg
 		std::ofstream fontFile(fontMetadataPath, std::ios::trunc);
 		std::ofstream scriptFile(scriptMetadataPath, std::ios::trunc);
 		std::ofstream audioFile(audioMetadataPath, std::ios::trunc);
+		std::ofstream sceneFile(sceneMetadataPath, std::ios::trunc);
 
 		textureFile << textureOut.c_str();
 		animationFile << animationOut.c_str();
@@ -666,6 +728,7 @@ namespace eg
 		fontFile << fontOut.c_str();
 		scriptFile << scriptOut.c_str();
 		audioFile << audioOut.c_str();
+		sceneFile << sceneOut.c_str();
 
 		textureFile.close();
 		animationFile.close();
@@ -675,6 +738,7 @@ namespace eg
 		fontFile.close();
 		scriptFile.close();
 		audioFile.close();
+		sceneFile.close();
 	}
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
@@ -707,6 +771,22 @@ namespace eg
 		data->Type = ResourceType::Image;
 		TextureResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Image;
+		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
+	}
+
+	void ResourceSerializer::CacheScene(UUID uuid, SceneResourceData* data)
+	{
+		EG_PROFILE_FUNCTION();
+		if (SceneResourceDataCache.find(uuid) != SceneResourceDataCache.end())
+		{
+			if (SceneResourceDataCache[uuid] != nullptr)
+				delete SceneResourceDataCache[uuid];
+			SceneResourceDataCache.erase(uuid);
+		}
+
+		data->Type = ResourceType::Scene;
+		SceneResourceDataCache[uuid] = data;
+		ResourceTypeInfo[uuid] = ResourceType::Scene;
 		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
 	}
 
