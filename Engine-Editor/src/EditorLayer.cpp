@@ -1007,11 +1007,21 @@ namespace eg
 	{
 		EG_PROFILE_FUNCTION();
 		std::string filepath = FileDialogs::OpenFile("Muniffic Project (*.mnproj)\0*.mnproj\0");
-		if (filepath.empty())
+		std::filesystem::path path = filepath;
+        if (filepath.empty() )
 		{
 			ConsolePanel::Log("File: EditorLayer.cpp - Empty file path", ConsolePanel::LogType::Error);
 			return false;
 		}
+		if (path.extension() != ".mnproj"){
+            ConsolePanel::Log("File: EditorLayer.cpp - Could not load " + path.filename().string() + " - not a project file", ConsolePanel::LogType::Error);
+            return false;
+		}
+		if (path == Project::GetProjectPath()){
+			ConsolePanel::Log("File: EditorLayer.cpp - Project already opened", ConsolePanel::LogType::Warning);
+            return false;
+	    }
+        //CloseProject();
 		OpenProject(filepath);
 		m_RecentProjectSerializer.Serialize(filepath, "recentProjectSerializer.txt");
 		ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
@@ -1021,6 +1031,9 @@ namespace eg
 	void EditorLayer::OpenProject(const std::filesystem::path& path)
 	{
         EG_PROFILE_FUNCTION();
+        bool isLoaded = Project::IsLoaded();
+		//if (isLoaded)
+            //ScriptEngine::Shutdown();
 		if (m_CurrentProject = Project::Load(path))
 		{
 			ScriptEngine::Init();
