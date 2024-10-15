@@ -37,6 +37,9 @@ namespace eg
 	Application::~Application()
 	{
 		EG_PROFILE_FUNCTION();
+		for (auto layer : m_LayerStack) {
+			layer->OnDetach();
+		}
 		ScriptEngine::Shutdown();
 		Renderer::Shutdown();
 	}

@@ -17,6 +17,11 @@ Editor::Editor(ApplicationSpecification spec)
     };
 
 bool Editor::OnWindowClose(WindowCloseEvent& e)
+
+	Editor::~Editor()
+	{
+	}
+	bool Editor::OnWindowClose(WindowCloseEvent& e)
 	{
 		EG_PROFILE_FUNCTION();
 
@@ -39,6 +44,4 @@ bool Editor::OnWindowClose(WindowCloseEvent& e)
 
 		return new Editor(spec);
 	};
-
-
 }

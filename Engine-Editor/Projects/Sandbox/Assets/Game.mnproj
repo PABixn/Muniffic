@@ -1,0 +1,6 @@
+Project:
+  Name: "GameJam"
+  StartScene: "Start.egscene"
+  AssetDirectory: "Assets"
+  SceneDirectory: "Scenes"
+  ScriptModulePath: "Scripts/Binaries/Game.dll"

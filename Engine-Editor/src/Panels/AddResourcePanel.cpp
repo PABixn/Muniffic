@@ -266,7 +266,7 @@ namespace eg
 		m_FontIcon = IconLoader::GetIcon(Icons::AddResource_Font);
 		m_TextIcon = IconLoader::GetIcon(Icons::AddResource_Text);
 		m_ImageIcon = IconLoader::GetIcon(Icons::AddResource_Image);
-		m_ScriptIcon = IconLoader::GetIcon(Icons::AddResource_Script);
+		m_ScriptIcon = IconLoader::GetIcon(Icons::AddResource_ScriptWhite);
 		m_NativeScriptIcon = IconLoader::GetIcon(Icons::AddResource_NativeScript);
 		m_CustomIcon = IconLoader::GetIcon(Icons::AddResource_Custom);
 	}

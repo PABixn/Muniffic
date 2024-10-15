@@ -16,7 +16,7 @@ namespace eg
 	public:
 		Editor(ApplicationSpecification spec);
 
-		~Editor() {}
+		~Editor();
 
 		EditorLayer* GetEditorLayer() { return static_cast<EditorLayer*>(GetFirstLayer()); }
 
