@@ -1,78 +1,78 @@
-Root: 4630922769743091467
+Root: 3915390608499010299
 Directories:
-  - UUID: 3946295733102745501
-    Name: Textures
-    Parent: 4630922769743091467
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 4328246595761765880
-    Name: SubTextures
-    Parent: 4630922769743091467
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 6033199917356877265
-    Name: Animations
-    Parent: 4630922769743091467
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 4944519842839294326
-    Name: Frames
-    Parent: 4630922769743091467
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 3615267952811103423
-    Name: SpriteAtlas
-    Parent: 4630922769743091467
-    Subdirectories:
-      []
-    Assets:
-      []
-  - UUID: 1583017196497690351
+  - UUID: 6037720251314281987
     Name: Fonts
-    Parent: 4630922769743091467
+    Parent: 3915390608499010299
     Subdirectories:
       []
     Assets:
-      - 5031153251243680206
-  - UUID: 7399826108421934004
+      []
+  - UUID: 8702245599158848232
+    Name: Textures
+    Parent: 3915390608499010299
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 5927266319690567279
+    Name: Animations
+    Parent: 3915390608499010299
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 3031271501238943031
+    Name: SubTextures
+    Parent: 3915390608499010299
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 499048163497618690
+    Name: Frames
+    Parent: 3915390608499010299
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 1370873334079879201
+    Name: SpriteAtlas
+    Parent: 3915390608499010299
+    Subdirectories:
+      []
+    Assets:
+      []
+  - UUID: 4363541942747616621
     Name: Shaders
-    Parent: 4630922769743091467
+    Parent: 3915390608499010299
     Subdirectories:
       []
     Assets:
       []
-  - UUID: 7414643103964661976
+  - UUID: 8201214547077326484
     Name: Scripts
-    Parent: 4630922769743091467
+    Parent: 3915390608499010299
     Subdirectories:
-      - 8233500595958880320
+      - 6825543464750784275
     Assets:
       []
-  - UUID: 8233500595958880320
+  - UUID: 6825543464750784275
     Name: Source
-    Parent: 7414643103964661976
+    Parent: 8201214547077326484
     Subdirectories:
       []
     Assets:
       []
-  - UUID: 2007812359470181113
+  - UUID: 2498417239877990040
     Name: Audio
-    Parent: 4630922769743091467
+    Parent: 3915390608499010299
     Subdirectories:
       []
     Assets:
       []
-  - UUID: 3006927521776122761
+  - UUID: 2075608658785984626
     Name: Scenes
-    Parent: 4630922769743091467
+    Parent: 3915390608499010299
     Subdirectories:
       []
     Assets:
