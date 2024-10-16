@@ -18,6 +18,7 @@
 #include "Engine/Project/ProjectSerializer.h"
 #include "Engine/Project/RecentProjectSerializer.h"
 #include "Engine/Project/ScriptSerializer.h"
+#include "MarkdownRenderer/Markdown.h"
 #include "IconLoader.h"
 
 namespace eg
@@ -43,6 +44,7 @@ namespace eg
 	void EditorLayer::OnAttach()
 	{
 		LoadFonts();
+
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
 		resourceSystemConfig.ResourceDirectory = "../resources";
@@ -225,6 +227,7 @@ namespace eg
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 		ImGui::PopStyleColor();
+
 		//Welcoming panel code
 		if (m_WelcomePanel->IsShown()) {
 			ImGuiStyle& style = ImGui::GetStyle();
@@ -244,9 +247,12 @@ namespace eg
 			ImGui::End();
 
 		}
-		else {
-			if (!projectOpened) {
-				if (m_WelcomePanel->isNewProjectCreated()) {
+		else
+		{
+			if (!projectOpened)
+			{
+				if (m_WelcomePanel->isNewProjectCreated())
+				{
 					//nya 2
 					NewProject();
 					m_NameNewProjectPanel->setNameGiven(true);
@@ -1176,7 +1182,8 @@ namespace eg
 		m_AddResourcePanel = nullptr;
 	}
 
-	void EditorLayer::LoadFonts() {
+	void EditorLayer::LoadFonts()
+	{
 		auto& io = ImGui::GetIO();
 
 		ImFontConfig font_config;
@@ -1189,15 +1196,23 @@ namespace eg
 
 		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, &font_config, full_ranges);
 		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, &font_config, full_ranges);
-		m_PoppinsRegularFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsRegularFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, &font_config, full_ranges);
 		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, &font_config, full_ranges);
-		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		m_PoppinsSemiBoldFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 40.0f, NULL, io.Fonts->GetGlyphRangesDefault());
-		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 20.0f, &font_config, full_ranges);
+		m_PoppinsSemiBoldFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 40.0f, &font_config, full_ranges);
+		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf", 50.0f, &font_config, full_ranges);
+		m_PoppinsBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsItalicFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Italic.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsBoldItalicFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-BoldItalic.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsHeading1Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 36.0f, &font_config, full_ranges);
+		m_PoppinsHeading2Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 31.5f, &font_config, full_ranges);
+		m_PoppinsHeading3Font = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Bold.ttf", 27.0f, &font_config, full_ranges);
 
 		io.FontDefault = m_PoppinsRegularFont;
 
 		io.Fonts->Build();
+
+		Markdown::init(m_PoppinsRegularFont, m_PoppinsBoldFont, m_PoppinsItalicFont, m_PoppinsBoldItalicFont, m_PoppinsHeading1Font, m_PoppinsHeading2Font, m_PoppinsHeading3Font);
 	}
 
 }

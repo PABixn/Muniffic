@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <cctype>
 #include <algorithm>
+#include "../MarkdownRenderer/Markdown.h"
 #include "../IconLoader.h"
 
 namespace eg
@@ -226,6 +227,7 @@ namespace eg
 					ImGui::PopStyleColor(3);
 
 					buttonIndex++;
+
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - iconSize - iconCenterY / 2);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding * 2.5);
 					ImGui::Text(GetLanguageSymbol(language).c_str());
@@ -244,7 +246,11 @@ namespace eg
 
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding * 2);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
-					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
+					//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
+					//Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding * 2, padding * 2);
+					ImGui::Indent(padding * 2);
+					ImGui::Text(msg.c_str());
+					ImGui::Unindent(padding * 2);
 					ImGui::PopTextWrapPos();
 
 					drawList->ChannelsSetCurrent(1);
@@ -265,7 +271,8 @@ namespace eg
 				else
 				{
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
+					//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
+					Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding, padding);
 					ImGui::PopTextWrapPos();
 					msg = "";
 
@@ -286,7 +293,8 @@ namespace eg
 		if (!msg.empty())
 		{
 			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-			ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
+			//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
+			Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding, padding);
 			ImGui::PopTextWrapPos();
 		}
 

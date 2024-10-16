@@ -135,6 +135,12 @@ namespace eg
 		ImFont* m_PoppinsRegularFont;
 		ImFont* m_PoppinsRegularFontBig;
 		ImFont* m_PoppinsMediumFont;
+		ImFont* m_PoppinsBoldFont;
+		ImFont* m_PoppinsItalicFont;
+		ImFont* m_PoppinsBoldItalicFont;
+		ImFont* m_PoppinsHeading1Font;
+		ImFont* m_PoppinsHeading2Font;
+		ImFont* m_PoppinsHeading3Font;
 		ImFont* m_PoppinsSemiBoldFont;
 		ImFont* m_PoppinsSemiBoldFontBig;
 		ImFont* m_PoppinsExtraBoldFont;
