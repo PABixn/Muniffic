@@ -1,47 +1,18 @@
 Scene: Untitled
 Entities:
-  - Entity: 8408273594048372423
+  - Entity: 6822932638832835660
     Name: Cube
     TagComponent:
-      Tag: Empty Entity
+      Tag: Floor
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [0, -0.899999976, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [9.39999962, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 0.769999981
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 34
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
-      IsInherited: false
-      IsInheritedInChildren: false
-  - Entity: 265142094999225801
-    Name: Cube
-    TagComponent:
-      Tag: Empty Entity
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      IsInherited: true
-      IsInheritedInChildren: true
-    AnimatorComponent:
-      Speed: 1
-      Animations:
-        - 1084221065774113432
-      Transitions:
-        []
-    ScriptComponent:
-      Scripts:
-        - ScriptUUID: 5901247596271073466
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:
@@ -59,23 +30,51 @@ Entities:
       IsInherited: false
       IsInheritedInChildren: false
       IsSensor: false
-  - Entity: 2671254940793511398
+  - Entity: 335369285282069291
     Name: Cube
     TagComponent:
-      Tag: Empty Entity
+      Tag: Camera
     TransformComponent:
-      Translation: [0, -1.10000002, 0]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [-10.8999996, 1, 1]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.769999981
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 5002865647422000459
+    Name: Cube
+    TagComponent:
+      Tag: Player
+    TransformComponent:
+      Translation: [0, 1.20000005, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
+      Color: [0.826254845, 0.172269329, 0.172269329, 1]
       TilingFactor: 1
       IsInherited: false
       IsInheritedInChildren: false
+    ScriptComponent:
+      Scripts:
+        []
+      IsInherited: false
+      IsInheritedInChildren: false
     RigidBody2DComponent:
-      Body Type: Static
+      Body Type: Dynamic
       FixedRotation: false
       IsInherited: false
       IsInheritedInChildren: false

@@ -644,7 +644,7 @@ namespace eg
 	void AssistantManager::SaveAssistant()
 	{
 		EG_PROFILE_FUNCTION();
-		std::filesystem::path path = Project::GetResourcesPath() / "resources/assistant/assistant.mndata";
+		std::filesystem::path path = std::filesystem::absolute("resources/assistant/assistant.mndata");
 		YAML::Emitter out;
 
 		if(!std::filesystem::exists(path.parent_path()))
@@ -662,7 +662,7 @@ namespace eg
 	bool AssistantManager::LoadAssistant()
 	{
 		EG_PROFILE_FUNCTION();
-		std::filesystem::path path = "resources/assistant/assistant.mndata";
+		std::filesystem::path path = std::filesystem::absolute("resources/assistant/assistant.mndata");
 
 		if (!std::filesystem::exists(path))
 		{

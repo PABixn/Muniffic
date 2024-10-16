@@ -7,7 +7,7 @@ set(MyProject_BUILD_TYPES Debug RelWithDebInfo Release Dist)
 project(${PROJECT_NAME} LANGUAGES CSharp)
 
 # Define configurations
-
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dist" CACHE STRING "" FORCE)
 
 # set(MunifficRootDir "../../../../../")
 
