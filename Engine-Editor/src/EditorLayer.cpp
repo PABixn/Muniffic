@@ -1022,11 +1022,11 @@ namespace eg
             ConsolePanel::Log("File: EditorLayer.cpp - Could not load " + path.filename().string() + " - not a project file", ConsolePanel::LogType::Error);
             return false;
 		}
-		if (path == Project::GetProjectPath()){
+		if (Project::GetActive() && path == Project::GetProjectPath()) {
 			ConsolePanel::Log("File: EditorLayer.cpp - Project already opened", ConsolePanel::LogType::Warning);
             return false;
 	    }
-        //CloseProject();
+  
 		OpenProject(filepath);
 		m_RecentProjectSerializer.Serialize(filepath, "recentProjectSerializer.txt");
 		ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
