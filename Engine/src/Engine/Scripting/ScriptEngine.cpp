@@ -526,13 +526,12 @@ namespace eg
 		return mono_runtime_invoke(method, instance, params, &exception);
 	}
 
-	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity, UUID uuid)
+	ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity)
 		: m_ScriptClass(scriptClass)
 	{
 		m_Instance = m_ScriptClass->Instantiate();
 		m_InstanceHandle = mono_gchandle_new(m_Instance, true);
 
-		m_UUID = uuid;
 		m_EntityUUID = entity.GetUUID();
 
 		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);

@@ -98,7 +98,7 @@ namespace eg {
 	class ScriptInstance
 	{
 	public:
-		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity, UUID uuid);
+		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity);
 		~ScriptInstance();
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
