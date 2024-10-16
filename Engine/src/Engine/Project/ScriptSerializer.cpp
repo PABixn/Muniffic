@@ -16,7 +16,7 @@ namespace eg
 		myfile << "local MunifficRootDir = \"../../../../\"\n";
 		myfile << "include(MunifficRootDir .. \"vendor/premake/premake_customization/solution_items.lua\")\n";
 		myfile << "workspace \""<<name<<"\"\n";
-		
+
 
 		myfile << "architecture \"x86_64\"\n";
 		myfile << "startproject \"Game\"\n";
@@ -82,5 +82,5 @@ namespace eg
 		return true;
 	}
 
-	
+
 }

@@ -28,6 +28,7 @@ namespace eg
 
 	bool ResourceSerializer::DeserializeResourceCache()
 	{
+        EG_PROFILE_FUNCTION();
 		AssetDirectorySerializer::DeserializeAssetDirectoryCache();
 
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
@@ -224,7 +225,7 @@ namespace eg
 				TextureResourceData* data = new TextureResourceData();
 				if(resource["ParentDirectory"])
 					data->ParentDirectory = resource["ParentDirectory"].as<UUID>();
-				else 
+				else
 					data->ParentDirectory = 0;
 				if(resource["ResourceName"])
 					data->ResourceName = resource["ResourceName"].as<std::string>();
@@ -355,7 +356,7 @@ namespace eg
 
 					CacheSpriteAtlas(uuid, data);
 				}
-			} 
+			}
 
 			if (scriptResources)
 			{
@@ -423,6 +424,7 @@ namespace eg
 
 	void ResourceSerializer::SerializeResourceCache()
 	{
+        EG_PROFILE_FUNCTION();
 		AssetDirectorySerializer::SerializeAssetDirectoryCache();
 
 		std::filesystem::path textureMetadataPath = ResourceUtils::GetMetadataPath(ResourceType::Image);
@@ -605,7 +607,7 @@ namespace eg
 			scriptOut << YAML::Key << "Extension" << YAML::Value << value->Extension;
 			scriptOut << YAML::Key << "IsEnabled" << YAML::Value << value->IsEnabled;
 			scriptOut << YAML::Key << "Methods" << YAML::Value << YAML::BeginSeq;
-			
+
 			for (auto& [key2, value2] : value->Methods)
 			{
 				scriptOut << YAML::BeginMap;
@@ -630,7 +632,7 @@ namespace eg
 
 		scriptOut << YAML::EndSeq;
 		scriptOut << YAML::EndMap;
-		
+
 		audioOut << YAML::BeginMap;
 		audioOut << YAML::Key << "Resources" << YAML::Value << YAML::BeginSeq;
 
@@ -677,6 +679,7 @@ namespace eg
 
 	void ResourceSerializer::CacheTexture(UUID uuid, TextureResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		//std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
 
 		//if (!std::filesystem::exists(finalPath))
@@ -709,6 +712,7 @@ namespace eg
 
 	void ResourceSerializer::CacheSubTexture(UUID uuid, SubTextureResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		if (SubTextureResourceDataCache.find(uuid) != SubTextureResourceDataCache.end())
 		{
 			if (SubTextureResourceDataCache[uuid] != nullptr)
@@ -724,6 +728,7 @@ namespace eg
 
 	void ResourceSerializer::CacheFont(UUID uuid, FontResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		/*std::filesystem::path finalPath = ResourceDatabase::GetResourcePath(uuid);
 
 		if (!std::filesystem::exists(finalPath))
@@ -756,6 +761,7 @@ namespace eg
 
 	void ResourceSerializer::CacheScript(UUID uuid, ScriptResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		if (ScriptResourceDataCache.find(uuid) != ScriptResourceDataCache.end())
 		{
 			if (ScriptResourceDataCache[uuid] != nullptr)
@@ -771,6 +777,7 @@ namespace eg
 
 	void ResourceSerializer::CacheAudio(UUID uuid, AudioResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		if (AudioResourceDataCache.find(uuid) != AudioResourceDataCache.end())
 		{
 			if (AudioResourceDataCache[uuid] != nullptr)
@@ -786,6 +793,7 @@ namespace eg
 
 	void ResourceSerializer::CacheAnimation(UUID uuid, AnimationResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		if (AnimationResourceDataCache.find(uuid) != AnimationResourceDataCache.end())
 		{
 			if (AnimationResourceDataCache[uuid] != nullptr)
@@ -801,6 +809,7 @@ namespace eg
 
 	void ResourceSerializer::CacheFrame(UUID uuid, FrameResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		if (FrameResourceDataCache.find(uuid) != FrameResourceDataCache.end())
 		{
 			if (FrameResourceDataCache[uuid] != nullptr)
@@ -812,11 +821,12 @@ namespace eg
 		FrameResourceDataCache[uuid] = data;
 		ResourceTypeInfo[uuid] = ResourceType::Frame;
 		AssetDirectoryManager::addAsset(data->ParentDirectory, uuid);
-	
+
 	}
 
 	void ResourceSerializer::CacheSpriteAtlas(UUID uuid, SpriteAtlasResourceData* data)
 	{
+        EG_PROFILE_FUNCTION();
 		if (SpriteAtlasResourceDataCache.find(uuid) != SpriteAtlasResourceDataCache.end())
 		{
 			if (SpriteAtlasResourceDataCache[uuid] != nullptr)

@@ -3,10 +3,12 @@
 
 namespace eg {
 	BasicAudio::BasicAudio(std::string& path) {
+		EG_PROFILE_FUNCTION();
 		m_Path = std::filesystem::path(path);
 	}
 
 	void BasicAudio::InitializeXAudio2() {
+		EG_PROFILE_FUNCTION();
 		hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 		if (FAILED(hr))
 			EG_CORE_TRACE(hr);
@@ -21,6 +23,7 @@ namespace eg {
 	}
 	HRESULT BasicAudio::FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DWORD& dwChunkDataPosition)
 	{
+		EG_PROFILE_FUNCTION();
 		HRESULT hr = S_OK;
 		if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
 			return HRESULT_FROM_WIN32(GetLastError());
@@ -76,6 +79,7 @@ namespace eg {
 
 	HRESULT BasicAudio::ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD bufferoffset)
 	{
+		EG_PROFILE_FUNCTION();
 		HRESULT hr = S_OK;
 		if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, bufferoffset, NULL, FILE_BEGIN))
 			return HRESULT_FROM_WIN32(GetLastError());
@@ -133,8 +137,8 @@ namespace eg {
 		BYTE* pDataBuffer = new BYTE[dwChunkSize];
 		ReadChunkData(hFile, pDataBuffer, dwChunkSize, dwChunkPosition);
 
-		buffer.AudioBytes = dwChunkSize;  
-		buffer.pAudioData = pDataBuffer;  
+		buffer.AudioBytes = dwChunkSize;
+		buffer.pAudioData = pDataBuffer;
 		buffer.Flags = XAUDIO2_END_OF_STREAM;
 		if (looped) buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
 		if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice, (WAVEFORMATEX*)&wfx))) EG_CORE_TRACE(hr);
@@ -142,15 +146,17 @@ namespace eg {
 		if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer)))
 			EG_CORE_TRACE(hr);
 		if (FAILED(hr = pSourceVoice->Start(0))) EG_CORE_TRACE(hr);
-			
+
 		return true;
 	}
 
 	void BasicAudio::Stop() {
+		EG_PROFILE_FUNCTION();
 		pSourceVoice->Stop();
 	}
 
 	std::string BasicAudio::GetFileName() {
+		EG_PROFILE_FUNCTION();
 		return m_Path.filename().string();
 	}
 }

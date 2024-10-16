@@ -9,12 +9,12 @@
 namespace eg {
 
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-		: m_AspectRatio(aspectRatio), m_Bounds({ -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel }), 
+		: m_AspectRatio(aspectRatio), m_Bounds({ -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel }),
 		m_Camera(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top), m_Rotation(rotation)
 	{
 	}
 
-	
+
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
@@ -39,7 +39,7 @@ namespace eg {
 			m_CameraPosition.x -= -sin(glm::radians(m_CameraRotation)) * m_CameraSpeed * (float)ts * m_ZoomLevel;
 			m_CameraPosition.y -= cos(glm::radians(m_CameraRotation)) * m_CameraSpeed * (float)ts * m_ZoomLevel;
 		}
-		
+
 		if (m_Rotation) {
 			if (eg::Input::IsKeyPressed(KeyCode::Q))
 				m_CameraRotation += m_CameraRotationSpeed * (float)ts;
@@ -55,7 +55,7 @@ namespace eg {
 		}
 
 		m_Camera.SetPosition(m_CameraPosition);
-		
+
 	}
 
 	void OrthographicCameraController::OnEvent(Event& e)
@@ -68,12 +68,14 @@ namespace eg {
 
 	void OrthographicCameraController::OnResize(float width, float height)
 	{
+        EG_PROFILE_FUNCTION();
 		m_AspectRatio = width / height;
 		RecalculateView();
 	}
 
 	void OrthographicCameraController::RecalculateView()
 	{
+        EG_PROFILE_FUNCTION();
 		m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
 		m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
 	}
@@ -86,7 +88,7 @@ namespace eg {
 		else
 			m_ZoomLevel *= m_ZoomChange;
 
-		
+
 		RecalculateView();
 		return false;
 	}
@@ -94,10 +96,10 @@ namespace eg {
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
 		EG_PROFILE_FUNCTION();
-		
+
 		OnResize((float)e.GetWidth(), (float)e.GetHeight());
 		return false;
 	}
 
-	
+
 }

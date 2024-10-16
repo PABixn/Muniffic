@@ -9,6 +9,7 @@ namespace eg
 
 	bool textLoaderLoad(ResourceLoader* loader, std::string name, Resource* outResource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!loader || name.empty() || !outResource)
 		{
 			EG_CORE_ERROR("textLoaderLoad called with nullptr");
@@ -42,6 +43,7 @@ namespace eg
 
 	void textLoaderUnload(ResourceLoader* loader, Resource* resource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!loader || !resource)
 		{
 			EG_CORE_WARN("textLoaderUnload called with nullptr");
@@ -59,6 +61,7 @@ namespace eg
 
 	ResourceLoader textResourceLoaderCreate()
 	{
+        EG_PROFILE_FUNCTION();
 		ResourceLoader loader;
 		loader.Type = ResourceType::Text;
 		loader.load = textLoaderLoad;

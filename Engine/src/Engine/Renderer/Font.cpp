@@ -16,20 +16,25 @@
 namespace eg
 {
 	Font::Font(MSDFData* data, Ref<Texture2D> atlasTexture)
-		: m_Data(data), m_AtlasTexture(atlasTexture) {}
+		: m_Data(data), m_AtlasTexture(atlasTexture) {
+        EG_PROFILE_FUNCTION();
+        }
 
 	Font::Font(Font* font)
-		: m_Data(font->m_Data), m_AtlasTexture(font->m_AtlasTexture) {}
+		: m_Data(font->m_Data), m_AtlasTexture(font->m_AtlasTexture) {
+        EG_PROFILE_FUNCTION();
+        }
 
 	Font::~Font()
 	{
-		//delete m_Data;
+        EG_PROFILE_FUNCTION();
 	}
 
 	UUID Font::s_DefaultFontUUID;
 
 	void Font::LoadFont(const std::filesystem::path& path)
 	{
+        EG_PROFILE_FUNCTION();
 		FontResourceData* data = new FontResourceData();
 		data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Font);
 		data->ResourceName = path.stem().string();

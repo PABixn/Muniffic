@@ -10,10 +10,12 @@ namespace eg
 {
 	RecentProjectSerializer::RecentProjectSerializer()
 	{
+		EG_PROFILE_FUNCTION();
 		Deserialize("recentProjectSerializer.txt");
 	}
 
 	void RecentProjectSerializer::DeleteProject(int id) {
+		EG_PROFILE_FUNCTION();
 		int cwel = m_ProjectList[id].find_last_of("\\");
 		std::string toDelete = m_ProjectList[id].erase(cwel);
 		std::filesystem::remove_all(toDelete);
@@ -23,6 +25,7 @@ namespace eg
 
 	bool RecentProjectSerializer::Serialize(const std::string& projectName, const std::string& path)
 	{
+		EG_PROFILE_FUNCTION();
 		bool present = false;
 		if (projectName != "")
 		{
@@ -70,11 +73,12 @@ namespace eg
 
 	bool RecentProjectSerializer::Deserialize(const std::string& path)
 	{
+		EG_PROFILE_FUNCTION();
 		YAML::Node data;
 		try
 		{
 			std::filesystem::path abs = std::filesystem::absolute(path);
-			
+
 			if (!std::filesystem::exists(abs))
 			{
 				//std::filesystem::create_(path);
@@ -121,5 +125,5 @@ namespace eg
 		ConsolePanel::Log("File: RecentProjectSerializer.cpp - Successfully loaded: " + path, ConsolePanel::LogType::Info);
 		return true;
 	}
-	
+
 }

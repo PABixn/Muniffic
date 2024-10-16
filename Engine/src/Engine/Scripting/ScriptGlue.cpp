@@ -22,6 +22,7 @@ namespace eg
 
 		std::string MonoStringToString(MonoString *string)
 		{
+            EG_PROFILE_FUNCTION();
 			char *cStr = mono_string_to_utf8(string);
 			std::string str(cStr);
 			mono_free(cStr);
@@ -30,6 +31,7 @@ namespace eg
 
 		const char* getSubstringAfterColon(const char *input)
 		{
+            EG_PROFILE_FUNCTION();
 			const char* colonPosition = strchr(input, ':');
 
 			if (colonPosition != nullptr)
@@ -42,6 +44,7 @@ namespace eg
 
 		const char* getSubstringAfterDot(const char *input)
 		{
+            EG_PROFILE_FUNCTION();
 			const char* colonPosition = strchr(input, '.');
 
 			if (colonPosition != nullptr)
@@ -55,6 +58,7 @@ namespace eg
 		template <typename... Component>
 		bool IsInheritedInChildren(MonoType *managedType, Entity e)
 		{
+            EG_PROFILE_FUNCTION();
 			bool isInherited = false;
 
 			([&managedType, &e, &isInherited]()
@@ -69,12 +73,14 @@ namespace eg
 		template <typename... Component>
 		bool IsInheritedInChildren(ComponentGroup<Component...>, MonoType *managedType, Entity e)
 		{
+            EG_PROFILE_FUNCTION();
 			return IsInheritedInChildren<Component...>(managedType, e);
 		}
 
 		template <typename... Component>
 		bool IsInheritedFromParent(MonoType *managedType, Entity e)
 		{
+            EG_PROFILE_FUNCTION();
 			bool isInherited = false;
 
 			([&managedType, &e, &isInherited]()
@@ -89,12 +95,14 @@ namespace eg
 		template <typename... Component>
 		bool IsInheritedFromParent(ComponentGroup<Component...>, MonoType *managedType, Entity e)
 		{
+            EG_PROFILE_FUNCTION();
 			return IsInheritedFromParent<Component...>(managedType, e);
 		}
 
 		template <typename... Component>
 		void CopyComponentToChildren(MonoType *managedType, Entity e, bool isUndo)
 		{
+            EG_PROFILE_FUNCTION();
 			([&managedType, &e, &isUndo]()
 			 {
 					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
@@ -105,12 +113,14 @@ namespace eg
 		template <typename... Component>
 		void CopyComponentToChildren(ComponentGroup<Component...>, MonoType *managedType, Entity e, bool isUndo)
 		{
+            EG_PROFILE_FUNCTION();
 			CopyComponentToChildren<Component...>(managedType, e, isUndo);
 		}
 
 		template <typename... Component>
 		void CopyComponentValuesToChildren(MonoType *managedType, Entity e)
 		{
+            EG_PROFILE_FUNCTION();
 			([&managedType, &e]()
 			 {
 					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
@@ -121,12 +131,14 @@ namespace eg
 		template <typename... Component>
 		void CopyComponentValuesToChildren(ComponentGroup<Component...>, MonoType *managedType, Entity e)
 		{
+            EG_PROFILE_FUNCTION();
 			CopyComponentValuesToChildren<Component...>(managedType, e);
 		}
 
 		template <typename... Component>
 		void InheritComponent(MonoType *managedType, Entity e, bool isUndo)
 		{
+            EG_PROFILE_FUNCTION();
 			([&managedType, &e, &isUndo]()
 			 {
 					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
@@ -137,12 +149,14 @@ namespace eg
 		template <typename... Component>
 		void InheritComponent(ComponentGroup<Component...>, MonoType *managedType, Entity e, bool isUndo)
 		{
+            EG_PROFILE_FUNCTION();
 			InheritComponent<Component...>(managedType, e, isUndo);
 		}
 
 		template <typename... Component>
 		void AddComponent(MonoType *managedType, Entity e)
 		{
+            EG_PROFILE_FUNCTION();
 			([&managedType, &e]()
 			 {
 					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
@@ -153,12 +167,14 @@ namespace eg
 		template <typename... Component>
 		void AddComponent(ComponentGroup<Component...>, MonoType *managedType, Entity e)
 		{
+            EG_PROFILE_FUNCTION();
 			AddComponent<Component...>(managedType, e);
 		}
 
 		template <typename... Component>
 		void RemoveComponent(MonoType *managedType, Entity e)
 		{
+            EG_PROFILE_FUNCTION();
 			([&managedType, &e]()
 			 {
 					if (std::strcmp(getSubstringAfterColon(typeid(Component).name()), getSubstringAfterDot(mono_type_get_name(managedType))) == 0)
@@ -169,6 +185,7 @@ namespace eg
 		template <typename... Component>
 		void RemoveComponent(ComponentGroup<Component...>, MonoType *managedType, Entity e)
 		{
+            EG_PROFILE_FUNCTION();
 			RemoveComponent<Component...>(managedType, e);
 		}
 	}
@@ -183,17 +200,20 @@ namespace eg
 #pragma region Console
 	static void Console_Log(MonoString* message, ConsolePanel::LogType logType)
 	{
+        EG_PROFILE_FUNCTION();
 		ConsolePanel::Log(Utils::MonoStringToString(message), logType);
 	}
 #pragma endregion
 #pragma region Entity
 	static MonoObject* Entity_GetScriptInstance(UUID uuid, MonoString* name)
 	{
+        EG_PROFILE_FUNCTION();
 		return ScriptEngine::GetManagedInstance(uuid, Utils::MonoStringToString(name));
 	}
 
 	static bool Entity_IsInheritedInChildren(UUID uuid, MonoReflectionType *componentType)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
@@ -204,6 +224,7 @@ namespace eg
 
 	static bool Entity_IsInheritedFromParent(UUID uuid, MonoReflectionType *componentType)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
@@ -214,6 +235,7 @@ namespace eg
 
 	static void Entity_CopyComponentToChildren(UUID uuid, MonoReflectionType *componentType, bool isUndo)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
@@ -224,6 +246,7 @@ namespace eg
 
 	static void Entity_CopyComponentValuesToChildren(UUID uuid, MonoReflectionType *componentType)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
@@ -234,6 +257,7 @@ namespace eg
 
 	static void Entity_RemoveAnyChildren(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -242,6 +266,7 @@ namespace eg
 
 	static void Entity_RemoveChild(UUID uuid, UUID childUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -251,6 +276,7 @@ namespace eg
 
 	static void Entity_AddChild(UUID uuid, UUID childUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -260,6 +286,7 @@ namespace eg
 
 	static bool Entity_IsChildOfAny(UUID uuid, UUID childUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -269,6 +296,7 @@ namespace eg
 
 	static bool Entity_IsChild(UUID uuid, UUID childUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -278,6 +306,7 @@ namespace eg
 
 	static int64_t Entity_GetParent(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -289,6 +318,7 @@ namespace eg
 
 	static void Entity_SetParent(UUID uuid, UUID parentUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -298,6 +328,7 @@ namespace eg
 
 	static void Entity_InheritComponent(UUID uuid, MonoReflectionType *componentType, bool isUndo)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
@@ -314,6 +345,7 @@ namespace eg
 
 	static int64_t* Entity_GetAnyChildren(UUID uuid, int* size)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -335,6 +367,7 @@ namespace eg
 
 	static int64_t* Entity_GetChildren(UUID uuid, int* size)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -356,6 +389,7 @@ namespace eg
 
 	static bool Entity_HasComponent(UUID uuid, MonoReflectionType *componentType)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -368,6 +402,7 @@ namespace eg
 
 	static void Entity_AddComponent(UUID uuid, MonoReflectionType *componentType)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
@@ -384,6 +419,7 @@ namespace eg
 
 	static void Entity_RemoveComponent(UUID uuid, MonoReflectionType *componentType)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
@@ -400,6 +436,7 @@ namespace eg
 
 	static int64_t Entity_FindEntityByName(MonoString *name)
 	{
+        EG_PROFILE_FUNCTION();
 		char *cStr = mono_string_to_utf8(name);
 
 		Scene *scene = ScriptEngine::GetSceneContext();
@@ -415,9 +452,10 @@ namespace eg
 
 	static int64_t* Entity_FindEntitiesByName(MonoString * name, int* size)
         {
+            EG_PROFILE_FUNCTION();
             Scene* scene = ScriptEngine::GetSceneContext();
             EG_CORE_ASSERT(scene, "No scene context!");
-			
+
 			char *cStr = mono_string_to_utf8(name);
 
 			std::vector<Entity> entities;
@@ -436,6 +474,7 @@ namespace eg
 
 	static bool Entity_Exists(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		return scene->EntityExists(uuid);
@@ -443,6 +482,7 @@ namespace eg
 
 	static int64_t Entity_Create(MonoString *name)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->CreateEntity(Utils::MonoStringToString(name));
@@ -455,6 +495,7 @@ namespace eg
 
 	static void Entity_Destroy(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
@@ -463,6 +504,7 @@ namespace eg
 
 	static MonoString *Entity_GetName(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
@@ -471,6 +513,7 @@ namespace eg
 
 	static void Entity_SetName(UUID uuid, MonoString *name)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity e = scene->GetEntityByUUID(uuid);
@@ -482,6 +525,7 @@ namespace eg
 #pragma region Transform
 	static void TransformComponent_GetTranslation(UUID uuid, glm::vec3 *outTranslation)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		*outTranslation = entity.GetComponent<TransformComponent>().Translation;
@@ -489,6 +533,7 @@ namespace eg
 
 	static void TransformComponent_SetTranslation(UUID uuid, glm::vec3 *translation)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<TransformComponent>().Translation = *translation;
@@ -496,6 +541,7 @@ namespace eg
 
 	static void TransformComponent_GetRotation(UUID uuid, glm::vec3 *outRotation)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		*outRotation = entity.GetComponent<TransformComponent>().Rotation;
@@ -503,6 +549,7 @@ namespace eg
 
 	static void TransformComponent_SetRotation(UUID uuid, glm::vec3 *rotation)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<TransformComponent>().Rotation = *rotation;
@@ -510,6 +557,7 @@ namespace eg
 
 	static void TransformComponent_GetScale(UUID uuid, glm::vec3 *outScale)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		*outScale = entity.GetComponent<TransformComponent>().Scale;
@@ -517,6 +565,7 @@ namespace eg
 
 	static void TransformComponent_SetScale(UUID uuid, glm::vec3 *scale)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<TransformComponent>().Scale = *scale;
@@ -527,6 +576,7 @@ namespace eg
 #pragma region SpriteRenderer
 	static void SpriteRendererComponent_GetColor(UUID uuid, glm::vec4 *outColor)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		*outColor = entity.GetComponent<SpriteRendererComponent>().Color;
@@ -534,6 +584,7 @@ namespace eg
 
 	static void SpriteRendererComponent_SetColor(UUID uuid, glm::vec4 *color)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<SpriteRendererComponent>().Color = *color;
@@ -541,6 +592,7 @@ namespace eg
 
 	static float SpriteRendererComponent_GetTilingFactor(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<SpriteRendererComponent>().TilingFactor;
@@ -548,6 +600,7 @@ namespace eg
 
 	static void SpriteRendererComponent_SetTilingFactor(UUID uuid, float tilingFactor)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<SpriteRendererComponent>().TilingFactor = tilingFactor;
@@ -555,6 +608,7 @@ namespace eg
 
 	static MonoString *SpriteRendererComponent_GetTexture(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		Ref<Texture2D> texture = entity.GetComponent<SpriteRendererComponent>().Texture;
@@ -563,6 +617,7 @@ namespace eg
 
 	static void SpriteRendererComponent_SetTexture(UUID uuid, MonoString *texturePath)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<SpriteRendererComponent>().Texture = Texture2D::Create(Utils::MonoStringToString(texturePath));
@@ -572,6 +627,7 @@ namespace eg
 #pragma region CircleRenderer
 	static void CircleRendererComponent_GetColor(UUID uuid, glm::vec4 *outColor)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		*outColor = entity.GetComponent<CircleRendererComponent>().Color;
@@ -579,6 +635,7 @@ namespace eg
 
 	static void CircleRendererComponent_SetColor(UUID uuid, glm::vec4 *color)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CircleRendererComponent>().Color = *color;
@@ -586,6 +643,7 @@ namespace eg
 
 	static float CircleRendererComponent_GetThickness(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CircleRendererComponent>().Thickness;
@@ -593,6 +651,7 @@ namespace eg
 
 	static void CircleRendererComponent_SetThickness(UUID uuid, float thickness)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CircleRendererComponent>().Thickness = thickness;
@@ -600,6 +659,7 @@ namespace eg
 
 	static float CircleRendererComponent_GetFade(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CircleRendererComponent>().Fade;
@@ -607,6 +667,7 @@ namespace eg
 
 	static void CircleRendererComponent_SetFade(UUID uuid, float fade)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CircleRendererComponent>().Fade = fade;
@@ -616,6 +677,7 @@ namespace eg
 #pragma region Animator
 	static void AnimatorComponent_PlayAnimation(UUID uuid, MonoString *animationName)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->Play();
@@ -623,6 +685,7 @@ namespace eg
 
 	static void AnimatorComponent_StopAnimation(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->Stop();
@@ -630,6 +693,7 @@ namespace eg
 
 	static void AnimatorComponent_UpdateAnimation(UUID uuid, float dt)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->Update(dt);
@@ -637,6 +701,7 @@ namespace eg
 
 	static void AnimatorComponent_ChangeAnimation(UUID uuid, MonoString *animationName)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->ChangeAnimation(Utils::MonoStringToString(animationName));
@@ -644,6 +709,7 @@ namespace eg
 
 	static void AnimatorComponent_PauseAnimation(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->Pause();
@@ -651,6 +717,7 @@ namespace eg
 
 	static void AnimatorComponent_SetSpeed(UUID uuid, float speed)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->SetSpeed(speed);
@@ -658,6 +725,7 @@ namespace eg
 
 	static float AnimatorComponent_GetSpeed(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<AnimatorComponent>().Animator2D->GetSpeed();
@@ -665,6 +733,7 @@ namespace eg
 
 	static const Ref<Animation> AnimatorComponent_GetCurrentAnimation(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<AnimatorComponent>().Animator2D->GetCurrentAnimation();
@@ -672,6 +741,7 @@ namespace eg
 
 	static void AnimatorComponent_AddAnimation(UUID uuid, MonoString *animationName)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->AddAnimationWithName(Utils::MonoStringToString(animationName));
@@ -679,6 +749,7 @@ namespace eg
 
 	static void AnimatorComponent_RemoveAnimation(UUID uuid, MonoString *animationName)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->RemoveAnimation(Utils::MonoStringToString(animationName));
@@ -686,6 +757,7 @@ namespace eg
 
 	static void AnimatorComponent_RemoveLastAnimation(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->RemoveLastAnimation();
@@ -693,6 +765,7 @@ namespace eg
 
 	static void AnimatorComponent_TransitionByIndex(UUID uuid, int toIndex)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->Transition(toIndex);
@@ -700,6 +773,7 @@ namespace eg
 
 	static void AnimatorComponent_Transition(UUID uuid, MonoString *toName)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->Transition(Utils::MonoStringToString(toName));
@@ -707,6 +781,7 @@ namespace eg
 
 	static void AnimatorComponent_AddTransition(UUID uuid, MonoString *fromName, MonoString *toName)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->AddTransition(Utils::MonoStringToString(fromName), Utils::MonoStringToString(toName));
@@ -714,6 +789,7 @@ namespace eg
 
 	static void AnimatorComponent_AddTransitionByIndex(UUID uuid, int fromIndex, int toIndex)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->AddTransition(fromIndex, toIndex);
@@ -721,6 +797,7 @@ namespace eg
 
 	static void AnimatorComponent_RemoveTransition(UUID uuid, MonoString *fromName, MonoString *toName)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->RemoveTransition(Utils::MonoStringToString(fromName), Utils::MonoStringToString(toName));
@@ -728,6 +805,7 @@ namespace eg
 
 	static void AnimatorComponent_RemoveTransitionByIndex(UUID uuid, int fromIndex, int toIndex)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<AnimatorComponent>().Animator2D->RemoveTransition(fromIndex, toIndex);
@@ -735,6 +813,7 @@ namespace eg
 
 	static bool AnimatorComponent_CanTransition(UUID uuid, MonoString *fromName, MonoString *toName)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<AnimatorComponent>().Animator2D->CanTransition(Utils::MonoStringToString(fromName), Utils::MonoStringToString(toName));
@@ -742,6 +821,7 @@ namespace eg
 
 	static bool AnimatorComponent_CanTransitionByIndex(UUID uuid, int fromIndex, int toIndex)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<AnimatorComponent>().Animator2D->CanTransition(fromIndex, toIndex);
@@ -751,6 +831,7 @@ namespace eg
 #pragma region Camera
 	static bool CameraComponent_IsPrimary(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CameraComponent>().Primary;
@@ -758,6 +839,7 @@ namespace eg
 
 	static void CameraComponent_SetPrimary(UUID uuid, bool primary)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().Primary = primary;
@@ -765,6 +847,7 @@ namespace eg
 
 	static bool CameraComponent_IsFixedAspectRatio(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CameraComponent>().FixedAspectRatio;
@@ -772,6 +855,7 @@ namespace eg
 
 	static void CameraComponent_SetFixedAspectRatio(UUID uuid, bool fixedAspectRatio)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().FixedAspectRatio = fixedAspectRatio;
@@ -780,6 +864,7 @@ namespace eg
 #pragma region SceneCamera
 	static void CameraComponent_SetOrtograpic(UUID uuid, float size, float nearClip, float farClip)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().Camera.SetOrthographic(size, nearClip, farClip);
@@ -787,6 +872,7 @@ namespace eg
 
 	static void CameraComponent_SetPerspective(UUID uuid, float verticalFOV, float nearClip, float farClip)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().Camera.SetPerspective(verticalFOV, nearClip, farClip);
@@ -794,6 +880,7 @@ namespace eg
 
 	static SceneCamera::ProjectionType CameraComponent_GetProjectionType(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CameraComponent>().Camera.GetProjectionType();
@@ -801,6 +888,7 @@ namespace eg
 
 	static void CameraComponent_SetProjectionType(UUID uuid, SceneCamera::ProjectionType projectionType)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().Camera.SetProjectionType(projectionType);
@@ -808,6 +896,7 @@ namespace eg
 
 	static float CameraComponent_GetOrthographicSize(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CameraComponent>().Camera.GetOrthographicSize();
@@ -815,6 +904,7 @@ namespace eg
 
 	static void CameraComponent_SetOrthographicSize(UUID uuid, float orthographicSize)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().Camera.SetOrthographicSize(orthographicSize);
@@ -822,6 +912,7 @@ namespace eg
 
 	static float CameraComponent_GetOrthographicNearClip(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CameraComponent>().Camera.GetOrthographicNearClip();
@@ -829,6 +920,7 @@ namespace eg
 
 	static void CameraComponent_SetOrthographicNearClip(UUID uuid, float orthographicNearClip)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().Camera.SetOrthographicNearClip(orthographicNearClip);
@@ -836,6 +928,7 @@ namespace eg
 
 	static float CameraComponent_GetOrthographicFarClip(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CameraComponent>().Camera.GetOrthographicFarClip();
@@ -843,6 +936,7 @@ namespace eg
 
 	static void CameraComponent_SetOrthographicFarClip(UUID uuid, float orthographicFarClip)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().Camera.SetOrthographicFarClip(orthographicFarClip);
@@ -850,6 +944,7 @@ namespace eg
 
 	static float CameraComponent_GetPerspectiveVerticalFOV(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CameraComponent>().Camera.GetPerspectiveVerticalFOV();
@@ -857,6 +952,7 @@ namespace eg
 
 	static void CameraComponent_SetPerspectiveVerticalFOV(UUID uuid, float perspectiveVerticalFOV)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().Camera.SetPerspectiveVerticalFOV(perspectiveVerticalFOV);
@@ -864,6 +960,7 @@ namespace eg
 
 	static float CameraComponent_GetPerspectiveNearClip(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CameraComponent>().Camera.GetPerspectiveNearClip();
@@ -871,6 +968,7 @@ namespace eg
 
 	static void CameraComponent_SetPerspectiveNearClip(UUID uuid, float perspectiveNearClip)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().Camera.SetPerspectiveNearClip(perspectiveNearClip);
@@ -878,6 +976,7 @@ namespace eg
 
 	static float CameraComponent_GetPerspectiveFarClip(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		return entity.GetComponent<CameraComponent>().Camera.GetPerspectiveFarClip();
@@ -885,6 +984,7 @@ namespace eg
 
 	static void CameraComponent_SetPerspectiveFarClip(UUID uuid, float perspectiveFarClip)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(uuid);
 		entity.GetComponent<CameraComponent>().Camera.SetPerspectiveFarClip(perspectiveFarClip);
@@ -896,6 +996,7 @@ namespace eg
 #pragma region RigidBody2D
 	static void RigidBody2DComponent_AwakeRuntimeBody(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -905,6 +1006,7 @@ namespace eg
 
 	static void RigidBody2DComponent_ApplyLinearImpulse(UUID uuid, glm::vec2 *impulse, glm::vec2 *point, bool wake)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -917,6 +1019,7 @@ namespace eg
 
 	static void RigidBody2DComponent_ApplyLinearImpulseToCenter(UUID uuid, glm::vec2 *impulse, bool wake)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -932,6 +1035,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetLinearVelocity(UUID uuid, glm::vec2* linearVelocity)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -945,6 +1049,7 @@ namespace eg
 
 	static void RigidBody2DComponent_GetLinearVelocity(UUID entityID, glm::vec2 *outLinearVelocity)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -958,6 +1063,7 @@ namespace eg
 
 	static RigidBody2DComponent::BodyType RigidBody2DComponent_GetType(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -968,6 +1074,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetType(UUID entityID, RigidBody2DComponent::BodyType bodyType)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -978,6 +1085,7 @@ namespace eg
 
 	static bool RigidBody2DComponent_IsFixedRotation(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -988,6 +1096,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetFixedRotation(UUID entityID, bool fixedRotation)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -998,6 +1107,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetGravityMultiplier(UUID entityID, float newMultiplier)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -1008,6 +1118,7 @@ namespace eg
 
 	static float RigidBody2DComponent_GetGravityMultiplier(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -1018,6 +1129,7 @@ namespace eg
 
 	static void RigidBody2DComponent_ApplyForce(UUID uuid, glm::vec2* force, glm::vec2* point, bool wake)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1030,6 +1142,7 @@ namespace eg
 
 	static void RigidBody2DComponent_ApplyForceToCenter(UUID uuid, glm::vec2* force, bool wake)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1042,6 +1155,7 @@ namespace eg
 
 	static void RigidBody2DComponent_ApplyTorque(UUID uuid,float torque, bool wake)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1054,6 +1168,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetEnabled(UUID uuid, bool enabled)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1066,6 +1181,7 @@ namespace eg
 
 	static bool RigidBody2DComponent_IsEnabled(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1078,6 +1194,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetSleepingAllowed(UUID uuid, bool allowed)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1090,6 +1207,7 @@ namespace eg
 
 	static bool RigidBody2DComponent_IsSleepingAllowed(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1102,6 +1220,7 @@ namespace eg
 
 	static float RigidBody2DComponent_GetAngularDamping(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1114,6 +1233,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetAngularDamping(UUID uuid, float angularDamping)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1126,6 +1246,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetAngularVelocity(UUID uuid, float velocity)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1138,6 +1259,7 @@ namespace eg
 
 	static float RigidBody2DComponent_GetAngularVelocity(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1150,6 +1272,7 @@ namespace eg
 
 	static b2ContactEdge* RigidBody2DComponent_GetContactList(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1162,6 +1285,7 @@ namespace eg
 
 	static b2JointEdge* RigidBody2DComponent_GetJointList(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1174,6 +1298,7 @@ namespace eg
 
 	static float RigidBody2DComponent_GetLinearDamping(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1186,6 +1311,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetLinearDamping(UUID uuid, float linearDamping)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1198,6 +1324,7 @@ namespace eg
 
 	static b2Vec2 RigidBody2DComponent_GetLocalPoint(UUID uuid, const b2Vec2& worldPoint)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1210,6 +1337,7 @@ namespace eg
 
 	static b2Vec2 RigidBody2DComponent_GetLocalVector(UUID uuid, const b2Vec2& worldVector)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1222,6 +1350,7 @@ namespace eg
 
 	static float RigidBody2DComponent_GetMass(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1234,6 +1363,7 @@ namespace eg
 
 	static void RigidBody2DComponent_GetMassData(UUID uuid, b2MassData* massData)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1246,6 +1376,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetMassData(UUID uuid, b2MassData* massData )
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1258,6 +1389,7 @@ namespace eg
 
 	static b2Vec2 RigidBody2DComponent_GetPosition(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1270,6 +1402,7 @@ namespace eg
 
 	static b2Transform RigidBody2DComponent_GetTransform(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1282,6 +1415,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetTransform(UUID uuid, b2Vec2& position, float angle)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1294,6 +1428,7 @@ namespace eg
 
 	static b2BodyUserData RigidBody2DComponent_GetUserData(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1306,6 +1441,7 @@ namespace eg
 
 	static b2Vec2 RigidBody2DComponent_GetWorldPoint(UUID uuid, const b2Vec2& localPoint)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1318,6 +1454,7 @@ namespace eg
 
 	static b2Vec2 RigidBody2DComponent_GetWorldVector(UUID uuid, const b2Vec2& localVector)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1330,6 +1467,7 @@ namespace eg
 
 	static bool RigidBody2DComponent_IsAwake(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1342,6 +1480,7 @@ namespace eg
 
 	static bool RigidBody2DComponent_IsBullet(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1354,6 +1493,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetAwake(UUID uuid, bool awake)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1366,6 +1506,7 @@ namespace eg
 
 	static void RigidBody2DComponent_SetBullet(UUID uuid, bool bullet)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
 		Entity entity = scene->GetEntityByUUID(uuid);
@@ -1688,21 +1829,25 @@ namespace eg
 
 	static bool BoxCollider2DComponent_CollidesWithTopEdge(UUID uuid, UUID other)
 	{
+        EG_PROFILE_FUNCTION();
 		return BoxCollider2DComponent_CollidesWithEdge(uuid, other, Side::TOP);
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithBottomEdge(UUID uuid, UUID other)
 	{
+        EG_PROFILE_FUNCTION();
 		return BoxCollider2DComponent_CollidesWithEdge(uuid, other, Side::BOTTOM);
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithLeftEdge(UUID uuid, UUID other)
 	{
+        EG_PROFILE_FUNCTION();
 		return BoxCollider2DComponent_CollidesWithEdge(uuid, other, Side::LEFT);
 	}
 
 	static bool BoxCollider2DComponent_CollidesWithRightEdge(UUID uuid, UUID other)
 	{
+        EG_PROFILE_FUNCTION();
 		return BoxCollider2DComponent_CollidesWithEdge(uuid, other, Side::RIGHT);
 	}
 
@@ -1734,7 +1879,7 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		Entity entityA = scene->GetEntityByUUID(uuid);
-		
+
 		if(!entityA || !entityA.HasComponent<BoxCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>())
 			return false;
 
@@ -1979,7 +2124,7 @@ namespace eg
 		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
 
 		EG_CORE_ASSERT(bodyA, "Body A in CircleCollider2DComponent_CollidesWithPoint is null");
-		
+
 		b2PolygonShape pointShape;
 		pointShape.SetAsBox(0.0001f, 0.0001f, b2Vec2(0, 0), 0);
 
@@ -2022,7 +2167,7 @@ namespace eg
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entityA = scene->GetEntityByUUID(uuid);
 		Entity entityB = scene->GetEntityByUUID(other);
-		
+
 		if(!entityA || !entityB || !entityA.HasComponent<CircleCollider2DComponent>() || !entityB.HasComponent<BoxCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>() || !entityB.HasComponent<RigidBody2DComponent>())
 			return false;
 
@@ -2044,21 +2189,25 @@ namespace eg
 
 	static bool CircleCollider2DComponent_CollidesWithTopEdge(UUID uuid, UUID other)
 	{
+        EG_PROFILE_FUNCTION();
 		return CircleCollider2DComponent_CollidesWithEdge(uuid, other, Side::TOP);
 	}
 
 	static bool CircleCollider2DComponent_CollidesWithBottomEdge(UUID uuid, UUID other)
 	{
+        EG_PROFILE_FUNCTION();
 		return CircleCollider2DComponent_CollidesWithEdge(uuid, other, Side::BOTTOM);
 	}
 
 	static bool CircleCollider2DComponent_CollidesWithLeftEdge(UUID uuid, UUID other)
 	{
+        EG_PROFILE_FUNCTION();
 		return CircleCollider2DComponent_CollidesWithEdge(uuid, other, Side::LEFT);
 	}
 
 	static bool CircleCollider2DComponent_CollidesWithRightEdge(UUID uuid, UUID other)
 	{
+        EG_PROFILE_FUNCTION();
 		return CircleCollider2DComponent_CollidesWithEdge(uuid, other, Side::RIGHT);
 	}
 
@@ -2132,12 +2281,13 @@ namespace eg
 		return b2TestOverlap(GetShapeFromCircleCollider2DComponent(colliderA), 0, &edge, 0, bodyA->GetTransform(), transform);
 	}
 
-	
+
 #pragma endregion
 
 #pragma region Text
 	static MonoString *TextComponent_GetText(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -2150,6 +2300,7 @@ namespace eg
 
 	static void TextComponent_SetText(UUID entityID, MonoString *textString)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -2162,6 +2313,7 @@ namespace eg
 
 	static void TextComponent_GetColor(UUID entityID, glm::vec4 *color)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -2174,6 +2326,7 @@ namespace eg
 
 	static void TextComponent_SetColor(UUID entityID, glm::vec4 *color)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -2186,6 +2339,7 @@ namespace eg
 
 	static float TextComponent_GetKerning(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -2198,6 +2352,7 @@ namespace eg
 
 	static void TextComponent_SetKerning(UUID entityID, float kerning)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -2210,6 +2365,7 @@ namespace eg
 
 	static float TextComponent_GetLineSpacing(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -2222,6 +2378,7 @@ namespace eg
 
 	static void TextComponent_SetLineSpacing(UUID entityID, float lineSpacing)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene);
 		Entity entity = scene->GetEntityByUUID(entityID);
@@ -2236,6 +2393,7 @@ namespace eg
 #pragma region Audio
 	static std::filesystem::path Audio_GetPath(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		return entity.GetComponent<AudioSourceComponent>().Audio->GetPath();
@@ -2243,6 +2401,7 @@ namespace eg
 
 	static void Audio_SetPath(UUID entityID, std::filesystem::path val)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		entity.GetComponent<AudioSourceComponent>().Audio->SetPath(val);
@@ -2250,6 +2409,7 @@ namespace eg
 
 	static bool Audio_Play(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		return entity.GetComponent<AudioSourceComponent>().Audio->Play();
@@ -2257,6 +2417,7 @@ namespace eg
 
 	static bool* Audio_IsLoopedPtr(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		return entity.GetComponent<AudioSourceComponent>().Audio->IsLoopedPtr();
@@ -2264,6 +2425,7 @@ namespace eg
 
 	static bool Audio_IsLooped(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		return entity.GetComponent<AudioSourceComponent>().Audio->IsLooped();
@@ -2271,6 +2433,7 @@ namespace eg
 
 	static bool* Audio_IsPlayingFromStartPtr(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		return entity.GetComponent<AudioSourceComponent>().Audio->IsPlayingFromStartPtr();
@@ -2278,6 +2441,7 @@ namespace eg
 
 	static bool Audio_IsPlayingFromStart(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		return entity.GetComponent<AudioSourceComponent>().Audio->IsPlayingFromStart();
@@ -2285,6 +2449,7 @@ namespace eg
 
 	static void Audio_SetIsLooped(UUID entityID, bool isLooped)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		entity.GetComponent<AudioSourceComponent>().Audio->SetIsLooped(isLooped);
@@ -2292,6 +2457,7 @@ namespace eg
 
 	static void Audio_SetIsPlayingFromStart(UUID entityID, bool isPlayingFromStart)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		entity.GetComponent<AudioSourceComponent>().Audio->SetIsPlayingFromStart(isPlayingFromStart);
@@ -2299,6 +2465,7 @@ namespace eg
 
 	static std::string Audio_GetFileName(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		return entity.GetComponent<AudioSourceComponent>().Audio->GetFileName();
@@ -2306,6 +2473,7 @@ namespace eg
 
 	static void Audio_LoadCurrentAudio(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		entity.GetComponent<AudioSourceComponent>().Audio->LoadCurrentAudio();
@@ -2313,6 +2481,7 @@ namespace eg
 
 	static void Audio_OpenAudio(UUID entityID, std::string path)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		entity.GetComponent<AudioSourceComponent>().Audio->OpenAudio(path);
@@ -2320,13 +2489,15 @@ namespace eg
 
 	static void Audio_Stop(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		entity.GetComponent<AudioSourceComponent>().Audio->Stop();
 	}
 
-	static float Audio_GetVolume(UUID entityID) 
+	static float Audio_GetVolume(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		return entity.GetComponent<AudioSourceComponent>().Audio->GetVolume();
@@ -2334,6 +2505,7 @@ namespace eg
 
 	static float* Audio_GetVolumePtr(UUID entityID)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		return entity.GetComponent<AudioSourceComponent>().Audio->GetVolumePtr();
@@ -2341,6 +2513,7 @@ namespace eg
 
 	static void Audio_SetVolume(UUID entityID, float newVolume)
 	{
+        EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
 		Entity entity = scene->GetEntityByUUID(entityID);
 		entity.GetComponent<AudioSourceComponent>().Audio->SetVolume(newVolume);
@@ -2351,66 +2524,79 @@ namespace eg
 #pragma region Input
 	static MonoString* Input_GetClipboardContent()
 	{
+        EG_PROFILE_FUNCTION();
 		return ScriptEngine::CreateString(Input::GetClipboardContent());
 	}
 
 	static void Input_SetClipboardContent(MonoString* content)
 	{
+        EG_PROFILE_FUNCTION();
 		Input::SetClipboardContent(Utils::MonoStringToString(content).data());
 	}
 
 	static MonoString* Input_GetKeyName(KeyCode keycode)
 	{
+        EG_PROFILE_FUNCTION();
 		return ScriptEngine::CreateString(Input::GetKeyName(keycode));
 	}
 
 	static bool Input_IsKeyPressed(KeyCode keycode)
 	{
+        EG_PROFILE_FUNCTION();
 		return Input::IsKeyPressed(keycode);
 	}
 
 	static bool Input_IsKeyReleased(KeyCode keycode)
 	{
+        EG_PROFILE_FUNCTION();
 		return Input::IsKeyReleased(keycode);
 	}
 
 	static bool Input_IsMouseButtonPressed(MouseCode button)
 	{
+        EG_PROFILE_FUNCTION();
 		return Input::IsMouseButtonPressed(button);
 	}
 
 	static bool Input_IsMouseButtonReleased(MouseCode button)
 	{
+        EG_PROFILE_FUNCTION();
 		return Input::IsMouseButtonReleased(button);
 	}
 
 	static bool Input_IsCursorOnWindow()
 	{
+        EG_PROFILE_FUNCTION();
 		return Input::IsCursorOnWindow();
 	}
 
 	static float Input_GetCursorPositonX()
 	{
+        EG_PROFILE_FUNCTION();
 		return Input::GetCursorPositonX();
 	}
 
 	static float Input_GetCursorPositonY()
 	{
+        EG_PROFILE_FUNCTION();
 		return Input::GetCursorPositonY();
 	}
 
 	static void Input_SetCursorMode(int mode)
 	{
+        EG_PROFILE_FUNCTION();
 		Input::SetCursorMode(mode);
 	}
 
 	static void Input_SetStickyKeysEnabled(bool enable)
 	{
+        EG_PROFILE_FUNCTION();
 		Input::SetStickyKeysEnabled(enable);
 	}
 
 	static void Input_SetStickyMouseButtonsEnabled(bool enable)
 	{
+        EG_PROFILE_FUNCTION();
 		Input::SetStickyMouseButtonsEnabled(enable);
 	}
 #pragma endregion
@@ -2423,6 +2609,7 @@ namespace eg
 
 	void ScriptGlue::RegisterFunctions()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_ADD_INTERNAL_CALL(Entity_Exists);
 		EG_ADD_INTERNAL_CALL(Console_Log);
 
@@ -2653,6 +2840,7 @@ namespace eg
 	template <typename... Component>
 	static void RegisterComponent()
 	{
+        EG_PROFILE_FUNCTION();
 		([]()
 		 {
 				std::string_view typeName = typeid(Component).name();
@@ -2673,12 +2861,14 @@ namespace eg
 	template <typename... Component>
 	static void RegisterComponent(ComponentGroup<Component...>)
 	{
+        EG_PROFILE_FUNCTION();
 		s_EntityHasComponentFunctions.clear();
 		RegisterComponent<Component...>();
 	}
 
 	void ScriptGlue::RegisterComponents()
 	{
+        EG_PROFILE_FUNCTION();
 		RegisterComponent(AllComponents{});
 	}
 }

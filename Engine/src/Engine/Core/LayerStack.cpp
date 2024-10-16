@@ -8,12 +8,14 @@ namespace eg {
 
 	LayerStack::~LayerStack()
 	{
+		EG_PROFILE_FUNCTION();
 		for (Layer* layer : m_Layers)
 			delete layer;
 	}
 
 	void LayerStack::PushLayer(Layer* layer)
 	{
+		EG_PROFILE_FUNCTION();
 		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
 		m_LayerInsertIndex++;
 		layer->OnAttach();
@@ -21,12 +23,14 @@ namespace eg {
 
 	void LayerStack::PushOverlay(Layer* overlay)
 	{
+		EG_PROFILE_FUNCTION();
 		m_Layers.emplace_back(overlay);
 		overlay->OnAttach();
 	}
 
 	void LayerStack::PopLayer(Layer* layer)
 	{
+		EG_PROFILE_FUNCTION();
 		auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
 		if (it != m_Layers.end())
 		{
@@ -37,6 +41,7 @@ namespace eg {
 
 	void LayerStack::PopOverlay(Layer* overlay)
 	{
+		EG_PROFILE_FUNCTION();
 		auto it = std::find(m_Layers.begin(), m_Layers.end(), overlay);
 		if (it != m_Layers.end())
 		{

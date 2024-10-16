@@ -26,7 +26,7 @@ namespace eg
 			stbi_image_free(images[0].pixels);
 		};
 
-		~Editor() {}
+		~Editor();
 
 		EditorLayer* GetEditorLayer() { return static_cast<EditorLayer*>(GetFirstLayer()); }
 

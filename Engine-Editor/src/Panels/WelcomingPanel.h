@@ -24,9 +24,6 @@ namespace eg
 
 	protected:
 		RecentProjectSerializer m_Rps;
-		Ref<Texture2D> m_DirectoryIcon;
-		Ref<Texture2D> m_NewProjectIcon;
-		Ref<Texture2D> m_DeleteProjectIcon;
 		bool m_NewProjectCreated;
 		bool m_Show;
 		std::string m_SelectedProject;

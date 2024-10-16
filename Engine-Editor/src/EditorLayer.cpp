@@ -18,6 +18,7 @@
 #include "Engine/Project/ProjectSerializer.h"
 #include "Engine/Project/RecentProjectSerializer.h"
 #include "Engine/Project/ScriptSerializer.h"
+#include "IconLoader.h"
 
 namespace eg
 {
@@ -30,6 +31,7 @@ namespace eg
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
+        EG_PROFILE_FUNCTION();
 		m_RecentProjectSerializer = RecentProjectSerializer();
 		m_WelcomePanel = CreateScope<WelcomingPanel>(m_RecentProjectSerializer.getProjectList(), m_RecentProjectSerializer);
 		m_NameNewProjectPanel = CreateScope<NameNewProjectPanel>();
@@ -40,6 +42,7 @@ namespace eg
 
 	void EditorLayer::OnAttach()
 	{
+		LoadFonts();
 		ResourceSystemConfig resourceSystemConfig;
 		resourceSystemConfig.MaxLoaderCount = 4;
 		resourceSystemConfig.ResourceDirectory = "../resources";
@@ -49,14 +52,17 @@ namespace eg
 			EG_ERROR("Failed to initialize resource system.");
 			return;
 		}
+
+		IconLoader::LoadIcons();
+
 		m_WelcomePanel->InitWelcomingPanel();
 
-		EG_PROFILE_FUNCTION();
-		m_IconPlay = Texture2D::Create("resources/icons/PlayButton.png");
-		m_IconPause = Texture2D::Create("resources/icons/PauseButton.png");
-		m_IconSimulate = Texture2D::Create("resources/icons/SimulateButton.png");
-		m_IconStop = Texture2D::Create("resources/icons/StopButton.png");
-		m_IconStep = Texture2D::Create("resources/icons/StepButton.png");
+
+		m_IconPlay = IconLoader::GetIcon(Icons::Editor_PlayButton);
+		m_IconPause = IconLoader::GetIcon(Icons::Editor_PauseButton);
+		m_IconSimulate = IconLoader::GetIcon(Icons::Editor_SimulateButton);
+		m_IconStop = IconLoader::GetIcon(Icons::Editor_StopButton);
+		m_IconStep = IconLoader::GetIcon(Icons::Editor_StepButton);
 
 		FrameBufferSpecification fbSpec;
 		fbSpec.Attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
@@ -78,12 +84,11 @@ namespace eg
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_WelcomePanel->IsShown()) {
 			return;
 		}
-
-
-		EG_PROFILE_FUNCTION();
+		
 		if (!m_ActiveScene->GetRegistry().valid(m_HoveredEntity))
 			m_HoveredEntity = Entity({});
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
@@ -137,7 +142,7 @@ namespace eg
 		{
 			// Update
 
-			m_RuntimeScene->OnUpdateRuntime(ts, oldTime);
+			m_RuntimeScene->OnUpdateRuntime(ts, m_OldTime);
 
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
@@ -175,6 +180,7 @@ namespace eg
 
 	void EditorLayer::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
@@ -203,6 +209,7 @@ namespace eg
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
 		ImGui::PopStyleVar();
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1529f, 0.1333f, 0.2000f, 1.0f));
 
 		if (opt_fullscreen)
 			ImGui::PopStyleVar(2);
@@ -217,7 +224,7 @@ namespace eg
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
-
+		ImGui::PopStyleColor();
 		//Welcoming panel code
 		if (m_WelcomePanel->IsShown()) {
 			ImGuiStyle& style = ImGui::GetStyle();
@@ -272,47 +279,60 @@ namespace eg
 
 			style.WindowMinSize.x = minWinSizeX;
 
-			if (ImGui::BeginMenuBar())
+			style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0, 0, 0, 0);
+			style.Colors[ImGuiCol_HeaderActive] = ImVec4(0, 0, 0, 0);
+			style.Colors[ImGuiCol_TextDisabled] = m_LightTextShade;
+
+		ImGui::PushFont(m_PoppinsSemiBoldFont);
+		ImGui::PushStyleColor(ImGuiCol_Text, m_LightTextShade);
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::BeginMenu("File"))
-				{
-					if (ImGui::MenuItem("Open Project...", "Ctrl+O"))
-						OpenProject();
+				if (ImGui::MenuItem("Open Project...", "Ctrl+O"))
+					OpenProject();
 
-					ImGui::Separator();
+				ImGui::Separator();
 
-					if (ImGui::MenuItem("New Scene", "Ctrl+N"))
-						NewScene();
+				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
+					NewScene();
 
-					if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
-						Save();
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+					Save();
 
-					if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
-						SaveAs();
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
+					SaveAs();
 
-					if (ImGui::MenuItem("Exit"))
-						Application::Get().Close();
-					ImGui::EndMenu();
-				}
-
-				if (ImGui::BeginMenu("Script"))
-				{
-					if (ImGui::MenuItem("Reload assembly", "Ctrl+R"))
-						ScriptEngine::ReloadAssembly();
-
-					ImGui::EndMenu();
-				}
-
-				if (ImGui::BeginMenu("Resources"))
-				{
-					if (ImGui::MenuItem("Add Resource", "Ctrl+A"))
-						m_AddResourcePanel->showResourcePanel(true);
-
-					ImGui::EndMenu();
-				}
-
-				ImGui::EndMenuBar();
+				if (ImGui::MenuItem("Exit"))
+					Application::Get().Close();
+				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("Script"))
+			{
+				if (ImGui::MenuItem("Reload assembly", "Ctrl+R"))
+					ScriptEngine::ReloadAssembly();
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Resources"))
+			{
+				if (ImGui::MenuItem("Add Resource", "Ctrl+A"))
+					m_AddResourcePanel->showResourcePanel(true);
+
+				ImGui::EndMenu();
+			}
+
+			if(ImGui::MenuItem("Game Objects")){}
+			if(ImGui::MenuItem("Components")){}
+			if(ImGui::MenuItem("Window")){}
+			if(ImGui::MenuItem("Help")){}
+
+			ImGui::EndMenuBar();
+		}
+		ImGui::PopStyleColor();
+		ImGui::PopFont();
 
 			m_SceneHierarchyPanel.OnImGuiRender();
 			m_ContentBrowserPanel->OnImGuiRender();
@@ -324,25 +344,40 @@ namespace eg
 				if (!IsProjectSaved()) {
 					ImGui::OpenPopup("Unsaved Changes");
 					ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
-					ImGui::BeginPopupModal("Unsaved Changes", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
-					ImGui::Text("Warning: Unsaved changes");
-					bool SaveBttn = ImGui::Button("Save");
-					ImGui::SameLine();
-					bool NotSaveBttn = ImGui::Button("Don't save");
-					ImGui::SameLine();
-					bool CancelBttn = ImGui::Button("Cancel");
-					if (SaveBttn) {
-						(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
-						Application::Get().Close();
-					}
-					else if (NotSaveBttn) {
-						Application::Get().Close();
-					}
-					else if (CancelBttn) {
-						SetIsWindowTryingToClose(false);
-					}
-					ImGui::EndPopup();
 
+					ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+					ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+
+					if (ImGui::BeginPopupModal("Unsaved Changes", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize)) {
+
+						ImVec2 spacing = style.ItemSpacing;
+						style.ItemSpacing = ImVec2(10.f, 10.f);
+						ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+
+						ImGui::Text("Warning: Unsaved changes");
+						bool SaveBttn = ImGui::Button("Save");
+						ImGui::SameLine();
+						bool NotSaveBttn = ImGui::Button("Don't save");
+						ImGui::SameLine();
+						bool CancelBttn = ImGui::Button("Cancel");
+						if (SaveBttn) {
+							(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
+							Application::Get().Close();
+						}
+						else if (NotSaveBttn) {
+							Application::Get().Close();
+						}
+						else if (CancelBttn) {
+							SetIsWindowTryingToClose(false);
+						}
+
+						style.ItemSpacing = spacing;
+						ImGui::PopStyleVar(2);
+						ImGui::EndPopup();
+					}
+
+					ImGui::PopStyleVar(2);
 				};
 			}
 
@@ -395,8 +430,9 @@ namespace eg
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
 				{
 					const wchar_t* path = (const wchar_t*)payload->Data;
-
-					OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
+					std::filesystem::path p = path;
+					if (p.extension() == ".egscene")
+   						OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -465,9 +501,11 @@ namespace eg
 
 	void EditorLayer::UI_Toolbar()
 	{
+		EG_PROFILE_FUNCTION();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 2.0f });
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{ 0.0f, 0.0f });
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
+		ImGui::PushStyleColor(ImGuiCol_Border, m_DarkShade);
 		auto& colors = ImGui::GetStyle().Colors;
 		auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f });
@@ -482,8 +520,13 @@ namespace eg
 		if (!toolbarEnabled)
 			tintColor.w = 0.5f;
 
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 0));
 		float size = ImGui::GetWindowHeight() - 4.0f;
-		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+		ImVec2 elementSize = ImGui::GetContentRegionAvail();
+		float iconPosX = (elementSize.x - size) * 0.5f - 19.0f;
+		float iconPosY = (elementSize.y - size) * 0.5f + 2.0f;
+		ImGui::SetCursorPos(ImVec2(iconPosX, iconPosY));
+
 		bool hasPlayButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play;
 		bool hasSimulateButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate;
 		bool hasPauseButton = m_SceneState != SceneState::Edit;
@@ -561,13 +604,14 @@ namespace eg
 				}
 			}
 		}
-		ImGui::PopStyleVar(2);
-		ImGui::PopStyleColor(3);
+		ImGui::PopStyleVar(3);
+		ImGui::PopStyleColor(4);
 		ImGui::End();
 	}
 
 	void EditorLayer::OnEvent(Event& e)
 	{
+		EG_PROFILE_FUNCTION();
 		m_Camera.OnEvent(e);
 		m_EditorCamera.OnEvent(e);
 
@@ -578,6 +622,7 @@ namespace eg
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
 	{
+		EG_PROFILE_FUNCTION();
 		if (e.IsRepeat())
 			return false;
 
@@ -691,6 +736,7 @@ namespace eg
 
 	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
+		EG_PROFILE_FUNCTION();
 		if (e.GetMouseButton() == (int)Mouse::ButtonLeft)
 		{
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(KeyCode::LeftAlt))
@@ -701,7 +747,7 @@ namespace eg
 
 	void EditorLayer::OnOverlayRender()
 	{
-
+		EG_PROFILE_FUNCTION();
 		if (m_SceneState == SceneState::Play)
 		{
 			Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
@@ -786,6 +832,7 @@ namespace eg
 
 	void EditorLayer::NewScene()
 	{
+		EG_PROFILE_FUNCTION();
 		m_ActiveScene = CreateRef<Scene>();
 		m_RuntimeScene = m_ActiveScene;
 
@@ -799,6 +846,7 @@ namespace eg
 
 	void EditorLayer::OpenScene()
 	{
+		EG_PROFILE_FUNCTION();
 		std::string filepath = FileDialogs::OpenFile("Muniffic Scene (*.egscene)\0*.egscene\0");
 		if (!filepath.empty())
 		{
@@ -812,6 +860,7 @@ namespace eg
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_SceneState != SceneState::Edit)
 			OnSceneStop();
 
@@ -835,6 +884,7 @@ namespace eg
 
 	void EditorLayer::SaveAs()
 	{
+		EG_PROFILE_FUNCTION();
 		std::string filepath = FileDialogs::SaveFile("Muniffic Scene (*.egscene)\0*.egscene\0");
 		if (!filepath.empty())
 		{
@@ -852,6 +902,7 @@ namespace eg
 
 	void EditorLayer::Save()
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_ActiveScenePath.empty())
 			SaveAs();
 		else
@@ -865,6 +916,7 @@ namespace eg
 
 	bool EditorLayer::CreateCmakelists(const std::filesystem::path path)
 	{
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path pathToScripts(path.string() + "\\Assets\\Scripts");
 		m_CustomScriptsDirectory = pathToScripts;
 		std::filesystem::path cmakeFilePath = pathToScripts / "CMakeLists.txt";
@@ -891,6 +943,7 @@ namespace eg
 
 	const std::string EditorLayer::CompileCustomScripts()
 	{
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path projectDirectory =  m_CurrentProject->GetProjectDirectory() / "Assets" / "Scripts";
 		const std::string& projectName = m_CurrentProject->GetProjectName();
 		std::string command = "cd " + projectDirectory.string() + " && cmake -DPROJECT_NAME=" + projectName + " . && cmake --build .";
@@ -903,6 +956,7 @@ namespace eg
 
 	void EditorLayer::NewProject()
 	{
+		EG_PROFILE_FUNCTION();
 		std::filesystem::path saveDir = std::filesystem::current_path() / "Projects" / m_NameNewProjectPanel->projectName / (m_NameNewProjectPanel->projectName + ".mnproj");
 		std::filesystem::path absolutePath = std::filesystem::absolute(saveDir);
 		//std::filesystem::path savePath = absolutePath / "Projects";
@@ -951,12 +1005,23 @@ namespace eg
 
 	bool EditorLayer::OpenProject()
 	{
+		EG_PROFILE_FUNCTION();
 		std::string filepath = FileDialogs::OpenFile("Muniffic Project (*.mnproj)\0*.mnproj\0");
-		if (filepath.empty())
+		std::filesystem::path path = filepath;
+        if (filepath.empty() )
 		{
 			ConsolePanel::Log("File: EditorLayer.cpp - Empty file path", ConsolePanel::LogType::Error);
 			return false;
 		}
+		if (path.extension() != ".mnproj"){
+            ConsolePanel::Log("File: EditorLayer.cpp - Could not load " + path.filename().string() + " - not a project file", ConsolePanel::LogType::Error);
+            return false;
+		}
+		if (path == Project::GetProjectPath()){
+			ConsolePanel::Log("File: EditorLayer.cpp - Project already opened", ConsolePanel::LogType::Warning);
+            return false;
+	    }
+        //CloseProject();
 		OpenProject(filepath);
 		m_RecentProjectSerializer.Serialize(filepath, "recentProjectSerializer.txt");
 		ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
@@ -965,6 +1030,10 @@ namespace eg
 
 	void EditorLayer::OpenProject(const std::filesystem::path& path)
 	{
+        EG_PROFILE_FUNCTION();
+        bool isLoaded = Project::IsLoaded();
+		//if (isLoaded)
+            //ScriptEngine::Shutdown();
 		if (m_CurrentProject = Project::Load(path))
 		{
 			ScriptEngine::Init();
@@ -990,16 +1059,19 @@ namespace eg
 
 	void EditorLayer::SaveProjectAs()
 	{
+        EG_PROFILE_FUNCTION();
 		ConsolePanel::Log("File: EditorLayer.cpp - Project saved", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::SaveProject()
 	{
+        EG_PROFILE_FUNCTION();
 		ConsolePanel::Log("File: EditorLayer.cpp - Project saved", ConsolePanel::LogType::Info);
 	}
 
 	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
 	{
+        EG_PROFILE_FUNCTION();
 		SceneSerializer serializer(scene);
 		serializer.Serialize(path.string());
 		ConsolePanel::Log("File: EditorLayer.cpp - Scene serialized", ConsolePanel::LogType::Info);
@@ -1007,28 +1079,36 @@ namespace eg
 
 	void EditorLayer::OnScenePlay()
 	{
-		if (m_ActiveScene->GetEntitiesWith<CameraComponent>().empty())
+		EG_PROFILE_FUNCTION();
 		{
-			ImGui::OpenPopup("No Camera");
-
-			return;
+			EG_PROFILE_SCOPE("Check Camera");
+		    if (m_ActiveScene->GetEntitiesWith<CameraComponent>().empty())
+		    {
+		    	ImGui::OpenPopup("No Camera");
+		    
+		    	return;
+		    }
 		}
-
-		if (!m_RuntimeScene)
-			m_RuntimeScene = CreateRef<Scene>();
 		if (m_SceneState == SceneState::Simulate)
 			OnSceneStop();
 		m_SceneState = SceneState::Play;
-
-		m_RuntimeScene = Scene::Copy(m_ActiveScene);
-		m_RuntimeScene->OnRuntimeStart();
-		m_ActiveScene = m_RuntimeScene;
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
-		ConsolePanel::Log("File: EditorLayer.cpp - Scene started", ConsolePanel::LogType::Info);
+		{
+            EG_PROFILE_SCOPE("Copying Scene");
+		    m_RuntimeScene = Scene::Copy(m_ActiveScene);
+		}
+		{
+            EG_PROFILE_SCOPE("OnRuntimeStart");
+			m_OldTime = std::chrono::high_resolution_clock::now();
+		    m_RuntimeScene->OnRuntimeStart();
+		    m_ActiveScene = m_RuntimeScene;
+		    m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		    ConsolePanel::Log("File: EditorLayer.cpp - Scene started", ConsolePanel::LogType::Info);
+		}
 	}
 
 	void EditorLayer::OnSceneSimulate()
 	{
+		EG_PROFILE_FUNCTION();
 		if (m_SceneState == SceneState::Play)
 			OnSceneStop();
 
@@ -1043,6 +1123,8 @@ namespace eg
 
 	void EditorLayer::OnScenePause()
 	{
+		EG_PROFILE_FUNCTION();
+
 		if (m_SceneState == SceneState::Edit)
 			return;
 		ConsolePanel::Log("File: EditorLayer.cpp - Scene paused", ConsolePanel::LogType::Info);
@@ -1051,7 +1133,9 @@ namespace eg
 
 	void EditorLayer::OnSceneStop()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_CORE_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate);
+		
 
 		if (m_SceneState == SceneState::Play)
 			m_ActiveScene->OnRuntimeStop();
@@ -1068,6 +1152,8 @@ namespace eg
 
 	void EditorLayer::OnDuplicateEntity()
 	{
+		EG_PROFILE_FUNCTION();
+
 		if (m_SceneState == SceneState::Play) {
 			ConsolePanel::Log("File: EditorLayer.cpp - Cannot duplicate entities while playing", ConsolePanel::LogType::Warning);
 			return;
@@ -1086,6 +1172,32 @@ namespace eg
 
 	void EditorLayer::CloseAddResourcePanel()
 	{
+		EG_PROFILE_FUNCTION();
 		m_AddResourcePanel = nullptr;
 	}
+
+	void EditorLayer::LoadFonts() {
+		auto& io = ImGui::GetIO();
+
+		ImFontConfig font_config;
+		font_config.OversampleH = 2;
+		font_config.OversampleV = 1;
+		font_config.MergeMode = false;
+		font_config.PixelSnapH = true;
+
+		static const ImWchar full_ranges[] = { 0x0020, 0xFFFF, 0 };
+
+		m_PoppinsLightFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Light.ttf", 25.0f, &font_config, full_ranges);
+		m_PoppinsRegularFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 18.0f, &font_config, full_ranges);
+		m_PoppinsRegularFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Regular.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsMediumFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-Medium.ttf", 50.0f, &font_config, full_ranges);
+		m_PoppinsSemiBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsSemiBoldFontBig = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-SemiBold.ttf", 40.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+		m_PoppinsExtraBoldFont = io.Fonts->AddFontFromFileTTF("assets/fonts/poppins/Poppins-ExtraBold.ttf", 50.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+
+		io.FontDefault = m_PoppinsRegularFont;
+
+		io.Fonts->Build();
+	}
+
 }
