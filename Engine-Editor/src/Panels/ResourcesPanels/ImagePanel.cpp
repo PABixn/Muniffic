@@ -38,20 +38,19 @@ namespace eg
 		if (!resourceLoad) {
 			return false;
 		}
-		else {
-			m_OriginalResourcePath = path;
-			m_ResourceData = new TextureResourceData();
-			((TextureResourceData*)m_ResourceData)->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Image);
-			((TextureResourceData*)m_ResourceData)->ResourceName = m_TexturePath.stem().string();
-			((TextureResourceData*)m_ResourceData)->Extension = m_TexturePath.extension().string();
-			((TextureResourceData*)m_ResourceData)->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
-			((TextureResourceData*)m_ResourceData)->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
-			((TextureResourceData*)m_ResourceData)->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
-			m_PreviewData = Texture2D::Create(path.string());
-			if (m_PreviewData == nullptr)
-				return false;
-			m_ShowImagePanel = true;
-		}
+		m_OriginalResourcePath = path;
+		m_ResourceData = new TextureResourceData();
+		((TextureResourceData*)m_ResourceData)->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Image);
+		((TextureResourceData*)m_ResourceData)->ResourceName = m_TexturePath.stem().string();
+		((TextureResourceData*)m_ResourceData)->Extension = m_TexturePath.extension().string();
+		((TextureResourceData*)m_ResourceData)->Height = ((ImageResourceData*)m_LoadedResource->Data)->height;
+		((TextureResourceData*)m_ResourceData)->Width = ((ImageResourceData*)m_LoadedResource->Data)->width;
+		((TextureResourceData*)m_ResourceData)->Channels = ((ImageResourceData*)m_LoadedResource->Data)->channelCount;
+		m_PreviewData = Texture2D::Create(path.string());
+		if (m_PreviewData == nullptr)
+			return false;
+		m_ShowImagePanel = true;
+		return true;
 	}
 
 	void ImagePanel::OnImGuiRender()

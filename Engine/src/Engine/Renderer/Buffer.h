@@ -31,10 +31,10 @@ namespace eg {
 	struct BufferElement
 	{
 		std::string Name;
-		uint32_t Offset;
-		ShaderDataType Type;
-		uint32_t Size;
-		bool Normalized;
+		uint32_t Offset = 0;
+		ShaderDataType Type = ShaderDataType::None;
+		uint32_t Size = 0;
+		bool Normalized = false;
 
 		BufferElement()
 		{

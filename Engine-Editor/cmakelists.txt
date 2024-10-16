@@ -1,11 +1,12 @@
 # Engine-Editor/CMakeLists.txt
 include(../Dependencies.cmake)
 cmake_minimum_required(VERSION 3.16)
+
 project(Engine-Editor LANGUAGES CXX)
+
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:DebugDLL>")
 
 # Output directories for target and object files
 set(TARGET_DIR "${CMAKE_CURRENT_BINARY_DIR}/Engine-Editor")
@@ -15,6 +16,28 @@ set(OBJECT_DIR "${CMAKE_CURRENT_BINARY_DIR}/Engine-Editor")
 file(GLOB_RECURSE SOURCES "src/*.h" "src/*.cpp")
 
 add_executable(Engine-Editor ${SOURCES})
+if (WIN32)
+    # Check if using MSVC
+    if (MSVC)
+        # Set the subsystem to Windows to avoid console window
+        target_link_options(Engine-Editor PRIVATE 
+        $<$<CONFIG:DEBUG>: /SUBSYSTEM:CONSOLE>
+        $<$<CONFIG:RelWithDebInfo>: /SUBSYSTEM:CONSOLE>
+        $<$<CONFIG:Release>: /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup>
+        $<$<CONFIG:Dist>: /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup>
+        )
+    elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        # For MinGW, use -mwindows to avoid console window
+        target_link_options(Engine-Editor PRIVATE -mwindows)
+    endif()
+endif()
+target_compile_definitions(Engine PRIVATE "$<$<CONFIG:Debug>:DEBUG_BUILD>")
+target_compile_definitions(Engine PRIVATE "$<$<CONFIG:RelWithInfo>:RelWithDebInfo_BUILD>")
+target_compile_definitions(Engine PRIVATE "$<$<CONFIG:Release>:RELEASE_BUILD>")
+target_compile_definitions(Engine PRIVATE "$<$<CONFIG:Dist>:DIST_BUILD>")
+target_compile_definitions(Engine PRIVATE 
+"$<$<OR:$<CONFIG:RelWithDebInfo>,$<CONFIG:Debug>>:EG_ENABLE_ASSERTS>"
+)
 
 set_target_properties(Engine-Editor PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${TARGET_DIR}
@@ -48,22 +71,20 @@ if(WIN32)
     set(CMAKE_SYSTEM_VERSION "latest")
 endif()
 
-# Configuration-specific settings
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_definitions(Engine-Editor PRIVATE "EG_DEBUG")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${TARGET_DIR})
-    set(CMAKE_OBJECT_OUTPUT_DIRECTORY_DEBUG ${OBJECT_DIR})
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${TARGET_DIR})
-    target_compile_options(Engine-Editor PRIVATE /Zi /Od)
+target_compile_options(Engine PRIVATE 
+"$<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:-g>"
+"$<$<CONFIG:Release>:-O2>"
+"$<$<CONFIG:Dist>:-O3>"
+)
 
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    target_compile_definitions(Engine-Editor PRIVATE "EG_RELEASE")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
-    target_compile_options(Engine-Editor PRIVATE /O2)
-    
-elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
-    target_compile_definitions(Engine-Editor PRIVATE "EG_DIST")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
-    target_compile_options(Engine-Editor PRIVATE /O2)
-endif()
+set(CMAKE_OBJECT_OUTPUT_DIRECTORY PARENT_SCOPE
+"$<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:${OBJECT_DIR}>"
+)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY 
+"$<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:${TARGET_DIR}>"
+)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY
+"$<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:${TARGET_DIR}>"
+)

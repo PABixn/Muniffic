@@ -13,6 +13,10 @@
 *.dylib
 *.dll
 
+# Compiled Static libraries
+**.lib
+**.pdb
+
 # Fortran module files
 *.mod
 

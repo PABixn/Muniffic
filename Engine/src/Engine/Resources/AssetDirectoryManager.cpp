@@ -211,6 +211,7 @@ namespace eg
 		}
 
 		assetDirectory->addAsset(assetUUID);
+		return true;
 	}
 
 	bool AssetDirectoryManager::removeAsset(UUID assetDirectoryUUID, UUID assetUUID, bool deleteFile)
