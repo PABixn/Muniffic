@@ -1513,7 +1513,7 @@ namespace eg
 					//ImGui::Text("Animations:");
 					int i = 0;
 					size_t index = -1;
-					for (auto animation : *animations)
+					for (auto& animation : *animations)
 					{
 						
 						ImGui::PushID("Anim" + i);

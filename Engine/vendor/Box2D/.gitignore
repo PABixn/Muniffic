@@ -5,3 +5,8 @@ settings.ini
 CMakeSettings.json
 out/
 .vs/
+
+# Static libraries
+**.lib
+**.pdb
+bin

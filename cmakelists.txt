@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug)
-endif()
+
 add_definitions(-DUNICODE -D_UNICODE)
+set(MyProject_BUILD_TYPES Debug RelWithDebInfo Release Dist)
+get_property(multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+set(CMAKE_CONFIGURATION_TYPES "${MyProject_BUILD_TYPES}" CACHE STRING "list of supported configuration types" FORCE)
 
 project(Muniffic)
 
@@ -23,7 +24,7 @@ else()
 endif()
 
 # Build configurations
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Dist" CACHE STRING "" FORCE)
+
 
 # MultiProcessor compilation flag
 if(MSVC)
@@ -31,7 +32,12 @@ if(MSVC)
 endif()
 
 # Output directories for build configurations
-set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}-${CMAKE_SYSTEM_NAME}-${ARCHITECTURE})
+set(OUTPUT_DIR 
+"$<$<CONFIG:Debug>:${CMAKE_BINARY_DIR}/Debug-${CMAKE_SYSTEM_NAME}-${ARCHITECTURE}>"
+"$<$<CONFIG:RelWithDebInfo>:${CMAKE_BINARY_DIR}/RelWithDebInfo-${CMAKE_SYSTEM_NAME}-${ARCHITECTURE}>"
+"$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Release-${CMAKE_SYSTEM_NAME}-${ARCHITECTURE}>"
+"$<$<CONFIG:Dist>:${CMAKE_BINARY_DIR}/Dist-${CMAKE_SYSTEM_NAME}-${ARCHITECTURE}>"
+)
 
 # Dependencies
 add_subdirectory(Engine/vendor/Box2D)

@@ -25,7 +25,8 @@ namespace eg {
 		ChildSearched,
 		thisSearched,
 		parentSearched,
-		bothSearched
+		bothSearched,
+		notSearched
 	};
 	struct EntityDisplayInfo
 	{
@@ -44,7 +45,7 @@ namespace eg {
 			childInfo = std::vector<EntityDisplayInfo>();
 		};
 		Entity entity;
-		searchRes res;
+		searchRes res = searchRes::notSearched;
 		std::vector<EntityDisplayInfo> childInfo;
 	};
 	class SceneHierarchyPanel {
@@ -71,8 +72,8 @@ namespace eg {
 		void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, Icons icon);
 	private:
 		std::string m_Search;
-		Ref<ImagePanel> m_ImagePanel;
-		Ref<Scene> m_Context;
+		Ref<ImagePanel> m_ImagePanel = nullptr;
+		Ref<Scene> m_Context = nullptr;
 		Entity m_SelectionContext;
 		std::filesystem::path m_PreviewAbsoluteImagePath;
 		bool m_ReevaluatePreview = true;

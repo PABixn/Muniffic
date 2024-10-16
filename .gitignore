@@ -38,6 +38,11 @@ Engine-Editor/.env
 	#Yaml-cpp
 	Engine/vendor/yaml-cpp/yamp-cpp/
 
+# Libs
+**.lib
+**.pdb
+**.dll
+
 # Visual Studio
 **.sln
 **.vcxproj
@@ -49,6 +54,7 @@ Engine-Editor/.env
 Engine/vendor/VulkanSDK
 Engine-Editor/assets/cache/
 scripts/__pycache__/
+Engine-Editor/resources/assistant/__pycache__/
 
 #Python
 Engine-Editor/.env
