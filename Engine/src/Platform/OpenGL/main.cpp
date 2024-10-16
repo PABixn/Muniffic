@@ -5,7 +5,7 @@
 #include "egpch.h"
 #include "imgui.h"
 #include "ImGuiOpenGLRenderer.h"
-#include "imgui_impl_opengl3.h"
+#include "ImGui/backends/imgui_impl_opengl3.h"
 #include <stdio.h>
 #include <glad/glad.h>
 #define GL_SILENCE_DEPRECATION

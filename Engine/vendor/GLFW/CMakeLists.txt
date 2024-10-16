@@ -5,12 +5,6 @@ project(GLFW LANGUAGES C)
 
 add_library(GLFW STATIC)
 
-if(MSVC)
-    target_compile_options(GLFW PRIVATE /w)
-else()
-    target_compile_options(GLFW PRIVATE -w)
-endif()
-
 # Output directories for binaries and object files
 set_target_properties(GLFW PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/GLFW"
@@ -90,25 +84,11 @@ elseif(WIN32) # Windows
     set(CMAKE_SYSTEM_VERSION "latest")
 endif()
 
-# Debug configuration
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
-
-# Release configuration
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
-
-# Dist configuration
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -O3")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O3")
-set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} -O3 -DNDEBUG")
 
 # Symbols for different configurations
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(GLFW PRIVATE GLFW_DEBUG)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "Dist")
-    target_compile_options(GLFW PRIVATE -O3)
     if(CMAKE_BUILD_TYPE STREQUAL "Dist")
         set(CMAKE_C_FLAGS_DIST "${CMAKE_C_FLAGS_DIST} -DNDEBUG")
         set(CMAKE_CXX_FLAGS_DIST "${CMAKE_CXX_FLAGS_DIST} -DNDEBUG")

@@ -2,7 +2,7 @@
 #include "ImguiLayer.h"
 #include "imgui.h"
 #include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
-#include "Platform/OpenGL/imgui_impl_opengl3.h"
+#include "ImGui/backends/imgui_impl_opengl3.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "Engine/Core/Application.h"

@@ -109,7 +109,6 @@ endif()
 # Build configuration settings
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(Engine PRIVATE EG_DEBUG)
-    target_compile_options(Engine PRIVATE $<$<CONFIG:Debug>:-g>)
     target_link_libraries(Engine PRIVATE
         "${Library_ShaderC_Debug}"
         "${Library_SPIRV_Cross_Debug}"
@@ -118,7 +117,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     target_compile_definitions(Engine PRIVATE EG_RELEASE)
-    target_compile_options(Engine PRIVATE $<$<CONFIG:Release>:-O2>)
     target_link_libraries(Engine PRIVATE
         "${Library_ShaderC_Release}"
         "${Library_SPIRV_Cross_Release}"
@@ -127,7 +125,6 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 
 elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
     target_compile_definitions(Engine PRIVATE EG_DIST)
-    target_compile_options(Engine PRIVATE $<$<CONFIG:Dist>:-O3>)
     target_link_libraries(Engine PRIVATE
         "${Library_ShaderC_Release}"
         "${Library_SPIRV_Cross_Release}"

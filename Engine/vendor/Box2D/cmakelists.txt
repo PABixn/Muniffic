@@ -29,24 +29,4 @@ target_include_directories(Box2D PUBLIC
 
 if (WIN32)
     target_compile_definitions(Box2D PRIVATE _CRT_SECURE_NO_WARNINGS) # Disable security warnings on MSVC
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Box2D)
 endif()
-
-# Configurations
-target_compile_options(Box2D PRIVATE
-    $<$<CONFIG:Debug>:-g>
-    $<$<CONFIG:Release>:-O2>
-    $<$<CONFIG:Dist>:-O3 -DNDEBUG>
-)
-
-# Enable or disable symbols
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_definitions(Box2D PRIVATE BOX2D_DEBUG)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
-    set(CMAKE_CXX_FLAGS_DIST "${CMAKE_CXX_FLAGS_DIST} -DNDEBUG")
-endif()
-
