@@ -11,7 +11,6 @@
 #include <iostream>
 
 namespace eg {
-	class Renderer;
 	void showQueueFamilies(VkPhysicalDevice physicalDevice);
 
 	struct QueueFamilyIndices {
@@ -35,12 +34,11 @@ namespace eg {
 
 	class Queue
 	{
-		friend class Renderer;
+		friend class VulkanRenderer;
 	public:
 		static QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
 		static QueueFamilyIndices GetQueueFamiliesIndices(const VkPhysicalDevice& device, const VkSurfaceKHR& surface, const bool& shouldBeSaved = false);
 		static std::vector<float>* PopulateQueuesCreationInfo(std::vector<VkDeviceQueueCreateInfo>& InfoToPopulate);
-
 	private:
 		static QueueFamilyIndices m_QueueFamilyIndices;
 	public:

@@ -4,6 +4,7 @@
 struct GLFWwindow;
 
 namespace eg {
+	/*
 	class OpenGLContext: public GraphicsContext {
 		public:
 			OpenGLContext(GLFWwindow* windowHandle);
@@ -11,5 +12,5 @@ namespace eg {
 			virtual void SwapBuffers() override;
 	private:
 		GLFWwindow* m_WindowHandle;
-	};
+	};*/
 }

@@ -29,17 +29,22 @@ namespace eg
 		m_Window = Window::Create(WindowProps(applicationSpec.Name));
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 		VRenderer::Init();
-		//Renderer::Init();
+		/*
+		* SMALL TEST
+		while (!glfwWindowShouldClose((GLFWwindow*)Application::Get().GetWindow().GetNativeWindow())) {
+			glfwPollEvents();
+			VRenderer::Render();
+		}*/
 
-		//m_ImGuiLayer = new ImGuiLayer();
-		//m_LayerStack.PushOverlay(m_ImGuiLayer);
+		m_ImGuiLayer = new ImGuiLayer();
+		m_LayerStack.PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
 	{
 		EG_PROFILE_FUNCTION();
 		ScriptEngine::Shutdown();
-		Renderer::Shutdown();
+		//Renderer::Shutdown();
 		VRenderer::Shutdown();
 	}
 

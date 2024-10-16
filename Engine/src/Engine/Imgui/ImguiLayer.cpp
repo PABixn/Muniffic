@@ -2,7 +2,7 @@
 #include "ImguiLayer.h"
 #include "imgui.h"
 #include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
-#include "Platform/OpenGL/imgui_impl_opengl3.h"
+//#include "Platform/OpenGL/imgui_impl_opengl3.h"
 #include "Imgui/backends/imgui_impl_vulkan.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -28,6 +28,7 @@ namespace eg {
 	{
 		EG_PROFILE_FUNCTION();
 		IMGUI_CHECKVERSION();
+		VRenderer::ImGuiInit();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
@@ -70,8 +71,7 @@ namespace eg {
 	void ImGuiLayer::OnDetach()
 	{
 		EG_PROFILE_FUNCTION();
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
+		ImGui_ImplVulkan_Shutdown();
 		ImGui::DestroyContext();
 	}
 
@@ -95,7 +95,7 @@ namespace eg {
 	void ImGuiLayer::Begin()
 	{
 		EG_PROFILE_FUNCTION();
-		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		ImGuizmo::BeginFrame();
@@ -108,13 +108,13 @@ namespace eg {
 		ImGuiIO& io = ImGui::GetIO();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
-		ImGui::Render();
-		glViewport(0, 0, app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+		//ImGui::Render();
+		//glViewport(0, 0, app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
 		ImGui::Render();
 		int display_w, display_h;
-		glfwGetFramebufferSize(window, &display_w, &display_h);
-		glViewport(0, 0, display_w, display_h);
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		//glfwGetFramebufferSize(window, &display_w, &display_h);
+		//glViewport(0, 0, display_w, display_h);
+		VRenderer::Render();
 
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{

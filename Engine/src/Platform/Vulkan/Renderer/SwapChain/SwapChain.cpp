@@ -1,6 +1,6 @@
 #define NOMINMAX
 #include "SwapChain.h"
-#include "Renderer/Core/Device/Device.h"
+#include "Renderer/Device/Device.h"
 #include <iostream>
 #include <algorithm>
 #include "Platform/Vulkan/VulkanRenderer.h"

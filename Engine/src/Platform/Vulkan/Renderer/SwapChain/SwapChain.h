@@ -8,11 +8,6 @@
 #include <vector>
 namespace eg {
 
-    class Device;
-    class Renderer;
-    class GraphicsPipeline;
-    class FrameManager;
-
     //Helpers
     struct SwapChainSupportDetails
     {
@@ -28,12 +23,13 @@ namespace eg {
 	class SwapChain
 	{
         friend class GraphicsPipeline;
-        friend class Renderer;
+        friend class VulkanRenderer;
         friend class FrameManager;
 	public:
         void create(GLFWwindow* window);
         void cleanUp();
         void recreate();
+        VkExtent2D getSwapChainExtent() { return m_Extent; }
     private:
         void createFrameBuffers();
 	private:

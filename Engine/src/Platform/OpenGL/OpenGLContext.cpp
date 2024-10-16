@@ -5,7 +5,7 @@
 #include "glad/glad.h"
 
 namespace eg
-{
+{/*
 	OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)
 		: m_WindowHandle(windowHandle)
 	{
@@ -32,11 +32,5 @@ namespace eg
 
 		EG_CORE_ASSERT(versionMajor > 4 || (versionMajor == 4 && versionMinor >= 5), "Hazel requires at least OpenGL version 4.5!");
 #endif
-	}
-
-	void OpenGLContext::SwapBuffers()
-	{
-		EG_PROFILE_FUNCTION();
-		glfwSwapBuffers(m_WindowHandle);
-	}
+	}*/
 }

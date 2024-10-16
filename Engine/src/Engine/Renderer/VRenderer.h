@@ -5,7 +5,9 @@ namespace eg {
 	{
 	public:
 		static void Init();
+		static void Render();
 		static void Shutdown();
+		static void ImGuiInit();
 	private:
 
 	};

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Platform/Vulkan/Renderer/Core/Queue/Queue.h"
+#include "Platform/Vulkan/Renderer/Queue/Queue.h"
 #include <vector>
 #include <memory>
 #include <iostream>

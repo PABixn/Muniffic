@@ -15,6 +15,8 @@ namespace eg {
 		case RendererAPI::API::OpenGL:
 			ConsolePanel::Log("File: FrameBuffer.cpp - FrameBuffer Created", ConsolePanel::LogType::Info);
 			return CreateRef<OpenGLFrameBuffer>(spec);
+		case RendererAPI::API::Vulkan:
+			return nullptr; //Framebuffer already created
 		}
 
 		EG_CORE_ASSERT(false, "Unknown RendererAPI!");
