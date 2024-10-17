@@ -2,7 +2,6 @@
 #include "AssistantPanel.h"
 #include <Imgui/imgui.h>
 #include "Engine/Project/Project.h"
-#include "Imgui/imgui_markdown.h"
 #include <thread>
 #include <sstream>
 #include <unordered_map>
@@ -28,8 +27,6 @@ namespace eg
 	{
         EG_PROFILE_FUNCTION();
 		memset(buffer, 0, sizeof(buffer));
-
-		mdConfig = ImGui::MarkdownConfig();
 
 		m_assistantInitialized = assistantManager->CheckAPI();
 
@@ -246,8 +243,6 @@ namespace eg
 
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding * 2);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
-					//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
-					//Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding * 2, padding * 2);
 					ImGui::Indent(padding * 2);
 					ImGui::Text(msg.c_str());
 					ImGui::Unindent(padding * 2);
@@ -271,7 +266,6 @@ namespace eg
 				else
 				{
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-					//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
 					Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding, padding);
 					ImGui::PopTextWrapPos();
 					msg = "";
@@ -293,7 +287,6 @@ namespace eg
 		if (!msg.empty())
 		{
 			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-			//ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
 			Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding, padding);
 			ImGui::PopTextWrapPos();
 		}

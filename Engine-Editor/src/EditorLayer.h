@@ -131,19 +131,19 @@ namespace eg
 		ImVec4 m_NormalShade = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
 		ImVec4 m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
 		
-		ImFont* m_PoppinsLightFont;
-		ImFont* m_PoppinsRegularFont;
-		ImFont* m_PoppinsRegularFontBig;
-		ImFont* m_PoppinsMediumFont;
-		ImFont* m_PoppinsBoldFont;
-		ImFont* m_PoppinsItalicFont;
-		ImFont* m_PoppinsBoldItalicFont;
-		ImFont* m_PoppinsHeading1Font;
-		ImFont* m_PoppinsHeading2Font;
-		ImFont* m_PoppinsHeading3Font;
-		ImFont* m_PoppinsSemiBoldFont;
-		ImFont* m_PoppinsSemiBoldFontBig;
-		ImFont* m_PoppinsExtraBoldFont;
+		ImFont* m_PoppinsLightFont = nullptr;
+		ImFont* m_PoppinsRegularFont = nullptr;
+		ImFont* m_PoppinsRegularFontBig = nullptr;
+		ImFont* m_PoppinsMediumFont = nullptr;
+		ImFont* m_PoppinsBoldFont = nullptr;
+		ImFont* m_PoppinsItalicFont = nullptr;
+		ImFont* m_PoppinsBoldItalicFont = nullptr;
+		ImFont* m_PoppinsHeading1Font = nullptr;
+		ImFont* m_PoppinsHeading2Font = nullptr;
+		ImFont* m_PoppinsHeading3Font = nullptr;
+		ImFont* m_PoppinsSemiBoldFont = nullptr;
+		ImFont* m_PoppinsSemiBoldFontBig = nullptr;
+		ImFont* m_PoppinsExtraBoldFont = nullptr;
 
 		//Time for fixedUpdate loop
 		std::chrono::steady_clock::time_point m_OldTime = std::chrono::high_resolution_clock::now();;
