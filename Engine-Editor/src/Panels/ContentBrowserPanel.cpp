@@ -60,8 +60,8 @@ namespace eg
 		ImGui::PopID();
 	}
 
-	void ContentBrowserPanel::OnImGuiRender() {
-
+	void ContentBrowserPanel::OnImGuiRender()
+	{
 		if (m_DeleteDirectoryPanel->IsShown())
 			m_DeleteDirectoryPanel->OnImGuiRender();
 
