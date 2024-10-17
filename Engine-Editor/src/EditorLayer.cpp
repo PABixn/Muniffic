@@ -33,7 +33,7 @@ namespace eg
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
-        EG_PROFILE_FUNCTION()
+		EG_PROFILE_FUNCTION();
            
 		m_RecentProjectSerializer = RecentProjectSerializer();
 		m_WelcomePanel = CreateScope<WelcomingPanel>(m_RecentProjectSerializer.getProjectList(), m_RecentProjectSerializer);
@@ -119,8 +119,6 @@ namespace eg
 		RenderCommand::Clear();
 
 		m_FrameBuffer->ClearAttachment(1, -1);
-
-
 
 		switch (m_SceneState)
 		{
@@ -1024,11 +1022,11 @@ namespace eg
             ConsolePanel::Log("File: EditorLayer.cpp - Could not load " + path.filename().string() + " - not a project file", ConsolePanel::LogType::Error);
             return false;
 		}
-		if (path == Project::GetProjectPath()){
+		if (Project::GetActive() && path == Project::GetProjectPath()) {
 			ConsolePanel::Log("File: EditorLayer.cpp - Project already opened", ConsolePanel::LogType::Warning);
             return false;
 	    }
-        //CloseProject();
+  
 		OpenProject(filepath);
 		m_RecentProjectSerializer.Serialize(filepath, "recentProjectSerializer.txt");
 		ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);
