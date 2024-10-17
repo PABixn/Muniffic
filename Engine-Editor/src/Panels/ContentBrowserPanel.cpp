@@ -85,7 +85,7 @@ namespace eg
 			drawList->ChannelsSplit(2);
 			drawList->ChannelsSetCurrent(1);
 
-			if (ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Arrow)->GetRendererID(), { 30, 30 }))
+			if (ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Arrow)->GetRendererID(), {30, 30}))
 			{
 				UUID oldPath = m_CurrentDirectory;
 				m_CurrentDirectory = AssetDirectoryManager::getParentDirectoryUUID(m_CurrentDirectory);
@@ -123,7 +123,7 @@ namespace eg
 		ImGui::SameLine();
 		drawList->ChannelsSplit(2);
 		drawList->ChannelsSetCurrent(1);
-		if(ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Plus)->GetRendererID(), ImVec2(30,30)))
+		if(ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY",(ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Plus)->GetRendererID(), ImVec2(30, 30)))
 		{
 			ImGui::OpenPopup("CreateNewResource");
 		}
@@ -216,7 +216,7 @@ namespace eg
 			ImGui::PushID(directory);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0,0,0,0));
-			ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 			ImGui::PopStyleColor();
 
 			ShowFolderMenu(directory);
@@ -539,13 +539,13 @@ namespace eg
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 
 		if (type == ResourceType::Script)
-			ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileScript)->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileScript)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 		else if (type == ResourceType::Audio)
-			ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileAudio)->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileAudio)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 		else if (type == ResourceType::Animation)
-			ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileAnimation)->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileAnimation)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 		else
-			ImGui::ImageButton((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_File)->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_File)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 
 		ImGui::PopStyleColor();
 	}

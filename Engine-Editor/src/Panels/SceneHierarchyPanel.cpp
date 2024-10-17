@@ -605,7 +605,7 @@ namespace eg
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(3.f, 5.f));
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
-		opened = ImGui::CustomTreeNodeEx((void *)(int64_t)entity.GetUUID(), flags, tag.c_str());
+		opened = ImGui::CustomTreeNodeEx((void *)(int64_t)entity.GetUUID(), (ImTextureID)IconLoader::GetIcon(Icons::Component_Puzzle)->GetRendererID(), flags, tag.c_str());
 		ImGui::PopStyleColor(2);
 		ImGui::PopStyleVar();
 		if (ImGui::BeginDragDropSource())
@@ -788,7 +788,7 @@ namespace eg
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
-			if (ImGui::InputText("##Tag", buffer, sizeof(buffer), ImGuiInputTextFlags_Wrapped))
+			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				std::string name = tag;
 				tag = std::string(buffer);
