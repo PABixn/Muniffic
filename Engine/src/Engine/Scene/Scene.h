@@ -64,6 +64,8 @@ namespace eg {
 			return m_Registry;
 		}
 
+		std::unordered_map<UUID, EntityInfo*>& GetEntityInfoMap() { return m_EntityInfoMap; }
+
 		bool IsRunning() const { return m_IsRunning; }
 		bool IsPaused() const { return m_IsPaused; }
 
@@ -103,6 +105,7 @@ namespace eg {
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 		//Change to shared_ptr if doesn't couse any problems
 		std::unordered_map<UUID, EntityInfo*> m_EntityInfoMap;
+
 
 		friend class Entity;
 		friend class SceneHierarchyPanel;
