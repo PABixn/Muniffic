@@ -133,6 +133,12 @@ namespace eg
 		ImFont* m_PoppinsRegularFont = nullptr;
 		ImFont* m_PoppinsRegularFontBig = nullptr;
 		ImFont* m_PoppinsMediumFont = nullptr;
+		ImFont* m_PoppinsBoldFont = nullptr;
+		ImFont* m_PoppinsItalicFont = nullptr;
+		ImFont* m_PoppinsBoldItalicFont = nullptr;
+		ImFont* m_PoppinsHeading1Font = nullptr;
+		ImFont* m_PoppinsHeading2Font = nullptr;
+		ImFont* m_PoppinsHeading3Font = nullptr;
 		ImFont* m_PoppinsSemiBoldFont = nullptr;
 		ImFont* m_PoppinsSemiBoldFontBig = nullptr;
 		ImFont* m_PoppinsExtraBoldFont = nullptr;
