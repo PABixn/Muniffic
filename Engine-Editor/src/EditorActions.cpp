@@ -313,9 +313,9 @@ namespace eg
 		if (entity == Entity())
 			return "Entity with UUID " + params.at(0) + " not found";
 
-		auto children = entity.GetAnyChildren();
 		std::string childrenNames = "";
-		for (Entity e : children)
+		Ref<std::vector<Entity>> children = entity.GetAnyChildren();
+		for (Entity e : *children)
 		{
 			childrenNames += e.GetName() + ",";
 		}
@@ -336,9 +336,9 @@ namespace eg
 		if (entity == Entity())
 			return "Entity with UUID " + params.at(0) + " not found";
 
-		auto children = entity.GetChildren();
 		std::string childrenNames = "";
-		for (Entity e : children)
+		Ref<std::vector<Entity>> children = entity.GetChildren();
+		for (Entity e : *children)
 		{
 			childrenNames += e.GetName() + ",";
 		}

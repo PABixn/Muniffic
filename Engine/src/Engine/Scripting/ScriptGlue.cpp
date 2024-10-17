@@ -351,16 +351,16 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(uuid);
 		EG_CORE_ASSERT(entity, "Entity does not exist!");
 
-		std::vector<Entity> childrenUUIDs = entity.GetAnyChildren();
+		Ref<std::vector<Entity>> childrenUUIDs = entity.GetAnyChildren();
 
-		int64_t* uuids = new int64_t[childrenUUIDs.size()];
+		int64_t* uuids = new int64_t[childrenUUIDs->size()];
 
-		for (int i = 0; i < childrenUUIDs.size(); i++)
+		for (int i = 0; i < childrenUUIDs->size(); i++)
 		{
-			uuids[i] = childrenUUIDs[i].GetUUID();
+			uuids[i] = childrenUUIDs->at(i).GetUUID();
 		}
 
-		*size = childrenUUIDs.size();
+		*size = childrenUUIDs->size();
 
 		return uuids;
 	}
@@ -373,16 +373,16 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(uuid);
 		EG_CORE_ASSERT(entity, "Entity does not exist!");
 
-		std::vector<Entity> childrenUUIDs = entity.GetChildren();
+		Ref<std::vector<Entity>> childrenUUIDs = entity.GetChildren();
 
-		int64_t* uuids = new int64_t[childrenUUIDs.size()];
+		int64_t* uuids = new int64_t[childrenUUIDs->size()];
 
-		for (int i = 0; i < childrenUUIDs.size(); i++)
-		{
-			uuids[i] = childrenUUIDs[i].GetUUID();
+		for (int i = 0; i < childrenUUIDs->size(); i++)
+		{ 
+			uuids[i] = childrenUUIDs->at(i).GetUUID();
 		}
 
-		*size = childrenUUIDs.size();
+		*size = childrenUUIDs->size();
 
 		return uuids;
 	}

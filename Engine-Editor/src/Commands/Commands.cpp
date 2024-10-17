@@ -63,7 +63,8 @@ namespace eg
 
 			m_DeletedEntity = SaveEntity(arg.m_Entity);
 
-			for (auto& child : arg.m_Entity.GetAnyChildren())
+			Ref<std::vector<Entity>> children = arg.m_Entity.GetAnyChildren();
+			for (auto& child : *children)
 			{
 				EntitySave saved = SaveEntity(child);
 				m_Children.push_back(saved);
@@ -115,7 +116,8 @@ namespace eg
 
 			m_DeletedEntity = SaveEntity(entity);
 
-			for (auto& child : entity.GetAnyChildren())
+			Ref<std::vector<Entity>> children = entity.GetAnyChildren();
+			for (auto& child : *children)
 			{
 				EntitySave saved = SaveEntity(child);
 				m_Children.push_back(saved);

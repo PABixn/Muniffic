@@ -336,11 +336,12 @@ namespace eg {
 
 			//Set Animations
 
+
 			{
 				auto group = m_Registry.view<TransformComponent, AnimatorComponent>();
 				for (auto entity : group)
 				{
-					auto [transform, animator ] = group.get<TransformComponent, AnimatorComponent>(entity);
+					auto [transform, animator] = group.get<TransformComponent, AnimatorComponent>(entity);
 					if (animator.Animator2D->GetCurrentAnimation() == nullptr || animator.Animator2D->GetCurrentAnimation()->GetFrameCount() == 0)
 						continue;
 					Ref<SubTexture2D> texture = animator.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
@@ -384,6 +385,10 @@ namespace eg {
 
 			Renderer2D::EndScene();
 		}
+
+		for(auto& entity : m_EntitiesToDestroy)
+			DestroyEntity(entity);
+		m_EntitiesToDestroy.clear();
 	}
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
@@ -466,7 +471,7 @@ namespace eg {
 					continue;
 				Ref<SubTexture2D> texture = animator.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
 
-				Renderer2D::DrawQuad(transform.GetTransform(), texture, (int)entity);
+				Renderer2D::DrawQuad(transform.GetTransform(), texture, 1, glm::vec4(1.0f), (int)entity);
 			}
 		}
 

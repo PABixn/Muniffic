@@ -72,11 +72,12 @@ namespace eg {
 		if (entity.GetParent().has_value())
 			out << YAML::Key << "Parent" << YAML::Value << entity.GetParent().value().GetUUID();
 
-		if (entity.GetChildren().size() > 0)
+		if (entity.GetChildCount() > 0)
 		{
 			out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
 
-			for (auto child : entity.GetChildren())
+			Ref<std::vector<Entity>> children = entity.GetChildren();
+			for (auto child : *children)
 				out << YAML::Value << child.GetUUID();
 
 			out << YAML::EndSeq; // EntityInfo
