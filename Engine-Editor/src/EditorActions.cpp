@@ -225,12 +225,12 @@ namespace eg
 
 		EG_CORE_INFO(output);
 
-		m_FunctionCalls.clear();
-
 		std::thread([output]()
 		{
 				m_AssistantManager->SubmitToolOutputs(m_ThreadID, m_RunID, output);
 		}).detach();
+
+		m_FunctionCalls.clear();
 
 		m_FunctionCallsMutex.unlock();
 	}

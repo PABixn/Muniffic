@@ -211,7 +211,7 @@ namespace eg
 
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ImGuiWindowFlags_NoBackground;
-
+		
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
 		ImGui::PopStyleVar();
@@ -289,14 +289,15 @@ namespace eg
 
 			style.WindowMinSize.x = minWinSizeX;
 
-			style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0, 0, 0, 0);
-			style.Colors[ImGuiCol_HeaderActive] = ImVec4(0, 0, 0, 0);
-			style.Colors[ImGuiCol_TextDisabled] = m_LightTextShade;
-
 		ImGui::PushFont(m_PoppinsSemiBoldFont);
 		ImGui::PushStyleColor(ImGuiCol_Text, m_LightTextShade);
+		ImGui::PushStyleColor(ImGuiCol_TextDisabled, m_LightTextShade);
+		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_NormalShade);
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_NormalShade);
 		if (ImGui::BeginMenuBar())
 		{
+
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::MenuItem("Open Project...", "Ctrl+O"))
@@ -315,7 +316,8 @@ namespace eg
 
 				if (ImGui::MenuItem("Exit"))
 					Application::Get().Close();
-				ImGui::EndMenu();
+
+				ImGui::EndMenu();				
 			}
 
 			if (ImGui::BeginMenu("Script"))
@@ -341,7 +343,7 @@ namespace eg
 
 			ImGui::EndMenuBar();
 		}
-		ImGui::PopStyleColor();
+		ImGui::PopStyleColor(5);
 		ImGui::PopFont();
 
 			m_SceneHierarchyPanel.OnImGuiRender();

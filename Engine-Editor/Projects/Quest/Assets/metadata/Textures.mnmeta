@@ -1,85 +1,85 @@
 Resources:
-  - UUID: 2868799104352897471
-    ParentDirectory: 4058848348184294479
-    ResourceName: Mushroom
+  - UUID: 2096168245406542103
+    ParentDirectory: 1402154855633883506
+    ResourceName: squareIdle
     Extension: .png
-    Width: 88
-    Height: 103
+    Width: 8640
+    Height: 7680
     Channels: 4
-  - UUID: 5971059976421292855
-    ParentDirectory: 4058848348184294479
+  - UUID: 4822483361129246619
+    ParentDirectory: 7518499889905845058
     ResourceName: background
     Extension: .png
     Width: 1920
     Height: 1080
     Channels: 3
-  - UUID: 6915486127643481679
-    ParentDirectory: 4058848348184294479
-    ResourceName: filled
+  - UUID: 1709818011598393051
+    ParentDirectory: 1402154855633883506
+    ResourceName: squareWalk
     Extension: .png
-    Width: 558
-    Height: 248
-    Channels: 4
-  - UUID: 3073514098121636886
-    ParentDirectory: 4058848348184294479
-    ResourceName: player
-    Extension: .png
-    Width: 1080
-    Height: 1920
-    Channels: 4
-  - UUID: 2147288385802459474
-    ParentDirectory: 4058848348184294479
-    ResourceName: crabWalk
-    Extension: .png
-    Width: 7560
+    Width: 14040
     Height: 3840
     Channels: 4
-  - UUID: 230503048180160378
-    ParentDirectory: 4058848348184294479
-    ResourceName: shield
+  - UUID: 3004710897462677659
+    ParentDirectory: 7518499889905845058
+    ResourceName: ShortDetached
     Extension: .png
-    Width: 102
-    Height: 92
+    Width: 758
+    Height: 419
     Channels: 4
-  - UUID: 3111189009044965736
-    ParentDirectory: 4058848348184294479
+  - UUID: 5492301953988942405
+    ParentDirectory: 7518499889905845058
+    ResourceName: LongDetached
+    Extension: .png
+    Width: 1827
+    Height: 467
+    Channels: 4
+  - UUID: 8338259171190208266
+    ParentDirectory: 8143211936874341395
+    ResourceName: spikes
+    Extension: .png
+    Width: 1920
+    Height: 150
+    Channels: 4
+  - UUID: 6247502100175362970
+    ParentDirectory: 8143211936874341395
+    ResourceName: LightThick
+    Extension: .png
+    Width: 782
+    Height: 1020
+    Channels: 4
+  - UUID: 6726367690180429190
+    ParentDirectory: 7518499889905845058
     ResourceName: SolidNiceGround
     Extension: .png
     Width: 813
     Height: 275
     Channels: 4
-  - UUID: 5765888930754833568
-    ParentDirectory: 4058848348184294479
-    ResourceName: backgroundFinal
+  - UUID: 7648315516138075520
+    ParentDirectory: 8143211936874341395
+    ResourceName: ThickBranch
     Extension: .png
-    Width: 1920
-    Height: 1080
-    Channels: 3
-  - UUID: 5449493125244607825
-    ParentDirectory: 4058848348184294479
-    ResourceName: playerWalk
-    Extension: .png
-    Width: 8640
-    Height: 3840
+    Width: 346
+    Height: 177
     Channels: 4
-  - UUID: 4837218940359014664
-    ParentDirectory: 4058848348184294479
-    ResourceName: playerJump
+  - UUID: 5595990218576034560
+    ParentDirectory: 8143211936874341395
+    ResourceName: LightThin
     Extension: .png
-    Width: 7560
-    Height: 7680
+    Width: 458
+    Height: 1020
     Channels: 4
-  - UUID: 1687609592684268133
-    ParentDirectory: 4058848348184294479
-    ResourceName: enemyWalk
+  - UUID: 6283358733454184857
+    ParentDirectory: 8143211936874341395
+    ResourceName: flower
     Extension: .png
-    Width: 7560
-    Height: 3840
+    Width: 183
+    Height: 195
     Channels: 4
-  - UUID: 7762673114422315442
-    ParentDirectory: 4058848348184294479
-    ResourceName: enemyAttack
+  - UUID: 4216236345485903332
+    ParentDirectory: 8143211936874341395
+    ResourceName: Vine05
     Extension: .png
-    Width: 8640
-    Height: 5760
+    Width: 59
+    Height: 608
     Channels: 4
