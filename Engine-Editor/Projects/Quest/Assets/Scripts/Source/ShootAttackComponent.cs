@@ -10,10 +10,12 @@ namespace Quest
     internal class ShootAttackComponent
     {
         private int damage = 10;
-        private float multiplier = 1.0f;
+        private float damageMultiplier = 1.0f;
+        private float attackSpeedMultiplier = 1.0f;
         private float range = 10;
         private float cooldown = 1.0f;
         private float cooldownTimer = 0.0f;
+        private int knockbackForce = 10;
         private int bulletSpeed = 1;
         private Entity entity;
 
@@ -25,13 +27,13 @@ namespace Quest
 
         List<Bullet> bullets = new List<Bullet>();
 
-        public ShootAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName = "Enemies")
+        public ShootAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName, AttackBoxComponent attackBoxComponent)
         {
             this.entity = entity;
             this.attackTargetTypes = attackTargetTypes;
             this.attackTargetParentName = attackTargetParentName;
+            this.attackBoxComponent = attackBoxComponent;
             transform = entity.GetComponent<TransformComponent>();
-            attackBoxComponent = entity.As<AttackBoxComponent>();
         }
 
         public void Update(float ts)
@@ -48,12 +50,12 @@ namespace Quest
             }
             if (cooldownTimer >= cooldown && Input.IsKeyPressed(KeyCode.R))
             {
-                //Console.WriteLine("Direction: " + attackBoxComponent.attackDirecton.X);
-                Bullet bullet = new Bullet(transform.translation.XY, attackBoxComponent.attackDirecton, damage, bulletSpeed, attackTargetTypes, attackTargetParentName);
+                Bullet bullet = new Bullet(transform.translation.XY, attackBoxComponent.GetDirection(), (int)(damage * damageMultiplier),(int)(bulletSpeed * attackSpeedMultiplier), attackTargetTypes, attackTargetParentName);
+                bullet.SetKnockBack(knockbackForce);
                 bullets.Add(bullet);
                 cooldownTimer = 0;
             }
-            
+
         }
 
         public void SetEntity(Entity entity)
@@ -61,14 +63,33 @@ namespace Quest
             this.entity = entity;
         }
 
-        public void SetMultiplier(float multiplier)
+        public void SetDamageMultiplier(float multiplier)
         {
-            this.multiplier = multiplier;
+            this.damageMultiplier = multiplier;
         }
 
-        public float GetMultiplier()
+        public float GetDamageMultiplier()
         {
-            return multiplier;
+            return damageMultiplier;
+        }
+
+        public void SetAttackSpeedMultiplier(float multiplier)
+        {
+            this.attackSpeedMultiplier = multiplier;
+        }
+
+        public float GetAttackSpeedMultiplier(){
+            return attackSpeedMultiplier;
+        }
+
+        public void SetKnockback(int knockbackForce)
+        {
+            this.knockbackForce = knockbackForce;
+        }
+
+        public int GetKnockback()
+        {
+            return knockbackForce;
         }
 
         public void SetDamage(int damage)

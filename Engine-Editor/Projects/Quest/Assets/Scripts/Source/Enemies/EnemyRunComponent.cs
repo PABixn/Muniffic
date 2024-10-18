@@ -41,7 +41,7 @@ namespace Quest
             {
                 attackBox = entity.As<EnemyAttackBoxComponent>();
             }
-            if(attackBox.isEnemyinRange(player))
+            if(attackBox.CollidesWith(player))
             {
                 return;
             }
@@ -58,7 +58,7 @@ namespace Quest
             {
                 direction.X *= -1;
                 if(attackBox != null)
-                    attackBox.attackDirecton = direction;
+                    attackBox.attackDirection = direction;
             }
 
             float targetSpeed = direction.X * speed * multiplier;
@@ -92,7 +92,7 @@ namespace Quest
                 direction = Vector2.Right;
             }
             if (attackBox != null)
-                attackBox.attackDirecton = direction;
+                attackBox.attackDirection = direction;
         }
 
         public bool GroundCheckMiddle()
