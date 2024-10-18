@@ -106,7 +106,7 @@ namespace eg {
 		m_FrameHeight = m_TextureData->Height / m_MaxRow;
 
 		std::sort(m_SelectedFrames.begin(), m_SelectedFrames.end());
-		for (auto frame : m_SelectedFrames) {
+		for (auto& frame : m_SelectedFrames) {
 			Ref<FrameData> frameData = CreateRef<FrameData>();
 
 			glm::vec2 min = { frame.second * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f - ((frame.first + 1) * (float)m_FrameHeight) / (float)m_TextureData->Height };
@@ -148,7 +148,7 @@ namespace eg {
         EG_PROFILE_FUNCTION();
 		EG_PROFILE_FUNCTION();
 		std::vector<std::pair<int, int>> newSelectedFrames;
-		for (auto frame : m_SelectedFrames)
+		for (auto& frame : m_SelectedFrames)
 		{
 			if (frame.first > m_MaxRow || frame.second > m_MaxColumn)
 				continue;

@@ -44,16 +44,17 @@ namespace eg
 	const std::string& AssistantManager::GetLastMessageRole(std::string threadID)
 	{
 		EG_PROFILE_FUNCTION();
+		const std::string empty = "";
 		if (m_Threads.find(threadID) == m_Threads.end())
 		{
 			EG_CORE_ERROR("Thread not found");
-			return "";
+			return empty;
 		}
 
 		if (m_Threads.at(threadID)->messages.size() == 0)
 		{
 			EG_CORE_ERROR("No messages found for thread");
-			return "";
+			return empty;
 		}
 
 		return m_Threads.at(threadID)->messages.at(m_Threads.at(threadID)->messages.size() - 1)->role;
@@ -637,12 +638,13 @@ namespace eg
 
 			WaitForCompletion(threadID);
 		}
+		return true;
 	}
 
 	void AssistantManager::SaveAssistant()
 	{
 		EG_PROFILE_FUNCTION();
-		std::filesystem::path path = Project::GetResourcesPath() / "resources/assistant/assistant.mndata";
+		std::filesystem::path path = std::filesystem::absolute("resources/assistant/assistant.mndata");
 		YAML::Emitter out;
 
 		if(!std::filesystem::exists(path.parent_path()))
@@ -660,7 +662,7 @@ namespace eg
 	bool AssistantManager::LoadAssistant()
 	{
 		EG_PROFILE_FUNCTION();
-		std::filesystem::path path = "resources/assistant/assistant.mndata";
+		std::filesystem::path path = std::filesystem::absolute("resources/assistant/assistant.mndata");
 
 		if (!std::filesystem::exists(path))
 		{

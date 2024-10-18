@@ -336,7 +336,7 @@ namespace eg {
 		ImVec2 cursorPos, cursorPos2;
 		float rectWidth = 0;
 
-		for (auto frame : m_Anim->GetFrames()) {
+		for (auto& frame : m_Anim->GetFrames()) {
 			rectWidth = frameWidth * frame->GetFrameDuration()-2;
 			cursorPos = ImGui::GetCursorScreenPos();
 			cursorPos2 = ImVec2(cursorPos.x + rectWidth, cursorPos.y + 40);

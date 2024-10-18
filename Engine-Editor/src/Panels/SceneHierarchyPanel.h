@@ -25,7 +25,8 @@ namespace eg {
 		ChildSearched,
 		thisSearched,
 		parentSearched,
-		bothSearched
+		bothSearched,
+		notSearched
 	};
 	struct EntityDisplayInfo
 	{
@@ -44,7 +45,7 @@ namespace eg {
 			childInfo = std::vector<EntityDisplayInfo>();
 		};
 		Entity entity;
-		searchRes res;
+		searchRes res = searchRes::notSearched;
 		std::vector<EntityDisplayInfo> childInfo;
 	};
 	class SceneHierarchyPanel {
@@ -56,6 +57,8 @@ namespace eg {
 		void OnImGuiRender();
 		void Update(float dt);
 
+		void Search();
+
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; SetPreviewAbsoluteImagePath(""); }
 		void SetPreviewAbsoluteImagePath(std::filesystem::path path) { m_PreviewAbsoluteImagePath = path; m_ReevaluatePreview = true; }
@@ -64,14 +67,13 @@ namespace eg {
 		void DisplayAddComponentEntry(const std::string& entryName);
 		void DrawEntityNode(EntityDisplayInfo entityDisplayInfo);
 		void DrawComponents(Entity entity);
-		void Search();
 		std::optional<EntityDisplayInfo> SearchEntity(Entity entity);
 		template<typename T, typename UIFunction>
 		void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, Icons icon);
 	private:
 		std::string m_Search;
-		Ref<ImagePanel> m_ImagePanel;
-		Ref<Scene> m_Context;
+		Ref<ImagePanel> m_ImagePanel = nullptr;
+		Ref<Scene> m_Context = nullptr;
 		Entity m_SelectionContext;
 		std::filesystem::path m_PreviewAbsoluteImagePath;
 		bool m_ReevaluatePreview = true;
