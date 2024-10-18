@@ -430,6 +430,8 @@ namespace eg
 		ImVec2 padd = ImGui::GetStyle().FramePadding; 
 		ImVec2 inputSize = ImVec2(300, 30);
 
+		Search();
+
 		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount()==2) {
 			Search();
 		}
