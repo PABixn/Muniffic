@@ -28,7 +28,7 @@ namespace eg
     private:
         std::string threadID;
         std::string assistantRespondingAnimation;
-        Scope<AssistantManager> assistantManager = nullptr;
+        Ref<AssistantManager> assistantManager = nullptr;
         char buffer[1024];
         bool m_isListening;
         bool m_shouldListen;

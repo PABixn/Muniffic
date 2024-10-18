@@ -375,19 +375,25 @@ namespace eg
 		m_Context->m_Registry.each([&](auto entityID)
 								   {
 			Entity entity{ entityID, m_Context.get() };
-			if (entity.GetParent() == std::nullopt) {
-				if (m_Search != "")
+			if (entity.Exists())
+			{
+				if (entity.GetParent() == std::nullopt)
 				{
-					std::optional<EntityDisplayInfo> found = SearchEntity(entity);
-					if (found.has_value()) {
-						m_ListOfEntityDisplayed.push_back(found.value());
+					if (m_Search != "")
+					{
+						std::optional<EntityDisplayInfo> found = SearchEntity(entity);
+						if (found.has_value()) {
+							m_ListOfEntityDisplayed.push_back(found.value());
+						}
 					}
+					else
+					{
+						m_ListOfEntityDisplayed.push_back(EntityDisplayInfo(entity, searchRes::thisSearched));
+					}
+
 				}
-				else
-				{
-					m_ListOfEntityDisplayed.push_back(EntityDisplayInfo(entity, searchRes::thisSearched));
-				}
-			} });
+			}
+			});
 		m_FirstDrawAfterSearch = true;
 	}
 

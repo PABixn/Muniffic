@@ -1,6 +1,7 @@
 #pragma once
 #include <Engine.h>
 #include "Commands/Commands.h"
+#include "Engine/Assistant/AssistantManager.h"
 
 namespace eg
 {
@@ -12,6 +13,12 @@ namespace eg
 
 		static void SetScene(const Ref<Scene>& scene) { m_Scene = scene; }
 		static void SetSelectionContext(Entity* entity) { m_SelectedEntity = entity; }
+        static void SetAssistantManager(Ref<AssistantManager> assistantManager) { m_AssistantManager = assistantManager; }
+        static void SetThreadAndRunIDs(const std::string& threadID, const std::string& runID) { m_ThreadID = threadID; m_RunID = runID; }
+
+        static void AddFunctionCall(std::function<std::string(std::string, std::vector<std::string>)> function, const std::string& functionName, const std::vector<std::string>& params, std::string toolCallID);
+
+        static void ExecuteFunctionCalls();
 		
     private:
         static std::string GetUUID(const std::vector<std::string>& params);
@@ -66,5 +73,19 @@ namespace eg
 	private:
 		static Ref<Scene> m_Scene;
 		static Entity* m_SelectedEntity;
+        static std::mutex m_FunctionCallsMutex;
+        static Ref<AssistantManager> m_AssistantManager;
+        static std::string m_ThreadID;
+        static std::string m_RunID;
+
+        struct FunctionCall
+        {
+            std::function<std::string(std::string, std::vector<std::string>)> function;
+            std::string functionName;
+            std::vector<std::string> params;
+            std::string toolCallID;
+        };
+
+        static std::vector<FunctionCall> m_FunctionCalls;
 	};
 }

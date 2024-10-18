@@ -20,6 +20,7 @@
 #include "Engine/Project/ScriptSerializer.h"
 #include "MarkdownRenderer/Markdown.h"
 #include "IconLoader.h"
+#include "EditorActions.h"
 #ifdef EG_RELEASE
 #define HELLO "Hello from Release"
 #endif
@@ -179,6 +180,8 @@ namespace eg
 
 		OnOverlayRender();
 		m_FrameBuffer->Unbind();
+
+		EditorActions::ExecuteFunctionCalls();
 	}
 
 	void EditorLayer::OnImGuiRender()

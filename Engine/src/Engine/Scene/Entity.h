@@ -62,6 +62,9 @@ namespace eg
 
 		bool Exists()
 		{
+			if (m_Scene == nullptr)
+				return false;
+
 			return m_Scene->m_Registry.valid(m_EntityHandle);
 		}
 
@@ -72,6 +75,9 @@ namespace eg
 
 		bool IsChild(Entity& child)
 		{
+			if (!Exists())
+				return false;
+
 			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
 			auto it = std::find(children.begin(), children.end(), child.GetUUID());
 
@@ -83,6 +89,9 @@ namespace eg
 
 		bool IsChildOfAny(Entity& child)
 		{
+			if (!Exists())
+				return false;
+
 			if (IsChild(child))
 				return true;
 
@@ -100,11 +109,17 @@ namespace eg
 
 		int GetChildCount()
 		{
+			if (!Exists())
+				return -1;
+
 			return m_Scene->m_EntityInfoMap[GetUUID()]->m_Children.size();
 		}
 
 		Ref<std::vector<Entity>> GetChildren()
 		{
+			if (!Exists())
+				return CreateRef<std::vector<Entity>>();
+
 			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
 			Ref<std::vector<Entity>> entities = CreateRef<std::vector<Entity>>();
 			//entities->reserve(children.size());
@@ -117,12 +132,17 @@ namespace eg
 
 		std::vector<UUID> GetChildrenUUID()
 		{
+			if (!Exists())
+				return std::vector<UUID>();
+
 			return m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
 		}
 
 		Ref<std::vector<Entity>> GetAnyChildren()
-
 		{
+			if (!Exists())
+				return CreateRef<std::vector<Entity>>();
+
 			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
 			Ref<std::vector<Entity>> entities = CreateRef<std::vector<Entity>>();
 			entities->reserve(children.size());
@@ -138,6 +158,9 @@ namespace eg
 
 		std::optional<Entity> GetParent()
 		{
+			if (!Exists())
+				return std::nullopt;
+
 			auto& parent = m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
 			if(parent == NULL)
 				return std::nullopt;
@@ -147,11 +170,17 @@ namespace eg
 
 		UUID GetParentUUID()
 		{
+			if (!Exists())
+				return 0;
+
 			return m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
 		}
 
 		void SetParent(std::optional<Entity> entity)
 		{
+			if (!Exists())
+				return;
+
 			auto& parent = m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
 			if (entity.has_value())
 			{
@@ -164,24 +193,36 @@ namespace eg
 
 		void SetParent(UUID entity)
 		{
+			if (!Exists())
+				return;
+
 			auto& parent = m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
 			parent = entity;
 		}
 
 		void AddChild(Entity child)
 		{
+			if (!Exists())
+				return;
+
 			if (!IsChild(child) && child.GetUUID() != GetUUID())
 				m_Scene->m_EntityInfoMap[GetUUID()]->m_Children.push_back(child.GetUUID());
 		}
 
 		void AddChild(UUID child)
 		{
+			if (!Exists())
+				return;
+
 			if(child != GetUUID())
 				m_Scene->m_EntityInfoMap[GetUUID()]->m_Children.push_back(child);
 		}
 
 		void RemoveChild(Entity child)
 		{
+			if (!Exists())
+				return;
+
 			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
 			auto it = std::find(children.begin(), children.end(), child.GetUUID());
 			if (it != children.end())
@@ -190,6 +231,9 @@ namespace eg
 
 		void RemoveAnyChildren()
 		{
+			if (!Exists())
+				return;
+
 			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
 			for (auto& child : children)
 			{
@@ -202,6 +246,9 @@ namespace eg
 		template<typename Component>
 		void RevertComponentValuesInChildren(std::unordered_map<UUID, Component>& previousValues)
 		{
+			if (!Exists())
+				return;
+
 			Ref<std::vector<Entity>> children = GetAnyChildren();
 			for (Entity e : *children)
 			{
@@ -215,6 +262,9 @@ namespace eg
 		template<typename Component>
 		void CopyComponentValuesToChildren()
 		{
+			if (!Exists())
+				return;
+
 			Ref<std::vector<Entity>> children = GetAnyChildren();
 			for (Entity e : *children)
 			{
@@ -230,6 +280,9 @@ namespace eg
 		template<typename Component>
 		void CopyComponentValuesToChildren(std::unordered_map<UUID, Component>& previousValues)
 		{
+			if (!Exists())
+				return;
+
 			Ref<std::vector<Entity>> children = GetAnyChildren();
 			for (Entity e : *children)
 			{
@@ -246,6 +299,9 @@ namespace eg
 		template<typename Component>
 		void CopyComponentToChildren(bool isUndo)
 		{
+			if (!Exists())
+				return;
+
 			Ref<std::vector<Entity>> children = GetAnyChildren();
 			for (Entity e : *children)
 			{
@@ -259,9 +315,11 @@ namespace eg
 		template<typename Component>
 		void InheritComponentInChildren(bool applyToEntity, bool isUndo)
 		{
-			if (GetInheritableComponent<Component>() == nullptr)
+			if (!Exists())
 				return;
 
+			if (GetInheritableComponent<Component>() == nullptr)
+				return;
 
 			GetInheritableComponent<Component>()->isInheritedInChildren = !isUndo;
 
@@ -282,6 +340,9 @@ namespace eg
 		template<typename T, typename Component>
 		void ApplyValueToChildren(T* value_ptr)
 		{
+			if (!Exists())
+				return;
+
 			Ref<std::vector<Entity>> children = GetAnyChildren();
 			for (Entity e : *children)
 			{
@@ -302,6 +363,9 @@ namespace eg
 
 		EntityInfo* GetEntityInfo()
 		{
+			if (!Exists())
+				return new EntityInfo(0);
+
 			return m_Scene->m_EntityInfoMap[GetUUID()];
 		}
 

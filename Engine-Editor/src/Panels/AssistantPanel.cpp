@@ -9,11 +9,12 @@
 #include <algorithm>
 #include "../MarkdownRenderer/Markdown.h"
 #include "../IconLoader.h"
+#include "../EditorActions.h"
 
 namespace eg
 {
 	AssistantPanel::AssistantPanel()
-		: assistantManager(CreateScope<AssistantManager>()),
+		: assistantManager(CreateRef<AssistantManager>()),
 		assistantRespondingAnimation("."),
 		m_isListening(false),
 		m_isMicrophoneAvailable(false),
@@ -50,6 +51,8 @@ namespace eg
 
 		if(m_assistantInitialized)
 			threadID = assistantManager->CreateThread();
+
+		EditorActions::SetAssistantManager(assistantManager);
 	}
 
 	std::string AssistantPanel::LoadInstructions()
