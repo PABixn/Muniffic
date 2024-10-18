@@ -2,34 +2,39 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Quest
 {
-    public class EnemyMeleeAttackComponent
+    public class MeleeAttackComponent
     {
         private bool Enabled = true;
 
-        private EnemyAttackBoxComponent attackBoxComponent;
+        private AttackBoxComponent attackBoxComponent;
         public string attackTargetParentName = "Enemies";
         public List<EntityType> attackTargetTypes = new List<EntityType> { EntityType.ENEMY_SQUARE };
 
         private float attackCooldown = 0.5f;
         private float attackTimer = 0f;
-        private int damage = 10;
-        private int knockbackForce = 10;
+        public int damage = 10;
+
+        private float multiplier = 1.0f;
+
+        private int knockbackForce = 100;
 
         private TransformComponent transform;
         private BoxCollider2DComponent collider;
 
         Entity entity;
 
-        public EnemyMeleeAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName = "Enemies")
+        public MeleeAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName, AttackBoxComponent attackBoxComponent)
         {
             this.entity = entity;
             this.attackTargetParentName = attackTargetParentName;
             this.attackTargetTypes = attackTargetTypes;
+            this.attackBoxComponent = attackBoxComponent;
             transform = entity.GetComponent<TransformComponent>();
             collider = entity.GetComponent<BoxCollider2DComponent>();
         }
@@ -37,16 +42,15 @@ namespace Quest
         public void Update(float ts)
         {
             if (collider == null || !Enabled) return;
-            if (attackBoxComponent == null) attackBoxComponent = entity.As<EnemyAttackBoxComponent>();
             attackTimer += ts;
 
-            if (attackTimer >= attackCooldown)
+            if (attackTimer >= attackCooldown && Input.IsKeyPressed(KeyCode.R))
             {
                 foreach (Entity e in Entity.FindEntityByName(attackTargetParentName).GetChildren())
                 {
-                    if (attackBoxComponent.isEnemyinRange(e) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
+                    if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.GetCenter(), attackBoxComponent.GetSize()) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
                     {
-                        e.As<HealthComponent>().TakeDamage(damage);
+                        e.As<HealthComponent>().TakeDamage((int)(damage * multiplier));
                         nockback(e, attackBoxComponent);
                     }
                 }
@@ -54,11 +58,11 @@ namespace Quest
             }
         }
 
-        private void nockback(Entity e, EnemyAttackBoxComponent attackBox)
+        private void nockback(Entity e, AttackBoxComponent attackBox)
         {
             RigidBody2DComponent rb = e.GetComponent<RigidBody2DComponent>();
             TransformComponent eTransform = e.GetComponent<TransformComponent>();
-            if (rb == null) return;
+            if(rb == null) return;
             Vector2 direction = eTransform.translation.XY - transform.translation.XY;
             direction.NormalizeTo(knockbackForce);
             rb.ApplyLinearImpulse(direction);
@@ -89,21 +93,19 @@ namespace Quest
             this.attackTargetTypes = attackTargetTypes;
         }
 
-        public bool isPlayerInRange()
+        public void SetKnockback(int force)
         {
-            foreach (Entity e in Entity.FindEntityByName(attackTargetParentName).GetChildren())
-            {
-                if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.attackBoxCenter, attackBoxComponent.attackBoxSize) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
-                {
-                    return true;
-                }
-            }
-            return false;
+            knockbackForce = force;
         }
 
-        public void setKnockback(int knockbackForce)
+        public void SetMultiplier(float multiplier)
         {
-            this.knockbackForce = knockbackForce;
+            this.multiplier = multiplier;
+        }
+
+        public float GetMultiplier()
+        {
+            return multiplier;
         }
     }
 }
