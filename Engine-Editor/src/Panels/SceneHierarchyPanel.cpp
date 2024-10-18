@@ -432,7 +432,7 @@ namespace eg
 
 		Search();
 
-		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount()==2) {
+		if (ImGui::InputText("##entitySearch", &m_Search) || ImGui::GetFrameCount() == 2) {
 			Search();
 		}
 
