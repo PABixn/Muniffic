@@ -268,9 +268,9 @@ namespace eg
 				}
 				else
 				{
-					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
+					//ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
 					Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding, padding);
-					ImGui::PopTextWrapPos();
+					//ImGui::PopTextWrapPos();
 					msg = "";
 
 					insideCode = true;
@@ -289,9 +289,9 @@ namespace eg
 
 		if (!msg.empty())
 		{
-			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
+			//ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
 			Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding, padding);
-			ImGui::PopTextWrapPos();
+			//ImGui::PopTextWrapPos();
 		}
 
 		drawList->ChannelsSetCurrent(0);
