@@ -178,12 +178,15 @@ namespace eg {
 		colors[ImGuiCol_ScrollbarGrabHovered] = m_LightShade;
 		colors[ImGuiCol_ScrollbarGrabActive] = m_LightShade;
 
-		//Others
-		colors[ImGuiCol_MenuBarBg] = ImVec4(0.153f, 0.133f, 0.200f, 1.0f);
-
 		//Borders
 		colors[ImGuiCol_Border] = m_LightShade;
 		style.PopupBorderSize = 1.0f;
+
+		//Text
+		colors[ImGuiCol_TextDisabled] = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
+
+		//Others
+		colors[ImGuiCol_MenuBarBg] = ImVec4(0.153f, 0.133f, 0.200f, 1.0f);
 	}
     
 }
