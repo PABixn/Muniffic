@@ -102,19 +102,7 @@ namespace eg {
 
 		static const std::filesystem::path GetScriptModulePath() {
 			EG_CORE_ASSERT(s_ActiveProject, "No active project");
-			return  s_ActiveProject->m_Config.ScriptModulePath /
-				#ifdef EG_DEBUG
-                "Debug"
-				#elif EG_RELEASE
-				"Release"
-				#elif EG_DIST
-				"Dist"
-				#elif EG_RELWITHDEBINFO
-				"RelWithDebInfo"
-				#else
-				"Debug"
-				#endif
-				/ (s_ActiveProject->m_Config.Name + ".dll");
+			return  s_ActiveProject->m_Config.ScriptModulePath / "Debug" / (s_ActiveProject->m_Config.Name + ".dll");
 		}
 
 		static void SetScriptModulePath(const std::filesystem::path& newDirectory) {
