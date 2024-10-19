@@ -37,7 +37,6 @@ namespace Quest
 
             entity = Entity.Create("Bullet");
             transform = entity.GetComponent<TransformComponent>();
-            transform.translation = new Vector3(direction, 0);
             transform.scale = new Vector3(0.1f, 0.1f, 0.5f);
             spriteRenderer = entity.AddComponent<SpriteRendererComponent>();
             spriteRenderer.color = Color.white;
@@ -45,7 +44,7 @@ namespace Quest
             rigidBody = entity.AddComponent<RigidBody2DComponent>();
             rigidBody.type = RigidBody2DComponent.BodyType.Kinematic;
             collider.isSensor = true;
-            transform.translation = new Vector3(position, 0);
+            transform.translation = new Vector3(position, -0.1f);
             rigidBody.AwakeRuntimeBody();
             rigidBody.linearVelocity = direction * speed;
             

@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Quest
 {
-    public interface AttackBoxComponent
+    public abstract class AttackBoxComponent : DefaultBehaviour
     {
-        void OnCreate();
-        void OnUpdate(float ts);
-        bool CollidesWith(Entity e);
-        Vector2 GetDirection();
-        Vector2 GetSize();
-        Vector2 GetOffset();
-        Vector2 GetCenter();
+        public abstract void OnCreate();
+        public abstract void OnUpdate(float ts);
+        public abstract bool CollidesWith(Entity e);
+        public abstract Vector2 GetDirection();
+        public abstract Vector2 GetSize();
+        public abstract Vector2 GetOffset();
+        public abstract Vector2 GetCenter();
     }
 }

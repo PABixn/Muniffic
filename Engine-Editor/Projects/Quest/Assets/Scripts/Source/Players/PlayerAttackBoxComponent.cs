@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Quest
 {
-    public class PlayerAttackBoxComponent : DefaultBehaviour, AttackBoxComponent
+    public class PlayerAttackBoxComponent : AttackBoxComponent
     {
         public Vector2 attackDirection = Vector2.Right;
         public Vector2 attackBoxSize = new Vector2(1, 1);
@@ -16,14 +16,14 @@ namespace Quest
 
         private BoxCollider2DComponent attackBox;
         private TransformComponent transform;
-        public void OnCreate()
+        public override void OnCreate()
         {
             attackBox = entity.GetComponent<BoxCollider2DComponent>();
             transform = entity.GetComponent<TransformComponent>();
             attackBoxCenter = new Vector2(transform.translation.X + (attackBoxOffset.X + attackBox.size.X) * attackDirection.X, transform.translation.Y + attackBoxOffset.Y);
         }
 
-        public void OnUpdate(float ts)
+        public override void OnUpdate(float ts)
         {
             if (Input.IsKeyPressed(KeyCode.A) && !Input.IsKeyPressed(KeyCode.D))
             {
@@ -36,23 +36,23 @@ namespace Quest
             attackBoxCenter = new Vector2(transform.translation.X + (attackBoxOffset.X + attackBox.size.X) * attackDirection.X, transform.translation.Y + attackBoxOffset.Y);
         }
 
-        public bool CollidesWith(Entity e){
+        public override bool CollidesWith(Entity e){
             return attackBox.CollidesWith(e);
         }
 
-        public Vector2 GetDirection(){
+        public override Vector2 GetDirection(){
             return attackDirection;
         }
 
-        public Vector2 GetSize(){
+        public override Vector2 GetSize(){
             return attackBoxSize;
         }
 
-        public Vector2 GetOffset(){
+        public override Vector2 GetOffset(){
             return attackBoxOffset;
         }
 
-        public Vector2 GetCenter(){
+        public override Vector2 GetCenter(){
             return attackBoxCenter;
         }
 

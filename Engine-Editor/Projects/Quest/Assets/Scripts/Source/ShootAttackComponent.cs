@@ -16,7 +16,7 @@ namespace Quest
         private float cooldown = 1.0f;
         private float cooldownTimer = 0.0f;
         private int knockbackForce = 10;
-        private int bulletSpeed = 1;
+        private int bulletSpeed = 4;
         private Entity entity;
 
         List<EntityType> attackTargetTypes = new List<EntityType>();

@@ -1,7 +1,7 @@
 Resources:
-  - UUID: 8863010160591618796
+  - UUID: 3136020345952418588
     ParentDirectory: 3370402605611323070
-    ResourceName: Quest.Player
+    ResourceName: Quest.PlayerAttackBoxComponent
     Extension: .cs
     IsEnabled: true
     Methods:
@@ -13,9 +13,9 @@ Resources:
     IsEnabled: true
     Methods:
       []
-  - UUID: 3136020345952418588
+  - UUID: 8863010160591618796
     ParentDirectory: 3370402605611323070
-    ResourceName: Quest.PlayerAttackBoxComponent
+    ResourceName: Quest.Player
     Extension: .cs
     IsEnabled: true
     Methods:
@@ -37,6 +37,13 @@ Resources:
   - UUID: 5222782641706725470
     ParentDirectory: 3370402605611323070
     ResourceName: Quest.CameraMove
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 7111738932302980541
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.PlayerAttackBoxComponent
     Extension: .cs
     IsEnabled: true
     Methods:

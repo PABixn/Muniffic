@@ -32,7 +32,6 @@ namespace Quest
 
         public void OnCreate()
         {
-            shootAttackComponent = new ShootAttackComponent(entity, BasePlayerTargets, "Enemies", playerAttackBoxComponent);
         }
 
         public void OnUpdate(float ts)
@@ -43,7 +42,8 @@ namespace Quest
             if(playerAttackBoxComponent == null) playerAttackBoxComponent = entity.As<PlayerAttackBoxComponent>();
             if(jumpComponent == null) jumpComponent = entity.As<JumpComponent>();
             if(runComponent == null) runComponent = entity.As<RunComponent>();
-            if(entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.PLAYER;
+            if(shootAttackComponent == null) shootAttackComponent = new ShootAttackComponent(entity, BasePlayerTargets, "Enemies", playerAttackBoxComponent);
+            if (entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.PLAYER;
             if(!initialized) Init();
 
             shootAttackComponent.Update(ts, Input.IsKeyPressed(KeyCode.R));
