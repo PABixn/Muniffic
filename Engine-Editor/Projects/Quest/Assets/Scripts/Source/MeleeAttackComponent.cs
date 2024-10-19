@@ -39,12 +39,12 @@ namespace Quest
             collider = entity.GetComponent<BoxCollider2DComponent>();
         }
 
-        public void Update(float ts)
+        public void Update(float ts, bool attackCondition = true)
         {
             if (collider == null || !Enabled) return;
             attackTimer += ts;
 
-            if (attackTimer >= attackCooldown && Input.IsKeyPressed(KeyCode.R))
+            if (attackTimer >= attackCooldown && attackCondition)
             {
                 foreach (Entity e in Entity.FindEntityByName(attackTargetParentName).GetChildren())
                 {

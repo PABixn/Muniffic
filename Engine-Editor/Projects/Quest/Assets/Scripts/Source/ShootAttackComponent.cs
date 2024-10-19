@@ -36,7 +36,7 @@ namespace Quest
             transform = entity.GetComponent<TransformComponent>();
         }
 
-        public void Update(float ts)
+        public void Update(float ts, bool attackCondition)
         {
             cooldownTimer += ts;
             foreach (Bullet bullet in bullets)
@@ -48,7 +48,7 @@ namespace Quest
                     bullets.Remove(bullet);
                 }
             }
-            if (cooldownTimer >= cooldown && Input.IsKeyPressed(KeyCode.R))
+            if (cooldownTimer >= cooldown && attackCondition)
             {
                 Bullet bullet = new Bullet(transform.translation.XY, attackBoxComponent.GetDirection(), (int)(damage * damageMultiplier),(int)(bulletSpeed * attackSpeedMultiplier), attackTargetTypes, attackTargetParentName);
                 bullet.SetKnockBack(knockbackForce);
