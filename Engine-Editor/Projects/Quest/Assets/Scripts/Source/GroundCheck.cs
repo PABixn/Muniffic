@@ -12,7 +12,7 @@ namespace Quest
     {
         public static bool IsGrounded(BoxCollider2DComponent groundCheck)
         {
-            List<Entity> entities = Entity.FindEntitiesByName("Floor");
+            List<Entity> entities = Entity.FindEntitiesByName("Wall");
 
             foreach (Entity entity in entities)
             {

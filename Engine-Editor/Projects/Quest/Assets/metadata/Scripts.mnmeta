@@ -1,2 +1,50 @@
 Resources:
-  []
+  - UUID: 3136020345952418588
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.PlayerAttackBoxComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 4452690059192365868
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.JumpComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 8863010160591618796
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.Player
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 1867687413990529871
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.HealthComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 388055781692258074
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.RunComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 5222782641706725470
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.CameraMove
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 4661687159670203365
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []

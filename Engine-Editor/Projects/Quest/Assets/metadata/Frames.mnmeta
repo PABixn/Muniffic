@@ -1,2 +1,199 @@
 Resources:
-  []
+  - UUID: 3952146258636553976
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle0
+    Extension: ""
+    SubTexture: 1973146961463636216
+    Duration: 1
+  - UUID: 5850471761058033975
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle1
+    Extension: ""
+    SubTexture: 3143889110011539281
+    Duration: 1
+  - UUID: 6208846792721176335
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle19
+    Extension: ""
+    SubTexture: 8863450076148516076
+    Duration: 1
+  - UUID: 5237760045810551439
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle4
+    Extension: ""
+    SubTexture: 8514219554720676677
+    Duration: 1
+  - UUID: 8602238628490220975
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle5
+    Extension: ""
+    SubTexture: 1691779221144226267
+    Duration: 1
+  - UUID: 4597579925615446259
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle2
+    Extension: ""
+    SubTexture: 4777034659698614257
+    Duration: 1
+  - UUID: 6958992224346279627
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle25
+    Extension: ""
+    SubTexture: 7423776919975704052
+    Duration: 1
+  - UUID: 2616813748904816203
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle6
+    Extension: ""
+    SubTexture: 2893788748582103130
+    Duration: 1
+  - UUID: 3698611208443359438
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle3
+    Extension: ""
+    SubTexture: 1056981696102788485
+    Duration: 1
+  - UUID: 3597003491637329881
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle7
+    Extension: ""
+    SubTexture: 3319471744190495577
+    Duration: 1
+  - UUID: 8618046233787167585
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle8
+    Extension: ""
+    SubTexture: 2041065156348877333
+    Duration: 1
+  - UUID: 6475677982560273633
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle31
+    Extension: ""
+    SubTexture: 4555187572383683720
+    Duration: 1
+  - UUID: 891060175645266728
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle9
+    Extension: ""
+    SubTexture: 4114537737194162829
+    Duration: 1
+  - UUID: 2083147118377455848
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle11
+    Extension: ""
+    SubTexture: 4246919270702160124
+    Duration: 1
+  - UUID: 1790978379173816809
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle10
+    Extension: ""
+    SubTexture: 4211704941824922127
+    Duration: 1
+  - UUID: 7477063130656856108
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle12
+    Extension: ""
+    SubTexture: 2113029755942795989
+    Duration: 1
+  - UUID: 9209493296489419758
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle13
+    Extension: ""
+    SubTexture: 7134017545601667460
+    Duration: 1
+  - UUID: 6048277320734500958
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle14
+    Extension: ""
+    SubTexture: 1118099752027576914
+    Duration: 1
+  - UUID: 3532717866189105179
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle15
+    Extension: ""
+    SubTexture: 1931641743987271709
+    Duration: 1
+  - UUID: 7654172187394392731
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle24
+    Extension: ""
+    SubTexture: 4487083409625895954
+    Duration: 1
+  - UUID: 9150542793594385917
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle16
+    Extension: ""
+    SubTexture: 887340489392162200
+    Duration: 1
+  - UUID: 1888322564746527741
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle23
+    Extension: ""
+    SubTexture: 3128953754730956484
+    Duration: 1
+  - UUID: 5230447526314077885
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle27
+    Extension: ""
+    SubTexture: 116159836750641526
+    Duration: 1
+  - UUID: 8931082892325948002
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle17
+    Extension: ""
+    SubTexture: 1934504650750236312
+    Duration: 1
+  - UUID: 918831269425311989
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle18
+    Extension: ""
+    SubTexture: 2022159910703035845
+    Duration: 1
+  - UUID: 3170058403533133362
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle20
+    Extension: ""
+    SubTexture: 4868333174280984041
+    Duration: 1
+  - UUID: 1994514368218907250
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle28
+    Extension: ""
+    SubTexture: 7806849568894995124
+    Duration: 1
+  - UUID: 5817513382962591673
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle21
+    Extension: ""
+    SubTexture: 159984259307442034
+    Duration: 1
+  - UUID: 1007295741906360261
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle22
+    Extension: ""
+    SubTexture: 8517565790650354247
+    Duration: 1
+  - UUID: 8147496703019209415
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle26
+    Extension: ""
+    SubTexture: 664872888758558678
+    Duration: 1
+  - UUID: 6797144401076601297
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle29
+    Extension: ""
+    SubTexture: 7210332394583841945
+    Duration: 1
+  - UUID: 6870784575685890752
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle30
+    Extension: ""
+    SubTexture: 2103381278318753012
+    Duration: 1
+  - UUID: 7197913293943881189
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle32
+    Extension: ""
+    SubTexture: 8210704931972629528
+    Duration: 1
