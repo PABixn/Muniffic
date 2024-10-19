@@ -37,9 +37,9 @@ namespace Quest
 
             entity = Entity.Create("Bullet");
             transform = entity.GetComponent<TransformComponent>();
-            transform.scale = new Vector3(0.1f, 0.1f, 0.5f);
+            transform.scale = new Vector3(0.15f * direction.X, 0.1f, 0.5f);
             spriteRenderer = entity.AddComponent<SpriteRendererComponent>();
-            spriteRenderer.color = Color.white;
+            spriteRenderer.texture = "Projects/Quest/Assets/Textures/bullet.png";
             collider = entity.AddComponent<BoxCollider2DComponent>();
             rigidBody = entity.AddComponent<RigidBody2DComponent>();
             rigidBody.type = RigidBody2DComponent.BodyType.Kinematic;

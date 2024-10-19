@@ -127,7 +127,7 @@ namespace eg
         public string texture
         {
             get => InternalCalls.SpriteRendererComponent_GetTexture(Entity.ID);
-            set => InternalCalls.SpriteRendererComponent_SetTexture(Entity.ID, ref value);
+            set => InternalCalls.SpriteRendererComponent_SetTexture(Entity.ID, value);
         }
 
         /// <summary>
