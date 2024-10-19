@@ -44,6 +44,7 @@ namespace Quest
                 bullet.OnUpdate(ts);
                 if(bullet.ShouldDestroy())
                 {
+
                     bullet.Destroy();
                     bullets.Remove(bullet);
                 }
@@ -54,8 +55,8 @@ namespace Quest
                 bullet.SetKnockBack(knockbackForce);
                 bullets.Add(bullet);
                 cooldownTimer = 0;
+                Console.WriteLine("Bullet created");
             }
-
         }
 
         public void SetEntity(Entity entity)

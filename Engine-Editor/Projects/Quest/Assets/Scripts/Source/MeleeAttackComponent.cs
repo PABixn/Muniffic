@@ -47,7 +47,7 @@ namespace Quest
             if (attackTimer >= attackCooldown && attackCondition)
             {
                 Entity enemyParent = Entity.FindEntityByName(attackTargetParentName);
-                if (enemyParent == null) return;
+                if (enemyParent.ID == 0) return;
                 foreach (Entity e in enemyParent.GetChildren())
                 {
                     if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.GetCenter(), attackBoxComponent.GetSize()) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))

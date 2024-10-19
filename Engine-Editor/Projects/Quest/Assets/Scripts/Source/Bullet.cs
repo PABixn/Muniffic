@@ -59,7 +59,7 @@ namespace Quest
                 shouldDestroy = true;
             }
             Entity enemyParent = Entity.FindEntityByName(attackParentString);
-            if (enemyParent == null)
+            if (enemyParent.ID == 0)
             {
                 return;
             }
