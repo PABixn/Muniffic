@@ -90,3 +90,24 @@ Resources:
     Width: 8640
     Height: 7680
     Channels: 4
+  - UUID: 2286676976987181609
+    ParentDirectory: 7518499889905845058
+    ResourceName: squareWalk
+    Extension: .png
+    Width: 14040
+    Height: 3840
+    Channels: 4
+  - UUID: 2856049949421333556
+    ParentDirectory: 1402154855633883506
+    ResourceName: squareIdle2Walk
+    Extension: .png
+    Width: 4320
+    Height: 1920
+    Channels: 4
+  - UUID: 408917395987356854
+    ParentDirectory: 7518499889905845058
+    ResourceName: squareIdle2Walk
+    Extension: .png
+    Width: 4320
+    Height: 1920
+    Channels: 4

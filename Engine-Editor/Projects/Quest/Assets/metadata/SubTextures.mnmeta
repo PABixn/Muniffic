@@ -19,6 +19,16 @@ Resources:
       - [0.125, 0.75]
       - [0.125, 1]
       - [0, 1]
+  - UUID: 1829943240858286001
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk22
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.692307711, 0]
+      - [0.769230783, 0]
+      - [0.769230783, 0.5]
+      - [0.692307711, 0.5]
   - UUID: 4777034659698614257
     ParentDirectory: 6177811797238138676
     ResourceName: squareIdle2
@@ -49,26 +59,6 @@ Resources:
       - [0.875, 0.75]
       - [0.875, 1]
       - [0.75, 1]
-  - UUID: 2022159910703035845
-    ParentDirectory: 6177811797238138676
-    ResourceName: squareIdle18
-    Extension: ""
-    Texture: 7134099327712876302
-    TexCoords:
-      - [0.125, 0.25]
-      - [0.25, 0.25]
-      - [0.25, 0.5]
-      - [0.125, 0.5]
-  - UUID: 1056981696102788485
-    ParentDirectory: 6177811797238138676
-    ResourceName: squareIdle3
-    Extension: ""
-    Texture: 7134099327712876302
-    TexCoords:
-      - [0.25, 0.75]
-      - [0.375, 0.75]
-      - [0.375, 1]
-      - [0.25, 1]
   - UUID: 8514219554720676677
     ParentDirectory: 6177811797238138676
     ResourceName: squareIdle4
@@ -79,6 +69,36 @@ Resources:
       - [0.5, 0.75]
       - [0.5, 1]
       - [0.375, 1]
+  - UUID: 1056981696102788485
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle3
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.25, 0.75]
+      - [0.375, 0.75]
+      - [0.375, 1]
+      - [0.25, 1]
+  - UUID: 3905098383459631685
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk13
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0, 0]
+      - [0.0769230798, 0]
+      - [0.0769230798, 0.5]
+      - [0, 0.5]
+  - UUID: 2022159910703035845
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle18
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.125, 0.25]
+      - [0.25, 0.25]
+      - [0.25, 0.5]
+      - [0.125, 0.5]
   - UUID: 1691779221144226267
     ParentDirectory: 6177811797238138676
     ResourceName: squareIdle5
@@ -88,6 +108,16 @@ Resources:
       - [0.5, 0.75]
       - [0.625, 0.75]
       - [0.625, 1]
+      - [0.5, 1]
+  - UUID: 2859259110729931163
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle2Walk2
+    Extension: ""
+    Texture: 408917395987356854
+    TexCoords:
+      - [0.5, 0]
+      - [0.75, 0]
+      - [0.75, 1]
       - [0.5, 1]
   - UUID: 2893788748582103130
     ParentDirectory: 6177811797238138676
@@ -139,6 +169,16 @@ Resources:
       - [0.25, 0.5]
       - [0.25, 0.75]
       - [0.125, 0.75]
+  - UUID: 9028130932518097423
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk1
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.0769230798, 0.5]
+      - [0.15384616, 0.5]
+      - [0.15384616, 1]
+      - [0.0769230798, 1]
   - UUID: 4246919270702160124
     ParentDirectory: 6177811797238138676
     ResourceName: squareIdle11
@@ -229,6 +269,26 @@ Resources:
       - [1, 0]
       - [1, 0.25]
       - [0.875, 0.25]
+  - UUID: 1418286891511581976
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk10
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.769230783, 0.5]
+      - [0.846153855, 0.5]
+      - [0.846153855, 1]
+      - [0.769230783, 1]
+  - UUID: 1942229120428787928
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk19
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.461538464, 0]
+      - [0.538461566, 0]
+      - [0.538461566, 0.5]
+      - [0.461538464, 0.5]
   - UUID: 8863450076148516076
     ParentDirectory: 6177811797238138676
     ResourceName: squareIdle19
@@ -239,6 +299,26 @@ Resources:
       - [0.375, 0.25]
       - [0.375, 0.5]
       - [0.25, 0.5]
+  - UUID: 5817478152031716524
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk18
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.384615391, 0]
+      - [0.461538464, 0]
+      - [0.461538464, 0.5]
+      - [0.384615391, 0.5]
+  - UUID: 520245159502301100
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk24
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.846153855, 0]
+      - [0.923076928, 0]
+      - [0.923076928, 0.5]
+      - [0.846153855, 0.5]
   - UUID: 4868333174280984041
     ParentDirectory: 6177811797238138676
     ResourceName: squareIdle20
@@ -249,6 +329,16 @@ Resources:
       - [0.5, 0.25]
       - [0.5, 0.5]
       - [0.375, 0.5]
+  - UUID: 5902200756010241705
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk9
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.692307711, 0.5]
+      - [0.769230783, 0.5]
+      - [0.769230783, 1]
+      - [0.692307711, 1]
   - UUID: 159984259307442034
     ParentDirectory: 6177811797238138676
     ResourceName: squareIdle21
@@ -319,6 +409,26 @@ Resources:
       - [0.375, 0]
       - [0.375, 0.25]
       - [0.25, 0.25]
+  - UUID: 3597879628578145206
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk5
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.384615391, 0.5]
+      - [0.461538464, 0.5]
+      - [0.461538464, 1]
+      - [0.384615391, 1]
+  - UUID: 8471665258706768630
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk12
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.923076928, 0.5]
+      - [1, 0.5]
+      - [1, 1]
+      - [0.923076928, 1]
   - UUID: 4555187572383683720
     ParentDirectory: 6177811797238138676
     ResourceName: squareIdle31
@@ -329,3 +439,193 @@ Resources:
       - [0.875, 0]
       - [0.875, 0.25]
       - [0.75, 0.25]
+  - UUID: 4774075748201679944
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk6
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.461538464, 0.5]
+      - [0.538461566, 0.5]
+      - [0.538461566, 1]
+      - [0.461538464, 1]
+  - UUID: 7087871448250632
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk8
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.615384638, 0.5]
+      - [0.692307711, 0.5]
+      - [0.692307711, 1]
+      - [0.615384638, 1]
+  - UUID: 9076637791432704840
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk14
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.0769230798, 0]
+      - [0.15384616, 0]
+      - [0.15384616, 0.5]
+      - [0.0769230798, 0.5]
+  - UUID: 6916337805789089130
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk0
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0, 0.5]
+      - [0.0769230798, 0.5]
+      - [0.0769230798, 1]
+      - [0, 1]
+  - UUID: 6980582036766036371
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk2
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.15384616, 0.5]
+      - [0.230769232, 0.5]
+      - [0.230769232, 1]
+      - [0.15384616, 1]
+  - UUID: 5744112441850519700
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk3
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.230769232, 0.5]
+      - [0.307692319, 0.5]
+      - [0.307692319, 1]
+      - [0.230769232, 1]
+  - UUID: 2598238703655314788
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk4
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.307692319, 0.5]
+      - [0.384615391, 0.5]
+      - [0.384615391, 1]
+      - [0.307692319, 1]
+  - UUID: 606894401678372769
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk7
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.538461566, 0.5]
+      - [0.615384638, 0.5]
+      - [0.615384638, 1]
+      - [0.538461566, 1]
+  - UUID: 469548552165077935
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk11
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.846153855, 0.5]
+      - [0.923076928, 0.5]
+      - [0.923076928, 1]
+      - [0.846153855, 1]
+  - UUID: 3553561025716430236
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk15
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.15384616, 0]
+      - [0.230769232, 0]
+      - [0.230769232, 0.5]
+      - [0.15384616, 0.5]
+  - UUID: 9078939277199616586
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk16
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.230769232, 0]
+      - [0.307692319, 0]
+      - [0.307692319, 0.5]
+      - [0.230769232, 0.5]
+  - UUID: 7957590827954798022
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk17
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.307692319, 0]
+      - [0.384615391, 0]
+      - [0.384615391, 0.5]
+      - [0.307692319, 0.5]
+  - UUID: 2189754527670434566
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle2Walk3
+    Extension: ""
+    Texture: 408917395987356854
+    TexCoords:
+      - [0.75, 0]
+      - [1, 0]
+      - [1, 1]
+      - [0.75, 1]
+  - UUID: 6711727496933022112
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk20
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.538461566, 0]
+      - [0.615384638, 0]
+      - [0.615384638, 0.5]
+      - [0.538461566, 0.5]
+  - UUID: 7615983534833091618
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk21
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.615384638, 0]
+      - [0.692307711, 0]
+      - [0.692307711, 0.5]
+      - [0.615384638, 0.5]
+  - UUID: 7618745212667370426
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk23
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.769230783, 0]
+      - [0.846153855, 0]
+      - [0.846153855, 0.5]
+      - [0.769230783, 0.5]
+  - UUID: 5580982298105421454
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareWalk25
+    Extension: ""
+    Texture: 2286676976987181609
+    TexCoords:
+      - [0.923076928, 0]
+      - [1, 0]
+      - [1, 0.5]
+      - [0.923076928, 0.5]
+  - UUID: 5300018019793697088
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle2Walk0
+    Extension: ""
+    Texture: 408917395987356854
+    TexCoords:
+      - [0, 0]
+      - [0.25, 0]
+      - [0.25, 1]
+      - [0, 1]
+  - UUID: 5696101218583124247
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle2Walk1
+    Extension: ""
+    Texture: 408917395987356854
+    TexCoords:
+      - [0.25, 0]
+      - [0.5, 0]
+      - [0.5, 1]
+      - [0.25, 1]
