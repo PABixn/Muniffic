@@ -1,5 +1,33 @@
 Scene: Untitled
 Entities:
+  - Entity: 5788534356523531950
+    Name: Cube
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.769999981
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 3
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 5222782641706725470
+      IsInherited: false
+      IsInheritedInChildren: false
   - Entity: 3486261274721042980
     Name: Cube
     Parent: 5780414226918828943
@@ -858,3 +886,56 @@ Entities:
       TextureUUID: 4822483361129246619
       IsInherited: false
       IsInheritedInChildren: false
+  - Entity: 2593248692687013949
+    Name: Cube
+    TagComponent:
+      Tag: Player
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        - 4037270119508845572
+      Transitions:
+        []
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 8863010160591618796
+          ScriptFields:
+            []
+        - ScriptUUID: 1867687413990529871
+          ScriptFields:
+            []
+        - ScriptUUID: 4452690059192365868
+          ScriptFields:
+            []
+        - ScriptUUID: 388055781692258074
+          ScriptFields:
+            []
+        - ScriptUUID: 3136020345952418588
+          ScriptFields:
+            []
+        - ScriptUUID: 4661687159670203365
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.280000001]
+      Size: [0.300000012, 0.219999999]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false

@@ -1,2 +1,331 @@
 Resources:
-  []
+  - UUID: 1973146961463636216
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle0
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0, 0.75]
+      - [0.125, 0.75]
+      - [0.125, 1]
+      - [0, 1]
+  - UUID: 3143889110011539281
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle1
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0, 0.75]
+      - [0.125, 0.75]
+      - [0.125, 1]
+      - [0, 1]
+  - UUID: 4777034659698614257
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle2
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.125, 0.75]
+      - [0.25, 0.75]
+      - [0.25, 1]
+      - [0.125, 1]
+  - UUID: 7210332394583841945
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle29
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.5, 0]
+      - [0.625, 0]
+      - [0.625, 0.25]
+      - [0.5, 0.25]
+  - UUID: 3319471744190495577
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle7
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.75, 0.75]
+      - [0.875, 0.75]
+      - [0.875, 1]
+      - [0.75, 1]
+  - UUID: 2022159910703035845
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle18
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.125, 0.25]
+      - [0.25, 0.25]
+      - [0.25, 0.5]
+      - [0.125, 0.5]
+  - UUID: 1056981696102788485
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle3
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.25, 0.75]
+      - [0.375, 0.75]
+      - [0.375, 1]
+      - [0.25, 1]
+  - UUID: 8514219554720676677
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle4
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.375, 0.75]
+      - [0.5, 0.75]
+      - [0.5, 1]
+      - [0.375, 1]
+  - UUID: 1691779221144226267
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle5
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.5, 0.75]
+      - [0.625, 0.75]
+      - [0.625, 1]
+      - [0.5, 1]
+  - UUID: 2893788748582103130
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle6
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.625, 0.75]
+      - [0.75, 0.75]
+      - [0.75, 1]
+      - [0.625, 1]
+  - UUID: 2041065156348877333
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle8
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.875, 0.75]
+      - [1, 0.75]
+      - [1, 1]
+      - [0.875, 1]
+  - UUID: 2113029755942795989
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle12
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.375, 0.5]
+      - [0.5, 0.5]
+      - [0.5, 0.75]
+      - [0.375, 0.75]
+  - UUID: 4114537737194162829
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle9
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0, 0.5]
+      - [0.125, 0.5]
+      - [0.125, 0.75]
+      - [0, 0.75]
+  - UUID: 4211704941824922127
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle10
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.125, 0.5]
+      - [0.25, 0.5]
+      - [0.25, 0.75]
+      - [0.125, 0.75]
+  - UUID: 4246919270702160124
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle11
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.25, 0.5]
+      - [0.375, 0.5]
+      - [0.375, 0.75]
+      - [0.25, 0.75]
+  - UUID: 7134017545601667460
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle13
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.5, 0.5]
+      - [0.625, 0.5]
+      - [0.625, 0.75]
+      - [0.5, 0.75]
+  - UUID: 3128953754730956484
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle23
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.75, 0.25]
+      - [0.875, 0.25]
+      - [0.875, 0.5]
+      - [0.75, 0.5]
+  - UUID: 1118099752027576914
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle14
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.625, 0.5]
+      - [0.75, 0.5]
+      - [0.75, 0.75]
+      - [0.625, 0.75]
+  - UUID: 4487083409625895954
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle24
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.875, 0.25]
+      - [1, 0.25]
+      - [1, 0.5]
+      - [0.875, 0.5]
+  - UUID: 1931641743987271709
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle15
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.75, 0.5]
+      - [0.875, 0.5]
+      - [0.875, 0.75]
+      - [0.75, 0.75]
+  - UUID: 887340489392162200
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle16
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.875, 0.5]
+      - [1, 0.5]
+      - [1, 0.75]
+      - [0.875, 0.75]
+  - UUID: 1934504650750236312
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle17
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0, 0.25]
+      - [0.125, 0.25]
+      - [0.125, 0.5]
+      - [0, 0.5]
+  - UUID: 8210704931972629528
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle32
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.875, 0]
+      - [1, 0]
+      - [1, 0.25]
+      - [0.875, 0.25]
+  - UUID: 8863450076148516076
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle19
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.25, 0.25]
+      - [0.375, 0.25]
+      - [0.375, 0.5]
+      - [0.25, 0.5]
+  - UUID: 4868333174280984041
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle20
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.375, 0.25]
+      - [0.5, 0.25]
+      - [0.5, 0.5]
+      - [0.375, 0.5]
+  - UUID: 159984259307442034
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle21
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.5, 0.25]
+      - [0.625, 0.25]
+      - [0.625, 0.5]
+      - [0.5, 0.5]
+  - UUID: 8517565790650354247
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle22
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.625, 0.25]
+      - [0.75, 0.25]
+      - [0.75, 0.5]
+      - [0.625, 0.5]
+  - UUID: 7423776919975704052
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle25
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0, 0]
+      - [0.125, 0]
+      - [0.125, 0.25]
+      - [0, 0.25]
+  - UUID: 7806849568894995124
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle28
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.375, 0]
+      - [0.5, 0]
+      - [0.5, 0.25]
+      - [0.375, 0.25]
+  - UUID: 2103381278318753012
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle30
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.625, 0]
+      - [0.75, 0]
+      - [0.75, 0.25]
+      - [0.625, 0.25]
+  - UUID: 664872888758558678
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle26
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.125, 0]
+      - [0.25, 0]
+      - [0.25, 0.25]
+      - [0.125, 0.25]
+  - UUID: 116159836750641526
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle27
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.25, 0]
+      - [0.375, 0]
+      - [0.375, 0.25]
+      - [0.25, 0.25]
+  - UUID: 4555187572383683720
+    ParentDirectory: 6177811797238138676
+    ResourceName: squareIdle31
+    Extension: ""
+    Texture: 7134099327712876302
+    TexCoords:
+      - [0.75, 0]
+      - [0.875, 0]
+      - [0.875, 0.25]
+      - [0.75, 0.25]

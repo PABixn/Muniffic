@@ -83,3 +83,10 @@ Resources:
     Width: 59
     Height: 608
     Channels: 4
+  - UUID: 7134099327712876302
+    ParentDirectory: 7518499889905845058
+    ResourceName: squareIdle
+    Extension: .png
+    Width: 8640
+    Height: 7680
+    Channels: 4
