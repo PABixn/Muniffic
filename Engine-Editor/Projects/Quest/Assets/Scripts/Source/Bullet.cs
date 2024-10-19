@@ -58,7 +58,12 @@ namespace Quest
             {
                 shouldDestroy = true;
             }
-            List<Entity> enemies = Entity.FindEntityByName(attackParentString).GetChildren();
+            Entity enemyParent = Entity.FindEntityByName(attackParentString);
+            if (enemyParent == null)
+            {
+                return;
+            }
+            List<Entity> enemies = enemyParent.GetChildren();
             foreach(Entity e in enemies)
             {
                 if (e.GetComponent<BoxCollider2DComponent>().CollidesWith(e))
