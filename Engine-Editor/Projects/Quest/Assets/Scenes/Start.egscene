@@ -493,7 +493,7 @@ Entities:
     TagComponent:
       Tag: Ceiling
     TransformComponent:
-      Translation: [9.60999966, 2.08519435, 0]
+      Translation: [9.60999966, 2.08519435, -0.100000001]
       Rotation: [0, -0, 3.1400001]
       Scale: [25.7999992, 0.799995482, 1]
       IsInherited: true
@@ -525,7 +525,7 @@ Entities:
     TagComponent:
       Tag: Wall
     TransformComponent:
-      Translation: [-3.0999999, 0.199999928, 0]
+      Translation: [-3.0999999, 0.199999928, -0.100000001]
       Rotation: [0, -0, -1.60000014]
       Scale: [4.70000172, 0.799999952, 1]
       IsInherited: true
@@ -877,7 +877,7 @@ Entities:
     TagComponent:
       Tag: Wall
     TransformComponent:
-      Translation: [-0.799999952, -1.80000007, 0]
+      Translation: [-0.799999952, -1.80000007, -0.100000001]
       Rotation: [0, -0, 0]
       Scale: [4.70000172, 0.799999952, 1]
       IsInherited: true

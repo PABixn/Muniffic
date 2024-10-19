@@ -31,6 +31,8 @@ namespace Quest
             transformComponent = entity.GetComponent<TransformComponent>();
             initialScale = transformComponent.scale;
             multiplier *= rigidBody.mass;
+            animatorComponent.ChangeAnimation("squareIdle");
+            animatorComponent.Play("squareIdle");
         }
 
         public void OnUpdate(float ts)
