@@ -37,6 +37,7 @@ namespace Quest
             if (healthComponent == null) healthComponent = entity.As<HealthComponent>();
             if(entityTypeComponent == null) entityTypeComponent = entity.As<EntityTypeComponent>();
             if (enemyRunComponent == null) enemyRunComponent = entity.As<EnemyRunComponent>();
+            if(enemyAttackBoxComponent == null) enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
             if (!initialized) Init();
             meleeAttackComponent.Update(ts);
 
