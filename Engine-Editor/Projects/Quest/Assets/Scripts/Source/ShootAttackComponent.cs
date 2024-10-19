@@ -24,6 +24,7 @@ namespace Quest
 
         private TransformComponent transform;
         private AttackBoxComponent attackBoxComponent;
+        private BoxCollider2DComponent collider;
 
         List<Bullet> bullets = new List<Bullet>();
 
@@ -34,6 +35,7 @@ namespace Quest
             this.attackTargetParentName = attackTargetParentName;
             this.attackBoxComponent = attackBoxComponent;
             transform = entity.GetComponent<TransformComponent>();
+            collider = entity.GetComponent<BoxCollider2DComponent>();
         }
 
         public void Update(float ts, bool attackCondition = true)
@@ -51,11 +53,10 @@ namespace Quest
             }
             if (cooldownTimer >= cooldown && attackCondition)
             {
-                Bullet bullet = new Bullet(transform.translation.XY, attackBoxComponent.GetDirection(), (int)(damage * damageMultiplier),(int)(bulletSpeed * attackSpeedMultiplier), attackTargetTypes, attackTargetParentName);
+                Bullet bullet = new Bullet(new Vector2(transform.translation.X, transform.translation.Y - collider.size.Y), attackBoxComponent.GetDirection(), (int)(damage * damageMultiplier),(int)(bulletSpeed * attackSpeedMultiplier), attackTargetTypes, attackTargetParentName);
                 bullet.SetKnockBack(knockbackForce);
                 bullets.Add(bullet);
                 cooldownTimer = 0;
-                Console.WriteLine("Bullet created");
             }
         }
 

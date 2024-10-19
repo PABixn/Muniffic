@@ -645,6 +645,9 @@ namespace eg
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void **params)
 	{
         EG_PROFILE_FUNCTION();
+		std::string methodName = mono_method_get_name(method);
+		std::string className = mono_class_get_name(mono_object_get_class(instance));
+		
 		MonoObject *exception = nullptr;
 		return mono_runtime_invoke(method, instance, params, &exception);
 	}

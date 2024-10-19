@@ -55,6 +55,13 @@ Resources:
     Width: 813
     Height: 275
     Channels: 4
+  - UUID: 9080538710334329600
+    ParentDirectory: 9003232130146830024
+    ResourceName: squareEnemyWalk
+    Extension: .png
+    Width: 11880
+    Height: 5760
+    Channels: 4
   - UUID: 7648315516138075520
     ParentDirectory: 8143211936874341395
     ResourceName: ThickBranch
@@ -110,4 +117,11 @@ Resources:
     Extension: .png
     Width: 4320
     Height: 1920
+    Channels: 4
+  - UUID: 7403560027199602755
+    ParentDirectory: 7518499889905845058
+    ResourceName: squareEnemyWalk
+    Extension: .png
+    Width: 11880
+    Height: 5760
     Channels: 4

@@ -1,5 +1,29 @@
 Scene: Untitled
 Entities:
+  - Entity: 4745023155935519221
+    Name: Cube
+    Children:
+      - 7982459756951887954
+    TagComponent:
+      Tag: Enemies
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 77411557396144834
+    Name: Cube
+    Children:
+      - 2593248692687013949
+    TagComponent:
+      Tag: PlayerWrapper
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
   - Entity: 5788534356523531950
     Name: Cube
     TagComponent:
@@ -693,11 +717,12 @@ Entities:
       IsSensor: true
   - Entity: 2593248692687013949
     Name: Cube
+    Parent: 77411557396144834
     TagComponent:
       Tag: Player
     TransformComponent:
       Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
+      Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
       IsInheritedInChildren: true
@@ -866,6 +891,7 @@ Entities:
       - 8832446760477647752
       - 5694339996848230515
       - 4144960256706863179
+      - 9167349498074951532
     TagComponent:
       Tag: Walls
     TransformComponent:
@@ -942,6 +968,7 @@ Entities:
       IsInheritedInChildren: false
   - Entity: 9167349498074951532
     Name: Cube
+    Parent: 8272590368761323106
     TagComponent:
       Tag: Wall
     TransformComponent:
@@ -964,6 +991,57 @@ Entities:
     BoxCollider2DComponent:
       Offset: [0, -0.0500000007]
       Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 7982459756951887954
+    Name: Cube
+    Parent: 4745023155935519221
+    TagComponent:
+      Tag: EnemySquare
+    TransformComponent:
+      Translation: [11.9987774, -0.591271639, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        - 4678681791681077110
+      Transitions:
+        []
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 7543818479903591432
+          ScriptFields:
+            []
+        - ScriptUUID: 6783974109383622782
+          ScriptFields:
+            []
+        - ScriptUUID: 765699927836403796
+          ScriptFields:
+            []
+        - ScriptUUID: 7856138058308442477
+          ScriptFields:
+            []
+        - ScriptUUID: 7762291810276271830
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: true
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.300000012]
+      Size: [0.300000012, 0.200000018]
       Density: 1
       Friction: 0.5
       Restitution: 0

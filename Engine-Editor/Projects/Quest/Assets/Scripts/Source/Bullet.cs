@@ -65,10 +65,11 @@ namespace Quest
             List<Entity> enemies = enemyParent.GetChildren();
             foreach(Entity e in enemies)
             {
-                if (e.GetComponent<BoxCollider2DComponent>().CollidesWith(e))
+                if (collider.CollidesWith(e))
                 {
                     if (entitiesToHurt.Contains(e.As<EntityTypeComponent>().entityType))
                     {
+                        DebugConsole.Log("Hurt entity: " + e.name);
                         e.As<HealthComponent>().TakeDamage(damage);
                         if (knockback > 0)
                         {

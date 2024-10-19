@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Quest{
 
-    class SquareEnemy : BaseEnemy {
+    class SquareEnemy : BaseEnemy
+    {
 
         bool initialized = false;
         public HealthComponent healthComponent;
@@ -31,7 +32,6 @@ namespace Quest{
         public override void  OnCreate()
         {
             player = Entity.FindEntityByName("Player");
-            shootAttackComponent = new ShootAttackComponent(entity , new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent);
         }
 
         public override void OnUpdate(float ts)
@@ -41,7 +41,9 @@ namespace Quest{
             if(entityTypeComponent == null) entityTypeComponent = entity.As<EntityTypeComponent>();
             if (enemyRunComponent == null) enemyRunComponent = entity.As<EnemyRunComponent>();
             if(enemyAttackBoxComponent == null) enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
+            if(shootAttackComponent == null) shootAttackComponent = new ShootAttackComponent(entity, new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent);
             if (!initialized) Init();
+            if(entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.ENEMY_SQUARE;
 
             shootAttackComponent.Update(ts);
 
@@ -50,8 +52,6 @@ namespace Quest{
                 Die();
             }
         }
-
-
 
         protected override void Init()
         {
@@ -63,8 +63,6 @@ namespace Quest{
             enemyRunComponent.SetMultiplier(SpeedMultiplier);
             initialized = true;
         }
-
-
 
         protected override void Die()
         {

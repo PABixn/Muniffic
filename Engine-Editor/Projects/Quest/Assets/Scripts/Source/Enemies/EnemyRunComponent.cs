@@ -36,8 +36,7 @@ namespace Quest
 
         public void OnUpdate(float ts)
         {
-            //Console.WriteLine("Direction x: " + direction.X + "y: " + direction.Y );
-            if(attackBox == null)
+            if (attackBox == null)
             {
                 attackBox = entity.As<EnemyAttackBoxComponent>();
             }
@@ -70,7 +69,7 @@ namespace Quest
             float movement = (float)speedDif * accelRate;
 
             rigidBody.ApplyLinearImpulse(Vector2.Right * movement);
-            animator.Play("enemyWalk");
+            animator.Play("squareEnemyWalk");
         }
 
         private bool IsPlayerInSight()
@@ -97,7 +96,7 @@ namespace Quest
 
         public bool GroundCheckMiddle()
         {
-            List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
+            List<Entity> entities = Entity.FindEntityByName("Walls").GetChildren();
 
             foreach (Entity entity in entities)
             {
@@ -113,7 +112,7 @@ namespace Quest
 
         public bool GroundCheckRight()
         {
-            List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
+            List<Entity> entities = Entity.FindEntityByName("Walls").GetChildren();
 
             foreach (Entity entity in entities)
             {
@@ -129,7 +128,7 @@ namespace Quest
 
         public bool GroundCheckLeft()
         {
-            List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
+            List<Entity> entities = Entity.FindEntityByName("Walls").GetChildren();
 
             foreach (Entity entity in entities)
             {
@@ -145,7 +144,7 @@ namespace Quest
 
         public bool WallCheckLeft()
         {
-            List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
+            List<Entity> entities = Entity.FindEntityByName("Walls").GetChildren();
 
             foreach (Entity entity in entities)
             {
@@ -161,7 +160,7 @@ namespace Quest
 
         public bool WallCheckRight()
         {
-            List<Entity> entities = Entity.FindEntityByName("Ground").GetChildren();
+            List<Entity> entities = Entity.FindEntityByName("Walls").GetChildren();
 
             foreach (Entity entity in entities)
             {

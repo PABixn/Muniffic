@@ -55,3 +55,38 @@ Resources:
     IsEnabled: true
     Methods:
       []
+  - UUID: 7543818479903591432
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.SquareEnemy
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 6783974109383622782
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.HealthComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 765699927836403796
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 7856138058308442477
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EnemyRunComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 7762291810276271830
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EnemyAttackBoxComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
