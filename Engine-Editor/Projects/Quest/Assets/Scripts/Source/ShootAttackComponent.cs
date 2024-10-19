@@ -36,7 +36,7 @@ namespace Quest
             transform = entity.GetComponent<TransformComponent>();
         }
 
-        public void Update(float ts, bool attackCondition)
+        public void Update(float ts, bool attackCondition = true)
         {
             cooldownTimer += ts;
             foreach (Bullet bullet in bullets)
