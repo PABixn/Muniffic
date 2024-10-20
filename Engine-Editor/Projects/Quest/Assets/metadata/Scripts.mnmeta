@@ -1,11 +1,4 @@
 Resources:
-  - UUID: 3136020345952418588
-    ParentDirectory: 3370402605611323070
-    ResourceName: Quest.PlayerAttackBoxComponent
-    Extension: .cs
-    IsEnabled: true
-    Methods:
-      []
   - UUID: 4452690059192365868
     ParentDirectory: 3370402605611323070
     ResourceName: Quest.JumpComponent
@@ -16,6 +9,13 @@ Resources:
   - UUID: 8863010160591618796
     ParentDirectory: 3370402605611323070
     ResourceName: Quest.Player
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 3136020345952418588
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.PlayerAttackBoxComponent
     Extension: .cs
     IsEnabled: true
     Methods:
@@ -37,13 +37,6 @@ Resources:
   - UUID: 5222782641706725470
     ParentDirectory: 3370402605611323070
     ResourceName: Quest.CameraMove
-    Extension: .cs
-    IsEnabled: true
-    Methods:
-      []
-  - UUID: 7111738932302980541
-    ParentDirectory: 3370402605611323070
-    ResourceName: Quest.PlayerAttackBoxComponent
     Extension: .cs
     IsEnabled: true
     Methods:
@@ -84,6 +77,41 @@ Resources:
     Methods:
       []
   - UUID: 7762291810276271830
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EnemyAttackBoxComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 3459830652203967227
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.TriangleEnemy
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 2280032308211456250
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.HealthComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 2859562116812498072
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 8177272779269080625
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EnemyRunComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 3568373248790355494
     ParentDirectory: 3370402605611323070
     ResourceName: Quest.EnemyAttackBoxComponent
     Extension: .cs

@@ -17,10 +17,10 @@ namespace Quest
         private EnemyAttackBoxComponent enemyAttackBoxComponent;
 
         public int Health { get; private set; } = 250;
-        public float SpeedMultiplier { get; private set; } = 1.5f;
+        public float SpeedMultiplier { get; private set; } = 0.5f;
         public int AttackDamage { get; private set; } = 80;
         public float AttackSpeed { get; private set; } = 1f;
-        public int KnockbackForce { get; private set; } = 50;
+        public int KnockbackForce { get; private set; } = 1;
 
         private Entity player;
         private Player playerScript;
@@ -28,7 +28,6 @@ namespace Quest
         public override void OnCreate()
         {
             player = Entity.FindEntityByName("Player");
-            meleeAttackComponent = new MeleeAttackComponent(entity,new List<EntityType> { EntityType.PLAYER },"PlayerWrapper", enemyAttackBoxComponent);
         }
 
         public override void OnUpdate(float ts)
@@ -38,8 +37,10 @@ namespace Quest
             if(entityTypeComponent == null) entityTypeComponent = entity.As<EntityTypeComponent>();
             if (enemyRunComponent == null) enemyRunComponent = entity.As<EnemyRunComponent>();
             if(enemyAttackBoxComponent == null) enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
+            if(meleeAttackComponent == null) meleeAttackComponent = new MeleeAttackComponent(entity, new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent);
             if (!initialized) Init();
             meleeAttackComponent.Update(ts);
+            if (entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.ENEMY_TRIANGLE;
 
             if (healthComponent.IsDead())
             {
@@ -60,6 +61,11 @@ namespace Quest
 
         protected override void Die()
         {
+            Entity sep = Entity.FindEntityByName("Separator");
+            if (sep.ID != 0)
+            {
+                Entity.Destroy(sep);
+            }
             Entity.Destroy(entity);
         }
 

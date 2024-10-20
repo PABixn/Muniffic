@@ -4,6 +4,7 @@ Entities:
     Name: Cube
     Children:
       - 7982459756951887954
+      - 1662886917216552241
     TagComponent:
       Tag: Enemies
     TransformComponent:
@@ -765,9 +766,6 @@ Entities:
         - ScriptUUID: 4661687159670203365
           ScriptFields:
             []
-        - ScriptUUID: 7111738932302980541
-          ScriptFields:
-            []
       IsInherited: false
       IsInheritedInChildren: false
     RigidBody2DComponent:
@@ -892,6 +890,8 @@ Entities:
       - 5694339996848230515
       - 4144960256706863179
       - 9167349498074951532
+      - 2454272723030596415
+      - 6360083800926698617
     TagComponent:
       Tag: Walls
     TransformComponent:
@@ -1004,7 +1004,7 @@ Entities:
     TagComponent:
       Tag: EnemySquare
     TransformComponent:
-      Translation: [11.9987774, -0.591271639, 0]
+      Translation: [18.8691025, -0.591271639, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       IsInherited: true
@@ -1042,6 +1042,121 @@ Entities:
     BoxCollider2DComponent:
       Offset: [0, -0.300000012]
       Size: [0.300000012, 0.200000018]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 2454272723030596415
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [9.27378464, -1.28313494, -0.200000003]
+      Rotation: [0, -0, 1.57000005]
+      Scale: [0.499992013, 0.200000003, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6726367690180429190
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 6360083800926698617
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Separator
+    TransformComponent:
+      Translation: [18.3805885, -1.29038656, -0.200000003]
+      Rotation: [0, -0, 1.57000005]
+      Scale: [0.499985218, 0.200000003, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6726367690180429190
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 1662886917216552241
+    Name: Cube
+    Parent: 4745023155935519221
+    TagComponent:
+      Tag: EnemyTriangle
+    TransformComponent:
+      Translation: [13, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        - 5756078902985494395
+      Transitions:
+        []
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 3459830652203967227
+          ScriptFields:
+            []
+        - ScriptUUID: 2280032308211456250
+          ScriptFields:
+            []
+        - ScriptUUID: 2859562116812498072
+          ScriptFields:
+            []
+        - ScriptUUID: 8177272779269080625
+          ScriptFields:
+            []
+        - ScriptUUID: 3568373248790355494
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: true
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.349999994]
+      Size: [0.200000018, 0.150000006]
       Density: 1
       Friction: 0.5
       Restitution: 0

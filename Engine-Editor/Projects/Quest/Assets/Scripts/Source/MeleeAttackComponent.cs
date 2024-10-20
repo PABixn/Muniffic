@@ -22,7 +22,7 @@ namespace Quest
 
         private float multiplier = 1.0f;
 
-        private int knockbackForce = 100;
+        private int knockbackForce = 1;
 
         private TransformComponent transform;
         private BoxCollider2DComponent collider;

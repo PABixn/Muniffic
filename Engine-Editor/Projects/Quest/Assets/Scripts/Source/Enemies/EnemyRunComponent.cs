@@ -48,28 +48,31 @@ namespace Quest
             if (IsPlayerInSight())
             {
                 TurnTowardPlayer();
-                if (!GroundCheckLeft() && !GroundCheckRight())
+                if (!WallCheckLeft() || !WallCheckRight())
                 {
                     return;
                 }
             }
-            else if ((GroundCheckMiddle() && GroundCheckRight() && (WallCheckLeft() || !GroundCheckLeft()) && direction.X < 0) || (GroundCheckMiddle() && GroundCheckLeft() && (WallCheckRight() || !GroundCheckRight()) && direction.X > 0))
+            else if (!WallCheckLeft() || !WallCheckRight())
             {
                 direction.X *= -1;
                 if(attackBox != null)
                     attackBox.attackDirection = direction;
             }
 
-            float targetSpeed = direction.X * speed * multiplier;
+            //float targetSpeed = direction.X * speed * multiplier;
 
-            float accelRate = (Math.Abs(targetSpeed) > 0.01f) ? acceleration : decceleration;
+            //float accelRate = (Math.Abs(targetSpeed) > 0.01f) ? acceleration : decceleration;
 
-            float speedDif = targetSpeed - rigidBody.linearVelocity.X;
+            //float speedDif = targetSpeed - rigidBody.linearVelocity.X;
 
-            float movement = (float)speedDif * accelRate;
+            //float movement = (float)speedDif * accelRate;
 
-            rigidBody.ApplyLinearImpulse(Vector2.Right * movement);
-            animator.Play("squareEnemyWalk");
+            rigidBody.linearVelocity = new Vector2(direction.X * speed * multiplier, rigidBody.linearVelocity.Y);
+            if(entity.As<EntityTypeComponent>().entityType == EntityType.ENEMY_SQUARE)
+                animator.Play("squareEnemyWalk");
+            else if(entity.As<EntityTypeComponent>().entityType == EntityType.ENEMY_TRIANGLE)
+                animator.Play("crabWalk");
         }
 
         private bool IsPlayerInSight()
@@ -94,84 +97,14 @@ namespace Quest
                 attackBox.attackDirection = direction;
         }
 
-        public bool GroundCheckMiddle()
-        {
-            List<Entity> entities = Entity.FindEntityByName("Walls").GetChildren();
-
-            foreach (Entity entity in entities)
-            {
-                BoxCollider2DComponent groundCollider = entity.GetComponent<BoxCollider2DComponent>();
-                if (groundCollider.CollidesWithBox(new Vector2(transform.translation.X, transform.translation.Y - collider.size.Y), new Vector2(0.1f, 0.1f)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool GroundCheckRight()
-        {
-            List<Entity> entities = Entity.FindEntityByName("Walls").GetChildren();
-
-            foreach (Entity entity in entities)
-            {
-                BoxCollider2DComponent groundCollider = entity.GetComponent<BoxCollider2DComponent>();
-                if (groundCollider.CollidesWithBox(new Vector2(transform.translation.X + collider.size.X, transform.translation.Y - collider.size.Y), new Vector2(0.1f, 0.1f)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool GroundCheckLeft()
-        {
-            List<Entity> entities = Entity.FindEntityByName("Walls").GetChildren();
-
-            foreach (Entity entity in entities)
-            {
-                BoxCollider2DComponent groundCollider = entity.GetComponent<BoxCollider2DComponent>();
-                if (groundCollider.CollidesWithBox(new Vector2(transform.translation.X - collider.size.X, transform.translation.Y - collider.size.Y), new Vector2(0.1f, 0.1f)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public bool WallCheckLeft()
         {
-            List<Entity> entities = Entity.FindEntityByName("Walls").GetChildren();
-
-            foreach (Entity entity in entities)
-            {
-                BoxCollider2DComponent groundCollider = entity.GetComponent<BoxCollider2DComponent>();
-                if (groundCollider.CollidesWithBox(new Vector2(transform.translation.X - collider.size.X, transform.translation.Y), new Vector2(0.1f, 0.1f)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return transform.translation.X >= 9.5f; 
         }
 
         public bool WallCheckRight()
         {
-            List<Entity> entities = Entity.FindEntityByName("Walls").GetChildren();
-
-            foreach (Entity entity in entities)
-            {
-                BoxCollider2DComponent groundCollider = entity.GetComponent<BoxCollider2DComponent>();
-                if (groundCollider.CollidesWithBox(new Vector2(transform.translation.X + collider.size.X, transform.translation.Y), new Vector2(0.1f, 0.1f)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return transform.translation.X <= 19.6f;
         }
 
         public void SetMultiplier(float multiplier)

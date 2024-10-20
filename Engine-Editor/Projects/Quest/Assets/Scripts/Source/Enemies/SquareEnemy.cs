@@ -18,11 +18,11 @@ namespace Quest{
         private EnemyRunComponent enemyRunComponent;
         private EnemyAttackBoxComponent enemyAttackBoxComponent;
 
-        public int Health { get; private set; } = 800;
+        public int Health { get; private set; } = 300;
         public float SpeedMultiplier { get; private set; } = 0.5f;
         public int AttackDamage { get; private set; } = 100;
         public float AttackSpeed{ get; private set; } = 2;
-        public int KnockbackForce{ get; private set; } = 20;
+        public int KnockbackForce{ get; private set; } = 1;
 
 
 

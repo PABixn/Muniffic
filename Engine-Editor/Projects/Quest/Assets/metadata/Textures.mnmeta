@@ -34,19 +34,19 @@ Resources:
     Width: 1827
     Height: 467
     Channels: 4
-  - UUID: 8338259171190208266
-    ParentDirectory: 8143211936874341395
-    ResourceName: spikes
-    Extension: .png
-    Width: 1920
-    Height: 150
-    Channels: 4
   - UUID: 6247502100175362970
     ParentDirectory: 8143211936874341395
     ResourceName: LightThick
     Extension: .png
     Width: 782
     Height: 1020
+    Channels: 4
+  - UUID: 8338259171190208266
+    ParentDirectory: 8143211936874341395
+    ResourceName: spikes
+    Extension: .png
+    Width: 1920
+    Height: 150
     Channels: 4
   - UUID: 6726367690180429190
     ParentDirectory: 7518499889905845058
@@ -55,12 +55,12 @@ Resources:
     Width: 813
     Height: 275
     Channels: 4
-  - UUID: 9080538710334329600
-    ParentDirectory: 9003232130146830024
-    ResourceName: squareEnemyWalk
+  - UUID: 5595990218576034560
+    ParentDirectory: 8143211936874341395
+    ResourceName: LightThin
     Extension: .png
-    Width: 11880
-    Height: 5760
+    Width: 458
+    Height: 1020
     Channels: 4
   - UUID: 7648315516138075520
     ParentDirectory: 8143211936874341395
@@ -69,12 +69,12 @@ Resources:
     Width: 346
     Height: 177
     Channels: 4
-  - UUID: 5595990218576034560
-    ParentDirectory: 8143211936874341395
-    ResourceName: LightThin
+  - UUID: 9080538710334329600
+    ParentDirectory: 9003232130146830024
+    ResourceName: squareEnemyWalk
     Extension: .png
-    Width: 458
-    Height: 1020
+    Width: 11880
+    Height: 5760
     Channels: 4
   - UUID: 6283358733454184857
     ParentDirectory: 8143211936874341395
@@ -119,9 +119,23 @@ Resources:
     Height: 1920
     Channels: 4
   - UUID: 7403560027199602755
-    ParentDirectory: 7518499889905845058
+    ParentDirectory: 9003232130146830024
     ResourceName: squareEnemyWalk
     Extension: .png
     Width: 11880
     Height: 5760
+    Channels: 4
+  - UUID: 2800560426826280247
+    ParentDirectory: 9003232130146830024
+    ResourceName: crabWalk
+    Extension: .png
+    Width: 7560
+    Height: 3840
+    Channels: 4
+  - UUID: 8387924155327597885
+    ParentDirectory: 7518499889905845058
+    ResourceName: crabWalk
+    Extension: .png
+    Width: 7560
+    Height: 3840
     Channels: 4

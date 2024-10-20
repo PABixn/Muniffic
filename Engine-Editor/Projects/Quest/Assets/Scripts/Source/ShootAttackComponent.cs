@@ -15,7 +15,7 @@ namespace Quest
         private float range = 10;
         private float cooldown = 1.0f;
         private float cooldownTimer = 0.0f;
-        private int knockbackForce = 10;
+        private int knockbackForce = 1;
         private int bulletSpeed = 4;
         private Entity entity;
 

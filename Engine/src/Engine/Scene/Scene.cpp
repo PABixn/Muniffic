@@ -603,6 +603,7 @@ namespace eg {
 	void Scene::AwakeRuntimeBody(Entity entity)
 	{
         EG_PROFILE_FUNCTION();
+
 		auto& transform = entity.GetComponent<TransformComponent>();
 		auto& rb = entity.GetComponent<RigidBody2DComponent>();
 

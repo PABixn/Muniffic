@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace Quest
         public float BasePlayerJumpForceMultiplier { get; private set; } = 0.5f;
         public int BasePlayerAttackDamage { get; private set; } = 100;
         public float BasePlayerAttackSpeed { get; private set; } = 2;
-        public int BasePlayerKnockbackForce = 100;
+        public int BasePlayerKnockbackForce = 0;
 
 
         private List<EntityType> BasePlayerTargets = new List<EntityType> { EntityType.ENEMY_SQUARE, EntityType.ENEMY_CIRCLE, EntityType.ENEMY_TRIANGLE };
@@ -62,7 +63,8 @@ namespace Quest
 
         public void killPlayer()
         {
-            runComponent.SetMultiplier(0);
+            entity.GetComponent<RigidBody2DComponent>().transform = new B2transform(Vector2.Zero, Vector2.Zero);
+            Init();
         }
 
 

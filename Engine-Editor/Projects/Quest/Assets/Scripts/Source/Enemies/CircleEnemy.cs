@@ -20,7 +20,7 @@ namespace Quest
         public float SpeedMultiplier { get; private set; } = 1;
         public int AttackDamage { get; private set; } = 20;
         public float AttackSpeed { get; private set; } = 0.2f;
-        public int KnockbackForce { get; private set; } = 10;
+        public int KnockbackForce { get; private set; } = 1;
 
 
 
@@ -30,7 +30,6 @@ namespace Quest
         public override void OnCreate()
         {
             player = Entity.FindEntityByName("Player");
-            shootAttackComponent = new ShootAttackComponent(entity, new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent);
         }
 
         public override void  OnUpdate(float ts)
@@ -40,10 +39,12 @@ namespace Quest
             if(entityTypeComponent == null) entityTypeComponent = entity.As<EntityTypeComponent>();
             if (enemyRunComponent == null) enemyRunComponent = entity.As<EnemyRunComponent>();
             if(enemyAttackBoxComponent == null) enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
+            if(shootAttackComponent == null) shootAttackComponent = new ShootAttackComponent(entity, new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent);
             if (!initialized)
             {
                 Init();
             }
+            if (entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.ENEMY_CIRCLE;
 
             shootAttackComponent.Update(ts);
 
