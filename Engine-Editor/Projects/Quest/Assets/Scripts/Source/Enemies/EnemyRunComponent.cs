@@ -47,11 +47,11 @@ namespace Quest
 
             if (IsPlayerInSight())
             {
-                TurnTowardPlayer();
                 if (!WallCheckLeft() || !WallCheckRight())
                 {
                     return;
                 }
+                TurnTowardPlayer();
             }
             else if (!WallCheckLeft() || !WallCheckRight())
             {
