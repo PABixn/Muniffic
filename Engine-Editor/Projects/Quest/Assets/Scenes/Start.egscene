@@ -733,6 +733,8 @@ Entities:
         - 4037270119508845572
         - 8750681251043671058
         - 2847362075815387793
+        - 7616353991522803854
+        - 587764338783038943
       Transitions:
         - From: 0
           To: 1
@@ -746,6 +748,34 @@ Entities:
           To: 0
         - From: 2
           To: 1
+        - From: 3
+          To: 2
+        - From: 3
+          To: 1
+        - From: 3
+          To: 0
+        - From: 2
+          To: 3
+        - From: 0
+          To: 3
+        - From: 1
+          To: 3
+        - From: 4
+          To: 3
+        - From: 4
+          To: 2
+        - From: 4
+          To: 1
+        - From: 4
+          To: 0
+        - From: 3
+          To: 4
+        - From: 2
+          To: 4
+        - From: 0
+          To: 4
+        - From: 1
+          To: 4
     ScriptComponent:
       Scripts:
         - ScriptUUID: 8863010160591618796
@@ -1013,8 +1043,34 @@ Entities:
       Speed: 1
       Animations:
         - 4678681791681077110
+        - 957778343545793326
+        - 5846174929618851138
+        - 5816662386376055065
       Transitions:
-        []
+        - From: 0
+          To: 1
+        - From: 1
+          To: 0
+        - From: 2
+          To: 1
+        - From: 2
+          To: 0
+        - From: 1
+          To: 2
+        - From: 0
+          To: 2
+        - From: 3
+          To: 2
+        - From: 3
+          To: 1
+        - From: 3
+          To: 0
+        - From: 2
+          To: 3
+        - From: 1
+          To: 3
+        - From: 0
+          To: 3
     ScriptComponent:
       Scripts:
         - ScriptUUID: 7543818479903591432
@@ -1128,8 +1184,34 @@ Entities:
       Speed: 1
       Animations:
         - 5756078902985494395
+        - 8710280948414860426
+        - 5609331868946778382
+        - 5178519701489264878
       Transitions:
-        []
+        - From: 0
+          To: 1
+        - From: 1
+          To: 0
+        - From: 0
+          To: 2
+        - From: 1
+          To: 2
+        - From: 2
+          To: 1
+        - From: 2
+          To: 0
+        - From: 0
+          To: 3
+        - From: 3
+          To: 2
+        - From: 3
+          To: 1
+        - From: 3
+          To: 0
+        - From: 2
+          To: 3
+        - From: 1
+          To: 3
     ScriptComponent:
       Scripts:
         - ScriptUUID: 3459830652203967227

@@ -104,6 +104,13 @@ Resources:
     Width: 14040
     Height: 3840
     Channels: 4
+  - UUID: 2435627356244459113
+    ParentDirectory: 7518499889905845058
+    ResourceName: squareEnemyAttack
+    Extension: .png
+    Width: 8640
+    Height: 7680
+    Channels: 4
   - UUID: 2856049949421333556
     ParentDirectory: 1402154855633883506
     ResourceName: squareIdle2Walk
@@ -117,6 +124,13 @@ Resources:
     Extension: .png
     Width: 4320
     Height: 1920
+    Channels: 4
+  - UUID: 6323117778100126646
+    ParentDirectory: 7518499889905845058
+    ResourceName: squareDeath
+    Extension: .png
+    Width: 7560
+    Height: 5760
     Channels: 4
   - UUID: 7403560027199602755
     ParentDirectory: 9003232130146830024
@@ -135,6 +149,27 @@ Resources:
   - UUID: 8387924155327597885
     ParentDirectory: 7518499889905845058
     ResourceName: crabWalk
+    Extension: .png
+    Width: 7560
+    Height: 3840
+    Channels: 4
+  - UUID: 4296456013096188589
+    ParentDirectory: 7518499889905845058
+    ResourceName: crabAttack
+    Extension: .png
+    Width: 8640
+    Height: 5760
+    Channels: 4
+  - UUID: 4897504062024256045
+    ParentDirectory: 7518499889905845058
+    ResourceName: crabDeath
+    Extension: .png
+    Width: 7560
+    Height: 3840
+    Channels: 4
+  - UUID: 3453127867174627443
+    ParentDirectory: 7518499889905845058
+    ResourceName: squareEnemyDeath
     Extension: .png
     Width: 7560
     Height: 3840

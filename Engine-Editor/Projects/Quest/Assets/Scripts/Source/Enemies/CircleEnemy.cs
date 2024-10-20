@@ -39,7 +39,7 @@ namespace Quest
             if(entityTypeComponent == null) entityTypeComponent = entity.As<EntityTypeComponent>();
             if (enemyRunComponent == null) enemyRunComponent = entity.As<EnemyRunComponent>();
             if(enemyAttackBoxComponent == null) enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
-            if(shootAttackComponent == null) shootAttackComponent = new ShootAttackComponent(entity, new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent);
+            if(shootAttackComponent == null) shootAttackComponent = new ShootAttackComponent(entity, new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent, "circleEnemyAttack");
             if (!initialized)
             {
                 Init();

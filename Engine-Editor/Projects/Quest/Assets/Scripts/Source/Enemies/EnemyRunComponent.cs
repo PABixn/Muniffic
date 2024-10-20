@@ -69,11 +69,17 @@ namespace Quest
             //float movement = (float)speedDif * accelRate;
 
             rigidBody.linearVelocity = new Vector2(direction.X * speed * multiplier, rigidBody.linearVelocity.Y);
-            if(entity.As<EntityTypeComponent>().entityType == EntityType.ENEMY_SQUARE)
-                animator.Play("squareEnemyWalk");
-            else if(entity.As<EntityTypeComponent>().entityType == EntityType.ENEMY_TRIANGLE)
-                animator.Play("crabWalk");
+            if(direction.X > 0)
+            {
+                transform.scale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                transform.scale = new Vector3(-1, 1, 1);
+            }
+            
         }
+
 
         private bool IsPlayerInSight()
         {

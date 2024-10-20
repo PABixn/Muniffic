@@ -19,27 +19,35 @@ namespace Quest
         private int bulletSpeed = 4;
         private Entity entity;
 
+        public bool isShooting = false;
+
+        private string AnimationName = "Attack";
+
         List<EntityType> attackTargetTypes = new List<EntityType>();
         string attackTargetParentName = "Enemies";
 
         private TransformComponent transform;
         private AttackBoxComponent attackBoxComponent;
         private BoxCollider2DComponent collider;
+        private AnimatorComponent animator;
 
         List<Bullet> bullets = new List<Bullet>();
 
-        public ShootAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName, AttackBoxComponent attackBoxComponent)
+        public ShootAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName, AttackBoxComponent attackBoxComponent, string AnimationName)
         {
             this.entity = entity;
             this.attackTargetTypes = attackTargetTypes;
             this.attackTargetParentName = attackTargetParentName;
             this.attackBoxComponent = attackBoxComponent;
+            this.AnimationName = AnimationName;
             transform = entity.GetComponent<TransformComponent>();
             collider = entity.GetComponent<BoxCollider2DComponent>();
+            animator = entity.GetComponent<AnimatorComponent>();
         }
 
         public void Update(float ts, bool attackCondition = true)
         {
+            
             cooldownTimer += ts;
             foreach (Bullet bullet in bullets)
             {
@@ -51,13 +59,31 @@ namespace Quest
                     bullets.Remove(bullet);
                 }
             }
+            if (isShooting) return;
             if (cooldownTimer >= cooldown && attackCondition)
             {
-                Bullet bullet = new Bullet(new Vector2(transform.translation.X, transform.translation.Y - collider.size.Y), attackBoxComponent.GetDirection(), (int)(damage * damageMultiplier),(int)(bulletSpeed * attackSpeedMultiplier), attackTargetTypes, attackTargetParentName);
-                bullet.SetKnockBack(knockbackForce);
-                bullets.Add(bullet);
-                cooldownTimer = 0;
+                isShooting = true;
+                animator.ChangeAnimation(AnimationName);
+                animator.Play(AnimationName);
             }
+        }
+
+        public void Attack()
+        {
+            Bullet bullet = new Bullet(new Vector2(transform.translation.X, transform.translation.Y - collider.size.Y), attackBoxComponent.GetDirection(), (int)(damage * damageMultiplier), (int)(bulletSpeed * attackSpeedMultiplier), attackTargetTypes, attackTargetParentName);
+            bullet.SetKnockBack(knockbackForce);
+            bullets.Add(bullet);
+            cooldownTimer = 0;
+        }
+
+        public void SetIsShooting(bool isShooting)
+        {
+            this.isShooting = isShooting;
+        }
+
+        public bool GetIsShooting()
+        {
+            return isShooting;
         }
 
         public void SetEntity(Entity entity)

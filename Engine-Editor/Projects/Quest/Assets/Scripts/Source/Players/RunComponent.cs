@@ -18,11 +18,12 @@ namespace Quest
         public float maxSpeed = 10f;
         public float acceleration = 1f;
         public float decceleration = 1f;
-
         private float multiplier = 1.0f;
 
         private bool idleToWalkAnimationShouldPlay = true;
         private bool walkAnimationShouldPlay = false;
+
+        private Player player;
 
         public void OnCreate()
         {
@@ -32,12 +33,14 @@ namespace Quest
             initialScale = transformComponent.scale;
             multiplier *= rigidBody.mass;
             animatorComponent.ChangeAnimation("squareIdle");
-            animatorComponent.Play("squareIdle");
+            animatorComponent.Play("squareWalk");
         }
 
         public void OnUpdate(float ts)
         {
             if(rigidBody == null) return;
+            if(player == null) player = entity.As<Player>();
+            if(player.GetIsShooting()) return;
             direction = Vector2.Zero;
             if (Input.IsKeyPressed(KeyCode.A) && !Input.IsKeyPressed(KeyCode.D))
             {

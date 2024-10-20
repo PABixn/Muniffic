@@ -11,6 +11,7 @@ namespace Quest
     public class Player : DefaultBehaviour
     {
         private bool initialized = false;
+        private bool died = false;
 
         private HealthComponent healthComponent;
         private ShootAttackComponent shootAttackComponent;
@@ -18,6 +19,8 @@ namespace Quest
         private RunComponent runComponent;
         private EntityTypeComponent entityTypeComponent;
         private PlayerAttackBoxComponent playerAttackBoxComponent;
+        private AnimatorComponent animator;
+
         public int BasePlayerHealth { get; private set; } = 800;
         public float BasePlayerSpeedMultiplier { get; private set; } = 0.5f;
         public float BasePlayerJumpForceMultiplier { get; private set; } = 0.5f;
@@ -33,6 +36,8 @@ namespace Quest
 
         public void OnCreate()
         {
+            animator = entity.GetComponent<AnimatorComponent>();
+            animator.Play("squareIdle");
         }
 
         public void OnUpdate(float ts)
@@ -42,17 +47,40 @@ namespace Quest
             if(healthComponent == null) healthComponent = entity.As<HealthComponent>();
             if(playerAttackBoxComponent == null) playerAttackBoxComponent = entity.As<PlayerAttackBoxComponent>();
             if(jumpComponent == null) jumpComponent = entity.As<JumpComponent>();
-            if(runComponent == null) runComponent = entity.As<RunComponent>();
-            if(shootAttackComponent == null) shootAttackComponent = new ShootAttackComponent(entity, BasePlayerTargets, "Enemies", playerAttackBoxComponent);
+            if (runComponent == null)
+            {
+                runComponent = entity.As<RunComponent>();
+            }
+            if(shootAttackComponent == null) shootAttackComponent = new ShootAttackComponent(entity, BasePlayerTargets, "Enemies", playerAttackBoxComponent, "playerAttack");
             if (entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.PLAYER;
             if(!initialized) Init();
-
+            
             shootAttackComponent.Update(ts, Input.IsKeyPressed(KeyCode.R));
-
             if (healthComponent.health == 0)
             {
-                killPlayer();
+                animator.ChangeAnimation("playerDeath");
+                animator.Play("playerDeath");
+                died = true;
             }
+        }
+
+        public bool GetIsShooting()
+        {
+            if (shootAttackComponent == null)
+                return false;
+            return shootAttackComponent.GetIsShooting();
+        }
+
+        public void Attack()
+        {
+            shootAttackComponent.Attack();
+        }
+
+        public void TransitionFromAttack()
+        {
+            animator.ChangeAnimation("squareIdle");
+            animator.Play("squareIdle");
+            shootAttackComponent.SetIsShooting(false);
         }
 
         public void healPlayer(int heal)
@@ -81,6 +109,7 @@ namespace Quest
             jumpComponent.SetMultiplier(BasePlayerJumpForceMultiplier);
             jumpComponent.Enable();
             initialized = true;
+            died = false;
         }
 
         public void SetDamageMultiplier(float multiplier){

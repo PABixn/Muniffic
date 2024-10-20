@@ -15,6 +15,10 @@ namespace Quest
         private MeleeAttackComponent meleeAttackComponent;
         private EnemyRunComponent enemyRunComponent;
         private EnemyAttackBoxComponent enemyAttackBoxComponent;
+        private AnimatorComponent animator;
+
+        private RigidBody2DComponent rigidBody;
+
 
         public int Health { get; private set; } = 250;
         public float SpeedMultiplier { get; private set; } = 0.5f;
@@ -25,27 +29,62 @@ namespace Quest
         private Entity player;
         private Player playerScript;
 
+        bool died = false;
+
         public override void OnCreate()
         {
             player = Entity.FindEntityByName("Player");
+            animator = entity.GetComponent<AnimatorComponent>();
+            rigidBody = entity.GetComponent<RigidBody2DComponent>();
+            animator.ChangeAnimation("triangleEnemyIdle");
+            animator.Play("triangleEnemyIdle");
+
         }
 
         public override void OnUpdate(float ts)
         {
+            if (died) return;
             if (playerScript == null) playerScript = player.As<Player>();
             if (healthComponent == null) healthComponent = entity.As<HealthComponent>();
             if(entityTypeComponent == null) entityTypeComponent = entity.As<EntityTypeComponent>();
-            if (enemyRunComponent == null) enemyRunComponent = entity.As<EnemyRunComponent>();
+            if (enemyRunComponent == null)
+            {
+                enemyRunComponent = entity.As<EnemyRunComponent>();
+            }
             if(enemyAttackBoxComponent == null) enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
-            if(meleeAttackComponent == null) meleeAttackComponent = new MeleeAttackComponent(entity, new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent);
+            if(meleeAttackComponent == null) meleeAttackComponent = new MeleeAttackComponent(entity, new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent, "triangeEnemyAttack");
             if (!initialized) Init();
             meleeAttackComponent.Update(ts);
             if (entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.ENEMY_TRIANGLE;
 
             if (healthComponent.IsDead())
             {
-                Die();
+                animator.ChangeAnimation("triangleEnemyDeath");
+                animator.Play("triangleEnemyDeath");
+                died = true;
+                return;
             }
+
+            if (Math.Abs(rigidBody.linearVelocity.X) > 0.1f)
+            {
+                animator.ChangeAnimation("crabWalk");
+                animator.Play("crabWalk");
+            }
+            else
+            {
+                animator.ChangeAnimation("triangleEnemyIdle");
+                animator.Play("triangleEnemyIdle");
+            }
+        }
+
+        public void Attack()
+        {
+            meleeAttackComponent.Attack();
+        }
+
+        public void TransitionFromAttack()
+        {
+            animator.Play("crabWalk");
         }
 
         protected override void Init()

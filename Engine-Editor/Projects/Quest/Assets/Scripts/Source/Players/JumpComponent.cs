@@ -34,7 +34,8 @@ namespace Quest
         public void OnUpdate(float ts)
         {
             if(rigidBody == null || collider == null || !Enabled) return;
-            
+            Console.WriteLine(entity.name);
+            if (entity.As<Player>().GetIsShooting()) return;
             if (isGrounded())
             {
                 coyoteTimer = coyoteTime;
@@ -43,7 +44,6 @@ namespace Quest
             {
                 coyoteTimer -= ts;
             }
-
             if (Input.IsKeyPressed(KeyCode.Space))
             {
                 animator.ChangeAnimation("playerJump");

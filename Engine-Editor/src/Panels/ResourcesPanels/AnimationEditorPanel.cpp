@@ -380,7 +380,7 @@ namespace eg {
 		ImGui::SetCursorScreenPos(ImVec2(startX - buttonSize.x - buttonGap, ImGui::GetCursorScreenPos().y + 60));
 
 		DrawAnimationOptions();
-		//DrawFunctionCallPopup();
+		DrawFunctionCallPopup();
 		//DrawFunctionInfoPopup();
 
 		if (m_FrameReleased) {

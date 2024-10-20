@@ -12,6 +12,7 @@ namespace Quest
     {
         private bool Enabled = true;
 
+        private string AnimationName;
         private AttackBoxComponent attackBoxComponent;
         public string attackTargetParentName = "Enemies";
         public List<EntityType> attackTargetTypes = new List<EntityType> { EntityType.ENEMY_SQUARE };
@@ -26,17 +27,21 @@ namespace Quest
 
         private TransformComponent transform;
         private BoxCollider2DComponent collider;
+        private AnimatorComponent animator;
 
         Entity entity;
+        private Entity entityToAttack;
 
-        public MeleeAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName, AttackBoxComponent attackBoxComponent)
+        public MeleeAttackComponent(Entity entity, List<EntityType> attackTargetTypes, string attackTargetParentName, AttackBoxComponent attackBoxComponent, string AnimationName)
         {
             this.entity = entity;
             this.attackTargetParentName = attackTargetParentName;
             this.attackTargetTypes = attackTargetTypes;
             this.attackBoxComponent = attackBoxComponent;
+            this.AnimationName = AnimationName;
             transform = entity.GetComponent<TransformComponent>();
             collider = entity.GetComponent<BoxCollider2DComponent>();
+            animator = entity.GetComponent<AnimatorComponent>();
         }
 
         public void Update(float ts, bool attackCondition = true)
@@ -52,12 +57,19 @@ namespace Quest
                 {
                     if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.GetCenter(), attackBoxComponent.GetSize()) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
                     {
-                        e.As<HealthComponent>().TakeDamage((int)(damage * multiplier));
-                        nockback(e, attackBoxComponent);
+                        entityToAttack = e;
+                        animator.Play(AnimationName);
+
                     }
                 }
                 attackTimer = 0;
             }
+        }
+
+        public void Attack()
+        {
+            entityToAttack.As<HealthComponent>().TakeDamage((int)(damage * multiplier));
+            nockback(entityToAttack, attackBoxComponent);
         }
 
         private void nockback(Entity e, AttackBoxComponent attackBox)
