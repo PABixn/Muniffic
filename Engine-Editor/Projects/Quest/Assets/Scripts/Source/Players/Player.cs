@@ -92,6 +92,9 @@ namespace Quest
 
         public void killPlayer()
         {
+            jumpComponent.coyoteTimer = jumpComponent.coyoteTime;
+            jumpComponent.jumpBufferTimer = jumpComponent.jumpBuffer;
+            entity.GetComponent<RigidBody2DComponent>().linearVelocity = new Vector2(0, 0);
             entity.GetComponent<RigidBody2DComponent>().transform = new B2transform(Vector2.Zero, Vector2.Zero);
             Init();
             animator.ChangeAnimation("squareIdle");

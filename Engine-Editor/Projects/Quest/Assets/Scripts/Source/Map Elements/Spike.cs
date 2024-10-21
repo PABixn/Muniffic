@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Quest
 {
-    internal class Spike : DefaultBehaviour
+    class Spike : DefaultBehaviour
     {
-        public int damage = int.MaxValue;
+        public int damage = 10000;
 
         
         public void OnCreate()

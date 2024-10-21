@@ -14,9 +14,9 @@ namespace Quest
         public bool shouldJump = false;
         public float jumpForce = 10f;
         public float coyoteTime = 0.1f;
-        private float coyoteTimer = 0f;
+        public float coyoteTimer = 0f;
         public float jumpBuffer = 0.1f;
-        private float jumpBufferTimer = 0f;
+        public float jumpBufferTimer = 0f;
 
         private RigidBody2DComponent rigidBody;
         private BoxCollider2DComponent collider;
@@ -59,7 +59,6 @@ namespace Quest
                 rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.X, jumpForce * multiplier);
                 jumpBufferTimer = 0;
                 shouldJump = false;
-                animator.Stop();
             }
             if (!Input.IsKeyPressed(KeyCode.Space) && rigidBody.linearVelocity.Y > 0.0f)
             {
