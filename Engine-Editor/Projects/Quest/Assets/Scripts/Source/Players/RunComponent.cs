@@ -33,7 +33,7 @@ namespace Quest
             initialScale = transformComponent.scale;
             multiplier *= rigidBody.mass;
             animatorComponent.ChangeAnimation("squareIdle");
-            animatorComponent.Play("squareWalk");
+            animatorComponent.Play("squareIdle");
         }
 
         public void OnUpdate(float ts)

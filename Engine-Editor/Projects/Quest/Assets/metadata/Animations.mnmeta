@@ -119,18 +119,6 @@ Resources:
       - 7161710862108033361
       - 3719438894605409709
       - 8409512212099325882
-  - UUID: 2847362075815387793
-    ParentDirectory: 5834058243908310703
-    ResourceName: squareIdle2Walk
-    Extension: .anim
-    FrameRate: 10
-    FrameCount: 0
-    Loop: true
-    Frames:
-      - 8750561574030364939
-      - 5229269036323929389
-      - 8201020979574143350
-      - 3028010289991933071
   - UUID: 4678681791681077110
     ParentDirectory: 5834058243908310703
     ResourceName: squareEnemyWalk
