@@ -40,7 +40,7 @@ namespace Quest
         {
             if(rigidBody == null) return;
             if(player == null) player = entity.As<Player>();
-            if(player.GetIsShooting()) return;
+            if(player.GetIsShooting() || player.died) return;
             direction = Vector2.Zero;
             if (Input.IsKeyPressed(KeyCode.A) && !Input.IsKeyPressed(KeyCode.D))
             {

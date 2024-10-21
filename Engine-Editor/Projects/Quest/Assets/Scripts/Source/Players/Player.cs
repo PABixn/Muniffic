@@ -11,7 +11,7 @@ namespace Quest
     public class Player : DefaultBehaviour
     {
         private bool initialized = false;
-        private bool died = false;
+        public bool died = false;
 
         private HealthComponent healthComponent;
         private ShootAttackComponent shootAttackComponent;
@@ -60,6 +60,7 @@ namespace Quest
             {
                 animator.ChangeAnimation("playerDeath");
                 animator.Play("playerDeath");
+
                 died = true;
             }
         }
@@ -93,6 +94,8 @@ namespace Quest
         {
             entity.GetComponent<RigidBody2DComponent>().transform = new B2transform(Vector2.Zero, Vector2.Zero);
             Init();
+            animator.ChangeAnimation("squareIdle");
+            animator.Play("squareIdle");
         }
 
 
@@ -108,8 +111,10 @@ namespace Quest
             runComponent.SetMultiplier(BasePlayerSpeedMultiplier);
             jumpComponent.SetMultiplier(BasePlayerJumpForceMultiplier);
             jumpComponent.Enable();
+            shootAttackComponent.isShooting = false;
             initialized = true;
             died = false;
+            
         }
 
         public void SetDamageMultiplier(float multiplier){

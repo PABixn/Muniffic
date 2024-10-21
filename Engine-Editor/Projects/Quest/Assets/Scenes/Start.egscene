@@ -1,5 +1,41 @@
 Scene: Untitled
 Entities:
+  - Entity: 7722491871612502777
+    Name: Cube
+    TagComponent:
+      Tag: TextComponentEntity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    TextComponent:
+      TextString: Lukasz Bobowski
+      Color: [1, 1, 1, 1]
+      Kerning: 0
+      LineSpacing: 0
+      IsInherited: false
+      IsInheritedInChildren: false
+      Font: 5510082124563868845
+  - Entity: 8407416948734261655
+    Name: Cube
+    TagComponent:
+      Tag: TextEntity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    TextComponent:
+      TextString: Lukasz Bobowski
+      Color: [1, 1, 1, 1]
+      Kerning: 0
+      LineSpacing: 0
+      IsInherited: false
+      IsInheritedInChildren: false
+      Font: 5510082124563868845
   - Entity: 4745023155935519221
     Name: Cube
     Children:

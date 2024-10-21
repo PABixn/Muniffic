@@ -35,7 +35,7 @@ namespace Quest
         {
             if(rigidBody == null || collider == null || !Enabled) return;
             Console.WriteLine(entity.name);
-            if (entity.As<Player>().GetIsShooting()) return;
+            if (entity.As<Player>().GetIsShooting() || entity.As<Player>().died) return;
             if (isGrounded())
             {
                 coyoteTimer = coyoteTime;
