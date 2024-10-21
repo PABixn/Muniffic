@@ -20,12 +20,12 @@ namespace Quest
         {
             attackBox = entity.GetComponent<BoxCollider2DComponent>();
             transform = entity.GetComponent<TransformComponent>();
-            attackBoxCenter = new Vector2(transform.translation.X + (attackBoxOffset.X + attackBox.size.X) * attackDirection.X, transform.translation.Y + attackBoxOffset.Y);
+            attackBoxCenter = new Vector2(transform.translation.X + (attackBoxOffset.X + attackBox.size.X) * transform.scale.X, transform.translation.Y + attackBoxOffset.Y);
         }
 
         public override void OnUpdate(float ts)
         {
-            attackBoxCenter = new Vector2(transform.translation.X + (attackBoxOffset.X + attackBox.size.X), transform.translation.Y + attackBoxOffset.Y);
+            attackBoxCenter = new Vector2(transform.translation.X + (attackBoxOffset.X + attackBox.size.X) * transform.scale.X, transform.translation.Y + attackBoxOffset.Y);
         }
 
         public override bool CollidesWith(Entity e)

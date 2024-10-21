@@ -33,8 +33,7 @@ namespace Quest
 
         public void OnUpdate(float ts)
         {
-            if(rigidBody == null || collider == null || !Enabled) return;
-            Console.WriteLine(entity.name);
+            if (rigidBody == null || collider == null || !Enabled) return;
             if (entity.As<Player>().GetIsShooting() || entity.As<Player>().died) return;
             if (isGrounded())
             {

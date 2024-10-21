@@ -20,7 +20,7 @@ namespace Quest
         private float attackCooldown = 0.5f;
         private float attackTimer = 0f;
         public int damage = 10;
-
+        public bool isAttacking = false;
         private float multiplier = 1.0f;
 
         private int knockbackForce = 1;
@@ -48,16 +48,22 @@ namespace Quest
         {
             if (collider == null || !Enabled) return;
             attackTimer += ts;
-
+            if (isAttacking)
+                return;
             if (attackTimer >= attackCooldown && attackCondition)
             {
                 Entity enemyParent = Entity.FindEntityByName(attackTargetParentName);
                 if (enemyParent.ID == 0) return;
                 foreach (Entity e in enemyParent.GetChildren())
                 {
-                    if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.GetCenter(), attackBoxComponent.GetSize()) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
+                    
+                    if (e.GetComponent<BoxCollider2DComponent>().CollidesWithBox(attackBoxComponent.GetCenter(), attackBoxComponent.GetSize() / 5) && attackTargetTypes.Contains(e.As<EntityTypeComponent>().entityType))
                     {
+                        Console.WriteLine("Attacking");
+                        Console.WriteLine(AnimationName);
+                        isAttacking = true;
                         entityToAttack = e;
+                        animator.ChangeAnimation(AnimationName);
                         animator.Play(AnimationName);
 
                     }

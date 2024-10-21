@@ -51,8 +51,12 @@ namespace Quest
             {
                 enemyRunComponent = entity.As<EnemyRunComponent>();
             }
-            if(enemyAttackBoxComponent == null) enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
-            if(meleeAttackComponent == null) meleeAttackComponent = new MeleeAttackComponent(entity, new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent, "triangeEnemyAttack");
+            if (enemyAttackBoxComponent == null)
+            {
+                enemyAttackBoxComponent = entity.As<EnemyAttackBoxComponent>();
+                enemyAttackBoxComponent.attackBoxSize = new Vector2(0.25f, 0.25f);
+            }
+            if(meleeAttackComponent == null) meleeAttackComponent = new MeleeAttackComponent(entity, new List<EntityType> { EntityType.PLAYER }, "PlayerWrapper", enemyAttackBoxComponent, "triangleEnemyAttack");
             if (!initialized) Init();
             meleeAttackComponent.Update(ts);
             if (entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.ENEMY_TRIANGLE;
@@ -62,6 +66,11 @@ namespace Quest
                 animator.ChangeAnimation("triangleEnemyDeath");
                 animator.Play("triangleEnemyDeath");
                 died = true;
+                return;
+            }
+
+            if(meleeAttackComponent.isAttacking)
+            {
                 return;
             }
 
@@ -84,6 +93,8 @@ namespace Quest
 
         public void TransitionFromAttack()
         {
+            meleeAttackComponent.isAttacking = false;
+            animator.ChangeAnimation("crabWalk");
             animator.Play("crabWalk");
         }
 
