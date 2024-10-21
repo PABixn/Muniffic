@@ -13,6 +13,7 @@ namespace eg
 	class Commands
 	{
 	public:
+		static SceneHierarchyPanel* s_SceneHierarchyPanelPtr;
 
 		const static int MAX_COMMANDS = 200;
 

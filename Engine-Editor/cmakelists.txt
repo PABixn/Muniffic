@@ -29,12 +29,14 @@ target_include_directories(Engine-Editor PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/../Engine/vendor/spdlog/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/../Engine/vendor"
     "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/"
     "${IncludeDir_filewatch}"
     "${IncludeDir_glm}"
     "${IncludeDir_stb_image}"
     "${IncludeDir_ImGuizmo}"
     "${IncludeDir_ImGui}"
 )
+message("${CMAKE_CURRENT_SOURCE_DIR}")
 # Link libraries
 target_link_libraries(Engine-Editor PRIVATE Engine)
 target_link_libraries(Engine-Editor PRIVATE ImGui)

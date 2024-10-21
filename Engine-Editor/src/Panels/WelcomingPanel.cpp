@@ -59,7 +59,7 @@ namespace eg
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-					if (ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)IconLoader::GetIcon(Icons::WelcomePanel_DeleteProject)->GetRendererID(), ImVec2(30.0f, 30.0f), ImVec2(0, 1), ImVec2(1, 0))) {
+					if (ImGui::ImageButton("WelcomePanel_DeleteProject##xx", (ImTextureID)IconLoader::GetIcon(Icons::WelcomePanel_DeleteProject)->GetRendererID(), ImVec2(30.0f, 30.0f), ImVec2(0, 1), ImVec2(1, 0))) {
 						auto it = find(m_ProjectList.begin(), m_ProjectList.end(), project);
 						int projectId = it - m_ProjectList.begin();
 						m_Rps.DeleteProject(projectId);

@@ -3699,7 +3699,9 @@ namespace ImGui
     IMGUI_API bool CustomTreeNodeEx(const void* ptr_id, ImTextureID id, ImGuiTreeNodeFlags flags, const char* fmt, ...);
     IMGUI_API bool TextWrappedWithLineLimit(const char* fmt, const int& line, ...);
     IMGUI_API bool TextWrappedWithLineLimitV(const char* fmt, const int& lineLimit, va_list args);
-    IMGUI_API bool StylisedDragScalar(const char* label, ImGuiDataType data_type, void* p_data, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags, ImDrawFlags drawFlags);
+    IMGUI_API bool StylisedDragScalar(const char* label, ImGuiDataType data_type, void* p_data, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags = 0, ImDrawFlags drawFlags = 0);
+    IMGUI_API bool StylisedDragScalarN(const char* label, ImGuiDataType data_type, void* p_data, int components, float v_speed, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags = 0);
+    IMGUI_API bool StylisedColorEdit(const char* label, float col[4], ImGuiColorEditFlags flags = 0);
     IMGUI_API void RenderFrameRounded(ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, ImDrawFlags flags = ImDrawFlags_None, bool border = true, float rounding = 0.0f);
     // MUNI_CUSTOM end
 

@@ -198,7 +198,7 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 
 		ComponentPropertyBeforeDraw(label);
-		bool changed_value = ImGui::DragFloat("", value, speed, min, max, format);
+		bool changed_value = ImGui::StylisedDragScalar("",ImGuiDataType_Float, value, speed, &min, &max, format);
 		ComponentPropertyAfterDraw(label);
 		return changed_value;
 	}
@@ -207,7 +207,7 @@ namespace eg
 	{
 		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
-		bool changed_value = ImGui::DragFloat2("", value, speed, min, max, format);
+		bool changed_value = ImGui::StylisedDragScalarN("", ImGuiDataType_Float, value, 2, speed, &min, &max, format);
 		ComponentPropertyAfterDraw(label);
 		return changed_value;
 	}
@@ -216,7 +216,7 @@ namespace eg
 	{
 		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
-		bool changed_value = ImGui::DragFloat3("", value, speed, min, max, format);
+		bool changed_value = ImGui::StylisedDragScalarN("", ImGuiDataType_Float, value, 3, speed, &min, &max, format);
 		ComponentPropertyAfterDraw(label);
 		return changed_value;
 	}
@@ -225,7 +225,7 @@ namespace eg
 	{
 		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
-		bool changed_value = ImGui::DragFloat4("", value, speed, min, max, format);
+		bool changed_value = ImGui::StylisedDragScalarN("", ImGuiDataType_Float, value, 4, speed, &min, &max, format);
 		ComponentPropertyAfterDraw(label);
 		return changed_value;
 	}
@@ -234,7 +234,7 @@ namespace eg
 	{
 		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
-		bool changed_value = ImGui::DragInt("", value, speed, min, max, format);
+		bool changed_value = ImGui::StylisedDragScalar("", ImGuiDataType_S32, value, speed, &min, &max, format);
 		ComponentPropertyAfterDraw(label);
 		return changed_value;
 	}
@@ -243,7 +243,7 @@ namespace eg
 	{
 		EG_PROFILE_FUNCTION();
 		ComponentPropertyBeforeDraw(label);
-		bool changed_value = ImGui::ColorEdit4("", col);
+		bool changed_value = ImGui::StylisedColorEdit("", col);
 		ComponentPropertyAfterDraw(label);
 		return changed_value;
 	}
@@ -336,6 +336,7 @@ namespace eg
 		EditorActions::SetSelectionContext(&m_SelectionContext);
 		m_ImagePanel = CreateRef<ImagePanel>();
 		m_ListOfEntityDisplayed = std::vector<EntityDisplayInfo>();
+		Commands::s_SceneHierarchyPanelPtr = this;
 		Search();
 	}
 

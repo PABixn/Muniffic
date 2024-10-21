@@ -4,6 +4,7 @@
 //#include "ConsolePanel.h"
 #include "Imgui/imgui.h"
 #include "../IconLoader.h"
+#include "Commands/Commands.h"
 
 namespace eg {
 	enum ComponentIcons {
@@ -49,7 +50,7 @@ namespace eg {
 	};
 	class SceneHierarchyPanel {
 	public:
-		SceneHierarchyPanel() = default;
+		SceneHierarchyPanel() { Commands::s_SceneHierarchyPanelPtr = this; };
 		SceneHierarchyPanel(const Ref<Scene>& scene);
 
 		void SetContext(const Ref<Scene>& scene);
@@ -59,12 +60,12 @@ namespace eg {
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; SetPreviewAbsoluteImagePath(""); }
 		void SetPreviewAbsoluteImagePath(std::filesystem::path path) { m_PreviewAbsoluteImagePath = path; m_ReevaluatePreview = true; }
+		void Search();
 	private:
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
 		void DrawEntityNode(EntityDisplayInfo entityDisplayInfo);
 		void DrawComponents(Entity entity);
-		void Search();
 		std::optional<EntityDisplayInfo> SearchEntity(Entity entity);
 		template<typename T, typename UIFunction>
 		void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, Icons icon);

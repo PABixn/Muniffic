@@ -27,21 +27,21 @@ namespace eg {
             switch (log->logType) {
             case LogType::Info:
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
-                ImGui::Button("INFO");
+                ImGui::Button("INFO##xx");
                 ImGui::PopStyleColor();
                 ImGui::SameLine();
                 ImGui::Text(log->message.c_str());
                 break;
             case LogType::Warning:
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.0f, 1.0f));
-                ImGui::Button("WARNING");
+                ImGui::Button("WARNING##xx");
                 ImGui::PopStyleColor();
                 ImGui::SameLine();
                 ImGui::Text(log->message.c_str());
                 break;
             case LogType::Error:
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
-                ImGui::Button("ERROR");
+                ImGui::Button("ERROR##xx");
                 ImGui::PopStyleColor();
                 ImGui::SameLine();
                 ImGui::Text(log->message.c_str());

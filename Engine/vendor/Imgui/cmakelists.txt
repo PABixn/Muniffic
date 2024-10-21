@@ -49,6 +49,8 @@ endif()
 # Build configuration settings
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(ImGui PRIVATE IMGUI_DEBUG)
+else()
+    target_compile_definitions(ImGui PRIVATE IMGUI_DISABLE_DEBUG_TOOLS)
 endif()
 
 find_package(Vulkan REQUIRED)
