@@ -69,6 +69,7 @@ namespace eg
 		}
 		else
 			AssetDirectoryManager::initDefault(rootUUID);
+		return false;
 	}
 
 	void AssetDirectorySerializer::SerializeAssetDirectoryCache()

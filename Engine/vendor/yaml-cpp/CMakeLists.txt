@@ -32,7 +32,7 @@ target_include_directories(yaml-cpp PRIVATE
 if(WIN32)
     set(CMAKE_SYSTEM_VERSION "latest")
     set_target_properties(yaml-cpp PROPERTIES
-        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:DebugDLL>")
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 elseif(UNIX AND NOT APPLE) # Linux
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
     set(CMAKE_SYSTEM_VERSION "latest")

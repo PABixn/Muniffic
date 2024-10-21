@@ -396,10 +396,11 @@ namespace eg
 			else
 				m_isAssistantMessageInProgress = false;
 
-			if (m_messageCount != assistantManager->GetMessages(threadID).size() || m_isAssistantMessageInProgress)
+			if (m_messageCount != assistantManager->GetMessages(threadID).size())
 			{
 				m_messageCount = assistantManager->GetMessages(threadID).size();
 				ImGui::SetScrollHereY(1.0f);
+				assistantRespondingAnimation = ".";
 			}
 		}
 

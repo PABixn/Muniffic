@@ -345,7 +345,8 @@ namespace eg
         EG_PROFILE_FUNCTION();
 		bool searched = false, childsearched = false;
 		EntityDisplayInfo currentEntityDisplayInfo = EntityDisplayInfo();
-		for (Entity e : entity.GetChildren())
+		Ref<std::vector<Entity>> children = entity.GetChildren();
+		for (Entity e : *children)
 		{
 			std::optional<EntityDisplayInfo> s = SearchEntity(e);
 			if (s.has_value())
@@ -586,7 +587,7 @@ namespace eg
 		auto &tag = entity.GetComponent<TagComponent>().Tag;
 		bool opened = false;
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Entity | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanFullWidth /* = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0)| ImGuiTreeNodeFlags_OpenOnArrow*/;
-		if (entity.GetChildren().size() != 0)
+		if (entity.GetChildCount() != 0)
 		{
 			flags |= ImGuiTreeNodeFlags_EntityWithChildren;
 		}
@@ -659,7 +660,8 @@ namespace eg
 			{
 				if (entity.Exists())
 				{
-					for (Entity &child : entity.GetChildren())
+					Ref<std::vector<Entity>> children = entity.GetChildren();
+					for (Entity child : *children)
 					{
 						DrawEntityNode(child);
 					}
@@ -695,13 +697,13 @@ namespace eg
 			bool open;
 			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
 			ImGui::PushStyleColor(ImGuiCol_HeaderActive, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade);
-			if (entity.GetChildren().size() > 0 && entity.GetInheritableComponent<T>()->isInheritedInChildren)
+			if (entity.GetChildCount() > 0 && entity.GetInheritableComponent<T>()->isInheritedInChildren)
 				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), (treeNodeFlags | ImGuiTreeNodeFlags_CopyingToChildren), name.c_str(), (ImTextureID)(componentIcon->GetRendererID()));
 			else
 				open = ImGui::CustomTreeNodeWithPicEx((void *)typeid(T).hash_code(), treeNodeFlags, name.c_str(), (ImTextureID)(componentIcon->GetRendererID()));
 			ImGui::PopStyleColor(2);
 			ImGui::PopStyleVar();
-			if (!(name == std::string("Transform") && !(entity.GetChildren().size() > 0 || entity.GetParent().has_value())))
+			if (!(name == std::string("Transform") && !(entity.GetChildCount() > 0 || entity.GetParent().has_value())))
 			{
 				ImGui::SameLine(contentRegionAvailable.x - lineHeight);
 				if (ImGui::Button("...", ImVec2{lineHeight, lineHeight}))
@@ -720,7 +722,7 @@ namespace eg
 
 				if (entity.HasComponent<T>())
 				{
-					if (entity.GetChildren().size() > 0)
+					if (entity.GetChildCount() > 0)
 					{
 						if (ImGui::MenuItem(entity.GetInheritableComponent<T>()->isInheritedInChildren == false ? "Inherit component in children" : "Stop inheriting component in children"))
 							Commands::ExecuteInheritComponentCommand<T>(entity, context, entity.GetInheritableComponent<T>()->isInheritedInChildren);
@@ -1514,7 +1516,7 @@ namespace eg
 					//ImGui::Text("Animations:");
 					int i = 0;
 					size_t index = -1;
-					for (auto animation : *animations)
+					for (auto& animation : *animations)
 					{
 						
 						ImGui::PushID("Anim" + i);

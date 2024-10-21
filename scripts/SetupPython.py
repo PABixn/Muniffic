@@ -15,7 +15,8 @@ class PythonConfiguration:
             "pyttsx3":"pyttsx3", 
             "pyaudio":"pyaudio",
             "SpeechRecognition":"speech_recognition", 
-            "python-dotenv":"dotenv"
+            "python-dotenv":"dotenv",
+            "setuptools": "setuptools"
             }
 
         for installName, packageName in packageNames.items():

@@ -19,7 +19,9 @@
 #include "Engine/Project/RecentProjectSerializer.h"
 #include "Engine/Project/ScriptSerializer.h"
 #include "IconLoader.h"
-
+#ifdef EG_RELEASE
+#define HELLO "Hello from Release"
+#endif
 namespace eg
 {
 
@@ -31,7 +33,8 @@ namespace eg
 	EditorLayer::EditorLayer()
 		: Layer("Sandbox2D"), m_Camera(1280.0f / 720.0f, true)
 	{
-        EG_PROFILE_FUNCTION();
+		EG_PROFILE_FUNCTION();
+           
 		m_RecentProjectSerializer = RecentProjectSerializer();
 		m_WelcomePanel = CreateScope<WelcomingPanel>(m_RecentProjectSerializer.getProjectList(), m_RecentProjectSerializer);
 		m_NameNewProjectPanel = CreateScope<NameNewProjectPanel>();
@@ -116,8 +119,6 @@ namespace eg
 		RenderCommand::Clear();
 
 		m_FrameBuffer->ClearAttachment(1, -1);
-
-
 
 		switch (m_SceneState)
 		{
@@ -255,7 +256,7 @@ namespace eg
 				{
 					if (m_WelcomePanel->getSelectedProject() != "")
 					{
-						auto projectFilePath = m_WelcomePanel->getSelectedProject();
+						auto& projectFilePath = m_WelcomePanel->getSelectedProject();
 						OpenProject(projectFilePath);
 					}
 					else
@@ -944,6 +945,8 @@ namespace eg
 	const std::string EditorLayer::CompileCustomScripts()
 	{
 		EG_PROFILE_FUNCTION();
+        if (!m_CurrentProject || !Project::GetActive())
+			return "No active project";
 		std::filesystem::path projectDirectory =  m_CurrentProject->GetProjectDirectory() / "Assets" / "Scripts";
 		const std::string& projectName = m_CurrentProject->GetProjectName();
 		std::string command = "cd " + projectDirectory.string() + " && cmake -DPROJECT_NAME=" + projectName + " . && cmake --build .";
@@ -980,7 +983,9 @@ namespace eg
 
 		AssetDirectoryManager::initDefault(rootUUID);
 
-		EG_ASSERT(this->CreateCmakelists(absolutePath.parent_path().string()));
+		bool createdCmakeLists = CreateCmakelists(absolutePath.parent_path().string())
+
+		EG_ASSERT(createdCmakeLists);
 		
 		Project::Save(absolutePath);
 		NewScene();
@@ -1017,11 +1022,11 @@ namespace eg
             ConsolePanel::Log("File: EditorLayer.cpp - Could not load " + path.filename().string() + " - not a project file", ConsolePanel::LogType::Error);
             return false;
 		}
-		if (path == Project::GetProjectPath()){
+		if (Project::GetActive() && path == Project::GetProjectPath()) {
 			ConsolePanel::Log("File: EditorLayer.cpp - Project already opened", ConsolePanel::LogType::Warning);
             return false;
 	    }
-        //CloseProject();
+  
 		OpenProject(filepath);
 		m_RecentProjectSerializer.Serialize(filepath, "recentProjectSerializer.txt");
 		ConsolePanel::Log("File: EditorLayer.cpp - Project opened", ConsolePanel::LogType::Info);

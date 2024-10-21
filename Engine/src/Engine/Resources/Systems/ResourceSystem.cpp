@@ -46,10 +46,15 @@ namespace eg {
 			StatePtr->RegisteredLoaders[i].Id = -1;
 		}
 
-		resourceSystemRegisterLoader(StatePtr, textResourceLoaderCreate());
-		resourceSystemRegisterLoader(StatePtr, binaryResourceLoaderCreate());
-		resourceSystemRegisterLoader(StatePtr, imageResourceLoaderCreate());
-		resourceSystemRegisterLoader(StatePtr, fontResourceLoaderCreate());
+		if(!resourceSystemRegisterLoader(StatePtr, textResourceLoaderCreate()))
+			return false;
+		if(!resourceSystemRegisterLoader(StatePtr, binaryResourceLoaderCreate()))
+			return false;
+		if(!resourceSystemRegisterLoader(StatePtr, imageResourceLoaderCreate()))
+			return false;
+		if(!resourceSystemRegisterLoader(StatePtr, fontResourceLoaderCreate()))
+			return false;
+		return true;
 	}
 
 	void resourceSystemShutdown()
@@ -114,6 +119,11 @@ namespace eg {
 				}
 			}
 		}
+        else
+        {
+            EG_ERROR("Invalid resource type passed to resourceSystemLoad");
+            return false;
+		}
 	}
 
 	bool resourceSystemLoadCustom(std::string name, std::string customType, Resource* outResource)
@@ -131,6 +141,11 @@ namespace eg {
 				}
 			}
 		}
+        else
+        {
+            EG_ERROR("Invalid custom type passed to resourceSystemLoadCustom");
+            return false;
+        }
 	}
 
 	void resourceSystemUnload(Resource* resource)

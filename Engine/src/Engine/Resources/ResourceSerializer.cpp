@@ -420,6 +420,7 @@ namespace eg
 			}
 
 		}
+		return true;
 	}
 
 	void ResourceSerializer::SerializeResourceCache()

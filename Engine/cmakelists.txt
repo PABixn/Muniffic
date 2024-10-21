@@ -1,8 +1,8 @@
 # Engine/CMakeLists.txt
 include(../Dependencies.cmake)
-
 cmake_minimum_required(VERSION 3.16)
 project(Engine LANGUAGES CXX)
+
 
 add_library(Engine STATIC)
 
@@ -107,27 +107,29 @@ if(WIN32)
 endif()
 
 # Build configuration settings
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_definitions(Engine PRIVATE EG_DEBUG)
-    target_link_libraries(Engine PRIVATE
-        "${Library_ShaderC_Debug}"
-        "${Library_SPIRV_Cross_Debug}"
-        "${Library_SPIRV_Cross_GLSL_Debug}"
-    )
-
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    target_compile_definitions(Engine PRIVATE EG_RELEASE)
-    target_link_libraries(Engine PRIVATE
-        "${Library_ShaderC_Release}"
-        "${Library_SPIRV_Cross_Release}"
-        "${Library_SPIRV_Cross_GLSL_Release}"
-    )
-
-elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
-    target_compile_definitions(Engine PRIVATE EG_DIST)
-    target_link_libraries(Engine PRIVATE
-        "${Library_ShaderC_Release}"
-        "${Library_SPIRV_Cross_Release}"
-        "${Library_SPIRV_Cross_GLSL_Release}"
-    )
-endif()
+target_link_libraries(Engine PRIVATE 
+"$<$<CONFIG:Debug>:${Library_ShaderC_Debug}>"
+"$<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>,$<CONFIG:Dist>>:${Library_ShaderC_Release}>"
+)
+target_link_libraries(Engine PRIVATE 
+"$<$<CONFIG:Debug>:${Library_SPIRV_Cross_Debug}>"
+"$<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>,$<CONFIG:Dist>>:${Library_SPIRV_Cross_Release}>"
+)
+target_link_libraries(Engine PRIVATE 
+"$<$<CONFIG:Debug>:${Library_SPIRV_Cross_GLSL_Debug}>"
+"$<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>,$<CONFIG:Dist>>:${Library_SPIRV_Cross_GLSL_Release}>"
+)
+target_compile_options(Engine PRIVATE 
+"$<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:-g>"
+"$<$<CONFIG:Release>:-O2>"
+"$<$<CONFIG:Dist>:-O3>"
+)
+target_compile_options(Engine PRIVATE 
+"$<$<CONFIG:Debug>:-O0>"
+)
+target_compile_definitions(Engine PRIVATE
+"$<$<CONFIG:Debug>:EG_DEBUG>"
+"$<$<CONFIG:RelWithDebInfo>:EG_RELWITHDEBINFO>"
+"$<$<CONFIG:Release>:EG_RELEASE>"
+"$<$<CONFIG:Dist>:EG_DIST>"
+)

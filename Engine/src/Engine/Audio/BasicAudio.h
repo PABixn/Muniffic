@@ -30,10 +30,10 @@ namespace eg {
 		bool looped = true;
 		bool playingFromStart = true;
 		float volume = 1;
-		HRESULT hr;
-		IXAudio2* pXAudio2;
-		IXAudio2MasteringVoice* pMasterVoice;
-		IXAudio2SourceVoice* pSourceVoice;
+		HRESULT hr = 0;
+		IXAudio2* pXAudio2 = nullptr;
+		IXAudio2MasteringVoice* pMasterVoice = nullptr;
+		IXAudio2SourceVoice* pSourceVoice = nullptr;
 	public:
 		std::filesystem::path GetPath() { return m_Path; }
 		void SetPath(std::filesystem::path val) { m_Path = val; LoadCurrentAudio(); }

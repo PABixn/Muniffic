@@ -13,7 +13,7 @@ namespace eg
 
 	struct ResourceSystemConfig
 	{
-		uint32_t MaxLoaderCount;
+		uint32_t MaxLoaderCount = 0;
 		std::filesystem::path ResourceDirectory;
 	};
 

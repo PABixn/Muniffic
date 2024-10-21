@@ -238,48 +238,11 @@ namespace eg {
 		RenderScene(camera);
 	}
 
-	void Scene::FixedUpdate()
-	{
-        EG_PROFILE_FUNCTION();
-		{
-			const int32_t velocityIterations = 6;
-			const int32_t positionIterations = 2;
-			//float interpolationAlpha = (T - Time.fixedTime) / Time.fixedDeltaTime;
-			m_PhysicsWorld->Step(m_FixedFramerate/1000.0f, velocityIterations, positionIterations);
-
-			auto view = m_Registry.view<RigidBody2DComponent>();
-			for (auto e : view)
-			{
-				Entity entity{ e, this };
-				auto& rb = entity.GetComponent<RigidBody2DComponent>();
-				auto& transform = entity.GetComponent<TransformComponent>();
-				auto* body = (b2Body*)rb.RuntimeBody;
-
-				if (!body)
-					continue;
-
-				transform.PrevTranslation = transform.Translation;
-				float interpolationAlpha = 1.0f;
-
-
-				transform.Translation.x = transform.PrevTranslation.x + interpolationAlpha * (body->GetPosition().x - transform.PrevTranslation.x);
-				transform.Translation.y = transform.PrevTranslation.y + interpolationAlpha * (body->GetPosition().y - transform.PrevTranslation.y);
-				transform.Rotation.z = body->GetAngle();
-			}
-		}
-	}
-
 	void Scene::OnUpdateRuntime(Timestep ts,std::chrono::steady_clock::time_point& oldTime)
 	{
         EG_PROFILE_FUNCTION();
-		m_NewTime = std::chrono::high_resolution_clock::now();
-		m_Delta = std::chrono::duration_cast<std::chrono::milliseconds>(m_NewTime - oldTime).count();
-		oldTime = m_NewTime;
-
-
 		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
-
 			// Update Native scripts
 			{
 				//C# Entity OnUpdate
@@ -291,32 +254,19 @@ namespace eg {
 				}
 
 				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+				{
+					// TODO: Move to Scene::OnScenePlay
+					if (!nsc.Instance)
 					{
-						// TODO: Move to Scene::OnScenePlay
-						if (!nsc.Instance)
-						{
-							nsc.Instance = nsc.InstantiateScript();
-							nsc.Instance->m_Entity = Entity{ entity, this };
-							nsc.Instance->OnCreate();
-						}
+						nsc.Instance = nsc.InstantiateScript();
+						nsc.Instance->m_Entity = Entity{ entity, this };
+						nsc.Instance->OnCreate();
+					}
 
-						nsc.Instance->OnUpdate(ts);
-					});
+					nsc.Instance->OnUpdate(ts);
+				});
 			}
 
-
-
-
-
-			m_TimePassed = m_TimePassed + (float)m_Delta;
-
-
-			while (m_TimePassed >= m_FixedFramerate)
-			{
-				FixedUpdate();
-				m_TimePassed = m_TimePassed - m_FixedFramerate;
-
-			}
 			// Physics
 			{
 				const int32_t velocityIterations = 6;
@@ -324,28 +274,23 @@ namespace eg {
 				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 				auto view = m_Registry.view<RigidBody2DComponent>();
-				for (auto e : view)
 				{
-					Entity entity{ e, this };
-					auto& rb = entity.GetComponent<RigidBody2DComponent>();
-					auto& transform = entity.GetComponent<TransformComponent>();
-					auto* body = (b2Body*)rb.RuntimeBody;
+					for (auto e : view)
+					{
+						Entity entity{ e, this };
+						auto& rb = entity.GetComponent<RigidBody2DComponent>();
+						auto& transform = entity.GetComponent<TransformComponent>();
+						auto* body = (b2Body*)rb.RuntimeBody;
 
-					if (!body)
-						continue;
-
-					transform.Translation.x = body->GetPosition().x;
-					transform.Translation.y = body->GetPosition().y;
-					transform.Rotation.z = body->GetAngle();
+						transform.Translation.x = body->GetPosition().x;
+						transform.Translation.y = body->GetPosition().y;
+						transform.Rotation.z = body->GetAngle();
+					}
 				}
 			}
 
-			for (Entity entity : m_EntitiesToDestroy)
-			{
-				DestroyEntity(entity);
-			}
-			m_EntitiesToDestroy.clear();
 		}
+
 
 		// Render 2D
 		Camera* mainCamera = nullptr;
@@ -391,11 +336,12 @@ namespace eg {
 
 			//Set Animations
 
+
 			{
 				auto group = m_Registry.view<TransformComponent, AnimatorComponent>();
 				for (auto entity : group)
 				{
-					auto [transform, animator ] = group.get<TransformComponent, AnimatorComponent>(entity);
+					auto [transform, animator] = group.get<TransformComponent, AnimatorComponent>(entity);
 					if (animator.Animator2D->GetCurrentAnimation() == nullptr || animator.Animator2D->GetCurrentAnimation()->GetFrameCount() == 0)
 						continue;
 					Ref<SubTexture2D> texture = animator.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
@@ -439,6 +385,10 @@ namespace eg {
 
 			Renderer2D::EndScene();
 		}
+
+		for(auto& entity : m_EntitiesToDestroy)
+			DestroyEntity(entity);
+		m_EntitiesToDestroy.clear();
 	}
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
@@ -521,7 +471,7 @@ namespace eg {
 					continue;
 				Ref<SubTexture2D> texture = animator.Animator2D->GetCurrentAnimation()->GetFrame()->GetSubTexture();
 
-				Renderer2D::DrawQuad(transform.GetTransform(), texture, (int)entity);
+				Renderer2D::DrawQuad(transform.GetTransform(), texture, 1, glm::vec4(1.0f), (int)entity);
 			}
 		}
 
@@ -557,7 +507,8 @@ namespace eg {
 			{
 				auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
 
-				Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
+				if(text.RuntimeFont)
+					Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
 			}
 		}
 
@@ -576,7 +527,7 @@ namespace eg {
 	void Scene::AddEntityToDestroy(Entity entity)
 	{
         EG_PROFILE_FUNCTION();
-		m_EntitiesToDestroy.push_back(entity  );
+		m_EntitiesToDestroy.push_back(entity);
 	}
 
 	Entity Scene::DuplicateEntity(Entity entity)
