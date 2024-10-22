@@ -55,7 +55,7 @@ namespace Quest
             if (entityTypeComponent.entityType == EntityType.NONE) entityTypeComponent.entityType = EntityType.PLAYER;
             if(!initialized) Init();
             
-            shootAttackComponent.Update(ts, Input.IsKeyPressed(KeyCode.R));
+            shootAttackComponent.Update(ts, Input.IsKeyPressed(KeyCode.Space) || Input.IsKeyPressed(KeyCode.E));
             if (healthComponent.health == 0)
             {
                 animator.ChangeAnimation("playerDeath");

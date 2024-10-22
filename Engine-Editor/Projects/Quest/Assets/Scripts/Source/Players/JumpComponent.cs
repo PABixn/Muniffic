@@ -43,7 +43,7 @@ namespace Quest
             {
                 coyoteTimer -= ts;
             }
-            if (Input.IsKeyPressed(KeyCode.Space))
+            if (Input.IsKeyPressed(KeyCode.W))
             {
                 animator.ChangeAnimation("playerJump");
                 animator.Play("playerJump");
@@ -60,7 +60,7 @@ namespace Quest
                 jumpBufferTimer = 0;
                 shouldJump = false;
             }
-            if (!Input.IsKeyPressed(KeyCode.Space) && rigidBody.linearVelocity.Y > 0.0f)
+            if (!Input.IsKeyPressed(KeyCode.W) && rigidBody.linearVelocity.Y > 0.0f)
             {
                 rigidBody.linearVelocity = new Vector2(rigidBody.linearVelocity.X, rigidBody.linearVelocity.Y * 0.3f);
                 coyoteTimer = 0;
