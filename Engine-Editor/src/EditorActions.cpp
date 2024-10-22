@@ -1742,6 +1742,8 @@ namespace eg
 		}
 		else if (params.at(1) == "Font")
 		{
+			return "Font property is read-only.";
+
 			if (ComponentHelper::CanConvertToInteger(params.at(2)) == false)
 				return "Parameter is not integer.";
 
