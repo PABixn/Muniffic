@@ -23,5 +23,8 @@ namespace eg
 		void OnUpdate() {}
 
 		bool OnWindowClose(WindowCloseEvent &e);
+
+	private:
+		void SetWindowIcon(GLFWwindow* window);
 	};
 }

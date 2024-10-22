@@ -291,10 +291,7 @@ namespace eg
 
 		ImGui::PushFont(m_PoppinsSemiBoldFont);
 		ImGui::PushStyleColor(ImGuiCol_Text, m_LightTextShade);
-		ImGui::PushStyleColor(ImGuiCol_TextDisabled, m_LightTextShade);
 		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
-		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, m_NormalShade);
-		ImGui::PushStyleColor(ImGuiCol_HeaderActive, m_NormalShade);
 		if (ImGui::BeginMenuBar())
 		{
 
@@ -343,7 +340,7 @@ namespace eg
 
 			ImGui::EndMenuBar();
 		}
-		ImGui::PopStyleColor(5);
+		ImGui::PopStyleColor(2);
 		ImGui::PopFont();
 
 			m_SceneHierarchyPanel.OnImGuiRender();
