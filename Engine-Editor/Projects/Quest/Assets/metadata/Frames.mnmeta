@@ -5,23 +5,11 @@ Resources:
     Extension: ""
     SubTexture: 1973146961463636216
     Duration: 1
-  - UUID: 5850471761058033975
+  - UUID: 8602238628490220975
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle1
+    ResourceName: squareIdle5
     Extension: ""
-    SubTexture: 3143889110011539281
-    Duration: 1
-  - UUID: 7913933998103964983
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareWalk5
-    Extension: ""
-    SubTexture: 3597879628578145206
-    Duration: 1
-  - UUID: 5237760045810551439
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle4
-    Extension: ""
-    SubTexture: 8514219554720676677
+    SubTexture: 1691779221144226267
     Duration: 1
   - UUID: 3028010289991933071
     ParentDirectory: 1701484678266922854
@@ -29,23 +17,35 @@ Resources:
     Extension: ""
     SubTexture: 2189754527670434566
     Duration: 1
+  - UUID: 5237760045810551439
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle4
+    Extension: ""
+    SubTexture: 8514219554720676677
+    Duration: 1
   - UUID: 6208846792721176335
     ParentDirectory: 1701484678266922854
     ResourceName: squareIdle19
     Extension: ""
     SubTexture: 8863450076148516076
     Duration: 1
-  - UUID: 8602238628490220975
+  - UUID: 7913933998103964983
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle5
+    ResourceName: squareWalk5
     Extension: ""
-    SubTexture: 1691779221144226267
+    SubTexture: 3597879628578145206
     Duration: 1
-  - UUID: 2616813748904816203
+  - UUID: 5850471761058033975
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle6
+    ResourceName: squareIdle1
     Extension: ""
-    SubTexture: 2893788748582103130
+    SubTexture: 3143889110011539281
+    Duration: 1
+  - UUID: 8750561574030364939
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle2Walk0
+    Extension: ""
+    SubTexture: 5300018019793697088
     Duration: 1
   - UUID: 6958992224346279627
     ParentDirectory: 1701484678266922854
@@ -53,11 +53,11 @@ Resources:
     Extension: ""
     SubTexture: 7423776919975704052
     Duration: 1
-  - UUID: 8750561574030364939
+  - UUID: 2616813748904816203
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle2Walk0
+    ResourceName: squareIdle6
     Extension: ""
-    SubTexture: 5300018019793697088
+    SubTexture: 2893788748582103130
     Duration: 1
   - UUID: 4597579925615446259
     ParentDirectory: 1701484678266922854
@@ -85,11 +85,17 @@ Resources:
     Extension: ""
     SubTexture: 3319471744190495577
     Duration: 1
-  - UUID: 8618046233787167585
+  - UUID: 5934102921091250657
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle8
+    ResourceName: crabWalk8
     Extension: ""
-    SubTexture: 2041065156348877333
+    SubTexture: 1770190496681542688
+    Duration: 1
+  - UUID: 6810804492143683041
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareWalk9
+    Extension: ""
+    SubTexture: 5902200756010241705
     Duration: 1
   - UUID: 7006654557258162401
     ParentDirectory: 1701484678266922854
@@ -103,23 +109,11 @@ Resources:
     Extension: ""
     SubTexture: 4555187572383683720
     Duration: 1
-  - UUID: 5934102921091250657
+  - UUID: 8618046233787167585
     ParentDirectory: 1701484678266922854
-    ResourceName: crabWalk8
+    ResourceName: squareIdle8
     Extension: ""
-    SubTexture: 1770190496681542688
-    Duration: 1
-  - UUID: 6810804492143683041
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareWalk9
-    Extension: ""
-    SubTexture: 5902200756010241705
-    Duration: 1
-  - UUID: 891060175645266728
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle9
-    Extension: ""
-    SubTexture: 4114537737194162829
+    SubTexture: 2041065156348877333
     Duration: 1
   - UUID: 2083147118377455848
     ParentDirectory: 1701484678266922854
@@ -127,17 +121,11 @@ Resources:
     Extension: ""
     SubTexture: 4246919270702160124
     Duration: 1
-  - UUID: 3901691826409845225
+  - UUID: 891060175645266728
     ParentDirectory: 1701484678266922854
-    ResourceName: squareWalk10
+    ResourceName: squareIdle9
     Extension: ""
-    SubTexture: 1418286891511581976
-    Duration: 1
-  - UUID: 1790978379173816809
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle10
-    Extension: ""
-    SubTexture: 4211704941824922127
+    SubTexture: 4114537737194162829
     Duration: 1
   - UUID: 3458386691114856809
     ParentDirectory: 1701484678266922854
@@ -151,17 +139,29 @@ Resources:
     Extension: ""
     SubTexture: 3905098383459631685
     Duration: 1
-  - UUID: 7477063130656856108
+  - UUID: 3901691826409845225
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle12
+    ResourceName: squareWalk10
     Extension: ""
-    SubTexture: 2113029755942795989
+    SubTexture: 1418286891511581976
+    Duration: 1
+  - UUID: 1790978379173816809
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle10
+    Extension: ""
+    SubTexture: 4211704941824922127
     Duration: 1
   - UUID: 5017587332494408428
     ParentDirectory: 1701484678266922854
     ResourceName: squareWalk8
     Extension: ""
     SubTexture: 7087871448250632
+    Duration: 1
+  - UUID: 7477063130656856108
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle12
+    Extension: ""
+    SubTexture: 2113029755942795989
     Duration: 1
   - UUID: 7352199717452378606
     ParentDirectory: 1701484678266922854
@@ -175,18 +175,6 @@ Resources:
     Extension: ""
     SubTexture: 7134017545601667460
     Duration: 1
-  - UUID: 1781509624959654494
-    ParentDirectory: 1701484678266922854
-    ResourceName: crabWalk13
-    Extension: ""
-    SubTexture: 2351876959388797242
-    Duration: 1
-  - UUID: 6048277320734500958
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle14
-    Extension: ""
-    SubTexture: 1118099752027576914
-    Duration: 1
   - UUID: 953501690713380638
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyAttack6
@@ -199,17 +187,41 @@ Resources:
     Extension: ""
     SubTexture: 7615983534833091618
     Duration: 1
-  - UUID: 3532717866189105179
+  - UUID: 1781509624959654494
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle15
+    ResourceName: crabWalk13
     Extension: ""
-    SubTexture: 1931641743987271709
+    SubTexture: 2351876959388797242
+    Duration: 1
+  - UUID: 6048277320734500958
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle14
+    Extension: ""
+    SubTexture: 1118099752027576914
     Duration: 1
   - UUID: 7654172187394392731
     ParentDirectory: 1701484678266922854
     ResourceName: squareIdle24
     Extension: ""
     SubTexture: 4487083409625895954
+    Duration: 1
+  - UUID: 3532717866189105179
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle15
+    Extension: ""
+    SubTexture: 1931641743987271709
+    Duration: 1
+  - UUID: 1497810071292098749
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyDeath8
+    Extension: ""
+    SubTexture: 2751904421304796329
+    Duration: 1
+  - UUID: 5230447526314077885
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle27
+    Extension: ""
+    SubTexture: 116159836750641526
     Duration: 1
   - UUID: 6788195721624549373
     ParentDirectory: 1701484678266922854
@@ -229,17 +241,11 @@ Resources:
     Extension: ""
     SubTexture: 887340489392162200
     Duration: 1
-  - UUID: 1497810071292098749
+  - UUID: 1122014625866315746
     ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyDeath8
+    ResourceName: squareWalk2
     Extension: ""
-    SubTexture: 2751904421304796329
-    Duration: 1
-  - UUID: 5230447526314077885
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle27
-    Extension: ""
-    SubTexture: 116159836750641526
+    SubTexture: 6980582036766036371
     Duration: 1
   - UUID: 6714912687206784098
     ParentDirectory: 1701484678266922854
@@ -253,18 +259,6 @@ Resources:
     Extension: ""
     SubTexture: 1934504650750236312
     Duration: 1
-  - UUID: 1122014625866315746
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareWalk2
-    Extension: ""
-    SubTexture: 6980582036766036371
-    Duration: 1
-  - UUID: 918831269425311989
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle18
-    Extension: ""
-    SubTexture: 2022159910703035845
-    Duration: 1
   - UUID: 7554294745032467381
     ParentDirectory: 1701484678266922854
     ResourceName: squareWalk4
@@ -276,6 +270,18 @@ Resources:
     ResourceName: squareWalk0
     Extension: ""
     SubTexture: 6916337805789089130
+    Duration: 1
+  - UUID: 918831269425311989
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle18
+    Extension: ""
+    SubTexture: 2022159910703035845
+    Duration: 1
+  - UUID: 1994514368218907250
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle28
+    Extension: ""
+    SubTexture: 7806849568894995124
     Duration: 1
   - UUID: 1126127350212066354
     ParentDirectory: 1701484678266922854
@@ -289,23 +295,17 @@ Resources:
     Extension: ""
     SubTexture: 4868333174280984041
     Duration: 1
-  - UUID: 1994514368218907250
+  - UUID: 6232116692553663737
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle28
+    ResourceName: squareWalk14
     Extension: ""
-    SubTexture: 7806849568894995124
+    SubTexture: 9076637791432704840
     Duration: 1
   - UUID: 5817513382962591673
     ParentDirectory: 1701484678266922854
     ResourceName: squareIdle21
     Extension: ""
     SubTexture: 159984259307442034
-    Duration: 1
-  - UUID: 6232116692553663737
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareWalk14
-    Extension: ""
-    SubTexture: 9076637791432704840
     Duration: 1
   - UUID: 1007295741906360261
     ParentDirectory: 1701484678266922854
@@ -318,12 +318,6 @@ Resources:
     ResourceName: squareIdle26
     Extension: ""
     SubTexture: 664872888758558678
-    Duration: 1
-  - UUID: 6797144401076601297
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle29
-    Extension: ""
-    SubTexture: 7210332394583841945
     Duration: 1
   - UUID: 1101879798564801233
     ParentDirectory: 1701484678266922854
@@ -339,11 +333,11 @@ Resources:
     Extension: ""
     SubTexture: 5744112441850519700
     Duration: 1
-  - UUID: 6870784575685890752
+  - UUID: 6797144401076601297
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle30
+    ResourceName: squareIdle29
     Extension: ""
-    SubTexture: 2103381278318753012
+    SubTexture: 7210332394583841945
     Duration: 1
   - UUID: 3605512703530488640
     ParentDirectory: 1701484678266922854
@@ -351,11 +345,11 @@ Resources:
     Extension: ""
     SubTexture: 5580982298105421454
     Duration: 1
-  - UUID: 7197913293943881189
+  - UUID: 6870784575685890752
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle32
+    ResourceName: squareIdle30
     Extension: ""
-    SubTexture: 8210704931972629528
+    SubTexture: 2103381278318753012
     Duration: 1
   - UUID: 5107957391363160165
     ParentDirectory: 1701484678266922854
@@ -363,11 +357,23 @@ Resources:
     Extension: ""
     SubTexture: 3553561025716430236
     Duration: 1
+  - UUID: 7197913293943881189
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle32
+    Extension: ""
+    SubTexture: 8210704931972629528
+    Duration: 1
   - UUID: 5398309230383268980
     ParentDirectory: 1701484678266922854
     ResourceName: squareWalk1
     Extension: ""
     SubTexture: 9028130932518097423
+    Duration: 1
+  - UUID: 5229269036323929389
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareIdle2Walk1
+    Extension: ""
+    SubTexture: 5696101218583124247
     Duration: 1
   - UUID: 3719438894605409709
     ParentDirectory: 1701484678266922854
@@ -381,11 +387,11 @@ Resources:
     Extension: ""
     SubTexture: 4774075748201679944
     Duration: 1
-  - UUID: 5229269036323929389
+  - UUID: 8612289354760188195
     ParentDirectory: 1701484678266922854
-    ResourceName: squareIdle2Walk1
+    ResourceName: playerDeath7
     Extension: ""
-    SubTexture: 5696101218583124247
+    SubTexture: 1723789749880969737
     Duration: 1
   - UUID: 589014702575030563
     ParentDirectory: 1701484678266922854
@@ -393,11 +399,11 @@ Resources:
     Extension: ""
     SubTexture: 606894401678372769
     Duration: 1
-  - UUID: 8612289354760188195
+  - UUID: 5533795104804888774
     ParentDirectory: 1701484678266922854
-    ResourceName: playerDeath7
+    ResourceName: squareEnemyDeath6
     Extension: ""
-    SubTexture: 1723789749880969737
+    SubTexture: 8692501886220034627
     Duration: 1
   - UUID: 5300650832774074566
     ParentDirectory: 1701484678266922854
@@ -405,17 +411,11 @@ Resources:
     Extension: ""
     SubTexture: 469548552165077935
     Duration: 1
-  - UUID: 5533795104804888774
+  - UUID: 6317430445230054224
     ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyDeath6
+    ResourceName: triangleEnemyAttack2
     Extension: ""
-    SubTexture: 8692501886220034627
-    Duration: 1
-  - UUID: 1050162100093192528
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareWalk12
-    Extension: ""
-    SubTexture: 8471665258706768630
+    SubTexture: 279871655248507385
     Duration: 1
   - UUID: 3764030500951545680
     ParentDirectory: 1701484678266922854
@@ -423,11 +423,11 @@ Resources:
     Extension: ""
     SubTexture: 7957590827954798022
     Duration: 1
-  - UUID: 6317430445230054224
+  - UUID: 1050162100093192528
     ParentDirectory: 1701484678266922854
-    ResourceName: triangleEnemyAttack2
+    ResourceName: squareWalk12
     Extension: ""
-    SubTexture: 279871655248507385
+    SubTexture: 8471665258706768630
     Duration: 1
   - UUID: 106357791267281567
     ParentDirectory: 1701484678266922854
@@ -435,29 +435,29 @@ Resources:
     Extension: ""
     SubTexture: 9078939277199616586
     Duration: 1
-  - UUID: 4826913995745688329
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareWalk18
-    Extension: ""
-    SubTexture: 5817478152031716524
-    Duration: 1
   - UUID: 3465331536073678601
     ParentDirectory: 1701484678266922854
     ResourceName: playerAttack28
     Extension: ""
     SubTexture: 1653636162428686114
     Duration: 1
-  - UUID: 983169439542495428
+  - UUID: 4826913995745688329
     ParentDirectory: 1701484678266922854
-    ResourceName: squareWalk19
+    ResourceName: squareWalk18
     Extension: ""
-    SubTexture: 1942229120428787928
+    SubTexture: 5817478152031716524
     Duration: 1
   - UUID: 4475783779974701764
     ParentDirectory: 1701484678266922854
     ResourceName: playerDeath10
     Extension: ""
     SubTexture: 8544329721571537657
+    Duration: 1
+  - UUID: 983169439542495428
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareWalk19
+    Extension: ""
+    SubTexture: 1942229120428787928
     Duration: 1
   - UUID: 2608891884126907652
     ParentDirectory: 1701484678266922854
@@ -477,17 +477,17 @@ Resources:
     Extension: ""
     SubTexture: 7618745212667370426
     Duration: 1
-  - UUID: 5678130305943348602
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareWalk24
-    Extension: ""
-    SubTexture: 520245159502301100
-    Duration: 1
   - UUID: 5779283609018595194
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyAttack9
     Extension: ""
     SubTexture: 8757008137575104543
+    Duration: 1
+  - UUID: 5678130305943348602
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareWalk24
+    Extension: ""
+    SubTexture: 520245159502301100
     Duration: 1
   - UUID: 8201020979574143350
     ParentDirectory: 1701484678266922854
@@ -497,11 +497,11 @@ Resources:
     Duration: 1
     ClassName: Quest.RunComponent
     FunctionCallName: PlayWalkAnimation
-  - UUID: 96088160825011953
+  - UUID: 7667765945965144817
     ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyWalk0
+    ResourceName: squareEnemyDeath9
     Extension: ""
-    SubTexture: 3941632016082519120
+    SubTexture: 7178556650292903659
     Duration: 1
   - UUID: 2984107824140642033
     ParentDirectory: 1701484678266922854
@@ -509,11 +509,11 @@ Resources:
     Extension: ""
     SubTexture: 3457958726377369017
     Duration: 1
-  - UUID: 7667765945965144817
+  - UUID: 96088160825011953
     ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyDeath9
+    ResourceName: squareEnemyWalk0
     Extension: ""
-    SubTexture: 7178556650292903659
+    SubTexture: 3941632016082519120
     Duration: 1
   - UUID: 8559832626684069214
     ParentDirectory: 1701484678266922854
@@ -551,23 +551,17 @@ Resources:
     Extension: ""
     SubTexture: 8393701026011438931
     Duration: 1
-  - UUID: 6298045477682283533
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyWalk7
-    Extension: ""
-    SubTexture: 3563361341444694269
-    Duration: 1
   - UUID: 4947163105638764557
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyAttack14
     Extension: ""
     SubTexture: 7736363535323990175
     Duration: 1
-  - UUID: 2627682143683505664
+  - UUID: 6298045477682283533
     ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyWalk8
+    ResourceName: squareEnemyWalk7
     Extension: ""
-    SubTexture: 6498331032461022232
+    SubTexture: 3563361341444694269
     Duration: 1
   - UUID: 758305391936737792
     ParentDirectory: 1701484678266922854
@@ -575,17 +569,23 @@ Resources:
     Extension: ""
     SubTexture: 837384000878304447
     Duration: 1
+  - UUID: 2627682143683505664
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyWalk8
+    Extension: ""
+    SubTexture: 6498331032461022232
+    Duration: 1
   - UUID: 6539971138998879660
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyWalk9
     Extension: ""
     SubTexture: 3536653562294491554
     Duration: 1
-  - UUID: 5718723584929980088
+  - UUID: 8841634927884883128
     ParentDirectory: 1701484678266922854
-    ResourceName: triangleEnemyAttack21
+    ResourceName: squareEnemyWalk10
     Extension: ""
-    SubTexture: 3375111009498115664
+    SubTexture: 8947863182210219316
     Duration: 1
   - UUID: 225599245819577528
     ParentDirectory: 1701484678266922854
@@ -593,11 +593,11 @@ Resources:
     Extension: ""
     SubTexture: 8319567013692961332
     Duration: 1
-  - UUID: 8841634927884883128
+  - UUID: 5718723584929980088
     ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyWalk10
+    ResourceName: triangleEnemyAttack21
     Extension: ""
-    SubTexture: 8947863182210219316
+    SubTexture: 3375111009498115664
     Duration: 1
   - UUID: 4055254651401986174
     ParentDirectory: 1701484678266922854
@@ -611,17 +611,17 @@ Resources:
     Extension: ""
     SubTexture: 2074417960881785012
     Duration: 1
-  - UUID: 3719525991674385966
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyWalk32
-    Extension: ""
-    SubTexture: 5776898271317603768
-    Duration: 1
   - UUID: 7444473314587671598
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyWalk13
     Extension: ""
     SubTexture: 3678443071318089997
+    Duration: 1
+  - UUID: 3719525991674385966
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyWalk32
+    Extension: ""
+    SubTexture: 5776898271317603768
     Duration: 1
   - UUID: 2783276913104739318
     ParentDirectory: 1701484678266922854
@@ -641,23 +641,17 @@ Resources:
     Extension: ""
     SubTexture: 2883678802163405444
     Duration: 1
-  - UUID: 3905684392687981469
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyWalk17
-    Extension: ""
-    SubTexture: 6812140677122847699
-    Duration: 1
   - UUID: 5985014521891927453
     ParentDirectory: 1701484678266922854
     ResourceName: playerDeath4
     Extension: ""
     SubTexture: 8703079349238818130
     Duration: 1
-  - UUID: 546684917859182010
+  - UUID: 3905684392687981469
     ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyWalk18
+    ResourceName: squareEnemyWalk17
     Extension: ""
-    SubTexture: 7312652132998270864
+    SubTexture: 6812140677122847699
     Duration: 1
   - UUID: 8409512212099325882
     ParentDirectory: 1701484678266922854
@@ -665,17 +659,17 @@ Resources:
     Extension: ""
     SubTexture: 5469021786728136941
     Duration: 1
+  - UUID: 546684917859182010
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyWalk18
+    Extension: ""
+    SubTexture: 7312652132998270864
+    Duration: 1
   - UUID: 9005494283356532514
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyWalk19
     Extension: ""
     SubTexture: 4721883377605589483
-    Duration: 1
-  - UUID: 8143097001731799152
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyWalk23
-    Extension: ""
-    SubTexture: 3688964219761205722
     Duration: 1
   - UUID: 254097358933851248
     ParentDirectory: 1701484678266922854
@@ -683,17 +677,11 @@ Resources:
     Extension: ""
     SubTexture: 4204712413957322305
     Duration: 1
-  - UUID: 9032606644177810769
+  - UUID: 8143097001731799152
     ParentDirectory: 1701484678266922854
-    ResourceName: triangleEnemyAttack22
+    ResourceName: squareEnemyWalk23
     Extension: ""
-    SubTexture: 1340046184640291511
-    Duration: 1
-  - UUID: 4610013769556652881
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyWalk22
-    Extension: ""
-    SubTexture: 268609543503827331
+    SubTexture: 3688964219761205722
     Duration: 1
   - UUID: 7161710862108033361
     ParentDirectory: 1701484678266922854
@@ -701,17 +689,29 @@ Resources:
     Extension: ""
     SubTexture: 5552143806223136500
     Duration: 1
-  - UUID: 731354592027994439
+  - UUID: 4610013769556652881
     ParentDirectory: 1701484678266922854
-    ResourceName: crabWalk14
+    ResourceName: squareEnemyWalk22
     Extension: ""
-    SubTexture: 8694487045527474102
+    SubTexture: 268609543503827331
+    Duration: 1
+  - UUID: 9032606644177810769
+    ParentDirectory: 1701484678266922854
+    ResourceName: triangleEnemyAttack22
+    Extension: ""
+    SubTexture: 1340046184640291511
     Duration: 1
   - UUID: 6322520469397770567
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyWalk24
     Extension: ""
     SubTexture: 3991619654049517664
+    Duration: 1
+  - UUID: 731354592027994439
+    ParentDirectory: 1701484678266922854
+    ResourceName: crabWalk14
+    Extension: ""
+    SubTexture: 8694487045527474102
     Duration: 1
   - UUID: 3909759611210840205
     ParentDirectory: 1701484678266922854
@@ -731,17 +731,17 @@ Resources:
     Extension: ""
     SubTexture: 318311932415819997
     Duration: 1
-  - UUID: 3537174143461961684
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyWalk28
-    Extension: ""
-    SubTexture: 1342460939086193077
-    Duration: 1
   - UUID: 4999839237802251220
     ParentDirectory: 1701484678266922854
     ResourceName: triangleEnemyDeath13
     Extension: ""
     SubTexture: 8261422939057178519
+    Duration: 1
+  - UUID: 3537174143461961684
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyWalk28
+    Extension: ""
+    SubTexture: 1342460939086193077
     Duration: 1
   - UUID: 4484229566577303740
     ParentDirectory: 1701484678266922854
@@ -761,17 +761,17 @@ Resources:
     Extension: ""
     SubTexture: 718682239757803071
     Duration: 1
-  - UUID: 2115209321783317332
-    ParentDirectory: 1701484678266922854
-    ResourceName: crabWalk0
-    Extension: ""
-    SubTexture: 6489830357719846340
-    Duration: 1
   - UUID: 4352564285096677716
     ParentDirectory: 1701484678266922854
     ResourceName: playerAttack11
     Extension: ""
     SubTexture: 7696245832009303760
+    Duration: 1
+  - UUID: 2115209321783317332
+    ParentDirectory: 1701484678266922854
+    ResourceName: crabWalk0
+    Extension: ""
+    SubTexture: 6489830357719846340
     Duration: 1
   - UUID: 2777379751850054880
     ParentDirectory: 1701484678266922854
@@ -779,29 +779,29 @@ Resources:
     Extension: ""
     SubTexture: 8434384790160287138
     Duration: 1
-  - UUID: 938996264248370353
-    ParentDirectory: 1701484678266922854
-    ResourceName: triangleEnemyAttack7
-    Extension: ""
-    SubTexture: 2967683701327551064
-    Duration: 1
   - UUID: 6793044741549942449
     ParentDirectory: 1701484678266922854
     ResourceName: crabWalk2
     Extension: ""
     SubTexture: 3860463096164092418
     Duration: 1
-  - UUID: 5133516833274862150
+  - UUID: 938996264248370353
     ParentDirectory: 1701484678266922854
-    ResourceName: crabWalk3
+    ResourceName: triangleEnemyAttack7
     Extension: ""
-    SubTexture: 2230347134802053601
+    SubTexture: 2967683701327551064
     Duration: 1
   - UUID: 4390443216232796230
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyAttack16
     Extension: ""
     SubTexture: 385023918885177849
+    Duration: 1
+  - UUID: 5133516833274862150
+    ParentDirectory: 1701484678266922854
+    ResourceName: crabWalk3
+    Extension: ""
+    SubTexture: 2230347134802053601
     Duration: 1
   - UUID: 7461644725087790991
     ParentDirectory: 1701484678266922854
@@ -821,29 +821,29 @@ Resources:
     Extension: ""
     SubTexture: 2404441640313023205
     Duration: 1
-  - UUID: 2598373759863302275
-    ParentDirectory: 1701484678266922854
-    ResourceName: triangleEnemyAttack8
-    Extension: ""
-    SubTexture: 6594454174058932623
-    Duration: 1
   - UUID: 6207912076433299587
     ParentDirectory: 1701484678266922854
     ResourceName: crabWalk7
     Extension: ""
     SubTexture: 5674473083000822601
     Duration: 1
-  - UUID: 1309753493561794574
+  - UUID: 2598373759863302275
     ParentDirectory: 1701484678266922854
-    ResourceName: crabWalk9
+    ResourceName: triangleEnemyAttack8
     Extension: ""
-    SubTexture: 3925725849253097153
+    SubTexture: 6594454174058932623
     Duration: 1
   - UUID: 6246207777444242446
     ParentDirectory: 1701484678266922854
     ResourceName: triangleEnemyDeath6
     Extension: ""
     SubTexture: 1446746230227422979
+    Duration: 1
+  - UUID: 1309753493561794574
+    ParentDirectory: 1701484678266922854
+    ResourceName: crabWalk9
+    Extension: ""
+    SubTexture: 3925725849253097153
     Duration: 1
   - UUID: 4962105977928694967
     ParentDirectory: 1701484678266922854
@@ -899,17 +899,17 @@ Resources:
     Extension: ""
     SubTexture: 1670107018500443117
     Duration: 1
-  - UUID: 1956259141378838633
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyAttack7
-    Extension: ""
-    SubTexture: 79303313019528849
-    Duration: 1
   - UUID: 2564026964700913257
     ParentDirectory: 1701484678266922854
     ResourceName: playerDeath14
     Extension: ""
     SubTexture: 5466758114199443833
+    Duration: 1
+  - UUID: 1956259141378838633
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyAttack7
+    Extension: ""
+    SubTexture: 79303313019528849
     Duration: 1
   - UUID: 521312367304081930
     ParentDirectory: 1701484678266922854
@@ -961,23 +961,17 @@ Resources:
     Extension: ""
     SubTexture: 1514401960740084734
     Duration: 1
-  - UUID: 7187213302883088048
-    ParentDirectory: 1701484678266922854
-    ResourceName: triangleEnemyAttack19
-    Extension: ""
-    SubTexture: 4721412363775724551
-    Duration: 1
   - UUID: 3585824384229110448
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyAttack19
     Extension: ""
     SubTexture: 4110092728941919038
     Duration: 1
-  - UUID: 2442556641063393526
+  - UUID: 7187213302883088048
     ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyAttack20
+    ResourceName: triangleEnemyAttack19
     Extension: ""
-    SubTexture: 8548507027292143142
+    SubTexture: 4721412363775724551
     Duration: 1
   - UUID: 1924085964759963382
     ParentDirectory: 1701484678266922854
@@ -985,11 +979,23 @@ Resources:
     Extension: ""
     SubTexture: 7378292796619236424
     Duration: 1
+  - UUID: 2442556641063393526
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyAttack20
+    Extension: ""
+    SubTexture: 8548507027292143142
+    Duration: 1
   - UUID: 1273950816696211819
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyAttack21
     Extension: ""
     SubTexture: 9206538467144532054
+    Duration: 1
+  - UUID: 4425162308727768654
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyAttack22
+    Extension: ""
+    SubTexture: 6865841786645319900
     Duration: 1
   - UUID: 7495107442149371982
     ParentDirectory: 1701484678266922854
@@ -999,12 +1005,6 @@ Resources:
     Duration: 1
     ClassName: Quest.TriangleEnemy
     FunctionCallName: TransitionFromAttack
-  - UUID: 4425162308727768654
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyAttack22
-    Extension: ""
-    SubTexture: 6865841786645319900
-    Duration: 1
   - UUID: 617531920336901095
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyAttack24
@@ -1017,17 +1017,17 @@ Resources:
     Extension: ""
     SubTexture: 2611189369390677437
     Duration: 1
-  - UUID: 2368174437200155076
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyAttack26
-    Extension: ""
-    SubTexture: 5347497155308356518
-    Duration: 1
   - UUID: 4895958121298364356
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyAttack31
     Extension: ""
     SubTexture: 3928359730512719323
+    Duration: 1
+  - UUID: 2368174437200155076
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyAttack26
+    Extension: ""
+    SubTexture: 5347497155308356518
     Duration: 1
   - UUID: 9215180204485186961
     ParentDirectory: 1701484678266922854
@@ -1041,17 +1041,17 @@ Resources:
     Extension: ""
     SubTexture: 3785573625731904894
     Duration: 1
-  - UUID: 800097972205096422
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyAttack29
-    Extension: ""
-    SubTexture: 1833085390934611522
-    Duration: 1
   - UUID: 5157045253901494758
     ParentDirectory: 1701484678266922854
     ResourceName: playerAttack26
     Extension: ""
     SubTexture: 4212815535419829166
+    Duration: 1
+  - UUID: 800097972205096422
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyAttack29
+    Extension: ""
+    SubTexture: 1833085390934611522
     Duration: 1
   - UUID: 4856268826578573095
     ParentDirectory: 1701484678266922854
@@ -1237,17 +1237,17 @@ Resources:
     Extension: ""
     SubTexture: 6994545218156412417
     Duration: 1
-  - UUID: 7433537158776056170
-    ParentDirectory: 1701484678266922854
-    ResourceName: triangleEnemyDeath7
-    Extension: ""
-    SubTexture: 4367244295503905535
-    Duration: 1
   - UUID: 6193181044387393898
     ParentDirectory: 1701484678266922854
     ResourceName: playerAttack15
     Extension: ""
     SubTexture: 2796416003550904659
+    Duration: 1
+  - UUID: 7433537158776056170
+    ParentDirectory: 1701484678266922854
+    ResourceName: triangleEnemyDeath7
+    Extension: ""
+    SubTexture: 4367244295503905535
     Duration: 1
   - UUID: 3590760046964511412
     ParentDirectory: 1701484678266922854
@@ -1293,17 +1293,17 @@ Resources:
     Extension: ""
     SubTexture: 215443593366460662
     Duration: 1
-  - UUID: 4805737729145791999
-    ParentDirectory: 1701484678266922854
-    ResourceName: squareEnemyDeath10
-    Extension: ""
-    SubTexture: 7180799771420667883
-    Duration: 1
   - UUID: 2974340159307260415
     ParentDirectory: 1701484678266922854
     ResourceName: squareEnemyDeath11
     Extension: ""
     SubTexture: 8138446934264986155
+    Duration: 1
+  - UUID: 4805737729145791999
+    ParentDirectory: 1701484678266922854
+    ResourceName: squareEnemyDeath10
+    Extension: ""
+    SubTexture: 7180799771420667883
     Duration: 1
   - UUID: 121920484162081715
     ParentDirectory: 1701484678266922854
@@ -1359,17 +1359,17 @@ Resources:
     Extension: ""
     SubTexture: 6448768853431418152
     Duration: 1
-  - UUID: 6563765583976829
-    ParentDirectory: 1701484678266922854
-    ResourceName: playerDeath12
-    Extension: ""
-    SubTexture: 8824353355386235307
-    Duration: 1
   - UUID: 8844858356885290877
     ParentDirectory: 1701484678266922854
     ResourceName: playerAttack20
     Extension: ""
     SubTexture: 950470144442902503
+    Duration: 1
+  - UUID: 6563765583976829
+    ParentDirectory: 1701484678266922854
+    ResourceName: playerDeath12
+    Extension: ""
+    SubTexture: 8824353355386235307
     Duration: 1
   - UUID: 3987791020983409045
     ParentDirectory: 1701484678266922854
@@ -1419,17 +1419,17 @@ Resources:
     Extension: ""
     SubTexture: 6432397031198448024
     Duration: 1
-  - UUID: 7211691540136546115
-    ParentDirectory: 1701484678266922854
-    ResourceName: playerAttack3
-    Extension: ""
-    SubTexture: 7446580422747696228
-    Duration: 1
   - UUID: 2078239547209330499
     ParentDirectory: 1701484678266922854
     ResourceName: playerAttack24
     Extension: ""
     SubTexture: 6136705796111601446
+    Duration: 1
+  - UUID: 7211691540136546115
+    ParentDirectory: 1701484678266922854
+    ResourceName: playerAttack3
+    Extension: ""
+    SubTexture: 7446580422747696228
     Duration: 1
   - UUID: 8312763379208811796
     ParentDirectory: 1701484678266922854

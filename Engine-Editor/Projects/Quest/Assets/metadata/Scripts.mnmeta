@@ -1,11 +1,4 @@
 Resources:
-  - UUID: 3136020345952418588
-    ParentDirectory: 3370402605611323070
-    ResourceName: Quest.PlayerAttackBoxComponent
-    Extension: .cs
-    IsEnabled: true
-    Methods:
-      []
   - UUID: 4452690059192365868
     ParentDirectory: 3370402605611323070
     ResourceName: Quest.JumpComponent
@@ -16,6 +9,13 @@ Resources:
   - UUID: 8863010160591618796
     ParentDirectory: 3370402605611323070
     ResourceName: Quest.Player
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 3136020345952418588
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.PlayerAttackBoxComponent
     Extension: .cs
     IsEnabled: true
     Methods:
