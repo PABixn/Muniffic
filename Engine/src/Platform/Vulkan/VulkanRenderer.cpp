@@ -160,14 +160,14 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
     }
     VkDescriptorPoolSize pool_sizes[] = {
     { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },                   // For samplers
-    { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },    // Combined image samplers
-    { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },             // Sampled images
-    { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },             // Storage images
-    { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },            // Uniform buffers
-    { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },            // Storage buffers
-    { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },    // Dynamic uniform buffers
-    { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },    // Dynamic storage buffers
-    { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }           // Input attachments
+    { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100 },    // Combined image samplers
+    { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 100 },             // Sampled images
+    { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 100 },             // Storage images
+    { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 100 },            // Uniform buffers
+    { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 100 },            // Storage buffers
+    { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 100 },    // Dynamic uniform buffers
+    { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 100 },    // Dynamic storage buffers
+    { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 100 }           // Input attachments
     };
     VkDescriptorPoolCreateInfo pool_info = {};
     pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -194,15 +194,14 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
     init_info.Device = m_Device.m_LogicalDevice;
     init_info.QueueFamily = m_Device.m_GraphicsQueue.m_QueueFamilyIndices.graphicsFamily.value();
     init_info.Queue = *m_Device.m_GraphicsQueue.m_VulkanQueue.get();
-    init_info.PipelineCache = VK_NULL_HANDLE;
     init_info.DescriptorPool = m_ImGuiDescriptorPool;
-    init_info.Subpass = 0;
+    init_info.RenderPass = m_ImGuiRenderPass;
     init_info.MinImageCount = 2;
     init_info.ImageCount = MAX_FRAMES_IN_FLIGHT;
     init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
     init_info.Allocator = nullptr;
     init_info.CheckVkResultFn = check_vk_result;
-    ImGui_ImplVulkan_Init(&init_info, m_ImGuiRenderPass);
+    ImGui_ImplVulkan_Init(&init_info);
 
 }
 

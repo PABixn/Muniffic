@@ -1,9 +1,10 @@
 #include "egpch.h"
 #include "ImguiLayer.h"
 #include "imgui.h"
-#include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
+//#include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
 //#include "Platform/OpenGL/imgui_impl_opengl3.h"
 #include "Imgui/backends/imgui_impl_vulkan.h"
+#include "Imgui/backends/imgui_impl_glfw.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "Engine/Core/Application.h"
@@ -29,13 +30,13 @@ namespace eg {
     {
 		EG_PROFILE_FUNCTION();
 		IMGUI_CHECKVERSION();
-		VRenderer::ImGuiInit();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		VRenderer::ImGuiInit();
 
 		ImFontConfig font_config;
 		font_config.OversampleH = 2;      
@@ -60,9 +61,6 @@ namespace eg {
 		}
 
 		SetDarkThemeColors();
-
-		Application& app = Application::Get();
-		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
     }
 

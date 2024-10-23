@@ -88,9 +88,8 @@ void eg::VulkanTexture::LoadTexture(TextureManager* textureManager, const char* 
     textureManager->CopyBufferToImage(stagingBuffer, *this);
     textureManager->TransitionTextureLayout(*this, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-
-    
-
     VRen::get().getResourceManager().DestroyBuffer(stagingBuffer);
+
+    this->loaded = true;
 }
 

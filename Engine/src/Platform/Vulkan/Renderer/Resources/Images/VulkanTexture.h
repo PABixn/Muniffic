@@ -31,6 +31,7 @@ namespace eg {
 		uint32_t height;
 		uint32_t rendererID = 1;
 		std::string path;
+		bool loaded = false;
 	private:
 		virtual const TextureSpecification& GetSpecification() const override { return TextureSpecification(); };
 
@@ -46,7 +47,7 @@ namespace eg {
 
 		virtual void Bind(uint32_t slot = 0) const override {};
 
-		virtual bool IsLoaded() const override { return false; };
+		virtual bool IsLoaded() const override { return loaded; };
 
 		virtual bool operator==(const Texture& other) const override { return this->GetID() == other.GetID(); };
 	};

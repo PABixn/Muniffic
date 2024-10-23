@@ -4,7 +4,7 @@
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 #include "egpch.h"
 #include "imgui.h"
-#include "ImGuiOpenGLRenderer.h"
+#include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include <stdio.h>
 #include <glad/glad.h>
