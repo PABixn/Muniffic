@@ -7,15 +7,19 @@ namespace eg
 {
 	NameNewProjectPanel::NameNewProjectPanel()
 		: m_Show(false), m_ProjectUUID(0)
-	{ }
+	{
+	    EG_PROFILE_FUNCTION();
+	}
 
 	void NameNewProjectPanel::ShowWindow(UUID directoryUUID)
 	{
+		EG_PROFILE_FUNCTION();
 		m_ProjectUUID = directoryUUID;
 		m_Show = true;
 	}
 
 	char correctChar(char& s) {
+        EG_PROFILE_FUNCTION();
 		if (s == ' ') {
 			return '_';
 		}
@@ -24,6 +28,7 @@ namespace eg
 
 	bool NameNewProjectPanel::isNameAllowed(char* name)
 	{
+        EG_PROFILE_FUNCTION();
 		while (*name != '\0') {
 			if (correctChar(*name) != *name)
 			{
@@ -36,6 +41,7 @@ namespace eg
 
 	std::vector<char> NameNewProjectPanel::makeNameAllowed(char* name)
 	{
+        EG_PROFILE_FUNCTION();
 		std::vector<char> correctedName = std::vector<char>();
 		while (*name != '\0') {
 			correctedName.push_back(correctChar(*name));
@@ -47,6 +53,7 @@ namespace eg
 
 	void NameNewProjectPanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
 
 		ImGui::Begin("Name project", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);

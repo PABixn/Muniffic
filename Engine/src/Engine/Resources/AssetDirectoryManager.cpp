@@ -9,6 +9,7 @@ namespace eg
 
 	UUID AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType type)
 	{
+        EG_PROFILE_FUNCTION();
 		for (auto& [uuid, assetDirectory] : assetDirectories)
 		{
 			if (assetDirectory->getParentDirectory() == rootDirectoryUUID)
@@ -24,6 +25,7 @@ namespace eg
 
 	std::string AssetDirectoryManager::getDirectoryName(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", uuid);
@@ -36,6 +38,7 @@ namespace eg
 
 	std::vector<UUID>& AssetDirectoryManager::getAssets(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", uuid);
@@ -49,6 +52,7 @@ namespace eg
 
 	std::vector<UUID>& AssetDirectoryManager::getSubdirectories(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", uuid);
@@ -62,6 +66,7 @@ namespace eg
 
 	UUID AssetDirectoryManager::getParentDirectoryUUID(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", uuid);
@@ -74,6 +79,7 @@ namespace eg
 
 	void AssetDirectoryManager::initDefault(UUID rootUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		rootDirectoryUUID = rootUUID;
 
 		AssetDirectory* textures = new AssetDirectory(UUID(), "Textures", rootUUID);
@@ -94,7 +100,7 @@ namespace eg
 		AssetDirectory* scripts = new AssetDirectory(scriptDiectoryUUID, "Scripts", rootUUID);
 
 		AssetDirectory* scriptsSource = new AssetDirectory(UUID(), "Source", scriptDiectoryUUID);
-		
+
 		AssetDirectory* audio = new AssetDirectory(UUID(), "Audio", rootUUID);
 
 		AssetDirectory* scenes = new AssetDirectory(UUID(), "Scenes", rootUUID);
@@ -102,6 +108,7 @@ namespace eg
 
 	bool AssetDirectoryManager::moveAssetDirectory(UUID assetDirectoryUUID, UUID newParentUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(assetDirectoryUUID) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", assetDirectoryUUID);
@@ -134,12 +141,14 @@ namespace eg
 
 	bool AssetDirectoryManager::moveAsset(UUID assetUUID, UUID newAssetDirectoryUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		ResourceData* data = (ResourceData*)ResourceDatabase::GetResourceData(assetUUID);
 		return moveAsset(assetUUID, data->ParentDirectory, newAssetDirectoryUUID);
 	}
 
 	bool AssetDirectoryManager::moveAsset(UUID assetUUID, UUID oldAssetDirectoryUUID, UUID newAssetDirectoryUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(newAssetDirectoryUUID) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", newAssetDirectoryUUID);
@@ -165,6 +174,7 @@ namespace eg
 
 	bool AssetDirectoryManager::changeAssetDirectoryName(UUID uuid, const std::string& newName)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", uuid);
@@ -183,6 +193,7 @@ namespace eg
 
 	bool AssetDirectoryManager::addAsset(UUID assetDirectoryUUID, UUID assetUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(assetDirectoryUUID) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", assetDirectoryUUID);
@@ -200,10 +211,12 @@ namespace eg
 		}
 
 		assetDirectory->addAsset(assetUUID);
+		return true;
 	}
 
 	bool AssetDirectoryManager::removeAsset(UUID assetDirectoryUUID, UUID assetUUID, bool deleteFile)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(assetDirectoryUUID) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", assetDirectoryUUID);
@@ -230,6 +243,7 @@ namespace eg
 
 	void AssetDirectoryManager::removeAssetDirectory(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 		{
 			EG_CORE_WARN("AssetDirectory with UUID {0} not found", uuid);
@@ -263,6 +277,7 @@ namespace eg
 
 	void AssetDirectoryManager::addAssetDirectory(UUID uuid, AssetDirectory* assetDirectory)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 			assetDirectories[uuid] = assetDirectory;
 		else
@@ -279,6 +294,7 @@ namespace eg
 
 	bool AssetDirectoryManager::removeSubDirectory(UUID parentUUID, UUID subdirectoryUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(parentUUID) == assetDirectories.end())
 		{
 			EG_CORE_WARN("Parent AssetDirectory with UUID {0} not found", parentUUID);
@@ -312,6 +328,7 @@ namespace eg
 
 	bool AssetDirectoryManager::addSubDirectory(UUID parentUUID, UUID subdirectoryUUID)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(parentUUID) == assetDirectories.end())
 		{
 			EG_CORE_WARN("Parent AssetDirectory with UUID {0} not found", parentUUID);
@@ -349,14 +366,16 @@ namespace eg
 
 	bool AssetDirectoryManager::findAssetDirectory(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		return assetDirectories.find(uuid) != assetDirectories.end();
 	}
 
 	bool AssetDirectoryManager::validateAssetDirectory(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 			return false;
-		
+
 		std::filesystem::path path = AssetDirectoryManager::getDirectoryPath(uuid);
 
 		if (!std::filesystem::exists(path))
@@ -367,6 +386,7 @@ namespace eg
 
 	AssetDirectory* AssetDirectoryManager::getAssetDirectory(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if(assetDirectories.find(uuid) != assetDirectories.end())
 			return assetDirectories.at(uuid);
 		else
@@ -378,6 +398,7 @@ namespace eg
 
 	std::filesystem::path AssetDirectoryManager::getDirectoryPath(UUID uuid)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 			return std::filesystem::path();
 
@@ -391,6 +412,7 @@ namespace eg
 
 	std::filesystem::path AssetDirectoryManager::getDirectoryPath(UUID uuid, std::filesystem::path& path)
 	{
+        EG_PROFILE_FUNCTION();
 		if (assetDirectories.find(uuid) == assetDirectories.end())
 			return std::filesystem::path();
 

@@ -20,10 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "imgui.h"
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif
+#include "imgui.h"
 #include "imgui_internal.h"
 #include "ImGuizmo.h"
 #if !defined(_WIN32) 
@@ -1739,80 +1739,77 @@ namespace ImGuizmo
       bool applyRotationLocaly = gContext.mMode == LOCAL || type == MOVE_SCREEN;
       bool modified = false;
 
-      // move
       if (gContext.mbUsing && (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID))
       {
-         ImGui::CaptureMouseFromApp();
-         const float len = fabsf(IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan)); // near plan
-         vec_t newPos = gContext.mRayOrigin + gContext.mRayVector * len;
-
-         // compute delta
-         vec_t newOrigin = newPos - gContext.mRelativeOrigin * gContext.mScreenFactor;
-         vec_t delta = newOrigin - gContext.mModel.v.position;
-
-         // 1 axis constraint
-         if (gContext.mCurrentOperation >= MOVE_X && gContext.mCurrentOperation <= MOVE_Z)
+         if (io.WantCaptureMouse)
          {
-            int axisIndex = gContext.mCurrentOperation - MOVE_X;
-            const vec_t& axisValue = *(vec_t*)&gContext.mModel.m[axisIndex];
-            float lengthOnAxis = Dot(axisValue, delta);
-            delta = axisValue * lengthOnAxis;
-         }
+            const float len = fabsf(IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan));
+            vec_t newPos = gContext.mRayOrigin + gContext.mRayVector * len;
+            vec_t newOrigin = newPos - gContext.mRelativeOrigin * gContext.mScreenFactor;
+            vec_t delta = newOrigin - gContext.mModel.v.position;
 
-         // snap
-         if (snap)
-         {
-            vec_t cumulativeDelta = gContext.mModel.v.position + delta - gContext.mMatrixOrigin;
-            if (applyRotationLocaly)
+            if (gContext.mCurrentOperation >= MOVE_X && gContext.mCurrentOperation <= MOVE_Z)
             {
-               matrix_t modelSourceNormalized = gContext.mModelSource;
-               modelSourceNormalized.OrthoNormalize();
-               matrix_t modelSourceNormalizedInverse;
-               modelSourceNormalizedInverse.Inverse(modelSourceNormalized);
-               cumulativeDelta.TransformVector(modelSourceNormalizedInverse);
-               ComputeSnap(cumulativeDelta, snap);
-               cumulativeDelta.TransformVector(modelSourceNormalized);
+               int axisIndex = gContext.mCurrentOperation - MOVE_X;
+               const vec_t& axisValue = *(vec_t*)&gContext.mModel.m[axisIndex];
+               float lengthOnAxis = Dot(axisValue, delta);
+               delta = axisValue * lengthOnAxis;
             }
-            else
+
+            if (snap)
             {
-               ComputeSnap(cumulativeDelta, snap);
+               vec_t cumulativeDelta = gContext.mModel.v.position + delta - gContext.mMatrixOrigin;
+               if (applyRotationLocaly)
+               {
+                  matrix_t modelSourceNormalized = gContext.mModelSource;
+                  modelSourceNormalized.OrthoNormalize();
+                  matrix_t modelSourceNormalizedInverse;
+                  modelSourceNormalizedInverse.Inverse(modelSourceNormalized);
+                  cumulativeDelta.TransformVector(modelSourceNormalizedInverse);
+                  ComputeSnap(cumulativeDelta, snap);
+                  cumulativeDelta.TransformVector(modelSourceNormalized);
+               }
+               else
+               {
+                  ComputeSnap(cumulativeDelta, snap);
+               }
+               delta = gContext.mMatrixOrigin + cumulativeDelta - gContext.mModel.v.position;
             }
-            delta = gContext.mMatrixOrigin + cumulativeDelta - gContext.mModel.v.position;
 
+            if (delta != gContext.mTranslationLastDelta)
+            {
+               modified = true;
+            }
+            gContext.mTranslationLastDelta = delta;
+
+            matrix_t deltaMatrixTranslation;
+            deltaMatrixTranslation.Translation(delta);
+            if (deltaMatrix)
+            {
+               memcpy(deltaMatrix, deltaMatrixTranslation.m16, sizeof(float) * 16);
+            }
+
+            matrix_t res = gContext.mModelSource * deltaMatrixTranslation;
+            *(matrix_t*)matrix = res;
+
+            if (!io.MouseDown[0])
+            {
+               gContext.mbUsing = false;
+            }
+
+            type = gContext.mCurrentOperation;
          }
-
-         if(delta != gContext.mTranslationLastDelta)
-         {
-             modified = true;
-         }
-         gContext.mTranslationLastDelta = delta;
-
-         // compute matrix & delta
-         matrix_t deltaMatrixTranslation;
-         deltaMatrixTranslation.Translation(delta);
-         if (deltaMatrix)
-         {
-            memcpy(deltaMatrix, deltaMatrixTranslation.m16, sizeof(float) * 16);
-         }
-
-         matrix_t res = gContext.mModelSource * deltaMatrixTranslation;
-         *(matrix_t*)matrix = res;
-
-         if (!io.MouseDown[0])
-         {
-            gContext.mbUsing = false;
-         }
-
-         type = gContext.mCurrentOperation;
       }
       else
       {
-         // find new possible way to move
          vec_t gizmoHitProportion;
          type = GetMoveType(&gizmoHitProportion);
          if (type != NONE)
          {
-            ImGui::CaptureMouseFromApp();
+            if (io.WantCaptureMouse)
+            {
+               // Additional logic
+            }
          }
          if (CanActivate() && type != NONE)
          {
@@ -1820,8 +1817,8 @@ namespace ImGuizmo
             gContext.mEditingID = gContext.mActualID;
             gContext.mCurrentOperation = type;
             vec_t movePlanNormal[] = { gContext.mModel.v.right, gContext.mModel.v.up, gContext.mModel.v.dir,
-               gContext.mModel.v.right, gContext.mModel.v.up, gContext.mModel.v.dir,
-               -gContext.mCameraDir };
+                                       gContext.mModel.v.right, gContext.mModel.v.up, gContext.mModel.v.dir,
+                                       -gContext.mCameraDir };
 
             vec_t cameraToModelNormalized = Normalized(gContext.mModel.v.position - gContext.mCameraEye);
             for (unsigned int i = 0; i < 3; i++)
@@ -1830,7 +1827,6 @@ namespace ImGuizmo
                movePlanNormal[i].Cross(orthoVector);
                movePlanNormal[i].Normalize();
             }
-            // pickup plan
             gContext.mTranslationPlan = BuildPlan(gContext.mModel.v.position, movePlanNormal[type - MOVE_X]);
             const float len = IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan);
             gContext.mTranslationPlanOrigin = gContext.mRayOrigin + gContext.mRayVector * len;
@@ -1849,20 +1845,13 @@ namespace ImGuizmo
 
       if (!gContext.mbUsing)
       {
-         // find new possible way to scale
          type = GetScaleType();
-         if (type != NONE)
-         {
-            ImGui::CaptureMouseFromApp();
-         }
-         if (CanActivate() && type != NONE)
+         if (type != NONE && io.WantCaptureMouse)
          {
             gContext.mbUsing = true;
             gContext.mEditingID = gContext.mActualID;
             gContext.mCurrentOperation = type;
             const vec_t movePlanNormal[] = { gContext.mModel.v.up, gContext.mModel.v.dir, gContext.mModel.v.right, gContext.mModel.v.dir, gContext.mModel.v.up, gContext.mModel.v.right, -gContext.mCameraDir };
-            // pickup plan
-
             gContext.mTranslationPlan = BuildPlan(gContext.mModel.v.position, movePlanNormal[type - SCALE_X]);
             const float len = IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan);
             gContext.mTranslationPlanOrigin = gContext.mRayOrigin + gContext.mRayVector * len;
@@ -1873,72 +1862,69 @@ namespace ImGuizmo
             gContext.mSaveMousePosx = io.MousePos.x;
          }
       }
-      // scale
+
       if (gContext.mbUsing && (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID))
       {
-         ImGui::CaptureMouseFromApp();
-         const float len = IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan);
-         vec_t newPos = gContext.mRayOrigin + gContext.mRayVector * len;
-         vec_t newOrigin = newPos - gContext.mRelativeOrigin * gContext.mScreenFactor;
-         vec_t delta = newOrigin - gContext.mModel.v.position;
-
-         // 1 axis constraint
-         if (gContext.mCurrentOperation >= SCALE_X && gContext.mCurrentOperation <= SCALE_Z)
+         if (io.WantCaptureMouse)
          {
-            int axisIndex = gContext.mCurrentOperation - SCALE_X;
-            const vec_t& axisValue = *(vec_t*)&gContext.mModel.m[axisIndex];
-            float lengthOnAxis = Dot(axisValue, delta);
-            delta = axisValue * lengthOnAxis;
+            const float len = IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan);
+            vec_t newPos = gContext.mRayOrigin + gContext.mRayVector * len;
+            vec_t newOrigin = newPos - gContext.mRelativeOrigin * gContext.mScreenFactor;
+            vec_t delta = newOrigin - gContext.mModel.v.position;
 
-            vec_t baseVector = gContext.mTranslationPlanOrigin - gContext.mModel.v.position;
-            float ratio = Dot(axisValue, baseVector + delta) / Dot(axisValue, baseVector);
+            if (gContext.mCurrentOperation >= SCALE_X && gContext.mCurrentOperation <= SCALE_Z)
+            {
+               int axisIndex = gContext.mCurrentOperation - SCALE_X;
+               const vec_t& axisValue = *(vec_t*)&gContext.mModel.m[axisIndex];
+               float lengthOnAxis = Dot(axisValue, delta);
+               delta = axisValue * lengthOnAxis;
 
-            gContext.mScale[axisIndex] = max(ratio, 0.001f);
+               vec_t baseVector = gContext.mTranslationPlanOrigin - gContext.mModel.v.position;
+               float ratio = Dot(axisValue, baseVector + delta) / Dot(axisValue, baseVector);
+
+               gContext.mScale[axisIndex] = max(ratio, 0.001f);
+            }
+            else
+            {
+               float scaleDelta = (io.MousePos.x - gContext.mSaveMousePosx) * 0.01f;
+               gContext.mScale.Set(max(1.f + scaleDelta, 0.001f));
+            }
+
+            if (snap)
+            {
+               float scaleSnap[] = { snap[0], snap[0], snap[0] };
+               ComputeSnap(gContext.mScale, scaleSnap);
+            }
+
+            for (int i = 0; i < 3; i++)
+               gContext.mScale[i] = max(gContext.mScale[i], 0.001f);
+
+            if (gContext.mScaleLast != gContext.mScale)
+            {
+               modified = true;
+            }
+            gContext.mScaleLast = gContext.mScale;
+
+            matrix_t deltaMatrixScale;
+            deltaMatrixScale.Scale(gContext.mScale * gContext.mScaleValueOrigin);
+
+            matrix_t res = deltaMatrixScale * gContext.mModel;
+            *(matrix_t*)matrix = res;
+
+            if (deltaMatrix)
+            {
+               deltaMatrixScale.Scale(gContext.mScale);
+               memcpy(deltaMatrix, deltaMatrixScale.m16, sizeof(float) * 16);
+            }
+
+            if (!io.MouseDown[0])
+               gContext.mbUsing = false;
+
+            type = gContext.mCurrentOperation;
          }
-         else
-         {
-            float scaleDelta = (io.MousePos.x - gContext.mSaveMousePosx) * 0.01f;
-            gContext.mScale.Set(max(1.f + scaleDelta, 0.001f));
-         }
-
-         // snap
-         if (snap)
-         {
-            float scaleSnap[] = { snap[0], snap[0], snap[0] };
-            ComputeSnap(gContext.mScale, scaleSnap);
-         }
-
-         // no 0 allowed
-         for (int i = 0; i < 3; i++)
-            gContext.mScale[i] = max(gContext.mScale[i], 0.001f);
-
-         if(gContext.mScaleLast != gContext.mScale)
-         {
-             modified = true;
-         }
-         gContext.mScaleLast = gContext.mScale;
-
-         // compute matrix & delta
-         matrix_t deltaMatrixScale;
-         deltaMatrixScale.Scale(gContext.mScale * gContext.mScaleValueOrigin);
-
-         matrix_t res = deltaMatrixScale * gContext.mModel;
-         *(matrix_t*)matrix = res;
-
-         if (deltaMatrix)
-         {
-            deltaMatrixScale.Scale(gContext.mScale);
-            memcpy(deltaMatrix, deltaMatrixScale.m16, sizeof(float) * 16);
-         }
-
-         if (!io.MouseDown[0])
-            gContext.mbUsing = false;
-
-         type = gContext.mCurrentOperation;
       }
       return modified;
    }
-
    static bool HandleRotation(float* matrix, float* deltaMatrix, int& type, float* snap)
    {
       ImGuiIO& io = ImGui::GetIO();
@@ -1949,89 +1935,89 @@ namespace ImGuizmo
       {
          type = GetRotateType();
 
-         if (type != NONE)
+         if (type != NONE && io.WantCaptureMouse)
          {
-            ImGui::CaptureMouseFromApp();
-         }
-
-         if (type == ROTATE_SCREEN)
-         {
-            applyRotationLocaly = true;
-         }
-
-         if (CanActivate() && type != NONE)
-         {
-            gContext.mbUsing = true;
-            gContext.mEditingID = gContext.mActualID;
-            gContext.mCurrentOperation = type;
-            const vec_t rotatePlanNormal[] = { gContext.mModel.v.right, gContext.mModel.v.up, gContext.mModel.v.dir, -gContext.mCameraDir };
-            // pickup plan
-            if (applyRotationLocaly)
+            if (type == ROTATE_SCREEN)
             {
-               gContext.mTranslationPlan = BuildPlan(gContext.mModel.v.position, rotatePlanNormal[type - ROTATE_X]);
-            }
-            else
-            {
-               gContext.mTranslationPlan = BuildPlan(gContext.mModelSource.v.position, directionUnary[type - ROTATE_X]);
+               applyRotationLocaly = true;
             }
 
-            const float len = IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan);
-            vec_t localPos = gContext.mRayOrigin + gContext.mRayVector * len - gContext.mModel.v.position;
-            gContext.mRotationVectorSource = Normalized(localPos);
-            gContext.mRotationAngleOrigin = ComputeAngleOnPlan();
+            if (CanActivate() && type != NONE)
+            {
+               gContext.mbUsing = true;
+               gContext.mEditingID = gContext.mActualID;
+               gContext.mCurrentOperation = type;
+               const vec_t rotatePlanNormal[] = { gContext.mModel.v.right, gContext.mModel.v.up, gContext.mModel.v.dir, -gContext.mCameraDir };
+
+               if (applyRotationLocaly)
+               {
+                  gContext.mTranslationPlan = BuildPlan(gContext.mModel.v.position, rotatePlanNormal[type - ROTATE_X]);
+               }
+               else
+               {
+                  gContext.mTranslationPlan = BuildPlan(gContext.mModelSource.v.position, directionUnary[type - ROTATE_X]);
+               }
+
+               const float len = IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan);
+               vec_t localPos = gContext.mRayOrigin + gContext.mRayVector * len - gContext.mModel.v.position;
+               gContext.mRotationVectorSource = Normalized(localPos);
+               gContext.mRotationAngleOrigin = ComputeAngleOnPlan();
+            }
          }
       }
 
-      // rotation
       if (gContext.mbUsing && (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID))
       {
-         ImGui::CaptureMouseFromApp();
-         gContext.mRotationAngle = ComputeAngleOnPlan();
-         if (snap)
+         if (io.WantCaptureMouse)
          {
-            float snapInRadian = snap[0] * DEG2RAD;
-            ComputeSnap(&gContext.mRotationAngle, snapInRadian);
+            gContext.mRotationAngle = ComputeAngleOnPlan();
+            if (snap)
+            {
+               float snapInRadian = snap[0] * DEG2RAD;
+               ComputeSnap(&gContext.mRotationAngle, snapInRadian);
+            }
+
+            vec_t rotationAxisLocalSpace;
+            rotationAxisLocalSpace.TransformVector(makeVect(gContext.mTranslationPlan.x, gContext.mTranslationPlan.y, gContext.mTranslationPlan.z, 0.f), gContext.mModelInverse);
+            rotationAxisLocalSpace.Normalize();
+
+            matrix_t deltaRotation;
+            deltaRotation.RotationAxis(rotationAxisLocalSpace, gContext.mRotationAngle - gContext.mRotationAngleOrigin);
+
+            if (gContext.mRotationAngle != gContext.mRotationAngleOrigin)
+            {
+               modified = true;
+            }
+            gContext.mRotationAngleOrigin = gContext.mRotationAngle;
+
+            matrix_t scaleOrigin;
+            scaleOrigin.Scale(gContext.mModelScaleOrigin);
+
+            if (applyRotationLocaly)
+            {
+               *(matrix_t*)matrix = scaleOrigin * deltaRotation * gContext.mModel;
+            }
+            else
+            {
+               matrix_t res = gContext.mModelSource;
+               res.v.position.Set(0.f);
+               *(matrix_t*)matrix = res * deltaRotation;
+               ((matrix_t*)matrix)->v.position = gContext.mModelSource.v.position;
+            }
+
+            if (deltaMatrix)
+            {
+               *(matrix_t*)deltaMatrix = gContext.mModelInverse * deltaRotation * gContext.mModel;
+            }
+
+            if (!io.MouseDown[0])
+            {
+               gContext.mbUsing = false;
+               gContext.mEditingID = -1;
+            }
+
+            type = gContext.mCurrentOperation;
          }
-         vec_t rotationAxisLocalSpace;
-
-         rotationAxisLocalSpace.TransformVector(makeVect(gContext.mTranslationPlan.x, gContext.mTranslationPlan.y, gContext.mTranslationPlan.z, 0.f), gContext.mModelInverse);
-         rotationAxisLocalSpace.Normalize();
-
-         matrix_t deltaRotation;
-         deltaRotation.RotationAxis(rotationAxisLocalSpace, gContext.mRotationAngle - gContext.mRotationAngleOrigin);
-         if(gContext.mRotationAngle != gContext.mRotationAngleOrigin)
-         {
-             modified = true;
-         }
-         gContext.mRotationAngleOrigin = gContext.mRotationAngle;
-
-         matrix_t scaleOrigin;
-         scaleOrigin.Scale(gContext.mModelScaleOrigin);
-
-         if (applyRotationLocaly)
-         {
-            *(matrix_t*)matrix = scaleOrigin * deltaRotation * gContext.mModel;
-         }
-         else
-         {
-            matrix_t res = gContext.mModelSource;
-            res.v.position.Set(0.f);
-
-            *(matrix_t*)matrix = res * deltaRotation;
-            ((matrix_t*)matrix)->v.position = gContext.mModelSource.v.position;
-         }
-
-         if (deltaMatrix)
-         {
-            *(matrix_t*)deltaMatrix = gContext.mModelInverse * deltaRotation * gContext.mModel;
-         }
-
-         if (!io.MouseDown[0])
-         {
-            gContext.mbUsing = false;
-            gContext.mEditingID = -1;
-         }
-         type = gContext.mCurrentOperation;
       }
       return modified;
    }

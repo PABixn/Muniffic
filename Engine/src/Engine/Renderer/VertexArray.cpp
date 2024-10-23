@@ -9,13 +9,14 @@
 namespace eg {
 	Ref<VertexArray> VertexArray::Create()
 	{
+        EG_PROFILE_FUNCTION();
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None: 
-			EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); 
+		case RendererAPI::API::None:
+			EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			ConsolePanel::Log("File: VertexArray.cpp - RendererAPI::None is currently not supported!", ConsolePanel::LogType::Error);
 			return nullptr;
-		case RendererAPI::API::OpenGL: 
+		case RendererAPI::API::OpenGL:
 			ConsolePanel::Log("File: VertexArray.cpp - Successfully created VertexArray", ConsolePanel::LogType::Info);
 			return std::make_shared<OpenGLVertexArray>();
 		}

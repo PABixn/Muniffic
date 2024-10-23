@@ -1,5 +1,6 @@
 #include "EditorActions.h"
 #include "EditorActionsHelper.h"
+#include "EditorLayer.h"
 
 namespace eg
 {
@@ -8,6 +9,8 @@ namespace eg
 
 	std::string EditorActions::ExecuteEntityAction(const std::string& actionName, const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
+
 		if (actionName == "GetUUID")
 		{
 			return GetUUID(params);
@@ -104,6 +107,8 @@ namespace eg
 
 	std::string EditorActions::ExecuteComponentAction(const std::string& actionName, const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
+
 		if (actionName == "GetTransformComponent")
 		{
 			return GetTransformComponent(params);
@@ -180,6 +185,8 @@ namespace eg
 
 	std::string EditorActions::GetUUID(const std::vector<std::string>& params)
 	{
+        EG_PROFILE_FUNCTION();
+
 		if (params.size() < 1)
 			return "No entity name provided.";
 
@@ -193,6 +200,8 @@ namespace eg
 
 	std::string EditorActions::Exists(const std::vector<std::string>& params)
 	{
+        EG_PROFILE_FUNCTION();
+
 		if (params.size() < 1)
 			return "No entity name provided.";
 
@@ -209,6 +218,8 @@ namespace eg
 
 	std::string EditorActions::GetAllEntities(const std::vector<std::string>& params)
 	{
+        EG_PROFILE_FUNCTION();
+
 		auto view = m_Scene->GetEntitiesWith<TransformComponent>();
 		std::string entities = "";
 		for (auto entity : view)
@@ -221,6 +232,8 @@ namespace eg
 
 	std::string EditorActions::ChangeName(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
+
 		if (params.size() < 1)
 			return "No entity name provided.";
 		else if (params.size() < 2)
@@ -248,6 +261,8 @@ namespace eg
 
 	std::string EditorActions::CreateEntity(const std::vector<std::string>& params)
 	{
+        EG_PROFILE_FUNCTION();
+
 		if (params.size() < 1)
 			return "No entity name provided.";
 
@@ -258,11 +273,14 @@ namespace eg
 		if (uuid == 0)
 			return "Failed to create entity.";
 
+		static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->GetSceneHierarchyPanel()->Search();
+
 		return "Entity created with UUID: " + std::to_string(uuid);
 	}
 
 	std::string EditorActions::DeleteEntity(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -276,11 +294,14 @@ namespace eg
 
 		Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Scene, *m_SelectedEntity));
 
+		static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->GetSceneHierarchyPanel()->Search();
+
 		return "Entity removed";
 	}
 
 	std::string EditorActions::GetAnyChildren(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -292,9 +313,9 @@ namespace eg
 		if (entity == Entity())
 			return "Entity with UUID " + params.at(0) + " not found";
 
-		auto children = entity.GetAnyChildren();
 		std::string childrenNames = "";
-		for (Entity e : children)
+		Ref<std::vector<Entity>> children = entity.GetAnyChildren();
+		for (Entity e : *children)
 		{
 			childrenNames += e.GetName() + ",";
 		}
@@ -303,6 +324,7 @@ namespace eg
 
 	std::string EditorActions::GetChildren(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -314,9 +336,9 @@ namespace eg
 		if (entity == Entity())
 			return "Entity with UUID " + params.at(0) + " not found";
 
-		auto children = entity.GetChildren();
 		std::string childrenNames = "";
-		for (Entity e : children)
+		Ref<std::vector<Entity>> children = entity.GetChildren();
+		for (Entity e : *children)
 		{
 			childrenNames += e.GetName() + ",";
 		}
@@ -325,6 +347,7 @@ namespace eg
 
 	std::string EditorActions::GetParent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -346,6 +369,7 @@ namespace eg
 
 	std::string EditorActions::SetParent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -381,6 +405,7 @@ namespace eg
 
 	std::string EditorActions::IsChild(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No child entity UUID provided.";
 		else if (params.size() < 2)
@@ -410,6 +435,7 @@ namespace eg
 
 	std::string EditorActions::IsChildOfAny(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No child entity UUID provided.";
 		else if (params.size() < 2)
@@ -439,6 +465,7 @@ namespace eg
 
 	std::string EditorActions::AddComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -460,6 +487,7 @@ namespace eg
 
 	std::string EditorActions::RemoveComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -481,6 +509,7 @@ namespace eg
 
 	std::string EditorActions::HasComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -502,6 +531,7 @@ namespace eg
 
 	std::string EditorActions::InheritComponentInChildren(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -523,6 +553,7 @@ namespace eg
 
 	std::string EditorActions::InheritComponentFromParent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -544,6 +575,7 @@ namespace eg
 
 	std::string EditorActions::CopyComponentToChildren(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -565,6 +597,7 @@ namespace eg
 
 	std::string EditorActions::CopyComponentValuesToChildren(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -586,6 +619,7 @@ namespace eg
 
 	std::string EditorActions::CopyComponentWithValuesToChildren(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -607,6 +641,7 @@ namespace eg
 
 	std::string EditorActions::IsInheritedFromParent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -628,6 +663,7 @@ namespace eg
 
 	std::string EditorActions::IsInheritedInChildren(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -654,6 +690,7 @@ namespace eg
 
 	std::string EditorActions::GetTransformComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -686,6 +723,7 @@ namespace eg
 
 	std::string EditorActions::SetTransformComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -750,6 +788,7 @@ namespace eg
 
 	std::string EditorActions::GetCameraComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -782,6 +821,7 @@ namespace eg
 
 	std::string EditorActions::SetCameraComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -960,6 +1000,7 @@ namespace eg
 
 	std::string EditorActions::GetSpriteRendererComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -990,6 +1031,7 @@ namespace eg
 
 	std::string EditorActions::SetSpriteRendererComponent(const std::vector<std::string>& params)
 	{
+        EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -1086,6 +1128,7 @@ namespace eg
 
 	std::string EditorActions::GetCircleRendererComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -1115,6 +1158,7 @@ namespace eg
 
 	std::string EditorActions::SetCircleRendererComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -1206,6 +1250,7 @@ namespace eg
 
 	std::string EditorActions::GetRigidBody2DComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -1231,6 +1276,7 @@ namespace eg
 
 	std::string EditorActions::SetRigidBody2DComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -1309,6 +1355,7 @@ namespace eg
 
 	std::string EditorActions::GetBoxCollider2DComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -1340,6 +1387,7 @@ namespace eg
 
 	std::string EditorActions::SetBoxCollider2DComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -1446,6 +1494,7 @@ namespace eg
 
 	std::string EditorActions::GetCircleCollider2DComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -1476,6 +1525,7 @@ namespace eg
 
 	std::string EditorActions::SetCircleCollider2DComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)
@@ -1574,6 +1624,7 @@ namespace eg
 
 	std::string EditorActions::GetTextComponent(const std::vector<std::string>& params)
 	{
+        EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 
@@ -1604,6 +1655,7 @@ namespace eg
 
 	std::string EditorActions::SetTextComponent(const std::vector<std::string>& params)
 	{
+		EG_PROFILE_FUNCTION();
 		if (params.size() < 1)
 			return "No entity UUID provided.";
 		else if (params.size() < 2)

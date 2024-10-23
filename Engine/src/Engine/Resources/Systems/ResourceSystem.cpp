@@ -8,12 +8,13 @@
 //Todo: switch to Ref instead of raw pointers
 namespace eg {
 
-	
+
 
 	static Ref<ResourceSystemState> StatePtr = nullptr;
 
 	bool load(std::string name, ResourceLoader* loader, Resource* outResource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (name.empty() || loader == nullptr || outResource == nullptr)
 		{
 			EG_CORE_ERROR("Invalid arguments passed to resourceSystemLoad");
@@ -27,6 +28,7 @@ namespace eg {
 
 	bool resourceSystemInit(ResourceSystemConfig config)
 	{
+        EG_PROFILE_FUNCTION();
 		if (config.MaxLoaderCount == 0)
 		{
 			EG_CORE_ERROR("Invalid MaxLoaderCount passed to resourceSystemInit");
@@ -44,14 +46,20 @@ namespace eg {
 			StatePtr->RegisteredLoaders[i].Id = -1;
 		}
 
-		resourceSystemRegisterLoader(StatePtr, textResourceLoaderCreate());
-		resourceSystemRegisterLoader(StatePtr, binaryResourceLoaderCreate());
-		resourceSystemRegisterLoader(StatePtr, imageResourceLoaderCreate());
-		resourceSystemRegisterLoader(StatePtr, fontResourceLoaderCreate());
+		if(!resourceSystemRegisterLoader(StatePtr, textResourceLoaderCreate()))
+			return false;
+		if(!resourceSystemRegisterLoader(StatePtr, binaryResourceLoaderCreate()))
+			return false;
+		if(!resourceSystemRegisterLoader(StatePtr, imageResourceLoaderCreate()))
+			return false;
+		if(!resourceSystemRegisterLoader(StatePtr, fontResourceLoaderCreate()))
+			return false;
+		return true;
 	}
 
 	void resourceSystemShutdown()
 	{
+        EG_PROFILE_FUNCTION();
 		if (StatePtr)
 		{
 			StatePtr = nullptr;
@@ -60,6 +68,7 @@ namespace eg {
 
 	bool resourceSystemRegisterLoader(Ref<ResourceSystemState> state, const ResourceLoader loader)
 	{
+        EG_PROFILE_FUNCTION();
 		if (StatePtr) {
 			uint32_t count = StatePtr->Config.MaxLoaderCount;
 			//Ensure no loader with the given type is already registered
@@ -77,7 +86,7 @@ namespace eg {
 					{
 							EG_ERROR("A loader with the given custom type is already registered");
 							return false;
-					}	
+					}
 				}
 			}
 			for (uint32_t i = 0; i < count; i++)
@@ -97,6 +106,7 @@ namespace eg {
 
 	bool resourceSystemLoad(std::string name, ResourceType resourceType, Resource* outResource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (StatePtr && resourceType != ResourceType::Custom)
 		{
 			uint32_t count = StatePtr->Config.MaxLoaderCount;
@@ -109,10 +119,16 @@ namespace eg {
 				}
 			}
 		}
+        else
+        {
+            EG_ERROR("Invalid resource type passed to resourceSystemLoad");
+            return false;
+		}
 	}
 
 	bool resourceSystemLoadCustom(std::string name, std::string customType, Resource* outResource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (StatePtr && !customType.empty())
 		{
 			uint32_t count = StatePtr->Config.MaxLoaderCount;
@@ -125,10 +141,16 @@ namespace eg {
 				}
 			}
 		}
+        else
+        {
+            EG_ERROR("Invalid custom type passed to resourceSystemLoadCustom");
+            return false;
+        }
 	}
 
 	void resourceSystemUnload(Resource* resource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (StatePtr && resource)
 		{
 			if (resource->LoaderId != -1)
@@ -144,13 +166,14 @@ namespace eg {
 
 	const std::filesystem::path resourceSystemGetResourceDirectory()
 	{
+        EG_PROFILE_FUNCTION();
 		if (StatePtr)
 			return StatePtr->Config.ResourceDirectory;
-		
+
 		EG_ERROR("Resource system not initialized");
 		return std::filesystem::path();
 	}
 
-	
+
 
 }

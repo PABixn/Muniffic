@@ -32,7 +32,7 @@ target_include_directories(yaml-cpp PRIVATE
 if(WIN32)
     set(CMAKE_SYSTEM_VERSION "latest")
     set_target_properties(yaml-cpp PROPERTIES
-        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:DebugDLL>")
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 elseif(UNIX AND NOT APPLE) # Linux
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
     set(CMAKE_SYSTEM_VERSION "latest")
@@ -41,8 +41,4 @@ endif()
 # Build configuration settings
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(yaml-cpp PRIVATE DEBUG)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
-
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 endif()

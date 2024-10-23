@@ -1,18 +1,24 @@
 #include "Commands.h"
 #include "Engine/Core/Application.h"
+#include "src/Panels/SceneHierarchyPanel.h"
 namespace eg
 {
+	SceneHierarchyPanel* Commands::s_SceneHierarchyPanelPtr = nullptr;
 	std::vector<Commands::Command*> Commands::commandHistory;
 	int Commands::currentCommandIndex;
 	int LastSavedCommandIndex = -1;
 	bool isSaved = true;
-	void SetIsSaved(bool val) {
-		if (!isSaved == val) {
+
+	void SetIsSaved(bool val)
+	{
+		if (!isSaved == val)
+		{
 			Application::Get().ChangeNameWithCurrentProject(val);
 			isSaved = val;
 		}
 		if (val)LastSavedCommandIndex = Commands::currentCommandIndex;
 	}
+
 	bool IsProjectSaved() {
 		return isSaved;
 	}
@@ -25,6 +31,7 @@ namespace eg
 			ChangeParent(e, arg.m_Parent);
 
 		m_CreatedEntity = SaveEntity(e);
+		s_SceneHierarchyPanelPtr->Search();
 	}
 
 	void Commands::CreateEntityCommand::Undo()
@@ -41,6 +48,7 @@ namespace eg
 		if (LastSavedCommandIndex == currentCommandIndex) {
 			SetIsSaved(true);
 		}
+		s_SceneHierarchyPanelPtr->Search();
 	}
 
 	void Commands::CreateEntityCommand::Redo()
@@ -48,6 +56,7 @@ namespace eg
 		m_Context->CreateEntityWithID(m_CreatedEntity.m_UUID, m_CreatedEntity.m_Name);
 
 		SetCurrentCommand(false);
+		s_SceneHierarchyPanelPtr->Search();
 	}
 
 	void Commands::DeleteEntityCommand::Execute(CommandArgs arg)
@@ -59,7 +68,8 @@ namespace eg
 
 			m_DeletedEntity = SaveEntity(arg.m_Entity);
 
-			for (auto& child : arg.m_Entity.GetAnyChildren())
+			Ref<std::vector<Entity>> children = arg.m_Entity.GetAnyChildren();
+			for (auto& child : *children)
 			{
 				EntitySave saved = SaveEntity(child);
 				m_Children.push_back(saved);
@@ -68,6 +78,7 @@ namespace eg
 			arg.m_Entity.RemoveAnyChildren();
 
 			m_Context->DestroyEntity(arg.m_Entity);
+			s_SceneHierarchyPanelPtr->Search();
 		}
 	}
 
@@ -98,6 +109,8 @@ namespace eg
 		}
 
 		SetCurrentCommand(true);
+
+		s_SceneHierarchyPanelPtr->Search();
 	}
 
 	void Commands::DeleteEntityCommand::Redo()
@@ -111,7 +124,8 @@ namespace eg
 
 			m_DeletedEntity = SaveEntity(entity);
 
-			for (auto& child : entity.GetAnyChildren())
+			Ref<std::vector<Entity>> children = entity.GetAnyChildren();
+			for (auto& child : *children)
 			{
 				EntitySave saved = SaveEntity(child);
 				m_Children.push_back(saved);
@@ -122,6 +136,8 @@ namespace eg
 		}
 
 		SetCurrentCommand(false);
+
+		s_SceneHierarchyPanelPtr->Search();
 	}
 
 	void Commands::ChangeParent(Entity& entity, std::optional<Entity> parent)
@@ -145,6 +161,7 @@ namespace eg
 		}
 
 		Commands::SetInheritedComponents(InheritableComponents{}, entity, parent);
+		s_SceneHierarchyPanelPtr->Search();
 	}
 
 	void Commands::ChangeParentCommand::Undo()
@@ -155,6 +172,7 @@ namespace eg
 		ChangeParent(entity, previousParent);
 
 		SetCurrentCommand(true);
+		s_SceneHierarchyPanelPtr->Search();
 	}
 
 	void Commands::ChangeParentCommand::Redo()
@@ -165,6 +183,7 @@ namespace eg
 		ChangeParent(entity, parent);
 
 		SetCurrentCommand(false);
+		s_SceneHierarchyPanelPtr->Search();
 	}
 
 	void Commands::DeleteResourceCommand::Undo()

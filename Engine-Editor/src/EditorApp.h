@@ -11,27 +11,17 @@
 
 namespace eg
 {
-
 	class Editor : public Application
 	{
 	public:
-		Editor(ApplicationSpecification spec)
-			: Application(spec) {
-			PushLayer(new EditorLayer());
-			GLFWimage images[1]; 
-			images[0].pixels = stbi_load(LOGO_DIRECTORY, &images[0].width, &images[0].height, 0, 4); 
-			const char* failReason = stbi_failure_reason();
+		Editor(ApplicationSpecification spec);
 
-			glfwSetWindowIcon((GLFWwindow *)this->GetWindow().GetNativeWindow(), 1, images);
-			stbi_image_free(images[0].pixels);
-		};
-
-		~Editor() {}
+		~Editor();
 
 		EditorLayer* GetEditorLayer() { return static_cast<EditorLayer*>(GetFirstLayer()); }
 
-		void OnUpdate() {
-		}
+		void OnUpdate() {}
+
 		bool OnWindowClose(WindowCloseEvent &e);
 	};
 }

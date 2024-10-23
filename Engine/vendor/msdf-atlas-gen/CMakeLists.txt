@@ -12,11 +12,11 @@ set_target_properties(msdf-atlas-gen PROPERTIES
     CXX_EXTENSIONS NO
 )
 
-if(MSVC)
-    target_compile_options(msdf-atlas-gen PRIVATE /w)
-else()
-    target_compile_options(msdf-atlas-gen PRIVATE -w)
-endif()
+#if(MSVC)
+#    target_compile_options(msdf-atlas-gen PRIVATE /w)
+#else()
+#    target_compile_options(msdf-atlas-gen PRIVATE -w)
+#endif()
 
 # Output directories for binaries and object files
 set_target_properties(msdf-atlas-gen PROPERTIES
@@ -40,27 +40,10 @@ target_include_directories(msdf-atlas-gen PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/msdfgen/include"
 )
 
-# Define preprocessor macros
-target_compile_definitions(msdf-atlas-gen PRIVATE
-    _CRT_SECURE_NO_WARNINGS
-)
-
 # Link msdfgen library
 target_link_libraries(msdf-atlas-gen PRIVATE msdfgen)
 
 # Platform-specific settings
 if(WIN32)
     set(CMAKE_SYSTEM_VERSION "latest")
-endif()
-
-# Build configuration settings
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_definitions(msdf-atlas-gen PRIVATE DEBUG)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
-
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
-
-elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
-    set(CMAKE_CXX_FLAGS_DIST "${CMAKE_CXX_FLAGS_DIST} -O3 -DNDEBUG")
 endif()

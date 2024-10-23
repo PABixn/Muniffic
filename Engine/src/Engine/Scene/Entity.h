@@ -98,13 +98,19 @@ namespace eg
 			return false;
 		}
 
-		std::vector<Entity> GetChildren()
+		int GetChildCount()
+		{
+			return m_Scene->m_EntityInfoMap[GetUUID()]->m_Children.size();
+		}
+
+		Ref<std::vector<Entity>> GetChildren()
 		{
 			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
-			std::vector<Entity> entities;
+			Ref<std::vector<Entity>> entities = CreateRef<std::vector<Entity>>();
+			//entities->reserve(children.size());
 			for (auto& child : children)
 			{
-				entities.push_back(m_Scene->GetEntityByUUID(child));
+				entities->emplace_back(m_Scene->GetEntityByUUID(child));
 			}
 			return entities;
 		}
@@ -114,17 +120,18 @@ namespace eg
 			return m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
 		}
 
-		std::vector<Entity> GetAnyChildren()
+		Ref<std::vector<Entity>> GetAnyChildren()
 
 		{
 			auto& children = m_Scene->m_EntityInfoMap[GetUUID()]->m_Children;
-			std::vector<Entity> entities;
+			Ref<std::vector<Entity>> entities = CreateRef<std::vector<Entity>>();
+			entities->reserve(children.size());
 			for (auto& child : children)
 			{
-				entities.push_back(m_Scene->GetEntityByUUID(child));
+				entities->emplace_back(m_Scene->GetEntityByUUID(child));
 				auto childEntity = m_Scene->GetEntityByUUID(child);
 				auto childChildren = childEntity.GetAnyChildren();
-				entities.insert(entities.end(), childChildren.begin(), childChildren.end());
+				entities->insert(entities->end(), childChildren->begin(), childChildren->end());
 			}
 			return entities;
 		}
@@ -146,9 +153,11 @@ namespace eg
 		void SetParent(std::optional<Entity> entity)
 		{
 			auto& parent = m_Scene->m_EntityInfoMap[GetUUID()]->m_Parent;
-			if(entity.has_value())
-				if(entity.value().GetUUID() != GetUUID())
+			if (entity.has_value())
+			{
+				if (entity.value().GetUUID() != GetUUID())
 					parent = entity.value().GetUUID();
+			}
 			else
 				parent = NULL;
 		}
@@ -193,7 +202,8 @@ namespace eg
 		template<typename Component>
 		void RevertComponentValuesInChildren(std::unordered_map<UUID, Component>& previousValues)
 		{
-			for (Entity e : GetAnyChildren())
+			Ref<std::vector<Entity>> children = GetAnyChildren();
+			for (Entity e : *children)
 			{
 				if (e.HasComponent<Component>())
 				{
@@ -205,7 +215,8 @@ namespace eg
 		template<typename Component>
 		void CopyComponentValuesToChildren()
 		{
-			for (Entity e : GetAnyChildren())
+			Ref<std::vector<Entity>> children = GetAnyChildren();
+			for (Entity e : *children)
 			{
 				if (e.HasComponent<Component>())
 				{
@@ -219,7 +230,8 @@ namespace eg
 		template<typename Component>
 		void CopyComponentValuesToChildren(std::unordered_map<UUID, Component>& previousValues)
 		{
-			for (Entity e : GetAnyChildren())
+			Ref<std::vector<Entity>> children = GetAnyChildren();
+			for (Entity e : *children)
 			{
 				if (e.HasComponent<Component>())
 				{
@@ -234,7 +246,8 @@ namespace eg
 		template<typename Component>
 		void CopyComponentToChildren(bool isUndo)
 		{
-			for (Entity e : GetAnyChildren())
+			Ref<std::vector<Entity>> children = GetAnyChildren();
+			for (Entity e : *children)
 			{
 				if (e.HasComponent<Component>() && isUndo)
 					e.RemoveComponent<Component>();
@@ -255,7 +268,8 @@ namespace eg
 			if (applyToEntity)
 				GetInheritableComponent<Component>()->isInherited = !isUndo;
 
-			for (Entity& e : GetAnyChildren())
+			Ref<std::vector<Entity>> children = GetAnyChildren();
+			for (Entity& e : *children)
 			{
 				if (e.HasComponent<Component>())
 				{
@@ -268,7 +282,8 @@ namespace eg
 		template<typename T, typename Component>
 		void ApplyValueToChildren(T* value_ptr)
 		{
-			for (Entity e : GetAnyChildren())
+			Ref<std::vector<Entity>> children = GetAnyChildren();
+			for (Entity e : *children)
 			{
 				if (e.HasComponent<Component>())
 				{
@@ -290,8 +305,8 @@ namespace eg
 			return m_Scene->m_EntityInfoMap[GetUUID()];
 		}
 
-		UUID GetUUID()  { return GetComponent<IDComponent>().ID; }
-		const std::string GetName() { return GetComponent<TagComponent>().Tag; }
+		const UUID& GetUUID() { return GetComponent<IDComponent>().ID; }
+		const std::string& GetName() { return GetComponent<TagComponent>().Tag; }
 		void SetName(const std::string& name) { GetComponent<TagComponent>().Tag = name; }
 		entt::entity GetHandle() { return m_EntityHandle; }
 		Scene* GetScene() { return m_Scene; }

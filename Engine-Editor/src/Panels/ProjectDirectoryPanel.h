@@ -11,7 +11,7 @@ namespace eg {
 		void SetContentBrowserPanel(Ref<ContentBrowserPanel> val) { m_ContentBrowserPanel = val; };
 	private:
 		std::string m_SearchedName;
-		Ref<ContentBrowserPanel> m_ContentBrowserPanel;
+		Ref<ContentBrowserPanel> m_ContentBrowserPanel = nullptr;
 
 		void DrawDirectoryTreeNode(const std::filesystem::path& path);
 	};

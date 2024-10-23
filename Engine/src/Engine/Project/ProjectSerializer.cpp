@@ -10,10 +10,12 @@ namespace eg
 	ProjectSerializer::ProjectSerializer(Ref<Project> project)
 		: m_Project(project)
 	{
+		EG_PROFILE_FUNCTION();
 	}
 
 	bool ProjectSerializer::Serialize(const std::filesystem::path& path)
 	{
+		EG_PROFILE_FUNCTION();
 		const auto& config = m_Project->GetConfig();
 
 		YAML::Emitter out;
@@ -40,6 +42,7 @@ namespace eg
 
 	bool ProjectSerializer::Deserialize(const std::filesystem::path& path)
 	{
+		EG_PROFILE_FUNCTION();
 		auto& config = m_Project->GetConfig();
 		YAML::Node data;
 		try

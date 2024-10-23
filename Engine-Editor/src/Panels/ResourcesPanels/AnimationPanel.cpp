@@ -12,6 +12,7 @@ namespace eg {
 	namespace Utils {
 		ImVec4 ColorFromHexNoAlpha(unsigned int hexColor)
 		{
+            EG_PROFILE_FUNCTION();
 			float r = ((hexColor >> 16) & 0xFF) / 255.0f;
 			float g = ((hexColor >> 8) & 0xFF) / 255.0f;
 			float b = (hexColor & 0xFF) / 255.0f;
@@ -40,10 +41,11 @@ namespace eg {
 
 	bool AnimationPanel::OpenAnimationPanel(const std::filesystem::path& path)
 	{
+        EG_PROFILE_FUNCTION();
 		EG_PROFILE_FUNCTION();
 		ShowAnimationPanel(true);
 		m_FrameData = CreateRef<FrameData>();
-		
+
 		std::filesystem::path textureBasePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / "Animations";
 		bool resourceLoad = false;
 		m_LoadedResource = new Resource();
@@ -75,12 +77,12 @@ namespace eg {
 		m_ResourceData->Extension = ".anim";
 
 		m_ImageAspectRatio = (float)m_PreviewOriginImage->GetWidth() / (float)m_PreviewOriginImage->GetHeight();
-		if (m_ImageAspectRatio < 1.0f) 
+		if (m_ImageAspectRatio < 1.0f)
 		{
 			m_BasePreviewWidthImage = 256 * m_ImageAspectRatio;
 			m_BasePreviewHeightImage = 256;
 		}
-		else 
+		else
 		{
 			m_BasePreviewWidthImage = 256;
 			m_BasePreviewHeightImage = 256 / m_ImageAspectRatio;
@@ -96,6 +98,7 @@ namespace eg {
 
 	void AnimationPanel::SetFrames()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_PROFILE_FUNCTION();
 		m_PreviewData->ClearFrames();
 
@@ -103,7 +106,7 @@ namespace eg {
 		m_FrameHeight = m_TextureData->Height / m_MaxRow;
 
 		std::sort(m_SelectedFrames.begin(), m_SelectedFrames.end());
-		for (auto frame : m_SelectedFrames) {
+		for (auto& frame : m_SelectedFrames) {
 			Ref<FrameData> frameData = CreateRef<FrameData>();
 
 			glm::vec2 min = { frame.second * (float)m_FrameWidth / (float)m_TextureData->Width, 1.0f - ((frame.first + 1) * (float)m_FrameHeight) / (float)m_TextureData->Height };
@@ -131,6 +134,7 @@ namespace eg {
 
 	void AnimationPanel::SetSelectedFrames()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_PROFILE_FUNCTION();
 		m_SelectedFrames.clear();
 		for (int i = m_Row; i < m_RowCount + m_Row; i++)
@@ -141,9 +145,10 @@ namespace eg {
 
 	void AnimationPanel::ClearOutdatedFrames()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_PROFILE_FUNCTION();
 		std::vector<std::pair<int, int>> newSelectedFrames;
-		for (auto frame : m_SelectedFrames)
+		for (auto& frame : m_SelectedFrames)
 		{
 			if (frame.first > m_MaxRow || frame.second > m_MaxColumn)
 				continue;
@@ -155,6 +160,7 @@ namespace eg {
 
 	void AnimationPanel::DeleteData()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_PROFILE_FUNCTION();
 		if (m_LoadedResource)
 		{
@@ -173,6 +179,7 @@ namespace eg {
 
 	void AnimationPanel::SaveData()
 	{
+        EG_PROFILE_FUNCTION();
 		m_ResourceData->Frames.clear();
 		m_ResourceData->Frames.reserve(m_PreviewData->GetFrameCount());
 
@@ -213,6 +220,7 @@ namespace eg {
 
 	void AnimationPanel::DrawSubtexture(const int& i,const int& j)
 	{
+        EG_PROFILE_FUNCTION();
 		if (j != 0)
 			ImGui::SameLine();
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
@@ -258,6 +266,7 @@ namespace eg {
 
 	void AnimationPanel::DrawFrameSelection()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_PROFILE_FUNCTION();
 		float contentRegionAvailX = ImGui::GetContentRegionAvail().x;
 		ImGui::PushItemWidth(DRAGINTWIDTH);
@@ -274,10 +283,10 @@ namespace eg {
 			SetFrames();
 		}
 
-		 
-		ImGui::SameLine();  
+
+		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + BASEGAP + ADDITIONALGAP);
-		
+
 		if (ImGui::DragInt("Row count", &m_MaxRow, 1.0f, 1, m_TextureData->Height))
 		{
 			if (m_MaxRow < 1)
@@ -289,7 +298,7 @@ namespace eg {
 			ClearOutdatedFrames();
 			SetFrames();
 		}
-		
+
 
 		if (ImGui::DragInt("Begin Column", &m_Column, 1.0f, 0, m_MaxColumn-1))
 		{
@@ -352,11 +361,11 @@ namespace eg {
 				for (int j = 0; j < (int)(m_PreviewOriginImage->GetWidth() / m_FrameWidth); j++) {
 					std::pair<int, int> frameIndex = std::make_pair(i, j);
 					m_SelectedFrames.emplace_back(frameIndex);
-					
+
 				}
 			SetFrames();
 		}
-		
+
 		ImGui::SameLine();
 		if (ImGui::Button("Select none", ImVec2(90, 40))) {
 			m_SelectedFrames.clear();
@@ -368,6 +377,7 @@ namespace eg {
 
 	void AnimationPanel::DrawAnimInfo()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
 		ImGui::Checkbox("Play", m_PreviewData->IsPlayingPtr());
 
@@ -382,7 +392,7 @@ namespace eg {
 		if (ImGui::DragInt("Frame Rate", m_PreviewData->GetFrameRatePtr(), 1.0f, 0.0f, 500)) {
 			SetFrames();
 		}
-		
+
 		char buffer[512];
 		memset(buffer, 0, sizeof(buffer));
 		std::strncpy(buffer, m_ResourceData->ResourceName.c_str(), sizeof(buffer));
@@ -394,6 +404,7 @@ namespace eg {
 
 	void AnimationPanel::DrawAnimationPreview()
 	{
+        EG_PROFILE_FUNCTION();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
 		ImGui::Text("Animation Preview:");
 		if (m_PreviewData->GetFrameCount() > 0)
@@ -413,6 +424,7 @@ namespace eg {
 
 	void AnimationPanel::OnImGuiRender()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_PROFILE_FUNCTION();
 		if (!m_ShowAnimationPanel)
 			return;
@@ -447,11 +459,11 @@ namespace eg {
 				DrawSubtexture(i, j);
 			}
 		}
-		
+
 		DrawAnimInfo();
-		
+
 		DrawAnimationPreview();
-		
+
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(20, 20));
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + BASEGAP);
 
@@ -474,6 +486,7 @@ namespace eg {
 
 	void AnimationPanel::CloseAnimationPanel()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_PROFILE_FUNCTION();
 		DeleteData();
 		ResetData();
@@ -482,6 +495,7 @@ namespace eg {
 
 	void AnimationPanel::ResetData()
 	{
+        EG_PROFILE_FUNCTION();
 		EG_PROFILE_FUNCTION();
 		m_FrameWidth = 0;
 		m_FrameHeight = 0;

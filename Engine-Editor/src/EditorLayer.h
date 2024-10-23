@@ -63,25 +63,25 @@ namespace eg
 		// UI Panels
 		void UI_Toolbar();
 
+		void LoadFonts();
 	private:
-		friend class UnsavedChangesPanel;
 		friend class ConsolePanel;
 		friend class AddResourcePanel;
 	private:
-		Ref<Project> m_CurrentProject;
+		Ref<Project> m_CurrentProject = nullptr;
 		std::filesystem::path m_CustomScriptsDirectory; // absolute
 		OrthographicCameraController m_Camera;
 		// Temp
-		Ref<Shader> m_Shader;
+        Ref<Shader> m_Shader = nullptr;
 		glm::vec4 m_SquareColor = {0.2f, 0.3f, 0.8f, 1.0f};
-		Ref<VertexArray> m_VA;
-		Ref<Texture2D> m_Texture;
-		Ref<Texture2D> m_IconPlay, m_IconStop, m_IconPause, m_IconSimulate, m_IconStep;
-		Ref<FrameBuffer> m_FrameBuffer;
+        Ref<VertexArray> m_VA = nullptr;
+        Ref<Texture2D> m_Texture = nullptr;
+        Ref<Texture2D> m_IconPlay = nullptr, m_IconStop = nullptr, m_IconPause = nullptr, m_IconSimulate = nullptr, m_IconStep = nullptr;
+        Ref<FrameBuffer> m_FrameBuffer = nullptr;
 
-		Ref<Scene> m_ActiveScene;
-		Ref<Scene> m_RuntimeScene;
-		Ref<Scene> m_EditorScene;
+		Ref<Scene> m_ActiveScene = nullptr;
+		Ref<Scene> m_RuntimeScene = nullptr;
+		Ref<Scene> m_EditorScene = nullptr;
 		std::filesystem::path m_ActiveScenePath;
 		Entity m_SquareEntity;
 		Entity m_CameraEntity;
@@ -100,13 +100,13 @@ namespace eg
 		};
 
 		glm::vec2 m_ViewportSize = {0.0f, 0.0f};
-		glm::vec2 m_ViewportBounds[2];
+        glm::vec2 m_ViewportBounds[2] = {{ 0.0f, 0.0f },{0.0f, 0.0f}};
 
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
 		std::vector<ProfileResult> m_ProfileResults;
 
-		Ref<ResourceSystemState> resourceSystemState;
+		Ref<ResourceSystemState> resourceSystemState = nullptr;
 
 		std::unordered_map<char, Ref<SubTexture2D>> s_TextureMap;
 
@@ -122,23 +122,23 @@ namespace eg
 		};
 
 		SceneState m_SceneState = SceneState::Edit;
-
 		friend class AddResourcePanel;
 	public:
-		UnsavedChangesPanel* m_UnsavedChangesPanel;
-		UnsavedChangesPanel* GetUnsavedChangesPanel() { return m_UnsavedChangesPanel; };
-	
-	public:
-		ImVec4 m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
+		ImVec4 m_LightTextShade = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
 		ImVec4 m_LightShade = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-		ImVec4 m_NormalShade = ImVec4(0.204f, 0.145f, 0.278f, 1.0f);
-
-		ImFont* m_PoppinsRegularFont;
-		ImFont* m_PoppinsLightFont;
-		ImFont* m_PoppinsMediumFont;
+		ImVec4 m_NormalShade = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
+		ImVec4 m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
+		
+		ImFont* m_PoppinsLightFont = nullptr;
+		ImFont* m_PoppinsRegularFont = nullptr;
+		ImFont* m_PoppinsRegularFontBig = nullptr;
+		ImFont* m_PoppinsMediumFont = nullptr;
+		ImFont* m_PoppinsSemiBoldFont = nullptr;
+		ImFont* m_PoppinsSemiBoldFontBig = nullptr;
+		ImFont* m_PoppinsExtraBoldFont = nullptr;
 
 		//Time for fixedUpdate loop
-		std::chrono::steady_clock::time_point oldTime = std::chrono::high_resolution_clock::now();;
+		std::chrono::steady_clock::time_point m_OldTime = std::chrono::high_resolution_clock::now();;
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		Ref<ContentBrowserPanel> m_ContentBrowserPanel = nullptr;
@@ -151,7 +151,6 @@ namespace eg
 
 		// Popups
 		bool IsWindowTryingToClose = false; // Helper for unsaved changes
-		
 	};
 
 }

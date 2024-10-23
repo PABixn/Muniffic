@@ -8,6 +8,7 @@ namespace eg
 {
 	bool imageLoaderLoad(ResourceLoader *loader, std::string name, Resource *outResource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!loader || name.empty() || !outResource)
 		{
 			return false;
@@ -54,6 +55,7 @@ namespace eg
 
 	void imageLoaderUnload(ResourceLoader *loader, Resource *resource)
 	{
+        EG_PROFILE_FUNCTION();
 		if (!loader || !resource)
 		{
 			EG_ERROR("imageLoaderUnload called with nullptr");
@@ -73,6 +75,7 @@ namespace eg
 
 	ResourceLoader imageResourceLoaderCreate()
 	{
+        EG_PROFILE_FUNCTION();
 		ResourceLoader loader;
 		loader.Type = ResourceType::Image;
 		loader.load = imageLoaderLoad;

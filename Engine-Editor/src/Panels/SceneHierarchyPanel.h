@@ -3,6 +3,9 @@
 #include "ResourcesPanels/ImagePanel.h"
 //#include "ConsolePanel.h"
 #include "Imgui/imgui.h"
+#include "../IconLoader.h"
+#include "Commands/Commands.h"
+
 namespace eg {
 	enum ComponentIcons {
 		ComponentIcon = 0,
@@ -23,7 +26,8 @@ namespace eg {
 		ChildSearched,
 		thisSearched,
 		parentSearched,
-		bothSearched
+		bothSearched,
+		notSearched
 	};
 	struct EntityDisplayInfo
 	{
@@ -42,17 +46,19 @@ namespace eg {
 			childInfo = std::vector<EntityDisplayInfo>();
 		};
 		Entity entity;
-		searchRes res;
+		searchRes res = searchRes::notSearched;
 		std::vector<EntityDisplayInfo> childInfo;
 	};
 	class SceneHierarchyPanel {
 	public:
-		SceneHierarchyPanel() = default;
+		SceneHierarchyPanel() { Commands::s_SceneHierarchyPanelPtr = this; };
 		SceneHierarchyPanel(const Ref<Scene>& scene);
 
 		void SetContext(const Ref<Scene>& scene);
 		void OnImGuiRender();
 		void Update(float dt);
+
+		void Search();
 
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; SetPreviewAbsoluteImagePath(""); }
@@ -62,21 +68,18 @@ namespace eg {
 		void DisplayAddComponentEntry(const std::string& entryName);
 		void DrawEntityNode(EntityDisplayInfo entityDisplayInfo);
 		void DrawComponents(Entity entity);
-		void Search();
 		std::optional<EntityDisplayInfo> SearchEntity(Entity entity);
 		template<typename T, typename UIFunction>
-		void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, int iconOrType);
+		void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, Icons icon);
 	private:
 		std::string m_Search;
-		Ref<ImagePanel> m_ImagePanel;
-		Ref<Scene> m_Context;
-		Ref<Texture2D> m_PuzzleIcon;
+		Ref<ImagePanel> m_ImagePanel = nullptr;
+		Ref<Scene> m_Context = nullptr;
 		Entity m_SelectionContext;
 		std::filesystem::path m_PreviewAbsoluteImagePath;
 		bool m_ReevaluatePreview = true;
 		std::vector<EntityDisplayInfo> m_ListOfEntityDisplayed;
 		bool m_FirstDrawAfterSearch;
-		std::vector<Ref<Texture2D>> m_ComponentIcons;
 		std::vector<Ref<Animation>> m_PreviewedAnimations;
 	};
 }

@@ -5,12 +5,6 @@ project(Glad LANGUAGES C)
 
 add_library(Glad STATIC)
 
-if(MSVC)
-    target_compile_options(Glad PRIVATE /w)
-else()
-    target_compile_options(Glad PRIVATE -w)
-endif()
-
 # Output directories for binaries and object files
 set_target_properties(Glad PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Glad"
@@ -46,16 +40,4 @@ endif()
 # Build configurations
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(Glad PRIVATE GLAD_DEBUG)
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
-
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2")
-
-elseif(CMAKE_BUILD_TYPE STREQUAL "Dist")
-    set(CMAKE_C_FLAGS_DIST "${CMAKE_C_FLAGS_DIST} -O3 -DNDEBUG")
-endif()
-
-if(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug-AS")
-    target_compile_options(Glad PRIVATE /RTC- /INCREMENTAL:NO) # NoRuntimeChecks, NoIncrementalLink
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
 endif()

@@ -79,10 +79,3 @@ set_target_properties(freetype PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/freetype"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/freetype"
 )
-
-# Configurations for Debug, Release, and Dist builds
-target_compile_options(freetype PRIVATE
-    $<$<CONFIG:Debug>:-g>
-    $<$<CONFIG:Release>:-O2>
-    $<$<CONFIG:Dist>:-O3>
-)

@@ -140,6 +140,7 @@ namespace eg
 		{
 			if(!AssetDirectoryManager::findAssetDirectory(assetDirectory))
 				return false;
+			return true;
 		}
 	};
 }

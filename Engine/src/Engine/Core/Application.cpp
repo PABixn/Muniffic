@@ -11,7 +11,7 @@
 
 namespace eg
 {
-#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+#define BIND_APP_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
 	Application *Application::s_Instance = nullptr;
 
@@ -27,14 +27,8 @@ namespace eg
 			std::filesystem::current_path(applicationSpec.WorkingDirectory);
 
 		m_Window = Window::Create(WindowProps(applicationSpec.Name));
-		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_Window->SetEventCallback(BIND_APP_EVENT_FN(OnEvent));
 		VRenderer::Init();
-		/*
-		* SMALL TEST
-		while (!glfwWindowShouldClose((GLFWwindow*)Application::Get().GetWindow().GetNativeWindow())) {
-			glfwPollEvents();
-			VRenderer::Render();
-		}*/
 
 		m_ImGuiLayer = new ImGuiLayer();
 		m_LayerStack.PushOverlay(m_ImGuiLayer);
@@ -43,6 +37,9 @@ namespace eg
 	Application::~Application()
 	{
 		EG_PROFILE_FUNCTION();
+		for (auto layer : m_LayerStack) {
+			layer->OnDetach();
+		}
 		ScriptEngine::Shutdown();
 		//Renderer::Shutdown();
 		VRenderer::Shutdown();
@@ -53,7 +50,7 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		m_LayerStack.PushLayer(layer);
 	}
-	
+
 	void Application::PushOverlay(Layer *layer)
 	{
 		EG_PROFILE_FUNCTION();
@@ -64,9 +61,9 @@ namespace eg
 	{
 		EG_PROFILE_FUNCTION();
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
-		
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_APP_EVENT_FN(OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_APP_EVENT_FN(OnWindowResize));
+
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
@@ -120,6 +117,7 @@ namespace eg
 
 	bool Application::OnWindowClose(WindowCloseEvent &e)
 	{
+		EG_PROFILE_FUNCTION();
 		m_Running = false;
 		return true;
 	}
@@ -139,12 +137,14 @@ namespace eg
 
 	void Application::SubmitToMainThread(std::function<void()> function)
 	{
+		EG_PROFILE_FUNCTION();
 		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
 		m_MainThreadQueue.emplace_back(function);
 	}
 
 	void Application::ExecuteMainThreadQueue()
 	{
+		EG_PROFILE_FUNCTION();
 		std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
 
 		for (auto &function : m_MainThreadQueue)
@@ -154,16 +154,19 @@ namespace eg
 	}
 
 	void Application::SetRunning(bool val) {
+		EG_PROFILE_FUNCTION();
 		m_Running = val;
 	}
 
 	void Application::ChangeName(const char* text) {
+		EG_PROFILE_FUNCTION();
 		if (auto WinWindow = dynamic_cast<WindowsWindow*>(&this->GetWindow()))
 			glfwSetWindowTitle((WinWindow)->GetGLFWwindow(), text);
 
 	}
 
 	void Application::ChangeNameWithCurrentProject(bool saved) {
+		EG_PROFILE_FUNCTION();
 		std::string TitleText = "Muniffic editor [";
 		TitleText += Project::GetActive().get()->GetProjectName();
 		TitleText += "]";

@@ -7,9 +7,10 @@
 namespace eg {
 	Ref<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification& spec)
 	{
+        EG_PROFILE_FUNCTION();
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None: 
+		case RendererAPI::API::None:
 			ConsolePanel::Log("File: FrameBuffer.cpp - RendererAPI::None is currently not supported!", ConsolePanel::LogType::Error);
 			EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL:

@@ -12,7 +12,7 @@ namespace eg
         {
             Info = 0, Warning = 1, Error = 2
         }
-        public static void Log(string message, LogType logType)
+        public static void Log(string message, LogType logType = LogType.Info)
         {
             InternalCalls.Console_Log(message, logType);
         }
