@@ -59,7 +59,6 @@ target_include_directories(Engine-Editor PRIVATE
     "${IncludeDir_ImGuizmo}"
     "${IncludeDir_ImGui}"
 )
-message("${CMAKE_CURRENT_SOURCE_DIR}")
 # Link libraries
 target_link_libraries(Engine-Editor PRIVATE Engine)
 target_link_libraries(Engine-Editor PRIVATE ImGui)

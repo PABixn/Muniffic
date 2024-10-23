@@ -63,7 +63,6 @@ namespace eg {
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; SetPreviewAbsoluteImagePath(""); }
 		void SetPreviewAbsoluteImagePath(std::filesystem::path path) { m_PreviewAbsoluteImagePath = path; m_ReevaluatePreview = true; }
-		void Search();
 	private:
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
