@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Core/UUID.h"
 namespace eg {
+	typedef void* ImTextureID;
 
 	enum class ImageFormat
 	{
@@ -26,7 +27,7 @@ namespace eg {
 
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
-		virtual uint32_t GetRendererID() const = 0;
+		virtual ImTextureID GetRendererID() const = 0;
 
 		virtual const std::string& GetPath() const = 0;
 

@@ -24,6 +24,7 @@ namespace eg {
 		Device& getDevice() { return m_Device; }
 		VkDevice& getNativeDevice() { return m_Device.m_LogicalDevice; }
 		VkRenderPass& getRenderPass() { return m_RenderPass; }
+		VkRenderPass& getImGuiRenderPass() { return m_ImGuiRenderPass; }
 		ResourceManager& getResourceManager() { return m_ResourceManager; }
 		SwapChain& getSwapChain() { return m_SwapChain; }
 		GraphicsPipeline& getGraphicsPipeline() { return m_GraphicsPipeline; }

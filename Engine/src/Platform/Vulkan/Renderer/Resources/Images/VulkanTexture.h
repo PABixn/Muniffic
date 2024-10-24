@@ -9,6 +9,7 @@
 #endif // !RENDERER_INCLUDE_GLFW_VULKAN
 
 #include "Engine/Renderer/Texture.h"
+#include "Imgui/imgui.h"
 
 namespace eg {
 	class TextureManager;
@@ -25,11 +26,13 @@ namespace eg {
 		void cleanUp();
 		VkImage m_TextureImage;
 		VkDeviceMemory m_TextureImageMemory;
+		VkImageView m_TextureImageView;
+		VkSampler m_Sampler;
 	public:
 		void LoadTexture(TextureManager* textureManager, const char* path);
 		uint32_t width;
 		uint32_t height;
-		uint32_t rendererID = 1;
+		ImTextureID rendererID;
 		std::string path;
 		bool loaded = false;
 	private:
@@ -37,7 +40,7 @@ namespace eg {
 
 		virtual uint32_t GetWidth() const override { return width; }
 		virtual uint32_t GetHeight() const override { return height; }
-		virtual uint32_t GetRendererID() const override { return rendererID; };
+		virtual ImTextureID GetRendererID() const override;
 
 		virtual const std::string& GetPath() const override { return path; };
 

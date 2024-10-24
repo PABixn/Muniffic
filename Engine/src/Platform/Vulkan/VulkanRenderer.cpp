@@ -158,21 +158,14 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
             throw std::runtime_error("failed to create render pass!");
         }
     }
-    VkDescriptorPoolSize pool_sizes[] = {
-    { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },                   // For samplers
-    { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100 },    // Combined image samplers
-    { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 100 },             // Sampled images
-    { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 100 },             // Storage images
-    { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 100 },            // Uniform buffers
-    { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 100 },            // Storage buffers
-    { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 100 },    // Dynamic uniform buffers
-    { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 100 },    // Dynamic storage buffers
-    { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 100 }           // Input attachments
+
+    VkDescriptorPoolSize pool_sizes[] = { 
+        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100 },    // Combined image samplers
     };
     VkDescriptorPoolCreateInfo pool_info = {};
     pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-    pool_info.maxSets = MAX_FRAMES_IN_FLIGHT;
+    pool_info.maxSets = 100;
     pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
     pool_info.pPoolSizes = pool_sizes;
     VkResult err = vkCreateDescriptorPool(m_Device.getNativeDevice(), &pool_info, nullptr, &m_ImGuiDescriptorPool);

@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 namespace eg
 {
+	typedef void* ImTextureID;
 	class OpenGLTexture2D : public Texture2D
 	{
 	public:
@@ -23,7 +24,7 @@ namespace eg
 		virtual const TextureSpecification& GetSpecification() const override { return m_Specification; }
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
-		virtual uint32_t GetRendererID() const override { return m_RendererID; }
+		virtual ImTextureID GetRendererID() const override { return m_RendererID; }
 
 		virtual const UUID& GetID() const override { return m_Id; }
 
@@ -46,7 +47,7 @@ namespace eg
 		std::string m_Path;
 		bool m_IsLoaded = false;
 		uint32_t m_Width, m_Height;	
-		uint32_t m_RendererID;
+		ImTextureID m_RendererID;
 		GLenum m_InternalFormat = GL_RGBA8, m_DataFormat = GL_RGBA;
 		UUID m_Id;
 	};

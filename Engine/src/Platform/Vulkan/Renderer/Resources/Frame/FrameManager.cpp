@@ -161,11 +161,24 @@ void eg::FrameManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32
 
 
 	vkCmdDrawIndexed(commandBuffer, m_ResourceManagerRef->getIndicesCount(), 1, 0, 0, 0);
+	vkCmdEndRenderPass(commandBuffer);
 
 	// ImGui Render
+	renderPassInfo = {};
+	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassInfo.renderPass = VRen::get().getImGuiRenderPass();
+	renderPassInfo.framebuffer = VRen::get().getSwapChain().m_SwapChainFramebuffers[imageIndex];
+	renderPassInfo.renderArea.offset = { 0, 0 };
+	renderPassInfo.renderArea.extent = VRen::get().getSwapChain().getSwapChainExtent();
+	clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
+	renderPassInfo.clearValueCount = 1;
+	renderPassInfo.pClearValues = &clearColor;
+	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
 	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
 
 	vkCmdEndRenderPass(commandBuffer);
+
 
 
 	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {

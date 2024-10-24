@@ -48,14 +48,14 @@ namespace eg {
 
 		m_InternalFormat = Utils::MunifficFormatToGLInternalFormat(m_Specification.Format);
 		m_DataFormat = Utils::MunifficFormatToGLDataFormat(m_Specification.Format);
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
+		//glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+		//glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		//glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		//glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		//glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
@@ -73,7 +73,7 @@ namespace eg {
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
 		EG_PROFILE_FUNCTION();
-		glDeleteTextures(1, &m_RendererID);
+		//glDeleteTextures(1, &m_RendererID);
 	}
 
 	Ref<Texture2D> OpenGLTexture2D::Create(const std::string& path)
@@ -132,7 +132,7 @@ namespace eg {
 			}
 
 			m_InternalFormat = internalFormat; m_DataFormat = dataFormat;
-
+			/*
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 
@@ -143,7 +143,7 @@ namespace eg {
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, (void*)(((ImageResourceData*)imgResource.Data)->pixels));
-
+			*/
 			stbi_image_free(((ImageResourceData*)imgResource.Data)->pixels);
 			return true;
 		}
@@ -166,13 +166,13 @@ namespace eg {
 		EG_PROFILE_FUNCTION();
 		uint32_t bpp = TextureFormatTobpp(m_DataFormat);
 		EG_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
+		//glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
 		EG_PROFILE_FUNCTION();
-		glBindTextureUnit(slot, m_RendererID);
+		//glBindTextureUnit(slot, m_RendererID);
 	}
 
 	

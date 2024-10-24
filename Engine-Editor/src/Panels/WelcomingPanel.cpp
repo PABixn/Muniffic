@@ -31,8 +31,6 @@ namespace eg
 		ImGui::Text("Muniffic Game Engine");
 		ImGui::PopFont();
 
-		ImGui::Dummy(ImVec2(0.0f, 30.0f));
-
 		float windowWidth = ImGui::GetWindowWidth();
 		ImGui::Columns(2, nullptr, false);
 		ImGui::SetColumnWidth(0, windowWidth * 0.75f);
