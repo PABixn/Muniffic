@@ -60,6 +60,7 @@ namespace eg {
         {
         	style.WindowRounding = 0.0f;
         	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+			style.TabBarOverlineSize = 0.0f;
         }
 
         SetDarkThemeColors();
@@ -166,6 +167,10 @@ namespace eg {
 		colors[ImGuiCol_TabActive] = m_DarkShade;
 		colors[ImGuiCol_TabUnfocused] = m_LightShade;
 		colors[ImGuiCol_TabUnfocusedActive] = m_DarkShade;
+		colors[ImGuiCol_TabSelectedOverline] = m_DarkShade;
+		colors[ImGuiCol_TabDimmed] = m_LightShade;
+		colors[ImGuiCol_TabDimmedSelected] = m_DarkShade;
+		colors[ImGuiCol_TabDimmedSelectedOverline] = m_DarkShade;
 
 		// Title
 		colors[ImGuiCol_TitleBg] = m_NormalShade;
@@ -180,6 +185,7 @@ namespace eg {
 
 		//Others
 		colors[ImGuiCol_MenuBarBg] = ImVec4(0.153f, 0.133f, 0.200f, 1.0f);
+		colors[ImGuiCol_CheckMark] = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
 	}
     
 }
