@@ -399,13 +399,14 @@ namespace eg
 			ImGui::End();
 
 			ImGui::Begin("Settings");
-
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
 			if (ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
 				Commands::ExecuteRawValueCommand(&m_ShowPhysicsColliders, !m_ShowPhysicsColliders, "Show Physics Colliders");
 			if (ImGui::Checkbox("Show Axis", &m_ShowAxis))
 				Commands::ExecuteRawValueCommand(&m_ShowAxis, !m_ShowAxis, "Show Axis");
 			if (ImGui::Checkbox("Show Grid", &m_ShowGrid))
 				Commands::ExecuteRawValueCommand(&m_ShowGrid, !m_ShowGrid, "Show Grid");
+			ImGui::PopStyleVar();
 			ImGui::End();
 
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });

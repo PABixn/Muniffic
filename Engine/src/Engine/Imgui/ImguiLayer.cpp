@@ -185,7 +185,7 @@ namespace eg {
 
 		//Others
 		colors[ImGuiCol_MenuBarBg] = ImVec4(0.153f, 0.133f, 0.200f, 1.0f);
-		colors[ImGuiCol_CheckMark] = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
+		colors[ImGuiCol_CheckMark] = ImVec4(1.f, 1.f, 1.f, 1.f);
 	}
     
 }
