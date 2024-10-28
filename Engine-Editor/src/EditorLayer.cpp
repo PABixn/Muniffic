@@ -83,6 +83,12 @@ namespace eg
 	{
 		EG_PROFILE_FUNCTION();
 		resourceSystemShutdown();
+		IconLoader::cleanUp();
+		m_IconPlay = nullptr;
+		m_IconStop = nullptr; 
+		m_IconPause = nullptr;
+		m_IconSimulate = nullptr;
+		m_IconStep = nullptr;
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
@@ -95,14 +101,14 @@ namespace eg
 		if (!m_ActiveScene->GetRegistry().valid(m_HoveredEntity))
 			m_HoveredEntity = Entity({});
 		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-		if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
+		/*if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
 			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
 			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_Camera.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-		}
+		}*/
 
 		if (m_ViewportFocused)
 			m_Camera.OnUpdate(ts);
@@ -114,11 +120,11 @@ namespace eg
 			m_ContentBrowserPanel->Update(ts);
 
 		Renderer2D::ResetStats();
-		m_FrameBuffer->Bind();
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-		RenderCommand::Clear();
+		//m_FrameBuffer->Bind();
+		//RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		//RenderCommand::Clear();
 
-		m_FrameBuffer->ClearAttachment(1, -1);
+		//m_FrameBuffer->ClearAttachment(1, -1);
 
 		switch (m_SceneState)
 		{
@@ -127,7 +133,7 @@ namespace eg
 			// Update
 			if (m_ViewportFocused)
 				m_Camera.OnUpdate(ts);
-			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+			//m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 			if (projectOpened) {
 				m_AddResourcePanel->Update(ts);
 			}
@@ -159,6 +165,7 @@ namespace eg
 			break;
 		}
 		}
+		/*
 
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= m_ViewportBounds[0].x;
@@ -166,17 +173,16 @@ namespace eg
 		my = m_ViewportSize.y - my;
 
 		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-
 		int mouseX = (int)mx;
 		int mouseY = (int)my;
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixedData = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);
 			m_HoveredEntity = pixedData == -1 ? Entity() : Entity((entt::entity)pixedData, m_ActiveScene.get());
-		}
+		}*/
 
-		OnOverlayRender();
-		m_FrameBuffer->Unbind();
+		//OnOverlayRender();
+		//m_FrameBuffer->Unbind();
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -423,8 +429,8 @@ namespace eg
 			ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
 			m_ViewportSize = { viewportSize.x, viewportSize.y };
-			uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
-			ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			//uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
+			//ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 			if (ImGui::BeginDragDropTarget())
 			{

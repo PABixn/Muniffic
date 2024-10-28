@@ -8,7 +8,6 @@
 #include "Engine/Project/Project.h"
 
 
-
 namespace eg
 {
 #define BIND_APP_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -41,7 +40,6 @@ namespace eg
 			layer->OnDetach();
 		}
 		ScriptEngine::Shutdown();
-		//Renderer::Shutdown();
 		VRenderer::Shutdown();
 	}
 
@@ -89,7 +87,7 @@ namespace eg
 			m_LastFrameTime = time;
 
 			ExecuteMainThreadQueue();
-
+			ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImVec4(0.125f, 0.102f, 0.188f, 1.0f); // Transparent
 
 			m_ImGuiLayer->Begin();
 			{
@@ -113,6 +111,7 @@ namespace eg
 			m_Window->OnUpdate();
 			frame++;
 		}
+		VRenderer::DeviceWaitIdle();
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent &e)
@@ -131,7 +130,9 @@ namespace eg
 			return false;
 		}
 		m_Minimized = false;
-		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		VRenderer::OnWindowResize();
+
+		//Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
 		return false;
 	}
 

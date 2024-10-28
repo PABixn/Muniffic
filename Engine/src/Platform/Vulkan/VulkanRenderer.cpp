@@ -32,6 +32,8 @@ void eg::VulkanRenderer::cleanUp()
     m_ResourceManager.cleanUp();
     m_GraphicsPipeline.cleanUp();
     m_SwapChain.cleanUp();
+    vkDestroyRenderPass(m_Device.getNativeDevice(), m_ImGuiRenderPass, nullptr);
+    vkDestroyDescriptorPool(m_Device.getNativeDevice(), m_ImGuiDescriptorPool, nullptr);
     vkDestroyCommandPool(m_Device.getNativeDevice(), m_PoolForOneTimeOperations, nullptr);
     m_Device.cleanUp();
     EG_TRACE("Vulkan Renderer Deinitialization Succesful");
@@ -60,11 +62,11 @@ void eg::VulkanRenderer::createRenderPass()
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = m_SwapChain.m_ImageFormat;
     colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
     colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
     VkAttachmentReference colorAttachmentRef{};
@@ -130,6 +132,15 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
         colorAttachmentRef.attachment = 0;
         colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
+        VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
+        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        colorBlendAttachment.blendEnable = VK_TRUE;
+        colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+        colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+        colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
         VkSubpassDependency dependency{};
         dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -143,6 +154,7 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         subpass.colorAttachmentCount = 1;
         subpass.pColorAttachments = &colorAttachmentRef;
+      
 
         // Render pass
         VkRenderPassCreateInfo renderPassInfo{};
@@ -153,6 +165,7 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
         renderPassInfo.pSubpasses = &subpass;
         renderPassInfo.dependencyCount = 1;
         renderPassInfo.pDependencies = &dependency;
+        
 
         if (vkCreateRenderPass(m_Device.m_LogicalDevice, &renderPassInfo, nullptr, &m_ImGuiRenderPass) != VK_SUCCESS) {
             throw std::runtime_error("failed to create render pass!");
@@ -160,7 +173,7 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
     }
 
     VkDescriptorPoolSize pool_sizes[] = { 
-        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100 },    // Combined image samplers
+        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100 }
     };
     VkDescriptorPoolCreateInfo pool_info = {};
     pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;

@@ -28,7 +28,7 @@ namespace eg {
 	public:
         void create(GLFWwindow* window);
         void cleanUp();
-        void recreate();
+        void recreate(GLFWwindow* glfwWin);
         VkExtent2D getSwapChainExtent() { return m_Extent; }
     private:
         void createFrameBuffers();

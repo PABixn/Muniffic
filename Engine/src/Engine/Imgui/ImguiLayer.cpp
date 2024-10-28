@@ -68,6 +68,7 @@ namespace eg {
     {
 		EG_PROFILE_FUNCTION();
 		ImGui_ImplVulkan_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
     }
 

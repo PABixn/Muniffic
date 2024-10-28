@@ -4,6 +4,7 @@
 #include "Platform/Vulkan/VulkanRenderer.h"
 #include <imgui.h>
 #include "Imgui/backends/imgui_impl_vulkan.h"
+#include "Engine/Core/Application.h"
 
 void eg::FrameManager::init(ResourceManager* rm)
 {
@@ -57,7 +58,11 @@ void eg::FrameManager::drawFrame()
 		result = vkAcquireNextImageKHR(VRen::get().getNativeDevice(), VRen::get().getSwapChain().m_NativeSwapChain, UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrameInFlightIndex], VK_NULL_HANDLE, &imageIndex);
 		if (result == VK_ERROR_OUT_OF_DATE_KHR)
 		{
-			VRen::get().getSwapChain().recreate();
+#if WIN32
+			VRen::get().getSwapChain().recreate((GLFWwindow*)Application::Get().GetWindow().GetNativeWindow());
+#else
+			EG_CORE_ASSERT(false);// FOR NOW THE APP IS ONLY FOR WIDNOWS USING GLFW
+#endif // WIN32
 			return;
 		}
 		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
@@ -104,7 +109,11 @@ void eg::FrameManager::drawFrame()
 
 		result = vkQueuePresentKHR((*VRen::get().getDevice().m_PresentQueue.GetNativeQueue().get()), &presentInfo);
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-			VRen::get().getSwapChain().recreate();
+#if WIN32
+			VRen::get().getSwapChain().recreate((GLFWwindow*)Application::Get().GetWindow().GetNativeWindow());
+#else
+			EG_CORE_ASSERT(false);// FOR NOW THE APP IS ONLY FOR WIDNOWS USING GLFW
+#endif // WIN32
 		}
 		else if (result != VK_SUCCESS) {
 			throw std::runtime_error("failed to present swap chain image!");
@@ -124,9 +133,9 @@ void eg::FrameManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32
 	if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
-
 	// Scene Render
 	VkRenderPassBeginInfo renderPassInfo{};
+	/*
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassInfo.renderPass = VRen::get().getRenderPass();
 	renderPassInfo.framebuffer = VRen::get().getSwapChain().m_SwapChainFramebuffers[imageIndex];
@@ -162,7 +171,7 @@ void eg::FrameManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32
 
 	vkCmdDrawIndexed(commandBuffer, m_ResourceManagerRef->getIndicesCount(), 1, 0, 0, 0);
 	vkCmdEndRenderPass(commandBuffer);
-
+	*/
 	// ImGui Render
 	renderPassInfo = {};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -170,7 +179,7 @@ void eg::FrameManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32
 	renderPassInfo.framebuffer = VRen::get().getSwapChain().m_SwapChainFramebuffers[imageIndex];
 	renderPassInfo.renderArea.offset = { 0, 0 };
 	renderPassInfo.renderArea.extent = VRen::get().getSwapChain().getSwapChainExtent();
-	clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
+	VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
 	renderPassInfo.clearValueCount = 1;
 	renderPassInfo.pClearValues = &clearColor;
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);

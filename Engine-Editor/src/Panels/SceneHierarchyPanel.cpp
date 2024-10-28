@@ -687,7 +687,8 @@ namespace eg
 		{
 			Ref<Texture2D> componentIcon = IconLoader::GetIcon(icon);
 
-			std::string ajDzik(entity.GetName() + std::to_string(componentIcon->GetRendererID()));
+			//std::string ajDzik(entity.GetName() + std::to_string(componentIcon->GetRendererID()));
+			std::string ajDzik = entity.GetName() + "##x";
 			ImGui::PushID(ajDzik.c_str());
 			auto &component = entity.GetComponent<T>();
 			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();

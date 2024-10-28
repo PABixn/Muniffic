@@ -168,20 +168,18 @@ namespace eg {
         }
     }
 
-    void SwapChain::recreate()
+    void SwapChain::recreate(GLFWwindow* glfwWin)
     {
-        //TO-DO Vulkan 1
-        /*
         int width = 0, height = 0;
-        glfwGetFramebufferSize(VRen::get().getGLFWwindow(), &width, &height);
+        glfwGetFramebufferSize(glfwWin, &width, &height);
         while (width == 0 || height == 0) {
-            glfwGetFramebufferSize(VRen::get().getGLFWwindow(), &width, &height);
+            glfwGetFramebufferSize(glfwWin, &width, &height);
             glfwWaitEvents();
         }
         vkDeviceWaitIdle(VRen::get().getNativeDevice());
         cleanUp(); 
-        create();
-        createFrameBuffers();*/
+        create(glfwWin);
+        createFrameBuffers();
     }
 
     void SwapChain::createFrameBuffers()

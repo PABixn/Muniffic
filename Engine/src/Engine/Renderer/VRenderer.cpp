@@ -25,3 +25,18 @@ void eg::VRenderer::ImGuiInit()
 #endif // WIN32
 	VRen::get().initImGui(win);
 }
+
+void eg::VRenderer::DeviceWaitIdle()
+{
+	vkDeviceWaitIdle(VRen::get().getNativeDevice());
+}
+
+void eg::VRenderer::OnWindowResize()
+{
+#if WIN32
+	GLFWwindow* win = (GLFWwindow*)Application::Get().GetWindow().GetNativeWindow();
+#else
+	EG_CORE_ASSERT(false);// FOR NOW THE APP IS ONLY FOR WIDNOWS USING GLFW
+#endif // WIN32
+	VRen::get().getSwapChain().recreate(win);
+}

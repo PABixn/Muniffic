@@ -22,6 +22,7 @@ namespace eg {
 	public:
 		VulkanTexture() = default;
 		VulkanTexture(const char* path);
+		VulkanTexture(const TextureSpecification& texSpec);
 		~VulkanTexture() { cleanUp(); }
 		void cleanUp();
 		VkImage m_TextureImage;

@@ -1,5 +1,6 @@
 #include "IconLoader.h"
 #include <filesystem>
+#include "vulkan/vulkan.h"
 
 namespace eg
 {
@@ -17,6 +18,12 @@ namespace eg
 			return m_DefaultIcon;
 		}
 		return m_Icons[icon];
+	}
+
+	void IconLoader::cleanUp()
+	{
+		m_Icons = {};
+		m_DefaultIcon = nullptr;
 	}
 
 	void IconLoader::LoadIcons()

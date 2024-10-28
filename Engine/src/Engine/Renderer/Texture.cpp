@@ -44,6 +44,8 @@ namespace eg {
 			case RendererAPI::API::OpenGL:
 				ConsolePanel::Log("File: Texture.cpp - 2D Texture Created", ConsolePanel::LogType::Info);
 				return OpenGLTexture2D::Create(specification);
+			case RendererAPI::API::Vulkan:
+				return VulkanTexture::Create(specification);
 		}
 
 		EG_ASSERT(false, "Unknown RendererAPI!");

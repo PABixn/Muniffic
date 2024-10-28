@@ -28,6 +28,7 @@ namespace eg {
 		ResourceManager& getResourceManager() { return m_ResourceManager; }
 		SwapChain& getSwapChain() { return m_SwapChain; }
 		GraphicsPipeline& getGraphicsPipeline() { return m_GraphicsPipeline; }
+		VkDescriptorPool& getImGuiDescriptorPool() { return m_ImGuiDescriptorPool; }
 	private:
 		Device m_Device;
 		SwapChain m_SwapChain;

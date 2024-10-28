@@ -63,6 +63,7 @@ namespace eg
 	public:
 		static void LoadIcons();
 		static Ref<Texture2D> GetIcon(Icons icon);
+		static void cleanUp();
 
 	private:
 		static std::filesystem::path GetIconPath(Icons icon);

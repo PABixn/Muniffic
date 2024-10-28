@@ -8,6 +8,8 @@ namespace eg {
 		static void Render();
 		static void Shutdown();
 		static void ImGuiInit();
+		static void DeviceWaitIdle();
+		static void OnWindowResize();
 	private:
 
 	};
