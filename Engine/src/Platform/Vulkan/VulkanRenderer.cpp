@@ -117,11 +117,10 @@ static void check_vk_result(VkResult err)
 void eg::VulkanRenderer::initImGui(GLFWwindow* window)
 {
     EG_PROFILE_FUNCTION()
-
     {
         EG_PROFILE_SCOPE("ImGui renderpass creation")
-            // Imgui renderpass creation
-            VkAttachmentDescription colorAttachment{};
+        // Imgui renderpass creation
+        VkAttachmentDescription colorAttachment{};
         colorAttachment.format = m_SwapChain.m_ImageFormat;
         colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
         colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -129,7 +128,7 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
         colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
         VkAttachmentReference colorAttachmentRef{};
         colorAttachmentRef.attachment = 0;

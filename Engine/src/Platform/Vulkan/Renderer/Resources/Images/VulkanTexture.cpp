@@ -181,9 +181,9 @@ void eg::VulkanTexture::LoadTexture(TextureManager* textureManager, const char* 
         }
         vkBindImageMemory(device.getNativeDevice(), m_TextureImage, m_TextureImageMemory, 0);
 
-        textureManager->TransitionTextureLayout(*this, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        textureManager->TransitionTextureLayout(*this, VRen::get().getFrameBufferImageFormat(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
         textureManager->CopyBufferToImage(stagingBuffer, *this);
-        textureManager->TransitionTextureLayout(*this, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        textureManager->TransitionTextureLayout(*this, VRen::get().getFrameBufferImageFormat(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
         VRen::get().getResourceManager().DestroyBuffer(stagingBuffer);
     }
@@ -194,7 +194,7 @@ void eg::VulkanTexture::LoadTexture(TextureManager* textureManager, const char* 
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = m_TextureImage;
         viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        viewInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+        viewInfo.format = VRen::get().getFrameBufferImageFormat();
         viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         viewInfo.subresourceRange.baseMipLevel = 0;
         viewInfo.subresourceRange.levelCount = 1;

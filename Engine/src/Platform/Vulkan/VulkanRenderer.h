@@ -29,6 +29,7 @@ namespace eg {
 		SwapChain& getSwapChain() { return m_SwapChain; }
 		GraphicsPipeline& getGraphicsPipeline() { return m_GraphicsPipeline; }
 		VkDescriptorPool& getImGuiDescriptorPool() { return m_ImGuiDescriptorPool; }
+		const VkFormat& getFrameBufferImageFormat() { return m_SwapChain.m_ImageFormat; }
 	private:
 		Device m_Device;
 		SwapChain m_SwapChain;
