@@ -116,9 +116,12 @@ static void check_vk_result(VkResult err)
 
 void eg::VulkanRenderer::initImGui(GLFWwindow* window)
 {
+    EG_PROFILE_FUNCTION()
+
     {
-        // Imgui renderpass creation
-        VkAttachmentDescription colorAttachment{};
+        EG_PROFILE_SCOPE("ImGui renderpass creation")
+            // Imgui renderpass creation
+            VkAttachmentDescription colorAttachment{};
         colorAttachment.format = m_SwapChain.m_ImageFormat;
         colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
         colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -154,7 +157,7 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         subpass.colorAttachmentCount = 1;
         subpass.pColorAttachments = &colorAttachmentRef;
-      
+
 
         // Render pass
         VkRenderPassCreateInfo renderPassInfo{};
@@ -165,50 +168,53 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
         renderPassInfo.pSubpasses = &subpass;
         renderPassInfo.dependencyCount = 1;
         renderPassInfo.pDependencies = &dependency;
-        
+
 
         if (vkCreateRenderPass(m_Device.m_LogicalDevice, &renderPassInfo, nullptr, &m_ImGuiRenderPass) != VK_SUCCESS) {
             throw std::runtime_error("failed to create render pass!");
         }
     }
+    {
+        EG_PROFILE_SCOPE("ImGuiDescriptorPool creation")
+            VkDescriptorPoolSize pool_sizes[] = {
+                { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100 }
+        };
+        VkDescriptorPoolCreateInfo pool_info = {};
+        pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+        pool_info.maxSets = 100;
+        pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
+        pool_info.pPoolSizes = pool_sizes;
+        VkResult err = vkCreateDescriptorPool(m_Device.getNativeDevice(), &pool_info, nullptr, &m_ImGuiDescriptorPool);
+        check_vk_result(err);
+    }
+    {
+        EG_PROFILE_SCOPE("ImGui internal init")
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-    VkDescriptorPoolSize pool_sizes[] = { 
-        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100 }
-    };
-    VkDescriptorPoolCreateInfo pool_info = {};
-    pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-    pool_info.maxSets = 100;
-    pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
-    pool_info.pPoolSizes = pool_sizes;
-    VkResult err = vkCreateDescriptorPool(m_Device.getNativeDevice(), &pool_info, nullptr, &m_ImGuiDescriptorPool);
-    check_vk_result(err);
+        ImGui::StyleColorsDark();
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-
-    ImGui::StyleColorsDark();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForVulkan(window, true);
-    ImGui_ImplVulkan_InitInfo init_info = {};
-    init_info.Instance = m_Device.m_VulkanInstance;
-    init_info.PhysicalDevice = m_Device.m_PhysicalDevice;
-    init_info.Device = m_Device.m_LogicalDevice;
-    init_info.QueueFamily = m_Device.m_GraphicsQueue.m_QueueFamilyIndices.graphicsFamily.value();
-    init_info.Queue = *m_Device.m_GraphicsQueue.m_VulkanQueue.get();
-    init_info.DescriptorPool = m_ImGuiDescriptorPool;
-    init_info.RenderPass = m_ImGuiRenderPass;
-    init_info.MinImageCount = 2;
-    init_info.ImageCount = MAX_FRAMES_IN_FLIGHT;
-    init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-    init_info.Allocator = nullptr;
-    init_info.CheckVkResultFn = check_vk_result;
-    ImGui_ImplVulkan_Init(&init_info);
-
+        // Setup Platform/Renderer backends
+        ImGui_ImplGlfw_InitForVulkan(window, true);
+        ImGui_ImplVulkan_InitInfo init_info = {};
+        init_info.Instance = m_Device.m_VulkanInstance;
+        init_info.PhysicalDevice = m_Device.m_PhysicalDevice;
+        init_info.Device = m_Device.m_LogicalDevice;
+        init_info.QueueFamily = m_Device.m_GraphicsQueue.m_QueueFamilyIndices.graphicsFamily.value();
+        init_info.Queue = *m_Device.m_GraphicsQueue.m_VulkanQueue.get();
+        init_info.DescriptorPool = m_ImGuiDescriptorPool;
+        init_info.RenderPass = m_ImGuiRenderPass;
+        init_info.MinImageCount = 2;
+        init_info.ImageCount = MAX_FRAMES_IN_FLIGHT;
+        init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+        init_info.Allocator = nullptr;
+        init_info.CheckVkResultFn = check_vk_result;
+        ImGui_ImplVulkan_Init(&init_info);
+    }
 }
 
 

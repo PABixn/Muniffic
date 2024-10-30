@@ -41,7 +41,7 @@
         if (enableValidationLayers) {
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
         }
-        extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+        //extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
 
         return extensions;
     }
@@ -178,9 +178,9 @@ void eg::Device::cleanUp()
 
         // vk instance creation
         VkResult res = vkCreateInstance(&createInfo, nullptr, &m_VulkanInstance);
-
+        
         if (res != VK_SUCCESS) {
-            std::cout << "error: " << res << std::endl;
+            std::cout << "not silli: " << res << std::endl;
             throw std::runtime_error("failed to create instance :(");
         }
     }

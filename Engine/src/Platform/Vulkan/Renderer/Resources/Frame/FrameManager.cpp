@@ -175,7 +175,7 @@ void eg::FrameManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32
 	// ImGui Render
 	renderPassInfo = {};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassInfo.renderPass = VRen::get().getImGuiRenderPass();
+	renderPassInfo.renderPass = VRen::get().getRenderPass();
 	renderPassInfo.framebuffer = VRen::get().getSwapChain().m_SwapChainFramebuffers[imageIndex];
 	renderPassInfo.renderArea.offset = { 0, 0 };
 	renderPassInfo.renderArea.extent = VRen::get().getSwapChain().getSwapChainExtent();
