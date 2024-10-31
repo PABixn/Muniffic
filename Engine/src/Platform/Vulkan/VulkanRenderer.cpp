@@ -32,7 +32,7 @@ void eg::VulkanRenderer::cleanUp()
     m_ResourceManager.cleanUp();
     m_GraphicsPipeline.cleanUp();
     m_SwapChain.cleanUp();
-    vkDestroyRenderPass(m_Device.getNativeDevice(), m_ImGuiRenderPass, nullptr);
+    //vkDestroyRenderPass(m_Device.getNativeDevice(), m_ImGuiRenderPass, nullptr);
     vkDestroyDescriptorPool(m_Device.getNativeDevice(), m_ImGuiDescriptorPool, nullptr);
     vkDestroyCommandPool(m_Device.getNativeDevice(), m_PoolForOneTimeOperations, nullptr);
     m_Device.cleanUp();
@@ -54,54 +54,60 @@ void eg::VulkanRenderer::createCommandPoolForOneTimeOperations()
         throw std::runtime_error("failed to create command pool! :(");
     }
 }
-
 void eg::VulkanRenderer::createRenderPass()
 {
-
-    // Render pass utilties
+    // Render pass utilities
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = m_SwapChain.m_ImageFormat;
     colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED; 
     colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
     VkAttachmentReference colorAttachmentRef{};
     colorAttachmentRef.attachment = 0;
     colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-
-    VkSubpassDependency dependency{};
-    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-    dependency.dstSubpass = 0;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.srcAccessMask = 0;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
     VkSubpassDescription subpass{};
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &colorAttachmentRef;
 
-    // Render pass
+    // Subpass dependencies for layout transitions
+    VkSubpassDependency dependencyStart{};
+    dependencyStart.srcSubpass = VK_SUBPASS_EXTERNAL;
+    dependencyStart.dstSubpass = 0;
+    dependencyStart.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependencyStart.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+    dependencyStart.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependencyStart.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+    VkSubpassDependency dependencyEnd{};
+    dependencyEnd.srcSubpass = 0;
+    dependencyEnd.dstSubpass = VK_SUBPASS_EXTERNAL;
+    dependencyEnd.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependencyEnd.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    dependencyEnd.dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    dependencyEnd.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+
+    VkSubpassDependency dependencies[] = { dependencyStart, dependencyEnd };
+    // Render pass creation
     VkRenderPassCreateInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     renderPassInfo.attachmentCount = 1;
     renderPassInfo.pAttachments = &colorAttachment;
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
-    renderPassInfo.dependencyCount = 1;
-    renderPassInfo.pDependencies = &dependency;
+    renderPassInfo.dependencyCount = std::size(dependencies);
+    renderPassInfo.pDependencies = dependencies;
 
     if (vkCreateRenderPass(m_Device.m_LogicalDevice, &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
         throw std::runtime_error("failed to create render pass!");
     }
 }
-
 
 // ImGui Helper
 static void check_vk_result(VkResult err)
@@ -117,62 +123,6 @@ static void check_vk_result(VkResult err)
 void eg::VulkanRenderer::initImGui(GLFWwindow* window)
 {
     EG_PROFILE_FUNCTION()
-    {
-        EG_PROFILE_SCOPE("ImGui renderpass creation")
-        // Imgui renderpass creation
-        VkAttachmentDescription colorAttachment{};
-        colorAttachment.format = m_SwapChain.m_ImageFormat;
-        colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-        colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-        colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-        colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-        VkAttachmentReference colorAttachmentRef{};
-        colorAttachmentRef.attachment = 0;
-        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-        VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
-        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-        colorBlendAttachment.blendEnable = VK_TRUE;
-        colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-        colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-        colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-        colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-        VkSubpassDependency dependency{};
-        dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-        dependency.dstSubpass = 0;
-        dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependency.srcAccessMask = 0;
-        dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-        VkSubpassDescription subpass{};
-        subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        subpass.colorAttachmentCount = 1;
-        subpass.pColorAttachments = &colorAttachmentRef;
-
-
-        // Render pass
-        VkRenderPassCreateInfo renderPassInfo{};
-        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        renderPassInfo.attachmentCount = 1;
-        renderPassInfo.pAttachments = &colorAttachment;
-        renderPassInfo.subpassCount = 1;
-        renderPassInfo.pSubpasses = &subpass;
-        renderPassInfo.dependencyCount = 1;
-        renderPassInfo.pDependencies = &dependency;
-
-
-        if (vkCreateRenderPass(m_Device.m_LogicalDevice, &renderPassInfo, nullptr, &m_ImGuiRenderPass) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create render pass!");
-        }
-    }
     {
         EG_PROFILE_SCOPE("ImGuiDescriptorPool creation")
             VkDescriptorPoolSize pool_sizes[] = {
@@ -206,7 +156,7 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
         init_info.QueueFamily = m_Device.m_GraphicsQueue.m_QueueFamilyIndices.graphicsFamily.value();
         init_info.Queue = *m_Device.m_GraphicsQueue.m_VulkanQueue.get();
         init_info.DescriptorPool = m_ImGuiDescriptorPool;
-        init_info.RenderPass = m_ImGuiRenderPass;
+        init_info.RenderPass = m_RenderPass;
         init_info.MinImageCount = 2;
         init_info.ImageCount = MAX_FRAMES_IN_FLIGHT;
         init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;

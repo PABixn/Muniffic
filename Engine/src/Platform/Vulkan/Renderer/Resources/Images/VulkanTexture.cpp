@@ -128,6 +128,7 @@ void eg::VulkanTexture::cleanUp()
 
 void eg::VulkanTexture::LoadTexture(TextureManager* textureManager, const char* Argpath){
     EG_PROFILE_FUNCTION();
+    VkFormat imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
     {
         EG_PROFILE_SCOPE("VulkanTexture: texels load");
         this->path = Argpath;
@@ -158,7 +159,7 @@ void eg::VulkanTexture::LoadTexture(TextureManager* textureManager, const char* 
         imageInfo.extent.depth = 1;
         imageInfo.mipLevels = 1;
         imageInfo.arrayLayers = 1;
-        imageInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+        imageInfo.format = imageFormat;
         imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
         imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
@@ -181,9 +182,9 @@ void eg::VulkanTexture::LoadTexture(TextureManager* textureManager, const char* 
         }
         vkBindImageMemory(device.getNativeDevice(), m_TextureImage, m_TextureImageMemory, 0);
 
-        textureManager->TransitionTextureLayout(*this, VRen::get().getFrameBufferImageFormat(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        textureManager->TransitionTextureLayout(*this, imageFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
         textureManager->CopyBufferToImage(stagingBuffer, *this);
-        textureManager->TransitionTextureLayout(*this, VRen::get().getFrameBufferImageFormat(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        textureManager->TransitionTextureLayout(*this, imageFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
         VRen::get().getResourceManager().DestroyBuffer(stagingBuffer);
     }
@@ -194,7 +195,7 @@ void eg::VulkanTexture::LoadTexture(TextureManager* textureManager, const char* 
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = m_TextureImage;
         viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        viewInfo.format = VRen::get().getFrameBufferImageFormat();
+        viewInfo.format = imageFormat;
         viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         viewInfo.subresourceRange.baseMipLevel = 0;
         viewInfo.subresourceRange.levelCount = 1;
