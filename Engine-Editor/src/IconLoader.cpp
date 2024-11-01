@@ -152,12 +152,8 @@ namespace eg
 				return addResourcePath / "native_script.png";
 			case Icons::AnimationEditor_LengthChange:
 				return animationEditorPath / "length_change.png";
-			case Icons::AnimationEditor_LengthChangeSelected:
-				return animationEditorPath / "length_change_selected.png";
 			case Icons::AnimationEditor_MoveIcon:
 				return animationEditorPath / "move.png";
-			case Icons::AnimationEditor_MoveIconSelected:
-				return animationEditorPath / "move_selected.png";
 			case Icons::Assistant_Settings:
 				return assistantPath / "settings.png";
 			case Icons::Assistant_CopyCode:
