@@ -238,21 +238,21 @@ namespace eg
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		bool openPopup = false;
 		if(label._Equal("Animation"))
-			openPopup = ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)m_AnimationIcon->GetRendererID(), {thumbnailSize, thumbnailSize});
+			openPopup = ImGui::ImageButton("AnimationAdd##xx", (ImTextureID)m_AnimationIcon->GetRendererID(), {thumbnailSize, thumbnailSize});
 		else if(label._Equal("Shader"))
-			openPopup = ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)m_ShaderIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
+			openPopup = ImGui::ImageButton("ShaderAdd##xx", (ImTextureID)m_ShaderIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
 		else if (label._Equal("Font"))
-			openPopup = ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)m_FontIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
+			openPopup = ImGui::ImageButton("FontAdd##xx", (ImTextureID)m_FontIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
 		else if (label._Equal("Text"))
-			openPopup = ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)m_TextIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
+			openPopup = ImGui::ImageButton("TextAdd##xx", (ImTextureID)m_TextIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
 		else if (label._Equal("Image"))
-			openPopup = ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)m_ImageIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
+			openPopup = ImGui::ImageButton("ImageAdd##xx", (ImTextureID)m_ImageIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
 		else if (label._Equal("Script"))
-			openPopup = ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)m_ScriptIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
+			openPopup = ImGui::ImageButton("ScriptAdd##xx", (ImTextureID)m_ScriptIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
 		else if (label._Equal("NativeScript"))
-			openPopup = ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)m_NativeScriptIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
+			openPopup = ImGui::ImageButton("NativeScriptAdd##xx", (ImTextureID)m_NativeScriptIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
 		else if (label._Equal("Custom"))
-			openPopup = ImGui::ImageButton("IMGUI ID NEEDED OR WONT WORK PROPERLY", (ImTextureID)m_CustomIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
+			openPopup = ImGui::ImageButton("CustomAdd##xx", (ImTextureID)m_CustomIcon->GetRendererID(), { thumbnailSize, thumbnailSize });
 		ImGui::PopStyleColor();
 		ImGui::PopID();
 

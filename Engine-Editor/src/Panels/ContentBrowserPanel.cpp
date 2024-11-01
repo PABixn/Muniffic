@@ -216,7 +216,7 @@ namespace eg
 			ImGui::PushID(directory);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0,0,0,0));
-			ImGui::ImageButton("ContentBrowser_Directory##xx", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
+			ImGui::ImageButton("ContentBrowser_Directory##xx", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), {thumbnailSize, thumbnailSize}, ImVec2(0,0), ImVec2(1,1));
 			ImGui::PopStyleColor();
 
 			ShowFolderMenu(directory);
@@ -539,13 +539,13 @@ namespace eg
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 
 		if (type == ResourceType::Script)
-			ImGui::ImageButton("ContentBrowser_FileScript", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileScript)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
+			ImGui::ImageButton("ContentBrowser_FileScript", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileScript)->GetRendererID(), {thumbnailSize, thumbnailSize}, ImVec2(0, 0), ImVec2(1, 1));
 		else if (type == ResourceType::Audio)
-			ImGui::ImageButton("ContentBrowser_FileAudio", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileAudio)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
+			ImGui::ImageButton("ContentBrowser_FileAudio", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileAudio)->GetRendererID(), {thumbnailSize, thumbnailSize}, ImVec2(0, 0), ImVec2(1, 1));
 		else if (type == ResourceType::Animation)
-			ImGui::ImageButton("ContentBrowser_FileAnimation", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileAnimation)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
+			ImGui::ImageButton("ContentBrowser_FileAnimation", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_FileAnimation)->GetRendererID(), {thumbnailSize, thumbnailSize}, ImVec2(0, 0), ImVec2(1, 1));
 		else
-			ImGui::ImageButton("ContentBrowser_File", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_File)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
+			ImGui::ImageButton("ContentBrowser_File", (ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_File)->GetRendererID(), {thumbnailSize, thumbnailSize}, ImVec2(0, 0), ImVec2(1, 1));
 
 		ImGui::PopStyleColor();
 	}

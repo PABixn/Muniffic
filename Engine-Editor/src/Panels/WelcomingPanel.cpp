@@ -57,7 +57,7 @@ namespace eg
 					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-					if (ImGui::ImageButton("WelcomePanel_DeleteProject##xx", (ImTextureID)IconLoader::GetIcon(Icons::WelcomePanel_DeleteProject)->GetRendererID(), ImVec2(30.0f, 30.0f), ImVec2(0, 1), ImVec2(1, 0))) {
+					if (ImGui::ImageButton("WelcomePanel_DeleteProject##xx", (ImTextureID)IconLoader::GetIcon(Icons::WelcomePanel_DeleteProject)->GetRendererID(), ImVec2(30.0f, 30.0f), ImVec2(0, 0), ImVec2(1, 1))) {
 						auto it = find(m_ProjectList.begin(), m_ProjectList.end(), project);
 						int projectId = it - m_ProjectList.begin();
 						m_Rps.DeleteProject(projectId);
@@ -70,7 +70,7 @@ namespace eg
 					ImGui::SetCursorPosX({ cursorPos - 39.0f });
 					ImGui::SameLine();
 					ImGui::SetCursorPosX({15.f});
-					ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
+					ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), { 32.0f, 32.0f }, ImVec2(0, 0), ImVec2(1, 1));
 				}
 				i++;
 			}
@@ -97,7 +97,7 @@ namespace eg
 		float posX = ImGui::GetCursorPosX();
 		posX -= (menuSize - 20.f);
 		ImGui::SetCursorPosX(posX);
-		ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), { 30.0f, 30.0f }, { 0, 1 }, { 1, 0 });
+		ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::ContentBrowser_Directory)->GetRendererID(), { 30.0f, 30.0f }, ImVec2(0, 0), ImVec2(1, 1));
 
 		if (ImGui::Button("Create a new project", { menuSize - 20.0f, 32.0f }))
 		{
@@ -106,7 +106,7 @@ namespace eg
 		}
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(posX);
-		ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::WelcomePanel_NewProject)->GetRendererID(), { 32.0f, 32.0f }, { 0, 1 }, { 1, 0 });
+		ImGui::Image((ImTextureID)IconLoader::GetIcon(Icons::WelcomePanel_NewProject)->GetRendererID(), { 32.0f, 32.0f }, ImVec2(0, 0), ImVec2(1, 1));
 		ImGui::PopFont();
 		ImGui::PopStyleVar();
 
