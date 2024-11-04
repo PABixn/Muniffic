@@ -38,6 +38,7 @@ namespace eg
 		EG_PROFILE_FUNCTION();
 		for (auto layer : m_LayerStack) {
 			layer->OnDetach();
+			delete layer;
 		}
 		ScriptEngine::Shutdown();
 		VRenderer::Shutdown();

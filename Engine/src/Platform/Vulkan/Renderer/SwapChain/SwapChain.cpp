@@ -193,7 +193,7 @@ namespace eg {
 
             VkFramebufferCreateInfo framebufferInfo{};
             framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-            framebufferInfo.renderPass = VRen::get().getRenderPass();
+            framebufferInfo.renderPass = VRen::get().getEditorRenderPass();
             framebufferInfo.attachmentCount = 1;
             framebufferInfo.pAttachments = attachments;
             framebufferInfo.width = m_Extent.width;

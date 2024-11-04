@@ -23,7 +23,7 @@ namespace eg {
 		void render();
 		Device& getDevice() { return m_Device; }
 		VkDevice& getNativeDevice() { return m_Device.m_LogicalDevice; }
-		VkRenderPass& getRenderPass() { return m_RenderPass; }
+		VkRenderPass& getEditorRenderPass() { return m_EditorRenderPass; }
 		ResourceManager& getResourceManager() { return m_ResourceManager; }
 		SwapChain& getSwapChain() { return m_SwapChain; }
 		GraphicsPipeline& getGraphicsPipeline() { return m_GraphicsPipeline; }
@@ -32,7 +32,7 @@ namespace eg {
 	private:
 		Device m_Device;
 		SwapChain m_SwapChain;
-		VkRenderPass m_RenderPass;
+		VkRenderPass m_EditorRenderPass;
 		ResourceManager m_ResourceManager;
 		VkCommandPool m_PoolForOneTimeOperations;
 		GraphicsPipeline m_GraphicsPipeline;

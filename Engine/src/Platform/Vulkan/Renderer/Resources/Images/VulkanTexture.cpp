@@ -238,6 +238,28 @@ void eg::VulkanTexture::LoadTexture(TextureManager* textureManager, const char* 
         EG_PROFILE_SCOPE("VulkanTexture: ImGui descriptorSet creation");
         this->rendererID = ImGui_ImplVulkan_AddTexture(m_Sampler, m_TextureImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     }
+    
+#ifdef MUNI_VULKAN_DEBUG
+    VkDebugUtilsObjectNameInfoEXT nameInfo = {};
+    nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+    nameInfo.objectType = VK_OBJECT_TYPE_SAMPLER;
+    nameInfo.objectHandle = (uint64_t)m_Sampler;
+    nameInfo.pObjectName = Argpath;
+    auto func = (PFN_vkSetDebugUtilsObjectNameEXT)vkGetInstanceProcAddr(VRen::get().getDevice().m_VulkanInstance, "vkSetDebugUtilsObjectNameEXT");
+    if (func != nullptr) {
+        func(VRen::get().getNativeDevice(), &nameInfo);
+    }
+    else {
+        static bool wasAlreadySaid = false;
+        if (!wasAlreadySaid)
+        {
+            EG_CORE_TRACE("VulkanTexture: debug utils extension not present.");
+            wasAlreadySaid = true;
+        }
+    }
+#endif // MUNI_VULKAN_DEBUG
+
+
     this->loaded = true;
 }
 

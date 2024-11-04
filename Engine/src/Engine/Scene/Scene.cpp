@@ -427,8 +427,13 @@ namespace eg {
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
         EG_PROFILE_FUNCTION();
+		if (m_ViewportHeight == height && m_ViewportWidth == width && m_ViewportNeedsResize && !ImGui::IsMouseDown(0)) {
+			VRenderer::ResizeViewport({ width, height }, true);
+			m_ViewportNeedsResize = false;
+		}
 		if (m_ViewportHeight == height && m_ViewportWidth == width)
 			return;
+		m_ViewportNeedsResize = true;
 
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;

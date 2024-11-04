@@ -25,6 +25,10 @@ set_target_properties(Engine PROPERTIES
 # Precompiled Header
 target_precompile_headers(Engine PRIVATE "src/egpch.h")
 
+# Renderer debug
+target_compile_definitions(Engine PRIVATE "$<$<CONFIG:Debug>:MUNI_VULKAN_DEBUG>")
+target_compile_definitions(Engine PRIVATE "MUNI_NO_ASSISTANT")
+
 # Source files
 file(GLOB_RECURSE ENGINE_SOURCE 
     "src/*.h"

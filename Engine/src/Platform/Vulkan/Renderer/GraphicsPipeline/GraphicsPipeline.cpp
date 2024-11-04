@@ -172,7 +172,7 @@ void eg::GraphicsPipeline::init()
 	pipelineInfo.pColorBlendState = &colorBlending;
 	pipelineInfo.pDynamicState = &dynamicState;
 	pipelineInfo.layout = m_PipelineLayout;
-	pipelineInfo.renderPass = VRen::get().getRenderPass();
+	pipelineInfo.renderPass = VRen::get().getEditorRenderPass();
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 	pipelineInfo.basePipelineIndex = -1;
@@ -188,7 +188,7 @@ void eg::GraphicsPipeline::cleanUp()
 	VkDevice& device = VRen::get().getNativeDevice();
 	vkDestroyPipeline(device, m_NativePipeline, nullptr);
 	vkDestroyPipelineLayout(device, m_PipelineLayout, nullptr);
-	vkDestroyRenderPass(device, VRen::get().getRenderPass(), nullptr);
+	vkDestroyRenderPass(device, VRen::get().getEditorRenderPass(), nullptr);
 	m_FragmentShader.CleanUp();
 	m_VertexShader.CleanUp();
 }

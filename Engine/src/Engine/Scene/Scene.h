@@ -91,6 +91,7 @@ namespace eg {
 		b2World* m_PhysicsWorld = nullptr;
 		bool m_IsRunning = false;
 		bool m_IsPaused = false;
+		bool m_ViewportNeedsResize = true;
 
 		int m_StepFrames = 0;
 

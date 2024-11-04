@@ -166,6 +166,7 @@ namespace eg
 
 	void AssistantManager::Init()
 	{
+#ifndef MUNI_NO_ASSISTANT
 		EG_PROFILE_FUNCTION();
 		Py_Initialize();
 		PyEval_InitThreads();
@@ -239,10 +240,13 @@ namespace eg
 		}
 
 		PyEval_SaveThread();
+
+#endif // !MUNI_NO_ASSISTANT
 	}
 
 	bool AssistantManager::CheckAPI()
 	{
+#ifndef MUNI_NO_ASSISTANT
 		EG_PROFILE_FUNCTION();
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
@@ -258,6 +262,10 @@ namespace eg
 		PyGILState_Release(gstate);
 
 		return PyObject_IsTrue(result);
+#else
+		return false;
+#endif // !MUNI_NO_ASSISTANT
+
 	}
 
 	bool AssistantManager::CreateAssistant(std::string assistantName, std::string assistantInstructions = "")
@@ -742,8 +750,11 @@ namespace eg
 
 	AssistantManager::~AssistantManager()
 	{
+#ifndef MUNI_NO_ASSISTANT
 		PyGILState_STATE gstate = PyGILState_Ensure();
 
 		Py_Finalize();
+#endif // !MUNI_NO_ASSISTANT
+
 	}
 }

@@ -5,6 +5,7 @@ namespace eg {
 	public:
 		void init() {};
 		void TransitionTextureLayout(VulkanTexture& texture, const VkFormat& format, const VkImageLayout& oldLayout, const VkImageLayout& newLayout);
+		void TransitionTextureLayout(VkImage& texture, const VkFormat& format, const VkImageLayout& oldLayout, const VkImageLayout& newLayout);
 		void CopyBufferToImage(VulkanBuffer& buffer, VulkanTexture& texture);
 	};
 }

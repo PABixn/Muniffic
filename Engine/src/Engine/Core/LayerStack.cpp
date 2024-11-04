@@ -8,9 +8,11 @@ namespace eg {
 
 	LayerStack::~LayerStack()
 	{
+		/*
 		EG_PROFILE_FUNCTION();
 		for (Layer* layer : m_Layers)
 			delete layer;
+			*/
 	}
 
 	void LayerStack::PushLayer(Layer* layer)

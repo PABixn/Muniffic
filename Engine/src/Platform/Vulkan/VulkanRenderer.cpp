@@ -41,7 +41,7 @@ void eg::VulkanRenderer::cleanUp()
 
 void eg::VulkanRenderer::render()
 {
-    m_ResourceManager.m_FrameManager.drawFrame();
+    m_ResourceManager.m_FrameManager.drawEditorFrame();
 }
 
 void eg::VulkanRenderer::createCommandPoolForOneTimeOperations()
@@ -104,7 +104,7 @@ void eg::VulkanRenderer::createRenderPass()
     renderPassInfo.dependencyCount = std::size(dependencies);
     renderPassInfo.pDependencies = dependencies;
 
-    if (vkCreateRenderPass(m_Device.m_LogicalDevice, &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
+    if (vkCreateRenderPass(m_Device.m_LogicalDevice, &renderPassInfo, nullptr, &m_EditorRenderPass) != VK_SUCCESS) {
         throw std::runtime_error("failed to create render pass!");
     }
 }
@@ -156,7 +156,7 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
         init_info.QueueFamily = m_Device.m_GraphicsQueue.m_QueueFamilyIndices.graphicsFamily.value();
         init_info.Queue = *m_Device.m_GraphicsQueue.m_VulkanQueue.get();
         init_info.DescriptorPool = m_ImGuiDescriptorPool;
-        init_info.RenderPass = m_RenderPass;
+        init_info.RenderPass = m_EditorRenderPass;
         init_info.MinImageCount = 2;
         init_info.ImageCount = MAX_FRAMES_IN_FLIGHT;
         init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
@@ -164,6 +164,7 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
         init_info.CheckVkResultFn = check_vk_result;
         ImGui_ImplVulkan_Init(&init_info);
     }
+    m_ResourceManager.m_FrameManager.initForImGui();
 }
 
 

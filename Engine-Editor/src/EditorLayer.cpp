@@ -89,6 +89,7 @@ namespace eg
 		m_IconPause = nullptr;
 		m_IconSimulate = nullptr;
 		m_IconStep = nullptr;
+		m_Texture = nullptr;
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
@@ -430,7 +431,10 @@ namespace eg
 
 			m_ViewportSize = { viewportSize.x, viewportSize.y };
 			//uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
-			//ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			ImTextureID textureID = VRenderer::GetSceneRenderImageID();
+			ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+
 
 			if (ImGui::BeginDragDropTarget())
 			{

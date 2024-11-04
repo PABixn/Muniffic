@@ -40,3 +40,13 @@ void eg::VRenderer::OnWindowResize()
 #endif // WIN32
 	VRen::get().getSwapChain().recreate(win);
 }
+ImTextureID eg::VRenderer::GetSceneRenderImageID()
+{
+	return VRen::get().getResourceManager().m_FrameManager.getSceneRendererID();
+}
+
+void eg::VRenderer::ResizeViewport(const std::pair<uint32_t, uint32_t>& viewportSize, bool recreate)
+{
+	if (viewportSize.first < 10 || viewportSize.second < 10) return;
+	if (recreate)VRen::get().m_ResourceManager.m_FrameManager.resizeViewport(viewportSize);
+}
