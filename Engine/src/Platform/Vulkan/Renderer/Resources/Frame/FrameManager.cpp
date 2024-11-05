@@ -453,6 +453,7 @@ void eg::FrameManager::sceneRecordCommandBuffer(VkCommandBuffer commandBuffer, u
 	renderPassInfo.clearValueCount = 1;
 	renderPassInfo.pClearValues = &clearColor;
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	VRen::get().getGraphicsPipeline().onViewportResize(commandBuffer, { m_ViewportWidth, m_ViewportHeight });
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getGraphicsPipeline().getNativePipeline());
 
 

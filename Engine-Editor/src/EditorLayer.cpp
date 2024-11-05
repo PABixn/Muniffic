@@ -403,6 +403,20 @@ namespace eg
 			ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 			ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
+			static auto lastTime = std::chrono::high_resolution_clock::now();
+			static int frameCount = 0;
+			static float fps = 0.0f;
+
+			frameCount++;
+			auto currentTime = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<float> elapsedTime = currentTime - lastTime;
+			if (elapsedTime.count() >= 1.0f) {
+				fps = frameCount / elapsedTime.count();
+				frameCount = 0;
+				lastTime = currentTime;
+			}
+
+			ImGui::Text("fps: %.0f", fps);
 			ImGui::End();
 
 			ImGui::Begin("Settings");

@@ -80,14 +80,15 @@ void eg::GraphicsPipeline::init()
 	multisampling.alphaToOneEnable = VK_FALSE;
 
 	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-	colorBlendAttachment.blendEnable = VK_TRUE;
+
+/*	colorBlendAttachment.blendEnable = VK_TRUE;
 	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
 	colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
 	colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
 	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
 	colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 	colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-	/*
+*/	
 	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
 	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
@@ -96,7 +97,7 @@ void eg::GraphicsPipeline::init()
 	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
 	colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 	colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-*/
+
 	VkPipelineColorBlendStateCreateInfo colorBlending{};
 	colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	colorBlending.logicOpEnable = VK_FALSE;
@@ -191,4 +192,26 @@ void eg::GraphicsPipeline::cleanUp()
 	vkDestroyRenderPass(device, VRen::get().getEditorRenderPass(), nullptr);
 	m_FragmentShader.CleanUp();
 	m_VertexShader.CleanUp();
+}
+
+void eg::GraphicsPipeline::onViewportResize(VkCommandBuffer& cmdBfr, const VkExtent2D& extentArg)
+{
+	static VkExtent2D CurrentExtent = { 0,0 };
+	if (extentArg.width == CurrentExtent.width && extentArg.height == CurrentExtent.height) return;
+	CurrentExtent = extentArg;
+	VkViewport viewport{};
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.width = static_cast<float>(extentArg.width);
+	viewport.height = static_cast<float>(extentArg.height);
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+
+	vkCmdSetViewport(cmdBfr, 0, 1, &viewport);
+
+	VkRect2D scissor{};
+	scissor.offset = { 0, 0 };
+	scissor.extent = extentArg;
+
+	vkCmdSetScissor(cmdBfr, 0, 1, &scissor);
 }

@@ -11,6 +11,7 @@ namespace eg {
 		friend class Renderer;
 		void init();
 		void cleanUp();
+		void onViewportResize(VkCommandBuffer& cmdBfr, const VkExtent2D& extentArg);
 		VkPipeline& getNativePipeline() { return m_NativePipeline; };
 		VkPipelineLayout& getPipelineLayout() { return m_PipelineLayout; }
 	private:
@@ -19,5 +20,6 @@ namespace eg {
 
 		VulkanShader m_VertexShader;
 		VulkanShader m_FragmentShader;
+
 	};
 }
