@@ -522,11 +522,9 @@ namespace eg
 			tintColor.w = 0.5f;
 
 		float size = ImGui::GetWindowHeight();
-		float numButtons = 2;
-		float totalWidth = (numButtons * size) + ((numButtons - 1) * 10.0f);
-		float startPosX = (ImGui::GetWindowWidth() - totalWidth) * 0.5f;
-
-		ImGui::SetCursorPosX(startPosX);
+		ImVec2 elementSize = ImGui::GetContentRegionAvail();
+		float iconPosX = (elementSize.x - size) * 0.5f - 19.0f;
+		ImGui::SetCursorPos(ImVec2(iconPosX,0));
 
 		bool hasPlayButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play;
 		bool hasSimulateButton = m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate;

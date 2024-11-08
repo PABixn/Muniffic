@@ -32,6 +32,7 @@ namespace eg {
 		{
 			style.WindowRounding = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+			style.TabBarOverlineSize = 0.0f;
 		}
 
 		SetDarkThemeColors();
@@ -61,6 +62,7 @@ namespace eg {
         	style.WindowRounding = 0.0f;
         	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 			style.TabBarOverlineSize = 0.0f;
+			style.TabRounding = 7.0f;
         }
 
         SetDarkThemeColors();
@@ -182,6 +184,9 @@ namespace eg {
 		colors[ImGuiCol_ScrollbarGrab] = m_LightShade;
 		colors[ImGuiCol_ScrollbarGrabHovered] = m_LightShade;
 		colors[ImGuiCol_ScrollbarGrabActive] = m_LightShade;
+
+		//Border
+		colors[ImGuiCol_Border] = m_LightShade;
 
 		//Others
 		colors[ImGuiCol_MenuBarBg] = ImVec4(0.153f, 0.133f, 0.200f, 1.0f);
