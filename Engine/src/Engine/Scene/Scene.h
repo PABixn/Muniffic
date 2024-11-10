@@ -35,7 +35,7 @@ namespace eg {
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
 		void OnUpdateRuntime(Timestep ts, std::chrono::steady_clock::time_point& oldTime);
 		void OnUpdateSimulation(Timestep ts, EditorCamera& camera);
-		void OnViewportResize(uint32_t width, uint32_t height);
+		bool OnViewportResize(uint32_t width, uint32_t height);
 
 		void RenderScene(EditorCamera& camera);
 
@@ -102,7 +102,7 @@ namespace eg {
 		float m_FixedFramerate = 1000.0f / 720.0f;
 
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
-		//Change to shared_ptr if doesn't couse any problems
+		//Change to shared_ptr if doesn't cause any problems
 		std::unordered_map<UUID, EntityInfo*> m_EntityInfoMap;
 
 		friend class Entity;

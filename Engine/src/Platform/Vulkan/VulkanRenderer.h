@@ -9,6 +9,8 @@
 #include "Platform/Vulkan/Renderer/SwapChain/SwapChain.h"
 #include "Platform/Vulkan/Renderer/Resources/ResourceManager.h"
 #include "Platform/Vulkan/Renderer/GraphicsPipeline/GraphicsPipeline.h"
+#include "entt.hpp"
+#include "Platform/Vulkan/Renderer/Resources/Scene/SceneRenderData.h"
 namespace eg {
 	class VulkanRenderer
 	{
@@ -29,6 +31,8 @@ namespace eg {
 		GraphicsPipeline& getGraphicsPipeline() { return m_GraphicsPipeline; }
 		VkDescriptorPool& getImGuiDescriptorPool() { return m_ImGuiDescriptorPool; }
 		const VkFormat& getFrameBufferImageFormat() { return m_SwapChain.m_ImageFormat; }
+		SceneRenderData& getSceneRenderData() { return m_CurrentSceneRenderData; }
+		void LoadSceneData(const entt::registry& entirtyRegistry);
 	private:
 		Device m_Device;
 		SwapChain m_SwapChain;
@@ -42,6 +46,7 @@ namespace eg {
 		void createCommandPoolForOneTimeOperations();
 		void createRenderPass();
 		void initImGui(GLFWwindow* window);
+		SceneRenderData m_CurrentSceneRenderData;
 	public:
 		VkCommandBuffer BeginSingleTimeCommands(); // Graphics queue family
 		void EndSingleTimeCommands(VkCommandBuffer& cb); // Submit to graphics queue

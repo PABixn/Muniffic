@@ -51,7 +51,6 @@ namespace eg {
 		VkDeviceMemory m_SceneRenderImageMemory[MAX_FRAMES_IN_FLIGHT + 1];
 
 		VkSemaphore m_SceneRenderFinishedSemaphores[MAX_FRAMES_IN_FLIGHT];
-		VkFence m_SceneRenderImageSafeToDelete[MAX_FRAMES_IN_FLIGHT + 1];
 	private:
 		uint32_t m_ViewportWidth = 0;
 		uint32_t m_ViewportHeight = 0;

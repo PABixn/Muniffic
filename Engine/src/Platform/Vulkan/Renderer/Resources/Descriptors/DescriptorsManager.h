@@ -10,6 +10,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #endif // !RENDERER_INCLUDE_GLFW_VULKAN
+#include "Engine/Renderer/EditorCamera.h"
 
 namespace eg {
 	class ResourceManager;
@@ -25,6 +26,7 @@ namespace eg {
 		void init(ResourceManager* ref);
 		void cleanUp();
 		void updateUniformBuffer(uint32_t cuffentFrame);
+		void setEditorCamera(EditorCamera* editorCameraArg);
 		VkDescriptorSetLayout& getDescriptorSetLayout() { return m_DescriptorSetLayout; };
 		std::vector<VulkanBuffer> m_UniformBuffers;
 		std::vector<void*> m_UniformBuffersMemoryMapped;
@@ -35,5 +37,6 @@ namespace eg {
 		std::vector<VkDescriptorSet> m_DescriptorSets;
 	private:
 		glm::mat4 m_ModelMatrix;
+		EditorCamera* m_EditorCamera;
 	};
 }

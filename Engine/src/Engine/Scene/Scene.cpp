@@ -424,15 +424,18 @@ namespace eg {
 		RenderScene(camera);
 	}
 
-	void Scene::OnViewportResize(uint32_t width, uint32_t height)
+	bool Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
         EG_PROFILE_FUNCTION();
 		if (m_ViewportHeight == height && m_ViewportWidth == width && m_ViewportNeedsResize && !ImGui::IsMouseDown(0)) {
+			// will recreate framebuffer
+			if (height < 10 || width  < 10) return false;
 			VRenderer::ResizeViewport({ width, height }, true);
 			m_ViewportNeedsResize = false;
+			return true;
 		}
 		if (m_ViewportHeight == height && m_ViewportWidth == width)
-			return;
+			return false;
 		m_ViewportNeedsResize = true;
 
 		m_ViewportWidth = width;
@@ -446,17 +449,18 @@ namespace eg {
 			if (!cameraComponent.FixedAspectRatio)
 				cameraComponent.Camera.SetViewportSize(width, height);
 		}
+		return false;
 
 	}
 
 	void Scene::RenderScene(EditorCamera& camera)
 	{
         EG_PROFILE_FUNCTION();
-		Renderer2D::BeginScene(camera);
-		RenderAxis();
+		//Renderer2D::BeginScene(camera);
+		//RenderAxis();
 
 		// Draw sprites
-		{
+		/* {
 			auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : group)
 			{
@@ -464,8 +468,8 @@ namespace eg {
 
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 			}
-		}
-
+		}*/
+		/*
 		//Draw Animations
 		{
 			auto group = m_Registry.group<TransformComponent, AnimatorComponent>();
@@ -515,9 +519,9 @@ namespace eg {
 				if(text.RuntimeFont)
 					Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
 			}
-		}
+		}*/
 
-		Renderer2D::EndScene();
+		//Renderer2D::EndScene();
 	}
 
 	void Scene::RenderAxis()

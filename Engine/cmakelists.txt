@@ -28,6 +28,7 @@ target_precompile_headers(Engine PRIVATE "src/egpch.h")
 # Renderer debug
 target_compile_definitions(Engine PRIVATE "$<$<CONFIG:Debug>:MUNI_VULKAN_DEBUG>")
 target_compile_definitions(Engine PRIVATE "MUNI_NO_ASSISTANT")
+target_compile_definitions(Engine PRIVATE "MUNI_ENGINE_BUILD")
 
 # Source files
 file(GLOB_RECURSE ENGINE_SOURCE 

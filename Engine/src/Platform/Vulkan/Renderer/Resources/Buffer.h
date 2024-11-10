@@ -13,5 +13,7 @@ namespace eg {
 		size_t m_Size;
 		VkBuffer m_Buffer;
 		VkDeviceMemory m_Memory;
+		void Create(const VkDeviceSize& size, const VkBufferUsageFlags& usage, const VkMemoryPropertyFlags& properties);
+		void Destroy();
 	};
 }

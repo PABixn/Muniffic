@@ -6,6 +6,11 @@ void eg::VRenderer::Init()
 	VRen::get().init();
 }
 
+void eg::VRenderer::SetEditorCamera(EditorCamera* editor)
+{
+	VRen::get().getResourceManager().m_DescriptorManager.setEditorCamera(editor);
+}
+
 void eg::VRenderer::Render()
 {
 	VRen::get().render();
@@ -47,6 +52,10 @@ ImTextureID eg::VRenderer::GetSceneRenderImageID()
 
 void eg::VRenderer::ResizeViewport(const std::pair<uint32_t, uint32_t>& viewportSize, bool recreate)
 {
-	if (viewportSize.first < 10 || viewportSize.second < 10) return;
 	if (recreate)VRen::get().m_ResourceManager.m_FrameManager.resizeViewport(viewportSize);
+}
+
+void eg::VRenderer::LoadScene(const entt::registry& Registry)
+{
+	VRen::get().LoadSceneData(Registry);
 }

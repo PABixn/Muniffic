@@ -17,6 +17,7 @@
 #include "glm/gtx/quaternion.hpp"
 #include "Engine/Resources/ResourceDatabase.h"
 
+#include "Platform/Vulkan/Renderer/Resources/Scene/SceneRenderData.h"
 
 namespace eg
 {
@@ -74,10 +75,12 @@ namespace eg
 
 	struct SpriteRendererComponent: Component
 	{
+		ObjectRenderData m_RenderData;
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<Texture2D> Texture;
 		UUID TextureUUID = 0;
 		float TilingFactor = 1.0f;
+
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const UUID& entityID) { EntityID = entityID; }

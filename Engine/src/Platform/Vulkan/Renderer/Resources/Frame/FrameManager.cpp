@@ -26,9 +26,6 @@ void eg::FrameManager::cleanUp()
 		vkDestroySemaphore(device.getNativeDevice(), m_SceneRenderFinishedSemaphores[i], nullptr);
 	}
 	cleanUpFramebuffer();
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT + 1; i++) {
-		vkDestroyFence(device.getNativeDevice(), m_SceneRenderImageSafeToDelete[i], nullptr);
-	}
 	vkDestroyRenderPass(device.getNativeDevice(), m_SceneRenderPass, nullptr);
 	vkDestroyCommandPool(device.getNativeDevice(), m_CommandPool, nullptr);
 }
@@ -36,8 +33,10 @@ void eg::FrameManager::cleanUp()
 void eg::FrameManager::cleanUpFramebuffer()
 {
 	vkDeviceWaitIdle(VRen::get().getNativeDevice());
-	vkWaitForFences(VRen::get().getNativeDevice(), 3, m_SceneRenderImageSafeToDelete, VK_TRUE, UINT64_MAX);
 	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT + 1; i++) {
+		if (m_SceneRenderImageRendererID[i]!= nullptr){
+			vkFreeDescriptorSets(VRen::get().getNativeDevice(), VRen::get().getImGuiDescriptorPool(), 1, (VkDescriptorSet*)&m_SceneRenderImageRendererID[i]);
+		}
 		if(m_SceneRenderSampler[i] != nullptr)
 			vkDestroySampler(VRen::get().getNativeDevice(), m_SceneRenderSampler[i], nullptr);
 		vkDestroyFramebuffer(VRen::get().getNativeDevice(), m_SceneRenderFramebuffers[i], nullptr);
@@ -145,11 +144,6 @@ void eg::FrameManager::createSceneFramebuffer(uint32_t widthArg, uint32_t height
 		if (vkCreateImageView(VRen::get().getNativeDevice(), &createInfo, nullptr, &m_SceneRenderImageViews[i]) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create image views! :(");
 		}
-
-
-
-
-
 
 		VkImageView attachments[] = {
 			   m_SceneRenderImageViews[i]
@@ -282,10 +276,19 @@ void eg::FrameManager::drawEditorFrame()
 		EG_PROFILE_SCOPE("Queue presentation");
 		VkPresentInfoKHR presentInfo{};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		std::vector<VkSemaphore> semaphores(1);
+		if (VRen::get().getSceneRenderData().m_Loaded) {
+			presentInfo.waitSemaphoreCount = 2;
+			semaphores.resize(2);
+			semaphores = { m_EditorRenderFinishedSemaphores[m_CurrentFrameInFlightIndex], m_SceneRenderFinishedSemaphores[m_CurrentFrameInFlightIndex] };
+		}
+		else
+		{
+			presentInfo.waitSemaphoreCount = 1;
+			semaphores = { m_EditorRenderFinishedSemaphores[m_CurrentFrameInFlightIndex] };
 
-		presentInfo.waitSemaphoreCount = 2;
-		VkSemaphore semaphores[] = { m_EditorRenderFinishedSemaphores[m_CurrentFrameInFlightIndex], m_SceneRenderFinishedSemaphores[m_CurrentFrameInFlightIndex] };
-		presentInfo.pWaitSemaphores = semaphores;
+		}
+		presentInfo.pWaitSemaphores = semaphores.data();
 		presentInfo.swapchainCount = 1;
 		presentInfo.pSwapchains = &VRen::get().getSwapChain().m_NativeSwapChain;
 		presentInfo.pImageIndices = &imageIndex;
@@ -309,11 +312,8 @@ void eg::FrameManager::drawEditorFrame()
 
 void eg::FrameManager::drawSceneFrame(uint32_t imageIndex)
 {
+	if (!VRen::get().getSceneRenderData().m_Loaded) return;
 	EG_PROFILE_FUNCTION();
-	{
-		EG_PROFILE_SCOPE("Fences wait");
-		vkWaitForFences(VRen::get().getNativeDevice(), 1, &m_SceneRenderImageSafeToDelete[imageIndex], VK_TRUE, UINT64_MAX);
-	}
 	{
 		EG_PROFILE_SCOPE("Scene render: Layout Transition");
 
@@ -339,9 +339,7 @@ void eg::FrameManager::drawSceneFrame(uint32_t imageIndex)
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = &m_SceneRenderFinishedSemaphores[m_CurrentFrameInFlightIndex];
 
-		vkResetFences(VRen::get().getNativeDevice(), 1, &m_SceneRenderImageSafeToDelete[imageIndex]);
-
-		if (vkQueueSubmit((*VRen::get().getDevice().m_GraphicsQueue.GetNativeQueue().get()), 1, &submitInfo, m_SceneRenderImageSafeToDelete[imageIndex]) != VK_SUCCESS) {
+		if (vkQueueSubmit((*VRen::get().getDevice().m_GraphicsQueue.GetNativeQueue().get()), 1, &submitInfo, nullptr) != VK_SUCCESS) {
 			throw std::runtime_error("failed to submit draw command buffer!");
 		}
 	}
@@ -453,7 +451,6 @@ void eg::FrameManager::sceneRecordCommandBuffer(VkCommandBuffer commandBuffer, u
 	renderPassInfo.clearValueCount = 1;
 	renderPassInfo.pClearValues = &clearColor;
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-	VRen::get().getGraphicsPipeline().onViewportResize(commandBuffer, { m_ViewportWidth, m_ViewportHeight });
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getGraphicsPipeline().getNativePipeline());
 
 
@@ -475,10 +472,18 @@ void eg::FrameManager::sceneRecordCommandBuffer(VkCommandBuffer commandBuffer, u
 	scissor.offset = { 0, 0 };
 	scissor.extent = { m_ViewportWidth, m_ViewportHeight };
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getGraphicsPipeline().getPipelineLayout(), 0, 1, &m_ResourceManagerRef->getDescriptorSets()[m_CurrentFrameInFlightIndex], 0, nullptr);
 
+	//vkCmdDrawIndexed(commandBuffer, m_ResourceManagerRef->getIndicesCount(), 1, 0, 0, 0);
 
-	vkCmdDrawIndexed(commandBuffer, m_ResourceManagerRef->getIndicesCount(), 1, 0, 0, 0);
+
+	std::vector<VkBuffer> vertexBufferss = { VRen::get().getSceneRenderData().m_VertexBuffer.m_Buffer.m_Buffer };
+	VkDeviceSize offsetss[] = { 0 };
+	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBufferss.data(), offsetss);
+	vkCmdBindIndexBuffer(commandBuffer, VRen::get().getSceneRenderData().m_IndexBuffer.m_Buffer.m_Buffer, 0, VK_INDEX_TYPE_UINT32);
+	vkCmdDrawIndexed(commandBuffer, VRen::get().getSceneRenderData().m_IndexBuffer.m_IndicesCount, 1, 0, 0, 0);
+
 	vkCmdEndRenderPass(commandBuffer);
 
 	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
@@ -516,11 +521,6 @@ void eg::FrameManager::CreateSyncObjects()
 		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 		for (size_t i = 0; i < std::size(m_SceneRenderFinishedSemaphores) ; i++) {
 			if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_SceneRenderFinishedSemaphores[i]) != VK_SUCCESS){
-				throw std::runtime_error("failed to create semaphores and/or fences! :(");
-			}
-		}
-		for (size_t i = 0; i < std::size(m_SceneRenderImageSafeToDelete); i++) {
-			if (vkCreateFence(device, &fenceInfo, nullptr, &m_SceneRenderImageSafeToDelete[i]) != VK_SUCCESS) {
 				throw std::runtime_error("failed to create semaphores and/or fences! :(");
 			}
 		}

@@ -4,6 +4,7 @@
 #include "Buffer.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
 #include "../Engine-Editor/src/Panels/ConsolePanel.h"
+#include "Buffer.h"
 
 
 namespace eg {

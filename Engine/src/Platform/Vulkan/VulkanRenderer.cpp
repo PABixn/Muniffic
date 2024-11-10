@@ -5,6 +5,7 @@
 #include "Imgui/backends/imgui_impl_vulkan.h"
 #include "Imgui/backends/imgui_impl_glfw.h"
 #include "Renderer/info.h"
+#include "Platform/Vulkan/Renderer/Resources/Scene/SceneRenderData.h"
 eg::VulkanRenderer eg::VRen::vren = VulkanRenderer();
 
 void eg::VulkanRenderer::init()
@@ -28,6 +29,7 @@ void eg::VulkanRenderer::init()
 void eg::VulkanRenderer::cleanUp()
 {
     vkDeviceWaitIdle(m_Device.getNativeDevice());
+    m_CurrentSceneRenderData.unloadScene();
     m_ResourceManager.m_FrameManager.cleanUp();
     m_ResourceManager.cleanUp();
     m_GraphicsPipeline.cleanUp();
@@ -42,6 +44,11 @@ void eg::VulkanRenderer::cleanUp()
 void eg::VulkanRenderer::render()
 {
     m_ResourceManager.m_FrameManager.drawEditorFrame();
+}
+
+void eg::VulkanRenderer::LoadSceneData(const entt::registry& entirtyRegistry)
+{
+    m_CurrentSceneRenderData.loadScene(entirtyRegistry);
 }
 
 void eg::VulkanRenderer::createCommandPoolForOneTimeOperations()

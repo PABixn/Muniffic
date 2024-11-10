@@ -101,15 +101,12 @@ namespace eg
 		
 		if (!m_ActiveScene->GetRegistry().valid(m_HoveredEntity))
 			m_HoveredEntity = Entity({});
-		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-		/*if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
-			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
-			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+		;
+		if (m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y))
 		{
-			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_Camera.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-		}*/
+		}
 
 		if (m_ViewportFocused)
 			m_Camera.OnUpdate(ts);
@@ -134,7 +131,7 @@ namespace eg
 			// Update
 			if (m_ViewportFocused)
 				m_Camera.OnUpdate(ts);
-			//m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 			if (projectOpened) {
 				m_AddResourcePanel->Update(ts);
 			}
@@ -142,7 +139,7 @@ namespace eg
 
 			// Render
 			// Renderer2D::BeginScene(m_EditorCamera);
-			// m_ActiveScene->OnRenderEditor(m_EditorCamera);
+			//m_ActiveScene->OnRenderEditor(m_EditorCamera);
 			// Renderer2D::EndScene();
 			break;
 		}
@@ -446,7 +443,7 @@ namespace eg
 			m_ViewportSize = { viewportSize.x, viewportSize.y };
 			//uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
 			ImTextureID textureID = VRenderer::GetSceneRenderImageID();
-			ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			ImGui::Image(textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 });
 
 
 
@@ -1068,6 +1065,8 @@ namespace eg
 			ScriptEngine::Init();
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
+			VRenderer::LoadScene(m_ActiveScene->GetRegistry());
+			VRenderer::SetEditorCamera(&m_EditorCamera);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 			m_ProjectDirectoryPanel = CreateRef<ProjectDirectoryPanel>();
 			m_ProjectDirectoryPanel->SetContentBrowserPanel(m_ContentBrowserPanel);
