@@ -912,14 +912,29 @@ namespace eg
 					ImGui::OpenPopup("Compilation");
 					//zna1
 				}
+
 				bool open = true;
-				if (ImGui::BeginPopupModal("Compilation", &open))
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+				if (ImGui::BeginPopupModal("Compilation", &open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
 				{
+					ImGui::PushFont(static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_PoppinsRegularFontBig);
+					ImVec2 spacing = ImGui::GetStyle().ItemSpacing;
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+					ImGui::GetStyle().ItemSpacing = ImVec2(10.f, 10.f);
+
 					ImGui::Text(result.c_str());
 					if (ImGui::Button("OK"))
 						ImGui::CloseCurrentPopup();
+
+					ImGui::GetStyle().ItemSpacing = spacing;
+					ImGui::PopStyleVar(2);
+					ImGui::PopFont();
 					ImGui::EndPopup();
 				}
+				ImGui::PopStyleVar(2);
+
 				if (PrettyButton("Add Script"))
 				{
 					ScriptResourceData* data = new ScriptResourceData();
