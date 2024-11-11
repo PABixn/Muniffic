@@ -19,8 +19,6 @@
 #include "Engine/Project/RecentProjectSerializer.h"
 #include "Engine/Project/ScriptSerializer.h"
 #include "IconLoader.h"
-#include <cstdio>
-#include <array>
 #ifdef EG_RELEASE
 #define HELLO "Hello from Release"
 #endif
@@ -949,35 +947,14 @@ namespace eg
 		EG_PROFILE_FUNCTION();
         if (!m_CurrentProject || !Project::GetActive())
 			return "No active project";
-
 		std::filesystem::path projectDirectory =  m_CurrentProject->GetProjectDirectory() / "Assets" / "Scripts";
 		const std::string& projectName = m_CurrentProject->GetProjectName();
 		std::string command = "cd " + projectDirectory.string() + " && cmake -DPROJECT_NAME=" + projectName + " . && cmake --build .";
-
-		std::array<char, 128> buffer;
-		std::string result;
-
-		FILE* pipe = _popen(command.c_str(), "r");
-		if (!pipe) {
-			ConsolePanel::Log("Failed to open pipe for script compilation", ConsolePanel::LogType::Error);
-			return "Failed to open pipe for script compilation due to system error";
-		}
-
-		while (fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
-			result += buffer.data();
-		}
-		int returnCode = _pclose(pipe);
-
-		if (returnCode != 0) { 
-			ConsolePanel::Log("Compilation failed: " + result, ConsolePanel::LogType::Error);
-			return "Compilation failed. Look into console for more information."; 
-		}
-
-		/*if (system(command.c_str()) != 0)
+		if (system(command.c_str()) != 0)
 		{ 
 			ConsolePanel::Log("Compilation failed.", ConsolePanel::LogType::Error);
 			return "Compilation failed. Look into console for more information."; 
-		}*/
+		}
 		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetScriptModulePath();
 		ScriptEngine::ReloadAssembly();
 		EG_TRACE("Compilation of Custom Scripts succeded");

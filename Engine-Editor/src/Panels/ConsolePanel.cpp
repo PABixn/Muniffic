@@ -27,24 +27,36 @@ namespace eg {
             switch (log->logType) {
             case LogType::Info:
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
                 ImGui::Button("INFO##xx");
-                ImGui::PopStyleColor();
+                ImGui::PopStyleColor(3);
                 ImGui::SameLine();
+                ImGui::PushTextWrapPos(0.0f);
                 ImGui::Text(log->message.c_str());
+                ImGui::PopTextWrapPos();
                 break;
             case LogType::Warning:
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5f, 0.5f, 0.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.5f, 0.0f, 1.0f));
                 ImGui::Button("WARNING##xx");
-                ImGui::PopStyleColor();
+                ImGui::PopStyleColor(3);
                 ImGui::SameLine();
+                ImGui::PushTextWrapPos(0.0f);
                 ImGui::Text(log->message.c_str());
+                ImGui::PopTextWrapPos();
                 break;
             case LogType::Error:
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
                 ImGui::Button("ERROR##xx");
-                ImGui::PopStyleColor();
+                ImGui::PopStyleColor(3);
                 ImGui::SameLine();
+                ImGui::PushTextWrapPos(0.0f);
                 ImGui::Text(log->message.c_str());
+				ImGui::PopTextWrapPos();
                 break;
             }
         }
