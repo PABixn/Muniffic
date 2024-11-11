@@ -2,16 +2,6 @@
 #include "Platform/Vulkan/VulkanRenderer.h"
 #include "ResourceManager.h"
 
-std::vector<eg::VulkanVertex> eg::Vertices = {
-	{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-	{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-	{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-	{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
-};
-std::vector<uint16_t> eg::Indices = {
-	0, 1, 2, 2, 3, 0
-};
-
 // Helper
 uint32_t eg::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
 	VkPhysicalDeviceMemoryProperties memProperties;
@@ -69,19 +59,6 @@ void eg::ResourceManager::DestroyBuffer(VulkanBuffer& buffer)
 
 void eg::ResourceManager::LoadModel(const char* path)
 {
-	VulkanBuffer stagingBuffer = createBuffer(Vertices.size() * sizeof(VulkanVertex), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-	copyDataToBuffer(stagingBuffer, (void*)Vertices.data());
-	copyBuffer(stagingBuffer, m_VertexBuffer.m_Buffer, Vertices.size() * sizeof(VulkanVertex));
-	DestroyBuffer(stagingBuffer);
-
-
-	VulkanBuffer stagingBufferIndex = createBuffer(Indices.size() * sizeof(Indices[0]), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-	copyDataToBuffer(stagingBufferIndex, (void*)Indices.data());
-	copyBuffer(stagingBufferIndex, m_IndexBuffer, Indices.size() * sizeof(Indices[0]));
-	DestroyBuffer(stagingBufferIndex);
-
-	m_IndicesCount = Indices.size();
-	m_VertexBuffer.m_VerticesCount = Vertices.size();
 	m_ModelLoaded = true;
 }
 
@@ -112,9 +89,6 @@ void eg::ResourceManager::copyBuffer(VulkanBuffer& srcBuffer, VulkanBuffer& dest
 void eg::ResourceManager::init()
 {
 	m_DescriptorManager.init(this);
-	m_VertexBuffer.m_Buffer = createBuffer(Vertices.size() * sizeof(VulkanVertex), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-	m_IndexBuffer = createBuffer(Indices.size() * sizeof(Indices[0]), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-	LoadModel("just test");
 	m_TextureManager.init();
 
 }

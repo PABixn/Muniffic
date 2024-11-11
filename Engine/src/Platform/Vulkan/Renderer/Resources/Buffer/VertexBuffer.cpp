@@ -6,14 +6,14 @@ bool eg::VulkanVertexBuffer::addBasic2DObjectVertices(ObjectRenderData* objectTo
 {
 	if (objectToAdd->m_Update == RenderUpdate_Created)
 	{
-		if (m_LastOffset + (objectToAdd->m_VerticesCount * sizeof(VulkanVertex)) <= m_Buffer.m_Size)
+		if (m_LastOffset + (objectToAdd->m_VerticesCount * sizeof(VulkanBasicMeshVertex)) <= m_Buffer.m_Size)
 		{
 			objectToAdd->m_VertexBufferOffset = m_LastOffset;
 			uintptr_t srcAddress = reinterpret_cast<uintptr_t>(m_Mapped);
 			uintptr_t incrementedAddress = srcAddress + m_LastOffset;
 			void* whereStart = reinterpret_cast<void*>(incrementedAddress);
-			memcpy(whereStart, verticesData, objectToAdd->m_VerticesCount * sizeof(VulkanVertex));
-			m_LastOffset += objectToAdd->m_VerticesCount * sizeof(VulkanVertex);
+			memcpy(whereStart, verticesData, objectToAdd->m_VerticesCount * sizeof(VulkanBasicMeshVertex));
+			m_LastOffset += objectToAdd->m_VerticesCount * sizeof(VulkanBasicMeshVertex);
 			m_VerticesCount += objectToAdd->m_VerticesCount;
 			objectToAdd->m_VertexBuffer = this;
 			return true;
@@ -26,8 +26,9 @@ bool eg::VulkanVertexBuffer::addBasic2DObjectVertices(ObjectRenderData* objectTo
 	return false;
 }
 
-void eg::VulkanVertexBuffer::create(size_t size)
+void eg::VulkanVertexBuffer::create(size_t size, VertexType vertexType)
 {
+	m_VertexType = vertexType;
 	m_Buffer.Create(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	VkResult res = vkMapMemory(VRen::get().getNativeDevice(), m_Buffer.m_Memory, 0, m_Buffer.m_Size, 0, &m_Mapped);
 	EG_ASSERT(res == 0);

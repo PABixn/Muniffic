@@ -40,10 +40,10 @@ void eg::GraphicsPipeline::init()
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertexInputInfo.vertexBindingDescriptionCount = 1;
-	VkVertexInputBindingDescription vertexBindDesc = VulkanVertex::getBindingDescription();
+	VkVertexInputBindingDescription vertexBindDesc = VulkanBasicMeshVertex::getBindingDescription();
 	vertexInputInfo.pVertexBindingDescriptions = &vertexBindDesc;
-	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(VulkanVertex::getAttributeDescriptions().size());
-	vertexInputInfo.pVertexAttributeDescriptions = VulkanVertex::getAttributeDescriptions().data();
+	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(VulkanBasicMeshVertex::getAttributeDescriptions().size());
+	vertexInputInfo.pVertexAttributeDescriptions = VulkanBasicMeshVertex::getAttributeDescriptions().data();
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

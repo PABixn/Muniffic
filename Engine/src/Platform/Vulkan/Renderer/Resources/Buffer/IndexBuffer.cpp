@@ -16,6 +16,7 @@ bool eg::VulkanIndexBuffer::addBasic2DObjectIndices(ObjectRenderData* objectToAd
 			m_LastOffset += objectToAdd->m_IndicesCount * sizeof(uint32_t);
 			objectToAdd->m_IndexBuffer = this;
 			objectToAdd->m_Update = RenderUpdate_None;
+			m_IndicesCount += objectToAdd->m_IndicesCount;
 			return true;
 		}
 		else

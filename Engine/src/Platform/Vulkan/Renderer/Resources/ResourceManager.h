@@ -8,8 +8,6 @@
 #include <glm/mat4x4.hpp>
 #include "Buffer/VertexBuffer.h"
 namespace eg {
-	extern std::vector<VulkanVertex> Vertices;
-	extern std::vector<uint16_t> Indices;
 	
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 	class ResourceManager

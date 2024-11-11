@@ -454,12 +454,6 @@ void eg::FrameManager::sceneRecordCommandBuffer(VkCommandBuffer commandBuffer, u
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getGraphicsPipeline().getNativePipeline());
 
 
-	std::vector<VkBuffer> vertexBuffers =  m_ResourceManagerRef->getVertexBuffers();
-	VkDeviceSize offsets[] = { 0 };
-	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers.data(), offsets);
-	vkCmdBindIndexBuffer(commandBuffer, m_ResourceManagerRef->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
-
-
 	VkViewport viewport{};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
@@ -475,7 +469,6 @@ void eg::FrameManager::sceneRecordCommandBuffer(VkCommandBuffer commandBuffer, u
 
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getGraphicsPipeline().getPipelineLayout(), 0, 1, &m_ResourceManagerRef->getDescriptorSets()[m_CurrentFrameInFlightIndex], 0, nullptr);
 
-	//vkCmdDrawIndexed(commandBuffer, m_ResourceManagerRef->getIndicesCount(), 1, 0, 0, 0);
 
 
 	std::vector<VkBuffer> vertexBufferss = { VRen::get().getSceneRenderData().m_VertexBuffer.m_Buffer.m_Buffer };

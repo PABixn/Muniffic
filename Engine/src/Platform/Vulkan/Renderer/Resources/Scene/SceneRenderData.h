@@ -37,7 +37,7 @@ namespace eg {
 		~SceneRenderData() {  };
 		void loadScene(const entt::registry& entityRegistry);
 		void unloadScene();
-		ObjectRenderData addSquare(const glm::vec3& color);
+		ObjectRenderData addSquare();
 		VulkanVertexBuffer m_VertexBuffer;
 		VulkanIndexBuffer m_IndexBuffer;
 	private:
