@@ -1,10 +1,10 @@
 #include "VertexBuffer.h"
-#include "Platform/Vulkan/Renderer/Resources/Scene/SceneRenderData.h"
+#include "Platform/Vulkan/Renderer/Resources/Scene/ObjectRenderData.h"
 #include "Platform/Vulkan/Renderer/Resources/Vertex/Vertex.h"
 #include "VulkanRenderer.h"
 bool eg::VulkanVertexBuffer::addBasic2DObjectVertices(ObjectRenderData* objectToAdd, void* verticesData)
 {
-	if (objectToAdd->m_Update == RenderUpdate_Created)
+	if ((objectToAdd->m_Update & RenderUpdate::Created) != RenderUpdate::None)
 	{
 		if (m_LastOffset + (objectToAdd->m_VerticesCount * sizeof(VulkanBasicMeshVertex)) <= m_Buffer.m_Size)
 		{

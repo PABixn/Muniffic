@@ -1,10 +1,10 @@
 #include "IndexBuffer.h"
-#include "Platform/Vulkan/Renderer/Resources/Scene/SceneRenderData.h"
+#include "Platform/Vulkan/Renderer/Resources/Scene/ObjectRenderData.h"
 #include "Platform/Vulkan/Renderer/Resources/Vertex/Vertex.h"
 #include "VulkanRenderer.h"
 bool eg::VulkanIndexBuffer::addBasic2DObjectIndices(ObjectRenderData* objectToAdd, void* indicesData)
 {
-	if (objectToAdd->m_Update == RenderUpdate_Created)
+	if ((objectToAdd->m_Update & RenderUpdate::Created) != RenderUpdate::None)
 	{
 		if (m_LastOffset + (objectToAdd->m_IndicesCount * sizeof(uint32_t)) <= m_Buffer.m_Size)
 		{
@@ -15,7 +15,6 @@ bool eg::VulkanIndexBuffer::addBasic2DObjectIndices(ObjectRenderData* objectToAd
 			memcpy(whereStart, indicesData, objectToAdd->m_IndicesCount * sizeof(uint32_t));
 			m_LastOffset += objectToAdd->m_IndicesCount * sizeof(uint32_t);
 			objectToAdd->m_IndexBuffer = this;
-			objectToAdd->m_Update = RenderUpdate_None;
 			m_IndicesCount += objectToAdd->m_IndicesCount;
 			return true;
 		}

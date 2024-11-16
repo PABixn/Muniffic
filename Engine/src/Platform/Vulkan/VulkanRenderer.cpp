@@ -21,6 +21,7 @@ void eg::VulkanRenderer::init()
     createRenderPass();
     m_SwapChain.createFrameBuffers();
     m_ResourceManager.init();
+    m_CurrentSceneRenderData.createBuffers(4, 10);
     m_GraphicsPipeline.init();
     m_ResourceManager.m_FrameManager.init(&m_ResourceManager);
     EG_TRACE("Vulkan Renderer initialization Succesful");

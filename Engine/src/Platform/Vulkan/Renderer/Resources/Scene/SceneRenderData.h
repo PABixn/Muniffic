@@ -4,29 +4,12 @@
 #include <vector>
 #include "Platform/Vulkan/Renderer/Resources/Buffer/VertexBuffer.h"
 #include "Platform/Vulkan/Renderer/Resources/Buffer/IndexBuffer.h"
+#include "Platform/Vulkan/Renderer/Resources/Buffer/SSBuffer.h"
 #include "Platform/Vulkan/Renderer/Resources/Vertex/Vertex.h"
+#include "Platform/Vulkan/Renderer/Resources/Descriptors/MatrixBufferDescriptorHelper.h"
+#include "ObjectRenderData.h"
 namespace eg {
 	struct VulkanVertexBuffer;
-
-	enum RenderUpdate
-	{
-		RenderUpdate_None = 0,
-		RenderUpdate_Created,
-		RenderUpdate_VerticesSizeChanged,
-		RenderUpdate_ValueChanged
-	};
-	struct ObjectRenderData {
-		RenderUpdate m_Update;
-		VulkanVertexBuffer* m_VertexBuffer;
-		uint64_t m_VertexBufferOffset;
-		uint32_t m_VerticesCount;
-		VulkanIndexBuffer* m_IndexBuffer;
-		uint64_t m_IndexBufferOffset;
-		uint32_t m_IndicesCount;
-
-	};
-
-
 
 	class SceneRenderData
 	{
@@ -37,10 +20,13 @@ namespace eg {
 		~SceneRenderData() {  };
 		void loadScene(const entt::registry& entityRegistry);
 		void unloadScene();
+		void createBuffers(size_t verticesPerObject, size_t numberOfObjects = 10);
 		ObjectRenderData addSquare();
+		void AddObjectToBuffers(ObjectRenderData& objRenderData, void* verticesData, void* indicesData, void* matricesData = nullptr);
+		MatrixBufferDescriptorHelper& getMatrixBufferDescriptorHelper(){ return m_DescriptorHelper; }
 		VulkanVertexBuffer m_VertexBuffer;
 		VulkanIndexBuffer m_IndexBuffer;
-	private:
-		
+		VulkanShaderStorageBuffer m_SSBO;
+		MatrixBufferDescriptorHelper m_DescriptorHelper;
 	};
 }

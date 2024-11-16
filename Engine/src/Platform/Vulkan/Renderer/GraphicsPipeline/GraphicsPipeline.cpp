@@ -129,8 +129,8 @@ void eg::GraphicsPipeline::init()
 	scissor.extent = VRen::get().getSwapChain().getSwapChainExtent();
 
 	std::vector<VkDynamicState> dynamicStates = {
-	VK_DYNAMIC_STATE_VIEWPORT,
-	VK_DYNAMIC_STATE_SCISSOR
+		VK_DYNAMIC_STATE_VIEWPORT,
+		VK_DYNAMIC_STATE_SCISSOR
 	};
 
 	VkPipelineDynamicStateCreateInfo dynamicState{};
@@ -147,8 +147,9 @@ void eg::GraphicsPipeline::init()
 
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	pipelineLayoutInfo.setLayoutCount = 1;
-	pipelineLayoutInfo.pSetLayouts = &VRen::get().getResourceManager().getDescriptorSetLayout();
+	pipelineLayoutInfo.setLayoutCount = 2;
+	VkDescriptorSetLayout layouts[] = { VRen::get().getResourceManager().getDescriptorSetLayout(), VRen::get().getSceneRenderData().getMatrixBufferDescriptorHelper().getDescriptorSetLayout() };
+	pipelineLayoutInfo.pSetLayouts = layouts;
 	pipelineLayoutInfo.pushConstantRangeCount = 0;
 	pipelineLayoutInfo.pPushConstantRanges = nullptr;
 

@@ -467,7 +467,8 @@ void eg::FrameManager::sceneRecordCommandBuffer(VkCommandBuffer commandBuffer, u
 	scissor.extent = { m_ViewportWidth, m_ViewportHeight };
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getGraphicsPipeline().getPipelineLayout(), 0, 1, &m_ResourceManagerRef->getDescriptorSets()[m_CurrentFrameInFlightIndex], 0, nullptr);
+	VkDescriptorSet sets[] = { m_ResourceManagerRef->getDescriptorSets()[m_CurrentFrameInFlightIndex], VRen::get().getSceneRenderData().getMatrixBufferDescriptorHelper().m_DescriptorSet };
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getGraphicsPipeline().getPipelineLayout(), 0, 2, sets, 0, nullptr);
 
 
 
