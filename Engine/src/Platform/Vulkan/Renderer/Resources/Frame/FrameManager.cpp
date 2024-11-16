@@ -476,7 +476,7 @@ void eg::FrameManager::sceneRecordCommandBuffer(VkCommandBuffer commandBuffer, u
 	VkDeviceSize offsetss[] = { 0 };
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBufferss.data(), offsetss);
 	vkCmdBindIndexBuffer(commandBuffer, VRen::get().getSceneRenderData().m_IndexBuffer.m_Buffer.m_Buffer, 0, VK_INDEX_TYPE_UINT32);
-	vkCmdDrawIndexed(commandBuffer, VRen::get().getSceneRenderData().m_IndexBuffer.m_IndicesCount, 1, 0, 0, 0);
+	vkCmdDrawIndexed(commandBuffer, VRen::get().getSceneRenderData().m_IndexBuffer.m_IndicesCount, VRen::get().getSceneRenderData().m_SSBO.m_InstancesCount, 0, 0, 0);
 
 	vkCmdEndRenderPass(commandBuffer);
 

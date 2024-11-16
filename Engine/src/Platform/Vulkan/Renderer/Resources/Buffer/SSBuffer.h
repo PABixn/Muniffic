@@ -2,8 +2,9 @@
 #include "Platform/Vulkan/Renderer/Resources/Buffer.h"
 namespace eg {
 	struct ObjectRenderData;
-	struct ObjectMatrixData {
+	struct alignas(16) ObjectMatrixData {
 		glm::vec3 color;
+		uint32_t padding;
 		glm::mat4 model;
 	};
 	class VulkanShaderStorageBuffer

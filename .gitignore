@@ -71,6 +71,7 @@ CMakeFiles/
 **.dir/
 !Dependencies.cmake
 CMakeCache.txt
+!VulkanSDK.cmake
 
 # Projects
 Engine-Editor/Projects/*

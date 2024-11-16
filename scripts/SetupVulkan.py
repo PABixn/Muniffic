@@ -67,5 +67,5 @@ class VulkanConfiguration:
         
         return shadercdLib.exists()
 
-if __name__ == "__main__":
-    VulkanConfiguration.Validate()
+#if __name__ == "__main__":
+    #VulkanConfiguration.Validate()

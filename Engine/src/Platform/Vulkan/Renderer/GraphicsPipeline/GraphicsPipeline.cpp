@@ -147,8 +147,8 @@ void eg::GraphicsPipeline::init()
 
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	pipelineLayoutInfo.setLayoutCount = 2;
 	VkDescriptorSetLayout layouts[] = { VRen::get().getResourceManager().getDescriptorSetLayout(), VRen::get().getSceneRenderData().getMatrixBufferDescriptorHelper().getDescriptorSetLayout() };
+	pipelineLayoutInfo.setLayoutCount = sizeof(layouts) / sizeof(layouts[0]);
 	pipelineLayoutInfo.pSetLayouts = layouts;
 	pipelineLayoutInfo.pushConstantRangeCount = 0;
 	pipelineLayoutInfo.pPushConstantRanges = nullptr;

@@ -14,6 +14,7 @@ void eg::MatrixBufferDescriptorHelper::init()
 
 	vkCreateDescriptorPool(VRen::get().getNativeDevice(), &poolInfo, nullptr, &m_DescriptorPool);
 
+
 	VkDescriptorSetLayoutBinding layoutBinding = {};
 	layoutBinding.binding = 1;
 	layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
@@ -25,8 +26,9 @@ void eg::MatrixBufferDescriptorHelper::init()
 	layoutInfo.bindingCount = 1;
 	layoutInfo.pBindings = &layoutBinding;
 
-	vkCreateDescriptorSetLayout(VRen::get().getNativeDevice(), &layoutInfo, nullptr, &m_DescriptorSetLayout);
-	
+	VkResult res = vkCreateDescriptorSetLayout(VRen::get().getNativeDevice(), &layoutInfo, nullptr, &m_DescriptorSetLayout);
+	EG_ASSERT(res == VK_SUCCESS);
+
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = m_DescriptorPool;
@@ -34,12 +36,10 @@ void eg::MatrixBufferDescriptorHelper::init()
 	allocInfo.pSetLayouts = &m_DescriptorSetLayout;
 
 	vkAllocateDescriptorSets(VRen::get().getNativeDevice(), &allocInfo, &m_DescriptorSet);
-
 }
 
 void eg::MatrixBufferDescriptorHelper::cleanup()
 {
-	vkFreeDescriptorSets(VRen::get().getNativeDevice(), m_DescriptorPool, m_DescriptorSetCount, &m_DescriptorSet);
 	vkDestroyDescriptorSetLayout(VRen::get().getNativeDevice(), m_DescriptorSetLayout, nullptr);
 	vkDestroyDescriptorPool(VRen::get().getNativeDevice(), m_DescriptorPool, nullptr);
 }

@@ -26,6 +26,12 @@ void eg::SceneRenderData::unloadScene()
 
     if (m_IndexBuffer.m_Buffer.m_Buffer != nullptr)
         m_IndexBuffer.destroy();
+
+    if (m_SSBO.m_Buffer.m_Buffer != nullptr)
+        m_SSBO.destroy();
+
+    if (m_DescriptorHelper.getDescriptorSetLayout() != nullptr)
+        m_DescriptorHelper.cleanup();
 }
 
 void eg::SceneRenderData::createBuffers(size_t verticesPerObject, size_t numberOfObjects)
@@ -71,6 +77,7 @@ void eg::SceneRenderData::AddObjectToBuffers(ObjectRenderData& objRenderData, vo
         ObjectMatrixData matrixData = {};
         matrixData.color = glm::vec3(1.f, 1.f, 1.f);
         matrixData.model = glm::mat4(1);
+        //matrixData.model = glm::transpose(matrixData.model);
         m_SSBO.addBasic2DObjectModelMatrix(&objRenderData, &matrixData);
     }
     else
