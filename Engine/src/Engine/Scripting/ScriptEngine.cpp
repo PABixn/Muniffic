@@ -559,6 +559,24 @@ namespace eg
 		}
 	}
 
+	void ScriptEngine::OnFixedUpdateEntity(Entity entity, Timestep ts)
+	{
+		EG_PROFILE_FUNCTION();
+		UUID entityID = entity.GetUUID();
+		if (s_Data->EntityInstances.find(entityID) != s_Data->EntityInstances.end())
+		{
+			for (auto& [key, value] : s_Data->EntityInstances.at(entityID))
+				if (ResourceDatabase::IsScriptEnabled(value->GetUUID()) && s_Data->SceneContext->EntityExists(entityID))
+					value->InvokeOnFixedUpdate(ts);
+			/*Ref<ScriptInstance> instance = s_Data->EntityInstances[entityID];
+			instance->InvokeOnUpdate(ts);*/
+		}
+		else
+		{
+			EG_CORE_ERROR("Couldn't find script instance for entity {}!", entityID);
+		}
+	}
+
 	Scene *ScriptEngine::GetSceneContext()
 	{
         EG_PROFILE_FUNCTION();
@@ -662,6 +680,7 @@ namespace eg
 		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
 		m_OnCreateMethod = m_ScriptClass->GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = m_ScriptClass->GetMethod("OnUpdate", 1);
+		m_OnFixedUpdateMethod = m_ScriptClass->GetMethod("OnFixedUpdate", 0);
 		m_OnCollisionEnterMethod = m_ScriptClass->GetMethod("OnCollisionEnter", 1);
 		m_OnCollisionExitMethod = m_ScriptClass->GetMethod("OnCollisionExit", 1);
 		m_OnKeyPress = m_ScriptClass->GetMethod("OnKeyPress", 1);
@@ -702,6 +721,16 @@ namespace eg
 		if (m_OnUpdateMethod)
 		{
 			void *arg = &ts;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &arg);
+		}
+	}
+
+	void ScriptInstance::InvokeOnFixedUpdate(float ts)
+	{
+		EG_PROFILE_FUNCTION();
+		if (m_OnUpdateMethod)
+		{
+			void* arg = &ts;
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &arg);
 		}
 	}

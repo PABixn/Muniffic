@@ -364,7 +364,7 @@ namespace eg
         internal extern static B2transform RigidBody2DComponent_GetTransform(long iD);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void RigidBody2DComponent_SetTransform(long iD, B2transform transform);
+        internal extern static void RigidBody2DComponent_SetTransform(long iD, Vector2 position, float angle);
 
         //[MethodImplAttribute(MethodImplOptions.InternalCall)]
        // internal extern static ref Entity RigidBody2DComponent_GetUserData(long iD);

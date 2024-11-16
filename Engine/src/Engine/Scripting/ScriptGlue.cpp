@@ -1687,6 +1687,13 @@ namespace eg
 		return (b2CircleShape*)fixture->GetShape();
 	}
 
+	static b2PolygonShape* GetShapeFromPolyCollider2DComponent(const PolyCollider2DComponent& polyCollider)
+	{
+		EG_PROFILE_FUNCTION();
+		b2Fixture* fixture = (b2Fixture*)polyCollider.RuntimeFixture;
+		return (b2PolygonShape*)fixture->GetShape();
+	}
+
 	static bool BoxCollider2DComponent_CollidesWith(UUID uuid, UUID other)
 	{
 		EG_PROFILE_FUNCTION();
@@ -1715,6 +1722,13 @@ namespace eg
 			const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
 			const auto& bodyB = (b2Body*)rigidBodyB.RuntimeBody;
 			return b2TestOverlap(GetShapeFromBoxCollider2DComponent(colliderA), 0, GetShapeFromCircleCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
+		}
+		else if (entityB.HasComponent<PolyCollider2DComponent>())
+		{
+			const auto& colliderB = entityB.GetComponent<PolyCollider2DComponent>();
+			const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+			const auto& bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+			return b2TestOverlap(GetShapeFromBoxCollider2DComponent(colliderA), 0, GetShapeFromPolyCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
 		}
 
 		return false;
@@ -1789,14 +1803,29 @@ namespace eg
 		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(colliderA), 0,GetShapeFromCircleCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
 	}
 
-	//static bool BoxCollider2DComponent_CollidesWithPolygon(UUID uuid, MonoArray *points)
-	//{
-	//	Scene *scene = ScriptEngine::GetSceneContext();
-	//	Entity entity = scene->GetEntityByUUID(uuid);
-	//	std::vector<glm::vec2> polygon;
-	//	Utils::MonoArrayToVector(points, polygon);
-	//	return entity.GetComponent<BoxCollider2DComponent>().CollidesWith(polygon);
-	//}
+	static bool BoxCollider2DComponent_CollidesWithPolygon(UUID uuid, UUID other)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+		Entity entityB = scene->GetEntityByUUID(other);
+
+
+		if (!entityA || !entityB || !entityA.HasComponent<BoxCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>() || !entityB.HasComponent<PolyCollider2DComponent>() || !entityB.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<BoxCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		const auto& colliderB = entityB.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+		b2Body* bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body A in BoxCollider2DComponent_CollidesWithPolygon is null");
+		EG_CORE_ASSERT(bodyB, "Body B in BoxCollider2DComponent_CollidesWithPolygon is null");
+
+		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(colliderA), 0, GetShapeFromPolyCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
+	}
 
 	static bool BoxCollider2DComponent_CollidesWithEdge(UUID uuid, UUID other, Side side)
 	{
@@ -2161,9 +2190,31 @@ namespace eg
 		return b2TestOverlap(GetShapeFromCircleCollider2DComponent(colliderA), 0, GetShapeFromBoxCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
 	}
 
-	//static bool CircleCollider2DComponent_CollidesWithPolygon(UUID uuid, MonoArray *points)
-	//{
-	//}
+	static bool CircleCollider2DComponent_CollidesWithPolygon(UUID uuid, UUID other)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+		Entity entityB = scene->GetEntityByUUID(other);
+
+		{
+			if (!entityA || !entityB || !entityA.HasComponent<CircleCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>() || !entityB.HasComponent<PolyCollider2DComponent>() || !entityB.HasComponent<RigidBody2DComponent>())
+				return false;
+		}
+
+		const auto& colliderA = entityA.GetComponent<CircleCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		const auto& colliderB = entityB.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+		b2Body* bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body A in CircleCollider2DComponent_CollidesWithPolygon is null");
+		EG_CORE_ASSERT(bodyB, "Body B in CircleCollider2DComponent_CollidesWithPolygon is null");
+
+		return b2TestOverlap(GetShapeFromCircleCollider2DComponent(colliderA), 0, GetShapeFromPolyCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
+	}
 
 	static bool CircleCollider2DComponent_CollidesWithEdge(UUID uuid, UUID other, Side side)
 	{
@@ -2287,6 +2338,479 @@ namespace eg
 
 
 #pragma endregion
+
+	#pragma region PolyCollider2D		
+	static void PolyCollider2DComponent_GetOffset(UUID uuid, glm::vec2* outOffset)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		*outOffset = entity.GetComponent<PolyCollider2DComponent>().Offset;
+	}
+
+	static void PolyCollider2DComponent_SetOffset(UUID uuid, glm::vec2* offset)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<PolyCollider2DComponent>().Offset = *offset;
+	}
+
+	static void PolyCollider2DComponent_GetSize(UUID uuid, glm::vec2* outSize)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		*outSize = entity.GetComponent<PolyCollider2DComponent>().Size;
+	}
+
+	static void PolyCollider2DComponent_SetSize(UUID uuid, glm::vec2* size)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<PolyCollider2DComponent>().Size = *size;
+	}
+
+	static float PolyCollider2DComponent_GetDensity(UUID uuid)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<PolyCollider2DComponent>().Density;
+	}
+
+	static void PolyCollider2DComponent_SetDensity(UUID uuid, float density)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<PolyCollider2DComponent>().Density = density;
+	}
+
+	static float PolyCollider2DComponent_GetFriction(UUID uuid)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<PolyCollider2DComponent>().Friction;
+	}
+
+	static void PolyCollider2DComponent_SetFriction(UUID uuid, float friction)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<PolyCollider2DComponent>().Friction = friction;
+	}
+
+	static float PolyCollider2DComponent_GetRestitution(UUID uuid)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<PolyCollider2DComponent>().Restitution;
+	}
+
+	static void PolyCollider2DComponent_SetRestitution(UUID uuid, float restitution)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<PolyCollider2DComponent>().Restitution = restitution;
+	}
+
+	static float PolyCollider2DComponent_GetRestitutionThreshold(UUID uuid)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<PolyCollider2DComponent>().RestitutionThreshold;
+	}
+
+	static void PolyCollider2DComponent_SetRestitutionThreshold(UUID uuid, float restitutionThreshold)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		entity.GetComponent<PolyCollider2DComponent>().RestitutionThreshold = restitutionThreshold;
+	}
+
+	static bool PolyCollider2DComponent_IsSensor(UUID uuid)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		return entity.GetComponent<PolyCollider2DComponent>().IsSensor;
+	}
+
+	//TODO: Implement creating a new fixture for the box collider
+	static void PolyCollider2DComponent_SetSensor(UUID uuid, bool isSensor)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(uuid);
+		auto& pc = entity.GetComponent<PolyCollider2DComponent>();
+		pc.IsSensor = isSensor;
+
+		if (!entity.HasComponent<RigidBody2DComponent>())
+			return;
+
+		const auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+		const auto& transform = entity.GetComponent<TransformComponent>();
+
+		Utils::RecreateFixture(rb2d, pc, transform);
+	}
+
+	static const b2EdgeShape& Getb2EdgeShapeFromPolygon(const PolyCollider2DComponent& collider, Scene* scene, int edgeId)
+	{
+		EG_PROFILE_FUNCTION();
+		b2EdgeShape edge;
+
+		//b2Vec2* verticesPtr = &vertices;
+
+		b2Vec2 vertex1 = b2Vec2(collider.Vertices.at(edgeId).x, collider.Vertices.at(edgeId).y);
+		if (edgeId = collider.VertexCount - 1)
+		{
+			b2Vec2 vertex2 = b2Vec2(collider.Vertices.at(0).x, collider.Vertices.at(0).y);
+			edge.SetTwoSided(vertex1, vertex2);
+		}
+		else
+		{
+			b2Vec2 vertex2 = b2Vec2(collider.Vertices.at(edgeId + 1).x, collider.Vertices.at(edgeId + 1).y);
+			edge.SetTwoSided(vertex1, vertex2);
+		}
+
+		return edge;
+	}
+
+	//static b2PolygonShape* GetShapeFromPolyCollider2DComponent(const PolyCollider2DComponent& polyCollider)
+	//{
+	//	EG_PROFILE_FUNCTION();
+	//	b2Fixture* fixture = (b2Fixture*)polyCollider.RuntimeFixture;
+	//	return (b2PolygonShape*)fixture->GetShape();
+	//}
+
+	static bool PolyCollider2DComponent_CollidesWith(UUID uuid, UUID other)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+		Entity entityB = scene->GetEntityByUUID(other);
+
+		if (!entityB || !entityA || !entityA.HasComponent<RigidBody2DComponent>() || !entityB.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+
+		const auto& bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+
+		if (entityB.HasComponent<PolyCollider2DComponent>())
+		{
+			const auto& colliderB = entityB.GetComponent<PolyCollider2DComponent>();
+			const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+			const auto& bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+			return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, GetShapeFromPolyCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
+		}
+		else if (entityB.HasComponent<CircleCollider2DComponent>())
+		{
+			const auto& colliderB = entityB.GetComponent<CircleCollider2DComponent>();
+			const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+			const auto& bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+			return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, GetShapeFromCircleCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
+		}
+
+		else if (entityB.HasComponent<BoxCollider2DComponent>())
+		{
+			const auto& colliderB = entityB.GetComponent<BoxCollider2DComponent>();
+			const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+			const auto& bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+			return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, GetShapeFromBoxCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
+		}
+		else if (entityB.HasComponent<PolyCollider2DComponent>())
+		{
+			const auto& colliderB = entityB.GetComponent<PolyCollider2DComponent>();
+			const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+			const auto& bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+			return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, GetShapeFromPolyCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
+		}
+
+		return false;
+	}
+
+	static bool PolyCollider2DComponent_CollidesWithBox(UUID uuid, UUID other)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+		Entity entityB = scene->GetEntityByUUID(other);
+
+		if (!entityA || !entityB || !entityA.HasComponent<PolyCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>() || !entityB.HasComponent<BoxCollider2DComponent>() || !entityB.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& collider = entityA.GetComponent<PolyCollider2DComponent>();
+		const auto& colliderB = entityB.GetComponent<BoxCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+		b2Body* bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body A in PolyCollider2DComponent_CollidesWithBox is null");
+		EG_CORE_ASSERT(bodyB, "Body B in PolyCollider2DComponent_CollidesWithBox is null");
+
+		return b2TestOverlap(GetShapeFromPolyCollider2DComponent(collider), 0, GetShapeFromBoxCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
+	}
+
+	static bool PolyCollider2DComponent_CollidesWithPoint(UUID uuid, glm::vec2* point)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+
+		if (!entityA || !entityA.HasComponent<PolyCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body A in PolyCollider2DComponent_CollidesWithPoint is null");
+
+		b2PolygonShape pointShape;
+		pointShape.SetAsBox(0.0001f, 0.0001f, b2Vec2(0, 0), 0);
+
+		return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, &pointShape, 0, bodyA->GetTransform(), b2Transform(b2Vec2(point->x, point->y), b2Rot(0)));
+	}
+
+	static bool PolyCollider2DComponent_CollidesWithCircle(UUID uuid, UUID other)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+		Entity entityB = scene->GetEntityByUUID(other);
+
+		if (!entityA || !entityB || !entityA.HasComponent<PolyCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>() || !entityB.HasComponent<CircleCollider2DComponent>() || !entityB.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		const auto& colliderB = entityB.GetComponent<CircleCollider2DComponent>();
+		const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+		b2Body* bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body A in PolyCollider2DComponent_CollidesWithCircle is null");
+		EG_CORE_ASSERT(bodyB, "Body B in PolyCollider2DComponent_CollidesWithCircle is null");
+
+		return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, GetShapeFromCircleCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
+	}
+
+	static bool PolyCollider2DComponent_CollidesWithPolygon(UUID uuid, UUID other)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+		Entity entityB = scene->GetEntityByUUID(other);
+
+
+		if (!entityA || !entityB || !entityA.HasComponent<PolyCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>() || !entityB.HasComponent<PolyCollider2DComponent>() || !entityB.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		const auto& colliderB = entityB.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+		b2Body* bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body A in PolyCollider2DComponent_CollidesWithPolygon is null");
+		EG_CORE_ASSERT(bodyB, "Body B in PolyCollider2DComponent_CollidesWithPolygon is null");
+
+		return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, GetShapeFromPolyCollider2DComponent(colliderB), 0, bodyA->GetTransform(), bodyB->GetTransform());
+	}
+
+	static bool PolyCollider2DComponent_CollidesWithBoxEdge(UUID uuid, UUID other, Side side)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+		Entity entityB = scene->GetEntityByUUID(other);
+
+		if (!entityA || !entityB || !entityA.HasComponent<PolyCollider2DComponent>() || !entityB.HasComponent<BoxCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>() || !entityB.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		const auto& colliderB = entityB.GetComponent<BoxCollider2DComponent>();
+		const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+
+		const auto& transformB = entityB.GetComponent<TransformComponent>();
+
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+		b2Body* bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body A in PolyCollider2DComponent_CollidesWithEdge is null");
+		EG_CORE_ASSERT(bodyB, "Body B in PolyCollider2DComponent_CollidesWithEdge is null");
+
+		b2EdgeShape edge = Getb2EdgeShapeFromBox(colliderB, scene, side);
+
+		edge.m_vertex1.x *= transformB.Scale.x;
+		edge.m_vertex1.y *= transformB.Scale.y;
+		edge.m_vertex2.x *= transformB.Scale.x;
+		edge.m_vertex2.y *= transformB.Scale.y;
+
+		return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, &edge, 0, bodyA->GetTransform(), bodyB->GetTransform());
+	}
+	/*static bool PolyCollider2DComponent_CollidesWithPolyEdge(UUID uuid, UUID other, Side side)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+		Entity entityB = scene->GetEntityByUUID(other);
+
+		if (!entityA || !entityB || !entityA.HasComponent<PolyCollider2DComponent>() || !entityB.HasComponent<PolyCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>() || !entityB.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		const auto& colliderB = entityB.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyB = entityB.GetComponent<RigidBody2DComponent>();
+
+		const auto& transformB = entityB.GetComponent<TransformComponent>();
+
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+		b2Body* bodyB = (b2Body*)rigidBodyB.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body A in PolyCollider2DComponent_CollidesWithPolyEdge is null");
+		EG_CORE_ASSERT(bodyB, "Body B in PolyCollider2DComponent_CollidesWithPolyEdge is null");
+
+		b2EdgeShape edge = Getb2EdgeShapeFromPolygon(colliderB, scene, side);
+
+		edge.m_vertex1.x *= transformB.Scale.x;
+		edge.m_vertex1.y *= transformB.Scale.y;
+		edge.m_vertex2.x *= transformB.Scale.x;
+		edge.m_vertex2.y *= transformB.Scale.y;
+
+		return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, &edge, 0, bodyA->GetTransform(), bodyB->GetTransform());
+	}*/
+
+	static bool PolyCollider2DComponent_CollidesWithTopEdge(UUID uuid, UUID other)
+	{
+		return PolyCollider2DComponent_CollidesWithBoxEdge(uuid, other, Side::TOP);
+	}
+
+	static bool PolyCollider2DComponent_CollidesWithBottomEdge(UUID uuid, UUID other)
+	{
+		return PolyCollider2DComponent_CollidesWithBoxEdge(uuid, other, Side::BOTTOM);
+	}
+
+	static bool PolyCollider2DComponent_CollidesWithLeftEdge(UUID uuid, UUID other)
+	{
+		return PolyCollider2DComponent_CollidesWithBoxEdge(uuid, other, Side::LEFT);
+	}
+
+	static bool PolyCollider2DComponent_CollidesWithRightEdge(UUID uuid, UUID other)
+	{
+		return PolyCollider2DComponent_CollidesWithBoxEdge(uuid, other, Side::RIGHT);
+	}
+
+	static bool PolyCollider2DComponent_CollidesWithBoxCoords(UUID uuid, glm::vec2* center, glm::vec2* size)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+
+		if (!entityA || !entityA.HasComponent<PolyCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body in PolyCollider2DComponent_CollidesWithBoxCoords is null");
+
+		b2PolygonShape otherShape;
+		otherShape.SetAsBox(size->x, size->y, b2Vec2(0, 0), 0);
+
+		b2Transform transform(b2Vec2(center->x, center->y), b2Rot(0));
+
+		return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, &otherShape, 0, bodyA->GetTransform(), transform);
+	}
+
+	/*static bool PolyCollider2DComponent_CollidesWithPolyCoords(UUID uuid, glm::vec2* center, glm::vec2* size)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+
+		if (!entityA || !entityA.HasComponent<BoxCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<BoxCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body in BoxCollider2DComponent_CollidesWithBoxCoords is null");
+
+		b2PolygonShape otherShape;
+		otherShape.SetAsBox(size->x, size->y, b2Vec2(0, 0), 0);
+
+		b2Transform transform(b2Vec2(center->x, center->y), b2Rot(0));
+
+		return b2TestOverlap(GetShapeFromBoxCollider2DComponent(colliderA), 0, &otherShape, 0, bodyA->GetTransform(), transform);
+	}*/
+
+	static bool PolyCollider2DComponent_CollidesWithCircleCoords(UUID uuid, glm::vec2* center, float radius)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+
+		if (!entityA || !entityA.HasComponent<PolyCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body in PolyCollider2DComponent_CollidesWithCircleCoords is null");
+
+		b2CircleShape otherShape;
+		otherShape.m_p = b2Vec2(0, 0);
+		otherShape.m_radius = radius;
+
+		b2Transform transform(b2Vec2(center->x, center->y), b2Rot(0));
+
+		return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, &otherShape, 0, bodyA->GetTransform(), transform);
+	}
+
+	static bool PolyCollider2DComponent_CollidesWithEdgeCoords(UUID uuid, glm::vec2* start, glm::vec2* end)
+	{
+		EG_PROFILE_FUNCTION();
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entityA = scene->GetEntityByUUID(uuid);
+
+		if (!entityA || !entityA.HasComponent<PolyCollider2DComponent>() || !entityA.HasComponent<RigidBody2DComponent>())
+			return false;
+
+		const auto& colliderA = entityA.GetComponent<PolyCollider2DComponent>();
+		const auto& rigidBodyA = entityA.GetComponent<RigidBody2DComponent>();
+		b2Body* bodyA = (b2Body*)rigidBodyA.RuntimeBody;
+
+		EG_CORE_ASSERT(bodyA, "Body in PolyCollider2DComponent_CollidesWithEdgeCoords is null");
+
+		b2EdgeShape edge;
+		edge.SetTwoSided(b2Vec2(end->x - start->x, end->y - start->y), b2Vec2(start->x - end->x, start->y - end->y));
+
+		b2Transform transform(b2Vec2(start->x, start->y), b2Rot(0));
+
+		return b2TestOverlap(GetShapeFromPolyCollider2DComponent(colliderA), 0, &edge, 0, bodyA->GetTransform(), transform);
+	}
+
+	#pragma endregion
 
 #pragma region Text
 	static MonoString *TextComponent_GetText(UUID entityID)
@@ -2766,6 +3290,7 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_CollidesWithBox);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_CollidesWithPoint);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_CollidesWithCircle);
+		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_CollidesWithPolygon);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_CollidesWithTopEdge);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_CollidesWithBottomEdge);
 		EG_ADD_INTERNAL_CALL(BoxCollider2DComponent_CollidesWithLeftEdge);
@@ -2792,6 +3317,7 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithCircle);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithPoint);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithBox);
+		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithPolygon);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithTopEdge);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithBottomEdge);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithLeftEdge);
@@ -2799,6 +3325,33 @@ namespace eg
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithBoxCoords);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithCircleCoords);
 		EG_ADD_INTERNAL_CALL(CircleCollider2DComponent_CollidesWithEdgeCoords);
+
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_GetOffset);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_SetOffset);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_GetSize);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_SetSize);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_GetDensity);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_SetDensity);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_GetFriction);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_SetFriction);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_GetRestitution);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_SetRestitution);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_GetRestitutionThreshold);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_SetRestitutionThreshold);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_IsSensor);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_SetSensor);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWith);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithBox);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithPolygon);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithPoint);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithCircle);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithTopEdge);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithBottomEdge);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithLeftEdge);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithRightEdge);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithBoxCoords);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithCircleCoords);
+		EG_ADD_INTERNAL_CALL(PolyCollider2DComponent_CollidesWithEdgeCoords);
 
 		EG_ADD_INTERNAL_CALL(TextComponent_GetText);
 		EG_ADD_INTERNAL_CALL(TextComponent_SetText);

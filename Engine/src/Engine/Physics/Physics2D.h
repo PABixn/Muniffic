@@ -4,6 +4,7 @@
 #include "Engine/Scene/Components.h"
 #include "box2d/box2d.h"
 #include "box2d/b2_body.h"
+
 namespace eg {
 
 	class Entity;
@@ -38,7 +39,7 @@ namespace eg {
 
 		void RecreateFixture(const RigidBody2DComponent& rb, BoxCollider2DComponent& bc, const TransformComponent& transform);
 		void RecreateFixture(const RigidBody2DComponent& rb, CircleCollider2DComponent& cc, const TransformComponent& transform);
-
+		void RecreateFixture(const RigidBody2DComponent& rb, PolyCollider2DComponent& pc, const TransformComponent& transform);
 	}
 
 }

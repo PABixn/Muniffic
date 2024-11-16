@@ -52,7 +52,6 @@ namespace eg
 	struct TransformComponent : Component
 	{
 		glm::vec3 Translation{ 0.0f, 0.0f, 0.0f };
-		glm::vec3 PrevTranslation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Scale{ 1.0f, 1.0f, 1.0f };
 
@@ -140,6 +139,29 @@ namespace eg
 		CircleRendererComponent(const glm::vec4& color)
 			: Color(color) {}
 	};
+
+	struct PolyCollider2DComponent : Component
+	{
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		glm::vec2 Size = { 0.5f, 0.5f };
+
+		std::vector<glm::vec2> Vertices;
+		int VertexCount = 0;
+
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		//Bounciness
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
+
+		bool IsSensor = false;
+
+		void* RuntimeFixture = nullptr;
+
+		PolyCollider2DComponent() = default;
+		PolyCollider2DComponent(const PolyCollider2DComponent&) = default;
+	};
+
 
 	struct CameraComponent: Component
 	{
@@ -301,12 +323,12 @@ namespace eg
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		RigidBody2DComponent, BoxCollider2DComponent,
-		CircleCollider2DComponent, TextComponent, AnimatorComponent, AudioSourceComponent>;
+		CircleCollider2DComponent, PolyCollider2DComponent, TextComponent, AnimatorComponent, AudioSourceComponent>;
 
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent,
 		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent,
-		CircleCollider2DComponent, TextComponent, SpriteRendererSTComponent,
+		CircleCollider2DComponent, PolyCollider2DComponent, TextComponent, SpriteRendererSTComponent,
 		AnimatorComponent, AudioSourceComponent>;
 }

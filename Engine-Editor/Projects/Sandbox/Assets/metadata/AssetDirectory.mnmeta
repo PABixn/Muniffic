@@ -6,7 +6,7 @@ Directories:
     Subdirectories:
       []
     Assets:
-      []
+      - 4475478014581016429
   - UUID: 8702245599158848232
     Name: Textures
     Parent: 3915390608499010299
@@ -14,15 +14,15 @@ Directories:
       []
     Assets:
       []
-  - UUID: 5927266319690567279
-    Name: Animations
+  - UUID: 3031271501238943031
+    Name: SubTextures
     Parent: 3915390608499010299
     Subdirectories:
       []
     Assets:
       []
-  - UUID: 3031271501238943031
-    Name: SubTextures
+  - UUID: 5927266319690567279
+    Name: Animations
     Parent: 3915390608499010299
     Subdirectories:
       []

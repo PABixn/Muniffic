@@ -105,6 +105,7 @@ namespace eg {
 		~ScriptInstance();
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
+		void InvokeOnFixedUpdate(float ts);
 		void InvokeOn2DCollisionEnter(InternalCollision2DEvent collision);
 		void InvokeOn2DCollisionExit(InternalCollision2DEvent collision);
 		void InvokeOnKeyPress(int keycode);
@@ -151,6 +152,7 @@ namespace eg {
 		MonoObject* m_Instance = nullptr;
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreateMethod = nullptr;
+		MonoMethod* m_OnFixedUpdateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
 		MonoMethod* m_OnCollisionEnterMethod = nullptr;
 		MonoMethod* m_OnCollisionExitMethod = nullptr;
@@ -186,6 +188,7 @@ namespace eg {
 		static bool EntityClassExists(const std::string& fullClassName);
 		static void OnCreateEntity(Entity entity);
 		static void OnUpdateEntity(Entity entity, Timestep ts);
+		static void OnFixedUpdateEntity(Entity entity, Timestep ts);
 		static std::vector<MonoClass*> GetBaseClasses(MonoClass* klass, MonoClass* entityClass);
 
 		static Scene* GetSceneContext();

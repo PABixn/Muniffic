@@ -176,6 +176,28 @@ namespace eg {
 	}
 
 	template<>
+	void Entity::SetComponent<PolyCollider2DComponent>(Entity& entity, PolyCollider2DComponent* component)
+	{
+		if (!entity.HasComponent<PolyCollider2DComponent>())
+			entity.AddComponent<PolyCollider2DComponent>();
+
+		auto& polyCollider2DComponent = entity.GetComponent<PolyCollider2DComponent>();
+
+		polyCollider2DComponent.Vertices = component->Vertices;
+		polyCollider2DComponent.VertexCount = component->VertexCount;
+		polyCollider2DComponent.Offset = component->Offset;
+		polyCollider2DComponent.Size = component->Size;
+		polyCollider2DComponent.Density = component->Density;
+		polyCollider2DComponent.Friction = component->Friction;
+		polyCollider2DComponent.Restitution = component->Restitution;
+		polyCollider2DComponent.RestitutionThreshold = component->RestitutionThreshold;
+		polyCollider2DComponent.isInherited = component->isInherited;
+		polyCollider2DComponent.isInheritedInChildren = component->isInheritedInChildren;
+		ConsolePanel::Log("File: Entity.cpp - Polygon Collider 2D component set successfully", ConsolePanel::LogType::Info);
+	}
+
+
+	template<>
 	void Entity::SetComponent<RigidBody2DComponent>(Entity& entity, RigidBody2DComponent* component)
 	{
         EG_PROFILE_FUNCTION();

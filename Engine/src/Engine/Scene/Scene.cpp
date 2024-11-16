@@ -238,9 +238,62 @@ namespace eg {
 		RenderScene(camera);
 	}
 
+	void Scene::FixedUpdate()
+	{
+		{
+			const int32_t velocityIterations = 6;
+			const int32_t positionIterations = 2;
+
+			{
+				//C# Entity OnFixedUpdate
+				auto view = m_Registry.view<ScriptComponent>();
+				for (auto entity : view)
+				{
+					Entity e{ entity, this };
+					ScriptEngine::OnFixedUpdateEntity(e, m_FixedFramerate / 1000.0f);
+				}
+			}
+
+			auto view = m_Registry.view<RigidBody2DComponent>();
+
+			for (auto e : view)
+			{
+				Entity entity{ e, this };
+				auto& rb = entity.GetComponent<RigidBody2DComponent>();
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto* body = (b2Body*)rb.RuntimeBody;
+				
+				body->SetTransform(b2Vec2(transform.Translation.x, transform.Translation.y), transform.Rotation.z);
+				body->SetAwake(true);
+			}
+
+
+			m_PhysicsWorld->Step(m_FixedFramerate / 1000.0f, velocityIterations, positionIterations);
+
+
+			for (auto e : view)
+			{
+				Entity entity{ e, this };
+				auto& rb = entity.GetComponent<RigidBody2DComponent>();
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto* body = (b2Body*)rb.RuntimeBody;
+				
+				transform.Translation.x = body->GetPosition().x;
+				transform.Translation.y = body->GetPosition().y;
+				transform.Rotation.z = body->GetAngle();
+
+			}
+		}
+	}
+
 	void Scene::OnUpdateRuntime(Timestep ts,std::chrono::steady_clock::time_point& oldTime)
 	{
         EG_PROFILE_FUNCTION();
+		m_NewTime = std::chrono::high_resolution_clock::now();
+		m_Delta = std::chrono::duration_cast<std::chrono::milliseconds>(m_NewTime - oldTime).count();
+		oldTime = m_NewTime;
+
+
 		if (!m_IsPaused || m_StepFrames-- > 0)
 		{
 			// Update Native scripts
@@ -268,27 +321,15 @@ namespace eg {
 			}
 
 			// Physics
+			m_TimePassed = m_TimePassed + (float)m_Delta;
+
+
+			while (m_TimePassed >= m_FixedFramerate)
 			{
-				const int32_t velocityIterations = 6;
-				const int32_t positionIterations = 2;
-				m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+				FixedUpdate();
+				m_TimePassed = m_TimePassed - m_FixedFramerate;
 
-				auto view = m_Registry.view<RigidBody2DComponent>();
-				{
-					for (auto e : view)
-					{
-						Entity entity{ e, this };
-						auto& rb = entity.GetComponent<RigidBody2DComponent>();
-						auto& transform = entity.GetComponent<TransformComponent>();
-						auto* body = (b2Body*)rb.RuntimeBody;
-
-						transform.Translation.x = body->GetPosition().x;
-						transform.Translation.y = body->GetPosition().y;
-						transform.Rotation.z = body->GetAngle();
-					}
-				}
 			}
-
 		}
 
 
@@ -372,6 +413,21 @@ namespace eg {
 				}
 			}
 
+			// Draw polygons
+			{
+				auto view = m_Registry.view<TransformComponent, PolyCollider2DComponent>();
+				for (auto entity : view)
+				{
+
+					auto [transform, polygon] = view.get<TransformComponent, PolyCollider2DComponent>(entity);
+					TransformComponent newTransform = transform;
+					newTransform.Rotation.x = -transform.Rotation.y;
+					newTransform.Rotation.y = -transform.Rotation.x;
+					newTransform.Rotation.z = -transform.Rotation.z;
+					Renderer2D::DrawPolygon(polygon.VertexCount, polygon.Vertices, polygon.Size, newTransform.GetTransform(), transform.Translation, (int)entity);
+				}
+			}
+
 			// Draw text
 			{
 				auto view = m_Registry.view<TransformComponent, TextComponent>();
@@ -419,6 +475,8 @@ namespace eg {
 				}
 			}
 		}
+
+
 
 		// Render
 		RenderScene(camera);
@@ -497,6 +555,20 @@ namespace eg {
 				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
 
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+			}
+		}
+
+		// Draw polygons
+		{
+			auto view = m_Registry.view<TransformComponent, PolyCollider2DComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, polygon] = view.get<TransformComponent, PolyCollider2DComponent>(entity);
+				TransformComponent newTransform = transform;
+				newTransform.Rotation.x = -transform.Rotation.y;
+				newTransform.Rotation.y = -transform.Rotation.x;
+				newTransform.Rotation.z = -transform.Rotation.z;
+				Renderer2D::DrawPolygon(polygon.VertexCount, polygon.Vertices, polygon.Size, newTransform.GetTransform(), transform.Translation, (int)entity);
 			}
 		}
 
@@ -651,6 +723,33 @@ namespace eg {
 			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 			cc.RuntimeFixture = fixture;
 		}
+
+		if (entity.HasComponent<PolyCollider2DComponent>())
+		{
+			auto& pc = entity.GetComponent<PolyCollider2DComponent>();
+			b2PolygonShape shape;
+			b2Vec2* vertices = new b2Vec2[pc.VertexCount];
+			for (int i = 0; i < pc.VertexCount; i++) {
+				vertices[i] = b2Vec2(pc.Vertices.at(i).x * transform.Scale.x, pc.Vertices.at(i).y * transform.Scale.y);
+			}
+			//b2Vec2* VerticesPtr = &pc.Vertices;
+			shape.Set(vertices, pc.VertexCount);
+
+			delete[] vertices;
+
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &shape;
+			
+			fixtureDef.density = pc.Density;
+			fixtureDef.friction = pc.Friction;
+			fixtureDef.restitution = pc.Restitution;
+			fixtureDef.restitutionThreshold = pc.RestitutionThreshold;
+			fixtureDef.userData.pointer = entity.GetUUID();
+			fixtureDef.isSensor = pc.IsSensor;
+
+			b2Fixture* fixture = body->CreateFixture(&fixtureDef);
+			pc.RuntimeFixture = fixture;
+		}
 	}
 
 	void* Scene::StartRuntimeBody(Entity entity)
@@ -729,6 +828,33 @@ namespace eg {
 
 				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 				cc.RuntimeFixture = fixture;
+			}
+
+			if (e.HasComponent<PolyCollider2DComponent>())
+			{
+				auto& pc = e.GetComponent<PolyCollider2DComponent>();
+				b2PolygonShape shape;
+
+				b2Vec2* vertices = new b2Vec2[pc.VertexCount];
+				for (int i = 0; i < pc.VertexCount; i++)
+				{
+					vertices[i].Set(pc.Vertices.at(i).x / 2 * pc.Size.x * transform.Scale.x, pc.Vertices.at(i).y / 2 * pc.Size.y * transform.Scale.y);
+				}
+
+
+				shape.Set(vertices, pc.VertexCount);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &shape;
+				fixtureDef.density = pc.Density;
+				fixtureDef.friction = pc.Friction;
+				fixtureDef.restitution = pc.Restitution;
+				fixtureDef.restitutionThreshold = pc.RestitutionThreshold;
+				fixtureDef.userData.pointer = e.GetUUID();
+				fixtureDef.isSensor = pc.IsSensor;
+
+				b2Fixture* fixture = body->CreateFixture(&fixtureDef);
+				pc.RuntimeFixture = fixture;
 			}
 		}
 	}
@@ -815,6 +941,12 @@ namespace eg {
 	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
 	{
         EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentAdded<PolyCollider2DComponent>(Entity entity, PolyCollider2DComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
 	}
 
 	template<>

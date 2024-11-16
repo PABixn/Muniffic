@@ -321,6 +321,35 @@ namespace eg {
 			out << YAML::EndMap; // CircleCollider2DComponent
 		}
 
+		if (entity.HasComponent<PolyCollider2DComponent>())
+		{
+			auto& pc = entity.GetComponent<PolyCollider2DComponent>();
+			std::string verticesString = "";
+			for (glm::vec2 vertex : pc.Vertices)
+			{
+				verticesString += vertex.x;
+				verticesString += ",";
+				verticesString += vertex.y;
+				verticesString += ",";
+
+			}
+			out << YAML::Key << "PolyCollider2DComponent";
+			out << YAML::BeginMap; // PolyCollider2DComponent
+			out << YAML::Key << "Offset" << YAML::Value << pc.Offset;
+			out << YAML::Key << "Size" << YAML::Value << pc.Size;
+			out << YAML::Key << "Vertices" << YAML::Value << pc.Vertices;
+			out << YAML::Key << "VertexCount" << YAML::Value << pc.VertexCount;
+			out << YAML::Key << "Friction" << YAML::Value << pc.Friction;
+			out << YAML::Key << "Density" << YAML::Value << pc.Density;
+			out << YAML::Key << "Friction" << YAML::Value << pc.Friction;
+			out << YAML::Key << "Restitution" << YAML::Value << pc.Restitution;
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << pc.RestitutionThreshold;
+			out << YAML::Key << "IsInherited" << YAML::Value << pc.isInherited;
+			out << YAML::Key << "IsInheritedInChildren" << YAML::Value << pc.isInheritedInChildren;
+			out << YAML::Key << "IsSensor" << YAML::Value << pc.IsSensor;
+			out << YAML::EndMap; // BoxCollider2DComponent
+		}
+
 		if (entity.HasComponent<TextComponent>())
 		{
 			out << YAML::Key << "TextComponent";
@@ -711,6 +740,45 @@ namespace eg {
 					if(circleCollider2DComponent["IsInheritedInChildren"])
 						cc.isInheritedInChildren = circleCollider2DComponent["IsInheritedInChildren"].as<bool>();
 				}
+
+				auto polyCollider2DComponent = entity["PolyCollider2DComponent"];
+				if (polyCollider2DComponent)
+				{
+					auto& pc = deserializedEntity.AddComponent<PolyCollider2DComponent>();
+					std::string verticesString = polyCollider2DComponent["Vertices"].as<std::string>();
+					pc.VertexCount = polyCollider2DComponent["VertexCount"].as<int>();
+					pc.Offset = polyCollider2DComponent["Offset"].as<glm::vec2>();
+					pc.Size = polyCollider2DComponent["Size"].as<glm::vec2>();
+					pc.Density = polyCollider2DComponent["Density"].as<float>();
+					pc.Friction = polyCollider2DComponent["Friction"].as<float>();
+					pc.Restitution = polyCollider2DComponent["Restitution"].as<float>();
+					pc.RestitutionThreshold = polyCollider2DComponent["RestitutionThreshold"].as<float>();
+					if (polyCollider2DComponent["IsSensor"])
+						pc.IsSensor = polyCollider2DComponent["IsSensor"].as<bool>();
+
+					if (polyCollider2DComponent["IsInherited"])
+						pc.isInherited = polyCollider2DComponent["IsInherited"].as<bool>();
+					if (polyCollider2DComponent["IsInheritedInChildren"])
+						pc.isInheritedInChildren = polyCollider2DComponent["IsInheritedInChildren"].as<bool>();
+
+					std::stringstream ss(verticesString);
+					std::string token;
+					std::vector<float>points;
+					char delimiter = ',';
+
+					while (std::getline(ss, token, delimiter)) {
+						points.push_back(std::stof(token));
+					}
+
+					for (int i = 0; i < points.size(); i += 2)
+					{
+						glm::vec2 vertex = glm::vec2(points.at(i), points.at(i + 1));
+						pc.Vertices.push_back(vertex);
+					}
+
+					int a = 0;
+				}
+
 
 				auto textComponent = entity["TextComponent"];
 				if (textComponent)

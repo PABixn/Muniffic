@@ -1,3 +1,89 @@
 Scene: Untitled
 Entities:
-  []
+  - Entity: 898555186857582872
+    Name: Cube
+    TagComponent:
+      Tag: kamera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.769999981
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 4177488106771296413
+    Name: Cube
+    TagComponent:
+      Tag: floor
+    TransformComponent:
+      Translation: [0, -1.60000002, 0]
+      Rotation: [0, 0, 0]
+      Scale: [7.5, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 265142094999225801
+    Name: Cube
+    TagComponent:
+      Tag: poligon
+    TransformComponent:
+      Translation: [1.49011612e-08, -2.38418579e-07, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        []
+      Transitions:
+        []
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    PolyCollider2DComponent:
+      Vertices: -1, -1.5, -1, 1, 1, 1, 1, -10, 0, -2
+      VertexCount: 5
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Friction: 0.5
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false

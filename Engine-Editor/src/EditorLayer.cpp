@@ -824,7 +824,14 @@ namespace eg
 			if (selectedEntity.HasComponent<TransformComponent>())
 			{
 				const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
+				/*if (selectedEntity.HasComponent<PolyCollider2DComponent>()) {
+					auto pcc = selectedEntity.GetComponent<PolyCollider2DComponent>();
+
+					Renderer2D::DrawPolygon(pcc.VertexCount, pcc.Vertices, pcc.Size, transform.GetTransform(),transform.Translation, (int)selectedEntity);
+				} else*/
 				Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1, 0.5f, 0, 1));
+
+				
 			}
 		}
 

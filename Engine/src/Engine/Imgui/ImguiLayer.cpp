@@ -1,6 +1,5 @@
 #include "egpch.h"
 #include "ImguiLayer.h"
-#include "imgui.h"
 #include "Platform/OpenGL/ImGuiOpenGLRenderer.h"
 #include "Platform/OpenGL/imgui_impl_opengl3.h"
 #include "glad/glad.h"

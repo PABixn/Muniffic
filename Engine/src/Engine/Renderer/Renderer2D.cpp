@@ -837,6 +837,38 @@ namespace eg {
 		}
 	}
 
+	void Renderer2D::DrawPolygon(int vertexCount, const std::vector<glm::vec2>& vertices, const glm::vec2& size, const glm::mat4& transform, const glm::vec3& translation, int id)
+	{
+
+
+
+		for (int i = 0; i < vertexCount; i++)
+		{
+			glm::vec4 point1 = glm::vec4(vertices.at(i).x * size.x, vertices.at(i).y*size.y, 0, 1) * transform;
+			point1.x += translation.x;
+			point1.y += translation.y+0.2f;
+			point1.z += translation.z;
+			glm::vec2 secondVertex;;
+
+			if (i == vertexCount - 1)
+			{
+				secondVertex = vertices.at(0);
+			}
+			else
+			{
+				secondVertex = vertices.at(i + 1);
+			}
+
+			glm::vec4 point2 = glm::vec4(secondVertex.x*size.x, secondVertex.y*size.y, 0 , 1.0f) * transform;
+			point2.x += translation.x;
+			point2.y += translation.y+0.2f;
+			point2.z += translation.z;
+
+			Renderer2D::DrawLine(point1, point2, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), id);
+
+		}
+	}
+
 	void Renderer2D::DrawString(const std::string& string, const glm::mat4& transform, const TextComponent& component, int entityID)
 	{
         EG_PROFILE_FUNCTION();
