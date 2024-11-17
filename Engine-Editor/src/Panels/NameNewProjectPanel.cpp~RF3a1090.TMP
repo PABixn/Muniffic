@@ -56,18 +56,7 @@ namespace eg
         EG_PROFILE_FUNCTION();
 		ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
 
-		ImGuiStyle& style = ImGui::GetStyle();
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
-		ImGui::PushStyleColor(ImGuiCol_Border, ImGuiLayer::m_DarkShade);
-
-		ImGui::Begin("Name project", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
-
-		ImVec2 spacing = style.ItemSpacing;
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
-		style.ItemSpacing = ImVec2(10.f, 10.f);
-
+		ImGui::Begin("Name project", &m_Show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 		ImGui::Text("Enter new project name");
 		static char buffer[256];
 		ImGui::InputText("##ProjectName", buffer, 256);
@@ -85,7 +74,11 @@ namespace eg
 			}
 		}
 
-		if (ImGui::BeginPopupModal("Project name not allowed", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+		ImGui::PushStyleColor(ImGuiCol_Border, ImGuiLayer::m_DarkShade);
+
+		if (ImGui::BeginPopupModal("Project name not allowed", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)
 		{
 			ImGui::Text("Project name contains forbidden characters. \nThe project will be saved as: ");
 			std::vector<char> correctedName= makeNameAllowed(buffer);
@@ -102,8 +95,7 @@ namespace eg
 			}
 			ImGui::EndPopup();
 		}
-		style.ItemSpacing = spacing;
-		ImGui::PopStyleVar(4);
+		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor();
 		ImGui::End();
 	}

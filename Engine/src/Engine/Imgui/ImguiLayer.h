@@ -26,11 +26,13 @@ namespace eg {
 		void SetDarkThemeColors();
 
 		uint32_t GetActiveWidgetID() const;
+	public:
+		static ImVec4 m_LightShade;
+		static ImVec4 m_NormalShade;
+		static ImVec4 m_DarkShade;
+		static ImVec4 m_LightTextShade;
 	private:
 		bool m_BlockEvents = true;
 		float m_Time;
-		ImVec4 m_LightShade = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
-		ImVec4 m_NormalShade = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
-		ImVec4 m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
 	};
 }

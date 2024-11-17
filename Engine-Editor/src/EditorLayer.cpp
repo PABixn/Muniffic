@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <array>
 #include "EditorActions.h"
+#include "Engine/Imgui/ImguiLayer.h"
 #ifdef EG_RELEASE
 #define HELLO "Hello from Release"
 #endif
@@ -292,7 +293,7 @@ namespace eg
 			style.WindowMinSize.x = minWinSizeX;
 
 		ImGui::PushFont(m_PoppinsSemiBoldFont);
-		ImGui::PushStyleColor(ImGuiCol_Text, m_LightTextShade);
+		ImGui::PushStyleColor(ImGuiCol_Text, ImGuiLayer::m_LightTextShade);
 		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
 		if (ImGui::BeginMenuBar())
 		{
@@ -358,6 +359,7 @@ namespace eg
 
 					ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
 					ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+					ImGui::PushStyleColor(ImGuiCol_Border, ImGuiLayer::m_DarkShade);
 
 					if (ImGui::BeginPopupModal("Unsaved Changes", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize)) {
 
@@ -389,6 +391,7 @@ namespace eg
 					}
 
 					ImGui::PopStyleVar(2);
+					ImGui::PopStyleColor();
 				};
 			}
 
@@ -521,7 +524,7 @@ namespace eg
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
-		ImGui::PushStyleColor(ImGuiCol_Border, m_DarkShade);
+		ImGui::PushStyleColor(ImGuiCol_Border, ImGuiLayer::m_DarkShade);
 
 		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar);
 
@@ -554,6 +557,8 @@ namespace eg
 			}
 		}
 
+		ImGui::PushStyleColor(ImGuiCol_Border, ImGuiLayer::m_DarkShade);
+
 		if (ImGui::BeginPopupModal("No Camera", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration))
 		{
 			ImVec2 window_size = ImGui::GetWindowSize();
@@ -573,6 +578,8 @@ namespace eg
 
 			ImGui::EndPopup();
 		}
+
+		ImGui::PopStyleColor();
 
 
 		if (hasSimulateButton)

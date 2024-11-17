@@ -7,6 +7,7 @@
 #include "Engine/Resources/ResourceSerializer.h"
 #include "Engine/Resources/ResourceDatabase.h"
 #include "../EditorLayer.h"
+#include "Engine/Imgui/ImguiLayer.h"
 #include <sys/stat.h>
 #include "Engine/Resources/AssetDirectoryManager.h"
 #include "../IconLoader.h"
@@ -93,8 +94,7 @@ namespace eg
 			ImVec2 buttonCenter = ImVec2(buttonPos.x + buttonSize.x * 0.5f, buttonPos.y + buttonSize.y * 0.5f);
 
 			if (ImGui::IsItemHovered() || ImGui::IsItemActive()) {
-				drawList->AddCircleFilled(buttonCenter, 20.0f, ImGui::ColorConvertFloat4ToU32(
-					static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade
+				drawList->AddCircleFilled(buttonCenter, 20.0f, ImGui::ColorConvertFloat4ToU32(ImGuiLayer::m_NormalShade
 				));
 			}
 			drawList->ChannelsMerge();
@@ -130,9 +130,7 @@ namespace eg
 		ImVec2 buttonCenter = ImVec2(buttonPos.x + buttonSize.x * 0.5f, buttonPos.y + buttonSize.y * 0.5f);
 
 		if (ImGui::IsItemHovered() || ImGui::IsItemActive()) {
-			drawList->AddCircleFilled(buttonCenter, 20.0f, ImGui::ColorConvertFloat4ToU32(
-				static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_NormalShade
-			));
+			drawList->AddCircleFilled(buttonCenter, 20.0f, ImGui::ColorConvertFloat4ToU32(ImGuiLayer::m_NormalShade));
 		}
 		drawList->ChannelsMerge();
 		ImGui::PopStyleColor(3);
@@ -301,9 +299,9 @@ namespace eg
 	}
 
 	void ContentBrowserPanel::ShowFolderPopups(UUID directory) {
-		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+		ImGui::PushStyleColor(ImGuiCol_Border, ImGuiLayer::m_DarkShade);
 
 		ShowDeleteFolderPopup(directory);
 		ShowRenameFolderPopup(directory);
@@ -371,9 +369,9 @@ namespace eg
 
 	void ContentBrowserPanel::ShowCreateFolderPopup() {
 		ImGuiStyle& style = ImGui::GetStyle();
-		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+		ImGui::PushStyleColor(ImGuiCol_Border, ImGuiLayer::m_DarkShade);
 
 		if (ImGui::BeginPopupModal("CreateNewDirectory", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
 
@@ -447,9 +445,9 @@ namespace eg
 	}
 
 	void ContentBrowserPanel::ShowFilePopups(UUID key, ResourceType type) {
-		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+		ImGui::PushStyleColor(ImGuiCol_Border, ImGuiLayer::m_DarkShade);
 
 		ShowDeleteFilePopup(key, type);
 		ShowRenameFilePopup(key, type);

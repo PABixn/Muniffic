@@ -12,6 +12,10 @@
 #include <imgui_internal.h>
 
 namespace eg {
+	ImVec4 ImGuiLayer::m_LightShade = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
+	ImVec4 ImGuiLayer::m_NormalShade = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
+	ImVec4 ImGuiLayer::m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
+	ImVec4 ImGuiLayer::m_LightTextShade = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
 
 	ImGuiLayer::ImGuiLayer()
 		:Layer("ImguiLayer"), m_Time(0.0f)
@@ -190,7 +194,7 @@ namespace eg {
 		style.PopupBorderSize = 1.0f;
 
 		//Text
-		colors[ImGuiCol_TextDisabled] = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
+		colors[ImGuiCol_TextDisabled] = m_LightTextShade;
 
 		//Others
 		colors[ImGuiCol_MenuBarBg] = ImVec4(0.153f, 0.133f, 0.200f, 1.0f);
