@@ -348,18 +348,16 @@ namespace eg
         EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
-		Entity entity = scene->GetEntityByUUID(uuid);
-		EG_CORE_ASSERT(entity, "Entity does not exist!");
 
-		Ref<std::vector<Entity>> childrenUUIDs = entity.GetAnyChildren();
+		std::vector<UUID>& childrenUUIDs = scene->GetEntityInfoMap().at(uuid)->GetChildren();
 
-		size_t count = childrenUUIDs->size();
+		size_t count = childrenUUIDs.size();
 
 		int64_t* uuids = new int64_t[count];
 
 		for (size_t i = 0; i < count; i++)
 		{
-			uuids[i] = childrenUUIDs->at(i).GetUUID();
+			uuids[i] = childrenUUIDs.at(i);
 		}
 
 		*size = count;
@@ -372,18 +370,16 @@ namespace eg
         EG_PROFILE_FUNCTION();
 		Scene *scene = ScriptEngine::GetSceneContext();
 		EG_CORE_ASSERT(scene, "No scene context!");
-		Entity entity = scene->GetEntityByUUID(uuid);
-		EG_CORE_ASSERT(entity, "Entity does not exist!");
 
-		Ref<std::vector<Entity>> childrenUUIDs = entity.GetChildren();
+		std::vector<UUID>& childrenUUIDs = scene->GetEntityInfoMap().at(uuid)->GetChildren();
 
-		size_t count = childrenUUIDs->size();
+		size_t count = childrenUUIDs.size();
 
 		int64_t* uuids = new int64_t[count];
 
 		for (size_t i = 0; i < count; i++)
 		{ 
-			uuids[i] = childrenUUIDs->at(i).GetUUID();
+			uuids[i] = childrenUUIDs.at(i);
 		}
 
 		*size = count;
@@ -1417,7 +1413,7 @@ namespace eg
 		return body->GetTransform();
 	}
 
-	static void RigidBody2DComponent_SetTransform(UUID uuid, b2Vec2& position, float angle)
+	static void RigidBody2DComponent_SetTransform(UUID uuid, b2Transform transform)
 	{
         EG_PROFILE_FUNCTION();
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -1425,9 +1421,10 @@ namespace eg
 		Entity entity = scene->GetEntityByUUID(uuid);
 		EG_CORE_ASSERT(entity, "Entity does not exist!");
 
+
 		auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
 		b2Body* body = (b2Body*)rb2d.RuntimeBody;
-		body->SetTransform(position, angle);
+		body->SetTransform(b2Vec2_zero, 0);
 	}
 
 	static b2BodyUserData RigidBody2DComponent_GetUserData(UUID uuid)

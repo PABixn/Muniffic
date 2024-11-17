@@ -124,7 +124,7 @@ namespace eg
         internal extern static string SpriteRendererComponent_GetTexture(long UUID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void SpriteRendererComponent_SetTexture(long UUID, ref string texturePath);
+        internal extern static void SpriteRendererComponent_SetTexture(long UUID, string texturePath);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static float SpriteRendererComponent_GetTilingFactor(long UUID);

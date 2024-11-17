@@ -1,0 +1,6 @@
+Project:
+  Name: Quest_for_the_solar_sombrero
+  StartScene: Start.egscene
+  AssetDirectory: Assets
+  SceneDirectory: Scenes
+  ScriptModulePath: Scripts/Binaries/

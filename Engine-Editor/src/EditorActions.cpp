@@ -1,11 +1,18 @@
 #include "EditorActions.h"
 #include "EditorActionsHelper.h"
 #include "EditorLayer.h"
+#include "Engine/Assistant/AssistantManager.h"
 
 namespace eg
 {
 	Ref<Scene> EditorActions::m_Scene = nullptr;
 	Entity* EditorActions::m_SelectedEntity = nullptr;
+	std::vector<EditorActions::FunctionCall> EditorActions::m_FunctionCalls = std::vector<FunctionCall>();
+	std::mutex EditorActions::m_FunctionCallsMutex;
+	Ref<AssistantManager> EditorActions::m_AssistantManager = nullptr;
+	std::string EditorActions::m_ThreadID = "";
+	std::string EditorActions::m_RunID = "";
+	
 
 	std::string EditorActions::ExecuteEntityAction(const std::string& actionName, const std::vector<std::string>& params)
 	{
@@ -179,7 +186,54 @@ namespace eg
 		}
 	}
 
+	void EditorActions::AddFunctionCall(std::function<std::string(std::string, std::vector<std::string>)> function, const std::string& functionName, const std::vector<std::string>& params, std::string toolCallID)
+	{
+		EG_PROFILE_FUNCTION();
 
+		m_FunctionCallsMutex.lock();
+
+		m_FunctionCalls.push_back(FunctionCall(function, functionName, params, toolCallID));
+
+		m_FunctionCallsMutex.unlock();
+	}
+
+	void EditorActions::ExecuteFunctionCalls()
+	{
+		EG_PROFILE_FUNCTION();
+
+		if(m_FunctionCalls.empty())
+			return;
+
+		m_FunctionCallsMutex.lock();
+
+		std::string output = "{";
+		int i = 0;
+
+		for (FunctionCall& functionCall : m_FunctionCalls)
+		{
+			std::string toolCallOutput = functionCall.function(functionCall.functionName, functionCall.params);
+
+			output += "\"" + functionCall.toolCallID + "\": \"" + toolCallOutput + "\"";
+
+			if (i != m_FunctionCalls.size() - 1)
+				output += ",";
+
+			i++;
+		}
+
+		output += "}";
+
+		EG_CORE_INFO(output);
+
+		std::thread([output]()
+		{
+				m_AssistantManager->SubmitToolOutputs(m_ThreadID, m_RunID, output);
+		}).detach();
+
+		m_FunctionCalls.clear();
+
+		m_FunctionCallsMutex.unlock();
+	}
 
 	#pragma region EntityActions
 
@@ -1103,6 +1157,8 @@ namespace eg
 		}
 		else if (params.at(1) == "Texture")
 		{
+			return "Texture property is read-only.";
+
 			if (ComponentHelper::CanConvertToInteger(params.at(2)) == false)
 				return "Parameter is not integer.";
 
@@ -1686,6 +1742,8 @@ namespace eg
 		}
 		else if (params.at(1) == "Font")
 		{
+			return "Font property is read-only.";
+
 			if (ComponentHelper::CanConvertToInteger(params.at(2)) == false)
 				return "Parameter is not integer.";
 

@@ -1,0 +1,1254 @@
+Scene: Untitled
+Entities:
+  - Entity: 6360083800926698617
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Separator
+    TransformComponent:
+      Translation: [18.3805885, -1.29038656, -0.200000003]
+      Rotation: [0, -0, 1.57000005]
+      Scale: [0.499985218, 0.200000003, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6726367690180429190
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 1662886917216552241
+    Name: Cube
+    Parent: 4745023155935519221
+    TagComponent:
+      Tag: EnemyTriangle
+    TransformComponent:
+      Translation: [13, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        - 5756078902985494395
+        - 8710280948414860426
+        - 5609331868946778382
+        - 5178519701489264878
+      Transitions:
+        - From: 0
+          To: 1
+        - From: 1
+          To: 0
+        - From: 0
+          To: 2
+        - From: 1
+          To: 2
+        - From: 2
+          To: 1
+        - From: 2
+          To: 0
+        - From: 0
+          To: 3
+        - From: 3
+          To: 2
+        - From: 3
+          To: 1
+        - From: 3
+          To: 0
+        - From: 2
+          To: 3
+        - From: 1
+          To: 3
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 3459830652203967227
+          ScriptFields:
+            []
+        - ScriptUUID: 2280032308211456250
+          ScriptFields:
+            []
+        - ScriptUUID: 2859562116812498072
+          ScriptFields:
+            []
+        - ScriptUUID: 8177272779269080625
+          ScriptFields:
+            []
+        - ScriptUUID: 3568373248790355494
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: true
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.349999994]
+      Size: [0.200000018, 0.150000006]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 4745023155935519221
+    Name: Cube
+    Children:
+      - 7982459756951887954
+      - 1662886917216552241
+    TagComponent:
+      Tag: Enemies
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 77411557396144834
+    Name: Cube
+    Children:
+      - 2593248692687013949
+    TagComponent:
+      Tag: PlayerWrapper
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 5788534356523531950
+    Name: Cube
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.769999981
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 3
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 5222782641706725470
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 3486261274721042980
+    Name: Cube
+    Parent: 5780414226918828943
+    TagComponent:
+      Tag: vine
+    TransformComponent:
+      Translation: [13.04, 0.100000016, -0.200000003]
+      Rotation: [0, -0, -0.599999964]
+      Scale: [1, 4.79999924, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 4216236345485903332
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 8461874452503321812
+    Name: Cube
+    Parent: 5780414226918828943
+    TagComponent:
+      Tag: vine
+    TransformComponent:
+      Translation: [1.17999995, 0.949999928, -0.200000003]
+      Rotation: [0, -0, 0.199999988]
+      Scale: [1, 3.50000215, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 4216236345485903332
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 3097278605878366757
+    Name: Cube
+    Parent: 5780414226918828943
+    TagComponent:
+      Tag: vine
+    TransformComponent:
+      Translation: [5.67999983, 0.949999988, -0.200000003]
+      Rotation: [0, -0, -0.400000006]
+      Scale: [1, 3.50000215, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 4216236345485903332
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 7379851789028574191
+    Name: Cube
+    Parent: 5780414226918828943
+    TagComponent:
+      Tag: vine
+    TransformComponent:
+      Translation: [10.1831532, 0, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 3.60000038, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 4216236345485903332
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 5780414226918828943
+    Name: Cube
+    Parent: 4007505980649619575
+    Children:
+      - 7379851789028574191
+      - 3097278605878366757
+      - 8461874452503321812
+      - 3486261274721042980
+      - 2810073197223048473
+      - 2258677927123020220
+    TagComponent:
+      Tag: Vines
+    TransformComponent:
+      Translation: [0, 0, -0.200000003]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 3584103748122598966
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [18.0903988, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 1093767988042896943
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [15.2322044, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 5723808216822149276
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [15.8546562, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 3683699115480173618
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [16.5108566, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 5497585531199753391
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [16.0489349, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 3584675986247486954
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [12.0142717, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 3256780558030570901
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [6.94529867, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 2719302668630748907
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [5.77752972, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 6907162255406140819
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [3.62362719, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 2804854094975944329
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [3.20392513, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 3801794575633922737
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [2.32695913, 1.29999995, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 2475672500692811396
+    Name: Cube
+    Parent: 8448595466385857207
+    TagComponent:
+      Tag: Branch
+    TransformComponent:
+      Translation: [0, 1.29999995, -0.200000003]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 7648315516138075520
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 8448595466385857207
+    Name: Cube
+    Parent: 4007505980649619575
+    Children:
+      - 2475672500692811396
+      - 5497585531199753391
+      - 5723808216822149276
+      - 3584103748122598966
+      - 3256780558030570901
+      - 1093767988042896943
+      - 2719302668630748907
+      - 3584675986247486954
+      - 6907162255406140819
+      - 3683699115480173618
+      - 2804854094975944329
+      - 3801794575633922737
+    TagComponent:
+      Tag: Branches
+    TransformComponent:
+      Translation: [0, 0, -0.200000003]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 2305143016023703690
+    Name: Cube
+    Parent: 4007505980649619575
+    Children:
+      - 7180681880845254734
+      - 7083775079444549499
+      - 3736025382427200968
+      - 4753255597080870486
+    TagComponent:
+      Tag: Flowers
+    TransformComponent:
+      Translation: [0, 0, -0.200000003]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 7083775079444549499
+    Name: Cube
+    Parent: 2305143016023703690
+    TagComponent:
+      Tag: flower
+    TransformComponent:
+      Translation: [-2.39216065, 0.727830529, -0.200000003]
+      Rotation: [-3.1415925, 0.00159254996, 1.57159245]
+      Scale: [0.499999642, 0.799999714, 0.999995172]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6283358733454184857
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 4753255597080870486
+    Name: Cube
+    Parent: 2305143016023703690
+    TagComponent:
+      Tag: flower
+    TransformComponent:
+      Translation: [-2.3900001, -0.300466299, -0.200000003]
+      Rotation: [-3.1415925, 0.00159254996, 1.57159245]
+      Scale: [0.499999821, 0.799999893, 0.999995768]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6283358733454184857
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 3736025382427200968
+    Name: Cube
+    Parent: 2305143016023703690
+    TagComponent:
+      Tag: flower
+    TransformComponent:
+      Translation: [-1.40810084, -1.21067524, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [0.499999911, 0.499999911, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6283358733454184857
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 7180681880845254734
+    Name: Cube
+    Parent: 2305143016023703690
+    TagComponent:
+      Tag: flower
+    TransformComponent:
+      Translation: [0, -1.21067524, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [0.499999911, 0.499999911, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6283358733454184857
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 4007505980649619575
+    Name: Cube
+    Children:
+      - 3760088532694791970
+      - 2305143016023703690
+      - 8448595466385857207
+      - 5780414226918828943
+    TagComponent:
+      Tag: Decorations
+    TransformComponent:
+      Translation: [0, 0, -0.200000003]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 3760088532694791970
+    Name: Cube
+    Parent: 4007505980649619575
+    Children:
+      - 7849819375183178272
+    TagComponent:
+      Tag: Light
+    TransformComponent:
+      Translation: [0, 0, -0.200000003]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 7452175453282574911
+    Name: Cube
+    TagComponent:
+      Tag: Background
+    TransformComponent:
+      Translation: [9.95750427, -0.338048577, -0.300000012]
+      Rotation: [0, -0, 0]
+      Scale: [29.2000008, 7, 1]
+      IsInherited: false
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 4822483361129246619
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 7849819375183178272
+    Name: Cube
+    Parent: 3760088532694791970
+    TagComponent:
+      Tag: Light Final
+    TransformComponent:
+      Translation: [21.6762638, 0, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [2.90000343, 3.5999999, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6247502100175362970
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 4144960256706863179
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Ceiling
+    TransformComponent:
+      Translation: [9.60999966, 2.08519435, -0.100000016]
+      Rotation: [0, -0, 3.1400001]
+      Scale: [25.7999992, 0.799995482, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 5492301953988942405
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.0500000007]
+      Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 5694339996848230515
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [-3.0999999, 0.199999928, -0.100000016]
+      Rotation: [0, -0, -1.60000014]
+      Scale: [4.70000172, 0.799999952, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 5492301953988942405
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.0500000007]
+      Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 8832446760477647752
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [19.7700653, -1.80000007, -0.100000016]
+      Rotation: [0, -0, 0]
+      Scale: [22.3818054, 0.799999952, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 5492301953988942405
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.0500000007]
+      Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 8386288615503162423
+    Name: Cube
+    Children:
+      - 1386199224608965254
+      - 2345967870706173765
+    TagComponent:
+      Tag: Parkour
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 1386199224608965254
+    Name: Cube
+    Parent: 8386288615503162423
+    TagComponent:
+      Tag: Parkour Wall
+    TransformComponent:
+      Translation: [6.41364384, -1.08242512, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 0.200000018, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6726367690180429190
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 2345967870706173765
+    Name: Cube
+    Parent: 8386288615503162423
+    TagComponent:
+      Tag: Parkour Wall
+    TransformComponent:
+      Translation: [3.43694663, -1.08242512, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 0.200000018, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6726367690180429190
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 226699103861917948
+    Name: Cube
+    TagComponent:
+      Tag: Lava
+    TransformComponent:
+      Translation: [4.8994422, -2.77429152, -0.200000122]
+      Rotation: [0, -0, 0]
+      Scale: [8, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 1601476137918503075
+      IsInherited: false
+      IsInheritedInChildren: false
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 7116761466320605023
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: true
+  - Entity: 2593248692687013949
+    Name: Cube
+    Parent: 77411557396144834
+    TagComponent:
+      Tag: Player
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        - 4037270119508845572
+        - 8750681251043671058
+        - 7616353991522803854
+        - 587764338783038943
+      Transitions:
+        - From: 0
+          To: 1
+        - From: 1
+          To: 0
+        - From: 0
+          To: 2
+        - From: 1
+          To: 2
+        - From: 2
+          To: 0
+        - From: 2
+          To: 1
+        - From: 3
+          To: 2
+        - From: 3
+          To: 1
+        - From: 3
+          To: 0
+        - From: 2
+          To: 3
+        - From: 0
+          To: 3
+        - From: 1
+          To: 3
+        - From: 4
+          To: 3
+        - From: 4
+          To: 2
+        - From: 4
+          To: 1
+        - From: 4
+          To: 0
+        - From: 3
+          To: 4
+        - From: 2
+          To: 4
+        - From: 0
+          To: 4
+        - From: 1
+          To: 4
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 8863010160591618796
+          ScriptFields:
+            []
+        - ScriptUUID: 1867687413990529871
+          ScriptFields:
+            []
+        - ScriptUUID: 4452690059192365868
+          ScriptFields:
+            []
+        - ScriptUUID: 388055781692258074
+          ScriptFields:
+            []
+        - ScriptUUID: 3136020345952418588
+          ScriptFields:
+            []
+        - ScriptUUID: 4661687159670203365
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: true
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.200000003]
+      Size: [0.300000012, 0.300000012]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 6579666199969798037
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [8.99644089, -2.56924272, -0.100000016]
+      Rotation: [0, -0, 1.5999999]
+      Scale: [2.1000011, 0.800019085, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 3004710897462677659
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.0500000007]
+      Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 1208991649749617549
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [1.14781427, -2.63000011, -0.100000016]
+      Rotation: [0, -0, -1.60000026]
+      Scale: [2.1000011, 0.799999952, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 3004710897462677659
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.0500000007]
+      Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 199767573991916379
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [5.10287619, -3.20207596, -0.100000016]
+      Rotation: [0, -0, 0]
+      Scale: [7.69000006, 0.799999952, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 5492301953988942405
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.0500000007]
+      Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 8272590368761323106
+    Name: Cube
+    Children:
+      - 1501134816656725508
+      - 199767573991916379
+      - 6579666199969798037
+      - 1208991649749617549
+      - 8832446760477647752
+      - 5694339996848230515
+      - 4144960256706863179
+      - 9167349498074951532
+      - 2454272723030596415
+      - 6360083800926698617
+    TagComponent:
+      Tag: Walls
+    TransformComponent:
+      Translation: [0, 0, -0.100000016]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+  - Entity: 1501134816656725508
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [-0.799999952, -1.80000007, -0.100000016]
+      Rotation: [0, -0, 0]
+      Scale: [4.70000172, 0.799999952, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 5492301953988942405
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.0500000007]
+      Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 2258677927123020220
+    Name: Cube
+    Parent: 5780414226918828943
+    TagComponent:
+      Tag: vine
+    TransformComponent:
+      Translation: [17.9400005, 0.100000016, -0.200000003]
+      Rotation: [0, -0, 0.600000024]
+      Scale: [1, 4.79999924, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 4216236345485903332
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 2810073197223048473
+    Name: Cube
+    Parent: 5780414226918828943
+    TagComponent:
+      Tag: vine
+    TransformComponent:
+      Translation: [15.5799999, 0, -0.200000003]
+      Rotation: [0, -0, 0]
+      Scale: [1, 3.60000038, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 4216236345485903332
+      IsInherited: false
+      IsInheritedInChildren: false
+  - Entity: 9167349498074951532
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [19.7999992, 0.199999928, -0.100000016]
+      Rotation: [0, -0, 1.60000002]
+      Scale: [4.70000172, 0.799999952, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 5492301953988942405
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.0500000007]
+      Size: [0.5, 0.449999988]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 7982459756951887954
+    Name: Cube
+    Parent: 4745023155935519221
+    TagComponent:
+      Tag: EnemySquare
+    TransformComponent:
+      Translation: [18.8691025, -0.591271639, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    AnimatorComponent:
+      Speed: 1
+      Animations:
+        - 4678681791681077110
+        - 957778343545793326
+        - 5846174929618851138
+        - 5816662386376055065
+      Transitions:
+        - From: 0
+          To: 1
+        - From: 1
+          To: 0
+        - From: 2
+          To: 1
+        - From: 2
+          To: 0
+        - From: 1
+          To: 2
+        - From: 0
+          To: 2
+        - From: 3
+          To: 2
+        - From: 3
+          To: 1
+        - From: 3
+          To: 0
+        - From: 2
+          To: 3
+        - From: 1
+          To: 3
+        - From: 0
+          To: 3
+    ScriptComponent:
+      Scripts:
+        - ScriptUUID: 7543818479903591432
+          ScriptFields:
+            []
+        - ScriptUUID: 6783974109383622782
+          ScriptFields:
+            []
+        - ScriptUUID: 765699927836403796
+          ScriptFields:
+            []
+        - ScriptUUID: 7856138058308442477
+          ScriptFields:
+            []
+        - ScriptUUID: 7762291810276271830
+          ScriptFields:
+            []
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Dynamic
+      FixedRotation: true
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, -0.300000012]
+      Size: [0.300000012, 0.200000018]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false
+  - Entity: 2454272723030596415
+    Name: Cube
+    Parent: 8272590368761323106
+    TagComponent:
+      Tag: Wall
+    TransformComponent:
+      Translation: [9.27378464, -1.28313494, -0.200000003]
+      Rotation: [0, -0, 1.57000005]
+      Scale: [0.499992013, 0.200000003, 1]
+      IsInherited: true
+      IsInheritedInChildren: true
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+      TextureUUID: 6726367690180429190
+      IsInherited: false
+      IsInheritedInChildren: false
+    RigidBody2DComponent:
+      Body Type: Static
+      FixedRotation: false
+      IsInherited: false
+      IsInheritedInChildren: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+      IsInherited: false
+      IsInheritedInChildren: false
+      IsSensor: false

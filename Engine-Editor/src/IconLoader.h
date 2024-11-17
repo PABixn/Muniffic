@@ -12,6 +12,7 @@ namespace eg
 		Editor_StopButton,
 		Editor_StepButton,
 		Editor_SimulateButton,
+		Editor_Logo,
 		ResourceNotFound,
 		WelcomePanel_NewProject,
 		WelcomePanel_DeleteProject,

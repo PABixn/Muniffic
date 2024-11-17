@@ -15,5 +15,7 @@ namespace eg
 
 		UUID m_Parent;
 		std::vector<UUID> m_Children;
+
+		std::vector<UUID>& GetChildren() { return m_Children; }
 	};
 }

@@ -2,18 +2,19 @@
 #include "AssistantPanel.h"
 #include <Imgui/imgui.h>
 #include "Engine/Project/Project.h"
-#include "Imgui/imgui_markdown.h"
 #include <thread>
 #include <sstream>
 #include <unordered_map>
 #include <cctype>
 #include <algorithm>
+#include "../MarkdownRenderer/Markdown.h"
 #include "../IconLoader.h"
+#include "../EditorActions.h"
 
 namespace eg
 {
 	AssistantPanel::AssistantPanel()
-		: assistantManager(CreateScope<AssistantManager>()),
+		: assistantManager(CreateRef<AssistantManager>()),
 		assistantRespondingAnimation("."),
 		m_isListening(false),
 		m_isMicrophoneAvailable(false),
@@ -27,8 +28,6 @@ namespace eg
 	{
         EG_PROFILE_FUNCTION();
 		memset(buffer, 0, sizeof(buffer));
-
-		mdConfig = ImGui::MarkdownConfig();
 
 		m_assistantInitialized = assistantManager->CheckAPI();
 
@@ -52,6 +51,8 @@ namespace eg
 
 		if(m_assistantInitialized)
 			threadID = assistantManager->CreateThread();
+
+		EditorActions::SetAssistantManager(assistantManager);
 	}
 
 	std::string AssistantPanel::LoadInstructions()
@@ -226,6 +227,7 @@ namespace eg
 					ImGui::PopStyleColor(3);
 
 					buttonIndex++;
+
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - iconSize - iconCenterY / 2);
 					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding * 2.5);
 					ImGui::Text(GetLanguageSymbol(language).c_str());
@@ -244,7 +246,9 @@ namespace eg
 
 					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding * 2);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padding);
-					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig);
+					ImGui::Indent(padding * 2);
+					ImGui::Text(msg.c_str());
+					ImGui::Unindent(padding * 2);
 					ImGui::PopTextWrapPos();
 
 					drawList->ChannelsSetCurrent(1);
@@ -264,9 +268,9 @@ namespace eg
 				}
 				else
 				{
-					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-					ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
-					ImGui::PopTextWrapPos();
+					//ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
+					Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding, padding);
+					//ImGui::PopTextWrapPos();
 					msg = "";
 
 					insideCode = true;
@@ -285,9 +289,9 @@ namespace eg
 
 		if (!msg.empty())
 		{
-			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
-			ImGui::Markdown(msg.c_str(), msg.size(), mdConfig, padding);
-			ImGui::PopTextWrapPos();
+			//ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + bubbleWidth - padding);
+			Markdown::text(msg, ImGui::GetCursorPos().x + bubbleWidth - padding, padding);
+			//ImGui::PopTextWrapPos();
 		}
 
 		drawList->ChannelsSetCurrent(0);

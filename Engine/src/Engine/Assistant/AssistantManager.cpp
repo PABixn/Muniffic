@@ -486,7 +486,7 @@ namespace eg
 		}
 		else if (status == "requires_action")
 		{
-			TakeAction(threadID, runID, gstate);
+			TakeAction(threadID, runID);
 		}
 		else if (status == "failed" || status == "cancelled" || status == "expired")
 		{
@@ -501,9 +501,12 @@ namespace eg
 		return false;
 	}
 
-	bool AssistantManager::TakeAction(std::string threadID, std::string runID, PyGILState_STATE gstate)
+	bool AssistantManager::TakeAction(std::string threadID, std::string runID)
 	{
 		EG_PROFILE_FUNCTION();
+
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
 		PyObject* args = PyTuple_Pack(2, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()));
 
 		if (args == nullptr)
@@ -572,8 +575,7 @@ namespace eg
 				}
 			}
 
-			std::string output = "{";
-			int i = 0;
+			EditorActions::SetThreadAndRunIDs(threadID, runID);
 
 			for (std::unordered_map<std::string, std::string> toolCall : toolCalls)
 			{
@@ -597,48 +599,50 @@ namespace eg
 					params.push_back(toolCall[key]);
 				}
 
-				std::string callToolOutput = EditorActions::ExecuteEntityAction(functionName, params);
+				EditorActions::AddFunctionCall(EditorActions::ExecuteEntityAction, functionName, params, toolCallID);
 
-				output += "\"" + toolCallID + "\": \"" + callToolOutput + "\"";
-
-				if (i != toolCalls.size() - 1)
-					output += ",";
-
-				i++;
+				//std::string callToolOutput = EditorActions::ExecuteEntityAction(functionName, params);
 			}
-
-			output += "}";
-
-			EG_CORE_INFO(output);
-
-			if (toolCalls.size() > 0)
-			{
-				args = PyTuple_Pack(3, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()), PyUnicode_FromString(output.c_str()));
-
-				if (args == nullptr)
-				{
-					PyErr_Print();
-					EG_CORE_ERROR("Failed to create args object");
-					PyGILState_Release(gstate);
-
-					return false;
-				}
-
-				result = PyObject_CallObject(m_SubmitToolOutputs, args);
-
-				if (result == nullptr)
-				{
-					PyErr_Print();
-					EG_CORE_ERROR("Failed to call submit_tool_outputs function");
-					PyGILState_Release(gstate);
-
-					return false;
-				}
-			}
-
-			WaitForCompletion(threadID);
 		}
+
+		PyGILState_Release(gstate);
 		return true;
+	}
+
+	void AssistantManager::SubmitToolOutputs(std::string threadID, std::string runID, std::string output)
+	{
+		EG_PROFILE_FUNCTION();
+
+		PyGILState_STATE gstate = PyGILState_Ensure();
+
+		PyObject* result;
+		PyObject* args;
+
+		args = PyTuple_Pack(3, PyUnicode_FromString(threadID.c_str()), PyUnicode_FromString(runID.c_str()), PyUnicode_FromString(output.c_str()));
+
+		if (args == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to create args object");
+			PyGILState_Release(gstate);
+
+			return;
+		}
+
+		result = PyObject_CallObject(m_SubmitToolOutputs, args);
+
+		if (result == nullptr)
+		{
+			PyErr_Print();
+			EG_CORE_ERROR("Failed to call submit_tool_outputs function");
+			PyGILState_Release(gstate);
+
+			return;
+		}
+
+		WaitForCompletion(threadID);
+
+		PyGILState_Release(gstate);
 	}
 
 	void AssistantManager::SaveAssistant()

@@ -4,7 +4,6 @@
 #include <Engine/Assistant/AssistantManager.h>
 #include <Imgui/imgui.h>
 #include <Engine/Renderer/Texture.h>
-#include "Imgui/imgui_markdown.h"
 
 namespace eg
 {
@@ -29,8 +28,7 @@ namespace eg
     private:
         std::string threadID;
         std::string assistantRespondingAnimation;
-        Scope<AssistantManager> assistantManager = nullptr;
-        ImGui::MarkdownConfig mdConfig;
+        Ref<AssistantManager> assistantManager = nullptr;
         char buffer[1024];
         bool m_isListening;
         bool m_shouldListen;

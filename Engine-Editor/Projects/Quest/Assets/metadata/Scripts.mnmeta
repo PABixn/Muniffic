@@ -1,0 +1,127 @@
+Resources:
+  - UUID: 4452690059192365868
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.JumpComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 8863010160591618796
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.Player
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 3136020345952418588
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.PlayerAttackBoxComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 1867687413990529871
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.HealthComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 388055781692258074
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.RunComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 5222782641706725470
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.CameraMove
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 4661687159670203365
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 7543818479903591432
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.SquareEnemy
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 6783974109383622782
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.HealthComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 765699927836403796
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 7856138058308442477
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EnemyRunComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 7762291810276271830
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EnemyAttackBoxComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 3459830652203967227
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.TriangleEnemy
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 2280032308211456250
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.HealthComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 2859562116812498072
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EntityTypeComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 8177272779269080625
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EnemyRunComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 3568373248790355494
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.EnemyAttackBoxComponent
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []
+  - UUID: 7116761466320605023
+    ParentDirectory: 3370402605611323070
+    ResourceName: Quest.Spike
+    Extension: .cs
+    IsEnabled: true
+    Methods:
+      []

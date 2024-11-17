@@ -380,8 +380,8 @@ namespace eg {
 		ImGui::SetCursorScreenPos(ImVec2(startX - buttonSize.x - buttonGap, ImGui::GetCursorScreenPos().y + 60));
 
 		DrawAnimationOptions();
-		//DrawFunctionCallPopup();
-		//DrawFunctionInfoPopup();
+		DrawFunctionCallPopup();
+		DrawFunctionInfoPopup();
 
 		if (m_FrameReleased) {
 			HandleMove(m_HoveredFrame);
@@ -405,12 +405,12 @@ namespace eg {
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ROUNDING);
 		ImGui::OpenPopup("Frame Info Popup");
 
-		if (ImGui::BeginPopup("Frame Info Popup")) {
+		if (ImGui::BeginPopup("Frame Info Popup", ImGuiWindowFlags_AlwaysAutoResize)) {
 			ImGui::Text("Frame Length: %d", m_Anim->GetFrame(hoverFrame)->GetFrameDuration());
 			if (m_Anim->GetFrame(hoverFrame)->GetClassname() != "")
 			{
-				ImGui::Text("Function name", m_Anim->GetFrame(hoverFrame)->GetFunctionCallName().c_str());
-				ImGui::Text("Class name", m_Anim->GetFrame(hoverFrame)->GetClassname().c_str());
+				ImGui::Text(m_Anim->GetFrame(hoverFrame)->GetFunctionCallName().c_str());
+				ImGui::Text(m_Anim->GetFrame(hoverFrame)->GetClassname().c_str());
 			}
 		}
 		ImGui::EndPopup();

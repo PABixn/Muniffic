@@ -38,7 +38,8 @@ namespace eg
 		void AddMessage(std::string threadID, std::string message);
 		bool WaitForCompletion(std::string threadID);
 		bool CheckIfAssistantExists(std::string assistantID);
-		bool TakeAction(std::string threadID, std::string runID, PyGILState_STATE gstate);
+		bool TakeAction(std::string threadID, std::string runID);
+		void SubmitToolOutputs(std::string threadID, std::string runID, std::string output);
 
 		void SpeakText(std::string text);
 		void SetVolume(float volume);
