@@ -6,6 +6,7 @@
 #include "Imgui/backends/imgui_impl_glfw.h"
 #include "Renderer/info.h"
 #include "Platform/Vulkan/Renderer/Resources/Scene/SceneRenderData.h"
+#include "Engine/Scene/Scene.h"
 eg::VulkanRenderer eg::VRen::vren = VulkanRenderer();
 
 void eg::VulkanRenderer::init()
@@ -47,9 +48,9 @@ void eg::VulkanRenderer::render()
     m_ResourceManager.m_FrameManager.drawEditorFrame();
 }
 
-void eg::VulkanRenderer::LoadSceneData(const entt::registry& entirtyRegistry)
+void eg::VulkanRenderer::LoadSceneData(Scene* scene)
 {
-    m_CurrentSceneRenderData.loadScene(entirtyRegistry);
+    m_CurrentSceneRenderData.loadScene(scene);
 }
 
 void eg::VulkanRenderer::createCommandPoolForOneTimeOperations()
@@ -62,6 +63,7 @@ void eg::VulkanRenderer::createCommandPoolForOneTimeOperations()
         throw std::runtime_error("failed to create command pool! :(");
     }
 }
+
 void eg::VulkanRenderer::createRenderPass()
 {
     // Render pass utilities
@@ -126,8 +128,6 @@ static void check_vk_result(VkResult err)
     if (err < 0)
         abort();
 }
-
-
 void eg::VulkanRenderer::initImGui(GLFWwindow* window)
 {
     EG_PROFILE_FUNCTION()
@@ -174,8 +174,6 @@ void eg::VulkanRenderer::initImGui(GLFWwindow* window)
     }
     m_ResourceManager.m_FrameManager.initForImGui();
 }
-
-
 
 VkCommandBuffer eg::VulkanRenderer::BeginSingleTimeCommands()
 {

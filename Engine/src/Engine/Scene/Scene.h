@@ -7,13 +7,13 @@
 #include "../../../vendor/entt/include/entt.hpp"
 #include "EntityInfo.h"
 #include "vector"
+#include "Platform/Vulkan/Renderer/Resources/Scene/ObjectRenderData.h"
 
 class b2World;
 
 namespace eg {
 
 	class Entity;
-
 	class Scene
 	{
 	public:
@@ -105,9 +105,12 @@ namespace eg {
 		//Change to shared_ptr if doesn't cause any problems
 		std::unordered_map<UUID, EntityInfo*> m_EntityInfoMap;
 
+
+
 		friend class Entity;
 		friend class SceneHierarchyPanel;
 		friend class SceneSerializer;
+		friend class SceneRenderData;
 	};
 
 }

@@ -131,6 +131,10 @@ namespace eg {
 
 		m_EntityMap[uuid] = (entt::entity)entity;
 		m_EntityInfoMap[uuid] = new EntityInfo(NULL);
+		
+
+		//VRenderer::LoadScene(m_Registry);
+		//doing this so the project doesn't compile
 		ConsolePanel::Log("File: Scene.cpp - Entity created: " + tag.Tag, ConsolePanel::LogType::Info);
 		return entity;
 	}

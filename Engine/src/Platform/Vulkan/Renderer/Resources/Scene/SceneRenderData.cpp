@@ -1,22 +1,26 @@
 #include "SceneRenderData.h"
 #include <vector>
 #include "Engine/Scene/Components.h"
-void eg::SceneRenderData::loadScene(const entt::registry& entityRegistry)
-{
+#include "Engine/Scene/Entity.h"
+void eg::SceneRenderData::loadScene(Scene* scene)
+{/*
 #ifdef MUNI_ENGINE_BUILD 
 
-    // Renderer will store data on vertices the fastest way- assuming scene vertices are changing extremely frequently.
+    // Renderer will store data on vertices the fastest way- assuming scene vertices are changing frequently.
 
-    auto group = entityRegistry.view<SpriteRendererComponent>();
+    auto group = entityRegistry.view<SpriteRendererComponent, TransformComponent>();
     for (auto entity : group)
     {
         SpriteRendererComponent spriteRenderer = group.get<SpriteRendererComponent>(entity);
-        spriteRenderer.m_RenderData = addSquare();
+        
+        spriteRenderer.m_RenderData = addSquare(group.get<TransformComponent>(entity).GetTransform());
     }
     m_Loaded = true;
 #else
     EG_ASSERT(false);
-#endif // MUNI_BUILD_ENGINE
+#endif // MUNI_BUILD_ENGINE*/
+    m_Scene = scene;
+    m_Loaded = true;
 }
 
 void eg::SceneRenderData::unloadScene()
@@ -32,6 +36,8 @@ void eg::SceneRenderData::unloadScene()
 
     if (m_DescriptorHelper.getDescriptorSetLayout() != nullptr)
         m_DescriptorHelper.cleanup();
+
+    m_Loaded = false;
 }
 
 void eg::SceneRenderData::createBuffers(size_t verticesPerObject, size_t numberOfObjects)
@@ -43,7 +49,7 @@ void eg::SceneRenderData::createBuffers(size_t verticesPerObject, size_t numberO
     m_DescriptorHelper.bindSSBO(&m_SSBO);
 }
 
-eg::ObjectRenderData eg::SceneRenderData::addSquare()
+eg::ObjectRenderData eg::SceneRenderData::addSquare(const glm::vec3 color, const glm::mat4& transform)
 {
     ObjectRenderData objRenderData = {};
     objRenderData.m_VerticesCount = 0;
@@ -64,8 +70,15 @@ eg::ObjectRenderData eg::SceneRenderData::addSquare()
         index += m_VertexBuffer.m_VerticesCount;
     }
     objRenderData.m_IndicesCount = 6;
-    AddObjectToBuffers(objRenderData, SpritesVertices.data(), indices.data());
+    ObjectMatrixData matrixData = { color, 0, transform };
+    AddObjectToBuffers(objRenderData, SpritesVertices.data(), indices.data(), &matrixData);
     return objRenderData;
+}
+
+void eg::SceneRenderData::addSquare(Entity& ent,const entt::registry& registry)
+{
+    TransformComponent tc = registry.get<TransformComponent>(ent);
+    m_EntityRenderInfoMap[m_LastRenderData++] = addSquare((ent.HasComponent<SpriteRendererComponent>() ? registry.get<SpriteRendererComponent>(ent).Color : glm::vec3(1.f,1.f,1.f)), tc.GetTransform());
 }
 
 void eg::SceneRenderData::AddObjectToBuffers(ObjectRenderData& objRenderData, void* verticesData, void* indicesData, void* matricesData)
@@ -86,3 +99,13 @@ void eg::SceneRenderData::AddObjectToBuffers(ObjectRenderData& objRenderData, vo
     }
     objRenderData.m_Update &= ~RenderUpdate::Created;
 }
+
+void eg::SceneRenderData::UpdateMatrixData(Entity& ent, void* upadtedMatricesData)
+{
+   ObjectRenderData objRenderData = m_EntityRenderInfoMap[(uint32_t)ent];
+   //EG_ASSERT(to_bool(objRenderData.m_Update & RenderUpdate::MatrixValueChanged));
+   uint32_t offset = offsetof(ObjectMatrixData, model);
+   void* updatedMatrixLocation = static_cast<void*>(static_cast<char*>(m_SSBO.m_Mapped) + objRenderData.m_MatricesBufferOffset + offset);
+   memcpy(updatedMatrixLocation, upadtedMatricesData, sizeof(glm::mat4));
+}
+

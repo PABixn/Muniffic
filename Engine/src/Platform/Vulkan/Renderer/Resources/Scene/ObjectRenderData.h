@@ -4,7 +4,7 @@ namespace eg {
 	class VulkanVertexBuffer;
 	class VulkanIndexBuffer;
 	class VulkanShaderStorageBuffer;
-	enum class RenderUpdate: uint32_t {
+	enum class RenderUpdate : uint32_t {
 		None = 0,
 		Created = 1 << 0,
 		VerticesSizeChanged = 1 << 1,
@@ -32,6 +32,10 @@ namespace eg {
 	
 	inline RenderUpdate operator~(RenderUpdate a) {
 		return static_cast<RenderUpdate>(~static_cast<std::underlying_type<RenderUpdate>::type>(a));
+	}
+
+	inline bool to_bool(RenderUpdate a) {
+		return a != RenderUpdate::None;
 	}
 
 	struct ObjectRenderData {

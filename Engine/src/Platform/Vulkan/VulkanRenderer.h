@@ -12,6 +12,7 @@
 #include "entt.hpp"
 #include "Platform/Vulkan/Renderer/Resources/Scene/SceneRenderData.h"
 namespace eg {
+	class Scene;
 	class VulkanRenderer
 	{
 		friend class VRenderer;
@@ -32,7 +33,7 @@ namespace eg {
 		VkDescriptorPool& getImGuiDescriptorPool() { return m_ImGuiDescriptorPool; }
 		const VkFormat& getFrameBufferImageFormat() { return m_SwapChain.m_ImageFormat; }
 		SceneRenderData& getSceneRenderData() { return m_CurrentSceneRenderData; }
-		void LoadSceneData(const entt::registry& entirtyRegistry);
+		void LoadSceneData(Scene* scene);
 	private:
 		Device m_Device;
 		SwapChain m_SwapChain;

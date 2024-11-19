@@ -11,7 +11,7 @@ struct ObjectData{
 	mat4 model;
 };
 
-layout(row_major, std430,set = 1, binding = 1) readonly buffer ObjectBuffer{
+layout(std430, set = 1, binding = 1) readonly buffer ObjectBuffer{
 	ObjectData objects[];
 } objectBuffer;
 

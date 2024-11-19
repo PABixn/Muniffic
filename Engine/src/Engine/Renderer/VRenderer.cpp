@@ -1,6 +1,7 @@
 #include "VRenderer.h"
 #include "Platform/Vulkan/VulkanRenderer.h"
 #include "Engine/Core/Application.h"
+#include "Platform/Vulkan/Renderer/Resources/Scene/ObjectRenderData.h"
 void eg::VRenderer::Init()
 {
 	VRen::get().init();
@@ -45,6 +46,7 @@ void eg::VRenderer::OnWindowResize()
 #endif // WIN32
 	VRen::get().getSwapChain().recreate(win);
 }
+
 ImTextureID eg::VRenderer::GetSceneRenderImageID()
 {
 	return VRen::get().getResourceManager().m_FrameManager.getSceneRendererID();
@@ -55,7 +57,24 @@ void eg::VRenderer::ResizeViewport(const std::pair<uint32_t, uint32_t>& viewport
 	if (recreate)VRen::get().m_ResourceManager.m_FrameManager.resizeViewport(viewportSize);
 }
 
-void eg::VRenderer::LoadScene(const entt::registry& Registry)
+void eg::VRenderer::LoadScene(Scene* scene)
 {
-	VRen::get().LoadSceneData(Registry);
+	VRen::get().LoadSceneData(scene);
+}
+
+void eg::VRenderer::UpdateTransformData(Entity& renderData, const TransformComponent& transform)
+{
+	VRen::get().m_CurrentSceneRenderData.UpdateMatrixData(renderData, (void*)&transform);
+}
+
+void eg::VRenderer::UpdateTransformData(Entity& entity)
+{
+	glm::mat4 matrixData = VRen::get().m_CurrentSceneRenderData.m_Scene->GetRegistry().get<TransformComponent>(entity).GetTransform();
+	
+	VRen::get().m_CurrentSceneRenderData.UpdateMatrixData(entity, (void*)&matrixData);
+}
+
+void eg::VRenderer::AddSquare(Entity& entity, const entt::registry& sceneRegistry)
+{
+	VRen::get().m_CurrentSceneRenderData.addSquare(entity, sceneRegistry);
 }

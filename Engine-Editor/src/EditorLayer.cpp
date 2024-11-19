@@ -1065,7 +1065,7 @@ namespace eg
 			ScriptEngine::Init();
 			auto startScenePath = Project::GetSceneFileSystemPath(Project::GetStartScene());
 			OpenScene(startScenePath);
-			VRenderer::LoadScene(m_ActiveScene->GetRegistry());
+			VRenderer::LoadScene(m_ActiveScene.get());
 			VRenderer::SetEditorCamera(&m_EditorCamera);
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 			m_ProjectDirectoryPanel = CreateRef<ProjectDirectoryPanel>();

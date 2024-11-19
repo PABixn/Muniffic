@@ -52,11 +52,12 @@ namespace eg
 
 	struct TransformComponent : Component
 	{
+	//private:
 		glm::vec3 Translation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 PrevTranslation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 Scale{ 1.0f, 1.0f, 1.0f };
-
+	//public:
 		TransformComponent() { isInheritedInChildren = true; isInherited = true; };
 		TransformComponent(const UUID& entityID) { EntityID = entityID; isInheritedInChildren = true; isInherited = true; };
 		TransformComponent(const TransformComponent&) = default;

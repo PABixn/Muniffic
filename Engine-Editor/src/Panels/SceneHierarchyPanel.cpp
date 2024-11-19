@@ -115,36 +115,39 @@ namespace eg
 		ImGui::PopID();
 	}
 
-	static void DrawVec3Control(Entity entity, const std::string &label, glm::vec3 &values, float resetValue = 0.0f, float columnWidth = 100.0f, bool firstValue = false)
+	static void DrawVec3Control(Entity entity, const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool firstValue = false)
 	{
 		EG_PROFILE_FUNCTION();
 		float x = values.x, y = values.y, z = values.z;
-		ImGuiIO &io = ImGui::GetIO();
+		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
 
 		ImGui::PushID(label.c_str());
 		float columnsWidth = ImGui::GetContentRegionAvail().x * WidthOfProperty - 68.f;
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0, 0});
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
 		ImGui::PushMultiItemsWidths(3, columnsWidth);
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = {lineHeight - 1.f, lineHeight};
+		ImVec2 buttonSize = { lineHeight - 1.f, lineHeight };
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.65f, 0.15f, 0.15f, 1.0f});
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{0.76f, 0.23f, 0.23f, 1.0f});
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{0.42f, 0.1f, 0.1f, 1.0f});
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.65f, 0.15f, 0.15f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.76f, 0.23f, 0.23f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.42f, 0.1f, 0.1f, 1.0f });
 		ImGui::PushFont(boldFont);
 		if (ImGui::StylisedButton("X", buttonSize, ImDrawFlags_RoundCornersLeft))
 		{
 			float check = values.x;
 			values.x = resetValue;
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"), check != 0 ? true : false);
+			VRenderer::UpdateTransformData(entity);
 		}
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 
-		if (ImGui::DragFloatRounded("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight))
+		if (ImGui::DragFloatRounded("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight)){
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"));
+			VRenderer::UpdateTransformData(entity);
+		}
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 
@@ -159,12 +162,15 @@ namespace eg
 			float check = values.y;
 			values.y = resetValue;
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"), check != 0 ? true : false);
+			VRenderer::UpdateTransformData(entity);
 		}
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		if (ImGui::DragFloatRounded("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight))
+		if (ImGui::DragFloatRounded("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight)) {
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"));
+			VRenderer::UpdateTransformData(entity);
+		}
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.65f, 0.06f, 0.83f, 1.0f});
@@ -178,13 +184,16 @@ namespace eg
 			float check = values.z;
 			values.z = resetValue;
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"), check != 0 ? true : false);
+			VRenderer::UpdateTransformData(entity);
 		}
 
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
-		if (ImGui::DragFloatRounded("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight))
+		if (ImGui::DragFloatRounded("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight)) {
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"));
+			VRenderer::UpdateTransformData(entity);
+		}
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 		ImGui::PopStyleVar();
