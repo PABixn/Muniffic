@@ -641,16 +641,60 @@ namespace eg
 			}
 		}
 
+		bool isRenameClicked = false;
+
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
 				Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Context, m_SelectionContext));
+
+			if (ImGui::MenuItem("Rename Entity"))
+				isRenameClicked = true;
 
 			if (ImGui::MenuItem("Create Child Entity"))
 				Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Child Entity", {}, m_Context, m_SelectionContext, entity));
 
 			ImGui::EndPopup();
 		}
+
+
+		if (isRenameClicked) {
+			ImGui::OpenPopup("RenameEntity");
+			isRenameClicked = false;
+		}
+		
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+		if (ImGui::BeginPopupModal("RenameEntity", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGuiStyle& style = ImGui::GetStyle();
+
+			ImVec2 spacing = style.ItemSpacing;
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+			style.ItemSpacing = ImVec2(10.f, 10.f);
+
+			ImGui::Text("Enter new entity name");
+			static char buffer[256] = "New entity name";
+			ImGui::InputText("##EntityName", buffer, 256);
+			if (ImGui::Button("Rename"))
+			{
+				Commands::ExecuteCommand<Commands::RenameEntityCommand>(Commands::CommandArgs(buffer, entity, m_Context, m_SelectionContext));
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			style.ItemSpacing = spacing;
+
+			ImGui::PopStyleVar(2);
+			ImGui::EndPopup();
+		}
+
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor();
 
 		if (opened)
 		{

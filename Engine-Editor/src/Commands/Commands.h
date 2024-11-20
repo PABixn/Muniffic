@@ -539,6 +539,24 @@ namespace eg
 			Entity& m_SelectionContext;
 		};
 
+		class RenameEntityCommand : public EntityCommand
+		{
+		public:
+			RenameEntityCommand(Ref<Scene>& context, Entity& selectionContext)
+				: EntityCommand(context, selectionContext)
+			{
+				Commands::AddCommand(this);
+			}
+
+			void Execute(CommandArgs arg) override;
+			void Undo() override;
+			void Redo() override;
+		private:
+			Entity m_renamedEntity;
+			std::string m_NewName;
+			std::string m_OldName;
+		};
+
 		class CreateEntityCommand : public EntityCommand
 		{
 		public:

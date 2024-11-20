@@ -105,6 +105,7 @@ namespace eg
 		SetCurrentCommand(true);
 	}
 
+
 	void Commands::DeleteEntityCommand::Redo()
 	{
 		Entity entity = m_Context->GetEntityByUUID(m_DeletedEntity.m_UUID);
@@ -128,6 +129,24 @@ namespace eg
 		}
 
 		SetCurrentCommand(false);
+	}
+
+	void Commands::RenameEntityCommand::Redo() {
+		m_renamedEntity.SetName(m_NewName);
+		SetCurrentCommand(false);
+	}
+
+	void Commands::RenameEntityCommand::Undo() {
+		m_renamedEntity.SetName(m_OldName);
+		SetCurrentCommand(true);
+	}
+
+	void Commands::RenameEntityCommand::Execute(CommandArgs args) {
+		m_renamedEntity = args.m_Entity;
+		m_OldName = m_renamedEntity.GetName();
+		m_NewName = args.m_Name;
+
+		m_renamedEntity.SetName(m_NewName);
 	}
 
 	void Commands::ChangeParent(Entity& entity, std::optional<Entity> parent)
