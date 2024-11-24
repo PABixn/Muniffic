@@ -322,13 +322,14 @@ namespace eg
 		ImGui::PopID();
 	}
 
-	UUID SceneHierarchyPanel::DrawFunctionCallPopup()
+	void SceneHierarchyPanel::DrawFunctionCallPopup()
 	{
 		EG_PROFILE_FUNCTION();
-
-		UUID uuid = 0;
-
-		ImGui::OpenPopup("FunctionCallPopup");
+		if (m_OpenFunctionPopupCall)
+		{
+			ImGui::OpenPopup("FunctionCallPopup");
+			m_OpenFunctionPopupCall = false;
+		}
 
 		if (ImGui::BeginPopup("FunctionCallPopup")) {
 			ImGui::Text("Function name:");
@@ -340,28 +341,26 @@ namespace eg
 			{
 				const auto& scriptMethods = ScriptEngine::GetAllScriptMethodMaps();
 				for (auto& [className, value] : scriptMethods) {
-					if (ImGui::Button(className.c_str())) {
-						ScriptResourceData* data = new ScriptResourceData();
-						data->ResourceName = className;
-						data->Extension = ".cs";
-						data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Script);
-						data->Type = ResourceType::Script;
-
-						uuid = ResourceDatabase::AddResource(AssetDirectoryManager::getDirectoryPath(data->ParentDirectory), data, ResourceType::Script);
-						ImGui::CloseCurrentPopup();
-						m_OpenFunctionPopupCall = false;
+					bool openedClass = ImGui::TreeNodeEx(className.c_str(), treeNodeFlags);
+					if (!openedClass)
+						continue;
+					for (auto& [MethodName, value2] : value) {
+						if (ScriptEngine::isMethodInternal(MethodName) || ScriptEngine::GetMethodParameterCount(className, MethodName) != 0)
+							continue;
+						if (ImGui::Button(MethodName.c_str()))
+						{
+							ImGui::CloseCurrentPopup();
+						}
 					}
+					ImGui::TreePop();
 				}
 				ImGui::TreePop();
 
 			}
-			if(ImGui::Button("Close")) {
-				ImGui::CloseCurrentPopup();
-				m_OpenFunctionPopupCall = false;
-			}
 			ImGui::EndPopup();
+
+
 		}
-		return uuid;
 	}
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene> &scene)
@@ -952,8 +951,7 @@ namespace eg
 						Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
 				} }, m_Context, Icons::Component_Camera);
 
-		//silli just for quicker nav
-		DrawComponent<ScriptComponent>("Script", entity, [this, entity, scene = m_Context](auto& component) mutable
+		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
 				ImGui::Unindent();
 				static std::string result;
@@ -989,23 +987,19 @@ namespace eg
 
 				if (PrettyButton("Add Script"))
 				{
-					/*ScriptResourceData* data = new ScriptResourceData();
+					ScriptResourceData* data = new ScriptResourceData();
 					data->ResourceName = "";
 					data->Extension = ".cs";
 					data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Script);
 					data->Type = ResourceType::Script;
 
 					UUID uuid = ResourceDatabase::AddResource(AssetDirectoryManager::getDirectoryPath(data->ParentDirectory), data, ResourceType::Script);
-					component.Scripts.push_back(uuid);*/
+					component.Scripts.push_back(uuid);
 
 					m_OpenFunctionPopupCall = true;
 				}
 
-				if (m_OpenFunctionPopupCall) {
-					UUID uuid = SceneHierarchyPanel::DrawFunctionCallPopup();
-					if (uuid != 0)
-						component.Scripts.push_back(uuid);
-				}
+				OpenFunctionPopupCall();
 
 				static std::vector<char*> buffers;
 
