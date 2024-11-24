@@ -962,15 +962,16 @@ namespace eg
 	const std::string EditorLayer::CompileCustomScripts()
 	{
 		EG_PROFILE_FUNCTION();
-        if (!m_CurrentProject || !Project::GetActive())
+		if (!m_CurrentProject || !Project::GetActive()) {
+			ConsolePanel::Log("No active project", ConsolePanel::LogType::Error);
 			return "No active project";
+		}
 
 		std::filesystem::path projectDirectory =  m_CurrentProject->GetProjectDirectory() / "Assets" / "Scripts";
 		const std::string& projectName = m_CurrentProject->GetProjectName();
 		std::string command = "cd " + projectDirectory.string() + " && cmake -DPROJECT_NAME=" + projectName + " . && cmake --build .";
 
-		std::array<char, 128> buffer;
-		std::string result;
+		std::array<char, 1024> buffer;
 
 		FILE* pipe = _popen(command.c_str(), "r");
 		if (!pipe) {
@@ -979,20 +980,20 @@ namespace eg
 		}
 
 		while (fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
-			result += buffer.data();
+			std::string line(buffer.data());
+
+			if (line.find("warning") != std::string::npos)
+				ConsolePanel::Log(line, ConsolePanel::LogType::Warning);
+			else if (line.find("error") != std::string::npos)
+				ConsolePanel::Log(line, ConsolePanel::LogType::Error);
 		}
 		int returnCode = _pclose(pipe);
 
 		if (returnCode != 0) { 
-			ConsolePanel::Log("Compilation failed: " + result, ConsolePanel::LogType::Error);
+			//ConsolePanel::Log("Compilation failed: " + result, ConsolePanel::LogType::Error);
 			return "Compilation failed. Look into console for more information."; 
 		}
 
-		/*if (system(command.c_str()) != 0)
-		{ 
-			ConsolePanel::Log("Compilation failed.", ConsolePanel::LogType::Error);
-			return "Compilation failed. Look into console for more information."; 
-		}*/
 		auto scriptModulePath = Project::GetProjectDirectory() / Project::GetAssetDirectory() / Project::GetActive()->GetScriptModulePath();
 		ScriptEngine::ReloadAssembly();
 		EG_TRACE("Compilation of Custom Scripts succeded");

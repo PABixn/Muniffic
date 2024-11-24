@@ -952,7 +952,6 @@ namespace eg
 						Commands::ExecuteRawValueCommand<bool>(&component.FixedAspectRatio, !component.FixedAspectRatio, "CameraComponent-Fixed Aspect Ratio");
 				} }, m_Context, Icons::Component_Camera);
 
-		//silli just for quicker nav
 		DrawComponent<ScriptComponent>("Script", entity, [this, entity, scene = m_Context](auto& component) mutable
 			{
 				ImGui::Unindent();
@@ -989,15 +988,6 @@ namespace eg
 
 				if (PrettyButton("Add Script"))
 				{
-					/*ScriptResourceData* data = new ScriptResourceData();
-					data->ResourceName = "";
-					data->Extension = ".cs";
-					data->ParentDirectory = AssetDirectoryManager::GetRootAssetTypeDirectory(ResourceType::Script);
-					data->Type = ResourceType::Script;
-
-					UUID uuid = ResourceDatabase::AddResource(AssetDirectoryManager::getDirectoryPath(data->ParentDirectory), data, ResourceType::Script);
-					component.Scripts.push_back(uuid);*/
-
 					m_OpenFunctionPopupCall = true;
 				}
 
