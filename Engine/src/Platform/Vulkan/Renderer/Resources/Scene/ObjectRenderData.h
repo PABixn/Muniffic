@@ -42,6 +42,7 @@ namespace eg {
 		RenderUpdate m_Update;
 		uint32_t m_VerticesCount;
 		uint32_t m_IndicesCount;
+		uint32_t m_FirstVertexCount;
 
 		VulkanVertexBuffer* m_VertexBuffer;
 		uint64_t m_VertexBufferOffset;

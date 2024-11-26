@@ -57,6 +57,8 @@ namespace eg
 		void RemoveComponent()
 		{
 			EG_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			T& component = m_Scene->m_Registry.get<T>(*this);
+			m_Scene->OnComponentRemoved<T>(*this, component);
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 

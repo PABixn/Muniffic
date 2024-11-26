@@ -34,6 +34,7 @@ namespace eg {
 		const VkFormat& getFrameBufferImageFormat() { return m_SwapChain.m_ImageFormat; }
 		SceneRenderData& getSceneRenderData() { return m_CurrentSceneRenderData; }
 		void LoadSceneData(Scene* scene);
+		
 	private:
 		Device m_Device;
 		SwapChain m_SwapChain;

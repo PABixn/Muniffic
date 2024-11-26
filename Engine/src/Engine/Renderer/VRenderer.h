@@ -25,9 +25,11 @@ namespace eg {
 		static ImTextureID GetSceneRenderImageID();
 		static void ResizeViewport(const std::pair<uint32_t, uint32_t>& viewportSize, bool recreate);
 		static void LoadScene(Scene* scene);
-		static void UpdateTransformData(Entity& renderData, const TransformComponent& transform);
+		static void FreeEntityRenderData(Entity entity);
+
 		static void UpdateTransformData(Entity& entity);
-		static void AddSquare(Entity& entity, const entt::registry& sceneRegistry);
+		static void AddSquare(Entity& entity, entt::registry* reg = nullptr);
+		static void UpdateSpriteRenderComponentData(Entity entity, entt::registry* reg = nullptr);
 	private:
 		static extent s_Extent;
 

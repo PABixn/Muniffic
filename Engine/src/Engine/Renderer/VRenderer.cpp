@@ -62,19 +62,22 @@ void eg::VRenderer::LoadScene(Scene* scene)
 	VRen::get().LoadSceneData(scene);
 }
 
-void eg::VRenderer::UpdateTransformData(Entity& renderData, const TransformComponent& transform)
+void eg::VRenderer::FreeEntityRenderData(Entity entity)
 {
-	VRen::get().m_CurrentSceneRenderData.UpdateMatrixData(renderData, (void*)&transform);
+	VRen::get().m_CurrentSceneRenderData.removeSquare(entity);
 }
 
 void eg::VRenderer::UpdateTransformData(Entity& entity)
 {
-	glm::mat4 matrixData = VRen::get().m_CurrentSceneRenderData.m_Scene->GetRegistry().get<TransformComponent>(entity).GetTransform();
-	
-	VRen::get().m_CurrentSceneRenderData.UpdateMatrixData(entity, (void*)&matrixData);
+	VRen::get().m_CurrentSceneRenderData.UpdateMatrixData(entity);
 }
 
-void eg::VRenderer::AddSquare(Entity& entity, const entt::registry& sceneRegistry)
+void eg::VRenderer::AddSquare(Entity& entity, entt::registry* reg)
 {
-	VRen::get().m_CurrentSceneRenderData.addSquare(entity, sceneRegistry);
+	VRen::get().m_CurrentSceneRenderData.addSquare(entity, reg);
+}
+
+void eg::VRenderer::UpdateSpriteRenderComponentData(Entity entity, entt::registry* reg)
+{
+	VRen::get().m_CurrentSceneRenderData.UpdateSpriteRenderComponentData(entity, reg);
 }

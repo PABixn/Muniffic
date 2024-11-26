@@ -149,6 +149,11 @@ namespace eg {
 			b2Body* entityBody = (b2Body*)entity.GetComponent<RigidBody2DComponent>().RuntimeBody;
 			m_PhysicsWorld->DestroyBody(entityBody);
 		}
+		if (entity.HasComponent<SpriteRendererComponent>())
+		{
+			VRenderer::FreeEntityRenderData(entity);
+		}
+
 		m_EntityMap.erase(entity.GetUUID());
 		m_EntityInfoMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
@@ -760,8 +765,6 @@ namespace eg {
 		static_assert(sizeof(T) == 0);
 	}
 
-
-
 	template<>
 	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
 	{
@@ -798,6 +801,7 @@ namespace eg {
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
 	{
         EG_PROFILE_FUNCTION();
+		VRenderer::AddSquare(entity, &m_Registry);
 	}
 
 	template<>
@@ -851,6 +855,104 @@ namespace eg {
 	void Scene::OnComponentAdded<AnimatorComponent>(Entity entity, AnimatorComponent& component)
 	{
         EG_PROFILE_FUNCTION();
+	}
+
+	template<typename T>
+	void Scene::OnComponentRemoved(Entity entity, T& component)
+	{
+		EG_PROFILE_FUNCTION();
+		static_assert(sizeof(T) == 0);
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<IDComponent>(Entity entity, IDComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<TagComponent>(Entity entity, TagComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<TransformComponent>(Entity entity, TransformComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<CameraComponent>(Entity entity, CameraComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<ScriptComponent>(Entity entity, ScriptComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+		VRenderer::FreeEntityRenderData(entity);
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<RigidBody2DComponent>(Entity entity, RigidBody2DComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<TextComponent>(Entity entity, TextComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<AudioSourceComponent>(Entity entity, AudioSourceComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<SpriteRendererSTComponent>(Entity entity, SpriteRendererSTComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
+	}
+
+	template<>
+	void Scene::OnComponentRemoved<AnimatorComponent>(Entity entity, AnimatorComponent& component)
+	{
+		EG_PROFILE_FUNCTION();
 	}
 
 }

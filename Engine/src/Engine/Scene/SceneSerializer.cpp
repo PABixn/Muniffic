@@ -584,9 +584,8 @@ namespace eg {
 						src.isInherited = spriteRendererComponent["IsInherited"].as<bool>();
 					if(spriteRendererComponent["IsInheritedInChildren"])
 						src.isInheritedInChildren = spriteRendererComponent["IsInheritedInChildren"].as<bool>();
+					VRenderer::UpdateSpriteRenderComponentData(deserializedEntity, &m_Scene->m_Registry);
 
-
-					VRenderer::AddSquare(deserializedEntity, m_Scene->m_Registry);
 				}
 
 				auto spriteRendererComponentST = entity["SpriteRendererSTComponent"];

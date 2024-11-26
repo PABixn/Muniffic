@@ -4,10 +4,11 @@
 #include "VulkanRenderer.h"
 bool eg::VulkanVertexBuffer::addBasic2DObjectVertices(ObjectRenderData* objectToAdd, void* verticesData)
 {
-	if ((objectToAdd->m_Update & RenderUpdate::Created) != RenderUpdate::None)
-	{
+	//if ((objectToAdd->m_Update & RenderUpdate::Created) != RenderUpdate::None)
+	//{
 		if (m_LastOffset + (objectToAdd->m_VerticesCount * sizeof(VulkanBasicMeshVertex)) <= m_Buffer.m_Size)
 		{
+			objectToAdd->m_FirstVertexCount = m_VerticesCount;
 			objectToAdd->m_VertexBufferOffset = m_LastOffset;
 			uintptr_t srcAddress = reinterpret_cast<uintptr_t>(m_Mapped);
 			uintptr_t incrementedAddress = srcAddress + m_LastOffset;
@@ -22,7 +23,7 @@ bool eg::VulkanVertexBuffer::addBasic2DObjectVertices(ObjectRenderData* objectTo
 		{
 			EG_ASSERT(false, "For now every object should fit into one vertex buffer");// TO-DO Vulkan
 		}
-	}
+	//}
 	return false;
 }
 

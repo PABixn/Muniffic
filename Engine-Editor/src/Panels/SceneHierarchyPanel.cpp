@@ -115,9 +115,10 @@ namespace eg
 		ImGui::PopID();
 	}
 
-	static void DrawVec3Control(Entity entity, const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool firstValue = false)
+	static bool DrawVec3Control(Entity entity, const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f, bool firstValue = false)
 	{
 		EG_PROFILE_FUNCTION();
+		bool changed = false;
 		float x = values.x, y = values.y, z = values.z;
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[0];
@@ -138,7 +139,7 @@ namespace eg
 			float check = values.x;
 			values.x = resetValue;
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"), check != 0 ? true : false);
-			VRenderer::UpdateTransformData(entity);
+			changed = true;
 		}
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
@@ -146,7 +147,7 @@ namespace eg
 
 		if (ImGui::DragFloatRounded("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight)){
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.x, x, entity, label + std::string("##X"));
-			VRenderer::UpdateTransformData(entity);
+			changed = true;
 		}
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
@@ -162,14 +163,14 @@ namespace eg
 			float check = values.y;
 			values.y = resetValue;
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"), check != 0 ? true : false);
-			VRenderer::UpdateTransformData(entity);
+			changed = true;
 		}
 		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 		ImGui::SameLine();
 		if (ImGui::DragFloatRounded("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight)) {
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.y, y, entity, label + std::string("##Y"));
-			VRenderer::UpdateTransformData(entity);
+			changed = true;
 		}
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
@@ -184,7 +185,7 @@ namespace eg
 			float check = values.z;
 			values.z = resetValue;
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"), check != 0 ? true : false);
-			VRenderer::UpdateTransformData(entity);
+			changed = true;
 		}
 
 		ImGui::PopFont();
@@ -192,7 +193,7 @@ namespace eg
 		ImGui::SameLine();
 		if (ImGui::DragFloatRounded("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f", 0, ImDrawFlags_RoundCornersRight)) {
 			Commands::ExecuteRawValueCommand<float, TransformComponent>(&values.z, z, entity, label + std::string("##Z"));
-			VRenderer::UpdateTransformData(entity);
+			changed = true;
 		}
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
@@ -200,6 +201,7 @@ namespace eg
 		ImGui::PopStyleVar();
 		PropertyLabel(label.c_str());
 		ImGui::PopID();
+		return changed;
 	}
 
 	static bool DrawComponentPropertyFloat(const char *label, float *value, float speed = 1.0f, float min = 0.0f, float max = 0.0f, const char *format = "%.3f")
@@ -653,8 +655,9 @@ namespace eg
 
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Delete Entity"))
+			if (ImGui::MenuItem("Delete Entity")) {
 				Commands::ExecuteCommand<Commands::DeleteEntityCommand>(Commands::CommandArgs("", entity, m_Context, m_SelectionContext));
+			}
 
 			if (ImGui::MenuItem("Create Child Entity"))
 				Commands::ExecuteCommand<Commands::CreateEntityCommand>(Commands::CommandArgs("Empty Child Entity", {}, m_Context, m_SelectionContext, entity));
@@ -840,9 +843,17 @@ namespace eg
 
 		DrawComponent<TransformComponent>("Transform", entity, [entity](auto& component)
 			{
-				DrawVec3Control(entity, "Translation", component.Translation, 0.0f, 100.f, true);
-				DrawVec3Control(entity, "Rotation", component.Rotation);
-				DrawVec3Control(entity, "Scale", component.Scale, 1.0f); }, m_Context, Icons::Component_Transform);
+				if (DrawVec3Control(entity, "Translation", component.Translation, 0.0f, 100.f, true) |
+					DrawVec3Control(entity, "Rotation", component.Rotation) |
+					DrawVec3Control(entity, "Scale", component.Scale, 1.0f)) {
+					Entity ent1 = entity;
+					if (ent1.HasComponent<SpriteRendererComponent>())
+					{
+						VRenderer::UpdateTransformData(ent1);
+
+					}
+				}
+			}, m_Context, Icons::Component_Transform);
 
 		DrawComponent<CameraComponent>("Camera", entity, [entity](auto& component)
 			{
@@ -1283,9 +1294,11 @@ namespace eg
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [entity](auto& component)
 			{
 				glm::vec4 color = component.Color;
-
-				if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color)))
+				bool changed = false;
+				if (DrawComponentPropertyColorEdit4("Color", glm::value_ptr(component.Color))) {
 					Commands::ExecuteRawValueCommand<glm::vec4, SpriteRendererComponent>(&component.Color, color, entity, "SpriteRendererComponent-Color");
+					changed = true;
+				}
 
 				DrawComponentPropertyFileReference("Texture", component.TextureUUID, [&component, &entity](int64_t* what) {
 					Ref<Texture2D> texture = ResourceDatabase::GetTextureRuntimeResource(*what);
@@ -1295,13 +1308,19 @@ namespace eg
 						Ref<Texture2D> oldTexture = component.Texture;
 						component.Texture = texture;
 						Commands::ExecuteRawValueCommand<Ref<Texture2D>, SpriteRendererComponent>(&component.Texture, oldTexture, entity, "SpriteRendererComponent-Texture", true);
+						VRenderer::UpdateSpriteRenderComponentData(entity);
 					}
 					else
 						EG_WARN("Could not load texture {0}", ResourceDatabase::GetResourcePath(*what));
 				});
 				float factor = component.TilingFactor;
-				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f))
+				if (DrawComponentPropertyFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f)) {
 					Commands::ExecuteRawValueCommand<float, SpriteRendererComponent>(&component.TilingFactor, factor, entity, "SpriteRendererComponent-Tiling Factor");
+					changed = true;
+				}
+				if (changed) {
+					VRenderer::UpdateSpriteRenderComponentData(entity);
+				}
 			},
 			m_Context, Icons::Component_SpriteRenderer);
 
