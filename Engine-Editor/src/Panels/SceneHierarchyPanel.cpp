@@ -658,24 +658,26 @@ namespace eg
 		}
 
 
+		static char buffer[256];
 		if (isRenameClicked) {
-			ImGui::OpenPopup("RenameEntity");
+			ImGui::OpenPopup(("RenameEntity" + std::to_string(entity.GetUUID())).c_str());
 			isRenameClicked = false;
+			const std::string& name = entity.GetComponent<TagComponent>().Tag;
+			memset(buffer, 0, 256);
+			memcpy(buffer, name.c_str(), std::clamp(name.size(), (size_t)0, (size_t)256));
 		}
 		
 		ImGui::PushStyleColor(ImGuiCol_PopupBg, static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_DarkShade);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
-		if (ImGui::BeginPopupModal("RenameEntity", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
+		if (ImGui::BeginPopupModal(("RenameEntity" + std::to_string(entity.GetUUID())).c_str(), NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize)) {
 			ImGuiStyle& style = ImGui::GetStyle();
 
 			ImVec2 spacing = style.ItemSpacing;
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
 			style.ItemSpacing = ImVec2(10.f, 10.f);
-
 			ImGui::Text("Enter new entity name");
-			static char buffer[256] = "New entity name";
 			ImGui::InputText("##EntityName", buffer, 256);
 			if (ImGui::Button("Rename"))
 			{
