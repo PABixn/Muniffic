@@ -24,8 +24,9 @@ namespace eg {
 		};
 		class LogMessage {
 		public:
-			LogMessage(const std::string& message, ConsolePanel::LogType logType)
-				: message(message), logType(logType) {}
+			LogMessage(const std::string& timestamp, const std::string& message, ConsolePanel::LogType logType)
+				:timestamp(timestamp), message(message), logType(logType) {}
+			std::string timestamp;
 			std::string message;
 			ConsolePanel::LogType logType;
 		};

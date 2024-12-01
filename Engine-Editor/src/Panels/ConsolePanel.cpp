@@ -23,50 +23,31 @@ namespace eg {
     }
     void ConsolePanel::Draw() {
         EG_PROFILE_FUNCTION();
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4.0f, 8.0f));
         for (auto& log : Logs) {
             switch (log->logType) {
             case LogType::Info:
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
-                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
-                ImGui::Button("INFO##xx");
-                ImGui::PopStyleColor(3);
-                ImGui::SameLine();
-                ImGui::PushTextWrapPos(0.0f);
-                ImGui::Text(log->message.c_str());
-                ImGui::PopTextWrapPos();
+                ImGui::TextColored(ImVec4(0.0f, 0.6f, 1.0f, 1.0f), "[INFO]");
                 break;
             case LogType::Warning:
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.5f, 0.0f, 1.0f));
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5f, 0.5f, 0.0f, 1.0f));
-                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.5f, 0.0f, 1.0f));
-                ImGui::Button("WARNING##xx");
-                ImGui::PopStyleColor(3);
-                ImGui::SameLine();
-                ImGui::PushTextWrapPos(0.0f);
-                ImGui::Text(log->message.c_str());
-                ImGui::PopTextWrapPos();
+                ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "[WARNING]");
                 break;
             case LogType::Error:
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
-                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
-                ImGui::Button("ERROR##xx");
-                ImGui::PopStyleColor(3);
-                ImGui::SameLine();
-                ImGui::PushTextWrapPos(0.0f);
-                ImGui::Text(log->message.c_str());
-				ImGui::PopTextWrapPos();
+                ImGui::TextColored(ImVec4(1.0f, 0.2f, 0.2f, 1.0f), "[ERROR]");
                 break;
             }
+            ImGui::SameLine();
+            ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), log->timestamp.c_str());
+            ImGui::SameLine();
+            ImGui::TextWrapped(log->message.c_str());
         }
+        ImGui::PopStyleVar();
         //ConsolePanel::ClearLogs();
     };
 
     void ConsolePanel::Log(const std::string& message, LogType type) {
         EG_PROFILE_FUNCTION();
-        std::string mess = ConsolePanel::getCurrentTime() + " | " + message;
-        Logs.push_back(new ConsolePanel::LogMessage(mess, type));
+        Logs.push_back(new ConsolePanel::LogMessage(ConsolePanel::getCurrentTime(), message, type));
     }
 
     void ConsolePanel::OnImGuiRender() {
