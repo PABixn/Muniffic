@@ -26,8 +26,9 @@ namespace eg {
 		static void ResizeViewport(const std::pair<uint32_t, uint32_t>& viewportSize, bool recreate);
 		static void LoadScene(Scene* scene);
 		static void FreeEntityRenderData(Entity entity);
+		static void UpdateAllMatricesData(Scene* scene = nullptr);
 
-		static void UpdateTransformData(Entity& entity);
+		static void UpdateTransformData(const Entity& entity);
 		static void AddSquare(Entity& entity, entt::registry* reg = nullptr);
 		static void UpdateSpriteRenderComponentData(Entity entity, entt::registry* reg = nullptr);
 	private:

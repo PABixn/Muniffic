@@ -1129,6 +1129,7 @@ namespace eg
 			m_OldTime = std::chrono::high_resolution_clock::now();
 		    m_RuntimeScene->OnRuntimeStart();
 		    m_ActiveScene = m_RuntimeScene;
+			VRenderer::LoadScene(m_ActiveScene.get());
 		    m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		    ConsolePanel::Log("File: EditorLayer.cpp - Scene started", ConsolePanel::LogType::Info);
 		}
@@ -1173,6 +1174,8 @@ namespace eg
 		m_SceneState = SceneState::Edit;
 		m_RuntimeScene->OnRuntimeStop();
 		m_ActiveScene = m_EditorScene;
+		VRenderer::LoadScene(m_ActiveScene.get());
+		VRenderer::UpdateAllMatricesData(m_ActiveScene.get());
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		m_RuntimeScene = nullptr;
 		ConsolePanel::Log("File: EditorLayer.cpp - Scene stopped", ConsolePanel::LogType::Info);

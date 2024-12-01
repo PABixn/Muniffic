@@ -67,7 +67,11 @@ void eg::VRenderer::FreeEntityRenderData(Entity entity)
 	VRen::get().m_CurrentSceneRenderData.removeSquare(entity);
 }
 
-void eg::VRenderer::UpdateTransformData(Entity& entity)
+void eg::VRenderer::UpdateAllMatricesData(Scene* scene = nullptr) {
+	VRen::get().m_CurrentSceneRenderData.
+}
+
+void eg::VRenderer::UpdateTransformData(const Entity& entity)
 {
 	VRen::get().m_CurrentSceneRenderData.UpdateMatrixData(entity);
 }

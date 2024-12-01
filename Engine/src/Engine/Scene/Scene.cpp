@@ -81,7 +81,7 @@ namespace eg {
 
 	Ref<Scene> Scene::Copy(Ref<Scene>& other)
 	{
-        EG_PROFILE_FUNCTION();
+		EG_PROFILE_FUNCTION();
 		Ref<Scene> scene = CreateRef<Scene>();
 		scene->m_ViewportWidth = other->m_ViewportWidth;
 		scene->m_ViewportHeight = other->m_ViewportHeight;
@@ -92,14 +92,24 @@ namespace eg {
 		auto& dstSceneRegistry = scene->m_Registry;
 		auto idView = srcSceneRegistry.view<IDComponent>();
 		EG_CORE_INFO("Entities count: {0}", idView.size());
-		// Copy entities
-		for(auto entity : idView)
+
+		// Store entities in the desired order
+		std::vector<entt::entity> entities;
+		for (auto entity : idView)
 		{
+			entities.push_back(entity);
+		}
+
+		// Iterate in reverse to maintain original order
+		for (auto it = entities.rbegin(); it != entities.rend(); ++it)
+		{
+			auto entity = *it;
 			UUID uuid = srcSceneRegistry.get<IDComponent>(entity).ID;
 			const auto& tag = srcSceneRegistry.get<TagComponent>(entity).Tag;
 			Entity newEntity = scene->CreateEntityWithID(uuid, tag);
 			enttMap[uuid] = (entt::entity)newEntity;
-			//Copy the values of the entity info not the pointer
+
+			// Copy the values of the entity info, not the pointer
 			EntityInfo* info = new EntityInfo(other->m_EntityInfoMap[uuid]->m_Parent);
 			for (auto child : other->m_EntityInfoMap[uuid]->m_Children)
 			{
@@ -113,6 +123,7 @@ namespace eg {
 		ConsolePanel::Log("File: Scene.cpp - Scene copied", ConsolePanel::LogType::Info);
 		return scene;
 	}
+
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
@@ -331,15 +342,16 @@ namespace eg {
 
 		if (mainCamera)
 		{
-			Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
+			//Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
 			// Draw sprites
 			{
 				auto group = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 				for (auto entity : group)
 				{
 					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+					
+					VRenderer::UpdateTransformData({ entity , nullptr });
+					//Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
 			}
 
@@ -392,7 +404,7 @@ namespace eg {
 				}
 			}
 
-			Renderer2D::EndScene();
+			//Renderer2D::EndScene();
 		}
 
 		for(auto& entity : m_EntitiesToDestroy)
