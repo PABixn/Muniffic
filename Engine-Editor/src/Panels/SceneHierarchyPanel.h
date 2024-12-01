@@ -5,6 +5,7 @@
 #include "Imgui/imgui.h"
 #include "../IconLoader.h"
 #include "Commands/Commands.h"
+#include "EntityPropertiesPanel.h"
 
 namespace eg {
 	enum ComponentIcons {
@@ -83,5 +84,6 @@ namespace eg {
 		bool m_FirstDrawAfterSearch;
 		std::vector<Ref<Animation>> m_PreviewedAnimations;
 		bool m_OpenFunctionPopupCall = false;
+		Ref<EntityPropertiesPanel> m_PropertiesPanel = nullptr;
 	};
 }
