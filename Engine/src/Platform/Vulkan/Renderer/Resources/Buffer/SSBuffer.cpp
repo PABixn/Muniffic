@@ -2,7 +2,7 @@
 #include "Platform/Vulkan/Renderer/Resources/Scene/ObjectRenderData.h"
 #include <glm/glm.hpp>
 #include "VulkanRenderer.h"
-bool eg::VulkanShaderStorageBuffer::addBasic2DObjectModelMatrix(ObjectRenderData* objectToAdd, void* colorNMatrixData)
+bool eg::VulkanShaderStorageBuffer::addBasic2DObjectSRComponentData(ObjectRenderData* objectToAdd, void* colorNMatrixData)
 {
 	if ((objectToAdd->m_Update & RenderUpdate::Created) != RenderUpdate::None)
 	{

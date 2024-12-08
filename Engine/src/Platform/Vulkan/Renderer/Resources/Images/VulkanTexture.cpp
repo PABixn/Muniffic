@@ -3,6 +3,7 @@
 #include "Platform/Vulkan/VulkanRenderer.h"
 #include "Engine/Core/Core.h"
 #include "Imgui/backends/imgui_impl_vulkan.h"
+#include "Engine/Resources/ResourceDatabase.h"
 
 eg::Ref<eg::Texture2D> eg::VulkanTexture::Create(const TextureSpecification& specification)
 {
@@ -16,13 +17,17 @@ eg::Ref<eg::Texture2D> eg::VulkanTexture::Create(const std::string& path)
 
 eg::Ref<eg::Texture2D> eg::VulkanTexture::Create(const UUID& id)
 {
-    EG_ASSERT(false);
-    return nullptr;
+    std::filesystem::path path = ResourceDatabase::GetResourcePath(id);
+    std::string p = path.string();
+    return CreateRef<VulkanTexture>(p.c_str());
 }
 
-eg::VulkanTexture::VulkanTexture(const char* path)
+
+
+
+eg::VulkanTexture::VulkanTexture(const char* path, bool isSceneImage)
 {
-    LoadTexture(&VRen::get().getResourceManager().getTextureManager(), path);
+    LoadTexture(&VRen::get().getResourceManager().getTextureManager(), path, isSceneImage);
 }
 
 eg::VulkanTexture::VulkanTexture(const TextureSpecification& texSpec)
@@ -126,7 +131,7 @@ void eg::VulkanTexture::cleanUp()
     vkFreeDescriptorSets(VRen::get().getNativeDevice(), VRen::get().getImGuiDescriptorPool(), 1, &helper);
 }
 
-void eg::VulkanTexture::LoadTexture(TextureManager* textureManager, const char* Argpath){
+void eg::VulkanTexture::LoadTexture(TextureManager* textureManager, const char* Argpath, bool isSceneImage){
     EG_PROFILE_FUNCTION();
     VkFormat imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
     {
@@ -267,4 +272,3 @@ ImTextureID eg::VulkanTexture::GetRendererID() const
 {
     return rendererID;
 }
-

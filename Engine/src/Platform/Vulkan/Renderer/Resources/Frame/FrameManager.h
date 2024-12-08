@@ -12,7 +12,6 @@ namespace eg {
 	class ResourceManager;
 	class FrameManager
 	{
-	friend class Renderer;
 	public:
 		ImTextureID getSceneRendererID(){ return m_SceneRenderImageRendererID[m_CurrentFrameInFlightIndex]; };
 		void init(ResourceManager* rm);
@@ -54,5 +53,6 @@ namespace eg {
 	private:
 		uint32_t m_ViewportWidth = 0;
 		uint32_t m_ViewportHeight = 0;
+	friend class Renderer;
 	};
 }

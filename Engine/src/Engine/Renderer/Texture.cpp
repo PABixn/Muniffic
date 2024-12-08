@@ -28,6 +28,7 @@ namespace eg {
 		{
 		case RendererAPI::API::None: EG_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 		case RendererAPI::API::OpenGL: return OpenGLTexture2D::Create(id);
+		case RendererAPI::API::Vulkan: return VulkanTexture::Create(id);
 		}
 
 		EG_ASSERT(false, "Unknown RendererAPI!");

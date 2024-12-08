@@ -14,7 +14,7 @@ namespace eg {
 		void* m_Mapped;
 		size_t m_LastOffset = 0;
 		size_t m_InstancesCount = 0;
-		bool addBasic2DObjectModelMatrix(ObjectRenderData* objectToAdd, void* indicesData);
+		bool addBasic2DObjectSRComponentData(ObjectRenderData* objectToAdd, void* indicesData);
 		void create(size_t size);
 		void destroy();
 	private:

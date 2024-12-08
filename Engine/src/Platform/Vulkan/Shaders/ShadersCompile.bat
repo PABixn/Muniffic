@@ -8,11 +8,14 @@ for /f "tokens=6" %%a in ("%line%") do (
     set "VULKAN_SDK_LOCATION=%%a"
 )
 echo %VULKAN_SDK_LOCATION%
-cd Fragment
-%VULKAN_SDK_LOCATION%\Bin\glslc.exe shader.frag -o frag.spv
-cd ../Vertex
-%VULKAN_SDK_LOCATION%\Bin\glslc.exe shader.vert -o vert.spv
-cd ../
+for /D %%d in ("*") do (
+    pushd %%d
+    cd %%d
+    %VULKAN_SDK_LOCATION%\Bin\glslc.exe shader.frag -o frag.spv
+    %VULKAN_SDK_LOCATION%\Bin\glslc.exe shader.vert -o vert.spv
+    cd ../
+    popd
+)
 del output.txt
 
 pause

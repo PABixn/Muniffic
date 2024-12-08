@@ -29,8 +29,11 @@ void eg::SceneRenderData::unloadScene()
     if (m_VertexBuffer.m_Buffer.m_Buffer != nullptr)
         m_VertexBuffer.destroy();
 
-    if (m_IndexBuffer.m_Buffer.m_Buffer != nullptr)
-        m_IndexBuffer.destroy();
+    for (uint32_t i = 0; i < m_IndexBuffer.size(); i++)
+    {
+        if (m_IndexBuffer[i].m_Buffer.m_Buffer != nullptr)
+            m_IndexBuffer[i].destroy();
+    }
 
     if (m_SSBO.m_Buffer.m_Buffer != nullptr)
         m_SSBO.destroy();
@@ -45,7 +48,9 @@ void eg::SceneRenderData::createBuffers(size_t verticesPerObject, size_t numberO
 {
     m_DescriptorHelper.init();
     m_VertexBuffer.create(verticesPerObject * sizeof(VulkanBasicMeshVertex), VertexType_BasicMesh);
-    m_IndexBuffer.create(verticesPerObject  * numberOfObjects * sizeof(uint32_t)* 1.5);
+    m_IndexBuffer.resize(numberOfIndexBuffers);
+    for (uint32_t i = 0; i< numberOfIndexBuffers;i++)
+        m_IndexBuffer[i].create(verticesPerObject * numberOfObjects * sizeof(uint32_t) * 1.5);
     m_SSBO.create(numberOfObjects * sizeof(ObjectMatrixData));
     m_DescriptorHelper.bindSSBO(&m_SSBO);
 
@@ -57,23 +62,30 @@ void eg::SceneRenderData::createBuffers(size_t verticesPerObject, size_t numberO
     SpritesVertices[3] = { {-0.5f, 0.5f, 0.f}, { 0.f, 0.f, 1.f }, { 1.0f, 1.0f } };
     memcpy(m_VertexBuffer.m_Mapped, SpritesVertices.data(), SpritesVertices.size() * sizeof(VulkanBasicMeshVertex));
     m_VertexBuffer.m_VerticesCount = 4;
+    UpdateDrawCallsInfo();
 }
 
 
 void eg::SceneRenderData::AddObjectToBuffers(ObjectRenderData& objRenderData, void* indicesData, void* matricesData)
 {
-    m_IndexBuffer.addBasic2DObjectIndices(&objRenderData, indicesData);
+    for  (uint32_t i = 0;  i < numberOfIndexBuffers;i++)
+    {
+        if (m_IndexBuffer[i].addBasic2DObjectIndices(&objRenderData, indicesData)) {
+            break;
+        }
+
+    }
     if (matricesData == nullptr)
     {
         ObjectMatrixData matrixData = {};
         matrixData.color = glm::vec3(1.f, 1.f, 1.f);
         matrixData.model = glm::mat4(1);
         //matrixData.model = glm::transpose(matrixData.model);
-        m_SSBO.addBasic2DObjectModelMatrix(&objRenderData, &matrixData);
+        m_SSBO.addBasic2DObjectSRComponentData(&objRenderData, &matrixData);
     }
     else
     {
-        m_SSBO.addBasic2DObjectModelMatrix(&objRenderData, matricesData);
+        m_SSBO.addBasic2DObjectSRComponentData(&objRenderData, matricesData);
     }
     objRenderData.m_Update &= ~RenderUpdate::Created;
 }
@@ -110,9 +122,9 @@ void eg::SceneRenderData::removeSquare(Entity entity)
     if (m_SSBO.m_InstancesCount!=0)
     {
         uint32_t lastRenderingEntity = findLastRenderData();
+        ObjectRenderData& objThatIsGoingToBeDeleted = m_EntityRenderInfoMap[(uint32_t)entity];
         if ((uint32_t)entity != lastRenderingEntity)
         {
-            ObjectRenderData& objThatIsGoingToBeDeleted = m_EntityRenderInfoMap[(uint32_t)entity];
             ObjectRenderData& LastObj = m_EntityRenderInfoMap[(uint32_t)lastRenderingEntity];
             LastObj.m_IndexBufferOffset = objThatIsGoingToBeDeleted.m_IndexBufferOffset;
             LastObj.m_MatricesBufferOffset = objThatIsGoingToBeDeleted.m_MatricesBufferOffset;
@@ -122,8 +134,8 @@ void eg::SceneRenderData::removeSquare(Entity entity)
         }
         m_SSBO.m_InstancesCount -= 1;
         m_SSBO.m_LastOffset -= sizeof(ObjectMatrixData);
-        m_IndexBuffer.m_IndicesCount -= 6;
-        m_IndexBuffer.m_LastOffset -= 6 * sizeof(uint32_t);
+        objThatIsGoingToBeDeleted.m_IndexBuffer->m_IndicesCount -= 6;
+        objThatIsGoingToBeDeleted.m_IndexBuffer->m_LastOffset -= 6 * sizeof(uint32_t);        
         m_EntityRenderInfoMap.erase((uint32_t)entity);
     }
 
@@ -157,12 +169,27 @@ void eg::SceneRenderData::UpdateAllMatrixData(Scene* scene)
     for (auto entity : group)
     {
         auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-        UpdateMatrixData({ entity , nullptr });
-        UpdateSpriteRenderComponentData({ entity , nullptr });
+        Entity ent = {entity, nullptr};
+        UpdateMatrixData(ent);
+        UpdateSpriteRenderComponentData(ent);
         //Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
     }
     
+}
+
+void eg::SceneRenderData::UpdateDrawCallsInfo()
+{
+    m_DrawCallInfos = std::vector<DrawCallsInfo>(1);
+    m_DrawCallInfos[0].drawCallCount = 1;
+    m_DrawCallInfos[0].graphicsPipeline = &VRen::get().getGraphicsPipeline();
+    m_DrawCallInfos[0].vertexBuffer = { &m_VertexBuffer };
+    m_DrawCallInfos[0].indexBuffer = { &m_IndexBuffer[0]};
+    m_DrawCallInfos[0].instancesCount = { &m_SSBO.m_InstancesCount };
+    m_DrawCallInfos[0].descriptorSets = std::vector<std::vector<VkDescriptorSet*>>(2);
+    m_DrawCallInfos[0].descriptorSets[0] = { &VRen::get().getResourceManager().getDescriptorSets()[0], &VRen::get().getSceneRenderData().getMatrixBufferDescriptorHelper().m_DescriptorSet };
+    m_DrawCallInfos[0].descriptorSets[1] = { &VRen::get().getResourceManager().getDescriptorSets()[1], &VRen::get().getSceneRenderData().getMatrixBufferDescriptorHelper().m_DescriptorSet };
+
+
 }
 
 eg::UUID eg::SceneRenderData::findLastRenderData() {

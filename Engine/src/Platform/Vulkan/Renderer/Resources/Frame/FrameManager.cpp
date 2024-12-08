@@ -451,7 +451,7 @@ void eg::FrameManager::sceneRecordCommandBuffer(VkCommandBuffer commandBuffer, u
 	renderPassInfo.clearValueCount = 1;
 	renderPassInfo.pClearValues = &clearColor;
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getGraphicsPipeline().getNativePipeline());
+
 
 
 	VkViewport viewport{};
@@ -466,7 +466,9 @@ void eg::FrameManager::sceneRecordCommandBuffer(VkCommandBuffer commandBuffer, u
 	scissor.offset = { 0, 0 };
 	scissor.extent = { m_ViewportWidth, m_ViewportHeight };
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-
+	/*
+	// TO_DO pipeline
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getGraphicsPipeline().getNativePipeline());
 	VkDescriptorSet sets[] = { m_ResourceManagerRef->getDescriptorSets()[m_CurrentFrameInFlightIndex], VRen::get().getSceneRenderData().getMatrixBufferDescriptorHelper().m_DescriptorSet };
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getGraphicsPipeline().getPipelineLayout(), 0, 2, sets, 0, nullptr);
 
@@ -475,9 +477,29 @@ void eg::FrameManager::sceneRecordCommandBuffer(VkCommandBuffer commandBuffer, u
 	std::vector<VkBuffer> vertexBufferss = { VRen::get().getSceneRenderData().m_VertexBuffer.m_Buffer.m_Buffer };
 	VkDeviceSize offsetss[] = { 0 };
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBufferss.data(), offsetss);
-	vkCmdBindIndexBuffer(commandBuffer, VRen::get().getSceneRenderData().m_IndexBuffer.m_Buffer.m_Buffer, 0, VK_INDEX_TYPE_UINT32);
-	vkCmdDrawIndexed(commandBuffer, VRen::get().getSceneRenderData().m_IndexBuffer.m_IndicesCount, VRen::get().getSceneRenderData().m_SSBO.m_InstancesCount, 0, 0, 0);
-
+	for (size_t i = 0; i < VRen::get().getSceneRenderData().m_IndexBuffer.size(); i++)
+	{
+		vkCmdBindIndexBuffer(commandBuffer, VRen::get().getSceneRenderData().m_IndexBuffer[i].m_Buffer.m_Buffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdDrawIndexed(commandBuffer, VRen::get().getSceneRenderData().m_IndexBuffer[i].m_IndicesCount, VRen::get().getSceneRenderData().m_SSBO.m_InstancesCount, 0, 0, 0);
+	}
+	*/
+	for (uint32_t j = 0; j < VRen::get().getSceneRenderData().m_DrawCallInfos.size(); j++) {
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getSceneRenderData().m_DrawCallInfos[j].graphicsPipeline->getNativePipeline());
+		for (uint32_t i = 0; i < VRen::get().getSceneRenderData().m_DrawCallInfos[j].drawCallCount; i++)
+		{
+			VkDeviceSize offsetsss[] = { 0 };
+			vkCmdBindVertexBuffers(commandBuffer, 0, 1, &VRen::get().getSceneRenderData().m_DrawCallInfos[j].vertexBuffer[i]->m_Buffer.m_Buffer, offsetsss);
+			vkCmdBindIndexBuffer(commandBuffer, VRen::get().getSceneRenderData().m_DrawCallInfos[j].indexBuffer[i]->m_Buffer.m_Buffer, 0, VK_INDEX_TYPE_UINT32);
+			std::vector<VkDescriptorSet> descriptorSets = std::vector<VkDescriptorSet>(VRen::get().getSceneRenderData().m_DrawCallInfos[j].descriptorSets[m_CurrentFrameInFlightIndex].size());
+			for (size_t k =0;k<VRen::get().getSceneRenderData().m_DrawCallInfos[j].descriptorSets[m_CurrentFrameInFlightIndex].size();k++)
+			{
+				VkDescriptorSet* ds = VRen::get().getSceneRenderData().m_DrawCallInfos[j].descriptorSets[m_CurrentFrameInFlightIndex][k];
+				descriptorSets[k] = *ds;
+			}
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, VRen::get().getSceneRenderData().m_DrawCallInfos[j].graphicsPipeline->getPipelineLayout(), 0, 2,descriptorSets.data(), 0, nullptr);
+			vkCmdDrawIndexed(commandBuffer, VRen::get().getSceneRenderData().m_DrawCallInfos[j].indexBuffer[i]->m_IndicesCount, (uint32_t)*VRen::get().getSceneRenderData().m_DrawCallInfos[j].instancesCount[i], 0, 0, 0);
+		}
+	}
 	vkCmdEndRenderPass(commandBuffer);
 
 	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {

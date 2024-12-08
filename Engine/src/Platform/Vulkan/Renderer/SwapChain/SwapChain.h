@@ -22,7 +22,7 @@ namespace eg {
 
 	class SwapChain
 	{
-        friend class GraphicsPipeline;
+        friend class ObjectWithoutTexturePipeline;
         friend class VulkanRenderer;
         friend class FrameManager;
 	public:

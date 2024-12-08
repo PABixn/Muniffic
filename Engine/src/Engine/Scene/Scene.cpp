@@ -305,6 +305,7 @@ namespace eg {
 						transform.Translation.x = body->GetPosition().x;
 						transform.Translation.y = body->GetPosition().y;
 						transform.Rotation.z = body->GetAngle();
+						VRenderer::UpdateTransformData(entity);
 					}
 				}
 			}

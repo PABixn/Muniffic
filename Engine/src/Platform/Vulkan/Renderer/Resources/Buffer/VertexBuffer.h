@@ -13,6 +13,7 @@ namespace eg {
 		size_t m_VerticesCount = 0;
 		size_t m_LastOffset = 0;
 		VertexType m_VertexType;
+		bool m_LeftSpace;
 		bool addBasic2DObjectVertices(ObjectRenderData* objectToAdd, void* verticesData);
 		void create(size_t size, VertexType vertexType);
 		void destroy();

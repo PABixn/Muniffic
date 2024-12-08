@@ -8,6 +8,7 @@
 #include "Platform/Vulkan/Renderer/Device/Device.h"
 #include "Platform/Vulkan/Renderer/SwapChain/SwapChain.h"
 #include "Platform/Vulkan/Renderer/Resources/ResourceManager.h"
+#include "Platform/Vulkan/Renderer/GraphicsPipeline/ObjectWithoutTexturePipeline.h"
 #include "Platform/Vulkan/Renderer/GraphicsPipeline/GraphicsPipeline.h"
 #include "entt.hpp"
 #include "Platform/Vulkan/Renderer/Resources/Scene/SceneRenderData.h"
@@ -29,7 +30,7 @@ namespace eg {
 		VkRenderPass& getEditorRenderPass() { return m_EditorRenderPass; }
 		ResourceManager& getResourceManager() { return m_ResourceManager; }
 		SwapChain& getSwapChain() { return m_SwapChain; }
-		GraphicsPipeline& getGraphicsPipeline() { return m_GraphicsPipeline; }
+		ObjectWithoutTexturePipeline& getGraphicsPipeline() { return m_GraphicsPipeline; }
 		VkDescriptorPool& getImGuiDescriptorPool() { return m_ImGuiDescriptorPool; }
 		const VkFormat& getFrameBufferImageFormat() { return m_SwapChain.m_ImageFormat; }
 		SceneRenderData& getSceneRenderData() { return m_CurrentSceneRenderData; }
@@ -41,7 +42,7 @@ namespace eg {
 		VkRenderPass m_EditorRenderPass;
 		ResourceManager m_ResourceManager;
 		VkCommandPool m_PoolForOneTimeOperations;
-		GraphicsPipeline m_GraphicsPipeline;
+		ObjectWithoutTexturePipeline m_GraphicsPipeline;
 	private:
 		VkDescriptorPool m_ImGuiDescriptorPool;
 	private:

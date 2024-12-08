@@ -53,6 +53,7 @@ namespace eg {
 		spriteRendererComponent.TilingFactor = component->TilingFactor;
 		spriteRendererComponent.isInherited = component->isInherited;
 		spriteRendererComponent.isInheritedInChildren = component->isInheritedInChildren;
+		VRenderer::UpdateSpriteRenderComponentData(entity);
 		ConsolePanel::Log("File: Entity.cpp - Sprite Renderer component set successfully", ConsolePanel::LogType::Info);
 	}
 

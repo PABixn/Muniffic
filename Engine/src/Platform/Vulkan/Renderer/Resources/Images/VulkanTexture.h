@@ -21,7 +21,7 @@ namespace eg {
 		static Ref<Texture2D> Create(const UUID& id);
 	public:
 		VulkanTexture() = default;
-		VulkanTexture(const char* path);
+		VulkanTexture(const char* path, bool sceneImage = false);
 		VulkanTexture(const TextureSpecification& texSpec);
 		~VulkanTexture() { cleanUp(); }
 		void cleanUp();
@@ -30,7 +30,7 @@ namespace eg {
 		VkImageView m_TextureImageView;
 		VkSampler m_Sampler;
 	public:
-		void LoadTexture(TextureManager* textureManager, const char* path);
+		void LoadTexture(TextureManager* textureManager, const char* path, bool isSceneImage = false);
 		uint32_t width;
 		uint32_t height;
 		ImTextureID rendererID;

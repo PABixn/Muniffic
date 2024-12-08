@@ -7,11 +7,22 @@
 #include "Platform/Vulkan/Renderer/Resources/Buffer/SSBuffer.h"
 #include "Platform/Vulkan/Renderer/Resources/Vertex/Vertex.h"
 #include "Platform/Vulkan/Renderer/Resources/Descriptors/MatrixBufferDescriptorHelper.h"
+#include "Platform/Vulkan/Renderer/GraphicsPipeline/GraphicsPipeline.h"
 #include "ObjectRenderData.h"
 #include "Engine/Scene/Scene.h"
 namespace eg {
+	const uint32_t numberOfIndexBuffers = 2;
 	struct VulkanVertexBuffer;
 	class Entity;
+
+	struct DrawCallsInfo { // a structure to organize draw calls in a way that we bind a pipeline, then we call the bindings and draw commands for each object (or objects if batched) that use the pipeline. After that we switch to a new pipeline and repeat
+		GraphicsPipeline* graphicsPipeline;
+		uint32_t drawCallCount;
+		std::vector<std::vector<VkDescriptorSet*>> descriptorSets;
+		std::vector<VulkanVertexBuffer*> vertexBuffer;
+		std::vector<VulkanIndexBuffer*> indexBuffer;
+		std::vector<size_t*> instancesCount;
+	};
 	class SceneRenderData
 	{
 	public:
@@ -31,11 +42,13 @@ namespace eg {
 		void UpdateSpriteRenderComponentData(Entity& entity, entt::registry* reg = nullptr);
 		void UpdateMatrixData(const Entity& objRenderData);
 		void UpdateAllMatrixData(Scene* scene);
+		void UpdateDrawCallsInfo();
 		UUID findLastRenderData();
 		MatrixBufferDescriptorHelper& getMatrixBufferDescriptorHelper(){ return m_DescriptorHelper; }
 		VulkanVertexBuffer m_VertexBuffer;
-		VulkanIndexBuffer m_IndexBuffer;
+		std::vector<VulkanIndexBuffer> m_IndexBuffer;
 		VulkanShaderStorageBuffer m_SSBO;
 		MatrixBufferDescriptorHelper m_DescriptorHelper;
+		std::vector<DrawCallsInfo> m_DrawCallInfos;
 	};
 }
