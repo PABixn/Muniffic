@@ -468,7 +468,7 @@ namespace eg {
 				}
 
 				if (m_OpenFunctionPopupCall) {
-					UUID uuid = DrawFunctionCallPopup();
+					UUID uuid = DrawScriptListPopup();
 					if (uuid != 0)
 						component.Scripts.push_back(uuid);
 				}
@@ -1377,7 +1377,7 @@ namespace eg {
 		}
 	}
 
-	UUID EntityPropertiesPanel::DrawFunctionCallPopup()
+	UUID EntityPropertiesPanel::DrawScriptListPopup()
 	{
 		EG_PROFILE_FUNCTION();
 
@@ -1386,11 +1386,11 @@ namespace eg {
 		ImGui::OpenPopup("FunctionCallPopup");
 
 		if (ImGui::BeginPopup("FunctionCallPopup")) {
-			ImGui::Text("Function name:");
+			ImGui::Text("Script name:");
 			static char functionName[128];
-			ImGui::InputText("##functionName", functionName, 128);
+			ImGui::InputText("##scriptName", functionName, 128);
 			int treeNodeFlags = ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_MoreSpaceBetweenTextAndArrow;
-			bool opened = ImGui::TreeNodeEx("Available Function calls:", treeNodeFlags);
+			bool opened = ImGui::TreeNodeEx("Available Scripts:", treeNodeFlags);
 			if (opened)
 			{
 				const auto& scriptMethods = ScriptEngine::GetAllScriptMethodMaps();

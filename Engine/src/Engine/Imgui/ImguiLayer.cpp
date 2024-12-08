@@ -12,10 +12,29 @@
 #include <imgui_internal.h>
 
 namespace eg {
+	const ImVec4 ImGuiLayer::m_OriginalLightShade = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
+	const ImVec4 ImGuiLayer::m_OriginalNormalShade = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
+	const ImVec4 ImGuiLayer::m_OriginalDarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
+	const ImVec4 ImGuiLayer::m_OriginalLightTextShade = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
+
 	ImVec4 ImGuiLayer::m_LightShade = ImVec4(0.251f, 0.212f, 0.349f, 1.0f);
 	ImVec4 ImGuiLayer::m_NormalShade = ImVec4(0.192f, 0.157f, 0.267f, 1.0f);
 	ImVec4 ImGuiLayer::m_DarkShade = ImVec4(0.125f, 0.102f, 0.188f, 1.0f);
 	ImVec4 ImGuiLayer::m_LightTextShade = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);
+
+	const ImVec4 ImGuiLayer::m_lightRatio = ImVec4(
+		m_OriginalLightShade.x / m_OriginalDarkShade.x,
+		m_OriginalLightShade.y / m_OriginalDarkShade.y,
+		m_OriginalLightShade.z / m_OriginalDarkShade.z,
+		1.0f
+	);
+
+	const ImVec4 ImGuiLayer::m_NormalRatio = ImVec4(
+		m_OriginalNormalShade.x / m_OriginalDarkShade.x,
+		m_OriginalNormalShade.y / m_OriginalDarkShade.y,
+		m_OriginalNormalShade.z / m_OriginalDarkShade.z,
+		1.0f
+	);
 
 	ImGuiLayer::ImGuiLayer()
 		:Layer("ImguiLayer"), m_Time(0.0f)
@@ -30,7 +49,7 @@ namespace eg {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 
-		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsDark();
 		ImGuiStyle& style = ImGui::GetStyle();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
@@ -59,7 +78,7 @@ namespace eg {
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-        ImGui::StyleColorsDark();
+        //ImGui::StyleColorsDark();
         ImGuiStyle& style = ImGui::GetStyle();
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
@@ -191,14 +210,31 @@ namespace eg {
 
 		//Borders
 		colors[ImGuiCol_Border] = m_LightShade;
+		colors[ImGuiCol_BorderShadow] = m_LightShade;
+		colors[ImGuiCol_ResizeGripHovered] = m_LightShade;
+		colors[ImGuiCol_ResizeGripActive] = m_LightShade;
 		style.PopupBorderSize = 1.0f;
 
 		//Text
 		colors[ImGuiCol_TextDisabled] = m_LightTextShade;
 
 		//Others
-		colors[ImGuiCol_MenuBarBg] = ImVec4(0.153f, 0.133f, 0.200f, 1.0f);
+		colors[ImGuiCol_MenuBarBg] = ImVec4(
+			m_DarkShade.x * 1.224f,
+			m_DarkShade.y * 1.304f,
+			m_DarkShade.z * 1.064f,
+			1.0f
+			);
 		colors[ImGuiCol_CheckMark] = ImVec4(1.f, 1.f, 1.f, 1.f);
 	}
-    
+
+	void ImGuiLayer::ReturnToOriginalTheme()
+	{
+		m_LightShade = m_OriginalLightShade;
+		m_NormalShade = m_OriginalNormalShade;
+		m_DarkShade = m_OriginalDarkShade;
+		m_LightTextShade = m_OriginalLightTextShade;
+
+		SetDarkThemeColors();
+	}
 }

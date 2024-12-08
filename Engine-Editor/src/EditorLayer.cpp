@@ -336,9 +336,16 @@ namespace eg
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("View"))
+			{
+				if (ImGui::MenuItem("Change theme"))
+					m_IsColorPopupTriggered = true;
+
+				ImGui::EndMenu();
+			}
+
 			if(ImGui::MenuItem("Game Objects")){}
 			if(ImGui::MenuItem("Components")){}
-			if(ImGui::MenuItem("Window")){}
 			if(ImGui::MenuItem("Help")){}
 
 			ImGui::EndMenuBar();
@@ -346,171 +353,222 @@ namespace eg
 		ImGui::PopStyleColor(2);
 		ImGui::PopFont();
 
-			m_SceneHierarchyPanel.OnImGuiRender();
-			m_ContentBrowserPanel->OnImGuiRender();
-			m_ProjectDirectoryPanel->OnImGuiRender();
-			m_ConsolePanel->OnImGuiRender();
-			m_AssistantPanel->OnImGuiRender();
+		if (m_IsColorPopupTriggered) {
+			ImGui::OpenPopup("ChangeTheme");
 
-			if (IsWindowTryingToClose) {
-				if (!IsProjectSaved()) {
-					ImGui::OpenPopup("Unsaved Changes");
-					ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
 
-					ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
-					ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
-					ImGui::PushStyleColor(ImGuiCol_Border, ImGuiLayer::m_DarkShade);
+			if (ImGui::BeginPopupModal("ChangeTheme", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize)) {
 
-					if (ImGui::BeginPopupModal("Unsaved Changes", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize)) {
+				ImVec2 spacing = style.ItemSpacing;
+				style.ItemSpacing = ImVec2(10.f, 10.f);
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
 
-						ImVec2 spacing = style.ItemSpacing;
-						style.ItemSpacing = ImVec2(10.f, 10.f);
-						ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
-						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+				ImVec4 myColor = ImGuiLayer::m_DarkShade;
+				ImGui::Text("Choose background color");
+				if (ImGui::ColorEdit3("ColorEdit", (float*)&myColor)) {
+					ImGuiLayer::m_DarkShade = myColor;
+					ImGuiLayer::m_NormalShade = ImVec4(
+						myColor.x * ImGuiLayer::m_NormalRatio.x,
+						myColor.y * ImGuiLayer::m_NormalRatio.y,
+						myColor.z * ImGuiLayer::m_NormalRatio.z,
+						1.0f
+					);
+					ImGuiLayer::m_LightShade = ImVec4(
+						myColor.x * ImGuiLayer::m_lightRatio.x,
+						myColor.y * ImGuiLayer::m_lightRatio.y,
+						myColor.z * ImGuiLayer::m_lightRatio.z,
+						1.0f
+					);
+					ImGuiLayer::SetDarkThemeColors();
+				}
 
-						ImGui::Text("Warning: Unsaved changes");
-						bool SaveBttn = ImGui::Button("Save");
-						ImGui::SameLine();
-						bool NotSaveBttn = ImGui::Button("Don't save");
-						ImGui::SameLine();
-						bool CancelBttn = ImGui::Button("Cancel");
-						if (SaveBttn) {
-							(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
-							Application::Get().Close();
-						}
-						else if (NotSaveBttn) {
-							Application::Get().Close();
-						}
-						else if (CancelBttn) {
-							SetIsWindowTryingToClose(false);
-						}
+				if (ImGui::Button("Reset")) {
+					ImGuiLayer::ReturnToOriginalTheme();
+				}
 
-						style.ItemSpacing = spacing;
-						ImGui::PopStyleVar(2);
-						ImGui::EndPopup();
+				ImGui::SameLine();
+
+				if (ImGui::Button("Close")) {
+					m_IsColorPopupTriggered = false;
+					ImGui::CloseCurrentPopup();
+				}
+
+				style.ItemSpacing = spacing;
+				ImGui::PopStyleVar(2);
+				ImGui::EndPopup();
+			}
+
+			ImGui::PopStyleVar(2);
+		}
+
+		m_SceneHierarchyPanel.OnImGuiRender();
+		m_ContentBrowserPanel->OnImGuiRender();
+		m_ProjectDirectoryPanel->OnImGuiRender();
+		m_ConsolePanel->OnImGuiRender();
+		m_AssistantPanel->OnImGuiRender();
+
+		if (IsWindowTryingToClose) {
+			if (!IsProjectSaved()) {
+				ImGui::OpenPopup("Unsaved Changes");
+				ImGui::SetNextWindowPos(ImVec2(Application::Get().GetWindow().GetWidth() / 2, Application::Get().GetWindow().GetHeight() / 2));
+
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.f);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.f, 10.f));
+				ImGui::PushStyleColor(ImGuiCol_Border, ImGuiLayer::m_DarkShade);
+
+				if (ImGui::BeginPopupModal("Unsaved Changes", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_AlwaysAutoResize)) {
+
+					ImVec2 spacing = style.ItemSpacing;
+					style.ItemSpacing = ImVec2(10.f, 10.f);
+					ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.f);
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 5.f));
+
+					ImGui::Text("Warning: Unsaved changes");
+					bool SaveBttn = ImGui::Button("Save");
+					ImGui::SameLine();
+					bool NotSaveBttn = ImGui::Button("Don't save");
+					ImGui::SameLine();
+					bool CancelBttn = ImGui::Button("Cancel");
+					if (SaveBttn) {
+						(*(dynamic_cast<EditorLayer*>(Application::Get().GetFirstLayer()))).Save();
+						Application::Get().Close();
+					}
+					else if (NotSaveBttn) {
+						Application::Get().Close();
+					}
+					else if (CancelBttn) {
+						SetIsWindowTryingToClose(false);
 					}
 
+					style.ItemSpacing = spacing;
 					ImGui::PopStyleVar(2);
-					ImGui::PopStyleColor();
-				};
-			}
-
-			ImGui::Begin("Stats");
-			std::string name = "None";
-			if (m_HoveredEntity.GetScene() && m_HoveredEntity.Exists()) { 
-				name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
-				ImGui::Text("Hovered Entity: %s", name.c_str());
-			}
-
-			auto stats = Renderer2D::GetStats();
-			ImGui::Text("Renderer2D Stats:");
-			ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-			ImGui::Text("Quads: %d", stats.QuadCount);
-			ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-			ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
-			ImGui::End();
-
-			ImGui::Begin("Settings");
-			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
-			if (ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
-				Commands::ExecuteRawValueCommand(&m_ShowPhysicsColliders, !m_ShowPhysicsColliders, "Show Physics Colliders");
-			if (ImGui::Checkbox("Show Axis", &m_ShowAxis))
-				Commands::ExecuteRawValueCommand(&m_ShowAxis, !m_ShowAxis, "Show Axis");
-			if (ImGui::Checkbox("Show Grid", &m_ShowGrid))
-				Commands::ExecuteRawValueCommand(&m_ShowGrid, !m_ShowGrid, "Show Grid");
-			ImGui::PopStyleVar();
-			ImGui::End();
-
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-			ImGui::Begin("Viewport");
-			auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
-			auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
-			auto viewportOffset = ImGui::GetWindowPos();
-			m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-			m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
-
-			m_ViewportFocused = ImGui::IsWindowFocused();
-			m_ViewportHovered = ImGui::IsWindowHovered();
-			Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused);
-
-			ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-
-			m_ViewportSize = { viewportSize.x, viewportSize.y };
-			uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
-			ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
-				{
-					const wchar_t* path = (const wchar_t*)payload->Data;
-					std::filesystem::path p = path;
-					if (p.extension() == ".egscene")
-   						OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
-				}
-				ImGui::EndDragDropTarget();
-			}
-
-			// Gizmos
-			Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-			if (selectedEntity && m_GizmoType != -1)
-			{
-				ImGuizmo::SetOrthographic(false);
-				ImGuizmo::SetDrawlist();
-				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, m_ViewportSize.x, m_ViewportSize.y);
-
-				ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-				// Camera
-				// Runtime camera from entity
-				// auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-				// const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
-				// const glm::mat4& cameraProjection = camera.GetProjection();
-				// glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
-
-				// Editor camera
-				const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
-				glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
-
-				// Entity Transform
-				auto& tc = selectedEntity.GetComponent<TransformComponent>();
-				glm::mat4 transform = tc.GetTransform();
-
-				// Snapping
-				bool snap = Input::IsKeyPressed(KeyCode::LeftControl);
-				float snapValue = 0.5f; // Snap to 0.5m for translation/scale
-				// Snap to 45 degrees for rotation
-				if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-					snapValue = 45.0f;
-
-				float snapValues[3] = { snapValue, snapValue, snapValue };
-
-				ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-					(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
-					nullptr, snap ? snapValues : nullptr);
-
-				if (ImGuizmo::IsUsing())
-				{
-					glm::vec3 translation, rotation, scale;
-					Math::DecomposeTransform(transform, translation, rotation, scale);
-
-					glm::vec3 deltaRotation = rotation - tc.Rotation;
-					tc.Translation = translation;
-					tc.Rotation = rotation;
-					tc.Scale = scale;
+					ImGui::EndPopup();
 				}
 
-				// ImGuizmo::ViewManipulate(glm::value_ptr(cameraView), m_Camera.GetZoomLevel(), ImVec2{ ImGui::GetWindowPos().x, ImGui::GetWindowPos().y }, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, 0x10101010);
+				ImGui::PopStyleVar(2);
+				ImGui::PopStyleColor();
+			};
+		}
+
+		ImGui::Begin("Stats");
+		std::string name = "None";
+		if (m_HoveredEntity.GetScene() && m_HoveredEntity.Exists()) { 
+			name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
+			ImGui::Text("Hovered Entity: %s", name.c_str());
+		}
+
+		auto stats = Renderer2D::GetStats();
+		ImGui::Text("Renderer2D Stats:");
+		ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+		ImGui::Text("Quads: %d", stats.QuadCount);
+		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+
+		ImGui::End();
+
+		ImGui::Begin("Settings");
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.f);
+		if (ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders))
+			Commands::ExecuteRawValueCommand(&m_ShowPhysicsColliders, !m_ShowPhysicsColliders, "Show Physics Colliders");
+		if (ImGui::Checkbox("Show Axis", &m_ShowAxis))
+			Commands::ExecuteRawValueCommand(&m_ShowAxis, !m_ShowAxis, "Show Axis");
+		if (ImGui::Checkbox("Show Grid", &m_ShowGrid))
+			Commands::ExecuteRawValueCommand(&m_ShowGrid, !m_ShowGrid, "Show Grid");
+		ImGui::PopStyleVar();
+		ImGui::End();
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+		ImGui::Begin("Viewport");
+		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+		auto viewportOffset = ImGui::GetWindowPos();
+		m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+		m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+		Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused);
+
+		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+
+		m_ViewportSize = { viewportSize.x, viewportSize.y };
+		uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
+		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserPanel"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				std::filesystem::path p = path;
+				if (p.extension() == ".egscene")
+   					OpenScene((Project::GetProjectName()) / Project::GetAssetDirectory() / path);
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		// Gizmos
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity && m_GizmoType != -1)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, m_ViewportSize.x, m_ViewportSize.y);
+
+			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+			// Camera
+			// Runtime camera from entity
+			// auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			// const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+			// const glm::mat4& cameraProjection = camera.GetProjection();
+			// glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+			// Editor camera
+			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+
+			// Entity Transform
+			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4 transform = tc.GetTransform();
+
+			// Snapping
+			bool snap = Input::IsKeyPressed(KeyCode::LeftControl);
+			float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+			// Snap to 45 degrees for rotation
+			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+				snapValue = 45.0f;
+
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+				nullptr, snap ? snapValues : nullptr);
+
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 translation, rotation, scale;
+				Math::DecomposeTransform(transform, translation, rotation, scale);
+
+				glm::vec3 deltaRotation = rotation - tc.Rotation;
+				tc.Translation = translation;
+				tc.Rotation = rotation;
+				tc.Scale = scale;
 			}
 
-			ImGui::End();
-			ImGui::PopStyleVar();
+			// ImGuizmo::ViewManipulate(glm::value_ptr(cameraView), m_Camera.GetZoomLevel(), ImVec2{ ImGui::GetWindowPos().x, ImGui::GetWindowPos().y }, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, 0x10101010);
+		}
 
-			UI_Toolbar();
+		ImGui::End();
+		ImGui::PopStyleVar();
 
-			ImGui::End();
-			if (projectOpened)
-				m_AddResourcePanel->OnImGuiRender();
+		UI_Toolbar();
+
+		ImGui::End();
+		if (projectOpened)
+			m_AddResourcePanel->OnImGuiRender();
 		}
 	}
 

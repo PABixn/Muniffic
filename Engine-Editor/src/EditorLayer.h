@@ -122,6 +122,9 @@ namespace eg
 		};
 
 		SceneState m_SceneState = SceneState::Edit;
+
+		bool m_IsColorPopupTriggered = false;
+
 		friend class AddResourcePanel;
 	public:
 		/*ImVec4 m_LightTextShade = ImVec4(0.7765f, 0.7333f, 0.8863f, 1.0f);

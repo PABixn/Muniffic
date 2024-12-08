@@ -23,7 +23,8 @@ namespace eg {
 		void End();
 
 		void SetBlockEvents(bool block) { m_BlockEvents = block; }
-		void SetDarkThemeColors();
+		static void SetDarkThemeColors();
+		static void ReturnToOriginalTheme();
 
 		uint32_t GetActiveWidgetID() const;
 	public:
@@ -31,6 +32,12 @@ namespace eg {
 		static ImVec4 m_NormalShade;
 		static ImVec4 m_DarkShade;
 		static ImVec4 m_LightTextShade;
+		static const ImVec4 m_OriginalLightShade;
+		static const ImVec4 m_OriginalNormalShade;
+		static const ImVec4 m_OriginalDarkShade;
+		static const ImVec4 m_OriginalLightTextShade;
+		static const ImVec4 m_lightRatio;
+		static const ImVec4 m_NormalRatio;
 	private:
 		bool m_BlockEvents = true;
 		float m_Time;

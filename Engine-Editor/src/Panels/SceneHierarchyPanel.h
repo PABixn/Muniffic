@@ -65,14 +65,8 @@ namespace eg {
 		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; SetPreviewAbsoluteImagePath(""); }
 		void SetPreviewAbsoluteImagePath(std::filesystem::path path) { m_PreviewAbsoluteImagePath = path; m_ReevaluatePreview = true; }
 	private:
-		template<typename T>
-		void DisplayAddComponentEntry(const std::string& entryName);
 		void DrawEntityNode(EntityDisplayInfo entityDisplayInfo);
-		void DrawComponents(Entity entity);
 		std::optional<EntityDisplayInfo> SearchEntity(Entity entity);
-		template<typename T, typename UIFunction>
-		void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction, Ref<Scene>& context, Icons icon);
-		UUID DrawFunctionCallPopup();
 	private:
 		std::string m_Search;
 		Ref<ImagePanel> m_ImagePanel = nullptr;

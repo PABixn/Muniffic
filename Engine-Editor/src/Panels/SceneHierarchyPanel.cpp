@@ -166,7 +166,12 @@ namespace eg
 		bool isActive = ImGui::IsItemActive();
 
 		if (isHovered || isActive) {
-			ImVec4 hoverColor = isHovered ? ImVec4(0.45f, 0.42f, 0.55f, 1.00f) : ImVec4(0.55f, 0.50f, 0.70f, 1.00f);
+			ImVec4 hoverColor = isHovered || isActive ? ImVec4(
+				ImGuiLayer::m_LightShade.x + (1.0f - ImGuiLayer::m_LightShade.x) * 0.225f,
+				ImGuiLayer::m_LightShade.y + (1.0f - ImGuiLayer::m_LightShade.y) * 0.225f,
+				ImGuiLayer::m_LightShade.z + (1.0f - ImGuiLayer::m_LightShade.z) * 0.225f,
+				1.0f
+			) : ImVec4(0, 0, 0, 0);
 			ImColor borderColor = ImColor(hoverColor);
 
 			float totalWidth = ImGui::CalcItemWidth();
@@ -220,6 +225,7 @@ namespace eg
 
 		if (m_SelectionContext) {
 			m_PropertiesPanel->SetEntity(m_SelectionContext);
+			m_PropertiesPanel->SetScene(m_Context);
 		}
 		if (m_PreviewAbsoluteImagePath != "")
 		{

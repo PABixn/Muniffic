@@ -156,7 +156,7 @@ namespace eg
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.f);
 		
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
-		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 10.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 30.f);
 
@@ -171,7 +171,12 @@ namespace eg
 		bool isActive = ImGui::IsItemActive();
 
 		if (isHovered || isActive) {
-			ImVec4 hoverColor = isHovered ? ImVec4(0.45f, 0.42f, 0.55f, 1.00f) : ImVec4(0.55f, 0.50f, 0.70f, 1.00f);
+			ImVec4 hoverColor = isHovered || isActive ? ImVec4(
+				ImGuiLayer::m_LightShade.x + (1.0f - ImGuiLayer::m_LightShade.x) * 0.225f,
+				ImGuiLayer::m_LightShade.y + (1.0f - ImGuiLayer::m_LightShade.y) * 0.225f,
+				ImGuiLayer::m_LightShade.z + (1.0f - ImGuiLayer::m_LightShade.z) * 0.225f,
+				1.0f
+			) : ImVec4(0, 0, 0, 0);
 			ImColor borderColor = ImColor(hoverColor);
 
 			float totalWidth = ImGui::CalcItemWidth();
