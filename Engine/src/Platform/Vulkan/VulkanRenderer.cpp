@@ -23,8 +23,8 @@ void eg::VulkanRenderer::init()
     m_SwapChain.createFrameBuffers();
     m_ResourceManager.init();
     m_CurrentSceneRenderData.createBuffers(4, 10);
-    m_GraphicsPipeline.init();
     m_ResourceManager.m_FrameManager.init(&m_ResourceManager);
+    m_GraphicsPipelineManager.CreatePipeline(GraphicsPipelineType::Type_BasicMeshWithColor);
     EG_TRACE("Vulkan Renderer initialization Succesful");
 }
 
@@ -34,7 +34,7 @@ void eg::VulkanRenderer::cleanUp()
     m_CurrentSceneRenderData.unloadScene();
     m_ResourceManager.m_FrameManager.cleanUp();
     m_ResourceManager.cleanUp();
-    m_GraphicsPipeline.cleanUp();
+    m_GraphicsPipelineManager.cleanUpAllPipelines();
     m_SwapChain.cleanUp();
     //vkDestroyRenderPass(m_Device.getNativeDevice(), m_ImGuiRenderPass, nullptr);
     vkDestroyDescriptorPool(m_Device.getNativeDevice(), m_ImGuiDescriptorPool, nullptr);

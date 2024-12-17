@@ -3,8 +3,8 @@
 #include "Renderer/Queue/Queue.h"
 #include "Platform/Vulkan/VulkanRenderer.h"
 #include "Renderer/Resources/Vertex/Vertex.h"
-#define VERTEX_SHADER_PATH SHADERS_FOLDER "/ColorBasicObject/vert.spv"
-#define FRAGMENT_SHADER_PATH SHADERS_FOLDER "/colorBasicObject/frag.spv"
+#define VERTEX_SHADER_PATH SHADERS_FOLDER "/textureBasicObject/vert.spv"
+#define FRAGMENT_SHADER_PATH SHADERS_FOLDER "/textureBasicObject/frag.spv"
 
 void eg::ObjectWithoutTexturePipeline::init()
 {
@@ -80,15 +80,15 @@ void eg::ObjectWithoutTexturePipeline::init()
 	VkViewport viewport;
 	VkRect2D scissor;
 	VkPipelineViewportStateCreateInfo viewportState{};
-	defineViewportState(viewportState,viewport, scissor);
+	defineViewportState(viewportState, viewport, scissor);
 
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	VkDescriptorSetLayout layouts[] = { VRen::get().getResourceManager().getDescriptorSetLayout(), VRen::get().getSceneRenderData().getMatrixBufferDescriptorHelper().getDescriptorSetLayout() };
+	VkDescriptorSetLayout layouts[] = { VRen::get().getResourceManager().getDescriptorSetLayout(), VRen::get().getSceneRenderData().getMatrixBufferDescriptorHelper().getDescriptorSetLayout(), VRen::get().getSceneRenderData().getTextureDescriptorHelper().getDescriptorSetLayout() };
 	pipelineLayoutInfo.setLayoutCount = sizeof(layouts) / sizeof(layouts[0]);
 	pipelineLayoutInfo.pSetLayouts = layouts;
 	pipelineLayoutInfo.pushConstantRangeCount = 0;
-	pipelineLayoutInfo.pPushConstantRanges = nullptr;
+	pipelineLayoutInfo.pPushConstantRanges = nullptr;	
 
 
 
@@ -119,7 +119,7 @@ void eg::ObjectWithoutTexturePipeline::init()
 	if (vkCreateGraphicsPipelines(device.m_LogicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_NativePipeline) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create graphics pipeline! :(");
 	}
- }
+}
 
 void eg::ObjectWithoutTexturePipeline::cleanUp()
 {

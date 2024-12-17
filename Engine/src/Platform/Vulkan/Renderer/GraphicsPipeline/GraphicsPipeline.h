@@ -19,11 +19,10 @@ namespace eg {
 		virtual void cleanUp() = 0;
 		virtual void onViewportResize(VkCommandBuffer& cmdBfr, const VkExtent2D& extentArg) = 0;
 	};
-	class PipelineManager {
-	public:
-		void CreatePipeline(const GraphicsPipelineType& type);
-		GraphicsPipeline* getPipeline(const GraphicsPipelineType& type);
-	private:
-		std::unordered_map<GraphicsPipelineType, GraphicsPipeline> m_Pipelines;
-	};
+	void defineInputAssembly(VkPipelineInputAssemblyStateCreateInfo& info);
+	void defineRasterizer(VkPipelineRasterizationStateCreateInfo& info);
+	void defineMultisampling(VkPipelineMultisampleStateCreateInfo& info);
+	void defineColorBlend(VkPipelineColorBlendAttachmentState& info, VkPipelineColorBlendStateCreateInfo& info1);
+	void defineViewportState(VkPipelineViewportStateCreateInfo& inf, VkViewport& viewport, VkRect2D& scissoro);
+	void defineDynamicStates(VkPipelineDynamicStateCreateInfo& info);
 }

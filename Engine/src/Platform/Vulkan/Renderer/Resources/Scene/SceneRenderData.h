@@ -5,8 +5,10 @@
 #include "Platform/Vulkan/Renderer/Resources/Buffer/VertexBuffer.h"
 #include "Platform/Vulkan/Renderer/Resources/Buffer/IndexBuffer.h"
 #include "Platform/Vulkan/Renderer/Resources/Buffer/SSBuffer.h"
+#include "Platform/Vulkan/Renderer/Resources/Buffer/SamplerArray.h"
 #include "Platform/Vulkan/Renderer/Resources/Vertex/Vertex.h"
 #include "Platform/Vulkan/Renderer/Resources/Descriptors/MatrixBufferDescriptorHelper.h"
+#include "Platform/Vulkan/Renderer/Resources/Descriptors/TextureDescriptor.h"
 #include "Platform/Vulkan/Renderer/GraphicsPipeline/GraphicsPipeline.h"
 #include "ObjectRenderData.h"
 #include "Engine/Scene/Scene.h"
@@ -45,10 +47,13 @@ namespace eg {
 		void UpdateDrawCallsInfo();
 		UUID findLastRenderData();
 		MatrixBufferDescriptorHelper& getMatrixBufferDescriptorHelper(){ return m_DescriptorHelper; }
+		TextureDescriptorHelper& getTextureDescriptorHelper(){ return m_TextureDescriptorHelper; }
 		VulkanVertexBuffer m_VertexBuffer;
 		std::vector<VulkanIndexBuffer> m_IndexBuffer;
 		VulkanShaderStorageBuffer m_SSBO;
+		VulkanSamplerArray m_SamplerArray;
 		MatrixBufferDescriptorHelper m_DescriptorHelper;
+		TextureDescriptorHelper m_TextureDescriptorHelper;
 		std::vector<DrawCallsInfo> m_DrawCallInfos;
 	};
 }

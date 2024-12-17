@@ -8,7 +8,7 @@
 #include "Platform/Vulkan/Renderer/Device/Device.h"
 #include "Platform/Vulkan/Renderer/SwapChain/SwapChain.h"
 #include "Platform/Vulkan/Renderer/Resources/ResourceManager.h"
-#include "Platform/Vulkan/Renderer/GraphicsPipeline/ObjectWithoutTexturePipeline.h"
+#include "Platform/Vulkan/Renderer/GraphicsPipeline/GraphicsPipelineManager.h"
 #include "Platform/Vulkan/Renderer/GraphicsPipeline/GraphicsPipeline.h"
 #include "entt.hpp"
 #include "Platform/Vulkan/Renderer/Resources/Scene/SceneRenderData.h"
@@ -17,10 +17,6 @@ namespace eg {
 	class VulkanRenderer
 	{
 		friend class VRenderer;
-		// TO-DO Vulkan
-		static VulkanRenderer ren;
-	public:
-		static VulkanRenderer& get() { return ren; };
 	public:
 		void init();
 		void cleanUp();
@@ -30,7 +26,7 @@ namespace eg {
 		VkRenderPass& getEditorRenderPass() { return m_EditorRenderPass; }
 		ResourceManager& getResourceManager() { return m_ResourceManager; }
 		SwapChain& getSwapChain() { return m_SwapChain; }
-		ObjectWithoutTexturePipeline& getGraphicsPipeline() { return m_GraphicsPipeline; }
+		GraphicsPipeline* getGraphicsPipeline(const GraphicsPipelineType& type) { return m_GraphicsPipelineManager.getPipeline(type); }
 		VkDescriptorPool& getImGuiDescriptorPool() { return m_ImGuiDescriptorPool; }
 		const VkFormat& getFrameBufferImageFormat() { return m_SwapChain.m_ImageFormat; }
 		SceneRenderData& getSceneRenderData() { return m_CurrentSceneRenderData; }
@@ -42,7 +38,7 @@ namespace eg {
 		VkRenderPass m_EditorRenderPass;
 		ResourceManager m_ResourceManager;
 		VkCommandPool m_PoolForOneTimeOperations;
-		ObjectWithoutTexturePipeline m_GraphicsPipeline;
+		PipelineManager m_GraphicsPipelineManager;
 	private:
 		VkDescriptorPool m_ImGuiDescriptorPool;
 	private:

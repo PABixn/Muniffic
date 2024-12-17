@@ -41,18 +41,24 @@ void eg::SceneRenderData::unloadScene()
     if (m_DescriptorHelper.getDescriptorSetLayout() != nullptr)
         m_DescriptorHelper.cleanup();
 
+    if (m_TextureDescriptorHelper.getDescriptorSetLayout() != nullptr)
+        m_TextureDescriptorHelper.cleanup();
+
     m_Loaded = false;
 }
 
 void eg::SceneRenderData::createBuffers(size_t verticesPerObject, size_t numberOfObjects)
 {
     m_DescriptorHelper.init();
+    m_TextureDescriptorHelper.init();
     m_VertexBuffer.create(verticesPerObject * sizeof(VulkanBasicMeshVertex), VertexType_BasicMesh);
     m_IndexBuffer.resize(numberOfIndexBuffers);
     for (uint32_t i = 0; i< numberOfIndexBuffers;i++)
         m_IndexBuffer[i].create(verticesPerObject * numberOfObjects * sizeof(uint32_t) * 1.5);
     m_SSBO.create(numberOfObjects * sizeof(ObjectMatrixData));
     m_DescriptorHelper.bindSSBO(&m_SSBO);
+    m_SamplerArray.create(MAX_SAMPLER_ARRAY_SIZE * sizeof(VkSampler));
+    m_TextureDescriptorHelper.bindSamplerArray(&m_SamplerArray);
 
 
     std::vector<VulkanBasicMeshVertex> SpritesVertices(4);
@@ -181,7 +187,7 @@ void eg::SceneRenderData::UpdateDrawCallsInfo()
 {
     m_DrawCallInfos = std::vector<DrawCallsInfo>(1);
     m_DrawCallInfos[0].drawCallCount = 1;
-    m_DrawCallInfos[0].graphicsPipeline = &VRen::get().getGraphicsPipeline();
+    m_DrawCallInfos[0].graphicsPipeline = VRen::get().getGraphicsPipeline(GraphicsPipelineType::Type_BasicMeshWithColor);
     m_DrawCallInfos[0].vertexBuffer = { &m_VertexBuffer };
     m_DrawCallInfos[0].indexBuffer = { &m_IndexBuffer[0]};
     m_DrawCallInfos[0].instancesCount = { &m_SSBO.m_InstancesCount };
