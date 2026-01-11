@@ -2,6 +2,10 @@
 
 Game engine aiming to introduce wide AI support and many game creation facilitations.
 
+| ![solar sombrero](screenshots/solar_sombrero.png) | ![simple project](screenshots/simple_project.png) |
+|----------|----------|
+| ![alternate colors](screenshots/alternate_colors.png) | ![assistant](screenshots/assistant.png) |
+
 ## Before you start
 
 - Make sure you have python installed and added to PATH
