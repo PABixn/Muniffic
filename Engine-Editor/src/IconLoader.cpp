@@ -79,6 +79,8 @@ namespace eg
 				return editorPath / "step_button.png";
 			case Icons::Editor_SimulateButton:
 				return editorPath / "simulate_button.png";
+			case Icons::Editor_Logo:
+				return editorPath / "logo.png";
 			case Icons::ResourceNotFound:
 				return m_DefaultIconPath.string();
 			case Icons::WelcomePanel_DeleteProject:

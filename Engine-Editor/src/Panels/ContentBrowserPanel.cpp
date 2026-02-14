@@ -67,11 +67,6 @@ namespace eg
 
 		ImGui::Begin("Content Browser");
 
-		ImGuiStyle& style = ImGui::GetStyle();
-		auto btnColor = style.Colors[ImGuiCol_Button];
-		auto btnColorHovered = style.Colors[ImGuiCol_ButtonHovered];
-		auto btnColorActive = style.Colors[ImGuiCol_ButtonActive];
-
 		ImGui::PushFont(static_cast<EditorLayer*>(Application::Get().GetFirstLayer())->m_PoppinsRegularFontBig);
 
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -389,7 +384,6 @@ namespace eg
 
 			style.ItemSpacing = ImVec2(20.f, 10.f);
 
-			ImVec4 buttonColor = style.Colors[ImGuiCol_Button];
 			ImGui::Text("Enter new folder name");
 			static char buffer[256] = "New Folder";
 
